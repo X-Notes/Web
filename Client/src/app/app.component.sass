@@ -1,0 +1,204 @@
+
+@import "../../node_modules/hamburgers/dist/hamburgers.min.css"
+
+header
+    width: 100%
+    background: #303030
+    height: 60px
+
+.content
+    padding: 5px 5px 0px 10px
+
+.content-header
+    width: 100%
+    height: 50px
+
+
+.flex-container
+    display: flex
+
+.space-between
+    justify-content: space-between
+
+
+.right
+    width: 250px
+    height: 100%
+    padding: 5px 15px 0 0
+
+.right img
+    height: 40px
+
+.profile 
+    width: 40px
+    height: 40px
+    -webkit-border-radius: 25px
+    -moz-border-radius: 25px
+    border-radius: 25px
+    overflow: hidden
+
+.profile img
+  border-radius: 50%
+  width: 100%
+  max-width: 100%
+  margin: 0 auto
+
+    
+
+// search center
+
+.search-icon
+    width: 40px
+    background: #f2f2f2
+    height: 40px
+    margin: 5px 0px 0px 0px
+    padding: 5px 0px 0px 5px
+    border-radius: 0px 8px 8px 0px
+    -webkit-tap-highlight-color: transparent
+
+.search-icon img
+    height: 30px
+    cursor: pointer
+
+input[type=text], select 
+  width: 650px
+  height: 40px
+  margin: 5px 0 5px 5px
+  display: inline-block
+  border: 1px solid #F2F2F2
+  border-radius: 8px 0px 0px 8px
+  padding: 0 0 0 10px
+  box-sizing: border-box
+  outline: none
+  font-size: 18px
+  background: #F2F2F2 !important
+  color: #202020 !important
+
+
+
+.left
+    min-width: 200px
+
+
+// logo
+.logo
+    padding: 5px 0 0 30px
+
+.logo img
+    height: 40px
+
+
+// Button menu
+.hamburger-inner:before
+    background-color: #ffffff
+    //height: 7px
+    width: 25px
+
+.hamburger-inner:after
+    background-color: #ffffff
+    //height: 7px
+    width: 25px
+
+.hamburger-inner
+    background-color: #ffffff
+    //height: 7px
+    width: 25px
+
+.hamburger.is-active .hamburger-inner
+    background-color: #ffffff
+
+.hamburger.is-active .hamburger-inner:after
+    background-color: #ffffff
+
+.hamburger
+    padding: 10px 0 0 5px
+    -webkit-tap-highlight-color: transparent
+
+.hamburger:hover
+    opacity: 1 !important
+
+.hamburger-box
+    width: 25px
+    height: 30px
+
+
+@media (max-width: 319px)
+    .logo
+        padding: 10px 0 0 30px
+    .logo img
+        height: 27px
+    .center
+        display: none
+
+    .right.flex-container
+        padding: 10px 15px 0 0px   
+
+    .right.flex-container img
+        height: 27px
+
+    .profile 
+        width: 27px
+        height: 27px
+
+@media (min-width: 320px) and (max-width: 479px)
+    .logo
+        padding: 10px 0 0 30px
+    .logo img
+        height: 27px
+    .center
+        display: none
+
+    .right.flex-container
+        padding: 10px 15px 0 0px    
+
+    .right.flex-container img
+        height: 27px
+
+    .profile 
+        width: 27px
+        height: 27px
+
+
+
+@media (min-width: 480px) and (max-width: 767px)
+    .logo
+        padding: 10px 0 0 30px
+
+    .logo img
+        height: 27px 
+
+    .center
+        display: none
+
+    .right.flex-container
+        padding: 10px 15px 0 0px   
+           
+    .right.flex-container img
+        height: 27px
+
+    .profile 
+        width: 27px
+        height: 27px
+
+
+@media only screen and (min-width: 768px) and (max-width: 991px)
+    .center
+        display: none
+
+
+@media (min-width: 992px) and  (max-width: 1199px)
+    .hamburger
+        display: none
+
+    .searchMob
+        display: none
+
+    input[type=text], select 
+        width: 450px
+
+@media only screen and (min-width: 1200px)
+    .hamburger
+        display: none
+
+    .searchMob
+        display: none

@@ -1,1 +1,34 @@
-<p>Let`s go guys</p>
+<header>
+    <div class="content">
+        <div class="content-header flex-container space-between">
+            <div class="left flex-container">
+                <div class="hamburger hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation"
+                    (click)="active=!active" [ngClass]="active ? 'is-active' : ''">
+                    <div class="hamburger-box">
+                        <div class="hamburger-inner">
+                        </div>
+                    </div>
+                </div>
+                <div class="logo">
+                    <img src="assets/logo-without-squirell.svg" />
+                </div>
+            </div>
+            <div class="center flex-container">
+                <div class="search">
+                    <input type="text" id="fname" name="firstname" placeholder="Search...">
+                </div>
+                <div class="search-icon">
+                        <img src="assets/search.svg" />
+                </div>
+            </div>
+            <div class="right flex-container space-between">
+                    <img class="searchMob" src="assets/searchMob.svg" />
+                    <img src="assets/view.svg" />
+                    <img src="assets/notification.svg" />
+                    <div class="profile">
+                        <img src="assets/kashich.png">
+                    </div>
+            </div>
+        </div>
+    </div>
+</header>
