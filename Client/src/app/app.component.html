@@ -1,4 +1,75 @@
-<p>Let`s go guys</p>
-<app-new-note>
-    
-</app-new-note>
+<header>
+    <div class="content">
+        <div class="content-header flex-container space-between">
+            <div class="left flex-container">
+                <div class="hamburger hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation"
+                    (click)="active=!active" [ngClass]="active ? 'is-active' : ''">
+                    <div class="hamburger-box">
+                        <div class="hamburger-inner">
+                        </div>
+                    </div>
+                </div>
+                <div class="logo">
+                    <img src="assets/logo-without-squirell.svg" />
+                </div>
+            </div>
+            <div class="center flex-container">
+                <div class="search">
+                    <input type="text" id="fname" name="firstname" placeholder="Search...">
+                </div>
+                <div class="search-icon">
+                        <img src="assets/search.svg" />
+                </div>
+            </div>
+            <div class="right flex-container space-between">
+                    <img class="searchMob" src="assets/searchMob.svg" />
+                    <img src="assets/view.svg" />
+                    <img src="assets/notification.svg" />
+                    <div class="profile">
+                        <img src="assets/kashich.png">
+                    </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="wrapper">
+<aside>
+    <ul class="side-bar">
+        <li>
+            <img src="assets/menu/noots.svg"/>
+            <span>Noots</span>
+        </li>
+        <li>
+            <img src="assets/menu/note.svg"/>
+            <span>Notes</span>
+        </li>
+        <li>
+            <img src="assets/menu/groups.svg"/>
+            <span>Groups</span>
+        </li>
+        <li>
+            <img src="assets/menu/people.svg"/>
+            <span>People</span>
+        </li>
+        <li>
+            <img src="assets/menu/labels.svg"/>
+            <span>Labels</span>
+        </li>
+        <li>
+            <img src="assets/menu/invites.svg"/>
+            <span>Invites</span>
+        </li>
+        <li>
+
+                <span>Bin</span>
+            </li>
+    </ul>
+
+</aside>
+<main>
+<p>Pellentesque habitant morbi tristique senectus et netus et male
+    suada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultri
+    cies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semp
+    er. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+</main>
+</div>
