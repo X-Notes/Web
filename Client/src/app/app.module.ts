@@ -3,14 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NewNoteComponent } from './new-note/new-note.component';
-import { NootsComponent } from './noots/noots.component';
-import { NotesComponent } from './notes/notes.component';
-import { GroupsComponent } from './groups/groups.component';
-import { PeopleComponent } from './people/people.component';
-import { LabelsComponent } from './labels/labels.component';
-import { InvitesComponent } from './invites/invites.component';
-import { BinComponent } from './bin/bin.component';
+import { NewNoteComponent } from './Notes/new-note/new-note.component';
+import { NootsComponent } from './Noots/noots/noots.component';
+import { NotesComponent } from './Notes/notes/notes.component';
+import { GroupsComponent } from './Groups/groups/groups.component';
+import { PeopleComponent } from './People/people/people.component';
+import { LabelsComponent } from './Labels/labels/labels.component';
+import { InvitesComponent } from './Invites/invites/invites.component';
+import { BinComponent } from './Bin/bin/bin.component';
+import { NoteComponent } from './Notes/note/note.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { BinComponent } from './bin/bin.component';
     PeopleComponent,
     LabelsComponent,
     InvitesComponent,
-    BinComponent
+    BinComponent,
+    NoteComponent
   ],
   imports: [
     BrowserModule,

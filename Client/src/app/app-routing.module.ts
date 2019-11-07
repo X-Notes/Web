@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { NootsComponent } from './noots/noots.component';
-import { InvitesComponent } from './invites/invites.component';
-import { PeopleComponent } from './people/people.component';
-import { LabelsComponent } from './labels/labels.component';
-import { NotesComponent } from './notes/notes.component';
-import { GroupsComponent } from './groups/groups.component';
-import { BinComponent } from './bin/bin.component';
+import { NootsComponent } from './Noots/noots/noots.component';
+import { InvitesComponent } from './Invites/invites/invites.component';
+import { PeopleComponent } from './People/people/people.component';
+import { LabelsComponent } from './Labels/labels/labels.component';
+import { NotesComponent } from './Notes/notes/notes.component';
+import { GroupsComponent } from './Groups/groups/groups.component';
+import { BinComponent } from './Bin/bin/bin.component';
 
 
 const routes: Routes = [
