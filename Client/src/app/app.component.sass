@@ -8,8 +8,9 @@
     margin-top: 1px
     
 .side-bar > li
-    padding-top: 15px
-    padding-bottom: 5px
+    padding-top: 10px
+    padding-bottom: 10px
+
 .side-bar li
     display: flex
     flex-direction: column
@@ -24,9 +25,11 @@
       align-items: center
       width: 150px
     
+
       span
           width: 100px
 
+          
       .center-icons
         width: 30px
         display: flex
@@ -34,6 +37,14 @@
         justify-content: center
         img
             height: 26px
+
+.side-bar li:hover
+    background: #303030
+    cursor: pointer
+    img
+      fill:red
+    span
+      color: #EBFFEC
 
 .under li
     display: flex

@@ -38,7 +38,7 @@
             <li class="active">
                 <div>
                     <div class="center-icons">
-                        <img src="assets/colorfull-menu/noots.svg" />
+                        <img [src]="nootImage" />
                     </div>
                     <span>Noots</span>
                 </div>
@@ -142,10 +142,8 @@
                 </div>
             </li>
         </ul>
-
     </aside>
-
     <main>
-
+        <router-outlet></router-outlet>
     </main>
 </div>

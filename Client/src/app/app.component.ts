@@ -10,11 +10,20 @@ export class AppComponent implements OnInit {
 
   activeMenu = false;
 
+  noteImage = 'assets/menu/note.svg';
+  nootImage = 'assets/colorfull-menu/noots.svg';
+  labelsImage = 'assets/menu/labels.svg';
+  peopleImage = 'assets/menu/people.svg';
+  groupImage = 'assets/menu/groups.svg';
+  binImage = 'assets/menu/bin.svg';
+  invitesImages = 'assets/menu/invites.svg';
+
   constructor() {
 
   }
   ngOnInit() {
   }
+
   DropMenu() {
     this.activeMenu = !this.activeMenu;
 
