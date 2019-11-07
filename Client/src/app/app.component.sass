@@ -2,33 +2,102 @@
 @import "../../node_modules/hamburgers/dist/hamburgers.min.css"
 
 
-
-
+.side-bar
+    margin-top: 1px
+    
+.side-bar > li
+    padding-top: 15px
+    padding-bottom: 5px
 .side-bar li
     display: flex
-    width: 100%
-    height: 70px
-    margin-top: 5px
-    background: black
+    flex-direction: column
     color: #484848
-    font-size: 24px
+    font-size: 22px
     justify-content: center
     align-items: center
+    
+    div
+      display: flex
+      justify-content: space-between
+      align-items: center
+      width: 150px
+    
+      span
+          width: 100px
+      img
+          height: 26px
 
-    img
-        height: 22px
+.under li
+    display: flex
+    flex-direction: column
+    width: 100%
+    font-size: 16px
+    margin-top: 15px
+    justify-content: center
+    align-items: center   
+    padding-left: 18px
+
+    div
+      display: flex
+      justify-content: space-between
+      align-items: center
+      width: 130px
+    
+      
+      span
+          width: 100px
+      img
+          height: 16px
+      .dot
+          margin-left: 2px
+          height: 10px
+
+.active
+    background: #303030
+    > div
+        span
+            color:#EBFFEC
+    li 
+        div
+            span
+                color: #DADADA
+
+#active-menu
     span
-        font-size: 26px
+        text-decoration: underline
+        color: #EBFFEC
 
+.new-note
+    span
+        color: #EBFFEC
+        
 //aside
+
+.display-none
+    display: none
+
+
+
 .wrapper 
   display: flex
   width: 100%
   height: 100%
 
-    
-main 
 
+
+
+main 
+    background: grey
+    padding: 50px 240px 0px 50px
+    width: 100%
+    display: flex
+    flex-wrap: wrap
+    overflow: hidden
+    overflow: scroll
+    justify-content: space-between
+
+    div
+        margin: 5px
 
 aside
   flex: 0 0 200px
@@ -181,6 +250,11 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
+    aside
+        z-index: 9999
+        position: fixed
+        width: 200px 
+        height: 100%
 
 @media (min-width: 320px) and (max-width: 479px)
     .logo
@@ -203,6 +277,11 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
+    aside
+        z-index: 9999
+        position: fixed
+        width: 200px
+        height: 100%
 
 @media (min-width: 480px) and (max-width: 767px)
     .logo
@@ -225,13 +304,23 @@ input[type=text], select
         height: 27px
     .right
         width: 180px
+    aside
+        z-index: 9999
+        position: fixed
+        width: 200px  
+        height: 100%
 
 @media only screen and (min-width: 768px) and (max-width: 991px)
     .center
         display: none
     .right
         width: 250px
-
+    aside
+        z-index: 9999
+        position: fixed
+        width: 200px
+        height: 100%
+        
 @media (min-width: 992px) and  (max-width: 1199px)
     .hamburger
         display: none
