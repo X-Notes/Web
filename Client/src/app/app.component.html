@@ -36,9 +36,9 @@
     <aside>
         <ul class="side-bar">
             <li class="active">
-                <div>
+                <div routerLink="/noots">
                     <div class="center-icons">
-                        <img [src]="nootImage" />
+                        <img [src]= "nootImage"/>
                     </div>
                     <span>Noots</span>
                 </div>
@@ -88,7 +88,7 @@
                 </ul>
             </li>
             <li>
-                <div>
+                <div routerLink="/notes">
                     <div class="center-icons">
                         <img src="assets/menu/note.svg" />
                     </div>
@@ -99,16 +99,15 @@
                 </ul>
             </li>
             <li>
-                <div>
+                <div routerLink="/groups">
                     <div class="center-icons">
                         <img src="assets/menu/groups.svg" />
                     </div>
                     <span>Groups</span>
                 </div>
-
             </li>
             <li>
-                <div>
+                <div routerLink="/people">
                     <div class="center-icons">
                         <img src="assets/menu/people.svg" />
                     </div>
@@ -117,7 +116,7 @@
             </li>
 
             <li>
-                <div>
+                <div routerLink="/labels">
                     <div class="center-icons">
                         <img src="assets/menu/labels.svg" />
                     </div>
@@ -125,7 +124,7 @@
                 </div>
             </li>
             <li>
-                <div>
+                <div routerLink="/invites">
                     <div class="center-icons">
                         <img src="assets/menu/invites.svg" />
                     </div>
@@ -133,7 +132,7 @@
                 </div>
             </li>
             <li>
-                <div>
+                <div routerLink="/bin">
                     <div class="center-icons">
                         <img src="assets/menu/bin.svg" />
                     </div>
@@ -142,8 +141,9 @@
                 </div>
             </li>
         </ul>
+
     </aside>
     <main>
-        <router-outlet></router-outlet>
+            <router-outlet></router-outlet>
     </main>
 </div>
