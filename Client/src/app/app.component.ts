@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Client';
+  activeMenu = true;
+
+  DropMenu() {
+    this.activeMenu = !this.activeMenu;
+  }
 }
