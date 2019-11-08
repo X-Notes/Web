@@ -2,67 +2,71 @@ $label-color: #EFCDFF
 
 div
     display: flex
-.header-label
-    font-size: 50px
-    font-weight: 900
-    color: #B8B8B8
-.add-new-label
-    font-size: 40px
-    font-weight: 900
-    color: #B8B8B8
-    margin-left: 10px
-.main-container
-    flex-direction: row
-    flex-wrap: wrap
-    width: 1000px
-    .all-elements-default-label
-        flex-direction: column
-        margin-right: 13px
-        .default-label
-            width: 487px
-            height: 40px
-            background-color: $label-color
-            justify-content: space-between
-            border-radius: 5px
-            align-items: center
-            padding-left: 10px
-            .title-label
-                color: #5C5C5C
-                font-size: 24px
-            .auxiliary-buttons-label
-                justify-content: space-evently
-                user-select: none
-                -moz-user-select: none
-                -webkit-user-select: none
-                -ms-user-select: none
-                .list-button
-                    cursor: pointer
-                .note-info-line
-                    height: 25px
-                    border-width: 0 1px 0 0
-                    border-style: solid
-                    margin-left: 20px
-                    margin-right: 20px
-                    color: #C6C6C6
-                .delete-cancel-button
-                    cursor: pointer
-                    margin-right: 20px
-        .hidden-color
-            display: flex
-            flex-direction: row
-            flex-wrap: wrap
-            justify-content: center
-            margin-top: 12px
-            height: 76px
-            width: 487px
-            .hidden-button-color
-                cursor: pointer
-                margin-bottom: 10px
-                width: 53px
-                height: 27px
-                background-color: #9b2929
+
+.wrapper-label
+    width: 800px
+    flex-direction: column
+    margin-left: 200px
+    .header-label
+        font-size: 40px
+        color: #B8B8B8
+        font-weight: 900
+    .header-new-label
+        flex-direction: row
+        align-items: center
+        color:#B8B8B8
+        font-size: 30px
+        font-weight: 900
+        .size-image-plus
+            width: 30px
+        .margin-add
+            margin-left: 10px
+    .many-label
+        flex-direction: row
+        justify-content: space-between
+        .default-label //Полностью весь лейбл с выпадающим список
+            flex-direction: column
+            height: 110px
+            width: 380px
+            .label-field
+                flex-direction: row
+                align-items: center
+                justify-content: space-between
+                width: 380px
+                height: 40px
+                background-color: #DDFFCD
                 border-radius: 5px
-                background-color: #FFEBCD
-                box-shadow: 0 5px 10px rgba(0,0,0,0.05)
-            .space-between-blocks
-                margin-right: 55px
+                .text-label
+                    margin-left: 15px
+                    color: #5C5C5C
+                    font-size: 20px
+                .options-label
+                    margin-right: 15px
+                    -moz-user-select: none
+                    -webkit-user-select: none
+                    -ms-user-select: none
+                    user-select: none
+                    .image-options
+                        cursor: pointer
+                    .note-info-line
+                        height: 20px
+                        border-width: 0 1px 0 0
+                        border-style: solid
+                        margin-left: 15px
+                        margin-right: 15px
+                        color: #C6C6C6
+                        cursor: default
+            .hidden-colors
+                display: flex
+                width: 380px
+                height: 70px
+                flex-wrap: wrap
+                justify-content: center
+                .hidden-color-element
+                    width: 50px
+                    height: 25px
+                    margin-top: 10px
+                    background-color: $label-color
+                    border-radius: 5px
+                .margin-colors
+                    margin-right: 30px

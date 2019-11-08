@@ -1,81 +1,55 @@
-<div class="header-label">
-    <p>Labels</p>
-</div>
-<div class="add-new-label">
-    <img src="assets/plusLabel.svg">
-    <p>Add new label</p>
-</div>
-<div class="main-container">
-    <div class="all-elements-default-label">
-        <div class="default-label">
-            <div class="title-label">
-                <p>Work</p>
-            </div>
-            <div class="auxiliary-buttons-label">
-                <div class="list-button"><img src="assets/buttonList.svg"></div>
-                <div class="note-info-line"></div>
-                <div class="delete-cancel-button"><img src="assets/buttonCancel.svg"></div>
-            </div>
-        </div>
-        <ul class="hidden-color">
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color"></li>
-        </ul>
+<div class="wrapper-label">
+    <div class="header-label">
+        <p>Labels</p>
     </div>
-    <div class="all-elements-default-label">
-        <div class="default-label">
-            <div class="title-label">
-                <p>Work</p>
-            </div>
-            <div class="auxiliary-buttons-label">
-                <div class="list-button"><img src="assets/buttonList.svg"></div>
-                <div class="note-info-line"></div>
-                <div class="delete-cancel-button"><img src="assets/buttonCancel.svg"></div>
-            </div>
-        </div>
-        <ul class="hidden-color">
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color space-between-blocks"></li>
-            <li class="hidden-button-color"></li>
-        </ul>
+    <div class="header-new-label">
+        <img src="assets/plusLabel.svg" class="size-image-plus">
+        <p class="margin-add">Add new label</p>
     </div>
-    <div class="all-elements-default-label">
+    <div class="many-label">
         <div class="default-label">
-            <div class="title-label">
-                <p>Work</p>
+            <div class="label-field">
+                <p class="text-label">Work</p>
+                <div class="options-label">
+                    <img src="assets/buttonList.svg" class="image-options" (click)="update=!update">
+                    <div class="note-info-line"></div>
+                    <img src="assets/buttonCancel.svg" class="image-options">
+                </div>
             </div>
-            <div class="auxiliary-buttons-label">
-                <div class="list-button"><img src="assets/buttonList.svg"></div>
-                <div class="note-info-line"></div>
-                <div class="delete-cancel-button"><img src="assets/buttonCancel.svg"></div>
-            </div>
+            <ul class="hidden-colors" *ngIf="update">
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element"></li>
+            </ul>
         </div>
-    </div>
-    <div class="all-elements-default-label">
         <div class="default-label">
-            <div class="title-label">
-                <p>Work</p>
+            <div class="label-field">
+                <p class="text-label">Work</p>
+                <div class="options-label">
+                    <img src="assets/buttonList.svg" class="image-options" (click)="update1=!update1">
+                    <div class="note-info-line"></div>
+                    <img src="assets/buttonCancel.svg" class="image-options">
+                </div>
             </div>
-            <div class="auxiliary-buttons-label">
-                <div class="list-button"><img src="assets/buttonList.svg"></div>
-                <div class="note-info-line"></div>
-                <div class="delete-cancel-button"><img src="assets/buttonCancel.svg"></div>
-            </div>
+            <ul class="hidden-colors" *ngIf="update1">
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element margin-colors"></li>
+                <li class="hidden-color-element"></li>
+            </ul>
         </div>
     </div>
 </div>
