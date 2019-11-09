@@ -33,11 +33,13 @@
     </div>
 </header>
 <div class="wrapper">
-    <aside [ngClass]="activeMenu ? '' : 'display-none' ">
+    <aside>
         <ul class="side-bar">
             <li class="active">
-                <div>
-                    <img src="assets/colorfull-menu/noots.svg" />
+                <div routerLink="/noots">
+                    <div class="center-icons">
+                        <img [src]= "nootImage"/>
+                    </div>
                     <span>Noots</span>
                 </div>
                 <ul class="under">
@@ -86,8 +88,10 @@
                 </ul>
             </li>
             <li>
-                <div>
-                    <img src="assets/menu/note.svg" />
+                <div routerLink="/notes">
+                    <div class="center-icons">
+                        <img src="assets/menu/note.svg" />
+                    </div>
                     <span>Notes</span>
                 </div>
                 <ul class="under">
@@ -95,43 +99,50 @@
                 </ul>
             </li>
             <li>
-                <div>
-                    <img src="assets/menu/groups.svg" />
+                <div routerLink="/groups">
+                    <div class="center-icons">
+                        <img src="assets/menu/groups.svg" />
+                    </div>
                     <span>Groups</span>
                 </div>
-
             </li>
             <li>
-                <div>
-                    <img src="assets/menu/people.svg" />
+                <div routerLink="/people">
+                    <div class="center-icons">
+                        <img src="assets/menu/people.svg" />
+                    </div>
                     <span>People</span>
                 </div>
             </li>
 
             <li>
-                <div>
-                    <img src="assets/menu/labels.svg" />
+                <div routerLink="/labels">
+                    <div class="center-icons">
+                        <img src="assets/menu/labels.svg" />
+                    </div>
                     <span>Labels</span>
                 </div>
             </li>
             <li>
-                <div>
-                    <img src="assets/menu/invites.svg" />
+                <div routerLink="/invites">
+                    <div class="center-icons">
+                        <img src="assets/menu/invites.svg" />
+                    </div>
                     <span>Invites</span>
                 </div>
             </li>
             <li>
-                <div>
-                    <img src="assets/menu/bin.svg" />
+                <div routerLink="/bin">
+                    <div class="center-icons">
+                        <img src="assets/menu/bin.svg" />
+                    </div>
                     <span>Bin
                     </span>
                 </div>
             </li>
         </ul>
-
     </aside>
     <main>
-        <app-view-label>          
-        </app-view-label>
+            <router-outlet></router-outlet>
     </main>
 </div>
