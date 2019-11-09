@@ -24,10 +24,11 @@ div
     .many-label
         flex-direction: row
         justify-content: space-between
+        flex-wrap: wrap
         .default-label //Полностью весь лейбл с выпадающим список
             flex-direction: column
-            height: 110px
             width: 380px
+            margin-top: 10px
             .label-field
                 flex-direction: row
                 align-items: center
@@ -48,6 +49,8 @@ div
                     user-select: none
                     .image-options
                         cursor: pointer
+                        transition-duration: 0.5s
+                        transition-property: transform 
                     .note-info-line
                         height: 20px
                         border-width: 0 1px 0 0
@@ -70,3 +73,28 @@ div
                     border-radius: 5px
                 .margin-colors
                     margin-right: 30px
+#firstLi
+    background-color: #FFCDCD
+#secondLi
+    background-color: #FFEBCD
+#thirdLi
+    background-color: #FFFDCD
+#fourthLi
+    background-color: #DDFFCD
+#fifthLi
+    background-color: #CDFFD8
+#sixLi
+    background-color: #CDFFFC
+#sevenLi
+    background-color: #CDEEFF
+#eithLi
+    background-color: #CDD5FF
+#nineLi
+    background-color: #EFCDFF
+#tenLi
+    background-color: #FFCDF4
+
+.image-options:hover
+    -webkit-transform: rotate(180deg)
+    -ms-transform: rotate(180deg)
+     transform: rotate(180deg)
