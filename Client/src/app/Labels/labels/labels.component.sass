@@ -2,9 +2,12 @@ $label-color: #EFCDFF
 
 div
     display: flex
-
+.wrapper
+    width: 100%
+    justify-content: center
 .wrapper-label
-    width: 800px
+    margin-top: 20px
+    width: 880px
     flex-direction: column
     .header-label
         font-size: 40px
@@ -16,18 +19,21 @@ div
         color:#B8B8B8
         font-size: 30px
         font-weight: 900
+        margin-top: 10px
         .size-image-plus
             width: 30px
         .margin-add
             margin-left: 10px
     .many-label
         flex-direction: row
-        justify-content: space-between
+        justify-content: flex-start
         flex-wrap: wrap
+        margin-top: 10px
         .default-label //Полностью весь лейбл с выпадающим список
             flex-direction: column
             width: 380px
             margin-top: 10px
+            margin-right: 30px
             .label-field
                 flex-direction: row
                 align-items: center
@@ -37,9 +43,15 @@ div
                 background-color: #DDFFCD
                 border-radius: 5px
                 .text-label
+                    font-family: 'Roboto',sans-serif
+                    font-weight: 400
+                    font-size: 20px
                     margin-left: 15px
                     color: #5C5C5C
-                    font-size: 20px
+                    height: 25px
+                    background: #DDFFCD
+                    outline: none
+                    border: 1px solid #DDFFCD
                 .options-label
                     margin-right: 15px
                     -moz-user-select: none
@@ -94,3 +106,4 @@ div
     background-color: #EFCDFF
 #tenLi
     background-color: #FFCDF4
+

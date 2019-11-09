@@ -1,9 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { trigger, transition, animate, style } from '@angular/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+@NgModule({
+  imports: [BrowserAnimationsModule, BrowserModule]
+})
 
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',
-  styleUrls: ['./labels.component.sass']
+  styleUrls: ['./labels.component.sass'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({transform : 'translateY(-50%)'}),
+        animate('200ms ease-in', style({transform: 'translateY(0%)', height: '*'}))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({transform: 'translateY(-50%)', opacity: '0.5', height: '0px'}))
+      ]),
+    ])
+  ]
 })
 export class LabelsComponent implements OnInit {
 
