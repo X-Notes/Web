@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +32,13 @@ export class AppComponent implements OnInit {
     menu.style.display = 'block';
     } else {
       menu.style.display = 'none';
+    }
+  }
+
+  @HostListener('window:resize', ['$event']) onresize(event) {
+    if (event.target.innerWidth < 1100 && event.target.innerWidth > 991) {
+      const menu = document.getElementsByTagName('aside')[0] as HTMLElement;
+      menu.style.display = 'block';
     }
   }
 }
