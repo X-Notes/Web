@@ -8,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 export class LabelsComponent implements OnInit {
 
   constructor() { }
-  // currentState = 'initial';
   update = false;
   h1color = '#DDFFCD';
+  element;
+  changeIcon() {
+    if (this.update === true) {
+      this.element.setAttribute('style', 'transform: rotate(180deg)');
+    } else {
+      this.element.setAttribute('style', 'transform: rotate(0deg)');
+    }
+  }
   changeColor(id) {
     if ('firstLi' === id) {
       this.h1color = '#FFCDCD';
@@ -34,10 +41,8 @@ export class LabelsComponent implements OnInit {
       this.h1color = '#FFCDF4';
     }
  }
-  update22() {
-    // this.currentState = this.currentState === 'initial' ? 'final' : 'initial';
-  }
   ngOnInit() {
+    this.element = document.getElementsByClassName('image-options')[0];
   }
 
 }
