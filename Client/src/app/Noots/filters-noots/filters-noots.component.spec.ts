@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NootsComponent } from './noots.component';
+import { FiltersNootsComponent } from './filters-noots.component';
 
-describe('NootsComponent', () => {
-  let component: NootsComponent;
-  let fixture: ComponentFixture<NootsComponent>;
+describe('FiltersNootsComponent', () => {
+  let component: FiltersNootsComponent;
+  let fixture: ComponentFixture<FiltersNootsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NootsComponent ]
+      declarations: [ FiltersNootsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NootsComponent);
+    fixture = TestBed.createComponent(FiltersNootsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
