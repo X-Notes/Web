@@ -14,8 +14,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
-        style({transform : 'translateY(-50%)'}),
-        animate('200ms ease-in', style({transform: 'translateY(0%)', height: '*'}))
+        style({transform : 'translateY(-70%)', opacity: '*'}),
+        animate('300ms ease-out', style({transform: 'translateY(0%)', height: '*', 'z-index': '-1'}))
       ]),
       transition(':leave', [
         animate('200ms ease-in', style({transform: 'translateY(-50%)', opacity: '0.5', height: '0px'}))

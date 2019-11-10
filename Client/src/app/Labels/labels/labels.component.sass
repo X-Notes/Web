@@ -32,7 +32,7 @@ div
         .default-label //Полностью весь лейбл с выпадающим список
             flex-direction: column
             width: 380px
-            margin-top: 10px
+            margin-top: 12px
             margin-right: 30px
             .label-field
                 flex-direction: row
@@ -42,6 +42,7 @@ div
                 height: 40px
                 background-color: #DDFFCD
                 border-radius: 5px
+                z-index: 5
                 .text-label
                     font-family: 'Roboto',sans-serif
                     font-weight: 400
@@ -51,7 +52,7 @@ div
                     height: 25px
                     background: #DDFFCD
                     outline: none
-                    border: 1px solid #DDFFCD
+                    border: none
                 .options-label
                     margin-right: 15px
                     -moz-user-select: none
@@ -107,3 +108,15 @@ div
 #tenLi
     background-color: #FFCDF4
 
+
+@media only screen and (min-width: 1200px) //desktop
+
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+
+@media only screen and (min-width: 768px) and (max-width: 991px) //laptop
+
+@media (min-width: 480px) and (max-width: 767px) //phone
+
+@media (min-width: 320px) and (max-width: 479px) //small phone
+
+@media (max-width: 319px) //min width
