@@ -20,6 +20,7 @@ import {NewNootComponent} from './Noots/new-noot/new-noot.component';
 import {NewNoteComponent} from './Notes/new-note/new-note.component';
 
 const ChildNootsRoutes: Routes = [
+  { path: '', component: AllNootsComponent},
   { path: 'all', component: AllNootsComponent},
   { path: 'my', component: MyNootsComponent},
   { path: 'saved', component: SavedComponent},
@@ -29,6 +30,7 @@ const ChildNootsRoutes: Routes = [
   { path: 'new', component: NewNootComponent}
 ];
 const ChildNotesRoutes: Routes = [
+  { path: '', component: AllNotesComponent},
   { path: 'all', component: AllNotesComponent},
   { path: 'shared', component: SharedNotesComponent},
   { path: 'locked', component: LockedNotesComponent},
@@ -63,7 +65,8 @@ const routes: Routes = [
   {path: 'groups', component: MainComponent, children: GroupsRoutes},
   {path: 'labels', component: MainComponent, children: LabelsRoutes},
   {path: 'invites', component: MainComponent, children: InvitesRoutes},
-  {path: 'bin', component: MainComponent, children: BinRoutes}
+  {path: 'bin', component: MainComponent, children: BinRoutes},
+  { path: '**', redirectTo: '/about'}
 ];
 
 @NgModule({
