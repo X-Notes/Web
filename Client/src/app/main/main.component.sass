@@ -1,5 +1,5 @@
 
-@import "../../node_modules/hamburgers/dist/hamburgers.min.css"
+@import "../../../node_modules/hamburgers/dist/hamburgers.min.css"
 
 
 
@@ -72,7 +72,7 @@
       justify-content: space-between
       align-items: center
       width: 130px
-    
+      outline: none
       
       span
           width: 100px
@@ -84,6 +84,7 @@
 
 .active
     background: #303030
+    border-radius: 0 0 10px 0
     > div
         span
             color:#EBFFEC
@@ -103,10 +104,10 @@
                 color: #EBFFEC !important
                 text-decoration: underline  
 
-#active-menu
+.active-menu
     span
         text-decoration: underline
-        color: #EBFFEC
+        color: #EBFFEC !important
 
 .new-note
     span

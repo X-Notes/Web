@@ -2,11 +2,12 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass']
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.sass']
 })
-export class AppComponent implements OnInit {
+export class MainComponent implements OnInit {
+
   title = 'Client';
 
   activeMenu = false;
@@ -18,7 +19,12 @@ export class AppComponent implements OnInit {
   groupImage = 'assets/menu/groups.svg';
   binImage = 'assets/menu/bin.svg';
   invitesImage = 'assets/menu/invites.svg';
+  dot = 'assets/under-menu/dot.svg';
+  subscribes = 'assets/under-menu/subscribes.svg';
 
+
+  ColorSubscribes = 'assets/colorfull-menu/subscribes.svg';
+  Colorfulldot  = 'assets/under-menu/colorful-dot.svg';
   ColornoteImage = 'assets/colorfull-menu/note.svg';
   ColornootImage = 'assets/colorfull-menu/noots.svg';
   ColorlabelsImage = 'assets/colorfull-menu/labels.svg';
