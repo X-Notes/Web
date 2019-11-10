@@ -7,6 +7,11 @@ import 'rxjs/add/operator/do';
 export class TokenIntercepter {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        const token = JSON.parse(localStorage.getItem('idKey'));
+        if (token) {
+            console.log('go');
+            req = req.clone({setHeaders: {Authorization: `Bearer ${token}`}});
+        }
         return next.handle(req);
 
     }
