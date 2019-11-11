@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCore.Firebase.Authentication.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,10 +30,20 @@ namespace NootsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .AllowCredentials()
+                       .WithOrigins("http://localhost:4200");
+            }));
+
             var connection = Configuration["Mongo:client"];
             var database = Configuration["Mongo:database"];
 
             services.AddControllers();
+            //services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
+            services.AddSiteAuthentications(Configuration);
 
             services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
 
@@ -47,12 +58,12 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthorization();
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
+            app.UseCors("MyPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -17,6 +17,10 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 
+import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenIntercepter } from './Services/token-intercepter';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,11 +37,15 @@ import { environment } from '../environments/environment';
     InvitesModule,
     GroupsModule,
     BinModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: TokenIntercepter,
+    multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
