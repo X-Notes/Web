@@ -1,0 +1,31 @@
+﻿using Noots.DataAccess.InterfacesRepositories;
+using Noots.DataAccess.Context;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Noots.DataAccess.Entities;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System.Threading.Tasks;
+
+namespace Noots.DataAccess.Repositories
+{
+    public class UserRepository : IUserRepository
+    {
+        private readonly DbContext _context = null;
+
+        public UserRepository(string connection,string database)
+        {
+            _context = new DbContext(connection,database);
+        }
+
+        public async Task Add(User user)
+        {
+            await _context.Users.InsertOneAsync(user);
+        }
+        public async Task<User> Get(int id)
+        {
+            return await _context.Users.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+    }
+}

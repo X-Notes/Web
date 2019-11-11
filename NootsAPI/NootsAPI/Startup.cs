@@ -10,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Noots.BusinessLogic.Interfaces;
+using Noots.BusinessLogic.Services;
+using Noots.DataAccess.InterfacesRepositories;
+using Noots.DataAccess.Repositories;
 
 namespace NootsAPI
 {
@@ -25,7 +29,14 @@ namespace NootsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connection = Configuration["Mongo:client"];
+            var database = Configuration["Mongo:database"];
+
             services.AddControllers();
+
+            services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
+
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
