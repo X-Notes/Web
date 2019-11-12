@@ -1,0 +1,23 @@
+<div class="default-label">
+    <div class="label-field" [ngStyle]="{backgroundColor: h1color}">
+        <input class="text-label" [ngStyle]="{'backgroundColor': h1color}" placeholder="Name your label...">
+        <div class="options-label">
+            <img src="assets/buttonList.svg" class="image-options button-list-size" (click)="update=!update"
+                (click)="changeIcon()">
+            <div class="note-info-line"></div>
+            <img src="assets/buttonCancel.svg" class="image-options button-cancel-size">
+        </div>
+    </div>
+    <ul class="hidden-colors" *ngIf="update" [@slideInOut]>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('firstLi')" id="firstLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('secondLi')" id="secondLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('thirdLi')" id="thirdLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('fourthLi')" id="fourthLi"></li>
+        <li class="hidden-color-element" (click)="changeColor('fifthLi')" id="fifthLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('sixLi')" id="sixLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('sevenLi')" id="sevenLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('eithLi')" id="eithLi"></li>
+        <li class="hidden-color-element margin-colors" (click)="changeColor('nineLi')" id="ninehLi"></li>
+        <li class="hidden-color-element" (click)="changeColor('tenLi')" id="tenLi"></li>
+    </ul>
+</div>
