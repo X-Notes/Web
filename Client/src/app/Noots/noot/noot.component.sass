@@ -6,50 +6,65 @@ div
 .main-note
     flex-direction: column
     background-color: $main-color
-    width: 420px
+    width: 360px
     padding: 0 20px
     border-radius: 25px
-    margin: 0 auto
+    margin-top: 20px
     .note-header
         flex-direction: row
         justify-content: space-between
-        margin-bottom: 20px
+        margin-bottom: 15px
         .note-label
             justify-content: center
             align-items: center
-            font-size: 16px
-            width: 111px
+            font-size: 15px
+            width: 100px
             height: 20px
             background-color: $label-color
             border-radius: 40px
             color: #808080
+            text-overflow: ellipsis
+            white-space: nowrap
+            overflow: hidden
         .note-plus-label
-            width: 45px
+            width: 40px
             background-color: $label-color-full
+        .note-options
+            -moz-user-select: none
+            -webkit-user-select: none
+            -ms-user-select: none
+            user-select: none
+            cursor: pointer
     .note-title
         display: -webkit-box
         -webkit-line-clamp: 2
         -webkit-box-orient: vertical
-        font-size: 26px
+        font-size: 24px
         font-weight: bold
-        line-height: 37px
-        margin-bottom: 20px
+        line-height: 36px
+        margin-bottom: 15px
         max-height: 74px
         text-overflow: ellipsis
         overflow: hidden
     .note-description
         display: -webkit-box
-        -webkit-line-clamp: 5
+        -webkit-line-clamp: 4
         -webkit-box-orient: vertical
-        font-size: 20px
-        font-weight: 400
-        margin-bottom: 20px
+        font-size: 18px
+        font-weight: 300
+        margin-bottom: 15px
         max-height: 150px
         text-overflow: ellipsis
+        text-align: justify
         overflow: hidden
     .note-image
         justify-content: center
-        margin-bottom: 20px
+        margin-bottom: 15px
+        -moz-user-select: none
+        -webkit-user-select: none
+        -ms-user-select: none
+        user-select: none
+        pointer-events: none
     .note-author
         font-size: 18px
         font-weight: 500
@@ -58,7 +73,7 @@ div
         color: #C4C4C4
         align-items: center
         justify-content: flex-start
-        margin-bottom: 20px
+        margin-bottom: 15px
         .note-date
             font-size: 16px
         .note-info-line
@@ -69,3 +84,15 @@ div
             margin-right: 10px
         .note-time-read
             font-size: 14px
+
+@media only screen and (min-width: 1200px)
+
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+
+@media (min-width: 480px) and (max-width: 767px) //large phone
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+
+@media (min-width: 150px) and (max-width: 319px) //min width
