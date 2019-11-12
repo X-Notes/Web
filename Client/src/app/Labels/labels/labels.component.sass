@@ -43,6 +43,8 @@ div
                 background-color: #DDFFCD
                 border-radius: 5px
                 z-index: 5
+                &:hover
+                    box-shadow: 0px 2px 2px #00000030
                 .text-label
                     font-family: 'Roboto',sans-serif
                     font-weight: 400
@@ -53,6 +55,8 @@ div
                     background: #DDFFCD
                     outline: none
                     border: none
+                    &:hover
+                        border-bottom: 1px dashed  #c5c5c5
                 .options-label
                     margin-right: 15px
                     -moz-user-select: none
@@ -85,6 +89,9 @@ div
                     background-color: $label-color
                     border-radius: 5px
                     box-shadow: 0px 2px 2px #00000035
+                    cursor: pointer
+                    &:hover
+                        box-shadow: 0px 4px 2px #00000050
                 .margin-colors
                     margin-right: 30px
 #firstLi
@@ -125,78 +132,145 @@ div
         .many-label
             margin-top: 5px
             .default-label
-                width: 300px
+                width: 320px
                 margin-right: 20px
                 .label-field
-                    width: 300px
-                    height: 35px
+                    width: 320px
                     .text-label
-                        font-size: 17px
+                        font-size: 18px
                         height: 22px
                         margin-left: 13px
                     .options-label
                         margin-right: 13px
-                        .button-list-size
-                            width: 16px
-                        .button-cancel-size
-                            width: 8px
                         .note-info-line
                             margin-left: 13px
                             margin-right: 13px
                             border-width: 0 0.7px 0 0
                 .hidden-colors
-                    width: 300px
+                    width: 320px
                     height: 70px
                     .hidden-color-element
-                        width: 44px
-                        height: 22px
+                        width: 48px
+                        height: 24px
                         margin-top: 7px
                     .margin-colors
                         margin-right: 18px
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
     .wrapper-label
-            width: 680px
+        width: 380px
+        margin-top: 10px
+        .header-label
+            font-size: 35px
+        .header-new-label
+            font-size: 25px
+            margin-top: 5px
+            .size-image-plus
+                width: 25px
+        .many-label
+            flex-direction: column
+            margin-top: 0px
+            .default-label
+                margin-top: 15px
+                margin-right: 0px
+                .label-field
+                    .text-label
+                        font-size: 18px
+                        height: 22px
+                        margin-left: 13px
+@media (min-width: 480px) and (max-width: 767px) //large phone
+    .wrapper-label
+        width: 380px
+        margin-top: 10px
+        .header-label
+            font-size: 35px
+        .header-new-label
+            font-size: 25px
+            margin-top: 5px
+            .size-image-plus
+                width: 25px
+        .many-label
+            flex-direction: column
+            margin-top: 0px
+            .default-label
+                margin-top: 15px
+                margin-right: 0px
+                .label-field
+                    .text-label
+                        font-size: 18px
+                        height: 22px
+                        margin-left: 13px
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+    .wrapper-label
+        width: 290px
+        margin-top: 10px
+        .header-label
+            font-size: 30px
+        .header-new-label
+            font-size: 20px
             margin-top: 10px
-            .header-label
-                font-size: 35px
-            .header-new-label
-                font-size: 25px
-                margin-top: 5px
-                .size-image-plus
-                    width: 25px
-            .many-label
-                margin-top: 5px
-                flex-direction: column
-                .default-label
-                    width: 300px
-                    margin-right: 20px
-                    .label-field
-                        width: 300px
-                        height: 35px
-                        .text-label
-                            font-size: 17px
-                            height: 22px
-                            margin-left: 13px
-                        .options-label
-                            margin-right: 13px
-                            .button-list-size
-                                width: 16px
-                            .button-cancel-size
-                                width: 8px
-                            .note-info-line
-                                margin-left: 13px
-                                margin-right: 13px
-                    .hidden-colors
-                        width: 300px
-                        height: 70px
-                        .hidden-color-element
-                            width: 44px
-                            height: 22px
-                            margin-top: 7px
-                        .margin-colors
-                            margin-right: 18px
-@media (min-width: 480px) and (max-width: 767px) //phone
+            .size-image-plus
+                width: 20px
+        .many-label
+            flex-direction: column
+            margin-top: 5px
+            .default-label
+                width: 290px
+                margin-right: 0px
+                margin-top: 15px
+                .label-field
+                    width: 290px
+                    .text-label
+                        font-size: 16px
+                        height: 20px
+                        margin-left: 10px
+                    .options-label
+                        .button-list-size
+                            width: 16px
+                .hidden-colors
+                    width: 290px
+                    height: 64px
+                    .hidden-color-element
+                        width: 44px
+                        height: 22px
+                        margin-top: 7px
+                    .margin-colors
+                        margin-right: 15px
 
-@media (min-width: 320px) and (max-width: 479px) //small phone
-
-@media (max-width: 319px) //min width
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .wrapper-label
+        width: 240px
+        margin-top: 10px
+        .header-label
+            font-size: 30px
+        .header-new-label
+            font-size: 20px
+            margin-top: 10px
+            .size-image-plus
+                width: 20px
+        .many-label
+            flex-direction: column
+            margin-top: 5px
+            .default-label
+                width: 240px
+                margin-right: 0px
+                margin-top: 15px
+                .label-field
+                    width: 240px
+                    .text-label
+                        font-size: 16px
+                        height: 20px
+                        margin-left: 10px
+                        max-width: 140px
+                    .options-label
+                        .button-list-size
+                            width: 16px
+                .hidden-colors
+                    width: 290px
+                    height: 64px
+                    .hidden-color-element
+                        width: 44px
+                        height: 22px
+                        margin-top: 7px
+                    .margin-colors
+                        margin-right: 15px
