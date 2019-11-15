@@ -3,10 +3,11 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
-import { NewUser } from '../Models/User/newUser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { PhotoService } from './photo.service';
+import { User } from '../Models/User/User';
+import { isUndefined, isNull } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class AuthService {
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.userData = user;
-        const dbuser: NewUser  = {
+        const dbuser: User  = {
           name: this.userData.displayName,
           email: this.userData.email,
           photo: this.userData.photoURL
@@ -55,9 +56,23 @@ export class AuthService {
         const user = JSON.parse(localStorage.getItem('user'));
         this.photoService.GetPhoto(user.photo).then(base64 => {
           user.photo = base64;
-          this.userService.Get(user)
+          this.userService.Get()
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe(x =>  this.router.navigate(['/noots']), error => console.log(error));
+        .subscribe(x => {
+          console.log(x);
+          if (!isUndefined(x) && !isNull(x)) {
+          this.router.navigate(['/noots']);
+          } else {
+            this.userService.CreateUser(user)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(newuser => {
+              if (!isUndefined(newuser) && !isNull(newuser)) {
+              this.router.navigate(['/noots']);
+              }
+            }
+              );
+          }
+        }, error => console.log(error));
         });
       });
     }).catch((error) => {

@@ -23,9 +23,13 @@ namespace Noots.DataAccess.Repositories
         {
             await _context.Users.InsertOneAsync(user);
         }
-        public async Task<User> Get(int id)
+        public async Task<User> Get(ObjectId id)
         {
             return await _context.Users.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
+        public async Task<User> GetByEmail(string email)
+        {
+            return await _context.Users.Find(x => x.Email == email).FirstOrDefaultAsync();
         }
     }
 }

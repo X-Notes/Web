@@ -1,4 +1,5 @@
-﻿using Noots.DataAccess.Entities;
+﻿using MongoDB.Bson;
+using Noots.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Noots.DataAccess.InterfacesRepositories
     public interface IUserRepository
     {
         Task Add(User user);
-        Task<User> Get(int id);
+        Task<User> Get(ObjectId id);
+        Task<User> GetByEmail(string email);
     }
 }

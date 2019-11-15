@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Noots.BusinessLogic.Interfaces;
 using Noots.Domain.DTO.User;
+using NootsAPI.Infastructure;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,31 +17,42 @@ namespace NootsAPI.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
+        IUserService userService;
+        public UserController(IUserService userService)
+        {
+            this.userService = userService;
+        }
         // GET: api/<controller>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<DTOUser> Get()
         {
-            return new string[] { "value1", "value2" };
+            var currentUserEmail = this.GetUserEmail();
+            var user = await this.userService.GetByEmail(currentUserEmail);
+            return user;
         }
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public void Get(int id)
         {
-            return "value";
+
         }
 
         // POST api/<controller>
         [HttpPost]
-        public void Authorize([FromBody]NewUser user)
+        public async Task<DTOUser> Authorize([FromBody]DTOUser user)
         {
-            var s = this;
+            var currentUserEmail = this.GetUserEmail();
+            await this.userService.Add(user);
+            var dbuser = await userService.GetByEmail(currentUserEmail);
+            return dbuser;
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
+
         }
 
         // DELETE api/<controller>/5

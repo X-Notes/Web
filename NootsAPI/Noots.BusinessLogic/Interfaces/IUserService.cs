@@ -1,4 +1,6 @@
-﻿using Noots.DataAccess.Entities;
+﻿using MongoDB.Bson;
+using Noots.DataAccess.Entities;
+using Noots.Domain.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +10,8 @@ namespace Noots.BusinessLogic.Interfaces
 {
     public interface IUserService
     {
-        Task Add(User user);
-        Task<User> Get(int id);
+        Task Add(DTOUser user);
+        Task<DTOUser> Get(ObjectId id);
+        Task<DTOUser> GetByEmail(string email);
     }
 }

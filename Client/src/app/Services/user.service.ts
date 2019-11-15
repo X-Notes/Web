@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { NewUser } from '../Models/User/newUser';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
+import { User } from '../Models/User/User';
 
 
 @Injectable({
@@ -16,7 +16,10 @@ export class UserService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public Get(user: NewUser) {
-    return this.httpClient.post(`${environment.nootsAPI + '/api/user'}`, user, this.httpOptions);
+  public Get() {
+    return this.httpClient.get<User>(`${environment.nootsAPI + '/api/user'}`);
+  }
+  public CreateUser(user: User) {
+    return this.httpClient.post<User>(`${environment.nootsAPI + '/api/user'}`, user, this.httpOptions);
   }
 }

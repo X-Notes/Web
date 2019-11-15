@@ -1,6 +1,9 @@
-﻿using Noots.BusinessLogic.Interfaces;
+﻿using AutoMapper;
+using MongoDB.Bson;
+using Noots.BusinessLogic.Interfaces;
 using Noots.DataAccess.Entities;
 using Noots.DataAccess.InterfacesRepositories;
+using Noots.Domain.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,19 +14,30 @@ namespace Noots.BusinessLogic.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository = null;
-        public UserService(IUserRepository userRepository)
+        private readonly IMapper mapper;
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
+            this.mapper = mapper;
         }
 
-        public async Task Add(User user)
+        public async Task Add(DTOUser user)
         {
-            await userRepository.Add(user);
+            var bduser = mapper.Map<User>(user);
+            await userRepository.Add(bduser);
         }
 
-        public async Task<User> Get(int id)
+        public async Task<DTOUser> Get(ObjectId id)
         {
-            return await userRepository.Get(id);
+            var user  = await userRepository.Get(id);
+            var bduser = mapper.Map<DTOUser>(user);
+            return bduser;
+        }
+        public async Task<DTOUser> GetByEmail(string email)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var bduser = mapper.Map<DTOUser>(user);
+            return bduser;
         }
     }
 }

@@ -15,6 +15,8 @@ using Noots.BusinessLogic.Interfaces;
 using Noots.BusinessLogic.Services;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
+using AutoMapper;
+using Noots.Domain.MappingProfiles;
 
 namespace NootsAPI
 {
@@ -41,12 +43,20 @@ namespace NootsAPI
             var connection = Configuration["Mongo:client"];
             var database = Configuration["Mongo:database"];
 
-            services.AddControllers();
-            services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
-           // services.AddSiteAuthentications(Configuration);
 
+            services.AddControllers();
+
+            //Mapper
+            services.AddAutoMapper(typeof(UserProfile).Assembly);
+
+            //Authentification
+            //services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
+            services.AddSiteAuthentications(Configuration);
+
+            //Repositories
             services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
 
+            // Services
             services.AddScoped<IUserService, UserService>();
         }
 
@@ -58,6 +68,7 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseHttpsRedirection();
 
