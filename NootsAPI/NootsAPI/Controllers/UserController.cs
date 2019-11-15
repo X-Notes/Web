@@ -31,9 +31,9 @@ namespace NootsAPI.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]NewUser user)
+        public void Authorize([FromBody]NewUser user)
         {
-            Console.WriteLine("@");
+            var s = this;
         }
 
         // PUT api/<controller>/5

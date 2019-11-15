@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import { NewUser } from '../Models/User/newUser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { PhotoService } from './photo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class AuthService {
   constructor(private afAuth: AngularFireAuth,
               private ngZone: NgZone,
               private router: Router,
-              private userService: UserService) {
+              private userService: UserService,
+              private photoService: PhotoService) {
 
     this.afAuth.idToken.subscribe(token => {
       this.token = token;
@@ -27,7 +29,12 @@ export class AuthService {
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.userData = user;
-        localStorage.setItem('user', JSON.stringify(this.userData));
+        const dbuser: NewUser  = {
+          name: this.userData.displayName,
+          email: this.userData.email,
+          photo: this.userData.photoURL
+        };
+        localStorage.setItem('user', JSON.stringify(dbuser));
         JSON.parse(localStorage.getItem('user'));
       } else {
         localStorage.setItem('user', null);
@@ -45,16 +52,14 @@ export class AuthService {
     return this.afAuth.auth.signInWithPopup(provider)
     .then((result) => {
       this.ngZone.run(() => {
-        const user: NewUser = {
-          name: 'david',
-          email: 'david@asd',
-          photo: 'photro'
-
-        };
-        this.userService.Get(user)
+        const user = JSON.parse(localStorage.getItem('user'));
+        this.photoService.GetPhoto(user.photo).then(base64 => {
+          user.photo = base64;
+          this.userService.Get(user)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(x =>  this.router.navigate(['/noots']), error => console.log(error));
         });
+      });
     }).catch((error) => {
       window.alert(error);
     });

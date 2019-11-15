@@ -42,8 +42,8 @@ namespace NootsAPI
             var database = Configuration["Mongo:database"];
 
             services.AddControllers();
-            //services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
-            services.AddSiteAuthentications(Configuration);
+            services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
+           // services.AddSiteAuthentications(Configuration);
 
             services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
 
