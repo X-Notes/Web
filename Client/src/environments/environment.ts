@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
 
-  nootsAPI : 'http://localhost:51486',
+  nootsAPI : 'http://localhost:5000',
   firebase: {
     apiKey: 'AIzaSyARUCz9Wc864vcTUf8EK51pMH1t9jpFnTc',
     authDomain: 'noots-storm.firebaseapp.com',
