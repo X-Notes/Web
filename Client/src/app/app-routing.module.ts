@@ -18,6 +18,7 @@ import { LockedNotesComponent} from './Notes/locked-notes/locked-notes.component
 import { SubscribesComponent } from './Noots/subscribes/subscribes.component';
 import {NewNootComponent} from './Noots/new-noot/new-noot.component';
 import {NewNoteComponent} from './Notes/new-note/new-note.component';
+import { AuthGuard } from './Guards/auth.guard';
 
 const ChildNootsRoutes: Routes = [
   { path: '', component: AllNootsComponent},
@@ -59,13 +60,13 @@ const BinRoutes: Routes =
 const routes: Routes = [
 
   {path: 'about', component: LandingComponent},
-  {path: 'noots', component: MainComponent, children: ChildNootsRoutes },
-  {path: 'notes', component: MainComponent, children: ChildNotesRoutes},
-  {path: 'people', component: MainComponent, children: PeopleRoutes},
-  {path: 'groups', component: MainComponent, children: GroupsRoutes},
-  {path: 'labels', component: MainComponent, children: LabelsRoutes},
-  {path: 'invites', component: MainComponent, children: InvitesRoutes},
-  {path: 'bin', component: MainComponent, children: BinRoutes},
+  {path: 'noots', component: MainComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]  },
+  {path: 'notes', component: MainComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
+  {path: 'people', component: MainComponent, children: PeopleRoutes, canActivate: [AuthGuard]},
+  {path: 'groups', component: MainComponent, children: GroupsRoutes, canActivate: [AuthGuard]},
+  {path: 'labels', component: MainComponent, children: LabelsRoutes, canActivate: [AuthGuard]},
+  {path: 'invites', component: MainComponent, children: InvitesRoutes, canActivate: [AuthGuard]},
+  {path: 'bin', component: MainComponent, children: BinRoutes, canActivate: [AuthGuard]},
   { path: '**', redirectTo: '/about'}
 ];
 
