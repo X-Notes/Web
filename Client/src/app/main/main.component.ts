@@ -38,7 +38,9 @@ export class MainComponent implements OnInit {
   ColorbinImage = 'assets/colorfull-menu/bin.svg';
   ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
+  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
+
+  }
   ngOnInit() {
     this.userService.Get()
     .pipe(takeUntil(this.unsubscribe))

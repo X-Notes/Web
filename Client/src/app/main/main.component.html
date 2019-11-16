@@ -26,7 +26,7 @@
                     <img src="assets/view.svg" />
                     <img src="assets/notification.svg" />
                     <div class="profile" (click)="openDialog()">
-                        <img [src]="user.photo">
+                        <img [src]="user?.photo || 'assets/default_avatar.png'">
                     </div>
                 </div>
                 <div *ngIf = 'activeProfileMenu' class="profile-menu">
