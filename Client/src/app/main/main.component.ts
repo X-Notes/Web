@@ -44,7 +44,9 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     this.userService.Get()
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; });
+    .subscribe(user => { this.user = user; }, error => {
+      this.router.navigate(['/about']);
+    });
   }
 
   DropMenu() {
