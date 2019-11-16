@@ -25,14 +25,23 @@
                     <img class="searchMob" src="assets/searchMob.svg" />
                     <img src="assets/view.svg" />
                     <img src="assets/notification.svg" />
-                    <div class="profile">
-                        <img src="assets/kashich.png">
+                    <div class="profile" (click)="openDialog()">
+                        <img [src]="user?.photo || 'assets/default_avatar.png'">
+                    </div>
+                </div>
+                <div *ngIf = 'activeProfileMenu' class="profile-menu">
+                    <div class='profile-info'>
+                        
+                    </div>
+                    <div class="profile-under-menu">
+                        <span>Update profile</span>
+                        <span (click)="exit()">Sign Out</span>
                     </div>
                 </div>
             </div>
         </div>
     </header>
-    <div class="wrapper">
+    <div class="wrapper" (click)="close()">
         <aside>
             <ul class="side-bar">
                 <li [ngClass]="{'active': isCurrentRouteRight('noot')}">
