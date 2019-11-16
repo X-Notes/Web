@@ -1,10 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
 import { AuthService } from '../Services/auth.service';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { isUndefined, isNull } from 'util';
 
 @Component({
   selector: 'app-main',
@@ -38,13 +39,24 @@ export class MainComponent implements OnInit {
   ColorbinImage = 'assets/colorfull-menu/bin.svg';
   ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
-
-  }
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private ngZone: NgZone
+  ) {}
   ngOnInit() {
-    this.userService.Get()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; });
+    this.userService
+      .Get()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(user => {
+        this.user = user;
+        if (isUndefined(user) || isNull(user)) {
+          localStorage.removeItem('user');
+          localStorage.removeItem('idKey');
+          this.router.navigate(['/about']);
+        }
+      });
   }
 
   DropMenu() {
