@@ -1,5 +1,10 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { User } from '../Models/User/User';
+import { AuthService } from '../Services/auth.service';
+import { UserService } from '../Services/user.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main',
@@ -7,10 +12,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./main.component.sass']
 })
 export class MainComponent implements OnInit {
-
   title = 'Client';
-
+  user: User;
+  activeProfileMenu = false;
   activeMenu = false;
+  unsubscribe = new Subject();
 
   noteImage = 'assets/menu/note.svg';
   nootImage = 'assets/menu/noots.svg';
@@ -22,9 +28,8 @@ export class MainComponent implements OnInit {
   dot = 'assets/under-menu/dot.svg';
   subscribes = 'assets/under-menu/subscribes.svg';
 
-
   ColorSubscribes = 'assets/colorfull-menu/subscribes.svg';
-  Colorfulldot  = 'assets/under-menu/colorful-dot.svg';
+  Colorfulldot = 'assets/under-menu/colorful-dot.svg';
   ColornoteImage = 'assets/colorfull-menu/note.svg';
   ColornootImage = 'assets/colorfull-menu/noots.svg';
   ColorlabelsImage = 'assets/colorfull-menu/labels.svg';
@@ -33,10 +38,11 @@ export class MainComponent implements OnInit {
   ColorbinImage = 'assets/colorfull-menu/bin.svg';
   ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
 
-  constructor(private router: Router) {
-
-  }
+  constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
   ngOnInit() {
+    this.userService.Get()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(user => { this.user = user; });
   }
 
   DropMenu() {
@@ -44,7 +50,7 @@ export class MainComponent implements OnInit {
 
     const menu = document.getElementsByTagName('aside')[0] as HTMLElement;
     if (this.activeMenu === true) {
-    menu.style.display = 'block';
+      menu.style.display = 'block';
     } else {
       menu.style.display = 'none';
     }
@@ -60,4 +66,14 @@ export class MainComponent implements OnInit {
     return route && this.router.url.search(route) !== -1;
   }
   changeRoute(rout: string) {}
+
+  openDialog() {
+    this.activeProfileMenu = !this.activeProfileMenu;
+  }
+  close() {
+    this.activeProfileMenu = false;
+  }
+  exit() {
+    this.authService.SignOut();
+  }
 }
