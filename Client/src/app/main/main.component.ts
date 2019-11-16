@@ -1,4 +1,7 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, NgModule } from '@angular/core';
+import { trigger, transition, animate, style } from '@angular/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
 import { AuthService } from '../Services/auth.service';
@@ -6,10 +9,17 @@ import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+@NgModule({
+  imports: [BrowserAnimationsModule, BrowserModule]
+})
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.sass']
+  styleUrls: ['./main.component.sass'],
+  animations: [
+
+  ]
 })
 export class MainComponent implements OnInit {
   title = 'Client';
