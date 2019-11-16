@@ -1,0 +1,29 @@
+<div class="default-user">
+    <div class="all-user">
+        <div class="user-color"></div>
+        <div class="user-field">
+            <div class="user-info">
+                <div class="user-photo">
+                    <img src="assets/kashich.png" class="image">
+                </div>
+                <div class="user-contact-info">
+                    <p>Dima Kashich</p>
+                </div>
+            </div>
+            <div class="user-options">
+                <div class="image-options button-list-size" (click)="changeIcon()">
+                    <img src="assets/buttonList.svg">
+                </div>
+                <div class="user-info-line"></div>
+                <div class="image-options button-cancel-size">
+                    <img src="assets/buttonCancel.svg">
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="hidden-options" *ngIf="update">
+        <li class="hidden-element">First task</li>
+        <li class="hidden-element">Second task</li>
+        <li class="hidden-element">Third task</li>
+    </ul>
+</div>
