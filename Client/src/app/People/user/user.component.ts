@@ -8,20 +8,36 @@ import { Component, OnInit } from '@angular/core';
 export class UserComponent implements OnInit {
 
   constructor() { }
-
-  element;
   update = false;
-
-  changeIcon() {
+  color = '#DDFFCD';
+  hideElement() {
     this.update = !this.update;
-    if (this.update === true) {
-      this.element.setAttribute('style', 'transform: rotate(180deg)');
-    } else {
-      this.element.setAttribute('style', 'transform: rotate(0deg)');
-    }
   }
+  changeColor(id) {
+    if ('firstLi' === id) {
+      this.color = '#FFCDCD';
+    } else if ('secondLi' === id) {
+      this.color = '#FFEBCD';
+    } else if ('thirdLi' === id) {
+      this.color = '#FFFDCD';
+    } else if ('fourthLi' === id) {
+      this.color = '#DDFFCD';
+    } else if ('fifthLi' === id) {
+      this.color = '#CDFFD8';
+    } else if ('sixLi' === id) {
+      this.color = '#CDFFFC';
+    } else if ('sevenLi' === id) {
+      this.color = '#CDEEFF';
+    } else if ('eightLi' === id) {
+      this.color = '#CDD5FF';
+    } else if ('nineLi' === id) {
+      this.color = '#EFCDFF';
+    } else if ('tenLi' === id) {
+      this.color = '#FFCDF4';
+    }
+ }
   ngOnInit() {
-    this.element = document.getElementsByClassName('image-options')[0];
+
   }
 
 }

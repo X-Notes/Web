@@ -1,7 +1,19 @@
 <div class="default-user">
     <div class="all-user">
-        <div class="user-color"></div>
-        <div class="user-field">
+        <ul class="user-color-modal" *ngIf="update">
+            <li class="user-modal-element user-modal-margin" id="firstLi" (click)="changeColor('firstLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="secondLi" (click)="changeColor('secondLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="thirdLi" (click)="changeColor('thirdLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="fourthLi" (click)="changeColor('fourthLi')"></li>
+            <li class="user-modal-element" id="fifthLi" (click)="changeColor('fifthLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="sixLi" (click)="changeColor('sixLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="sevenLi" (click)="changeColor('sevenLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="eightLi" (click)="changeColor('eightLi')"></li>
+            <li class="user-modal-element user-modal-margin" id="nineLi" (click)="changeColor('nineLi')"></li>
+            <li class="user-modal-element" id="tenLi" (click)="changeColor('tenLi')"></li>
+        </ul>
+        <div class="user-color" (click)="hideElement()" [ngStyle]="{backgroundColor: color}"></div>
+        <div class="user-field" [ngStyle]="{backgroundColor: color}">
             <div class="user-info">
                 <div class="user-photo">
                     <img src="assets/kashich.png" class="image">
@@ -11,9 +23,6 @@
                 </div>
             </div>
             <div class="user-options">
-                <div class="image-options button-list-size" (click)="changeIcon()">
-                    <img src="assets/buttonList.svg">
-                </div>
                 <div class="user-info-line"></div>
                 <div class="image-options button-cancel-size">
                     <img src="assets/buttonCancel.svg">
@@ -21,9 +30,4 @@
             </div>
         </div>
     </div>
-    <ul class="hidden-options" *ngIf="update">
-        <li class="hidden-element">First task</li>
-        <li class="hidden-element">Second task</li>
-        <li class="hidden-element">Third task</li>
-    </ul>
 </div>
