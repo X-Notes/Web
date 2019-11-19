@@ -1,6 +1,6 @@
 <div class="default-user">
     <div class="all-user">
-        <ul class="user-color-modal" *ngIf="update">
+        <ul class="user-color-modal" *ngIf="update" [@slideInOut]>
             <li class="user-modal-element user-modal-margin" id="firstLi" (click)="changeColor('firstLi')"></li>
             <li class="user-modal-element user-modal-margin" id="secondLi" (click)="changeColor('secondLi')"></li>
             <li class="user-modal-element user-modal-margin" id="thirdLi" (click)="changeColor('thirdLi')"></li>

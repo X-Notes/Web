@@ -1,9 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { trigger, transition, animate, style } from '@angular/animations';
+
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.sass']
+  styleUrls: ['./user.component.sass'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({transform : 'translateY(-70%)', opacity: '*'}),
+        animate('300ms ease-out', style({transform: 'translateY(0%)', height: '*'}))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({transform: 'translateY(-30%)', opacity: '0.5', height: '0px', overflow: 'hidden'}))
+      ]),
+    ])
+  ]
 })
 export class UserComponent implements OnInit {
 
