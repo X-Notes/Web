@@ -1,12 +1,16 @@
-﻿using System;
+﻿using BusinessLogic.Interfaces;
+using BusinessLogic.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace Workers
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            IHabr habr = new Habr();
+            await habr.GetSite();
         }
     }
 }
