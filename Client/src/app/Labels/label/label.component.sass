@@ -1,0 +1,175 @@
+$label-color: #EFCDFF
+
+div
+    display: flex
+
+.default-label //Полностью весь лейбл с выпадающим список
+            flex-direction: column
+            width: 380px
+            margin-top: 12px
+            margin-right: 30px
+            .label-field
+                flex-direction: row
+                align-items: center
+                justify-content: space-between
+                width: 380px
+                height: 40px
+                background-color: #DDFFCD
+                border-radius: 5px
+                z-index: 5
+                &:hover
+                    box-shadow: 0px 2px 2px #00000030
+                .text-label
+                    font-family: 'Roboto',sans-serif
+                    font-weight: 400
+                    font-size: 20px
+                    margin-left: 15px
+                    color: #5C5C5C
+                    height: 25px
+                    background: #DDFFCD
+                    outline: none
+                    border: none
+                    &:hover
+                        border-bottom: 1px dashed  #c5c5c5
+                .options-label
+                    margin-right: 15px
+                    -moz-user-select: none
+                    -webkit-user-select: none
+                    -ms-user-select: none
+                    user-select: none
+                    .image-options
+                        cursor: pointer
+                        -moz-transition: all 0.25s linear
+                        -webkit-transition: all 0.25s linear
+                        transition: all 0.25s linear
+                    .note-info-line
+                        height: 20px
+                        border-width: 0 1px 0 0
+                        border-style: solid
+                        margin-left: 15px
+                        margin-right: 15px
+                        color: #C6C6C6
+                        cursor: default
+            .hidden-colors
+                display: flex
+                width: 380px
+                height: 70px
+                flex-wrap: wrap
+                justify-content: center
+                .hidden-color-element
+                    width: 50px
+                    height: 25px
+                    margin-top: 10px
+                    background-color: $label-color
+                    border-radius: 5px
+                    box-shadow: 0px 2px 2px #00000035
+                    cursor: pointer
+                    &:hover
+                        box-shadow: 0px 4px 2px #00000050
+                .margin-colors
+                    margin-right: 30px
+#firstLi
+    background-color: #FFCDCD
+#secondLi
+    background-color: #FFEBCD
+#thirdLi
+    background-color: #FFFDCD
+#fourthLi
+    background-color: #DDFFCD
+#fifthLi
+    background-color: #CDFFD8
+#sixLi
+    background-color: #CDFFFC
+#sevenLi
+    background-color: #CDEEFF
+#eithLi
+    background-color: #CDD5FF
+#nineLi
+    background-color: #EFCDFF
+#tenLi
+    background-color: #FFCDF4
+
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+    .default-label
+                width: 320px
+                margin-right: 20px
+                .label-field
+                    width: 320px
+                    .text-label
+                        font-size: 18px
+                        height: 22px
+                        margin-left: 13px
+                    .options-label
+                        margin-right: 13px
+                        .note-info-line
+                            margin-left: 13px
+                            margin-right: 13px
+                            border-width: 0 0.7px 0 0
+                .hidden-colors
+                    width: 320px
+                    height: 70px
+                    .hidden-color-element
+                        width: 48px
+                        height: 24px
+                        margin-top: 7px
+                    .margin-colors
+                        margin-right: 18px
+
+@media (min-width: 480px) and (max-width: 767px) //large phone
+    .default-label
+                margin-top: 15px
+                margin-right: 0px
+                .label-field
+                    .text-label
+                        font-size: 18px
+                        height: 22px
+                        margin-left: 13px
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+    .default-label
+                width: 290px
+                margin-right: 0px
+                margin-top: 15px
+                .label-field
+                    width: 290px
+                    .text-label
+                        font-size: 16px
+                        height: 20px
+                        margin-left: 10px
+                    .options-label
+                        .button-list-size
+                            width: 16px
+                .hidden-colors
+                    width: 290px
+                    height: 64px
+                    .hidden-color-element
+                        width: 44px
+                        height: 22px
+                        margin-top: 7px
+                    .margin-colors
+                        margin-right: 15px
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .default-label
+                width: 240px
+                margin-right: 0px
+                margin-top: 15px
+                .label-field
+                    width: 240px
+                    .text-label
+                        font-size: 16px
+                        height: 20px
+                        margin-left: 10px
+                        max-width: 140px
+                    .options-label
+                        .button-list-size
+                            width: 16px
+                .hidden-colors
+                    width: 290px
+                    height: 64px
+                    .hidden-color-element
+                        width: 44px
+                        height: 22px
+                        margin-top: 7px
+                    .margin-colors
+                        margin-right: 15px
