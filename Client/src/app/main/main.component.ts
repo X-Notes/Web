@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener, NgModule, NgZone } from '@angular/core';
-import { trigger, transition, animate, style } from '@angular/animations';
+import { trigger, transition, animate, style, state } from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -19,7 +19,18 @@ import { isUndefined, isNull } from 'util';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.sass'],
   animations: [
-
+    trigger('slideInOut', [
+      state('out', style({ height: '*' , overflow: 'hidden'})),
+      transition('* => void', [
+        style({ height: '*', overflow: 'hidden' }),
+        animate('200ms ease-in', style({ height: '0' }))
+      ]),
+      state('in', style({ height: '0' })),
+      transition('void => *', [
+        style({ height: '0', overflow: 'hidden'}),
+        animate('300ms ease-out', style({ height: '*' , overflow: 'hidden'}))
+      ])
+    ])
   ]
 })
 export class MainComponent implements OnInit {
@@ -28,6 +39,7 @@ export class MainComponent implements OnInit {
   activeProfileMenu = false;
   activeMenu = false;
   unsubscribe = new Subject();
+  update = false;
 
   noteImage = 'assets/menu/note.svg';
   nootImage = 'assets/menu/noots.svg';
@@ -62,7 +74,6 @@ export class MainComponent implements OnInit {
       this.router.navigate(['/about']);
     });
   }
-
   DropMenu() {
     this.activeMenu = !this.activeMenu;
 
