@@ -5,12 +5,14 @@ import { SharedNotesComponent } from './shared-notes/shared-notes.component';
 import { LockedNotesComponent } from './locked-notes/locked-notes.component';
 import { NoteComponent } from './note/note.component';
 import { NewNoteComponent } from './new-note/new-note.component';
-
+import { NotesContainerComponent } from './notes-container/notes-container.component';
+import { AppRoutingModule } from '..//app-routing.module';
 
 @NgModule({
-  declarations: [AllNotesComponent, SharedNotesComponent, LockedNotesComponent, NoteComponent, NewNoteComponent],
+  declarations: [AllNotesComponent, SharedNotesComponent, LockedNotesComponent, NoteComponent, NewNoteComponent, NotesContainerComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    AppRoutingModule
   ],
   exports: []
 })

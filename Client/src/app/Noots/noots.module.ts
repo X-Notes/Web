@@ -9,7 +9,8 @@ import { FiltersNootsComponent } from './filters-noots/filters-noots.component';
 import { SubscribesComponent } from './Subscribe-folder/subscribes/subscribes.component';
 import { NewNootComponent } from './new-noot/new-noot.component';
 import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.component';
-
+import { AppRoutingModule } from '..//app-routing.module';
+import { NootsContainerComponent } from './noots-container/noots-container.component';
 
 @NgModule({
   declarations: [
@@ -21,10 +22,12 @@ import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.compo
        FiltersNootsComponent,
        SubscribesComponent,
        NewNootComponent,
-       SubscribeComponent
+       SubscribeComponent,
+       NootsContainerComponent,
       ],
   imports: [
-    CommonModule
+    CommonModule,
+    AppRoutingModule
   ],
   exports: [NootComponent]
 })
