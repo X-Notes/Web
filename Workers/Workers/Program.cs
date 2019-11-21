@@ -10,7 +10,8 @@ namespace Workers
         static async Task Main(string[] args)
         {
             IHabr habr = new Habr();
-            await habr.GetSite();
+            var articles = await habr.ParsePages(50);
+            Console.WriteLine(articles);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace BusinessLogic.Interfaces
 {
     public interface IHabr
     {
-        Task<string> GetSite();
+        Task<List<List<string>>> ParsePages(int pages);
     }
 }
