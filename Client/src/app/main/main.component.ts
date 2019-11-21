@@ -1,4 +1,7 @@
-import { Component, OnInit, HostListener, NgZone } from '@angular/core';
+import { Component, OnInit, HostListener, NgModule, NgZone } from '@angular/core';
+import { trigger, transition, animate, style } from '@angular/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
 import { AuthService } from '../Services/auth.service';
@@ -7,10 +10,17 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { isUndefined, isNull } from 'util';
 
+@NgModule({
+  imports: [BrowserAnimationsModule, BrowserModule]
+})
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
-  styleUrls: ['./main.component.sass']
+  styleUrls: ['./main.component.sass'],
+  animations: [
+
+  ]
 })
 export class MainComponent implements OnInit {
   title = 'Client';
@@ -46,17 +56,11 @@ export class MainComponent implements OnInit {
     private ngZone: NgZone
   ) {}
   ngOnInit() {
-    this.userService
-      .Get()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(user => {
-        this.user = user;
-        if (isUndefined(user) || isNull(user)) {
-          localStorage.removeItem('user');
-          localStorage.removeItem('idKey');
-          this.router.navigate(['/about']);
-        }
-      });
+    this.userService.Get()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(user => { this.user = user; }, error => {
+      this.router.navigate(['/about']);
+    });
   }
 
   DropMenu() {

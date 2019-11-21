@@ -9,7 +9,9 @@ div
     width: 360px
     padding: 0 20px
     border-radius: 25px
-    margin-top: 20px
+    margin-top: 40px
+    &:hover
+        box-shadow: 0px 2px 2px #00000030
     .note-header
         flex-direction: row
         justify-content: space-between
@@ -41,7 +43,6 @@ div
         -webkit-box-orient: vertical
         font-size: 24px
         font-weight: bold
-        line-height: 36px
         margin-bottom: 15px
         max-height: 74px
         text-overflow: ellipsis
@@ -64,11 +65,11 @@ div
         -webkit-user-select: none
         -ms-user-select: none
         user-select: none
-        pointer-events: none
     .note-author
         font-size: 18px
         font-weight: 500
         margin-bottom: 5px
+        color: #303030
     .note-info
         color: #C4C4C4
         align-items: center
@@ -88,11 +89,153 @@ div
 @media only screen and (min-width: 1200px)
 
 @media (min-width: 992px) and  (max-width: 1199px) //laptop
+    .main-note
+        margin-top: 40px
+        .note-header
+            margin-bottom: 12px
+            .note-label
+                font-size: 14px
+        .note-title
+            margin-bottom: 12px
+            font-size: 22px
+        .note-description
+            -webkit-line-clamp: 3
+            margin-bottom: 12px
+            font-size: 17px
+        .note-author
+            font-size: 17px
+        .note-image
+            margin-bottom: 12px
+        .note-info
+            margin-bottom: 12px
+            .note-date
+                font-size: 15px
+            .note-info-line
+                height: 14px
+            .note-time-read
+                font-size: 13px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
-
+    .main-note
+        margin-top: 30px
+        .note-header
+            margin-bottom: 12px
+            .note-label
+                font-size: 14px
+            .note-options
+                height: 19px
+        .note-title
+            margin-bottom: 12px
+            font-size: 20px
+        .note-description
+            -webkit-line-clamp: 3
+            margin-bottom: 12px
+            font-size: 16px
+        .note-author
+            font-size: 16px
+        .note-image
+            margin-bottom: 12px
+        .note-info
+            margin-bottom: 12px
+            .note-date
+                font-size: 14px
+            .note-info-line
+                height: 13px
+            .note-time-read
+                font-size: 12px
+    
 @media (min-width: 480px) and (max-width: 767px) //large phone
+    .main-note
+        margin-top: 30px
+        .note-header
+            margin-bottom: 10px
+            .note-label
+                font-size: 13px
+            .note-options
+                height: 18px
+        .note-title
+            margin-bottom: 10px
+            font-size: 18px
+        .note-description
+            -webkit-line-clamp: 3
+            margin-bottom: 10px
+            font-size: 15px
+        .note-author
+            font-size: 15px
+        .note-image
+            margin-bottom: 10px
+        .note-info
+            margin-bottom: 10px
+            .note-date
+                font-size: 14px
+            .note-info-line
+                height: 13px
+            .note-time-read
+                font-size: 12px
 
 @media (min-width: 320px) and (max-width: 479px) //phone
-
+    .main-note
+        margin-top: 30px
+        width: 300px
+        border-radius: 15px
+        .note-header
+            margin-bottom: 8px
+            .note-label
+                font-size: 12px
+                width: 75px
+            .note-plus-label
+                width: 40px
+            .note-options
+                height: 17px
+        .note-title
+            margin-bottom: 8px
+            font-size: 18px
+        .note-description
+            -webkit-line-clamp: 3
+            margin-bottom: 8px
+            font-size: 15px
+        .note-author
+            font-size: 14px
+        .note-image
+            margin-bottom: 8px
+        .note-info
+            margin-bottom: 8px
+            .note-date
+                font-size: 13px
+            .note-info-line
+                height: 13px
+            .note-time-read
+                font-size: 12px
 @media (min-width: 150px) and (max-width: 319px) //min width
+    .main-note
+        margin-top: 30px
+        width: 260px
+        border-radius: 15px
+        .note-header
+            margin-bottom: 8px
+            .note-label
+                font-size: 11px
+                width: 60px
+            .note-plus-label
+                width: 40px
+            .note-options
+                height: 14px
+        .note-title
+            margin-bottom: 8px
+            font-size: 16px
+        .note-description
+            -webkit-line-clamp: 3
+            margin-bottom: 8px
+            font-size: 13px
+        .note-author
+            font-size: 12px
+        .note-image
+            margin-bottom: 8px
+        .note-info
+            margin-bottom: 8px
+            .note-date
+                font-size: 11px
+            .note-info-line
+                height: 10px
+            .note-time-read
+                font-size: 10px

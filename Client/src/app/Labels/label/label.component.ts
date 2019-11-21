@@ -25,6 +25,7 @@ export class LabelComponent implements OnInit {
   h1color = '#DDFFCD';
   element;
   changeIcon() {
+    this.update = !this.update;
     if (this.update === true) {
       this.element.setAttribute('style', 'transform: rotate(180deg)');
     } else {
