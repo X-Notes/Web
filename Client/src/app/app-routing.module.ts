@@ -15,7 +15,7 @@ import {FiltersNootsComponent} from './Noots/filters-noots/filters-noots.compone
 import {AllNotesComponent} from './Notes/all-notes/all-notes.component';
 import {SharedNotesComponent} from './Notes/shared-notes/shared-notes.component';
 import { LockedNotesComponent} from './Notes/locked-notes/locked-notes.component';
-import { SubscribesComponent } from './Noots/subscribes/subscribes.component';
+import { SubscribesComponent } from './Noots/Subscribe-folder/subscribes/subscribes.component';
 import {NewNootComponent} from './Noots/new-noot/new-noot.component';
 import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
