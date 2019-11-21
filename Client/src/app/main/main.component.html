@@ -51,7 +51,7 @@
                         </div>
                         <span>Noots</span>
                     </div>
-                    <ul [ngClass]="{'display-none': !isCurrentRouteRight('noot')}" class="under">
+                    <ul *ngIf="isCurrentRouteRight('noot')" class="under" [@slideInOut]>
                         <li>
                             <div routerLink="/noots/new" class="new-note" [ngClass]="{'active-menu': isCurrentRouteRight('noots/new')}">
                                 <img src="assets/under-menu/plus.svg" />
@@ -103,7 +103,7 @@
                         </div>
                         <span>Notes</span>
                     </div>
-                    <ul [ngClass]="{'display-none': !isCurrentRouteRight('note')}" class="under">
+                    <ul [ngClass]="{'display-none': !isCurrentRouteRight('note')}" class="under" [@slideInOut]>
                             <li>
                                 <div routerLink="/notes/new" class="new-note" [ngClass]="{'active-menu': isCurrentRouteRight('notes/new')}">
                                     <img src="assets/under-menu/plus.svg" />
