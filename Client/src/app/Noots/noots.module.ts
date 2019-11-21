@@ -6,8 +6,9 @@ import { MyNootsComponent } from './my-noots/my-noots.component';
 import { WatchLatersComponent } from './watch-laters/watch-laters.component';
 import { AllNootsComponent } from './all-noots/all-noots.component';
 import { FiltersNootsComponent } from './filters-noots/filters-noots.component';
-import { SubscribesComponent } from './subscribes/subscribes.component';
+import { SubscribesComponent } from './Subscribe-folder/subscribes/subscribes.component';
 import { NewNootComponent } from './new-noot/new-noot.component';
+import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { NewNootComponent } from './new-noot/new-noot.component';
        AllNootsComponent,
        FiltersNootsComponent,
        SubscribesComponent,
-       NewNootComponent
+       NewNootComponent,
+       SubscribeComponent
       ],
   imports: [
     CommonModule
