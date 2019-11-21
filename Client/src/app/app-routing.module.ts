@@ -19,6 +19,9 @@ import { SubscribesComponent } from './Noots/Subscribe-folder/subscribes/subscri
 import {NewNootComponent} from './Noots/new-noot/new-noot.component';
 import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
+import { NootsContainerComponent} from './Noots/noots-container/noots-container.component';
+import { NotesContainerComponent} from './Notes/notes-container/notes-container.component';
+
 
 const ChildNootsRoutes: Routes = [
   { path: '', component: AllNootsComponent},
@@ -40,8 +43,8 @@ const ChildNotesRoutes: Routes = [
 
 const Routes: Routes =
 [
-  {path: 'noots', component: AllNootsComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]},
-  {path: 'notes', component: AllNotesComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
+  {path: 'noots', component: NootsContainerComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]},
+  {path: 'notes', component: NotesContainerComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
   {path: 'people', component: PeopleComponent, canActivate: [AuthGuard]},
   {path: 'groups', component: GroupsComponent, canActivate: [AuthGuard]},
   {path: 'invites', component: InvitesComponent, canActivate: [AuthGuard]},
