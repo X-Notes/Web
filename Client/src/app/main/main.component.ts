@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, NgModule } from '@angular/core';
+import { Component, OnInit, HostListener, NgModule, NgZone } from '@angular/core';
 import { trigger, transition, animate, style, state } from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,6 +8,7 @@ import { AuthService } from '../Services/auth.service';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { isUndefined, isNull } from 'util';
 
 @NgModule({
   imports: [BrowserAnimationsModule, BrowserModule]
@@ -60,9 +61,12 @@ export class MainComponent implements OnInit {
   ColorbinImage = 'assets/colorfull-menu/bin.svg';
   ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
-
-  }
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private ngZone: NgZone
+  ) {}
   ngOnInit() {
     this.userService.Get()
     .pipe(takeUntil(this.unsubscribe))
