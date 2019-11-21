@@ -37,36 +37,22 @@ const ChildNotesRoutes: Routes = [
   { path: 'locked', component: LockedNotesComponent},
   { path: 'new', component: NewNoteComponent}
 ];
-const PeopleRoutes: Routes =
+
+const Routes: Routes =
 [
-  {path: '', component: PeopleComponent}
+  {path: 'noots', component: AllNootsComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]},
+  {path: 'notes', component: AllNotesComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
+  {path: 'people', component: PeopleComponent, canActivate: [AuthGuard]},
+  {path: 'groups', component: GroupsComponent, canActivate: [AuthGuard]},
+  {path: 'invites', component: InvitesComponent, canActivate: [AuthGuard]},
+  {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
+  {path: 'bin', component: BinComponent, canActivate: [AuthGuard]}
 ];
-const GroupsRoutes: Routes =
-[
-  {path: '', component: GroupsComponent}
-];
-const InvitesRoutes: Routes =
-[
-  {path: '', component: InvitesComponent}
-];
-const LabelsRoutes: Routes =
-[
-  {path: '', component: LabelsComponent}
-];
-const BinRoutes: Routes =
-[
-  {path: '', component: BinComponent}
-];
+
 const routes: Routes = [
 
   {path: 'about', component: LandingComponent},
-  {path: 'noots', component: MainComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]  },
-  {path: 'notes', component: MainComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
-  {path: 'people', component: MainComponent, children: PeopleRoutes, canActivate: [AuthGuard]},
-  {path: 'groups', component: MainComponent, children: GroupsRoutes, canActivate: [AuthGuard]},
-  {path: 'labels', component: MainComponent, children: LabelsRoutes, canActivate: [AuthGuard]},
-  {path: 'invites', component: MainComponent, children: InvitesRoutes, canActivate: [AuthGuard]},
-  {path: 'bin', component: MainComponent, children: BinRoutes, canActivate: [AuthGuard]},
+  {path: '', component: MainComponent, children: Routes, canActivate: [AuthGuard]  },
   { path: '**', redirectTo: '/about'}
 ];
 

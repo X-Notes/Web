@@ -22,8 +22,8 @@ import { isUndefined, isNull } from 'util';
     trigger('slideInOut', [
       state('out', style({ height: '*' , overflow: 'hidden'})),
       transition('* => void', [
-        style({ height: '*', overflow: 'hidden' }),
-        animate('200ms ease-in', style({ height: '0' }))
+        style({ height: '*', overflow: 'hidden', borderRadius: '0px' }),
+        animate('300ms ease-in', style({ height: '0', borderRadius: '0px' }))
       ]),
       state('in', style({ height: '0' })),
       transition('void => *', [
