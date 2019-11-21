@@ -103,7 +103,7 @@
                         </div>
                         <span>Notes</span>
                     </div>
-                    <ul [ngClass]="{'display-none': !isCurrentRouteRight('note')}" class="under" [@slideInOut]>
+                    <ul *ngIf="isCurrentRouteRight('note')" class="under" [@slideInOut]>
                             <li>
                                 <div routerLink="/notes/new" class="new-note" [ngClass]="{'active-menu': isCurrentRouteRight('notes/new')}">
                                     <img src="assets/under-menu/plus.svg" />
