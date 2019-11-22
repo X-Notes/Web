@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
-    public class Habr : IHabr
+    public class Habr : IHabr // Защита от бесконечного цикла
     {
+        string  baseAddress = "https://habr.com/ru/all/page";
         public Habr()
         {
             
@@ -20,7 +21,6 @@ namespace BusinessLogic.Services
         {
             var tasks = new List<Task<IEnumerable<string>>>();
 
-            var baseAddress = "https://habr.com/ru/all/page";
 
             var articles = new List<List<string>>();
 
@@ -29,6 +29,7 @@ namespace BusinessLogic.Services
                 var t = GetLinksFromPage(baseAddress + (i + 1).ToString() + '/');
                 tasks.Add(t);
             }
+
             await Task.WhenAll(tasks);
 
             foreach(var result in tasks)
@@ -41,13 +42,37 @@ namespace BusinessLogic.Services
         {
             var config = Configuration.Default.WithDefaultLoader();
             var context = BrowsingContext.New(config);
+
             IEnumerable<string> links = null;
             try
             {
+
                 var document = await context.OpenAsync(adress);
+
+                if(document.Title == "HTTP 503")
+                {
+                    while(document.Title == "HTTP 503")
+                    {
+                        Thread.Sleep(200);
+                        document = await context.OpenAsync(adress);
+                    }
+                }
+
                 var articles = document.GetElementsByClassName("post__title_link");
-                links = articles.Cast<IHtmlAnchorElement>().Select(x => x.Href);
-                Console.WriteLine(links);
+
+
+                if (articles.Count() < 19)
+                {
+                    while (articles.Count() < 19)
+                    {
+                        Thread.Sleep(100);
+                        document = await context.OpenAsync(adress);
+                        articles =  document.GetElementsByClassName("post__title_link");
+                    
+                    }
+                }
+                 links = articles.Cast<IHtmlAnchorElement>().Select(x => x.Href);
+                 Console.WriteLine(links.Count());
             }
             catch(Exception e)
             {
