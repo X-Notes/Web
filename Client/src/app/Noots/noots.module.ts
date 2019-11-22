@@ -9,7 +9,7 @@ import { FiltersNootsComponent } from './filters-noots/filters-noots.component';
 import { SubscribesComponent } from './Subscribe-folder/subscribes/subscribes.component';
 import { NewNootComponent } from './new-noot/new-noot.component';
 import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.component';
-
+import { UpperMenuComponent } from '../upper-menu/upper-menu.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,8 @@ import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.compo
        FiltersNootsComponent,
        SubscribesComponent,
        NewNootComponent,
-       SubscribeComponent
+       SubscribeComponent,
+       UpperMenuComponent
       ],
   imports: [
     CommonModule
