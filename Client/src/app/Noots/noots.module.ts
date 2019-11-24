@@ -9,6 +9,7 @@ import { FiltersNootsComponent } from './filters-noots/filters-noots.component';
 import { SubscribesComponent } from './Subscribe-folder/subscribes/subscribes.component';
 import { NewNootComponent } from './new-noot/new-noot.component';
 import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.component';
+import { UpperMenuComponent } from '../upper-menu/upper-menu.component';
 import { AppRoutingModule } from '..//app-routing.module';
 import { NootsContainerComponent } from './noots-container/noots-container.component';
 
@@ -23,6 +24,7 @@ import { NootsContainerComponent } from './noots-container/noots-container.compo
        SubscribesComponent,
        NewNootComponent,
        SubscribeComponent,
+       UpperMenuComponent,
        NootsContainerComponent,
       ],
   imports: [

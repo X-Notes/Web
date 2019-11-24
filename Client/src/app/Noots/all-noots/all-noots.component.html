@@ -1,9 +1,9 @@
-<app-upper-menu *ngIf="update"></app-upper-menu>
+<app-upper-menu *ngIf= "update"></app-upper-menu>
 <div class="wrapper-main">
     <div class="wrapper-noots">
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
+        <app-noot (Changed)="Changed($event)"></app-noot>
+        <app-noot (Changed)="Changed($event)"></app-noot>
+        <app-noot (Changed)="Changed($event)"></app-noot>
+        <app-noot (Changed)="Changed($event)"></app-noot>
     </div>
 </div>

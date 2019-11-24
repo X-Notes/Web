@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-noot',
@@ -8,7 +8,12 @@ import { Component, OnInit } from '@angular/core';
 export class NootComponent implements OnInit {
 
   constructor() { }
-
+  update = true;
+  @Output() Changed = new EventEmitter<boolean>();
+  change(increased: any) {
+      this.Changed.emit(increased);
+      console.log(2, increased);
+  }
   ngOnInit() {
   }
 

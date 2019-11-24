@@ -8,7 +8,12 @@ import { Component, OnInit } from '@angular/core';
 export class AllNootsComponent implements OnInit {
 
   constructor() { }
-
+  update = false;
+  Changed(increased: any) {
+    console.log(1, increased);
+    increased = !increased;
+    this.update = increased;
+  }
   ngOnInit() {
   }
 
