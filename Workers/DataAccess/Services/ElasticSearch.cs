@@ -1,8 +1,10 @@
 ﻿using DataAccess.Interfaces;
+using Domain.Elastic;
 using Nest;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataAccess.Services
 {
@@ -13,6 +15,18 @@ namespace DataAccess.Services
         public ElasticSearch(string indexName, IElasticClient _elasticClient)
         {
             this._elasticClient = _elasticClient;
+        }
+
+        public async Task<CreateResponse> CreateAsync(Noot item)
+        {
+            return await _elasticClient.CreateDocumentAsync(item);
+        }
+        public async Task CreateCollectionAsync(List<Noot> items)
+        {
+            foreach(var item in items)
+            {
+                await _elasticClient.CreateDocumentAsync(item);
+            }
         }
     }
 }

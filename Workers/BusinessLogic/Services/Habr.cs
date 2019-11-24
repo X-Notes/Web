@@ -13,15 +13,9 @@ namespace BusinessLogic.Services
     public class Habr : IHabr // Защита от бесконечного цикла
     {
         string  baseAddress = "https://habr.com/ru/all/page";
-        public Habr()
-        {
-            
 
-        }
-        public void Run()
-        {
-            Console.WriteLine("running");
-        }
+
+
         public async Task<List<List<string>>> ParsePages(int pages)
         {
             var tasks = new List<Task<IEnumerable<string>>>();

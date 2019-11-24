@@ -15,8 +15,8 @@ namespace Workers
             var provider = services.services.BuildServiceProvider();
 
 
-            var habr = provider.GetService<IHabr>();
-            habr.Run();
+            var system = provider.GetService<IControlSystem>();
+            system.Run();
         }
     }
 }

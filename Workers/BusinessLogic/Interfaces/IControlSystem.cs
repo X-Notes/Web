@@ -1,12 +1,13 @@
-﻿using System;
+﻿using DataAccess.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Interfaces
 {
-    public interface IHabr
+    public interface IControlSystem
     {
-        Task<List<List<string>>> ParsePages(int pages);
+        Task Run();
     }
 }
