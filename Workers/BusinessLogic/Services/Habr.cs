@@ -16,6 +16,11 @@ namespace BusinessLogic.Services
         public Habr()
         {
             
+
+        }
+        public void Run()
+        {
+            Console.WriteLine("running");
         }
         public async Task<List<List<string>>> ParsePages(int pages)
         {

@@ -8,5 +8,6 @@ namespace BusinessLogic.Interfaces
     public interface IHabr
     {
         Task<List<List<string>>> ParsePages(int pages);
+        void Run();
     }
 }

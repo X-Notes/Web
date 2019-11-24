@@ -1,17 +1,22 @@
 ﻿using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Workers.Starting;
 
 namespace Workers
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            IHabr habr = new Habr();
-            var articles = await habr.ParsePages(50);
-            Console.WriteLine(articles);
+            RegisterServices services = new RegisterServices();
+            var provider = services.services.BuildServiceProvider();
+
+
+            var habr = provider.GetService<IHabr>();
+            habr.Run();
         }
     }
 }
