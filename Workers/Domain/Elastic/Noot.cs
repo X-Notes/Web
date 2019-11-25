@@ -10,5 +10,7 @@ namespace Domain.Elastic
         public string Title { set; get; }
         public string Description { set; get; }
         public string Location { set; get; }
+        public string Author { set; get; }
+        public DateTime Date { set; get; }
     }
 }

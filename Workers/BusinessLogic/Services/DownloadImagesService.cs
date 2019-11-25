@@ -18,9 +18,18 @@ namespace BusinessLogic.Services
         public async Task<string> GetImage(string url)
         {
             HttpResponseMessage response = await _client.GetAsync(url);
-            Console.WriteLine(1);
+  
             byte[] content = await response.Content.ReadAsByteArrayAsync();
-            var image = "data:image/png;base64," + Convert.ToBase64String(content);
+
+            string image = null;
+            if (url.Contains(".jpeg"))
+            {
+                image = "data:image/jpeg;base64," + Convert.ToBase64String(content);
+            }
+            else
+            {
+                image = "data:image/png;base64," + Convert.ToBase64String(content);
+            }
             return image;
         }
     }

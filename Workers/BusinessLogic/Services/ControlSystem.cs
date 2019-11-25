@@ -18,8 +18,8 @@ namespace BusinessLogic.Services
         }
         public async Task Run()
         {
-            var pages = await habr.ParsePages(1);
-            await habr.ParseConcreatePage(pages);
+            var pages = await habr.ParseMainPages(1);
+            await habr.ParseConcretePages(pages);
         }
     }
 }
