@@ -53,11 +53,10 @@ namespace NootsAPI
             //services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
             services.AddSiteAuthentications(Configuration);
 
-            //Repositories
-            services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
+            services.ElasticService(Configuration);
+            services.BusinessServices(Configuration);
+            services.DatabaseServices(Configuration);
 
-            // Services
-            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

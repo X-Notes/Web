@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Noots.DataAccess.Entities;
 using Noots.Domain.DTO.User;
+using Noots.Domain.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

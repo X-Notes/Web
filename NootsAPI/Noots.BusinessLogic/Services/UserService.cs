@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
 using Noots.BusinessLogic.Interfaces;
-using Noots.DataAccess.Entities;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.Domain.DTO.User;
+using Noots.Domain.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using Noots.DataAccess.Entities;
+using Noots.Domain.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;
