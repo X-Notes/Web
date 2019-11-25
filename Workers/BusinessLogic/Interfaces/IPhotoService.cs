@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Interfaces
 {
-    public interface IHabr
+    public interface IPhotoService
     {
-        Task<List<List<string>>> ParseMainPages(int pages);
     }
 }

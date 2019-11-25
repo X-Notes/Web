@@ -33,7 +33,6 @@ namespace Workers.Starting
 
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
             services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
-
         }
     }
 }

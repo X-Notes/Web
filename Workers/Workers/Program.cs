@@ -9,7 +9,7 @@ namespace Workers
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             RegisterServices services = new RegisterServices();
             var provider = services.services.BuildServiceProvider();
@@ -17,6 +17,7 @@ namespace Workers
 
             var system = provider.GetService<IControlSystem>();
             system.Run();
+            Console.ReadKey();
         }
     }
 }

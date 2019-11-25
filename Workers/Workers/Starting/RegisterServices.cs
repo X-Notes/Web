@@ -32,6 +32,8 @@ namespace Workers.Starting
             services.BusinessServices(Configuration);
 
 
+            services.AddHttpClient<IDownloadImagesService, DownloadImagesService>();
+
         }
     }
 }

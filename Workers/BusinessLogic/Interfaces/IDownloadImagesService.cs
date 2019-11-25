@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Interfaces
 {
-    public interface IHabr
+    public interface IDownloadImagesService
     {
-        Task<List<List<string>>> ParseMainPages(int pages);
+        Task<string> GetImage(string url);
     }
 }
