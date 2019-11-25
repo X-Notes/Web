@@ -17,11 +17,11 @@ namespace DataAccess.Services
             this._elasticClient = _elasticClient;
         }
 
-        public async Task<CreateResponse> CreateAsync(Noot item)
+        public async Task<CreateResponse> CreateAsync(ElasticNoot item)
         {
             return await _elasticClient.CreateDocumentAsync(item);
         }
-        public async Task CreateCollectionAsync(List<Noot> items)
+        public async Task CreateCollectionAsync(List<ElasticNoot> items)
         {
             foreach(var item in items)
             {

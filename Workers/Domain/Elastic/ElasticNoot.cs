@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Elastic
 {
-    public class Noot
+    public class ElasticNoot
     {
         public int Id { set; get; }
         public string Title { set; get; }

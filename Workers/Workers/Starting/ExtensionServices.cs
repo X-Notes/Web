@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using DataAccess.Interfaces;
+using DataAccess.IRepositories;
+using DataAccess.Repositories;
 using DataAccess.Services;
 using Domain.Elastic;
 using Microsoft.Extensions.Configuration;
@@ -29,10 +31,19 @@ namespace Workers.Starting
 
             NestConnectionSettings settings = new NestConnectionSettings(uri)
                 .DefaultIndex(defaultIndex)
-                .DefaultMappingFor<Noot>(m => m.IdProperty(p => p.Id));
+                .DefaultMappingFor<ElasticNoot>(m => m.IdProperty(p => p.Id));
 
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
             services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
+        }
+        public static void DatabaseServices(this IServiceCollection services, IConfiguration configuration)
+        {
+
+            var connection = configuration["Mongo:client"];
+            var database = configuration["Mongo:database"];
+
+            services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
+            services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
         }
     }
 }

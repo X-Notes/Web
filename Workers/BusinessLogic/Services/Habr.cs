@@ -25,7 +25,6 @@ namespace BusinessLogic.Services
 
         public async Task ParseConcretePage(string adress)
         {
-
             var config = Configuration.Default.WithDefaultLoader();
             var context = BrowsingContext.New(config);
 

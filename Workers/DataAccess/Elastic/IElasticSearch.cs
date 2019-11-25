@@ -9,7 +9,7 @@ namespace DataAccess.Interfaces
 {
     public interface IElasticSearch
     {
-        Task<CreateResponse> CreateAsync(Noot item);
-        Task CreateCollectionAsync(List<Noot> items);
+        Task<CreateResponse> CreateAsync(ElasticNoot item);
+        Task CreateCollectionAsync(List<ElasticNoot> items);
     }
 }
