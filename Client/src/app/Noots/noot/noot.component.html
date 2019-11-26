@@ -1,10 +1,10 @@
 <div class = "main-note">
         <div class = "note-header">
             <div class = "note-label">
-                <p class="check">Medium</p>
+                <p class="check">{{noot.labels[0]}}</p>
             </div>
             <div class = "note-label">
-                <p>Design</p>
+                <p>{{noot.labels[1]}}</p>
             </div>
             <div class = "note-label note-plus-label">
                 <p>+10</p>
@@ -14,23 +14,21 @@
             </div>
         </div>
         <div class = "note-title">
-            <p>Apple’s Gender-Neutral Emojis Aren’t for Everyone Apple’s Gender-Neutral Emojis Aren’t for Everyone</p>
+            <p>{{noot.title}}</p>
         </div>
         <div class = "note-description">
-            <p>They place restrictions and limits on an identity that’s all about freedom
-                They place restrictions and limits on an identity that’s all about freedom
-                They place restrictions and limits on an identity that’s all about freedom
+            <p>{{noot.description}}
             </p>
         </div>
         <div class = "note-image">
-            <img src="assets/city.png">
+            <img [src]="noot.images[0]">
         </div>
         <div class = "note-author">
-            <p>Nate Lapinski</p>
+            <p>{{noot.author}}</p>
         </div>
         <div class = "note-info">
             <div class = "note-date">
-                <p>17.06.18</p>
+                <p>{{noot.date}}</p>
             </div>
             <div class = "note-info-line">
     

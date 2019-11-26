@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Noot } from 'src/app/Models/Noots/Noot';
 
 @Component({
   selector: 'app-noot',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./noot.component.sass']
 })
 export class NootComponent implements OnInit {
+
+  @Input() noot: Noot;
 
   constructor() { }
 

@@ -1,12 +1,5 @@
 <div class="wrapper-main">
     <div class="wrapper-noots">
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
-        <app-noot></app-noot>
+        <app-noot *ngFor="let noot of noots" [noot]="noot"></app-noot>
     </div>
 </div>
