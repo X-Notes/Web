@@ -1,25 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Shared\\Shared\\Shared.csproj": {}
+    "B:\\Project\\Noots\\Shared\\Shared\\Shared.csproj": {}
   },
   "projects": {
-    "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Shared\\Shared\\Shared.csproj": {
+    "B:\\Project\\Noots\\Shared\\Shared\\Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Shared\\Shared\\Shared.csproj",
+        "projectUniqueName": "B:\\Project\\Noots\\Shared\\Shared\\Shared.csproj",
         "projectName": "Shared",
-        "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Shared\\Shared\\Shared.csproj",
-        "packagesPath": "C:\\Users\\4akly\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Shared\\Shared\\obj\\",
+        "projectPath": "B:\\Project\\Noots\\Shared\\Shared\\Shared.csproj",
+        "packagesPath": "C:\\Users\\Дима\\.nuget\\packages\\",
+        "outputPath": "B:\\Project\\Noots\\Shared\\Shared\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\4akly\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Дима\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.0"

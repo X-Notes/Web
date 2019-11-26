@@ -220,25 +220,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\4akly\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\Дима\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\Workers.csproj",
+      "projectUniqueName": "B:\\Project\\Noots\\Workers\\Workers\\Workers.csproj",
       "projectName": "Workers",
-      "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\Workers.csproj",
-      "packagesPath": "C:\\Users\\4akly\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\obj\\",
+      "projectPath": "B:\\Project\\Noots\\Workers\\Workers\\Workers.csproj",
+      "packagesPath": "C:\\Users\\Дима\\.nuget\\packages\\",
+      "outputPath": "B:\\Project\\Noots\\Workers\\Workers\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\4akly\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\Дима\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.0"
@@ -250,14 +249,14 @@
       "frameworks": {
         "netcoreapp3.0": {
           "projectReferences": {
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj"
+            "B:\\Project\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj": {
+              "projectPath": "B:\\Project\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj"
             },
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\DataAccess\\DataAccess.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\DataAccess\\DataAccess.csproj"
+            "B:\\Project\\Noots\\Workers\\DataAccess\\DataAccess.csproj": {
+              "projectPath": "B:\\Project\\Noots\\Workers\\DataAccess\\DataAccess.csproj"
             },
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Domain\\Domain.csproj"
+            "B:\\Project\\Noots\\Workers\\Domain\\Domain.csproj": {
+              "projectPath": "B:\\Project\\Noots\\Workers\\Domain\\Domain.csproj"
             }
           }
         }

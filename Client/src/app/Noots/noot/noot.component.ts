@@ -25,7 +25,6 @@ export class NootComponent implements OnInit {
       this.color = 'rgba(101, 226, 113, 0.69)';
       this.update = false;
       this.change(this.update);
-      console.log(this.update);
     } else {
       this.update = true;
       this.color = '';
