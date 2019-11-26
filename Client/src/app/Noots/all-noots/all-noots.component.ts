@@ -1,9 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { trigger, transition, animate, style, state } from '@angular/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+@NgModule({
+  imports: [BrowserAnimationsModule, BrowserModule]
+})
 
 @Component({
   selector: 'app-all-noots',
   templateUrl: './all-noots.component.html',
-  styleUrls: ['./all-noots.component.sass']
+  styleUrls: ['./all-noots.component.sass'],
+  animations: [
+    trigger('slideInOut', [
+      state('out', style({ height: '*' , overflow: 'hidden'})),
+      transition('* => void', [
+        style({ height: '*', overflow: 'hidden'}),
+        animate('300ms ease-in', style({ height: '0', opacity: '0.3'}))
+      ]),
+      state('in', style({ height: '0' })),
+      transition('void => *', [
+        style({ height: '0', overflow: 'hidden'}),
+        animate('300ms ease-out', style({ height: '*' , overflow: 'hidden'}))
+      ])
+    ])
+  ]
 })
 export class AllNootsComponent implements OnInit {
 

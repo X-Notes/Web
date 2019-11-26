@@ -1,4 +1,4 @@
-<app-upper-menu *ngIf= "update"></app-upper-menu>
+<div class="wrapper-upper-menu" [@slideInOut] *ngIf= "update"><app-upper-menu ></app-upper-menu></div>
 <div class="wrapper-main">
     <div class="wrapper-noots">
         <app-noot (Changed)="Changed($event)" *ngFor = "let item of items">{{item}}</app-noot>
