@@ -63,13 +63,16 @@ namespace BusinessLogic.Services
             var s = document.GetElementById("post-content-body");
             var body = document.GetElementById("post-content-body").TextContent;
             var Images = document.GetElementById("post-content-body").GetElementsByTagName("img").Cast<IHtmlImageElement>();
-            var TasksImages = Images.Select(x => downloadImages.GetImage(x.Source));
-            await Task.WhenAll(TasksImages);
-            var images = TasksImages.Select(x => x.Result).ToList();
+
+            var images = Images.Select(x => x.Source).ToList();
+
+            //var TasksImages = Images.Select(x => downloadImages.GetImage(x.Source));
+            //await Task.WhenAll(TasksImages);
+            //var images = TasksImages.Select(x => x.Result).ToList();
 
             return new ElasticNoot()
             {
-                Id = noot.Id,
+                Id = noot.Id.ToString(),
                 Labels = noot.Labels,
                 Author = noot.Author,
                 Title = noot.Title,

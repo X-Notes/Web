@@ -20,7 +20,7 @@ namespace BusinessLogic.Services
             HttpResponseMessage response = await _client.GetAsync(url);
   
             byte[] content = await response.Content.ReadAsByteArrayAsync();
-
+            Console.WriteLine("Image");
             string image = null;
             if (url.Contains(".jpeg"))
             {

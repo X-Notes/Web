@@ -27,5 +27,12 @@ namespace Noots.DataAccess.Elastic
                 await _elasticClient.CreateDocumentAsync(item);
             }
         }
+        public async Task<IEnumerable<ElasticNoot>> GetAllNoots()
+        {
+            var s = (await _elasticClient.SearchAsync<ElasticNoot>(
+                x=>x.MatchAll().Size(100)
+                )).Documents;
+            return s;
+        }
     }
 }

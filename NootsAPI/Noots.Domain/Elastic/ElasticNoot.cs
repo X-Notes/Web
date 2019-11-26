@@ -7,7 +7,7 @@ namespace Noots.Domain.Elastic
 {
     public class ElasticNoot
     {
-        public ObjectId Id { set; get; }
+        public string Id { set; get; }
         public string Title { set; get; }
         public string Description { set; get; }
         public List<string> Labels { set; get; }

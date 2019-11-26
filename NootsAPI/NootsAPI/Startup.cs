@@ -67,13 +67,15 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRouting();
+            app.UseCors("MyPolicy");
+
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseCors("MyPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

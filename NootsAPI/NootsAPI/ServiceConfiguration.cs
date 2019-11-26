@@ -22,21 +22,12 @@ namespace NootsAPI
     {
         public static void AddSiteAuthentications(this IServiceCollection services, IConfiguration configuration)
         {
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            })
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.Authority = configuration["FirebaseOptions:Authority"];
-                    options.IncludeErrorDetails = true;
 
+                    options.Authority = configuration["FirebaseOptions:Authority"];
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -46,7 +37,6 @@ namespace NootsAPI
                         ValidateLifetime = true
                     };
                 });
-
         }
         public static void DatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -59,6 +49,7 @@ namespace NootsAPI
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<INootService, NootService>();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {
