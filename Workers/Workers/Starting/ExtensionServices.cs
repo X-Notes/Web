@@ -20,7 +20,7 @@ namespace Workers.Starting
     {
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IControlSystem, ControlSystem>();
+            services.AddSingleton<IControlSystem, ControlSystem>();
             services.AddTransient<IHabr, Habr>();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)

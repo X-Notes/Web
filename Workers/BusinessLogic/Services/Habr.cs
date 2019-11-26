@@ -1,7 +1,12 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using BusinessLogic.Interfaces;
+using DataAccess.Interfaces;
+using DataAccess.IRepositories;
+using Domain.Elastic;
+using Domain.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +21,15 @@ namespace BusinessLogic.Services
         string  baseAddress = "https://habr.com/ru/all/page";
 
         private readonly IDownloadImagesService downloadImages;
-        public Habr(IDownloadImagesService downloadImages)
+
+        private readonly INootRepository nootRepository = null;
+        private readonly IElasticSearch elasticSearch = null;
+
+        public Habr(IDownloadImagesService downloadImages, INootRepository nootRepository, IElasticSearch elasticSearch)
         {
             this.downloadImages = downloadImages;
+            this.nootRepository = nootRepository;
+            this.elasticSearch = elasticSearch;
         }
 
 
@@ -41,25 +52,54 @@ namespace BusinessLogic.Services
                 }
             }
 
-            await CreateMongoDocument(document);
-            await CreateElasticDocument(document);
+            var mongoNoot  = CreateMongoDocument(document);
+            mongoNoot = await nootRepository.Add(mongoNoot);
 
+            var elasticNoot = await CreateElasticDocument(document, mongoNoot);
+            await elasticSearch.CreateAsync(elasticNoot);
         }
-        public async Task CreateElasticDocument(IDocument document)
+        public async Task<ElasticNoot> CreateElasticDocument(IDocument document, MongoNoot noot)
         {
+            var s = document.GetElementById("post-content-body");
             var body = document.GetElementById("post-content-body").TextContent;
             var Images = document.GetElementById("post-content-body").GetElementsByTagName("img").Cast<IHtmlImageElement>();
             var TasksImages = Images.Select(x => downloadImages.GetImage(x.Source));
             await Task.WhenAll(TasksImages);
-            var images = TasksImages.Select(x => x.Result);
+            var images = TasksImages.Select(x => x.Result).ToList();
+
+            return new ElasticNoot()
+            {
+                Id = noot.Id,
+                Labels = noot.Labels,
+                Author = noot.Author,
+                Title = noot.Title,
+                Date = noot.Date,
+                Images = images,
+                Description = body
+            };
+        }
+        public  MongoNoot CreateMongoDocument(IDocument document)
+        {
             var title = document.GetElementsByClassName("post__title-text").FirstOrDefault().InnerHtml;
-            var tags = document.GetElementsByClassName("inline-list__item-link post__tag").Select(x => x.InnerHtml).ToList();
+
+            var body = document.GetElementById("post-content-body");
+
+            var blocks = body.OuterHtml.Split("<br>");
+       
+
+            var tags = document.GetElementsByClassName("inline-list__item inline-list__item_hub").Select(x => x.TextContent).ToList();
+
             var time = document.GetElementsByClassName("post__time").FirstOrDefault().OuterHtml.Split('\"').Skip(3).FirstOrDefault().Trim('"');
             var user = document.GetElementsByClassName("user-info__nickname user-info__nickname_small").FirstOrDefault().InnerHtml;
-        }
-        public async Task CreateMongoDocument(IDocument document)
-        {
 
+            return new MongoNoot()
+            {
+                Title = title,
+                Author = user,
+                Date = Convert.ToDateTime(time),
+                Description = body.OuterHtml,
+                Labels = tags
+            };
         }
 
         public async Task ParseConcretePages(List<List<string>> ListPages)
