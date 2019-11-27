@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Interfaces;
 using Noots.Domain.Elastic;
+using Noots.Domain.Mongo;
 
 namespace NootsAPI.Controllers
 {
 
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NootsController : ControllerBase
@@ -26,6 +26,12 @@ namespace NootsAPI.Controllers
         public async Task<IEnumerable<ElasticNoot>> GetAllNoots()
         {
             return await nootService.GetAllNoots();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<MongoNoot> GetFullNoot(string id)
+        {
+            return await nootService.GetFullNoot(id);
         }
     }
 }

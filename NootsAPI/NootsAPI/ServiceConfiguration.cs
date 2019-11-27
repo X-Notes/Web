@@ -45,6 +45,7 @@ namespace NootsAPI
             var database = configuration["Mongo:database"];
 
             services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
+            services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
         }
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {

@@ -3,6 +3,7 @@ import { NootsService } from 'src/app/Services/noots.service';
 import { Noot } from 'src/app/Models/Noots/Noot';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-all-noots',
@@ -13,12 +14,14 @@ export class AllNootsComponent implements OnInit {
 
   noots: Noot[];
   unsubscribe = new Subject();
-  constructor(private nootService: NootsService) { }
+  constructor(private nootService: NootsService, private router: Router) { }
 
   ngOnInit() {
     this.nootService.GetAll().pipe(takeUntil(this.unsubscribe))
     .subscribe(x => this.noots = x
       , error => console.log(error));
   }
-
+  OpenNoot(id: string) {
+    this.router.navigate(['/noots', id]);
+  }
 }

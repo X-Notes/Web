@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Noot } from 'src/app/Models/Noots/Noot';
 
 @Component({
@@ -8,11 +8,15 @@ import { Noot } from 'src/app/Models/Noots/Noot';
 })
 export class NootComponent implements OnInit {
 
+  @Output() OpenNoot = new EventEmitter<string>();
+
   @Input() noot: Noot;
 
   constructor() { }
 
   ngOnInit() {
   }
-
+  Open() {
+    this.OpenNoot.emit(this.noot.id);
+  }
 }

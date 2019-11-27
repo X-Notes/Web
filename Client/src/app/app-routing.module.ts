@@ -21,6 +21,7 @@ import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
 import { NootsContainerComponent} from './Noots/noots-container/noots-container.component';
 import { NotesContainerComponent} from './Notes/notes-container/notes-container.component';
+import { FullNootComponent } from './Noots/full-noot/full-noot.component';
 
 
 const ChildNootsRoutes: Routes = [
@@ -31,7 +32,8 @@ const ChildNootsRoutes: Routes = [
   { path: 'watch-laters', component: WatchLatersComponent},
   { path: 'filters', component: FiltersNootsComponent},
   { path: 'subscribes' , component: SubscribesComponent},
-  { path: 'new', component: NewNootComponent}
+  { path: 'new', component: NewNootComponent},
+  { path: ':id', component: FullNootComponent}
 ];
 const ChildNotesRoutes: Routes = [
   { path: '', component: AllNotesComponent},

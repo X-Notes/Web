@@ -1,5 +1,5 @@
 <div class="wrapper-main">
     <div class="wrapper-noots">
-        <app-noot *ngFor="let noot of noots" [noot]="noot"></app-noot>
+        <app-noot *ngFor="let noot of noots" [noot]="noot" (OpenNoot)="OpenNoot($event)"></app-noot>
     </div>
 </div>
