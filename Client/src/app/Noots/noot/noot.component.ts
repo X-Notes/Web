@@ -16,19 +16,16 @@ export class NootComponent implements OnInit {
   colorUpdate = false;
   @Output() Changed = new EventEmitter<boolean>();
 
-  change(increased: any) {
-      this.Changed.emit(increased);
-  }
   changeColor() {
     this.colorUpdate = !this.colorUpdate;
     if (this.colorUpdate === true) {
       this.color = 'rgba(101, 226, 113, 0.69)';
       this.update = false;
-      this.change(this.update);
+      this.Changed.emit(this.update);
     } else {
       this.update = true;
       this.color = '';
-      this.change(this.update);
+      this.Changed.emit(this.update);
     }
   }
   ngOnInit() {
