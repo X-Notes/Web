@@ -11,7 +11,7 @@ using Noots.Domain.Mongo;
 
 namespace NootsAPI.Controllers
 {
-
+ 
     [Route("api/[controller]")]
     [ApiController]
     public class NootsController : ControllerBase

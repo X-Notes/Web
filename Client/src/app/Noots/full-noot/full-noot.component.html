@@ -1,4 +1,17 @@
 <div class="content">
- 
- <div class="noot" [innerHtml]="html"></div>
+    <div class="structure">
+        <div class="note-header">
+            <div *ngFor="let item of fullNoot?.labels;  let i= index" class="note-label">
+                <p *ngIf="i<2" class="check">{{item}}</p>
+            </div>
+            <div class="note-label note-plus-label">
+                <p class="check">+10</p>
+            </div>
+            <div class="note-options">
+                <img src="assets/options.svg">
+            </div>
+        </div>
+        <h2>{{fullNoot.title}}</h2>
+        <div class="code" [innerHtml]="html"></div>
+    </div>
 </div>
