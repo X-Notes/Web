@@ -17,11 +17,13 @@ export class AllNootsComponent implements OnInit {
   constructor(private nootService: NootsService, private router: Router) { }
 
   ngOnInit() {
-    this.nootService.GetAll().pipe(takeUntil(this.unsubscribe))
+    setTimeout(() => this.nootService.GetAll().pipe(takeUntil(this.unsubscribe))
     .subscribe(x => this.noots = x
-      , error => console.log(error));
+      , error => console.log(error)), 400);
+
   }
   OpenNoot(id: string) {
     this.router.navigate(['/noots', id]);
   }
 }
+

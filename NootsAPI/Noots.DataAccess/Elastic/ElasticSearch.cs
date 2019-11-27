@@ -30,7 +30,7 @@ namespace Noots.DataAccess.Elastic
         public async Task<IEnumerable<ElasticNoot>> GetAllNoots()
         {
             var s = (await _elasticClient.SearchAsync<ElasticNoot>(
-                x=>x.MatchAll().Size(20)
+                x=>x.MatchAll().Size(10)
                 )).Documents;
             return s;
         }
