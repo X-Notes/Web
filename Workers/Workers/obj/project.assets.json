@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.0": {
+    ".NETCoreApp,Version=v3.1": {
       "AngleSharp/0.13.0": {
         "type": "package",
         "dependencies": {
@@ -53,7 +53,7 @@
       },
       "BusinessLogic/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.0",
+        "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
           "AngleSharp": "0.13.0"
         },
@@ -66,7 +66,7 @@
       },
       "DataAccess/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.0",
+        "framework": ".NETCoreApp,Version=v3.1",
         "compile": {
           "bin/placeholder/DataAccess.dll": {}
         },
@@ -76,7 +76,7 @@
       },
       "Domain/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v3.0",
+        "framework": ".NETCoreApp,Version=v3.1",
         "compile": {
           "bin/placeholder/Domain.dll": {}
         },
@@ -213,51 +213,46 @@
     }
   },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.0": [
+    ".NETCoreApp,Version=v3.1": [
       "BusinessLogic >= 1.0.0",
       "DataAccess >= 1.0.0",
       "Domain >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\4akly\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\4akly\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\Workers.csproj",
+      "projectUniqueName": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\Workers\\Workers.csproj",
       "projectName": "Workers",
-      "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\Workers.csproj",
+      "projectPath": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\Workers\\Workers.csproj",
       "packagesPath": "C:\\Users\\4akly\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Workers\\obj\\",
+      "outputPath": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\Workers\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
-      ],
       "configFilePaths": [
         "C:\\Users\\4akly\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "netcoreapp3.0"
+        "netcoreapp3.1"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "netcoreapp3.0": {
+        "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj"
+            "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj": {
+              "projectPath": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\BusinessLogic\\BusinessLogic.csproj"
             },
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\DataAccess\\DataAccess.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\DataAccess\\DataAccess.csproj"
+            "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\DataAccess\\DataAccess.csproj": {
+              "projectPath": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\DataAccess\\DataAccess.csproj"
             },
-            "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\4akly\\Desktop\\GIT\\Noots\\Workers\\Domain\\Domain.csproj"
+            "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\4akly\\Desktop\\Git\\Noots\\Workers\\Domain\\Domain.csproj"
             }
           }
         }
@@ -269,7 +264,7 @@
       }
     },
     "frameworks": {
-      "netcoreapp3.0": {
+      "netcoreapp3.1": {
         "imports": [
           "net461",
           "net462",
@@ -285,7 +280,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
