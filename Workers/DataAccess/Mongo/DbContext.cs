@@ -29,5 +29,12 @@ namespace DataAccess.Mongo
                 return _database.GetCollection<MongoNoot>("noots");
             }
         }
+        public IMongoCollection<Labels> Labels
+        {
+            get
+            {
+                return _database.GetCollection<Labels>("labels");
+            }
+        }
     }
 }

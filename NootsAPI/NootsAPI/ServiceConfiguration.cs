@@ -46,11 +46,13 @@ namespace NootsAPI
 
             services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
             services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
+            services.AddTransient<ILabelRepository, LabelRepository>(x => new LabelRepository(connection, database));
         }
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<INootService, NootService>();
+            services.AddScoped<ILabelService, LabelService >();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {
