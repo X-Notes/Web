@@ -4,7 +4,7 @@ import { InvitesComponent } from './Invites/invites/invites.component';
 import { PeopleComponent } from './People/people/people.component';
 import { LabelsComponent } from './Labels/labels/labels.component';
 import { GroupsComponent } from './Groups/groups/groups.component';
- // import { BinComponent } from './Bin/bin/bin.component';
+import { BinComponent } from './Bin/bin/bin.component';
 import {LandingComponent} from './landing/landing.component';
 import {MyNootsComponent} from './Noots/my-noots/my-noots.component';
 import {SavedComponent} from './Noots/saved/saved.component';
@@ -51,7 +51,7 @@ const Routes: Routes =
   {path: 'groups', component: GroupsComponent, canActivate: [AuthGuard]},
   {path: 'invites', component: InvitesComponent, canActivate: [AuthGuard]},
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
-   // {path: 'bin', component: BinComponent, canActivate: [AuthGuard]}
+   {path: 'bin', component: BinComponent, canActivate: [AuthGuard]}
 ];
 
 const routes: Routes = [
