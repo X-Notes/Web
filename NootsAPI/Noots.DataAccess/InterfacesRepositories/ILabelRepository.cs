@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
-using Noots.Domain.DTO.Label;
-using Noots.Domain.Mongo;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

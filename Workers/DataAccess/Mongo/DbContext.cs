@@ -1,5 +1,6 @@
-﻿using Domain.Mongo;
+﻿
 using MongoDB.Driver;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,11 +30,11 @@ namespace DataAccess.Mongo
                 return _database.GetCollection<MongoNoot>("noots");
             }
         }
-        public IMongoCollection<Labels> Labels
+        public IMongoCollection<Label> Labels
         {
             get
             {
-                return _database.GetCollection<Labels>("labels");
+                return _database.GetCollection<Label>("labels");
             }
         }
     }

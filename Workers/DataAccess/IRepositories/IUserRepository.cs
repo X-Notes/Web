@@ -1,5 +1,6 @@
-﻿using Domain.Mongo;
+﻿
 using MongoDB.Bson;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

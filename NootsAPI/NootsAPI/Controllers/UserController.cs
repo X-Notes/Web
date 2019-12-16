@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Interfaces;
-using Noots.Domain.DTO.User;
 using NootsAPI.Infastructure;
+using Shared.DTO.User;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

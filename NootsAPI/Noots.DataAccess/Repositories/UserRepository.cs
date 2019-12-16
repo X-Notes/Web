@@ -6,7 +6,7 @@ using System.Text;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Threading.Tasks;
-using Noots.Domain.Mongo;
+using Shared.Mongo;
 
 namespace Noots.DataAccess.Repositories
 {

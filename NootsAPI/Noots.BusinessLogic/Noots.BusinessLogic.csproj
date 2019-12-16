@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
     <ProjectReference Include="..\Noots.DataAccess\Noots.DataAccess.csproj" />
-    <ProjectReference Include="..\Noots.Domain\Noots.Domain.csproj" />
   </ItemGroup>
 
 </Project>

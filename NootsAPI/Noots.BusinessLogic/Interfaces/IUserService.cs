@@ -1,5 +1,5 @@
 ﻿using MongoDB.Bson;
-using Noots.Domain.DTO.User;
+using Shared.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Text;

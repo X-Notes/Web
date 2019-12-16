@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Interfaces;
-using Noots.Domain.Elastic;
-using Noots.Domain.Mongo;
+using Shared.Elastic;
+using Shared.Mongo;
 
 namespace NootsAPI.Controllers
 {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Noots.BusinessLogic.Interfaces;
 using Noots.DataAccess.InterfacesRepositories;
-using Noots.Domain.DTO.Label;
-using Noots.Domain.Mongo;
+using Shared.DTO.Label;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

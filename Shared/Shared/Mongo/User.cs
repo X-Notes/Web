@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Noots.Domain.Mongo
+namespace Shared.Mongo
 {
     public class User
     {

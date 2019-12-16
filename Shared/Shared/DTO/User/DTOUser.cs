@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Noots.Domain.DTO.User
+namespace Shared.DTO.User
 {
     public class DTOUser
     {

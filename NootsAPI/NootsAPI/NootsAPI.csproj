@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Noots.BusinessLogic\Noots.BusinessLogic.csproj" />
     <ProjectReference Include="..\Noots.DataAccess\Noots.DataAccess.csproj" />
-    <ProjectReference Include="..\Noots.Domain\Noots.Domain.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

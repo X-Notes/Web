@@ -16,7 +16,7 @@ using Noots.BusinessLogic.Services;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
 using AutoMapper;
-using Noots.Domain.MappingProfiles;
+using Shared.MappingProfiles;
 
 namespace NootsAPI
 {

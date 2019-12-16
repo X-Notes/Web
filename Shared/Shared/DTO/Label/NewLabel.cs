@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Noots.Domain.DTO.Label
+namespace Shared.DTO.Label
 {
-    public class LabelDTO
+    public class NewLabel
     {
-        public string Id { set; get; }
         public string Name { set; get; }
         public string Color { set; get; }
     }

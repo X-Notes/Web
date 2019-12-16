@@ -8,7 +8,7 @@ using Noots.BusinessLogic.Services;
 using Noots.DataAccess.Elastic;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
-using Noots.Domain.Elastic;
+using Shared.Elastic;
 using System;
 using System.Collections.Generic;
 using System.Linq;

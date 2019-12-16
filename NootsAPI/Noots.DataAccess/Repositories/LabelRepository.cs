@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using Noots.DataAccess.Context;
 using Noots.DataAccess.InterfacesRepositories;
-using Noots.Domain.Mongo;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

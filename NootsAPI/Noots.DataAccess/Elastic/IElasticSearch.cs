@@ -1,5 +1,5 @@
 ﻿using Nest;
-using Noots.Domain.Elastic;
+using Shared.Elastic;
 using System;
 using System.Collections.Generic;
 using System.Text;

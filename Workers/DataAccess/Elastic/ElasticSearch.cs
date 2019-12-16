@@ -1,6 +1,6 @@
 ﻿using DataAccess.Interfaces;
-using Domain.Elastic;
 using Nest;
+using Shared.Elastic;
 using System;
 using System.Collections.Generic;
 using System.Text;

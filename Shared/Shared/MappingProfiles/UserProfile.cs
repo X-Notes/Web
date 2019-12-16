@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
-using Noots.Domain.DTO.User;
-using Noots.Domain.Mongo;
+using Shared.DTO.User;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Noots.Domain.MappingProfiles
+namespace Shared.MappingProfiles
 {
     public class UserProfile : Profile
     {
         public UserProfile()
         {
             CreateMap<DTOUser, User>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src=>src.Name))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.PhotoId, opt => opt.MapFrom(src => src.Photo))
             .ForMember(dest => dest.Id, opt => opt.Ignore());

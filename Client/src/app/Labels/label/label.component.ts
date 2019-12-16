@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { trigger, transition, animate, style } from '@angular/animations';
+import { Label } from 'src/app/Models/Labels/Label';
 
 
 @Component({
@@ -21,6 +22,10 @@ import { trigger, transition, animate, style } from '@angular/animations';
 export class LabelComponent implements OnInit {
 
   constructor() { }
+
+  @Output() updateLabel = new EventEmitter<Label>();
+  @Input() label: Label;
+
   update = false;
   h1color = '#DDFFCD';
   element;

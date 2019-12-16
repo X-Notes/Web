@@ -1,5 +1,5 @@
-﻿using Noots.Domain.Elastic;
-using Noots.Domain.Mongo;
+﻿using Shared.Elastic;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Interfaces;
-using Noots.Domain.DTO.Label;
 using NootsAPI.Infastructure;
+using Shared.DTO.Label;
 
 namespace NootsAPI.Controllers
 {

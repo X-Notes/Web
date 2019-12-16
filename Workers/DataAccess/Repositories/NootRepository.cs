@@ -1,6 +1,6 @@
 ﻿using DataAccess.IRepositories;
 using DataAccess.Mongo;
-using Domain.Mongo;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;

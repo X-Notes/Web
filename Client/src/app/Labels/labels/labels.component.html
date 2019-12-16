@@ -8,9 +8,7 @@
             <p class="margin-add">Add new label</p>
         </div>
         <div class="many-label">
-            <app-label></app-label>
-            <app-label></app-label>
-            <app-label></app-label>
+            <app-label *ngFor="let label of labels" [label]="label"></app-label>
         </div>
     </div>
 </div>
