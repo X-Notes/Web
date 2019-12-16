@@ -28,6 +28,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bulma/css/bulma.min.css",
               "node_modules/roboto-fontface/css/roboto/roboto-fontface.css",
               "src/styles.sass"
             ],
