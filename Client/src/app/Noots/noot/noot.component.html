@@ -1,40 +1,45 @@
-<div class = "main-note" (click)="Open()">
-        <div class = "note-header">
-            <div class = "note-label">
+<div class="main-note">
+    <div class="highlighting-note" (click)="changeColor()" [ngStyle]="{backgroundColor: color}">
+        <img [src]="colorUpdate ? acceptWhite : acceptCommon" id="size-image-highlighting">
+    </div>
+    <div class="note-container">
+        <div class="note-header">
+            <div class="note-label">
                 <p class="check">{{noot.labels[0]}}</p>
             </div>
-            <div class = "note-label">
+            <div class="note-label">
                 <p>{{noot.labels[1]}}</p>
             </div>
-            <div class = "note-label note-plus-label">
+            <div class="note-label note-plus-label">
                 <p>+10</p>
-            </div> 
-            <div class = "note-options">
-                <img src = "assets/options.svg">
+            </div>
+            <div class="note-options" (click)="changeColor()">
+                <img src="assets/options.svg">
             </div>
         </div>
-        <div class = "note-title">
+        <div class="note-title">
             <p>{{noot.title}}</p>
         </div>
-        <div class = "note-description">
+        <div class="note-description">
             <p>{{noot.description}}
             </p>
         </div>
-        <div class = "note-image">
+        <div class="note-image">
             <img [src]="noot.images[0]">
         </div>
-        <div class = "note-author">
+        <div class="note-author">
             <p>{{noot.author}}</p>
         </div>
-        <div class = "note-info">
-            <div class = "note-date">
+        <div class="note-info">
+            <div class="note-date">
                 <p>{{noot.date}}</p>
             </div>
-            <div class = "note-info-line">
-    
+            <div class="note-info-line">
+
             </div>
-            <div class = "note-time-read">
+            <div class="note-time-read">
                 <p>11 min read</p>
             </div>
         </div>
     </div>
+</div>
