@@ -11,5 +11,8 @@ namespace Noots.DataAccess.InterfacesRepositories
     {
         Task<ObjectId> Add(Label newLabel);
         Task<List<Label>> GetLabelsByUserId(ObjectId objectId);
+        Task Update(Label label);
+        Task Delete(ObjectId id);
+        Task<Label> GetLabelById(ObjectId id);
     }
 }

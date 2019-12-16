@@ -11,5 +11,8 @@ namespace Noots.BusinessLogic.Interfaces
     {
         Task<string> Add(NewLabel newLabel,string email);
         Task<List<LabelDTO>> GetLabelsByUserId(string email);
+        Task Update(LabelDTO label);
+        Task Delete(string id);
+        Task<LabelDTO> GetById(string id);
     }
 }

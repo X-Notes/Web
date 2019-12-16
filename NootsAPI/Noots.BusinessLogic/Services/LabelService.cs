@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using Noots.BusinessLogic.Interfaces;
 using Noots.DataAccess.InterfacesRepositories;
 using Shared.DTO.Label;
@@ -29,6 +30,7 @@ namespace Noots.BusinessLogic.Services
             dbLabel.UserId = user.Id;
 
             var _id = await labelRepository.Add(dbLabel);
+          
             return _id.ToString();
         }
         public async Task<List<LabelDTO>> GetLabelsByUserId(string email)
@@ -39,6 +41,32 @@ namespace Noots.BusinessLogic.Services
             var labelsDTO = mapper.Map<List<LabelDTO>>(labels);
 
             return labelsDTO;
+        }
+        public async Task Update(LabelDTO label)
+        {
+            var dblabel = mapper.Map<Label>(label);
+            if (ObjectId.TryParse(label.Id, out var dbId))
+            {
+                dblabel.Id = dbId;
+                await labelRepository.Update(dblabel);
+            }
+        }
+        public async Task Delete(string id)
+        {
+            if(ObjectId.TryParse(id, out var dbId))
+            {
+                await labelRepository.Delete(dbId);
+            }
+        }
+        public async Task<LabelDTO> GetById(string id)
+        {
+            if(ObjectId.TryParse(id, out var labelId))
+            {
+                var label =  await labelRepository.GetLabelById(labelId);
+                var labelDTO = mapper.Map<LabelDTO>(label);
+                return labelDTO;
+            }
+            throw new Exception();
         }
     }
 }

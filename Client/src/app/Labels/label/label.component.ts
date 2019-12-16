@@ -24,14 +24,24 @@ export class LabelComponent implements OnInit {
   constructor() { }
 
   @Output() updateLabel = new EventEmitter<Label>();
+  @Output() deleteLabel = new EventEmitter<string>();
   @Input() label: Label;
 
   update = false;
-  changeIcon() {
+
+  ChangeIcon() {
     this.update = !this.update;
   }
-  changeColor(id) {
-    this.label.color = id;
+  Delete() {
+    this.deleteLabel.emit(this.label.id);
+  }
+  ChangeName() {
+    this.updateLabel.emit(this.label);
+  }
+  ChangeColor(color) {
+    this.label.color = color;
+    this.updateLabel.emit(this.label);
+    this.update = false;
  }
   ngOnInit() {
   }

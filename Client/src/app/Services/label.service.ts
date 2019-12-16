@@ -21,4 +21,13 @@ export class LabelService {
   public GetUserLabels() {
     return this.httpClient.get<Label[]>(`${environment.nootsAPI + '/api/labels'}`, this.httpOptions);
   }
+  public Update(label: Label) {
+    return this.httpClient.put(`${environment.nootsAPI + '/api/labels'}`, label, this.httpOptions);
+  }
+  public Delete(id: string) {
+    return this.httpClient.delete(`${environment.nootsAPI + `/api/labels/${id}`}`, this.httpOptions);
+  }
+  public GetById(id: string) {
+    return this.httpClient.get<Label>(`${environment.nootsAPI + `/api/labels/${id}`}`, this.httpOptions);
+  }
 }

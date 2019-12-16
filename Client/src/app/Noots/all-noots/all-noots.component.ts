@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NootsService } from 'src/app/Services/noots.service';
 import { Noot } from 'src/app/Models/Noots/Noot';
 import { takeUntil } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   templateUrl: './all-noots.component.html',
   styleUrls: ['./all-noots.component.sass']
 })
-export class AllNootsComponent implements OnInit {
+export class AllNootsComponent implements OnInit, OnDestroy {
 
   noots: Noot[];
   unsubscribe = new Subject();
@@ -24,6 +24,11 @@ export class AllNootsComponent implements OnInit {
   }
   OpenNoot(id: string) {
     this.router.navigate(['/noots', id]);
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.unsubscribe();
   }
 }
 

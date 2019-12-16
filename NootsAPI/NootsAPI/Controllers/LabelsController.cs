@@ -23,10 +23,11 @@ namespace NootsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<string> Add(NewLabel newLabel)
+        public async Task<JsonResult> Add(NewLabel newLabel)
         {
             var currentUserEmail = this.GetUserEmail();
-            return await labelService.Add(newLabel, currentUserEmail);
+            var id =  await labelService.Add(newLabel, currentUserEmail);
+            return new JsonResult(id);
         }
 
         [HttpGet]
@@ -34,6 +35,23 @@ namespace NootsAPI.Controllers
         {
             var currentUserEmail = this.GetUserEmail();
             return await labelService.GetLabelsByUserId(currentUserEmail);
+        }
+        [HttpPut]
+        public async Task Update(LabelDTO label)
+        {
+            await labelService.Update(label);
+        
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(string id)
+        {
+            await labelService.Delete(id);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<LabelDTO> GetById(string id)
+        {
+            return await labelService.GetById(id);
         }
     }
 }

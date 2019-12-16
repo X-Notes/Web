@@ -32,6 +32,6 @@ namespace NootsAPI.Controllers
         public async Task<MongoNoot> GetFullNoot(string id)
         {
             return await nootService.GetFullNoot(id);
-        } 
+        }
     }
 }

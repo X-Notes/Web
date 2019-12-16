@@ -1,4 +1,4 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnInit, NgModule, OnDestroy } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LabelService } from 'src/app/Services/label.service';
@@ -10,21 +10,56 @@ import { NewLabel } from 'src/app/Models/Labels/NewLabel';
 @NgModule({
   imports: [BrowserAnimationsModule, BrowserModule]
 })
-
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',
   styleUrls: ['./labels.component.sass']
 })
-export class LabelsComponent implements OnInit {
-
+export class LabelsComponent implements OnInit, OnDestroy {
   labels: Label[];
   unsubscribe = new Subject();
-  constructor(private labelService: LabelService) { }
+  constructor(private labelService: LabelService) {}
 
-  ngOnInit() {
-    this.labelService.GetUserLabels().pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => this.labels = x, error => console.log(error));
+  Create() {
+    const newLabel: NewLabel = {
+      name : '',
+      color: '#FFCDCD'
+    };
+    this.labelService.CreateLabel(newLabel).pipe(takeUntil(this.unsubscribe))
+    .subscribe(x =>
+      this.labelService.GetById(x).pipe(takeUntil(this.unsubscribe))
+      .subscribe(g => this.labels.unshift(g), error => console.log(error))
+      , error => console.log( error));
   }
-
+  Update(label: Label) {
+    this.labelService
+      .Update(label)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        x => x,
+        error => console.log(error)
+      );
+  }
+  Delete(id: string) {
+    this.labelService
+      .Delete(id)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        x => (this.labels = this.labels.filter(g => g.id !== id)),
+        error => console.log(error)
+      );
+  }
+  ngOnInit() {
+    this.labelService
+      .GetUserLabels()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        x => (this.labels = x),
+        error => console.log(error)
+      );
+  }
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.unsubscribe();
+  }
 }

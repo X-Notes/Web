@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using Shared.DTO.Label;
 using Shared.Mongo;
 using System;
@@ -16,6 +17,8 @@ namespace Shared.MappingProfiles
                 .ForMember(x => x.Id, opt => opt.MapFrom(g => g.Id.ToString()))
                 .ForMember(x => x.Color, opt => opt.MapFrom(g => g.Color))
                 .ForMember(x => x.Name, opt => opt.MapFrom(g => g.Name));
+            CreateMap<LabelDTO, Label>()
+                .ForMember(x => x.Id, opt => opt.Ignore());
         }
     }
 }
