@@ -26,7 +26,7 @@ import { TokenIntercepter } from './Services/token-intercepter';
   declarations: [
     AppComponent,
     LandingComponent,
-    MainComponent
+    MainComponent,
   ],
   imports: [
     BrowserModule,

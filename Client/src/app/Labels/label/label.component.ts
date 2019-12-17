@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { trigger, transition, animate, style } from '@angular/animations';
+import { Label } from 'src/app/Models/Labels/Label';
 
 
 @Component({
@@ -21,42 +22,28 @@ import { trigger, transition, animate, style } from '@angular/animations';
 export class LabelComponent implements OnInit {
 
   constructor() { }
+
+  @Output() updateLabel = new EventEmitter<Label>();
+  @Output() deleteLabel = new EventEmitter<string>();
+  @Input() label: Label;
+
   update = false;
-  h1color = '#DDFFCD';
-  element;
-  changeIcon() {
+
+  ChangeIcon() {
     this.update = !this.update;
-    if (this.update === true) {
-      this.element.setAttribute('style', 'transform: rotate(180deg)');
-    } else {
-      this.element.setAttribute('style', 'transform: rotate(0deg)');
-    }
   }
-  changeColor(id) {
-    if ('firstLi' === id) {
-      this.h1color = '#FFCDCD';
-    } else if ('secondLi' === id) {
-      this.h1color = '#FFEBCD';
-    } else if ('thirdLi' === id) {
-      this.h1color = '#FFFDCD';
-    } else if ('fourthLi' === id) {
-      this.h1color = '#DDFFCD';
-    } else if ('fifthLi' === id) {
-      this.h1color = '#CDFFD8';
-    } else if ('sixLi' === id) {
-      this.h1color = '#CDFFFC';
-    } else if ('sevenLi' === id) {
-      this.h1color = '#CDEEFF';
-    } else if ('eithLi' === id) {
-      this.h1color = '#CDD5FF';
-    } else if ('nineLi' === id) {
-      this.h1color = '#EFCDFF';
-    } else if ('tenLi' === id) {
-      this.h1color = '#FFCDF4';
-    }
+  Delete() {
+    this.deleteLabel.emit(this.label.id);
+  }
+  ChangeName() {
+    this.updateLabel.emit(this.label);
+  }
+  ChangeColor(color) {
+    this.label.color = color;
+    this.updateLabel.emit(this.label);
+    this.update = false;
  }
   ngOnInit() {
-    this.element = document.getElementsByClassName('image-options')[0];
   }
 
 }

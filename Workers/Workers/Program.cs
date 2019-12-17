@@ -1,7 +1,9 @@
 ﻿using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Workers.Starting;
 
 namespace Workers
 {
@@ -9,8 +11,13 @@ namespace Workers
     {
         static async Task Main(string[] args)
         {
-            IHabr habr = new Habr();
-            await habr.GetSite();
+            RegisterServices services = new RegisterServices();
+            var provider = services.services.BuildServiceProvider();
+
+
+            var system = provider.GetService<IControlSystem>();
+            system.Run();
+            Console.ReadKey();
         }
     }
 }

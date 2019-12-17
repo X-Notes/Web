@@ -124,6 +124,8 @@
 .display-none
     display: none
 
+.display-active
+    display: block
 
 
 .wrapper
@@ -242,7 +244,7 @@ header
 input[type=text], select 
   width: 650px
   height: 40px
-  margin: 5px 0 5px 5px
+  margin: 5px 0 5px 0px
   display: inline-block
   border: 1px solid #F2F2F2
   border-radius: 8px 0px 0px 8px
@@ -322,12 +324,15 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
-    aside
-        display: none
+
+    .mobile-menu
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+         
+    .desktop-menu
+        display: none
 
 @media (min-width: 320px) and (max-width: 479px)
     .logo
@@ -350,12 +355,15 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
-    aside
-        display: none
+
+    .mobile-menu
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+         
+    .desktop-menu
+        display: none
 
 @media (min-width: 480px) and (max-width: 767px)
     .logo
@@ -378,21 +386,25 @@ input[type=text], select
         height: 27px
     .right
         width: 180px
-    aside
-        display: none
+
+    .mobile-menu
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+
+    .desktop-menu
+        display: none
+
         
 @media only screen and (min-width: 768px) and (max-width: 991px)    
     .center
         display: none
     .right
         width: 250px
-    aside
-        width: 200px  
-        height: 100%
+
+    .desktop-menu
+        display: none
                 
 @media (min-width: 992px) and  (max-width: 1199px)
     .hamburger
@@ -404,7 +416,10 @@ input[type=text], select
     input[type=text], select 
         width: 450px
 
-    aside
+    .display-active
+        display: none
+        
+    .desktop-menu
         display: block
 
 @media only screen and (min-width: 1200px)
@@ -413,8 +428,11 @@ input[type=text], select
 
     .searchMob
         display: none
-    aside
-        display: block    
 
+    .display-active
+        display: none
+
+    .desktop-menu
+        display: block 
 main
     width: 100%

@@ -11,6 +11,8 @@ import { NewNootComponent } from './new-noot/new-noot.component';
 import { SubscribeComponent } from './Subscribe-folder/subscribe/subscribe.component';
 import { AppRoutingModule } from '..//app-routing.module';
 import { NootsContainerComponent } from './noots-container/noots-container.component';
+import { FullNootComponent } from './full-noot/full-noot.component';
+import { MenuModule } from '../Menu/menu.module';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,12 @@ import { NootsContainerComponent } from './noots-container/noots-container.compo
        NewNootComponent,
        SubscribeComponent,
        NootsContainerComponent,
+       FullNootComponent,
       ],
   imports: [
     CommonModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MenuModule
   ],
   exports: [NootComponent]
 })

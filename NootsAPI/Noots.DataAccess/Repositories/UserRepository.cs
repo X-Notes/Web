@@ -3,10 +3,10 @@ using Noots.DataAccess.Context;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Noots.DataAccess.Entities;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Threading.Tasks;
+using Shared.Mongo;
 
 namespace Noots.DataAccess.Repositories
 {

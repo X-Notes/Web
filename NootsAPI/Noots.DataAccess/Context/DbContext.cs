@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using Noots.DataAccess.Entities;
+using Shared.Mongo;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +20,20 @@ namespace Noots.DataAccess.Context
             get
             {
                 return _database.GetCollection<User>("users");
+            }
+        }
+        public IMongoCollection<MongoNoot> Noots
+        {
+            get
+            {
+                return _database.GetCollection<MongoNoot>("noots");
+            }
+        }
+        public IMongoCollection<Label> Labels
+        {
+            get
+            {
+                return _database.GetCollection<Label>("labels");
             }
         }
     }

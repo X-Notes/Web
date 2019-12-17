@@ -4,13 +4,13 @@
             <p>Labels</p>
         </div>
         <div class="header-new-label">
-            <img src="assets/plusLabel.svg" class="size-image-plus">
-            <p class="margin-add">Add new label</p>
+            <div (click)="Create()">
+                <img src="assets/plusLabel.svg" class="size-image-plus">
+                <p class="margin-add">Add new label</p>
+            </div>
         </div>
         <div class="many-label">
-            <app-label></app-label>
-            <app-label></app-label>
-            <app-label></app-label>
+            <app-label *ngFor="let label of labels" (deleteLabel)="Delete($event)" (updateLabel)="Update($event)" [label]="label"></app-label>
         </div>
     </div>
 </div>

@@ -16,7 +16,7 @@ using Noots.BusinessLogic.Services;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
 using AutoMapper;
-using Noots.Domain.MappingProfiles;
+using Shared.MappingProfiles;
 
 namespace NootsAPI
 {
@@ -53,11 +53,10 @@ namespace NootsAPI
             //services.AddFirebaseAuthentication(Configuration["FirebaseOptions:Issuer"], Configuration["FirebaseOptions:Audience"]);
             services.AddSiteAuthentications(Configuration);
 
-            //Repositories
-            services.AddTransient<IUserRepository, UserRepository>(x=> new UserRepository(connection, database));
+            services.ElasticService(Configuration);
+            services.BusinessServices(Configuration);
+            services.DatabaseServices(Configuration);
 
-            // Services
-            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,13 +67,15 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRouting();
+            app.UseCors("MyPolicy");
+
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseCors("MyPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
