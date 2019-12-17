@@ -72,11 +72,13 @@ export class MainComponent implements OnInit {
   }
   DropMenu() {
     this.activeMenu = !this.activeMenu;
-    const menu = document.getElementsByClassName('mobile-menu')[0] as HTMLElement;
+    const menu = document.getElementById('mobile-menu') as HTMLElement;
     if (this.activeMenu === true) {
-      menu.style.display = 'block';
+      menu.classList.remove('display-none');
+      menu.classList.add('display-active');
     } else {
-      menu.style.display = 'none';
+      menu.classList.remove('display-active');
+      menu.classList.add('display-none');
     }
   }
 

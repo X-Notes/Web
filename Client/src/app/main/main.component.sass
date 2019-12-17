@@ -124,6 +124,8 @@
 .display-none
     display: none
 
+.display-active
+    display: block
 
 
 .wrapper
@@ -324,7 +326,6 @@ input[type=text], select
         min-width: 170px
 
     .mobile-menu
-        display: none
         z-index: 9999
         position: fixed
         width: 200px  
@@ -356,7 +357,6 @@ input[type=text], select
         min-width: 170px
 
     .mobile-menu
-        display: none
         z-index: 9999
         position: fixed
         width: 200px  
@@ -388,7 +388,6 @@ input[type=text], select
         width: 180px
 
     .mobile-menu
-        display: none
         z-index: 9999
         position: fixed
         width: 200px  
@@ -404,9 +403,6 @@ input[type=text], select
     .right
         width: 250px
 
-    .mobile-menu
-        display: none
-
     .desktop-menu
         display: none
                 
@@ -420,8 +416,9 @@ input[type=text], select
     input[type=text], select 
         width: 450px
 
-    .mobile-menu
-        display: none  
+    .display-active
+        display: none
+        
     .desktop-menu
         display: block
 
@@ -432,9 +429,10 @@ input[type=text], select
     .searchMob
         display: none
 
-    .mobile-menu
-        display: none  
+    .display-active
+        display: none
+
     .desktop-menu
-        display: block
+        display: block 
 main
     width: 100%

@@ -182,7 +182,7 @@
             </li>
         </ul>
     </aside>
-    <aside class="mobile-menu">
+    <aside id="mobile-menu" class="display-none mobile-menu">
         <ul class="side-bar">
             <li [ngClass]="{'active': isCurrentRouteRight('noot')}">
                 <div (click)="changeRoute('noots')" routerLink="/noots/all">
