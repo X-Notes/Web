@@ -59,15 +59,15 @@
                             </div>
                         </li>
                         <li>
-                            <div  routerLink="/noots/all" [ngClass]="{'active-menu': isCurrentRouteRight('noots/all')}">
+                            <div  routerLink="/noots/all" [ngClass]="{'active-menu': isCurrentRouteRight('noots/all')}" [@slide]>
                                 <img class="dot" [src]= "isCurrentRouteRight('noots/all') ? Colorfulldot : dot" />
-                                <span>All noots</span>
+                                <span [@slide]>All noots</span>
                             </div>
                         </li>
                         <li>
-                            <div routerLink="/noots/my" [ngClass]="{'active-menu': isCurrentRouteRight('noots/my')}">
+                            <div routerLink="/noots/my" [ngClass]="{'active-menu': isCurrentRouteRight('noots/my')}" >
                                 <img class="dot" [src]= "isCurrentRouteRight('noots/my') ? Colorfulldot : dot" />
-                                <span>My noots</span>
+                                <span [@slide]>My noots</span>
                             </div>
                         </li>
                         <li>
