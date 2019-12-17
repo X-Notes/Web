@@ -322,12 +322,16 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
-    aside
+
+    .mobile-menu
         display: none
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+         
+    .desktop-menu
+        display: none
 
 @media (min-width: 320px) and (max-width: 479px)
     .logo
@@ -350,12 +354,16 @@ input[type=text], select
         width: 180px
     .left
         min-width: 170px
-    aside
+
+    .mobile-menu
         display: none
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+         
+    .desktop-menu
+        display: none
 
 @media (min-width: 480px) and (max-width: 767px)
     .logo
@@ -378,21 +386,29 @@ input[type=text], select
         height: 27px
     .right
         width: 180px
-    aside
+
+    .mobile-menu
         display: none
         z-index: 9999
         position: fixed
         width: 200px  
         height: 100%
+
+    .desktop-menu
+        display: none
+
         
 @media only screen and (min-width: 768px) and (max-width: 991px)    
     .center
         display: none
     .right
         width: 250px
-    aside
-        width: 200px  
-        height: 100%
+
+    .mobile-menu
+        display: none
+
+    .desktop-menu
+        display: none
                 
 @media (min-width: 992px) and  (max-width: 1199px)
     .hamburger
@@ -404,7 +420,9 @@ input[type=text], select
     input[type=text], select 
         width: 450px
 
-    aside
+    .mobile-menu
+        display: none  
+    .desktop-menu
         display: block
 
 @media only screen and (min-width: 1200px)
@@ -413,8 +431,10 @@ input[type=text], select
 
     .searchMob
         display: none
-    aside
-        display: block    
 
+    .mobile-menu
+        display: none  
+    .desktop-menu
+        display: block
 main
     width: 100%
