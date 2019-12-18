@@ -1,6 +1,6 @@
 <div class="main-note">
-    <div class="highlighting-note" (click)="changeColor()" [ngStyle]="{backgroundColor: color}">
-        <img [src]="colorUpdate ? acceptWhite : acceptCommon" id="size-image-highlighting">
+    <div class="highlighting-note" (click)="CallUpper()" [ngStyle]="{backgroundColor: color}">
+        <img [src]="Update ? acceptWhite : acceptCommon" id="size-image-highlighting">
     </div>
     <div class="note-container">
         <div class="note-header">
@@ -19,7 +19,7 @@
             <div class="note-label note-plus-label">
                 <p>+{{noot.labels.length}}</p>
             </div>
-            <div class="note-options" (click)="changeColor()">
+            <div class="note-options" (click)="CallUpper()">
                 <img src="assets/options.svg">
             </div>
         </div>

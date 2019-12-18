@@ -16,21 +16,21 @@ export class NootComponent implements OnInit {
 
   acceptCommon = 'assets/highlighting/accept-common.svg';
   acceptWhite = 'assets/highlighting/accept-white.svg';
-  update = true;
-  color = '';
-  colorUpdate = false;
-  @Output() Changed = new EventEmitter<boolean>();
 
-  changeColor() {
-    this.colorUpdate = !this.colorUpdate;
-    if (this.colorUpdate === true) {
+  color = '';
+  Update = false;
+
+  @Output() AddChanged = new EventEmitter<string>();
+  @Output() RemoveChanged = new EventEmitter<string>();
+
+  CallUpper() {
+    this.Update = !this.Update;
+    if (this.Update === true) {
       this.color = 'rgba(101, 226, 113, 0.69)';
-      this.update = false;
-      this.Changed.emit(this.update);
+      this.AddChanged.emit(this.noot.id);
     } else {
-      this.update = true;
       this.color = '';
-      this.Changed.emit(this.update);
+      this.RemoveChanged.emit(this.noot.id);
     }
   }
   ngOnInit() {

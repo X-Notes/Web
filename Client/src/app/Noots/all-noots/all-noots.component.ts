@@ -39,32 +39,21 @@ export class AllNootsComponent implements OnInit, OnDestroy {
   constructor(private nootService: NootsService, private router: Router) { }
 
   update = false;
-  items = [{component: 'app-noot'},
-  {component: 'app-noot'},
-  {component: 'app-noot'},
-  {component: 'app-noot'}
-  ];
-  updateMenu = [];
-  Changed(condition: any) {
-    for (let num = 0; num < this.items.length; num++) {
-      console.log(condition, 1);
-      if (condition === false) {
-        this.update = true;
-        this.updateMenu.push({id: num});
-        console.log(this.updateMenu);
-        break;
-      }
-    }
-    console.log(condition, 2);
-    if (condition === true) {
-      this.updateMenu.pop();
-      console.log(this.updateMenu);
-      if (this.updateMenu.length === 0) {
-        this.update = false;
-        console.log(condition, 3);
-      }
+  updateMenu: string[] = [];
+
+  RemoveChanged(id: string) {
+    this.updateMenu = this.updateMenu.filter(x => x !== id);
+    if (this.updateMenu.length > 0) {
+      this.update = true;
+    } else {
+      this.update = false;
     }
   }
+  AddChanged(id: string) {
+    this.updateMenu.push(id);
+    this.update = true;
+  }
+
   ngOnInit() {
     setTimeout(() => this.nootService.GetAll().pipe(takeUntil(this.unsubscribe))
     .subscribe(x => this.noots = x

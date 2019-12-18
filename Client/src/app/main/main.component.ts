@@ -38,7 +38,7 @@ export class MainComponent implements OnInit {
   activeProfileMenu = false;
   activeMenu = false;
   unsubscribe = new Subject();
-  update = false;
+
 
   noteImage = 'assets/menu/note.svg';
   nootImage = 'assets/menu/noots.svg';
@@ -72,21 +72,16 @@ export class MainComponent implements OnInit {
   }
   DropMenu() {
     this.activeMenu = !this.activeMenu;
-
-    const menu = document.getElementsByTagName('aside')[0] as HTMLElement;
+    const menu = document.getElementById('mobile-menu') as HTMLElement;
     if (this.activeMenu === true) {
-      menu.style.display = 'block';
+      menu.classList.remove('display-none');
+      menu.classList.add('display-active');
     } else {
-      menu.style.display = 'none';
+      menu.classList.remove('display-active');
+      menu.classList.add('display-none');
     }
   }
 
-  @HostListener('window:resize', ['$event']) onresize(event) {
-    if (event.target.innerWidth < 1100 && event.target.innerWidth > 991) {
-      const menu = document.getElementsByTagName('aside')[0] as HTMLElement;
-      menu.style.display = 'block';
-    }
-  }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
