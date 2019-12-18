@@ -90,8 +90,7 @@ namespace BusinessLogic.Services
             var blocks = body.OuterHtml.Split("<br>");
        
 
-            var tags = document.GetElementsByClassName("inline-list__item inline-list__item_hub").Select(x => x.TextContent).ToList();
-            tags = tags.Select(x => x.Trim(',')).ToList();
+            var tags = document.GetElementsByClassName("inline-list__item inline-list__item_hub").Select(x => x.TextContent.Replace(",", "")).ToList();
             var time = document.GetElementsByClassName("post__time").FirstOrDefault().OuterHtml.Split('\"').Skip(3).FirstOrDefault().Trim('"');
             var user = document.GetElementsByClassName("user-info__nickname user-info__nickname_small").FirstOrDefault().InnerHtml;
 
