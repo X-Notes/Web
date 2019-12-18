@@ -21,7 +21,7 @@ import { takeUntil } from 'rxjs/operators';
     trigger('slideInOut', [
       state('out', style({ height: '*' , overflow: 'hidden'})),
       transition('* => void', [
-        style({ height: '*', overflow: 'hidden', borderRadius: '0px' }),
+        style({ height: '*', overflow: 'hidden', borderRadius: '0px', 'background-color': '#FBFBFB' }),
         animate('300ms ease-in', style({ height: '0', borderRadius: '0px' }))
       ]),
       state('in', style({ height: '0' })),

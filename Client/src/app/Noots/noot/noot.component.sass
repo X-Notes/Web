@@ -1,6 +1,7 @@
 $main-color: #EBFFEC
 $label-color: #FFFDCD
 $label-color-full: #FAFAFA
+
 div
     display: flex
 .main-note
@@ -29,14 +30,14 @@ div
             background-color: rgba(218, 218, 218, 0.69)
     .note-container
         flex-direction: column
-        width: 320px
+        width: 310px
         padding: 0 0 0 10px
         .note-header
             flex-direction: row
             justify-content: space-between
             margin-bottom: 15px
             .note-label
-                justify-content: center
+                padding: 0 7px
                 align-items: center
                 font-size: 15px
                 width: 100px
@@ -44,9 +45,32 @@ div
                 background-color: $label-color
                 border-radius: 40px
                 color: #808080
-                text-overflow: ellipsis
-                white-space: nowrap
-                overflow: hidden
+                justify-content: center
+                position: relative
+                &:hover 
+                    .tooltiptext
+                        visibility: visible
+                        box-shadow: 0px 1px 2px #00000030
+                        opacity: 1
+                .tooltiptext
+                    white-space: nowrap
+                    padding: 3px 10px
+                    font-size: 15px
+                    visibility: hidden
+                    background-color: $label-color
+                    color: #808080
+                    border-radius: 5px
+                    position: absolute
+                    z-index: 5
+                    top: -35px
+                    left: 0px
+                    transition: .3s ease-out
+                    opacity: 0
+                .note-label-paragraph
+                    overflow: hidden
+                    white-space: nowrap
+                    text-overflow: ellipsis
+                    -o-text-overflow: ellipsis
             .note-plus-label
                 width: 40px
                 background-color: $label-color-full
@@ -78,12 +102,16 @@ div
             text-align: justify
             overflow: hidden
         .note-image
+            border-radius: 10px
             justify-content: center
             margin-bottom: 15px
             -moz-user-select: none
             -webkit-user-select: none
             -ms-user-select: none
             user-select: none
+            max-height: 220px
+            .note-image-image
+                object-fit: cover
         .note-author
             font-size: 18px
             font-weight: 500
