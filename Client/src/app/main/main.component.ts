@@ -22,7 +22,7 @@ import { takeUntil } from 'rxjs/operators';
       state('out', style({ height: '*' , overflow: 'hidden'})),
       transition('* => void', [
         style({ height: '*', overflow: 'hidden', borderRadius: '0px', 'background-color': '#FBFBFB' }),
-        animate('3000ms ease-in', style({ height: '0', borderRadius: '0px' }))
+        animate('300ms ease-in', style({ height: '0', borderRadius: '0px' }))
       ]),
       state('in', style({ height: '0' })),
       transition('void => *', [
