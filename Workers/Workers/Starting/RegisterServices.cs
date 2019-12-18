@@ -2,7 +2,6 @@
 using BusinessLogic.Services;
 using DataAccess.Interfaces;
 using DataAccess.Services;
-using Domain.Elastic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
