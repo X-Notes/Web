@@ -164,8 +164,9 @@ namespace BusinessLogic.Services
 
                 if (articles.Count() < 19)
                 {
-                    while (articles.Count() < 19)
+                    while (articles.Count() < 15)
                     {
+                        Console.WriteLine("1");
                         Thread.Sleep(100);
                         document = await context.OpenAsync(adress);
                         articles =  document.GetElementsByClassName("post__title_link");
