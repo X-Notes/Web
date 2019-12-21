@@ -13,7 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class FullNootComponent implements OnInit {
 
   html;
-  private fullNoot: FullNoot = {
+  fullNoot: FullNoot = {
     title: '',
     labels: [],
     id: '',
