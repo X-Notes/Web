@@ -5,11 +5,11 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY NootsAPI/ source/
+COPY NootsAPI/ NootsAPI/
 COPY Shared/ Shared/
-WORKDIR source
+WORKDIR NootsAPI/NootsAPI
 RUN dotnet publish -c Release -o output
 
 FROM base AS final
-COPY --from=build /src/source/NootsAPI/output .
+COPY --from=build /src/NootsAPI/NootsAPI/output .
 ENTRYPOINT ["dotnet", "NootsAPI.dll"]
