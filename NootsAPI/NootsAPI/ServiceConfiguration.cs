@@ -76,6 +76,14 @@ namespace NootsAPI
 
             services.AddScoped<IMessageQueue, MessageQueue>();
 
+            services.AddScoped<IMessageProducer, MessageProducer>();
+            services.AddScoped<IMessageProducerScope, MessageProducerScope>();
+            services.AddScoped<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
+
+            services.AddScoped<IMessageConsumer, MessageConsumer>();
+            services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
+            services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
+
             services.AddScoped<IConnectionFactory>(x => new ConnectionFactory()
             {
                 Uri = new Uri(configuration["Rabbit"]),
@@ -85,14 +93,6 @@ namespace NootsAPI
                 TopologyRecoveryEnabled = true,
                 RequestedHeartbeat = 60
             });
-
-            services.AddScoped<IMessageProducer, MessageProducer>();
-            services.AddScoped<IMessageProducerScope, MessageProducerScope>();
-            services.AddScoped<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
-
-            services.AddScoped<IMessageConsumer, MessageConsumer>();
-            services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
-            services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
         }
      }
 }

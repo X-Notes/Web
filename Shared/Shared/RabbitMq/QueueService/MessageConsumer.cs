@@ -19,7 +19,7 @@ namespace Shared.RabbitMq.QueueService
 
             remove => _consumer.Received -= value;
         }
-        public MessageConsumer(MessageConsumerSettings settings)
+        public MessageConsumer(MessageConsumerSettings settings = null)
         {
             _settings = settings;
             _consumer = new EventingBasicConsumer(_settings.Channel);

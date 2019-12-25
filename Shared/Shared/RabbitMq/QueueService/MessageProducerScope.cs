@@ -15,7 +15,7 @@ namespace Shared.RabbitMq.QueueService
         private readonly MessageScopeSettings _messageScopeSettings;
         private readonly IConnectionFactory _connectionFactory;
 
-        public MessageProducerScope(IConnectionFactory connectionFactory, MessageScopeSettings messageScopeSettings)
+        public MessageProducerScope(IConnectionFactory connectionFactory, MessageScopeSettings messageScopeSettings = null)
         {
             _connectionFactory = connectionFactory;
             _messageScopeSettings = messageScopeSettings;

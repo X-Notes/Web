@@ -66,7 +66,7 @@ namespace NootsAPI.Controllers
         [HttpGet("update")]
         public void GetUpdate()
         {
-            this.queueService.PostValue("Get");
+           this.queueService.PostValue("Get");
         }
     }
 }

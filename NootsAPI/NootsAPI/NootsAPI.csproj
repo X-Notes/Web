@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
     <ProjectReference Include="..\Noots.BusinessLogic\Noots.BusinessLogic.csproj" />
     <ProjectReference Include="..\Noots.DataAccess\Noots.DataAccess.csproj" />
   </ItemGroup>

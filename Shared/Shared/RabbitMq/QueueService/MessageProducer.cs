@@ -12,7 +12,7 @@ namespace Shared.RabbitMq.QueueService
         private readonly MessageProducerSettings _messageProducerSettings;
         private readonly IBasicProperties _properties;
 
-        public MessageProducer(MessageProducerSettings messageProducerSettings)
+        public MessageProducer(MessageProducerSettings messageProducerSettings = null)
         {
             _messageProducerSettings = messageProducerSettings;
 
