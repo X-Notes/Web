@@ -7,7 +7,10 @@ using DataAccess.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
+using RabbitMQ.Client;
 using Shared.Elastic;
+using Shared.RabbitMq.QueueInterfaces;
+using Shared.RabbitMq.QueueService;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,6 +47,30 @@ namespace Workers.Starting
 
             services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
             services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
+        }
+        public static void RabbitMQServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IQueueService, QueueService>();
+
+            services.AddScoped<IMessageQueue, MessageQueue>();
+
+            services.AddScoped<IMessageProducer, MessageProducer>();
+            services.AddScoped<IMessageProducerScope, MessageProducerScope>();
+            services.AddScoped<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
+
+            services.AddScoped<IMessageConsumer, MessageConsumer>();
+            services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
+            services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
+
+            services.AddScoped<IConnectionFactory>(x => new ConnectionFactory()
+            {
+                Uri = new Uri(configuration["Rabbit"]),
+                RequestedConnectionTimeout = 30000,
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
+                AutomaticRecoveryEnabled = true,
+                TopologyRecoveryEnabled = true,
+                RequestedHeartbeat = 60
+            });
         }
     }
 }

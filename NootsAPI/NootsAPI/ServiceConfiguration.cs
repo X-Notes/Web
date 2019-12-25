@@ -8,7 +8,10 @@ using Noots.BusinessLogic.Services;
 using Noots.DataAccess.Elastic;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
+using RabbitMQ.Client;
 using Shared.Elastic;
+using Shared.RabbitMq.QueueInterfaces;
+using Shared.RabbitMq.QueueService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,5 +70,29 @@ namespace NootsAPI
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
             services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
         }
-    }
+        public static void RabbitMQService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IQueueService, QueueService>();
+
+            services.AddScoped<IMessageQueue, MessageQueue>();
+
+            services.AddScoped<IConnectionFactory>(x => new ConnectionFactory()
+            {
+                Uri = new Uri(configuration["Rabbit"]),
+                RequestedConnectionTimeout = 30000,
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
+                AutomaticRecoveryEnabled = true,
+                TopologyRecoveryEnabled = true,
+                RequestedHeartbeat = 60
+            });
+
+            services.AddScoped<IMessageProducer, MessageProducer>();
+            services.AddScoped<IMessageProducerScope, MessageProducerScope>();
+            services.AddScoped<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
+
+            services.AddScoped<IMessageConsumer, MessageConsumer>();
+            services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
+            services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
+        }
+     }
 }

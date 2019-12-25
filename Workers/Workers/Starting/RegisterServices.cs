@@ -30,6 +30,7 @@ namespace Workers.Starting
             services.ElasticService(Configuration);
             services.BusinessServices(Configuration);
             services.DatabaseServices(Configuration);
+            services.RabbitMQServices(Configuration);
 
             services.AddHttpClient<IDownloadImagesService, DownloadImagesService>();
 

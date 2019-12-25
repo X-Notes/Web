@@ -17,10 +17,12 @@ namespace NootsAPI.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        IUserService userService;
-        public UserController(IUserService userService)
+        private readonly IUserService userService;
+        private readonly IQueueService queueService;
+        public UserController(IUserService userService, IQueueService queueService)
         {
             this.userService = userService;
+            this.queueService = queueService;
         }
         // GET: api/<controller>
         [HttpGet]
@@ -59,6 +61,12 @@ namespace NootsAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpGet("update")]
+        public void GetUpdate()
+        {
+            this.queueService.PostValue("Get");
         }
     }
 }

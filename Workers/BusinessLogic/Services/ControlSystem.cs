@@ -11,10 +11,12 @@ namespace BusinessLogic.Services
     {
         IHabr habr;
         IElasticSearch ElasticSearch;
-        public ControlSystem(IHabr habr, IElasticSearch ElasticSearch)
+        IQueueService QueueService;
+        public ControlSystem(IHabr habr, IElasticSearch ElasticSearch, IQueueService QueueService)
         {
             this.habr = habr;
             this.ElasticSearch = ElasticSearch;
+            this.QueueService = QueueService;
         }
         public async Task Run()
         {

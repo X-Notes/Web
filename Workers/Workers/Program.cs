@@ -16,7 +16,7 @@ namespace Workers
 
 
             var system = provider.GetService<IControlSystem>();
-            system.Run();
+            await system.Run();
             Console.ReadKey();
         }
     }

@@ -56,7 +56,7 @@ namespace NootsAPI
             services.ElasticService(Configuration);
             services.BusinessServices(Configuration);
             services.DatabaseServices(Configuration);
-
+            services.RabbitMQService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
