@@ -26,3 +26,23 @@ services:
     container_name: "mongodb"
     ports:
         - 27017:27017
+
+  noots-web:
+    image: davydq/noots-web
+    container_name: 'noots-web'
+    ports:
+      - "80:80"
+
+  noots-api:
+    image: davydq/noots-api
+    container_name: 'noots-api'
+    ports:
+      - "5000:80"
+    environment: 
+      Mongo:client:HostName: "mongodb"
+
+  worker:
+    image: davydq/worker
+    container_name: 'worker'
+    environment:
+      Rabbit: "amqp://guest:guest@localhost:5672"

@@ -17,6 +17,7 @@ using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
 using AutoMapper;
 using Shared.MappingProfiles;
+using Microsoft.OpenApi.Models;
 
 namespace NootsAPI
 {
@@ -44,7 +45,13 @@ namespace NootsAPI
             var database = Configuration["Mongo:database"];
 
 
+
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
 
             //Mapper
             services.AddAutoMapper(typeof(UserProfile).Assembly);
@@ -66,6 +73,16 @@ namespace NootsAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
 
             app.UseRouting();
             app.UseCors("MyPolicy");
