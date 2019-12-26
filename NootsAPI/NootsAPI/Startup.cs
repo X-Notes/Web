@@ -74,6 +74,13 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json") 
+                .AddEnvironmentVariables() 
+                .Build();
+
+
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),

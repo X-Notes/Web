@@ -31,7 +31,11 @@
     <ProjectReference Include="..\Noots.BusinessLogic\Noots.BusinessLogic.csproj" />
     <ProjectReference Include="..\Noots.DataAccess\Noots.DataAccess.csproj" />
   </ItemGroup>
-
+<ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
