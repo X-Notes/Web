@@ -74,13 +74,11 @@ namespace NootsAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            var configuration = new ConfigurationBuilder()
+            var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json") 
-                .AddEnvironmentVariables() 
-                .Build();
-
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", reloadOnChange: true, optional: true)
+                .AddEnvironmentVariables();
 
             app.UseSwagger();
 
