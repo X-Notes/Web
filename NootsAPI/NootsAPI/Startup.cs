@@ -75,6 +75,7 @@ namespace NootsAPI
             }
 
             var configuration = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json") 
                 .AddEnvironmentVariables() 
