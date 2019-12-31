@@ -32,6 +32,8 @@ namespace Workers.Starting
             string defaultIndex = configuration["elasticsearch:index"];
             Uri uri = new Uri(url);
 
+            Console.WriteLine(url);
+
             NestConnectionSettings settings = new NestConnectionSettings(uri)
                 .DefaultIndex(defaultIndex)
                 .DefaultMappingFor<ElasticNoot>(m => m.IdProperty(p => p.Id));
@@ -42,8 +44,10 @@ namespace Workers.Starting
         public static void DatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
 
-            var connection = configuration["Mongo:client"];
-            var database = configuration["Mongo:database"];
+            var host = configuration["Mongo:Host"];
+            var port = configuration["Mongo:Port"];
+            var database = configuration["Mongo:Database"];
+            var connection = $@"mongodb://{host}:{port}";
 
             services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
             services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
@@ -62,9 +66,14 @@ namespace Workers.Starting
             services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
             services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
 
+            Console.WriteLine(configuration["Rabbit"]);
+
             services.AddScoped<IConnectionFactory>(x => new ConnectionFactory()
             {
-                Uri = new Uri(configuration["Rabbit"]),
+                HostName = configuration["Rabbit"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
                 RequestedConnectionTimeout = 30000,
                 NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
                 AutomaticRecoveryEnabled = true,

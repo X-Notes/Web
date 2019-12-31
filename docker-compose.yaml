@@ -17,15 +17,21 @@ services:
     container_name: 'elasticsearch'
     restart: always
     environment:
-      discovery.type: single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     expose:
       - "9200"
-    
+
   mongodb:
-    image: mongo:latest
-    container_name: "mongodb"
+    image: mongo
+    restart: always
     ports:
-        - 27017:27017
+      - 27017:27017
 
   noots-web:
     image: davydq/noots-web
@@ -38,11 +44,17 @@ services:
     container_name: 'noots-api'
     ports:
       - "5000:80"
+    depends_on:
+      - mongodb
     environment: 
-      Mongo:client:HostName: "mongodb"
-
+      Rabbit: "rabbitmq"
+      Mongo:Host: "mongodb"
+      
   worker:
     image: davydq/worker
     container_name: 'worker'
-    environment:
-      Rabbit: "amqp://guest:guest@localhost:5672"
+    depends_on:
+      - mongodb
+    environment: 
+      Rabbit: "rabbitmq"
+      Mongo:Host: "mongodb"
