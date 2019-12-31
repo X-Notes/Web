@@ -74,11 +74,11 @@ namespace Workers.Starting
                 UserName = "guest",
                 Password = "guest",
                 VirtualHost = "/",
-                RequestedConnectionTimeout = 30000,
-                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
-                AutomaticRecoveryEnabled = true,
-                TopologyRecoveryEnabled = true,
-                RequestedHeartbeat = 60
+                //RequestedConnectionTimeout = 30000,
+                //NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
+                //AutomaticRecoveryEnabled = true,
+                //TopologyRecoveryEnabled = true,
+                //RequestedHeartbeat = 60
             });
         }
     }
