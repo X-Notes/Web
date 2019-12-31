@@ -19,6 +19,9 @@ export class UserService {
   public Get() {
     return this.httpClient.get<User>(`${environment.nootsAPI + '/api/user'}`);
   }
+  public GetUpdates() {
+    return this.httpClient.get(`${environment.nootsAPI + '/api/user/update'}`);
+  }
   public CreateUser(user: User) {
     return this.httpClient.post<User>(`${environment.nootsAPI + '/api/user'}`, user, this.httpOptions);
   }

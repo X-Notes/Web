@@ -16,6 +16,7 @@ namespace Noots.DataAccess.Repositories
 
         public UserRepository(string connection,string database)
         {
+            Console.WriteLine(connection);
             _context = new DbContext(connection,database);
         }
 

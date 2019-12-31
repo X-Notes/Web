@@ -4,7 +4,7 @@ import { InvitesComponent } from './Invites/invites/invites.component';
 import { PeopleComponent } from './People/people/people.component';
 import { LabelsComponent } from './Labels/labels/labels.component';
 import { GroupsComponent } from './Groups/groups/groups.component';
-import { BinComponent } from './Bin/bin/bin.component';
+import { TrashComponent } from './Trash/trash/trash.component';
 import {LandingComponent} from './landing/landing.component';
 import {MyNootsComponent} from './Noots/my-noots/my-noots.component';
 import {SavedComponent} from './Noots/saved/saved.component';
@@ -43,7 +43,7 @@ const ChildNotesRoutes: Routes = [
   { path: 'new', component: NewNoteComponent}
 ];
 
-const Routes: Routes =
+const RoutesMain: Routes =
 [
   {path: 'noots', component: NootsContainerComponent, children: ChildNootsRoutes, canActivate: [AuthGuard]},
   {path: 'notes', component: NotesContainerComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
@@ -51,13 +51,13 @@ const Routes: Routes =
   {path: 'groups', component: GroupsComponent, canActivate: [AuthGuard]},
   {path: 'invites', component: InvitesComponent, canActivate: [AuthGuard]},
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
-   {path: 'bin', component: BinComponent, canActivate: [AuthGuard]}
+   {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]}
 ];
 
 const routes: Routes = [
 
   {path: 'about', component: LandingComponent},
-  {path: '', component: MainComponent, children: Routes, canActivate: [AuthGuard]  },
+  {path: '', component: MainComponent, children: RoutesMain, canActivate: [AuthGuard]  },
   { path: '**', redirectTo: '/about'}
 ];
 

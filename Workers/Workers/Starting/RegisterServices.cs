@@ -2,7 +2,6 @@
 using BusinessLogic.Services;
 using DataAccess.Interfaces;
 using DataAccess.Services;
-using Domain.Elastic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -31,6 +30,7 @@ namespace Workers.Starting
             services.ElasticService(Configuration);
             services.BusinessServices(Configuration);
             services.DatabaseServices(Configuration);
+            services.RabbitMQServices(Configuration);
 
             services.AddHttpClient<IDownloadImagesService, DownloadImagesService>();
 

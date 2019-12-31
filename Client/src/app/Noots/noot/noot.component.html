@@ -4,16 +4,11 @@
     </div>
     <div class="note-container">
         <div class="note-header">
-            <div class="note-label">
-                <p class="check note-label-paragraph">{{noot.labels[0]}}</p>
+
+            <div *ngFor="let item of noot.labels | slice:0:2"class="note-label">
+                <p class="check note-label-paragraph">{{item}}</p>
                 <div class="tooltiptext">
-                    <span>{{noot.labels[0]}}</span>
-                </div>
-            </div>
-            <div class="note-label">
-                <p class="check note-label-paragraph">{{noot.labels[1]}}</p>
-                <div class="tooltiptext">
-                    <span>{{noot.labels[1]}}</span>
+                    <span>{{item}}</span>
                 </div>
             </div>
             <div class="note-label note-plus-label">

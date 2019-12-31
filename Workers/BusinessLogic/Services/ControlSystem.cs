@@ -11,15 +11,18 @@ namespace BusinessLogic.Services
     {
         IHabr habr;
         IElasticSearch ElasticSearch;
-        public ControlSystem(IHabr habr, IElasticSearch ElasticSearch)
+        IQueueService QueueService;
+        public ControlSystem(IHabr habr, IElasticSearch ElasticSearch, IQueueService QueueService)
         {
             this.habr = habr;
             this.ElasticSearch = ElasticSearch;
+            this.QueueService = QueueService;
         }
         public async Task Run()
         {
-            var pages = await habr.ParseMainPages(5);
-            await habr.ParseConcretePages(pages);
+            Console.WriteLine(5);
+            //var pages = await habr.ParseMainPages(1);
+            //await habr.ParseConcretePages(pages);
         }
     }
 }

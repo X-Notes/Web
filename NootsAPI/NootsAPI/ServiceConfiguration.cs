@@ -8,7 +8,10 @@ using Noots.BusinessLogic.Services;
 using Noots.DataAccess.Elastic;
 using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
+using RabbitMQ.Client;
 using Shared.Elastic;
+using Shared.RabbitMq.QueueInterfaces;
+using Shared.RabbitMq.QueueService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +44,10 @@ namespace NootsAPI
         public static void DatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
 
-            var connection = configuration["Mongo:client"];
-            var database = configuration["Mongo:database"];
+            var host = configuration["Mongo:Host"];
+            var port = configuration["Mongo:Port"];
+            var database = configuration["Mongo:Database"];
+            var connection = $@"mongodb://{host}:{port}";
 
             services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
             services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
@@ -67,5 +72,32 @@ namespace NootsAPI
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
             services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
         }
-    }
+        public static void RabbitMQService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IQueueService, QueueService>();
+
+            services.AddScoped<IMessageQueue, MessageQueue>();
+
+            services.AddScoped<IMessageProducer, MessageProducer>();
+            services.AddScoped<IMessageProducerScope, MessageProducerScope>();
+            services.AddScoped<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
+
+            services.AddScoped<IMessageConsumer, MessageConsumer>();
+            services.AddScoped<IMessageConsumerScope, MessageConsumerScope>();
+            services.AddScoped<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
+
+            services.AddScoped<IConnectionFactory>(x => new ConnectionFactory()
+            {
+                HostName = configuration["Rabbit"],
+                UserName = "guest",
+                Password = "guest",
+                VirtualHost = "/",
+                //RequestedConnectionTimeout = 30000,
+                //NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
+                //AutomaticRecoveryEnabled = true,
+                //TopologyRecoveryEnabled = true,
+                //RequestedHeartbeat = 60
+            });
+        }
+     }
 }

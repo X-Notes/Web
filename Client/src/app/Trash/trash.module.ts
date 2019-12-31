@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {BinComponent} from './bin/bin.component';
+import {TrashComponent} from './trash/trash.component';
 
 
 @NgModule({
-  declarations: [BinComponent],
+  declarations: [TrashComponent],
   imports: [
     CommonModule
   ],
-  exports: [BinComponent]
+  exports: [TrashComponent]
 })
 export class BinModule { }
