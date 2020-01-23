@@ -49,6 +49,7 @@ export class MainComponent implements OnInit {
   invitesImage = 'assets/menu/invites.svg';
   dot = 'assets/under-menu/dot.svg';
   subscribes = 'assets/under-menu/subscribes.svg';
+  container = 'assets/menu/container.svg';
 
   ColorSubscribes = 'assets/colorfull-menu/subscribes.svg';
   Colorfulldot = 'assets/under-menu/colorful-dot.svg';
@@ -59,6 +60,7 @@ export class MainComponent implements OnInit {
   ColorgroupImage = 'assets/colorfull-menu/groups.svg';
   ColorbinImage = 'assets/colorfull-menu/bin.svg';
   ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
+  ColorContainer = 'assets/colorfull-menu/container.svg';
 
   constructor(private router: Router, private authService: AuthService, private userService: UserService) {
 
