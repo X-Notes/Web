@@ -9,7 +9,7 @@ div
     flex-direction: row
     background-color: $main-color
     width: 360px
-    padding: 0 20px 0 0
+    padding: 0 25px 0 0
     border-radius: 25px
     margin-top: 40px
     margin-bottom: 5px
@@ -113,6 +113,27 @@ div
             max-height: 220px
             .note-image-image
                 object-fit: cover
+        .note-docs
+            align-items: center
+            justify-content: space-between
+            margin-bottom: 15px
+            svg
+                width: 26px
+                height: 28px
+            .note-docs-field
+                width: calc(100% - 36px)
+                height: 28px
+                padding: 0 5px
+                align-items: center
+                background-color: white
+                border-radius: 5px
+                .docs-name
+                    font-weight: 400
+                    font-size: 16px
+                    overflow: hidden
+                    white-space: nowrap
+                    text-overflow: ellipsis
+                    -o-text-overflow: ellipsis
         .note-author
             font-size: 18px
             font-weight: 500
@@ -121,18 +142,17 @@ div
         .note-info
             color: #C4C4C4
             align-items: center
-            justify-content: flex-start
+            justify-content: space-between
             margin-bottom: 15px
             .note-date
                 font-size: 16px
-            .note-info-line
-                height: 15px
-                border-width: 0 1px 0 0
-                border-style: solid
-                margin-left: 10px
-                margin-right: 10px
-            .note-time-read
-                font-size: 14px
+            .note-help-icons
+                svg
+                    margin: 0 0 0 15px
+                    fill:#C4C4C4
+                    transition: .2s ease-in-out
+                    &:hover
+                        fill: #888888
 
 @media only screen and (min-width: 1200px)
 
@@ -159,10 +179,6 @@ div
                 margin-bottom: 12px
                 .note-date
                     font-size: 15px
-                .note-info-line
-                    height: 14px
-                .note-time-read
-                    font-size: 13px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
     .main-note
@@ -189,10 +205,6 @@ div
                 margin-bottom: 12px
                 .note-date
                     font-size: 14px
-                .note-info-line
-                    height: 13px
-                .note-time-read
-                    font-size: 12px
     
 @media (min-width: 480px) and (max-width: 767px) //large phone
     .main-note
@@ -219,10 +231,6 @@ div
                 margin-bottom: 10px
                 .note-date
                     font-size: 14px
-                .note-info-line
-                    height: 13px
-                .note-time-read
-                    font-size: 12px
 
 @media (min-width: 320px) and (max-width: 479px) //phone
     .main-note
@@ -257,10 +265,6 @@ div
                 margin-bottom: 8px
                 .note-date
                     font-size: 13px
-                .note-info-line
-                    height: 13px
-                .note-time-read
-                    font-size: 12px
     #size-image-highlighting
         width: 15px
 
@@ -297,9 +301,5 @@ div
                 margin-bottom: 8px
                 .note-date
                     font-size: 11px
-                .note-info-line
-                    height: 10px
-                .note-time-read
-                    font-size: 10px
     #size-image-highlighting
         width: 15px
