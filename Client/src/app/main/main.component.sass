@@ -43,6 +43,22 @@ header
             .main-search
                 display: flex
                 align-items: center
+                input[type=text], select
+                    width: 250px
+                    height: 30px
+                    margin: 5px 0 5px 0px
+                    display: flex
+                    border: none
+                    outline: none
+                    border-radius: 8px 0px 0px 8px
+                    padding: 0 0 0 10px
+                    font-size: 16px
+                    background: #4A4A4A 
+                    color: #8E8E8E
+                    transition: .3s ease
+                    &:focus
+                        width: 300px
+                        color: #cacaca
                 .search-icon
                     height: 30px
                     width: 35px
@@ -76,23 +92,75 @@ header
                     overflow: hidden
             .fix-height
                 height: 30px
-
-input[type=text], select
-    width: 250px
-    height: 30px
-    margin: 5px 0 5px 0px
-    display: flex
-    border: none
-    outline: none
-    border-radius: 8px 0px 0px 8px
-    padding: 0 0 0 10px
-    font-size: 16px
-    background: #4A4A4A 
-    color: #8E8E8E
-    transition: .3s ease
-    &:focus
-        width: 300px
-        color: #cacaca
+        .profile-menu
+            display: flex
+            flex-direction: column
+            position: absolute
+            width: 301px
+            height: 252px
+            background: #FBFBFB
+            border-left: 1px solid
+            border-bottom: 1px solid
+            border-color: #D6D6D6
+            border-radius: 0px 0px 0px 5px  
+            z-index: 100
+            top: 60px
+            right: 0px
+            .profile-info
+                display: flex
+                flex-direction: row
+                align-items: center
+                justify-content: space-evenly
+                padding: 0 10px
+                width: 100%
+                height: 100px
+                background-color: #FBFBFB
+                border-bottom: 1px solid #D6D6D6
+                .profile-image
+                    width: 60px
+                    height: 60px
+                    border-radius: 50%
+                    overflow: hidden
+                    img
+                        width: 100%
+                .profile-description
+                    display: flex
+                    flex-direction: column
+                    height: 60px
+                    width: calc(100% - 70px)
+                    justify-content: space-around
+                    margin-left: 10px
+                    p
+                        overflow: hidden
+                        white-space: nowrap
+                        text-overflow: ellipsis 
+                        -o-text-overflow: ellipsis
+                    .profile-name
+                        font-weight: bold
+                        font-size: 22px
+                    .profile-mail
+                        font-size: 14px
+            .profile-settings
+                display: flex
+                flex-direction: column
+                width: 100%
+                height: 150px
+                padding: 20px 15px
+                justify-content: space-between
+                .profile-field
+                    display: flex
+                    align-items: center
+                    width: 100%
+                    font-size: 18px
+                    color: #484848
+                    cursor: pointer
+                    .profile-svg-icon
+                        width: 21px
+                        height: 21px
+                        svg
+                            width: 100%
+                    .profile-field-text
+                        margin-left: 10px
 
 .side-bar
     margin-top: 1px
@@ -201,6 +269,7 @@ input[type=text], select
                 text-decoration: underline  
 
 .active-menu
+    background: linear-gradient(99.51deg, rgba(37, 36, 36, 0.167409) 25.95%, #252424 56.56%, rgba(37, 36, 36, 0) 82.12%, #252424 99.63%) !important
     span
         text-decoration: underline
         color: #EBFFEC !important
@@ -231,39 +300,6 @@ input[type=text], select
 aside
   flex: 0 0 200px
   background: #FBFBFB
-  
-    
-.profile-menu
-    position: absolute
-    width: 300px
-    height: 300px
-    background: #FBFBFB
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25)
-    border-radius: 5px
-    z-index: 10000
-    top: 10px
-    right: 65px
-
-    .profile-info
-        width: 100%
-        margin-top: 5px
-        height: 160px
-        background: grey 
-
-    .profile-under-menu
-        display: flex
-        justify-content: space-between
-        flex-direction: column
-        text-align: center
-        width: 100%
-        height: 130px
-        color: #484848
-
-        span
-            &:hover
-                color: #000
-                background: #EBFFEC
-                cursor: pointer
 
 @media (max-width: 319px)
     .logo
