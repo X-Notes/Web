@@ -36,6 +36,8 @@ export class MainComponent implements OnInit {
   title = 'Client';
   user: User;
   activeProfileMenu = false;
+  activeNotificationMenu = false;
+  activeInvitesMenu = false;
   activeMenu = false;
   unsubscribe = new Subject();
 
@@ -91,11 +93,25 @@ export class MainComponent implements OnInit {
   }
   changeRoute(rout: string) {}
 
-  openDialog() {
+  openProfileDialog() {
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = false;
     this.activeProfileMenu = !this.activeProfileMenu;
+  }
+  openNotificationDialog() {
+    this.activeProfileMenu = false;
+    this.activeInvitesMenu = false;
+    this.activeNotificationMenu = !this.activeNotificationMenu;
+  }
+  openInvitesDialog() {
+    this.activeProfileMenu = false;
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = !this.activeInvitesMenu;
   }
   close() {
     this.activeProfileMenu = false;
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = false;
   }
   exit() {
     this.authService.SignOut();
