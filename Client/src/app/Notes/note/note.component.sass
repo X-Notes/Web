@@ -9,10 +9,9 @@ div
     flex-direction: row
     background-color: $main-color
     width: 360px
-    padding: 0 25px 0 0
+    padding: 0 20px 0 0
     border-radius: 25px
     margin-top: 40px
-    margin-bottom: 5px
     &:hover
         box-shadow: 0px 2px 2px #00000030
     .highlighting-note
@@ -234,18 +233,28 @@ div
 
 @media (min-width: 320px) and (max-width: 479px) //phone
     .main-note
-        margin-top: 30px
+        margin-top: 35px
         width: 300px
         border-radius: 15px
+        padding: 0 10px 0 0
         .highlighting-note
-            width: 20px
+            width: 30px
+            border-radius: 15px 0 0 15px
         .note-container
-            width: 280px
+            width: 260px
             .note-header
                 margin-bottom: 8px
                 .note-label
                     font-size: 12px
                     width: 75px
+                    .tooltiptext
+                        max-width: 160px
+                        top: -29px
+                        overflow: hidden
+                        font-size: 13px
+                        padding: 2px 10px
+                        span
+                            overflow: hidden
                 .note-plus-label
                     width: 40px
                 .note-options
@@ -271,17 +280,26 @@ div
 @media (min-width: 150px) and (max-width: 319px) //min width
     .main-note
         margin-top: 30px
-        width: 260px
+        width: 270px
         border-radius: 15px
         .highlighting-note
-            width: 20px
+            width: 30px
+            border-radius: 15px 0 0 15px
         .note-container
-            width: 240px
+            width: 220px
             .note-header
                 margin-bottom: 8px
                 .note-label
                     font-size: 11px
                     width: 60px
+                    .tooltiptext
+                        max-width: 152px
+                        top: -26px
+                        overflow: hidden
+                        font-size: 13px
+                        padding: 2px 10px
+                        span
+                            overflow: hidden
                 .note-plus-label
                     width: 40px
                 .note-options
