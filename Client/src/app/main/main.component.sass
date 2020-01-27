@@ -223,7 +223,9 @@ header
         .active-sidebar-field
             background-color: #303030
             border-radius: 0px 0px 10px 0px
-            p
+            .sidebar-field-help
+                display: flex !important
+            .sidebar-title
                 background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%)
                 -webkit-background-clip: text
                 -webkit-text-fill-color: transparent
@@ -246,8 +248,43 @@ header
                 .icon5
                     fill: url(#paint5_linear)
         .sidebar-field
+            flex-direction: column
             width: 200px
-            outline: none
+            .sidebar-field-help
+                display: none
+                height: 180px
+                width: 100%
+                flex-direction: column
+                align-items: center
+                .active-sidebar-field-help
+                    background: linear-gradient(99.51deg, rgba(37, 36, 36, 0.167409) 25.95%, #252424 56.56%, rgba(37, 36, 36, 0) 82.12%, #252424 99.63%)
+                    border-radius: 0px 0px 10px 0px
+                    .sidebar-title-help
+                        color: #8EEB97 !important
+                    .sidebar-icon-help
+                        circle
+                            fill: #8EEB97 !important
+                .field-help
+                    height: 45px
+                    width: 100%
+                    padding-left: 50px
+                    align-items: center
+                    cursor: pointer
+                    outline: none
+                    .sidebar-icon-help-wrapper
+                        height: 100%
+                        width: 30px
+                        align-items: center
+                        justify-content: center
+                        .sidebar-icon-help
+                            width: 8px
+                            height: 8px
+                        .sidebar-icon-help-plus
+                            width: 10px
+                            height: 10px
+                    .sidebar-title-help
+                        font-size: 18px
+                        color: #DADADA 
             .field
                 width: 100%
                 height: 50px
@@ -255,6 +292,7 @@ header
                 align-items: center
                 padding-left: 15px
                 cursor: pointer
+                outline: none
                 .sidebar-icon
                     height: 100%
                     width: 60px
