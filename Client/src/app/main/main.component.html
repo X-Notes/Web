@@ -158,7 +158,7 @@
                     <p>Notes</p>
                 </div>
             </div>
-            <div class="sidebar-field-help">
+            <div class="sidebar-field-help" [@slideInOut] *ngIf="isCurrentRouteRight('notes')">
                 <div class="field-help" routerLink="/notes/new"
                     [ngClass]="{'active-sidebar-field-help': isCurrentRouteRight('notes/new')}">
                     <div class="sidebar-icon-help-wrapper">

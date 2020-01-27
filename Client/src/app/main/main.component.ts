@@ -19,16 +19,16 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./main.component.sass'],
   animations: [
     trigger('slideInOut', [
-      state('out', style({ height: '*' , overflow: 'hidden'})),
-      transition('* => void', [
-        style({ height: '*', overflow: 'hidden', 'background-color': '#FBFBFB' }),
-        animate('300ms ease-in', style({ height: '0', borderRadius: '0px' }))
-      ]),
-      state('in', style({ height: '0' })),
+      state('in', style({ height: '0'})),
       transition('void => *', [
-        style({ height: '0', overflow: 'hidden'}),
-        animate('300ms ease-out', style({ height: '*' , overflow: 'hidden'}))
-      ])
+        style({ height: '0'}),
+        animate('300ms ease-in-out', style({height: '*'}))
+      ]),
+      state('out', style({ height: '*'})),
+      transition('* => void', [
+        style({ height: '*', opacity: 0}),
+        animate('300ms ease-in-out', style({ height: '0'}))
+      ]),
     ])
   ]
 })
