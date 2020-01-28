@@ -21,7 +21,7 @@ import { takeUntil } from 'rxjs/operators';
     trigger('slideInOut', [
       state('in', style({ height: '0'})),
       transition('void => *', [
-        style({ height: '0'}),
+        style({ height: '0', overflow: 'hidden'}),
         animate('300ms ease-in-out', style({height: '*'}))
       ]),
       state('out', style({ height: '*'})),
@@ -29,16 +29,30 @@ import { takeUntil } from 'rxjs/operators';
         style({ height: '*', opacity: 0}),
         animate('300ms ease-in-out', style({ height: '0'}))
       ]),
+    ]),
+    trigger('sidebarCloseOpen', [
+      state('out', style({ transform: 'translateX(0)' })),
+      transition('void => *', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('200ms ease-in-out')
+      ]),
+      transition('* => void', [
+        animate('200ms ease-in-out', style({ transform: 'translateX(-100%)' }))
+      ])
     ])
   ]
 })
 export class MainComponent implements OnInit {
   title = 'Client';
   user: User;
+
+  activeSidebar = true;
+
   activeProfileMenu = false;
   activeNotificationMenu = false;
   activeInvitesMenu = false;
   activeMenu = false;
+
   unsubscribe = new Subject();
 
   constructor(private router: Router, private authService: AuthService, private userService: UserService) {
@@ -51,24 +65,16 @@ export class MainComponent implements OnInit {
       this.router.navigate(['/about']);
     });
   }
-  DropMenu() {
-    this.activeMenu = !this.activeMenu;
-    const menu = document.getElementById('mobile-menu') as HTMLElement;
-    if (this.activeMenu === true) {
-      menu.classList.remove('display-none');
-      menu.classList.add('display-active');
-    } else {
-      menu.classList.remove('display-active');
-      menu.classList.add('display-none');
-    }
-  }
   GetUpdates() {
     this.userService.GetUpdates().subscribe(x => x, error => console.log(error));
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
-  changeRoute(rout: string) {}
+
+  openSidebar() {
+    this.activeSidebar = !this.activeSidebar;
+  }
 
   openProfileDialog() {
     this.activeNotificationMenu = false;

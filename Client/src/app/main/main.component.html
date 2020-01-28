@@ -1,7 +1,7 @@
 <header>
     <div class="left-content">
-        <div class=" hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation" (click)="DropMenu()"
-            [ngClass]="activeMenu ? 'is-active' : ''">
+        <div class=" hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation" (click)="openSidebar()"
+            [ngClass]="activeSidebar ? 'is-active' : ''">
             <div class="hamburger-box">
                 <div class="hamburger-inner">
                 </div>
@@ -134,9 +134,9 @@
     </div>
 </header>
 <div class="wrapper" (click)="close()">
-    <aside>
-        <div class="sidebar-field" (click)="changeRoute('notes')"
-            [ngClass]="{'active-sidebar-field': isCurrentRouteRight('note')}">
+    <aside [@sidebarCloseOpen] *ngIf='activeSidebar'>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
             <div class="field" routerLink="/notes/all">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-first">
@@ -160,7 +160,7 @@
             </div>
             <div class="sidebar-field-help" [@slideInOut] *ngIf="isCurrentRouteRight('notes')">
                 <div class="field-help" routerLink="/notes/new"
-                    [ngClass]="{'active-sidebar-field-help': isCurrentRouteRight('notes/new')}">
+                    routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help-plus">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -175,7 +175,7 @@
                     </div>
                 </div>
                 <div class="field-help" routerLink="/notes/all"
-                    [ngClass]="{'active-sidebar-field-help': isCurrentRouteRight('notes/all')}">
+                    routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -188,7 +188,7 @@
                     </div>
                 </div>
                 <div class="field-help" routerLink="/notes/shared"
-                    [ngClass]="{'active-sidebar-field-help': isCurrentRouteRight('notes/shared')}">
+                    routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,7 +201,7 @@
                     </div>
                 </div>
                 <div class="field-help" routerLink="/notes/locked"
-                    [ngClass]="{'active-sidebar-field-help': isCurrentRouteRight('notes/locked')}">
+                    routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -215,8 +215,8 @@
                 </div>
             </div>
         </div>
-        <div class="sidebar-field" (click)="changeRoute('containers')"
-            [ngClass]="{'active-sidebar-field': isCurrentRouteRight('containers')}">
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
             <div class="field" routerLink="/containers">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-second">
@@ -240,8 +240,8 @@
                 </div>
             </div>
         </div>
-        <div class="sidebar-field" (click)="changeRoute('labels')"
-            [ngClass]="{'active-sidebar-field': isCurrentRouteRight('labels')}">
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
             <div class="field" routerLink="/labels">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-third">
@@ -264,8 +264,8 @@
                 </div>
             </div>
         </div>
-        <div class="sidebar-field" (click)="changeRoute('people')"
-            [ngClass]="{'active-sidebar-field': isCurrentRouteRight('people')}">
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
             <div class="field" routerLink="/people">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-fourth">
@@ -288,8 +288,8 @@
                 </div>
             </div>
         </div>
-        <div class="sidebar-field" (click)="changeRoute('bin')"
-            [ngClass]="{'active-sidebar-field': isCurrentRouteRight('bin')}">
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
             <div class="field" routerLink="/bin">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-fifth">

@@ -245,9 +245,23 @@ header
             .sidebar-icon-wrapper-fifth
                 .icon5
                     fill: url(#paint5_linear)
+        .sidebar-field:not(.active-sidebar-field):hover
+            background-color: #ececec
+            border-radius: 0px 0px 10px 0px
+            .field
+                .sidebar-icon
+                    .rect1
+                        fill: #999999
+                    .rect2
+                        fill: #303030
+                    path
+                        fill: #303030
+                .sidebar-title
+                    color: #303030
         .sidebar-field
             flex-direction: column
             width: 200px
+            transition: .3s cubic-bezier(0,0,0,1)
             .sidebar-field-help
                 height: 180px
                 width: 100%
@@ -261,13 +275,18 @@ header
                     .sidebar-icon-help
                         circle
                             fill: #8EEB97 !important
+                .field-help:not(.active-sidebar-field-help):hover
+                    background: #2A2A2A
+                    border-radius: 0px 0px 10px 0px
                 .field-help
                     height: 45px
                     width: 100%
                     padding-left: 50px
+                    border-radius: 0px 0px 10px 0px
                     align-items: center
                     cursor: pointer
                     outline: none
+                    transition: .3s ease-out
                     .sidebar-icon-help-wrapper
                         height: 100%
                         width: 30px
@@ -280,6 +299,8 @@ header
                             width: 10px
                             height: 10px
                     .sidebar-title-help
+                        height: 100%
+                        align-items: center
                         font-size: 18px
                         color: #DADADA 
             .field
@@ -295,7 +316,10 @@ header
                     width: 60px
                     align-items: center
                     justify-content: center
-                    fill:#484848
+                    path
+                        transition: 0.3s ease
+                    rect
+                        transition: 0.3s ease
                     .sidebar-icon-wrapper-first
                         width: 23px
                         height: 24px
@@ -312,19 +336,17 @@ header
                         width: 19px
                         height: 24px
                 .sidebar-title
+                    height: 100%
+                    align-items: center
                     font-size: 24px
                     color: #484848
 
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
 
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
 
-@media (max-width: 319px)
+@media (min-width: 480px) and (max-width: 767px) //large phone
 
-@media (min-width: 320px) and (max-width: 479px)
+@media (min-width: 320px) and (max-width: 479px) //phone
 
-@media (min-width: 480px) and (max-width: 767px)
-        
-@media only screen and (min-width: 768px) and (max-width: 991px)    
-                
-@media (min-width: 992px) and  (max-width: 1199px)
-
-@media only screen and (min-width: 1200px)
+@media (min-width: 150px) and (max-width: 319px) //min width
