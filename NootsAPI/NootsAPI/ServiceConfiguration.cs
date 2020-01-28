@@ -3,13 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Nest;
-using Noots.BusinessLogic.Interfaces;
 using Noots.BusinessLogic.Services;
 using Noots.DataAccess.Elastic;
-using Noots.DataAccess.InterfacesRepositories;
 using Noots.DataAccess.Repositories;
 using RabbitMQ.Client;
-using Shared.Elastic;
 using Shared.RabbitMq.QueueInterfaces;
 using Shared.RabbitMq.QueueService;
 using System;
@@ -49,15 +46,13 @@ namespace NootsAPI
             var database = configuration["Mongo:Database"];
             var connection = $@"mongodb://{host}:{port}";
 
-            services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
-            services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
-            services.AddTransient<ILabelRepository, LabelRepository>(x => new LabelRepository(connection, database));
+            services.AddTransient<UserRepository>(x => new UserRepository(connection, database));
+            services.AddTransient<LabelRepository>(x => new LabelRepository(connection, database));
         }
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<INootService, NootService>();
-            services.AddScoped<ILabelService, LabelService >();
+            services.AddScoped<UserService>();
+            services.AddScoped<LabelService >();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {
@@ -66,15 +61,14 @@ namespace NootsAPI
             Uri uri = new Uri(url);
 
             NestConnectionSettings settings = new NestConnectionSettings(uri)
-                .DefaultIndex(defaultIndex)
-                .DefaultMappingFor<ElasticNoot>(m => m.IdProperty(p => p.Id));
+                .DefaultIndex(defaultIndex);
 
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
-            services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
+            services.AddSingleton(f => new ElasticSearch());
         }
         public static void RabbitMQService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IQueueService, QueueService>();
+            services.AddScoped<QueueService>();
 
             services.AddScoped<IMessageQueue, MessageQueue>();
 

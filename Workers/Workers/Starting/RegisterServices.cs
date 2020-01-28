@@ -1,6 +1,4 @@
-﻿using BusinessLogic.Interfaces;
-using BusinessLogic.Services;
-using DataAccess.Interfaces;
+﻿using BusinessLogic.Services;
 using DataAccess.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +30,7 @@ namespace Workers.Starting
             services.DatabaseServices(Configuration);
             services.RabbitMQServices(Configuration);
 
-            services.AddHttpClient<IDownloadImagesService, DownloadImagesService>();
+            services.AddHttpClient();
 
         }
     }

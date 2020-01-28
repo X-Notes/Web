@@ -1,327 +1,317 @@
 <header>
-    <div class="content">
-        <div class="content-header flex-container space-between">
-            <div class="left flex-container">
-                <div class="hamburger hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation"
-                    (click)="DropMenu()" [ngClass]="activeMenu ? 'is-active' : ''">
-                    <div class="hamburger-box">
-                        <div class="hamburger-inner">
-                        </div>
-                    </div>
-                </div>
-                <div class="logo">
-                    <img src="assets/logo-without-squirell.svg" />
-                </div>
-            </div>
-            <div class="center flex-container">
-                <div class="search">
-                    <input type="text" id="fname" name="firstname" placeholder="Search...">
-                </div>
-                <div class="search-icon">
-                    <img src="assets/search.svg" />
-                </div>
-            </div>
-            <div class="right flex-container space-between">
-                <img class="searchMob" src="assets/searchMob.svg" />
-                <img src="assets/view.svg" />
-                <img src="assets/notification.svg" />
-                <div class="profile" (click)="openDialog()">
-                    <img [src]="user?.photo || 'assets/default_avatar.png'">
-                </div>
-            </div>
-            <div *ngIf='activeProfileMenu' class="profile-menu">
-                <div class='profile-info'>
-
-                </div>
-                <div class="profile-under-menu">
-                    <span (click)="GetUpdates()">Get updates</span>
-                    <span>Update profile</span>
-                    <span (click)="exit()">Sign Out</span>
+    <div class="left-content">
+        <div class=" hamburger--squeeze" aria-label="Menu" role="button" aria-controls="navigation" (click)="openSidebar()"
+            [ngClass]="activeSidebar ? 'is-active' : ''">
+            <div class="hamburger-box">
+                <div class="hamburger-inner">
                 </div>
             </div>
         </div>
     </div>
+    <div class="right-content">
+        <div class="svg-logo">
+            <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M46.039 6.02344H41.2412C41.2122 5.896 41.1703 5.75771 41.1114 5.56322L41.1114 5.56313C41.08 5.45966 41.0439 5.34028 41.0023 5.19818C40.5359 3.99898 39.9575 2.84679 39.2747 1.75702C38.877 1.14921 38.3554 0.632891 37.7443 0.242084C37.4045 0.02083 37.2151 0 36.7223 0C36.3154 0 36.2709 0.0372658 36.1262 0.158677C36.0956 0.184314 36.0606 0.213704 36.0167 0.247287C35.8078 0.407229 35.8099 0.500766 35.8167 0.799116C35.818 0.860076 35.8196 0.929587 35.8196 1.00996C35.8225 1.19343 35.8795 1.37191 35.9834 1.52293C36.0872 1.67394 36.2333 1.79072 36.4032 1.85854C37.1664 2.34258 37.8798 2.9015 38.5328 3.52706C39.1997 4.24342 39.7062 5.09459 40.0183 6.02344H34.9785C34.2581 6.05529 33.5538 6.24734 32.9163 6.58568C31.4557 7.44475 30.3705 8.82364 29.8763 10.4485C29.2018 12.8042 30.7712 13.2545 31.4637 13.2545L49.6213 13.2572C51.4137 13.2572 51.6575 11.6615 51.3981 10.826C50.6791 8.60185 49.9259 7.90555 49.4709 7.48488L49.4709 7.48482C49.4088 7.42746 49.3523 7.37522 49.3022 7.32493C48.6693 6.84077 47.5254 6.02344 46.039 6.02344ZM5.71964 18.6927V35.9141H0V5.04258L18.417 22.5842V5.14409H24.16V36L5.71964 18.6927ZM104.452 5.1082L108.501 10.7619H98.8233V35.9354H92.8572V10.7619H86.3724L82.497 5.1082H104.452ZM132.628 19.6204C131.462 18.3016 129.766 17.6421 127.538 17.6421H117.567C116.81 17.4131 116.278 17.1059 115.962 16.7181C115.645 16.3302 115.49 15.63 115.49 14.5888C115.59 12.8986 115.801 11.8739 116.123 11.5147C116.513 11.1175 117.019 10.8542 117.567 10.7624H133.722L129.095 5.10872H118.016C116.792 5.07686 115.575 5.31128 114.449 5.79591C113.492 6.22754 112.656 6.89231 112.019 7.72993C111.358 8.63381 110.885 9.6614 110.626 10.752C110.315 12.0429 110.164 13.3675 110.177 14.6955C110.165 15.912 110.302 17.1255 110.585 18.3085C110.818 19.3148 111.247 20.2649 111.848 21.1041C112.374 21.8439 113.121 22.3971 113.98 22.6841C114.97 22.9832 116 23.1246 117.033 23.1032H126.973C127.276 23.0907 127.577 23.147 127.855 23.2678C128.133 23.3886 128.381 23.5708 128.579 23.8008C128.978 24.2659 129.221 25.2298 129.308 26.6927C129.221 28.2545 128.978 29.333 128.579 29.9282C128.411 30.2038 128.175 30.4308 127.893 30.5869C127.612 30.743 127.295 30.8228 126.973 30.8185H109.448L113.22 35.936H126.532C127.76 35.9702 128.981 35.7357 130.109 35.2488C131.074 34.807 131.911 34.1262 132.542 33.2705C133.219 32.3174 133.693 31.2346 133.935 30.0896C134.241 28.6913 134.388 27.2627 134.373 25.8311C134.375 23.0095 133.793 20.9393 132.628 19.6204ZM40.5817 35.9339C37.9451 34.5137 35.6122 32.5874 33.7156 30.2646C31.5647 27.759 30.1391 24.7098 29.5938 21.4483C29.407 20.4071 29.3993 19.1056 29.3837 16.4688L29.3835 16.3572C29.3821 15.6906 29.3807 15.0218 29.8376 14.5608C30.1883 14.2453 30.6429 14.071 31.1139 14.0714C34.0995 13.8996 39.9333 13.9491 39.9333 13.9491C40.3721 13.9531 41.1209 13.9484 42.027 13.9426H42.0271H42.0273H42.0275H42.0277H42.0278C44.5974 13.9262 48.4312 13.9017 50.0496 14.048C50.3906 14.0691 50.7188 14.1864 50.9964 14.3864C51.7019 14.9356 51.7486 15.9898 51.7564 16.5521C51.829 21.1255 50.9419 23.7285 50.9419 23.7285C49.1654 28.9736 45.4594 33.3396 40.5817 35.9339ZM61.3409 30.2646C63.2373 32.5867 65.5692 34.5128 68.2045 35.9339C73.0819 33.3399 76.7872 28.9737 78.5621 23.7285C78.5621 23.7285 79.4492 21.1255 79.3792 16.5521C79.3714 15.9898 79.3221 14.9356 78.6166 14.3864C78.3403 14.1859 78.0128 14.0685 77.6724 14.048C76.0539 13.9017 72.2181 13.9262 69.6489 13.9426C68.7428 13.9484 67.9943 13.9531 67.556 13.9491C67.556 13.9491 61.7249 13.8996 58.7366 14.0714C58.2665 14.0716 57.813 14.2459 57.463 14.5608C57.006 15.0218 57.0075 15.6906 57.0089 16.3572L57.0091 16.4688C57.0246 19.1056 57.0324 20.4071 57.2192 21.4483C57.7645 24.7098 59.19 27.759 61.3409 30.2646ZM59.0894 13.2545C58.3968 13.2545 56.8275 12.8042 57.4993 10.4485C57.9936 8.82364 59.0788 7.44475 60.5394 6.58568C61.1771 6.24798 61.8813 6.05598 62.6016 6.02344H67.6437C67.3316 5.09459 66.8251 4.24342 66.1582 3.52706C65.5051 2.9015 64.7918 2.34258 64.0286 1.85854C63.8587 1.79072 63.7126 1.67394 63.6087 1.52293C63.5049 1.37191 63.4479 1.19343 63.445 1.00996C63.445 0.926663 63.4432 0.855032 63.4417 0.792495C63.4344 0.499371 63.4321 0.40604 63.6395 0.247287C63.6832 0.213843 63.7181 0.184558 63.7486 0.158996C63.8937 0.0373311 63.9382 0 64.3477 0C64.8431 0 65.0299 0.02083 65.3671 0.242084C65.9797 0.631851 66.5023 1.14833 66.9001 1.75702C67.5818 2.84738 68.1602 3.99947 68.6276 5.19818C68.6693 5.34032 68.7054 5.45973 68.7368 5.56323C68.7957 5.75771 68.8376 5.896 68.8666 6.02344H73.6622C75.1511 6.02344 76.2924 6.84077 76.928 7.32493C76.9787 7.37614 77.0361 7.42937 77.0993 7.48797C77.5534 7.90897 78.3066 8.60729 79.0239 10.826C79.2833 11.6615 79.0394 13.2572 77.247 13.2572L59.0894 13.2545Z"
+                    fill="white" />
+            </svg>
+        </div>
+        <div class="header-instruments">
+            <div class="main-search">
+                <input type="text" id="fname" name="firstname" placeholder="Search..." autocomplete="off">
+                <div class="search-area">
+                    <div class="search-icon">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M17.5599 7.46616C17.5599 11.0815 14.629 14.0124 11.0136 14.0124C9.74418 14.0124 8.55913 13.6511 7.55572 13.0256L2.37462 18.2067C1.92288 18.6585 1.19046 18.6585 0.738711 18.2067C0.286966 17.755 0.286966 17.0226 0.738711 16.5708L5.83651 11.473C4.97825 10.3657 4.46739 8.97559 4.46739 7.46616C4.46739 3.85077 7.39824 0.919922 11.0136 0.919922C14.629 0.919922 17.5599 3.85077 17.5599 7.46616ZM15.561 7.46645C15.561 9.97835 13.5247 12.0146 11.0128 12.0146C8.50092 12.0146 6.46463 9.97835 6.46463 7.46645C6.46463 4.95456 8.50092 2.91826 11.0128 2.91826C13.5247 2.91826 15.561 4.95456 15.561 7.46645Z"
+                                fill="#FBFBFB" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="header-icons" (click)="openInvitesDialog()">
+                <div class="push">
+                    <span>10</span>
+                </div>
+                <div class="header-icons-first">
+                    <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.59773 4.13221L14.1175 0.41795C14.2723 0.278633 14.7723 0 15.5339 0C16.2955 0 16.78 0.278633 16.927 0.41795L21.4468 4.13221H28.3743V6.73278H28.3742V9.82509L30.9656 12.0049L30.9465 12.0275H30.9748L30.9748 27.3986V27.9096V29.9992L2.60057 29.9992V30.0003H0V13.9773V13.7003V12.0269H0.0111517L2.6472 9.80929V4.13372H4.31894V4.13221H9.59773ZM25.7735 14.007V12.1208H25.7736V6.73278L5.24778 6.73278V12.2141H5.20115V13.9616L15.5148 22.251L25.7735 14.007ZM2.60057 27.3986V14.5027L15.518 24.8849L15.5632 24.8286L15.5704 24.8375L28.3742 14.5482L28.3742 27.3986L2.60057 27.3986Z"
+                            fill="white" />
+                    </svg>
+                </div>
+            </div>
+            <div class="header-icons" (click)="openNotificationDialog()">
+                <div class="push">
+                    <span>10</span>
+                </div>
+                <div class="header-icons-second">
+                    <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M15.4191 1.7598C15.4191 1.95728 15.3866 2.14717 15.3266 2.3244C19.7613 3.11212 23.1288 6.98655 23.1288 11.6475C23.1288 11.675 23.1286 11.7024 23.1284 11.7299H23.1286V16.9992L27.0071 21.9975C27.2004 22.2067 27.3186 22.4864 27.3186 22.7936C27.3186 23.4415 26.7935 23.9666 26.1457 23.9668V23.9676H1.00574V23.955C0.437126 23.8737 0 23.3847 0 22.7936C0 22.4893 0.115884 22.212 0.305933 22.0035L4.18998 17.05V11.6475V11.3957H4.19326C4.312 6.84758 7.63752 3.09791 11.9921 2.32441C11.9321 2.14718 11.8995 1.95729 11.8995 1.7598C11.8995 0.787889 12.6874 0 13.6593 0C14.6313 0 15.4191 0.787889 15.4191 1.7598ZM20.9502 21.1157V21.1173H21.453V21.1157H20.9502ZM2.33447 22.6257H24.9841L24.984 22.6268H2.33462L2.33447 22.6257ZM16.8 28.699C17.6329 27.8661 18.1008 26.7364 18.1008 25.5585H13.6594H9.21802C9.21802 26.7364 9.68595 27.8661 10.5189 28.699C11.3518 29.532 12.4815 29.9999 13.6594 29.9999C14.8373 29.9999 15.967 29.532 16.8 28.699Z"
+                            fill="#FBFBFB" />
+                    </svg>
+                </div>
+            </div>
+            <div class="header-icons">
+                <div class="profile" (click)="openProfileDialog()">
+                    <img [src]="user?.photo || 'assets/default_avatar.png'">
+                </div>
+            </div>
+        </div>
+        <div *ngIf='activeProfileMenu' class="profile-menu">
+            <div class="profile-info">
+                <div class="profile-image">
+                    <img [src]="user?.photo || 'assets/default_avatar.png'">
+                </div>
+                <div class="profile-description">
+                    <div class="profile-name">
+                        <p>Saint Mosesone_moses@gmail.com</p>
+                    </div>
+                    <div class="profile-mail">
+                        <p>one_moses@gmail.comone_moses@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-settings">
+                <div class="profile-field">
+                    <div class="profile-svg-icon">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M2.10815 13.242L0.494141 12.8911C0.205688 12.8283 0 12.5731 0 12.2779V8.72208C0 8.42694 0.205688 8.17172 0.494141 8.10892L2.10815 7.75804C2.24854 7.32834 2.42236 6.90921 2.62756 6.50546L1.73401 5.11557C1.57446 4.86725 1.6095 4.5412 1.81812 4.3326L4.33264 1.81815C4.54126 1.60938 4.86719 1.57446 5.1156 1.73404L6.50549 2.62756C6.90918 2.42233 7.32837 2.24849 7.75806 2.10814L8.10889 0.49411C8.17151 0.205719 8.427 0 8.72205 0H12.278C12.573 0 12.8285 0.205719 12.8911 0.49411L13.2419 2.10814C13.6716 2.24849 14.0908 2.42233 14.4945 2.62756L15.8844 1.73404C16.1328 1.57446 16.4587 1.60954 16.6674 1.81815L19.1819 4.3326C19.3905 4.5412 19.4255 4.86725 19.266 5.11557L18.3724 6.50546C18.5776 6.90921 18.7515 7.32834 18.8918 7.75804L20.5059 8.10892C20.7943 8.17172 21 8.42694 21 8.72208V12.2779C21 12.5731 20.7943 12.8283 20.5059 12.8911L18.8918 13.242C18.7515 13.6717 18.5776 14.0908 18.3724 14.4945L19.266 15.8844C19.4255 16.1328 19.3905 16.4588 19.1819 16.6674L16.6674 19.1819C16.4587 19.3905 16.1328 19.4255 15.8844 19.266L14.4945 18.3724C14.0908 18.5777 13.6716 18.7515 13.2419 18.8919L12.8911 20.5059C12.8285 20.7943 12.573 21 12.278 21H8.72205C8.427 21 8.17151 20.7943 8.10889 20.5059L7.75806 18.8919C7.32837 18.7515 6.90918 18.5777 6.50549 18.3724L5.1156 19.266C4.86719 19.4255 4.54126 19.3905 4.33264 19.1819L1.81812 16.6674C1.6095 16.4588 1.57446 16.1328 1.73401 15.8844L2.62756 14.4945C2.42236 14.0908 2.24854 13.6717 2.10815 13.242ZM2.73486 8.90616L1.255 9.22787V11.7721L2.73511 12.0938C2.9624 12.1433 3.14368 12.3145 3.20605 12.5385C3.3689 13.1218 3.60266 13.6859 3.90149 14.2151C4.01587 14.4178 4.00867 14.6671 3.88269 14.8629L3.06335 16.1376L4.86243 17.9368L6.13708 17.1173C6.33289 16.9915 6.58215 16.9843 6.78491 17.0987C7.31409 17.3974 7.87817 17.6313 8.46155 17.7939C8.68555 17.8564 8.85669 18.0378 8.90613 18.2651L9.22791 19.745H11.7721L12.0939 18.2651C12.1433 18.0378 12.3145 17.8564 12.5385 17.7939C13.1218 17.6313 13.6859 17.3974 14.2153 17.0987C14.4178 16.9843 14.6671 16.9914 14.8629 17.1173L16.1377 17.9368L17.9368 16.1376L17.1173 14.8629C16.9913 14.6671 16.9844 14.4178 17.0988 14.2151C17.3973 13.6859 17.6312 13.1218 17.7939 12.5385C17.8563 12.3145 18.0377 12.1433 18.2651 12.0938L19.745 11.7721V9.22787L18.2649 8.90616C18.0376 8.85666 17.8563 8.68555 17.7939 8.46155C17.6311 7.8782 17.3972 7.31409 17.0985 6.78488C16.9841 6.58221 16.9913 6.33292 17.1173 6.13712L17.9366 4.86243L16.1376 3.0632L14.8629 3.88271C14.6671 4.00848 14.4178 4.01569 14.2151 3.90129C13.6859 3.60265 13.1218 3.36873 12.5385 3.20612C12.3145 3.14362 12.1433 2.96225 12.0939 2.73491L11.7721 1.25497H9.22791L8.90613 2.73491C8.85669 2.96225 8.68555 3.14362 8.46155 3.20612C7.87817 3.36873 7.31409 3.60265 6.78467 3.90129C6.58215 4.01569 6.33289 4.00864 6.13708 3.88271L4.8623 3.0632L3.06323 4.86243L3.88269 6.13712C4.00867 6.33292 4.01562 6.58221 3.90125 6.78488C3.60266 7.31409 3.36877 7.8782 3.20605 8.46155C3.14368 8.68555 2.96228 8.85666 2.73486 8.90616ZM15.5205 10.4996C15.5205 13.2675 13.2684 15.5195 10.5006 15.5195C7.73267 15.5195 5.48059 13.2675 5.48059 10.4996C5.48059 7.73169 7.73267 5.47968 10.5006 5.47968C13.2684 5.47968 15.5205 7.73169 15.5205 10.4996ZM14.2655 10.4996C14.2655 8.42366 12.5765 6.73465 10.5006 6.73465C8.42468 6.73465 6.7356 8.42366 6.7356 10.4996C6.7356 12.5755 8.42468 14.2645 10.5006 14.2645C12.5765 14.2645 14.2655 12.5755 14.2655 10.4996Z"
+                                fill="#484848" />
+                        </svg>
+                    </div>
+                    <div class="profile-field-text">
+                        <p>Settings</p>
+                    </div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-svg-icon">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M10.08 20.0881V14.28H7.04099C7.26493 15.5412 7.59599 16.6635 8.00203 17.5863C8.39206 18.4727 8.83477 19.1376 9.28382 19.5693C9.56429 19.8389 9.83075 20.0033 10.08 20.0881ZM10.92 14.28V20.0881C11.1693 20.0033 11.4357 19.8389 11.7162 19.5693C12.1652 19.1376 12.6079 18.4727 12.998 17.5863C13.404 16.6635 13.7351 15.5412 13.959 14.28H10.92ZM10.92 20.9918C16.5243 20.7713 21 16.1583 21 10.5C21 4.70101 16.299 0 10.5 0C4.84167 0 0.228706 4.47572 0.00824648 10.08H0V10.5V10.92H0.00824649C0.223226 16.385 4.61504 20.7768 10.08 20.9918V21H10.5H10.92V20.9918ZM10.92 13.44V10.92H14.2762C14.2605 11.7971 14.1958 12.6416 14.0893 13.44H10.92ZM10.08 10.08V7.56H6.91068C6.80416 8.35839 6.73948 9.20287 6.72376 10.08H10.08ZM10.92 7.56V10.08H14.2762C14.2605 9.20287 14.1958 8.35839 14.0893 7.56H10.92ZM10.92 6.72V0.911942C11.1693 0.996667 11.4357 1.16111 11.7162 1.43072C12.1652 1.86238 12.6079 2.52725 12.998 3.41368C13.404 4.33651 13.7351 5.45881 13.959 6.72H10.92ZM10.08 6.72V0.911943C9.83075 0.996668 9.56429 1.16111 9.28382 1.43072C8.83477 1.86238 8.39206 2.52725 8.00203 3.41368C7.59599 4.33651 7.26493 5.45881 7.04099 6.72H10.08ZM10.08 13.44V10.92H6.72376C6.73948 11.7971 6.80416 12.6416 6.91068 13.44H10.08ZM12.7581 19.6625C13.6903 18.4733 14.4225 16.5706 14.8116 14.28H17.0691C16.6925 15.4701 16.145 16.5334 15.4739 17.4164C14.6991 18.4359 13.772 19.2024 12.7581 19.6625ZM14.9364 13.44H17.3012C17.4906 12.6422 17.6054 11.7975 17.6333 10.92H15.1164C15.1013 11.7915 15.0395 12.6357 14.9364 13.44ZM15.3094 18.8795C16.4856 17.709 17.4076 16.1196 17.9473 14.28H19.3924C18.5663 16.221 17.1232 17.8363 15.3094 18.8795ZM18.163 13.44H19.7045C19.9597 12.6402 20.1136 11.7952 20.151 10.92H18.4737C18.4477 11.7915 18.3409 12.6357 18.163 13.44ZM3.69877 13.44H6.06355C5.96053 12.6357 5.89871 11.7915 5.88363 10.92H3.36666C3.39456 11.7975 3.5094 12.6422 3.69877 13.44ZM6.18843 14.28H3.93085C4.30753 15.4701 4.85502 16.5334 5.52606 17.4164C6.30092 18.4359 7.228 19.2024 8.24192 19.6625C7.30973 18.4733 6.57747 16.5706 6.18843 14.28ZM2.52627 10.92C2.55232 11.7915 2.6591 12.6357 2.83704 13.44H1.29553C1.0403 12.6402 0.886406 11.7952 0.848966 10.92H2.52627ZM3.05274 14.28H1.60757C2.43371 16.221 3.87679 17.8363 5.6906 18.8795C4.51443 17.709 3.59241 16.1196 3.05274 14.28ZM14.9364 7.56C15.0395 8.36432 15.1013 9.20851 15.1164 10.08H17.6333C17.6054 9.20245 17.4906 8.35776 17.3012 7.56H14.9364ZM17.0691 6.72H14.8116C14.4225 4.4294 13.6903 2.52667 12.7581 1.33747C13.772 1.79757 14.6991 2.5641 15.4739 3.58365C16.145 4.46661 16.6925 5.52993 17.0691 6.72ZM18.163 7.56C18.3409 8.36432 18.4477 9.20851 18.4737 10.08H20.151C20.1136 9.2048 19.9597 8.35977 19.7045 7.56H18.163ZM19.3924 6.72H17.9473C17.4076 4.88042 16.4856 3.29101 15.3094 2.12045C17.1232 3.16373 18.5663 4.77898 19.3924 6.72ZM6.18843 6.72H3.93085C4.30753 5.52993 4.85502 4.46661 5.52606 3.58365C6.30092 2.5641 7.22801 1.79757 8.24192 1.33747C7.30973 2.52667 6.57747 4.4294 6.18843 6.72ZM3.69877 7.56H6.06355C5.96053 8.36432 5.89871 9.20851 5.88363 10.08H3.36666C3.39456 9.20245 3.5094 8.35776 3.69877 7.56ZM3.05274 6.72C3.59241 4.88042 4.51443 3.29101 5.6906 2.12045C3.87679 3.16373 2.43371 4.77898 1.60757 6.72H3.05274ZM1.29553 7.56H2.83704C2.6591 8.36432 2.55232 9.20851 2.52627 10.08H0.848966C0.886406 9.2048 1.0403 8.35977 1.29553 7.56Z"
+                                fill="#484848" />
+                        </svg>
+                    </div>
+                    <div class="profile-field-text">
+                        <p>Language: <span>English</span></p>
+                    </div>
+                </div>
+                <div class="profile-field">
+                    <div class="profile-svg-icon">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M2.33335 0H18.6666C19.9559 0 21 1.04415 21 2.33335V18.6666C21 19.9559 19.9559 21 18.6667 21H2.33335C1.04415 21 0 19.9559 0 18.6666V14H2.33335V18.6667H18.6667V2.33335H2.33335V7H0V2.33335C0 1.04415 1.04415 0 2.33335 0ZM9.91665 16.3334L8.26585 14.6825L11.2816 11.6667H0V9.33337H11.2816L8.26585 6.31752L9.91665 4.66667L15.75 10.5L9.91665 16.3334Z"
+                                fill="#484848" />
+                        </svg>
+                    </div>
+                    <div class="profile-field-text">
+                        <p>Log out</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf='activeNotificationMenu' class="notification-menu">
+            <div class="notification-info">
+                <div class="notification-title">
+                    <p>Notification</p>
+                </div>
+                <div class="notification-icon">
+                    <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M2.10815 13.242L0.494141 12.8911C0.205688 12.8283 0 12.5731 0 12.2779V8.72208C0 8.42694 0.205688 8.17172 0.494141 8.10892L2.10815 7.75804C2.24854 7.32834 2.42236 6.90921 2.62756 6.50546L1.73401 5.11557C1.57446 4.86725 1.6095 4.5412 1.81812 4.3326L4.33264 1.81815C4.54126 1.60938 4.86719 1.57446 5.1156 1.73404L6.50549 2.62756C6.90918 2.42233 7.32837 2.24849 7.75806 2.10814L8.10889 0.49411C8.17151 0.205719 8.427 0 8.72205 0H12.278C12.573 0 12.8285 0.205719 12.8911 0.49411L13.2419 2.10814C13.6716 2.24849 14.0908 2.42233 14.4945 2.62756L15.8844 1.73404C16.1328 1.57446 16.4587 1.60954 16.6674 1.81815L19.1819 4.3326C19.3905 4.5412 19.4255 4.86725 19.266 5.11557L18.3724 6.50546C18.5776 6.90921 18.7515 7.32834 18.8918 7.75804L20.5059 8.10892C20.7943 8.17172 21 8.42694 21 8.72208V12.2779C21 12.5731 20.7943 12.8283 20.5059 12.8911L18.8918 13.242C18.7515 13.6717 18.5776 14.0908 18.3724 14.4945L19.266 15.8844C19.4255 16.1328 19.3905 16.4588 19.1819 16.6674L16.6674 19.1819C16.4587 19.3905 16.1328 19.4255 15.8844 19.266L14.4945 18.3724C14.0908 18.5777 13.6716 18.7515 13.2419 18.8919L12.8911 20.5059C12.8285 20.7943 12.573 21 12.278 21H8.72205C8.427 21 8.17151 20.7943 8.10889 20.5059L7.75806 18.8919C7.32837 18.7515 6.90918 18.5777 6.50549 18.3724L5.1156 19.266C4.86719 19.4255 4.54126 19.3905 4.33264 19.1819L1.81812 16.6674C1.6095 16.4588 1.57446 16.1328 1.73401 15.8844L2.62756 14.4945C2.42236 14.0908 2.24854 13.6717 2.10815 13.242ZM2.73486 8.90616L1.255 9.22787V11.7721L2.73511 12.0938C2.9624 12.1433 3.14368 12.3145 3.20605 12.5385C3.3689 13.1218 3.60266 13.6859 3.90149 14.2151C4.01587 14.4178 4.00867 14.6671 3.88269 14.8629L3.06335 16.1376L4.86243 17.9368L6.13708 17.1173C6.33289 16.9915 6.58215 16.9843 6.78491 17.0987C7.31409 17.3974 7.87817 17.6313 8.46155 17.7939C8.68555 17.8564 8.85669 18.0378 8.90613 18.2651L9.22791 19.745H11.7721L12.0939 18.2651C12.1433 18.0378 12.3145 17.8564 12.5385 17.7939C13.1218 17.6313 13.6859 17.3974 14.2153 17.0987C14.4178 16.9843 14.6671 16.9914 14.8629 17.1173L16.1377 17.9368L17.9368 16.1376L17.1173 14.8629C16.9913 14.6671 16.9844 14.4178 17.0988 14.2151C17.3973 13.6859 17.6312 13.1218 17.7939 12.5385C17.8563 12.3145 18.0377 12.1433 18.2651 12.0938L19.745 11.7721V9.22787L18.2649 8.90616C18.0376 8.85666 17.8563 8.68555 17.7939 8.46155C17.6311 7.8782 17.3972 7.31409 17.0985 6.78488C16.9841 6.58221 16.9913 6.33292 17.1173 6.13712L17.9366 4.86243L16.1376 3.0632L14.8629 3.88271C14.6671 4.00848 14.4178 4.01569 14.2151 3.90129C13.6859 3.60265 13.1218 3.36873 12.5385 3.20612C12.3145 3.14362 12.1433 2.96225 12.0939 2.73491L11.7721 1.25497H9.22791L8.90613 2.73491C8.85669 2.96225 8.68555 3.14362 8.46155 3.20612C7.87817 3.36873 7.31409 3.60265 6.78467 3.90129C6.58215 4.01569 6.33289 4.00864 6.13708 3.88271L4.8623 3.0632L3.06323 4.86243L3.88269 6.13712C4.00867 6.33292 4.01562 6.58221 3.90125 6.78488C3.60266 7.31409 3.36877 7.8782 3.20605 8.46155C3.14368 8.68555 2.96228 8.85666 2.73486 8.90616ZM15.5205 10.4996C15.5205 13.2675 13.2684 15.5195 10.5006 15.5195C7.73267 15.5195 5.48059 13.2675 5.48059 10.4996C5.48059 7.73169 7.73267 5.47968 10.5006 5.47968C13.2684 5.47968 15.5205 7.73169 15.5205 10.4996ZM14.2655 10.4996C14.2655 8.42366 12.5765 6.73465 10.5006 6.73465C8.42468 6.73465 6.7356 8.42366 6.7356 10.4996C6.7356 12.5755 8.42468 14.2645 10.5006 14.2645C12.5765 14.2645 14.2655 12.5755 14.2655 10.4996Z"
+                            fill="#484848" />
+                    </svg>
+                </div>
+            </div>
+            <div class="notification-content">
+
+            </div>
+        </div>
+        <div *ngIf='activeInvitesMenu' class="invites-menu">
+        </div>
+    </div>
 </header>
 <div class="wrapper" (click)="close()">
-    <aside class="desktop-menu">
-        <ul class="side-bar">
-            <li [ngClass]="{'active': isCurrentRouteRight('noot')}">
-                <div (click)="changeRoute('noots')" routerLink="/noots/all">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('noot') ? ColornootImage : nootImage" />
+    <aside [@sidebarCloseOpen] *ngIf='activeSidebar'>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
+            <div class="field" routerLink="/notes/all">
+                <div class="sidebar-icon">
+                    <div class="sidebar-icon-wrapper-first">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="icon1" fill-rule="evenodd" clip-rule="evenodd"
+                                d="M4.00553 2H15.658C16.7641 2 17.6608 2.89543 17.6608 4V8V8.03416L19.2934 6.35913C19.4093 6.24032 19.5331 6.13155 19.6635 6.03291V6V4C19.6635 1.79086 17.8702 0 15.658 0H4.00553C1.79334 0 0 1.79086 0 4H2.00277C2.00277 2.89543 2.89944 2 4.00553 2ZM17.6608 14.1566V14.1584L19.6635 12.1037V12.1019L22.6953 8.99156C23.1393 8.536 23.0926 7.84943 22.5909 7.45807C22.0892 7.0667 21.3225 7.11875 20.8784 7.57431L13.9993 14.6318L15.8161 16.0491L17.6608 14.1566ZM17.6608 20V17.0088L19.6635 14.9541V20C19.6635 22.2091 17.8702 24 15.658 24H4.00554C1.79334 24 0 22.2091 0 20V19.1434H2.00277V20C2.00277 21.1046 2.89944 22 4.00554 22H15.658C16.7641 22 17.6608 21.1046 17.6608 20ZM0 17.7148H2.00277V15.7147H0V17.7148ZM2.00277 12.286V14.2861H0V12.286H2.00277ZM0 10.8574H2.00277V8.85728H0V10.8574ZM2.00277 5.42857V7.42871H0V5.42857H2.00277ZM13.8611 17.214C13.4639 17.3545 13.0606 17.0399 13.1622 16.6688L13.4754 15.5246C13.5701 15.1786 14.0396 15.0411 14.3363 15.2725L15.2475 15.9833C15.5442 16.2147 15.4558 16.6495 15.0855 16.7806L13.8611 17.214ZM4.0963 4.36328C3.64381 4.36328 3.27699 4.72959 3.27699 5.18146C3.27699 5.63333 3.64381 5.99964 4.0963 5.99964H15.0205C15.473 5.99964 15.8398 5.63333 15.8398 5.18146C15.8398 4.72959 15.473 4.36328 15.0205 4.36328H4.0963ZM4.0963 7.63672C3.64381 7.63672 3.27699 8.00303 3.27699 8.4549C3.27699 8.90677 3.64381 9.27308 4.0963 9.27308H13.9281C14.3806 9.27308 14.7474 8.90677 14.7474 8.4549C14.7474 8.00303 14.3806 7.63672 13.9281 7.63672H4.0963ZM3.27699 11.7264C3.27699 11.2745 3.64381 10.9082 4.0963 10.9082H12.8356C13.2881 10.9082 13.655 11.2745 13.655 11.7264C13.655 12.1783 13.2881 12.5446 12.8356 12.5446H4.0963C3.64381 12.5446 3.27699 12.1783 3.27699 11.7264ZM4.09562 14.25C3.6435 14.25 3.27699 14.616 3.27699 15.0675C3.27699 15.519 3.6435 15.885 4.09562 15.885H10.1039C10.556 15.885 10.9225 15.519 10.9225 15.0675C10.9225 14.616 10.556 14.25 10.1039 14.25H4.09562ZM3.27699 18.2733C3.27699 17.8214 3.64381 17.4551 4.0963 17.4551H10.1046C10.5571 17.4551 10.9239 17.8214 10.9239 18.2733C10.9239 18.7251 10.5571 19.0914 10.1046 19.0914H4.0963C3.64381 19.0914 3.27699 18.7251 3.27699 18.2733Z"
+                                fill="#484848" />
+                            <defs>
+                                <linearGradient id="paint1_linear" x1="0" y1="0" x2="23" y2="24"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#CDEEFF" />
+                                    <stop offset="1" stop-color="#FFCDCD" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
-                    <span>Noots</span>
                 </div>
-                <ul *ngIf="isCurrentRouteRight('noot')" class="under" [@slideInOut]>
-                    <li>
-                        <div routerLink="/noots/new" class="new-note"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/new')}">
-                            <img src="assets/under-menu/plus.svg" />
-                            <span>New Noot</span>
+                <div class="sidebar-title">
+                    <p>Notes</p>
+                </div>
+            </div>
+            <div class="sidebar-field-help" [@slideInOut] *ngIf="isCurrentRouteRight('notes')">
+                <div class="field-help" routerLink="/notes/new"
+                    routerLinkActive="active-sidebar-field-help">
+                    <div class="sidebar-icon-help-wrapper">
+                        <div class="sidebar-icon-help-plus">
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M5 0C4.63184 0 4.3335 0.298828 4.3335 0.666992V4.33398H0.666504C0.29834 4.33398 0 4.63184 0 5C0 5.36816 0.29834 5.66699 0.666504 5.66699H4.3335V9.33301C4.3335 9.70117 4.63184 10 5 10C5.26025 10 5.48584 9.85059 5.59619 9.63281C5.6416 9.54297 5.66699 9.44043 5.66699 9.33301V5.66699H9.3335C9.70166 5.66699 10 5.36816 10 5C10 4.63184 9.70166 4.33398 9.3335 4.33398H5.66699V0.666992C5.66699 0.298828 5.36816 0 5 0Z"
+                                    fill="#DADADA" />
+                            </svg>
                         </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/all" [ngClass]="{'active-menu': isCurrentRouteRight('noots/all')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/all') ? Colorfulldot : dot" />
-                            <span>All noots</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/my" [ngClass]="{'active-menu': isCurrentRouteRight('noots/my')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/my') ? Colorfulldot : dot" />
-                            <span>My noots</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/filters"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/filters')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/filters') ? Colorfulldot : dot" />
-                            <span>Filters</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/saved" [ngClass]="{'active-menu': isCurrentRouteRight('noots/saved')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/saved') ? Colorfulldot : dot" />
-                            <span>Saved</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/watch-laters"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/watch-laters')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/watch-laters') ? Colorfulldot : dot" />
-                            <span>Watch Later</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/subscribes"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/subscribes')}">
-                            <img [src]="isCurrentRouteRight('noots/subscribes') ? ColorSubscribes : subscribes" />
-                            <span>Subscribes</span>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('note')}">
-                <div (click)="changeRoute('notes')" routerLink="/notes/all">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('note') ? ColornoteImage : noteImage" />
                     </div>
-                    <span>Notes</span>
-                </div>
-                <ul *ngIf="isCurrentRouteRight('note')" class="under" [@slideInOut]>
-                    <li>
-                        <div routerLink="/notes/new" class="new-note"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/new')}">
-                            <img src="assets/under-menu/plus.svg" />
-                            <span>New Note</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/all" id="active-menu"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/all')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/all') ? Colorfulldot : dot" />
-                            <span>All notes</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/shared"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/shared')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/shared') ? Colorfulldot : dot" />
-                            <span>Shared</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/locked"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/locked')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/locked') ? Colorfulldot : dot" />
-                            <span>Locked</span>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('groups')}">
-                <div (click)="changeRoute('groups')" routerLink="/groups">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('groups') ? ColorgroupImage : groupImage" />
+                    <div class="sidebar-title-help">
+                        <p>New note</p>
                     </div>
-                    <span>Groups</span>
                 </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('people')}">
-                <div (click)="changeRoute('people')" routerLink="/people">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('people') ? ColorpeopleImage : peopleImage" />
-                    </div>
-                    <span>People</span>
-                </div>
-            </li>
-
-            <li [ngClass]="{'active': isCurrentRouteRight('labels')}">
-                <div (click)="changeRoute('labels')" routerLink="/labels">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('labels') ? ColorlabelsImage : labelsImage" />
-                    </div>
-                    <span>Labels</span>
-                </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('invites')}">
-                <div (click)="changeRoute('invites')" routerLink="/invites">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('invites') ? ColorinvitesImage : invitesImage" />
-                    </div>
-                    <span>Invites</span>
-                </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('bin')}">
-                <div (click)="changeRoute('bin')" routerLink="/bin">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('bin') ? ColorbinImage : binImage" />
-                    </div>
-                    <span>Bin
-                    </span>
-                </div>
-            </li>
-        </ul>
-    </aside>
-    <aside id="mobile-menu" class="display-none mobile-menu">
-        <ul class="side-bar">
-            <li [ngClass]="{'active': isCurrentRouteRight('noot')}">
-                <div (click)="changeRoute('noots')" routerLink="/noots/all">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('noot') ? ColornootImage : nootImage" />
-                    </div>
-                    <span>Noots</span>
-                </div>
-                <ul *ngIf="isCurrentRouteRight('noot')" class="under" [@slideInOut]>
-                    <li>
-                        <div routerLink="/noots/new" class="new-note"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/new')}">
-                            <img src="assets/under-menu/plus.svg" />
-                            <span>New Noot</span>
+                <div class="field-help" routerLink="/notes/all"
+                    routerLinkActive="active-sidebar-field-help">
+                    <div class="sidebar-icon-help-wrapper">
+                        <div class="sidebar-icon-help">
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="4" cy="4" r="4" fill="#DADADA" />
+                            </svg>
                         </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/all" [ngClass]="{'active-menu': isCurrentRouteRight('noots/all')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/all') ? Colorfulldot : dot" />
-                            <span>All noots</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/my" [ngClass]="{'active-menu': isCurrentRouteRight('noots/my')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/my') ? Colorfulldot : dot" />
-                            <span>My noots</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/filters"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/filters')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/filters') ? Colorfulldot : dot" />
-                            <span>Filters</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/saved" [ngClass]="{'active-menu': isCurrentRouteRight('noots/saved')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/saved') ? Colorfulldot : dot" />
-                            <span>Saved</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/watch-laters"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/watch-laters')}">
-                            <img class="dot" [src]="isCurrentRouteRight('noots/watch-laters') ? Colorfulldot : dot" />
-                            <span>Watch Later</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/noots/subscribes"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('noots/subscribes')}">
-                            <img [src]="isCurrentRouteRight('noots/subscribes') ? ColorSubscribes : subscribes" />
-                            <span>Subscribes</span>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('note')}">
-                <div (click)="changeRoute('notes')" routerLink="/notes/all">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('note') ? ColornoteImage : noteImage" />
                     </div>
-                    <span>Notes</span>
+                    <div class="sidebar-title-help">
+                        <p>All notes</p>
+                    </div>
                 </div>
-                <ul *ngIf="isCurrentRouteRight('note')" class="under" [@slideInOut]>
-                    <li>
-                        <div routerLink="/notes/new" class="new-note"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/new')}">
-                            <img src="assets/under-menu/plus.svg" />
-                            <span>New Note</span>
+                <div class="field-help" routerLink="/notes/shared"
+                    routerLinkActive="active-sidebar-field-help">
+                    <div class="sidebar-icon-help-wrapper">
+                        <div class="sidebar-icon-help">
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="4" cy="4" r="4" fill="#DADADA" />
+                            </svg>
                         </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/all" id="active-menu"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/all')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/all') ? Colorfulldot : dot" />
-                            <span>All notes</span>
+                    </div>
+                    <div class="sidebar-title-help">
+                        <p>Locked</p>
+                    </div>
+                </div>
+                <div class="field-help" routerLink="/notes/locked"
+                    routerLinkActive="active-sidebar-field-help">
+                    <div class="sidebar-icon-help-wrapper">
+                        <div class="sidebar-icon-help">
+                            <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="4" cy="4" r="4" fill="#DADADA" />
+                            </svg>
                         </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/shared"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/shared')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/shared') ? Colorfulldot : dot" />
-                            <span>Shared</span>
-                        </div>
-                    </li>
-                    <li>
-                        <div routerLink="/notes/locked"
-                            [ngClass]="{'active-menu': isCurrentRouteRight('notes/locked')}">
-                            <img class="dot" [src]="isCurrentRouteRight('notes/locked') ? Colorfulldot : dot" />
-                            <span>Locked</span>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('groups')}">
-                <div (click)="changeRoute('groups')" routerLink="/groups">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('groups') ? ColorgroupImage : groupImage" />
                     </div>
-                    <span>Groups</span>
-                </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('people')}">
-                <div (click)="changeRoute('people')" routerLink="/people">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('people') ? ColorpeopleImage : peopleImage" />
+                    <div class="sidebar-title-help">
+                        <p>Locked</p>
                     </div>
-                    <span>People</span>
                 </div>
-            </li>
-
-            <li [ngClass]="{'active': isCurrentRouteRight('labels')}">
-                <div (click)="changeRoute('labels')" routerLink="/labels">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('labels') ? ColorlabelsImage : labelsImage" />
+            </div>
+        </div>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
+            <div class="field" routerLink="/containers">
+                <div class="sidebar-icon">
+                    <div class="sidebar-icon-wrapper-second">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect class="rect1" x="3" y="16" width="16" height="21" rx="2" transform="rotate(-90 3 16)"
+                                fill="#A0A0A0" />
+                            <rect class="rect2" y="19" width="16" height="21" rx="2" transform="rotate(-90 0 19)"
+                                fill="#484848" />
+                            <defs>
+                                <linearGradient id="paint2_linear" x1="16" y1="19" x2="3.75284e-06" y2="40"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#CDEEFF" />
+                                    <stop offset="1" stop-color="#FFCDCD" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
-                    <span>Labels</span>
                 </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('invites')}">
-                <div (click)="changeRoute('invites')" routerLink="/invites">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('invites') ? ColorinvitesImage : invitesImage" />
+                <div class="sidebar-title">
+                    <p>Folders</p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
+            <div class="field" routerLink="/labels">
+                <div class="sidebar-icon">
+                    <div class="sidebar-icon-wrapper-third">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="icon3" fill-rule="evenodd" clip-rule="evenodd"
+                                d="M2.01642 2L2.01642 15L17.4937 15L21.7865 8.5L17.4937 2L2.01642 2ZM1.00821 0C0.451391 0 0 0.447715 0 1L0 16C0 16.5523 0.451391 17 1.00821 17L18.0385 17C18.3785 17 18.6956 16.83 18.8819 16.548L23.8352 9.04796C24.0549 8.71517 24.0549 8.28482 23.8352 7.95204L18.8819 0.45204C18.6956 0.169957 18.3785 0 18.0385 0L1.00821 0Z"
+                                fill="#484848" />
+                            <defs>
+                                <linearGradient id="paint3_linear" x1="0" y1="0" x2="24" y2="17"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#CDEEFF" />
+                                    <stop offset="1" stop-color="#FFCDCD" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
-                    <span>Invites</span>
                 </div>
-            </li>
-            <li [ngClass]="{'active': isCurrentRouteRight('bin')}">
-                <div (click)="changeRoute('bin')" routerLink="/bin">
-                    <div class="center-icons">
-                        <img [src]="isCurrentRouteRight('bin') ? ColorbinImage : binImage" />
+                <div class="sidebar-title">
+                    <p>Labels</p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
+            <div class="field" routerLink="/people">
+                <div class="sidebar-icon">
+                    <div class="sidebar-icon-wrapper-fourth">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="icon4" fill-rule="evenodd" clip-rule="evenodd"
+                                d="M14.2462 5.99971C14.2462 3.6584 12.3416 1.75379 10.0003 1.75379C7.65899 1.75379 5.75379 3.6584 5.75379 5.99971C5.75379 8.34101 7.65899 10.2462 10.0003 10.2462C12.3416 10.2462 14.2462 8.34101 14.2462 5.99971ZM4 5.99971C4 2.68622 6.68622 0 10.0003 0C13.3138 0 16 2.68622 16 5.99971C16 9.31378 13.3138 12 10.0003 12C6.68622 12 4 9.31378 4 5.99971ZM18.2257 23.1037C18.2257 23.5985 18.6232 24 19.1129 24C19.6026 24 20 23.5985 20 23.1037C20 22.8491 19.9905 22.5964 19.9722 22.3532C19.822 20.3216 19.0667 18.3993 17.7893 16.7955C15.8689 14.3833 13.0301 13 10.0003 13C7.34542 13 4.83899 14.0558 2.94172 15.9721C1.04445 17.8884 0 20.4214 0 23.1037C0 23.5985 0.397433 24 0.887128 24C1.37682 24 1.77426 23.5985 1.77426 23.1037C1.77426 18.5212 5.46471 14.7926 10.0003 14.7926C12.4896 14.7926 14.8245 15.9327 16.4065 17.9195C17.4581 19.2394 18.0791 20.8187 18.2027 22.4888C18.2181 22.6878 18.2257 22.8952 18.2257 23.1037Z"
+                                fill="#484848" />
+                            <defs>
+                                <linearGradient id="paint4_linear" x1="0" y1="0" x2="20" y2="24"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#CDEEFF" />
+                                    <stop offset="1" stop-color="#FFCDCD" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
                     </div>
-                    <span>Bin
-                    </span>
                 </div>
-            </li>
-        </ul>
+                <div class="sidebar-title">
+                    <p>People</p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-field"
+            routerLinkActive="active-sidebar-field">
+            <div class="field" routerLink="/bin">
+                <div class="sidebar-icon">
+                    <div class="sidebar-icon-wrapper-fifth">
+                        <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path class="icon5" fill-rule="evenodd" clip-rule="evenodd"
+                                d="M7.5358 0.0014134C7.31778 0.00994514 7.10279 0.0570288 6.90086 0.140671C6.67665 0.233541 6.47293 0.369664 6.30133 0.541267C6.12973 0.71287 5.9936 0.916592 5.90073 1.1408C5.81074 1.35805 5.76307 1.59042 5.7602 1.82542H1.248V1.82475C1.23436 1.82475 1.22074 1.82497 1.20713 1.82542H1.15172V1.82847C1.0208 1.8386 0.892096 1.86934 0.770411 1.91975C0.618997 1.98247 0.481418 2.07439 0.365531 2.19028C0.249643 2.30617 0.157716 2.44375 0.0949984 2.59516C0.0322845 2.74656 4.16351e-06 2.90884 0 3.07272V3.07275V3.69672H18.144V3.07272H18.1436C18.1435 2.90907 18.1113 2.74703 18.0486 2.59583C17.9859 2.44442 17.894 2.30684 17.7781 2.19095C17.6622 2.07506 17.5246 1.98313 17.3732 1.92042C17.2218 1.85771 17.0596 1.82543 16.8957 1.82542H16.8956H12.4317C12.4288 1.5905 12.3811 1.35822 12.2912 1.14105C12.1983 0.916836 12.0622 0.713114 11.8906 0.541511C11.719 0.369909 11.5153 0.233786 11.2911 0.140915C11.0742 0.0510995 10.8423 0.00343814 10.6078 0.00039969V0.000244617H10.5839H7.60806V0L7.578 0.000244617H7.5358V0.0014134ZM16.3677 4.51191H1.24767V4.51245L1.05614 4.51245L2.30502 21.2048C2.34883 22.7245 3.56986 23.9491 5.08807 23.9987V24H5.14184C5.15581 24.0002 5.1698 24.0003 5.18381 24.0003L5.19901 24.0002L5.22577 24H12.9182C12.9322 24.0002 12.9462 24.0003 12.9602 24.0003L12.9827 24.0002L13.0022 24H13.0561V23.9987C14.6023 23.9481 15.8402 22.6788 15.8402 21.1203V21.1201L15.8403 21.1201L17.0879 4.5121H16.3677V4.51191ZM7.91655 22.0319L7.91652 22.032H8.62737C8.74804 22.1399 8.90737 22.2056 9.08204 22.2056C9.2567 22.2056 9.41604 22.1399 9.53671 22.032H10.2275L10.2275 22.0319H9.53682C9.67636 21.907 9.76418 21.7255 9.76418 21.5234V6.9712C9.76418 6.59447 9.45877 6.28906 9.08204 6.28906C8.70531 6.28906 8.3999 6.59447 8.3999 6.9712V21.5234C8.3999 21.7255 8.48772 21.907 8.62725 22.0319H7.91655ZM4.66514 6.27493C4.2889 6.29406 3.99939 6.61458 4.01852 6.99083L4.75745 21.5243C4.77658 21.9005 5.0971 22.19 5.47335 22.1709C5.84959 22.1518 6.1391 21.8313 6.11997 21.455L5.38104 6.92155C5.36191 6.5453 5.04139 6.2558 4.66514 6.27493ZM12.7735 7.01719C12.7926 6.64095 13.1131 6.35144 13.4894 6.37057C13.8656 6.38969 14.1551 6.71021 14.136 7.08645L13.3972 21.6199C13.3781 21.9962 13.0576 22.2857 12.6813 22.2666C12.3051 22.2474 12.0156 21.9269 12.0347 21.5507L12.7735 7.01719Z"
+                                fill="#484848" />
+                            <defs>
+                                <linearGradient id="paint5_linear" x1="0" y1="0" x2="18" y2="24"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#CDEEFF" />
+                                    <stop offset="1" stop-color="#FFCDCD" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+                <div class="sidebar-title">
+                    <p>Bin</p>
+                </div>
+            </div>
+        </div>
     </aside>
     <main>
         <router-outlet></router-outlet>

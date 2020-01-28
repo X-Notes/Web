@@ -1,4 +1,4 @@
-﻿using DataAccess.IRepositories;
+﻿
 using DataAccess.Mongo;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository
     {
         private readonly DbContext _context = null;
 

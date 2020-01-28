@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Interfaces;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Shared.RabbitMq.QueueInterfaces;
 using Shared.RabbitMq.QueueModel;
@@ -10,13 +9,11 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Services
 {
-    public class QueueService : IQueueService, IDisposable
+    public class QueueService : IDisposable
     {
         private readonly IMessageConsumerScope _messageConsumerScope;
-        private readonly IHabr habr;
-        public QueueService(IMessageConsumerScopeFactory messageConsumerScopeFactory, IHabr habr)
+        public QueueService(IMessageConsumerScopeFactory messageConsumerScopeFactory)
         {
-            this.habr = habr;
             this._messageConsumerScope = messageConsumerScopeFactory.Connect(new MessageScopeSettings
             {
                 ExchangeName = "ServerExchange",
@@ -32,7 +29,6 @@ namespace BusinessLogic.Services
             var processed = false;
             try
             {
-                Parse();
                 var value = Encoding.UTF8.GetString(e.Body);
                 Console.WriteLine($"Received {value}");
                 processed = true;
@@ -46,11 +42,6 @@ namespace BusinessLogic.Services
             {
                 _messageConsumerScope.MessageConsumer.SetAcknowledge(e.DeliveryTag, processed);
             }
-        }
-        public async Task Parse()
-        {
-            var pages = await habr.ParseMainPages(2);
-            await habr.ParseConcretePages(pages);
         }
         public void Dispose()
         {

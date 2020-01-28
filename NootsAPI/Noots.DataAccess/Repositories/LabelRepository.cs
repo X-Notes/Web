@@ -1,7 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using Noots.DataAccess.Context;
-using Noots.DataAccess.InterfacesRepositories;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Noots.DataAccess.Repositories
 {
-    public class LabelRepository : ILabelRepository
+    public class LabelRepository
     {
         private readonly DbContext _context = null;
         public LabelRepository(string connection, string database)

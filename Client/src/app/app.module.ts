@@ -2,12 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NootsModule } from './Noots/noots.module';
 import { NotesModule } from './Notes/notes.module';
-import { GroupsModule} from './Groups/groups.module';
 import { PeopleModule } from './People/people.module';
 import { LabelsModule } from './Labels/labels.module';
-import {InvitesModule } from './Invites/invites.module';
 import { BinModule } from './Trash/trash.module';
 import { LandingComponent } from './landing/landing.component';
 import { MainComponent } from './main/main.component';
@@ -20,6 +17,8 @@ import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenIntercepter } from './Services/token-intercepter';
+import { ContainerComponent } from './Containers/container/container.component';
+import { ContainersComponent } from './Containers/containers/containers.component';
 
 
 @NgModule({
@@ -27,16 +26,15 @@ import { TokenIntercepter } from './Services/token-intercepter';
     AppComponent,
     LandingComponent,
     MainComponent,
+    ContainerComponent,
+    ContainersComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     PeopleModule,
     NotesModule,
-    NootsModule,
     LabelsModule,
-    InvitesModule,
-    GroupsModule,
     BinModule,
     HttpClientModule,
     AngularFireModule.initializeApp(environment.firebase),

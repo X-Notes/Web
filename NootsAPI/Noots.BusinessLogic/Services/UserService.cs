@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
-using Noots.BusinessLogic.Interfaces;
-using Noots.DataAccess.InterfacesRepositories;
+using Noots.DataAccess.Repositories;
 using Shared.DTO.User;
 using Shared.Mongo;
 using System;
@@ -11,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Noots.BusinessLogic.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
-        private readonly IUserRepository userRepository = null;
+        private readonly UserRepository userRepository = null;
         private readonly IMapper mapper;
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(UserRepository userRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;

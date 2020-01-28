@@ -19,15 +19,25 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./main.component.sass'],
   animations: [
     trigger('slideInOut', [
-      state('out', style({ height: '*' , overflow: 'hidden'})),
-      transition('* => void', [
-        style({ height: '*', overflow: 'hidden', borderRadius: '0px', 'background-color': '#FBFBFB' }),
-        animate('300ms ease-in', style({ height: '0', borderRadius: '0px' }))
-      ]),
-      state('in', style({ height: '0' })),
+      state('in', style({ height: '0'})),
       transition('void => *', [
         style({ height: '0', overflow: 'hidden'}),
-        animate('300ms ease-out', style({ height: '*' , overflow: 'hidden'}))
+        animate('300ms ease-in-out', style({height: '*'}))
+      ]),
+      state('out', style({ height: '*'})),
+      transition('* => void', [
+        style({ height: '*', opacity: 0}),
+        animate('300ms ease-in-out', style({ height: '0'}))
+      ]),
+    ]),
+    trigger('sidebarCloseOpen', [
+      state('out', style({ transform: 'translateX(0)' })),
+      transition('void => *', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('200ms ease-in-out')
+      ]),
+      transition('* => void', [
+        animate('200ms ease-in-out', style({ transform: 'translateX(-100%)' }))
       ])
     ])
   ]
@@ -35,30 +45,15 @@ import { takeUntil } from 'rxjs/operators';
 export class MainComponent implements OnInit {
   title = 'Client';
   user: User;
+
+  activeSidebar = true;
+
   activeProfileMenu = false;
+  activeNotificationMenu = false;
+  activeInvitesMenu = false;
   activeMenu = false;
+
   unsubscribe = new Subject();
-
-
-  noteImage = 'assets/menu/note.svg';
-  nootImage = 'assets/menu/noots.svg';
-  labelsImage = 'assets/menu/labels.svg';
-  peopleImage = 'assets/menu/people.svg';
-  groupImage = 'assets/menu/groups.svg';
-  binImage = 'assets/menu/bin.svg';
-  invitesImage = 'assets/menu/invites.svg';
-  dot = 'assets/under-menu/dot.svg';
-  subscribes = 'assets/under-menu/subscribes.svg';
-
-  ColorSubscribes = 'assets/colorfull-menu/subscribes.svg';
-  Colorfulldot = 'assets/under-menu/colorful-dot.svg';
-  ColornoteImage = 'assets/colorfull-menu/note.svg';
-  ColornootImage = 'assets/colorfull-menu/noots.svg';
-  ColorlabelsImage = 'assets/colorfull-menu/labels.svg';
-  ColorpeopleImage = 'assets/colorfull-menu/people.svg';
-  ColorgroupImage = 'assets/colorfull-menu/groups.svg';
-  ColorbinImage = 'assets/colorfull-menu/bin.svg';
-  ColorinvitesImage = 'assets/colorfull-menu/invites.svg';
 
   constructor(private router: Router, private authService: AuthService, private userService: UserService) {
 
@@ -70,30 +65,36 @@ export class MainComponent implements OnInit {
       this.router.navigate(['/about']);
     });
   }
-  DropMenu() {
-    this.activeMenu = !this.activeMenu;
-    const menu = document.getElementById('mobile-menu') as HTMLElement;
-    if (this.activeMenu === true) {
-      menu.classList.remove('display-none');
-      menu.classList.add('display-active');
-    } else {
-      menu.classList.remove('display-active');
-      menu.classList.add('display-none');
-    }
-  }
   GetUpdates() {
     this.userService.GetUpdates().subscribe(x => x, error => console.log(error));
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
-  changeRoute(rout: string) {}
 
-  openDialog() {
+  openSidebar() {
+    this.activeSidebar = !this.activeSidebar;
+  }
+
+  openProfileDialog() {
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = false;
     this.activeProfileMenu = !this.activeProfileMenu;
+  }
+  openNotificationDialog() {
+    this.activeProfileMenu = false;
+    this.activeInvitesMenu = false;
+    this.activeNotificationMenu = !this.activeNotificationMenu;
+  }
+  openInvitesDialog() {
+    this.activeProfileMenu = false;
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = !this.activeInvitesMenu;
   }
   close() {
     this.activeProfileMenu = false;
+    this.activeNotificationMenu = false;
+    this.activeInvitesMenu = false;
   }
   exit() {
     this.authService.SignOut();

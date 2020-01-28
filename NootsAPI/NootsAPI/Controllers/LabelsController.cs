@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Noots.BusinessLogic.Interfaces;
+using Noots.BusinessLogic.Services;
 using NootsAPI.Infastructure;
 using Shared.DTO.Label;
 
@@ -16,8 +16,8 @@ namespace NootsAPI.Controllers
     [ApiController]
     public class LabelsController : ControllerBase
     {
-        ILabelService labelService;
-        public LabelsController(ILabelService labelService)
+        LabelService labelService;
+        public LabelsController(LabelService labelService)
         {
             this.labelService = labelService;
         }

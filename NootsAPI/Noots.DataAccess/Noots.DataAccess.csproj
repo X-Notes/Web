@@ -13,4 +13,8 @@
     <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="InterfacesRepositories\" />
+  </ItemGroup>
+
 </Project>

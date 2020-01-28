@@ -1,14 +1,10 @@
-﻿using BusinessLogic.Interfaces;
-using BusinessLogic.Services;
-using DataAccess.Interfaces;
-using DataAccess.IRepositories;
+﻿using BusinessLogic.Services;
 using DataAccess.Repositories;
 using DataAccess.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using RabbitMQ.Client;
-using Shared.Elastic;
 using Shared.RabbitMq.QueueInterfaces;
 using Shared.RabbitMq.QueueService;
 using System;
@@ -23,8 +19,7 @@ namespace Workers.Starting
     {
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IControlSystem, ControlSystem>();
-            services.AddTransient<IHabr, Habr>();
+
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {
@@ -32,14 +27,12 @@ namespace Workers.Starting
             string defaultIndex = configuration["elasticsearch:index"];
             Uri uri = new Uri(url);
 
-            Console.WriteLine(url);
 
             NestConnectionSettings settings = new NestConnectionSettings(uri)
-                .DefaultIndex(defaultIndex)
-                .DefaultMappingFor<ElasticNoot>(m => m.IdProperty(p => p.Id));
+                .DefaultIndex(defaultIndex);
 
             services.AddSingleton<IElasticClient>(new ElasticClient(settings));
-            services.AddSingleton<IElasticSearch>(f => new ElasticSearch(defaultIndex, f.GetService<IElasticClient>()));
+            services.AddSingleton(f => new ElasticSearch());
         }
         public static void DatabaseServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -49,12 +42,11 @@ namespace Workers.Starting
             var database = configuration["Mongo:Database"];
             var connection = $@"mongodb://{host}:{port}";
 
-            services.AddTransient<IUserRepository, UserRepository>(x => new UserRepository(connection, database));
-            services.AddTransient<INootRepository, NootRepository>(x => new NootRepository(connection, database));
+            services.AddTransient<UserRepository>(x => new UserRepository(connection, database));
         }
         public static void RabbitMQServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IQueueService, QueueService>();
+            services.AddSingleton<QueueService>();
 
             services.AddScoped<IMessageQueue, MessageQueue>();
 

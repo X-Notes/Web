@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Interfaces;
-using BusinessLogic.Services;
+﻿using BusinessLogic.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
@@ -13,10 +12,6 @@ namespace Workers
         {
             RegisterServices services = new RegisterServices();
             var provider = services.services.BuildServiceProvider();
-
-
-            var system = provider.GetService<IControlSystem>();
-            await system.Run();
         }
     }
 }

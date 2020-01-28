@@ -1,438 +1,352 @@
-
 @import "../../../node_modules/hamburgers/dist/hamburgers.min.css"
 
+svg
+    width: 100%
+    height: 100%
 
-
-
-.side-bar
-    margin-top: 1px
-    
-
-
-.side-bar > li
+div
     display: flex
-    flex-direction: column
-    color: #484848
-    font-size: 22px
-    justify-content: center
+
+header
+    display: flex
+    width: 100%
+    height: 60px
+    background: #303030
     align-items: center
-    
-    > div
-      display: flex
-      justify-content: space-between
-      align-items: center
-      width: 100%
-      padding: 7px 20px 7px 20px
-      
-
-      &:hover 
-         cursor: pointer 
-
-      &:focus
-          outline: 0
-
-      span
-          width: 100px
-
-          
-      .center-icons
-        width: 30px
-        display: flex
-        align-self: center
-        justify-content: center
-        img
-            height: 26px
-
-.side-bar > li:not(.active) > div
-    &:hover
-        background: #EBFFEC 
-        cursor: pointer 
-
-        span
-         color: black         
-
-
-
-.under
-    border-radius: 0 0 10px 0
-    width: 100%
-    background: #303030
-    padding-bottom: 10px
-    li
-        div
-            span
-                color: #dadada
-
-.under li
-    display: flex
-    flex-direction: column
-    width: 100%
-    font-size: 16px
-    margin-top: 15px
-    justify-content: center
-    align-items: center   
-    padding-left: 18px
-
-    div
-      display: flex
-      justify-content: space-between
-      align-items: center
-      width: 130px
-      outline: none
-      
-      span
-          width: 100px
-      img
-          height: 16px
-      .dot
-          margin-left: 2px
-          height: 10px
-
-.active
-    background: #303030
-    border-radius: 0 0 10px 0
-    > div
-        span
-            color:#EBFFEC
-
-    li:first-child
-        div
-            span
-                color: #EBFFEC
-    li
-        div
-            span
-                color: #dadada
-
-        &:hover
+    .left-content
+        height: 100%
+        width: 200px
+        padding: 0  0 0 20px
+        align-items: center
+        .hamburger--squeeze
+            height: 30px
             cursor: pointer
-            span
-                color: #EBFFEC !important
-                text-decoration: underline  
-
-.active-menu
-    span
-        text-decoration: underline
-        color: #EBFFEC !important
-
-.new-note
-    span
-        color: #EBFFEC
-        
-//aside
-
-.display-none
-    display: none
-
-.display-active
-    display: block
-
+            .hamburger-box
+                width: 25px
+                height: 30px
+                .hamburger-inner
+                    background-color: #ffffff
+                    width: 25px
+                    &::before
+                        background-color: #ffffff
+                        width: 25px
+                    &::after
+                        background-color: #ffffff
+                        width: 25px
+    .right-content
+        height: 100%
+        width: calc( 100% - 200px )
+        padding: 0  20px 0 0
+        align-items: center
+        justify-content: space-between
+        .svg-logo
+            height: 36px
+            width: 135px
+            cursor: pointer
+        .header-instruments
+            align-items: center
+            .main-search
+                align-items: center
+                input[type=text], select
+                    width: 250px
+                    height: 30px
+                    margin: 5px 0 5px 0px
+                    border: none
+                    outline: none
+                    border-radius: 8px 0px 0px 8px
+                    padding: 0 0 0 10px
+                    font-size: 16px
+                    background: #4A4A4A 
+                    color: #8E8E8E
+                    transition: .3s ease
+                    &:focus
+                        width: 300px
+                        color: #cacaca
+                .search-area
+                    height: 30px
+                    width: 35px
+                    align-items: center
+                    justify-content: center
+                    background: #515151 !important
+                    border-radius: 0px 8px 8px 0px
+                    cursor: pointer
+                    .search-icon
+                        width: 18px
+                        height: 19px
+            .header-icons
+                position: relative
+                cursor: pointer
+                margin-left: 25px
+                .header-icons-first
+                    width: 31px
+                    height: 30px
+                .header-icons-second
+                    width: 28px
+                    height: 30px
+                .push
+                    justify-content: center
+                    align-items: center
+                    position: absolute
+                    top: -5px
+                    right: -5px
+                    height: 20px
+                    width: 20px
+                    border-radius: 50%
+                    background-color: #ED6565
+                    color: white
+                    font-size: 12px
+                .profile
+                    width: 40px
+                    height: 40px
+                    border-radius: 25px
+                    overflow: hidden
+            .fix-height
+                height: 30px
+        .profile-menu
+            flex-direction: column
+            position: absolute
+            z-index: 100
+            top: 60px
+            right: 0px
+            width: 300px
+            height: 250px
+            background: #FBFBFB
+            border-left: 1px solid
+            border-bottom: 1px solid
+            border-color: #D6D6D6
+            border-radius: 0px 0px 0px 5px  
+            .profile-info
+                flex-direction: row
+                align-items: center
+                padding: 0 10px
+                width: 100%
+                height: 100px
+                background-color: #FBFBFB
+                border-bottom: 1px solid #D6D6D6
+                .profile-image
+                    width: 60px
+                    height: 60px
+                    border-radius: 50%
+                    overflow: hidden
+                    img
+                        width: 100%
+                .profile-description
+                    flex-direction: column
+                    height: 60px
+                    width: calc(100% - 70px)
+                    justify-content: space-around
+                    margin-left: 10px
+                    p
+                        overflow: hidden
+                        white-space: nowrap
+                        text-overflow: ellipsis 
+                        -o-text-overflow: ellipsis
+                    .profile-name
+                        font-weight: bold
+                        font-size: 22px
+                    .profile-mail
+                        font-size: 14px
+            .profile-settings
+                flex-direction: column
+                width: 100%
+                height: 150px
+                padding: 20px 15px
+                justify-content: space-between
+                .profile-field
+                    align-items: center
+                    width: 100%
+                    font-size: 18px
+                    color: #484848
+                    cursor: pointer
+                    .profile-svg-icon
+                        width: 21px
+                        height: 21px
+                        svg
+                            width: 100%
+                            height: 100%
+                    .profile-field-text
+                        margin-left: 10px
+        .notification-menu
+            flex-direction: column
+            width: 300px
+            height: 485px
+            position: absolute
+            z-index: 100
+            top: 60px
+            right: 0px
+            background: #FBFBFB
+            border-left: 1px solid
+            border-bottom: 1px solid
+            border-color: #D6D6D6
+            border-radius: 0px 0px 0px 5px
+            .notification-info
+                align-items: center
+                justify-content: space-between
+                width: 100%
+                height: 50px
+                padding: 0 20px 0 10px
+                border-bottom: 1px solid #D6D6D6
+                .notification-title
+                    font-size: 22px
+                    font-weight: 500
+                    color: #303030
+                .notification-icon
+                    height: 21px
+                    width: 21px
+                    cursor: pointer
+        .invites-menu
+            flex-direction: column
+            width: 300px
+            height: 485px
+            position: absolute
+            z-index: 100
+            top: 60px
+            right: 0px
+            background: #FBFBFB
+            border-left: 1px solid
+            border-bottom: 1px solid
+            border-color: #D6D6D6
+            border-radius: 0px 0px 0px 5px
 
 .wrapper
-  display: flex
-  width: 100%
-  height: 100%
-
-
-
-
-
-     
-aside
-  flex: 0 0 200px
-  background: #FBFBFB
-
-
-
-
-
-// header
-header
     width: 100%
-    background: #303030
-    height: 60px
-
-.content
-    padding: 5px 5px 0px 10px
-
-.content-header
-    width: 100%
-    height: 50px
-
-
-.flex-container
-    display: flex
-
-.space-between
-    justify-content: space-between
-
-
-.right
-    width: 200px
     height: 100%
-    padding: 5px 15px 0 0
-
-.right img
-    height: 40px
-
-    &:hover
-        cursor: pointer
-        
-
-.profile 
-    width: 40px
-    height: 40px
-    -webkit-border-radius: 25px
-    -moz-border-radius: 25px
-    border-radius: 25px
-    overflow: hidden
-
-.profile img
-  border-radius: 50%
-  width: 100%
-  max-width: 100%
-  margin: 0 auto
-  
-    
-.profile-menu
-    position: absolute
-    width: 300px
-    height: 300px
-    background: #FBFBFB
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25)
-    border-radius: 5px
-    z-index: 10000
-    top: 10px
-    right: 65px
-
-    .profile-info
+    main
         width: 100%
-        margin-top: 5px
-        height: 160px
-        background: grey 
-
-    .profile-under-menu
+    aside
+        margin-top: 1px
         display: flex
-        justify-content: space-between
         flex-direction: column
-        text-align: center
-        width: 100%
-        height: 130px
-        color: #484848
-
-        span
-            &:hover
-                color: #000
-                background: #EBFFEC
+        width: 200px
+        height: 100%
+        background-color: #FBFBFB
+        .active-sidebar-field
+            background-color: #303030
+            border-radius: 0px 0px 10px 0px
+            .sidebar-title
+                background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%)
+                -webkit-background-clip: text
+                -webkit-text-fill-color: transparent
+            .sidebar-icon-wrapper-first
+                .icon1
+                    fill: url(#paint1_linear)
+            .sidebar-icon-wrapper-second
+                .rect2
+                    fill: url(#paint2_linear)
+                .rect1
+                    fill: #fff
+            .sidebar-icon-wrapper-third
+                .icon3
+                    d: path("M0 1C0 0.447715 0.447715 0 1 0L17.8916 0C18.2288 0 18.5433 0.169957 18.7281 0.45204L23.6411 7.95204C23.859 8.28482 23.859 8.71517 23.6411 9.04796L18.7281 16.548C18.5433 16.83 18.2288 17 17.8916 17L1 17C0.447715 17 0 16.5523 0 16L0 1Z")
+                    fill: url(#paint3_linear)
+            .sidebar-icon-wrapper-fourth
+                .icon4
+                    fill: url(#paint4_linear)
+            .sidebar-icon-wrapper-fifth
+                .icon5
+                    fill: url(#paint5_linear)
+        .sidebar-field:not(.active-sidebar-field):hover
+            background-color: #ececec
+            border-radius: 0px 0px 10px 0px
+            .field
+                .sidebar-icon
+                    .rect1
+                        fill: #999999
+                    .rect2
+                        fill: #303030
+                    path
+                        fill: #303030
+                .sidebar-title
+                    color: #303030
+        .sidebar-field
+            flex-direction: column
+            width: 200px
+            transition: .3s cubic-bezier(0,0,0,1)
+            .sidebar-field-help
+                height: 180px
+                width: 100%
+                flex-direction: column
+                align-items: center
+                .active-sidebar-field-help
+                    background: linear-gradient(99.51deg, rgba(37, 36, 36, 0.167409) 25.95%, #252424 56.56%, rgba(37, 36, 36, 0) 82.12%, #252424 99.63%)
+                    border-radius: 0px 0px 10px 0px
+                    .sidebar-title-help
+                        color: #8EEB97 !important
+                    .sidebar-icon-help
+                        circle
+                            fill: #8EEB97 !important
+                .field-help:not(.active-sidebar-field-help):hover
+                    background: #2A2A2A
+                    border-radius: 0px 0px 10px 0px
+                .field-help
+                    height: 45px
+                    width: 100%
+                    padding-left: 50px
+                    border-radius: 0px 0px 10px 0px
+                    align-items: center
+                    cursor: pointer
+                    outline: none
+                    transition: .3s ease-out
+                    .sidebar-icon-help-wrapper
+                        height: 100%
+                        width: 30px
+                        align-items: center
+                        justify-content: center
+                        .sidebar-icon-help
+                            width: 8px
+                            height: 8px
+                        .sidebar-icon-help-plus
+                            width: 10px
+                            height: 10px
+                    .sidebar-title-help
+                        height: 100%
+                        align-items: center
+                        font-size: 18px
+                        color: #DADADA 
+            .field
+                width: 100%
+                height: 50px
+                flex-direction: row
+                align-items: center
+                padding-left: 15px
                 cursor: pointer
+                outline: none
+                .sidebar-icon
+                    height: 100%
+                    width: 60px
+                    align-items: center
+                    justify-content: center
+                    path
+                        transition: 0.3s ease
+                    rect
+                        transition: 0.3s ease
+                    .sidebar-icon-wrapper-first
+                        width: 23px
+                        height: 24px
+                    .sidebar-icon-wrapper-second
+                        width: 24px
+                        height: 19px
+                    .sidebar-icon-wrapper-third
+                        width: 24px
+                        height:17px
+                    .sidebar-icon-wrapper-fourth
+                        width: 20px
+                        height: 24px
+                    .sidebar-icon-wrapper-fifth
+                        width: 19px
+                        height: 24px
+                .sidebar-title
+                    height: 100%
+                    align-items: center
+                    font-size: 24px
+                    color: #484848
 
-// search center
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
 
-.search-icon
-    width: 40px
-    background: #f2f2f2
-    height: 40px
-    margin: 5px 0px 0px 0px
-    padding: 5px 0px 0px 5px
-    border-radius: 0px 8px 8px 0px
-    -webkit-tap-highlight-color: transparent
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
 
-.search-icon img
-    height: 30px
-    cursor: pointer
+@media (min-width: 480px) and (max-width: 767px) //large phone
 
-input[type=text], select 
-  width: 650px
-  height: 40px
-  margin: 5px 0 5px 0px
-  display: inline-block
-  border: 1px solid #F2F2F2
-  border-radius: 8px 0px 0px 8px
-  padding: 0 0 0 10px
-  box-sizing: border-box
-  outline: none
-  font-size: 18px
-  background: #F2F2F2 !important
-  color: #202020 !important
+@media (min-width: 320px) and (max-width: 479px) //phone
 
-
-
-.left
-    min-width: 200px
-
-
-// logo
-.logo
-    padding: 5px 0 0 30px
-
-.logo img
-    height: 40px
-
-
-// Button menu
-.hamburger-inner:before
-    background-color: #ffffff
-    //height: 7px
-    width: 25px
-
-.hamburger-inner:after
-    background-color: #ffffff
-    //height: 7px
-    width: 25px
-
-.hamburger-inner
-    background-color: #ffffff
-    //height: 7px
-    width: 25px
-
-.hamburger.is-active .hamburger-inner
-    background-color: #ffffff
-
-.hamburger.is-active .hamburger-inner:after
-    background-color: #ffffff
-
-.hamburger
-    padding: 10px 0 0 5px
-    -webkit-tap-highlight-color: transparent
-
-.hamburger:hover
-    opacity: 1 !important
-
-.hamburger-box
-    width: 25px
-    height: 30px
-
-
-@media (max-width: 319px)
-    .logo
-        padding: 10px 0 0 30px
-    .logo img
-        height: 22px
-    .center
-        display: none
-
-    .right.flex-container
-        padding: 10px 15px 0 0px   
-
-    .right.flex-container img
-        height: 22px
-
-    .profile 
-        width: 22px
-        height: 22px
-    .right
-        width: 180px
-    .left
-        min-width: 170px
-
-    .mobile-menu
-        z-index: 9999
-        position: fixed
-        width: 200px  
-        height: 100%
-         
-    .desktop-menu
-        display: none
-
-@media (min-width: 320px) and (max-width: 479px)
-    .logo
-        padding: 10px 0 0 30px
-    .logo img
-        height: 22px
-    .center
-        display: none
-
-    .right.flex-container
-        padding: 10px 15px 0 0px    
-
-    .right.flex-container img
-        height: 22px
-
-    .profile 
-        width: 22px
-        height: 22px
-    .right
-        width: 180px
-    .left
-        min-width: 170px
-
-    .mobile-menu
-        z-index: 9999
-        position: fixed
-        width: 200px  
-        height: 100%
-         
-    .desktop-menu
-        display: none
-
-@media (min-width: 480px) and (max-width: 767px)
-    .logo
-        padding: 10px 0 0 30px
-
-    .logo img
-        height: 27px 
-
-    .center
-        display: none
-
-    .right.flex-container
-        padding: 10px 15px 0 0px   
-           
-    .right.flex-container img
-        height: 27px
-
-    .profile 
-        width: 27px
-        height: 27px
-    .right
-        width: 180px
-
-    .mobile-menu
-        z-index: 9999
-        position: fixed
-        width: 200px  
-        height: 100%
-
-    .desktop-menu
-        display: none
-
-        
-@media only screen and (min-width: 768px) and (max-width: 991px)    
-    .center
-        display: none
-    .right
-        width: 250px
-
-    .desktop-menu
-        display: none
-                
-@media (min-width: 992px) and  (max-width: 1199px)
-    .hamburger
-        display: none
-
-    .searchMob
-        display: none
-
-    input[type=text], select 
-        width: 450px
-
-    .display-active
-        display: none
-        
-    .desktop-menu
-        display: block
-
-@media only screen and (min-width: 1200px)
-    .hamburger
-        display: none
-
-    .searchMob
-        display: none
-
-    .display-active
-        display: none
-
-    .desktop-menu
-        display: block 
-main
-    width: 100%
+@media (min-width: 150px) and (max-width: 319px) //min width
