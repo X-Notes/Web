@@ -1,5 +1,4 @@
-﻿using Noots.BusinessLogic.Interfaces;
-using RabbitMQ.Client;
+﻿using RabbitMQ.Client;
 using Shared.RabbitMq.QueueInterfaces;
 using Shared.RabbitMq.QueueModel;
 using System;
@@ -8,7 +7,7 @@ using System.Text;
 
 namespace Noots.BusinessLogic.Services
 {
-    public class QueueService : IQueueService
+    public class QueueService
     {
         private readonly IMessageProducerScope _messageProducerScope;
 

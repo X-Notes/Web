@@ -22,13 +22,6 @@ namespace Noots.DataAccess.Context
                 return _database.GetCollection<User>("users");
             }
         }
-        public IMongoCollection<MongoNoot> Noots
-        {
-            get
-            {
-                return _database.GetCollection<MongoNoot>("noots");
-            }
-        }
         public IMongoCollection<Label> Labels
         {
             get

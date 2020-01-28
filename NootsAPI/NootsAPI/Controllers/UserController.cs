@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Noots.BusinessLogic.Interfaces;
+using Noots.BusinessLogic.Services;
 using NootsAPI.Infastructure;
 using Shared.DTO.User;
 
@@ -17,9 +17,9 @@ namespace NootsAPI.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly IUserService userService;
-        private readonly IQueueService queueService;
-        public UserController(IUserService userService, IQueueService queueService)
+        private readonly UserService userService;
+        private readonly QueueService queueService;
+        public UserController(UserService userService, QueueService queueService)
         {
             this.userService = userService;
             this.queueService = queueService;

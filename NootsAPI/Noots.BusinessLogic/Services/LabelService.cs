@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
-using Noots.BusinessLogic.Interfaces;
-using Noots.DataAccess.InterfacesRepositories;
+using Noots.DataAccess.Repositories;
 using Shared.DTO.Label;
 using Shared.Mongo;
 using System;
@@ -11,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Noots.BusinessLogic.Services
 {
-    public class LabelService : ILabelService
+    public class LabelService
     {
-        private readonly ILabelRepository labelRepository;
-        private readonly IUserRepository userRepository;
+        private readonly LabelRepository labelRepository;
+        private readonly UserRepository userRepository;
         private readonly IMapper mapper;
-        public LabelService(ILabelRepository labelRepository, IUserRepository userRepository, IMapper mapper)
+        public LabelService(LabelRepository labelRepository, UserRepository userRepository, IMapper mapper)
         {
             this.labelRepository = labelRepository;
             this.userRepository = userRepository;

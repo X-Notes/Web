@@ -1,5 +1,4 @@
-﻿using Noots.DataAccess.InterfacesRepositories;
-using Noots.DataAccess.Context;
+﻿using Noots.DataAccess.Context;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +9,7 @@ using Shared.Mongo;
 
 namespace Noots.DataAccess.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository
     {
         private readonly DbContext _context = null;
 
