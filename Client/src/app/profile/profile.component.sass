@@ -1,0 +1,62 @@
+.container   
+    width: 100%
+    height: calc(100% - 60px)
+    overflow: auto
+    display: flex
+    justify-content: center
+    padding-top: 40px
+
+
+    .profile
+        width: 600px
+        padding: 20px
+
+        p
+            font-weight: 500
+            color: #383838
+
+        .information
+            margin-top: 15px
+            margin-bottom: 20px
+            display: flex
+            justify-content: center
+
+            .photo
+                cursor: pointer
+                width: 120px
+                height: 120px
+                background: grey
+                border-radius: 50%
+
+                img
+                    border-radius: 50% 
+                    object-fit: cover
+
+                &:hover
+                    .hover
+                        display: flex
+                .hover
+                    display: none
+                    height: 40px
+                    width: 100%
+                    bottom: 44px
+                    z-index: 0
+                    opacity: 30%
+                    position: relative
+                    background: white
+                    justify-content: center
+                    align-items: center
+
+                    img
+                        border-radius: 0% 
+
+                    #upload
+                        z-index: 1
+                        position: absolute
+                        width: 110px
+                        background: blue
+                        border-radius: 0 0 300px 300px
+                        height: 40px
+                        
+
+            

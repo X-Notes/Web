@@ -1,1 +1,15 @@
-<p>profile works!</p>
+<div class="container">
+    <div class="profile">
+        <p>Account</p>
+        <div class="information">
+            <div class="photo">
+                <img [src]="user?.photo">
+                <div class="hover">
+                    <img src="assets/profilePhoto.svg">
+                    <input type="file" name="upload" id="upload" class="upload-box" placeholder="Upload File">  
+                </div>
+            </div>
+        </div>
+        <p>Personalization</p>
+    </div>
+</div>
