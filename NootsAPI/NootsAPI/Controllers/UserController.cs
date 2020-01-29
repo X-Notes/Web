@@ -24,7 +24,7 @@ namespace NootsAPI.Controllers
             this.userService = userService;
             this.queueService = queueService;
         }
-        // GET: api/<controller>
+
         [HttpGet]
         public async Task<DTOUser> Get()
         {
@@ -33,14 +33,7 @@ namespace NootsAPI.Controllers
             return user;
         }
 
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public void Get(int id)
-        {
 
-        }
-
-        // POST api/<controller>
         [HttpPost]
         public async Task<DTOUser> Authorize([FromBody]DTOUser user)
         {
@@ -48,25 +41,6 @@ namespace NootsAPI.Controllers
             await this.userService.Add(user);
             var dbuser = await userService.GetByEmail(currentUserEmail);
             return dbuser;
-        }
-
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-
-        }
-
-        // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
-
-        [HttpGet("update")]
-        public void GetUpdate()
-        {
-           this.queueService.PostValue("Get");
         }
     }
 }

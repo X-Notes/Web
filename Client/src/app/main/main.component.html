@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="profile-settings">
-                <div class="profile-field">
+                <div routerLink="/profile" class="profile-field">
                     <div class="profile-svg-icon">
                         <svg fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -133,6 +133,8 @@
         </div>
     </div>
 </header>
+
+
 <div class="wrapper" (click)="close()">
     <aside [@sidebarCloseOpen] *ngIf='activeSidebar'>
         <div class="sidebar-field"
