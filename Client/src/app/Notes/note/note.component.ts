@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Noot } from 'src/app/Models/Noots/Noot';
 
 @Component({
   selector: 'app-note',
@@ -8,9 +7,8 @@ import { Noot } from 'src/app/Models/Noots/Noot';
 })
 export class NoteComponent implements OnInit {
 
-  @Output() OpenNoot = new EventEmitter<string>();
+  @Output() OpenNote = new EventEmitter<string>();
 
-  @Input() noot: Noot;
 
   constructor() { }
 
@@ -24,15 +22,15 @@ export class NoteComponent implements OnInit {
     this.Update = !this.Update;
     if (this.Update === true) {
       this.color = 'rgba(101, 226, 113, 0.69)';
-      this.AddChanged.emit(this.noot.id);
+      this.AddChanged.emit();
     } else {
       this.color = '';
-      this.RemoveChanged.emit(this.noot.id);
+      this.RemoveChanged.emit();
     }
   }
   ngOnInit() {
   }
   Open() {
-    this.OpenNoot.emit(this.noot.id);
+    this.OpenNote.emit();
   }
 }

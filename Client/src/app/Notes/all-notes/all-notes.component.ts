@@ -1,6 +1,4 @@
 import { OnDestroy } from '@angular/core';
-import { NootsService } from 'src/app/Services/noots.service';
-import { Noot } from 'src/app/Models/Noots/Noot';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
@@ -34,9 +32,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 })
 export class AllNotesComponent implements OnInit, OnDestroy {
 
-  noots: Noot[];
+
   unsubscribe = new Subject();
-  constructor(private nootService: NootsService, private router: Router) { }
+  constructor(private router: Router) { }
 
   update = false;
   updateMenu: string[] = [];
@@ -55,13 +53,10 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    setTimeout(() => this.nootService.GetAll().pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => this.noots = x
-      , error => console.log(error)), 400);
-
   }
+
   OpenNoot(id: string) {
-    this.router.navigate(['/noots', id]);
+    this.router.navigate(['/notes', id]);
   }
 
   ngOnDestroy() {

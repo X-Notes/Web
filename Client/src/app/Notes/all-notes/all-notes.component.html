@@ -1,6 +1,6 @@
 <div class="wrapper-upper-menu" [@slideInOut] *ngIf= "update"></div>
 <div class="wrapper-main">
     <div class="wrapper-noots">
-        <app-note (AddChanged)="AddChanged($event)" (RemoveChanged)="RemoveChanged($event)" *ngFor="let noot of noots" [noot]="noot" (OpenNoot)="OpenNoot($event)"></app-note>
+        <app-note (AddChanged)="AddChanged($event)" (RemoveChanged)="RemoveChanged($event)" (OpenNote)="OpenNoot($event)"></app-note>
     </div>
 </div>
