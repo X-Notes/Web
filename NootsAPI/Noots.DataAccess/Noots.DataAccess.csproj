@@ -5,16 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="InterfacesRepositories\**" />
+    <EmbeddedResource Remove="InterfacesRepositories\**" />
+    <None Remove="InterfacesRepositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.9.3" />
     <PackageReference Include="NEST" Version="7.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="InterfacesRepositories\" />
   </ItemGroup>
 
 </Project>
