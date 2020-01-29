@@ -26,5 +26,10 @@ namespace NootsAPI.Controllers
         {
             return await settingsService.CreateIndexForUser();
         }
+        [HttpGet("label")]
+        public async Task<string> CreateIndexForLabel()
+        {
+            return await settingsService.CreateIndexForLabel();
+        }
     }
 }

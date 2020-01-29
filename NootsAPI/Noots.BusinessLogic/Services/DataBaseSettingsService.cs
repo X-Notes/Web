@@ -28,5 +28,16 @@ namespace Noots.BusinessLogic.Services
 
             return "success";
         }
+        public async Task<string> CreateIndexForLabel()
+        {
+            var options = new CreateIndexOptions();
+            var field = new StringFieldDefinition<Label>("UserId");
+            var indexDefinition = new IndexKeysDefinitionBuilder<Label>().Ascending(field);
+
+            var indexModel = new CreateIndexModel<Label>(indexDefinition, options);
+            await _context.Labels.Indexes.CreateOneAsync(indexModel);
+
+            return "success";
+        }
     }
 }

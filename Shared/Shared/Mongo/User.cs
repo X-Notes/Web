@@ -11,5 +11,6 @@ namespace Shared.Mongo
         public string Name { set; get; }
         public string Email { set; get; }
         public string PhotoId { set; get; }
+        public string ProfilePhotoId { set; get; }
     }
 }
