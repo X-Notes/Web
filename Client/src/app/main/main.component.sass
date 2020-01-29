@@ -9,6 +9,7 @@ div
 
 header
     display: flex
+    position: relative
     width: 100%
     height: 50px
     background: #303030
@@ -16,7 +17,7 @@ header
     .left-content
         height: 100%
         width: 200px
-        padding: 0  0 0 33px
+        padding: 0  0 0 35px
         align-items: center
         .is-active
             .hamburger-inner
@@ -108,117 +109,17 @@ header
                     color: white
                     font-size: 12px
                 .profile
-                    width: 40px
-                    height: 40px
+                    width: 35px
+                    height: 35px
                     border-radius: 25px
                     overflow: hidden
             .fix-height
                 height: 30px
-        .profile-menu
-            flex-direction: column
+        .help-menu-wrapper
             position: absolute
             z-index: 100
-            top: 60px
+            top: 50px
             right: 0px
-            width: 300px
-            height: 250px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px  
-            .profile-info
-                flex-direction: row
-                align-items: center
-                padding: 0 10px
-                width: 100%
-                height: 100px
-                background-color: #FBFBFB
-                border-bottom: 1px solid #D6D6D6
-                .profile-image
-                    width: 60px
-                    height: 60px
-                    border-radius: 50%
-                    overflow: hidden
-                    img
-                        width: 100%
-                .profile-description
-                    flex-direction: column
-                    height: 60px
-                    width: calc(100% - 70px)
-                    justify-content: space-around
-                    margin-left: 10px
-                    p
-                        overflow: hidden
-                        white-space: nowrap
-                        text-overflow: ellipsis 
-                        -o-text-overflow: ellipsis
-                    .profile-name
-                        font-weight: bold
-                        font-size: 22px
-                    .profile-mail
-                        font-size: 14px
-            .profile-settings
-                flex-direction: column
-                width: 100%
-                height: 150px
-                padding: 20px 15px
-                justify-content: space-between
-                .profile-field
-                    align-items: center
-                    width: 100%
-                    font-size: 18px
-                    color: #484848
-                    cursor: pointer
-                    .profile-svg-icon
-                        width: 21px
-                        height: 21px
-                        svg
-                            width: 100%
-                            height: 100%
-                    .profile-field-text
-                        margin-left: 10px
-        .notification-menu
-            flex-direction: column
-            width: 300px
-            height: 485px
-            position: absolute
-            z-index: 100
-            top: 60px
-            right: 0px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px
-            .notification-info
-                align-items: center
-                justify-content: space-between
-                width: 100%
-                height: 50px
-                padding: 0 20px 0 10px
-                border-bottom: 1px solid #D6D6D6
-                .notification-title
-                    font-size: 22px
-                    font-weight: 500
-                    color: #303030
-                .notification-icon
-                    height: 21px
-                    width: 21px
-                    cursor: pointer
-        .invites-menu
-            flex-direction: column
-            width: 300px
-            height: 485px
-            position: absolute
-            z-index: 100
-            top: 60px
-            right: 0px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px
 
 .wrapper
     width: 100%

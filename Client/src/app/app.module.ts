@@ -19,6 +19,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenIntercepter } from './Services/token-intercepter';
 import { ContainerComponent } from './Containers/container/container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
+import { InvitesComponent } from './HeaderComponents/invites/invites.component';
+import { ProfileComponent } from './HeaderComponents/profile/profile.component';
+import { NotificationComponent } from './HeaderComponents/notification/notification.component';
 
 
 @NgModule({
@@ -28,6 +31,9 @@ import { ContainersComponent } from './Containers/containers/containers.componen
     MainComponent,
     ContainerComponent,
     ContainersComponent,
+    InvitesComponent,
+    ProfileComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,
