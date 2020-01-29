@@ -24,7 +24,7 @@ const ChildNotesRoutes: Routes = [
 const RoutesMain: Routes =
 [
   {path: 'notes', component: NotesContainerComponent, children: ChildNotesRoutes, canActivate: [AuthGuard]},
-  {path: 'containers', component: ContainersComponent, canActivate: [AuthGuard]},
+  {path: 'folders', component: ContainersComponent, canActivate: [AuthGuard]},
   {path: 'people', component: PeopleComponent, canActivate: [AuthGuard]},
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
   {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]}
