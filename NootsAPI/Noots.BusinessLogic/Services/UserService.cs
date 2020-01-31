@@ -28,17 +28,16 @@ namespace Noots.BusinessLogic.Services
             var bduser = mapper.Map<User>(user);
             await userRepository.Add(bduser);
         }
-
-        public async Task<DTOUser> Get(ObjectId id)
-        {
-            var user  = await userRepository.Get(id);
-            var bduser = mapper.Map<DTOUser>(user);
-            return bduser;
-        }
         public async Task<DTOUser> GetByEmail(string email)
         {
             var user = await userRepository.GetByEmail(email);
             var bduser = mapper.Map<DTOUser>(user);
+            return bduser;
+        }
+        public async Task<DTOFullUser> GetFullByEmail(string email)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var bduser = mapper.Map<DTOFullUser>(user);
             return bduser;
         }
         public async Task<string> ChangeProfilePhoto(IFormFile photo, string email)

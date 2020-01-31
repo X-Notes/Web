@@ -43,6 +43,14 @@ namespace NootsAPI.Controllers
             return dbuser;
         }
 
+
+        [HttpGet("full")]
+        public async Task<DTOFullUser> GetFullUser()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            var user = await this.userService.GetFullByEmail(currentUserEmail);
+            return user;
+        }
         [HttpPost("photo")]
         public async Task<string> ChangeProfilePhoto(IFormFile photo)
         {

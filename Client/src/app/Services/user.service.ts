@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { User } from '../Models/User/User';
+import { FullUser } from '../Models/User/FullUser';
 
 
 @Injectable({
@@ -18,6 +19,9 @@ export class UserService {
 
   public Get() {
     return this.httpClient.get<User>(`${environment.nootsAPI + '/api/user'}`);
+  }
+  public GetFull() {
+    return this.httpClient.get<FullUser>(`${environment.nootsAPI + '/api/user/full'}`);
   }
   public GetUpdates() {
     return this.httpClient.get(`${environment.nootsAPI + '/api/user/update'}`);

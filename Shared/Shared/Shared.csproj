@@ -5,13 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="MongoDB.Bson" Version="2.10.0" />
-    <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
+    <Compile Remove="Elastic\**" />
+    <EmbeddedResource Remove="Elastic\**" />
+    <None Remove="Elastic\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Elastic\" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="MongoDB.Bson" Version="2.10.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
   </ItemGroup>
 
 </Project>
