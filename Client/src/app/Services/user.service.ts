@@ -36,4 +36,7 @@ export class UserService {
   public NewBackgroundPhoto(photo: FormData) {
     return this.httpClient.post<Background>(`${environment.nootsAPI + '/api/user/background'}`, photo);
   }
+  public deleteBackground(id: number) {
+    return this.httpClient.delete(`${environment.nootsAPI}` + `/api/user/background/${id}`);
+  }
 }

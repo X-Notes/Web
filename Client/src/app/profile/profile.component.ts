@@ -57,4 +57,12 @@ export class ProfileComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => this.user.backgroundsId.push(x), error => console.log(error));
   }
+
+  deleteBackground(id: number) {
+    this.userService.deleteBackground(id)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => {
+      this.user.backgroundsId = this.user.backgroundsId.filter(z => z.id !== id);
+      }, error => console.log(error));
+  }
 }

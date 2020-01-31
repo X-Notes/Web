@@ -64,5 +64,12 @@ namespace NootsAPI.Controllers
             var currentUserEmail = this.GetUserEmail();
             return await userService.NewBackgroundPhoto(photo, currentUserEmail);
         }
+
+        [HttpDelete("background/{id}")]
+        public async Task DeleteBackground(int id)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.DeleteBackground(currentUserEmail, id);
+        }
     }
 }

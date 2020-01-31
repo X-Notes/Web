@@ -74,5 +74,14 @@ namespace Noots.BusinessLogic.Services
 
             return mapper.Map<DTOBackground>(newBackground);
         }
+        public async Task DeleteBackground(string email, int id)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var userBackgrounds = user.BackgroundsId;
+
+            var background = userBackgrounds.FirstOrDefault(x => x.Id == id);
+            userBackgrounds.Remove(background);
+            await userRepository.UpdateBackgrounds(email, userBackgrounds);
+        }
     }
 }

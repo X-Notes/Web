@@ -14,7 +14,7 @@
         <div *ngIf="user?.backgroundsId" class="backgrounds">
             <div *ngFor="let item of user.backgroundsId" class="background">
                 <div class="close">
-                    <img src="assets/profile/close.svg">
+                    <img src="assets/profile/close.svg" (click)="deleteBackground(item.id)">
                 </div>
                 <img [src]="item.backgroundId"/>
             </div>
