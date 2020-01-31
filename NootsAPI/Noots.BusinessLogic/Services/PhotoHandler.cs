@@ -29,7 +29,7 @@ namespace Noots.BusinessLogic.Services
         private string ConvertBase64jpeg(byte[] bytes)
         {
             var base64 = Convert.ToBase64String(bytes);
-            return "data:image/png;base64," + base64;
+            return "data:image/jpeg;base64," + base64;
         }
 
         public async Task<string> GetBase64(IFormFile file)

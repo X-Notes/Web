@@ -4,7 +4,7 @@
     overflow: auto
     display: flex
     justify-content: center
-    padding-top: 40px
+    padding-top: 20px
 
     .profile
         width: 600px
@@ -65,7 +65,36 @@
             margin-top: 15px
             margin-bottom: 20px
             width: 100%
+            display: flex
+            flex-wrap: wrap
+            padding: 10px 0 20px 40px
+            .background
+                width: 120px
+                margin: 0 5px 5px 5px
+                height: 140px
+                border-radius: 5px
 
+                .close
+                    height: 20px
+                    width: 20px
+                    background: #EFEFEF
+                    position: relative
+                    left: 100px
+                    top: 20px
+                    border-radius: 0 3px 0 7px
+                    display: flex
+                    justify-content: center
+                    align-items: center
+                    img
+                        height: 13px
+                        width: 13px
+                        &:hover
+                            cursor: pointer
+                img
+                    width: 120px
+                    height: 120px    
+                    object-fit: cover
+                    border-radius: 5px           
         .new
             margin-top: 15px
             margin-bottom: 20px
@@ -76,6 +105,7 @@
                 box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25)
                 border-radius: 5px
                 display: flex
+                margin-left: 40px
                 justify-content: center
                 align-items: center
                     

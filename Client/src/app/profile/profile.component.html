@@ -11,9 +11,12 @@
             </div>
         </div>
         <p>Personalization</p>
-        <div *ngIf="user?.backgrounds" class="backgrounds">
-            <div *ngFor="let item of user.backgrounds">
-
+        <div *ngIf="user?.backgroundsId" class="backgrounds">
+            <div *ngFor="let item of user.backgroundsId" class="background">
+                <div class="close">
+                    <img src="assets/profile/close.svg">
+                </div>
+                <img [src]="item.backgroundId"/>
             </div>
         </div>
         <div class="new">
