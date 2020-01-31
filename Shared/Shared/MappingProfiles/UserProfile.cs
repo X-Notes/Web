@@ -20,13 +20,15 @@ namespace Shared.MappingProfiles
             CreateMap<User, DTOUser>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.PhotoId, opt => opt.MapFrom(src => src.PhotoId));
+                .ForMember(dest => dest.PhotoId, opt => opt.MapFrom(src => src.PhotoId))
+                .ForMember(dest => dest.BackgroundId, opt => opt.MapFrom(src => src.CurrentBackgroundId.BackgroundId));
 
             CreateMap<User, DTOFullUser>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhotoId, opt => opt.MapFrom(src => src.PhotoId))
-                .ForMember(dest => dest.BackgroundsId, opt => opt.MapFrom(src => src.BackgroundsId));
+                .ForMember(dest => dest.BackgroundsId, opt => opt.MapFrom(src => src.BackgroundsId))
+                .ForMember(dest => dest.CurrentBackgroundId, opt => opt.MapFrom(src => src.CurrentBackgroundId));
         }
     }
 }

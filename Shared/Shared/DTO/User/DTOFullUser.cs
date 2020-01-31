@@ -10,5 +10,6 @@ namespace Shared.DTO.User
         public string Email { set; get; }
         public string PhotoId { set; get; }
         public List<DTOBackground> BackgroundsId { set; get; }
+        public DTOBackground CurrentBackgroundId { set; get; }
     }
 }

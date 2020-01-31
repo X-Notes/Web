@@ -38,11 +38,12 @@ namespace Noots.DataAccess.Repositories
             var options = new FindOneAndUpdateOptions<User>{};
             await _context.Users.FindOneAndUpdateAsync(filter, update, options);
         }
-        public async Task UpdateBackgrounds(string email, List<Background> backgrounds)
+        public async Task UpdateBackgrounds(string email, List<Background> backgrounds, Background currentBackGround)
         {
             var filter = new BsonDocument("Email", email);
             var update = Builders<User>.Update
-                .Set("BackgroundsId", backgrounds);
+                .Set("BackgroundsId", backgrounds)
+                .Set("CurrentBackgroundId", currentBackGround);
             var options = new FindOneAndUpdateOptions<User> { };
             await _context.Users.FindOneAndUpdateAsync(filter, update, options);
         }

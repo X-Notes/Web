@@ -70,7 +70,7 @@ namespace Noots.BusinessLogic.Services
                 userBackgrounds = new List<Background>();
             }
             userBackgrounds.Add(newBackground);
-            await userRepository.UpdateBackgrounds(email, userBackgrounds);
+            await userRepository.UpdateBackgrounds(email, userBackgrounds, newBackground);
 
             return mapper.Map<DTOBackground>(newBackground);
         }
@@ -81,7 +81,8 @@ namespace Noots.BusinessLogic.Services
 
             var background = userBackgrounds.FirstOrDefault(x => x.Id == id);
             userBackgrounds.Remove(background);
-            await userRepository.UpdateBackgrounds(email, userBackgrounds);
+            background = userBackgrounds.Last();
+            await userRepository.UpdateBackgrounds(email, userBackgrounds, background);
         }
     }
 }

@@ -5,4 +5,5 @@ export interface FullUser {
     email: string;
     photoId: string;
     backgroundsId: Background[];
+    currentBackgroundId: Background;
 }
