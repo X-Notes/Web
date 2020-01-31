@@ -11,6 +11,6 @@ namespace Shared.Mongo
         public string Name { set; get; }
         public string Email { set; get; }
         public string PhotoId { set; get; }
-        public List<string> BackgroundsId { set; get; }
+        public List<Background> BackgroundsId { set; get; }
     }
 }

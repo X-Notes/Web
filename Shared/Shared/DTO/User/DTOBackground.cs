@@ -4,11 +4,9 @@ using System.Text;
 
 namespace Shared.DTO.User
 {
-    public class DTOUser
+    public class DTOBackground
     {
-        public string Name { set; get; }
-        public string Email { set; get; }
-        public string PhotoId { set; get; }
+        public int Id { set; get; }
         public string BackgroundId { set; get; }
     }
 }

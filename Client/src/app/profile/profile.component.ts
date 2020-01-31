@@ -42,6 +42,7 @@ export class ProfileComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => this.user.photoId = x, error => console.log(error));
   }
+
   uploadBackground(files) {
     if (files.length === 0) {
       return;
@@ -49,5 +50,11 @@ export class ProfileComponent implements OnInit {
     if (files[0].type !== 'image/png' && files[0].type !== 'image/jpeg') {
       return;
     }
+    const formData = new FormData();
+    formData.append('photo', files[0]);
+
+    this.userService.NewBackgroundPhoto(formData)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => console.log(x), error => console.log(error));
   }
 }

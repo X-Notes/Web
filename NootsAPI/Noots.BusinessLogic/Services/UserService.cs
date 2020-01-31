@@ -6,6 +6,7 @@ using Shared.DTO.User;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,11 +43,36 @@ namespace Noots.BusinessLogic.Services
         }
         public async Task<string> ChangeProfilePhoto(IFormFile photo, string email)
         {
-            var bytes = await this.photoHandler.GetBytesFromFile(photo);
-            var base64 = Convert.ToBase64String(bytes);
-            base64 = "data:image/png;base64," + base64;
+            var base64 = await this.photoHandler.GetBase64(photo);
             await userRepository.UpdateProfilePhoto(email, base64);
             return base64;
+        }
+        public async Task<DTOBackground> NewBackgroundPhoto(IFormFile photo, string email)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var base64 = await this.photoHandler.GetBase64(photo);
+            var userBackgrounds = user.BackgroundsId;
+
+            int key = 0;
+            if(userBackgrounds != null)
+            {
+                key = userBackgrounds.Select(x => x.Id).Max();
+            }
+
+            var newBackground = new Background()
+            {
+                BackgroundId = base64,
+                Id = ++key
+            };
+
+            if(userBackgrounds == null)
+            {
+                userBackgrounds = new List<Background>();
+            }
+            userBackgrounds.Add(newBackground);
+            await userRepository.UpdateBackgrounds(email, userBackgrounds);
+
+            return mapper.Map<DTOBackground>(newBackground);
         }
     }
 }

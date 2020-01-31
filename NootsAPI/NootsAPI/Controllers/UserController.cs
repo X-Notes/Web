@@ -58,5 +58,11 @@ namespace NootsAPI.Controllers
             return await userService.ChangeProfilePhoto(photo, currentUserEmail);
         }
 
+        [HttpPost("background")]
+        public async Task<DTOBackground> NewBackgroundPhoto(IFormFile photo)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            return await userService.NewBackgroundPhoto(photo, currentUserEmail);
+        }
     }
 }

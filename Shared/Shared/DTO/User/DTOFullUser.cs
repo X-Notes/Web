@@ -9,6 +9,6 @@ namespace Shared.DTO.User
         public string Name { set; get; }
         public string Email { set; get; }
         public string PhotoId { set; get; }
-        public List<string> BackgroundsId { set; get; }
+        public List<DTOBackground> BackgroundsId { set; get; }
     }
 }
