@@ -57,5 +57,6 @@ namespace NootsAPI.Controllers
             var currentUserEmail = this.GetUserEmail();
             return await userService.ChangeProfilePhoto(photo, currentUserEmail);
         }
+
     }
 }

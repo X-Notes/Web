@@ -55,14 +55,14 @@
             </div>
             <div class="header-icons">
                 <div class="profile" (click)="openProfileDialog()">
-                    <img [src]="user?.photo || 'assets/default_avatar.png'">
+                    <img [src]="user?.photoId || 'assets/default_avatar.png'">
                 </div>
             </div>
         </div>
         <div *ngIf='activeProfileMenu' class="profile-menu">
             <div class="profile-info">
                 <div class="profile-image">
-                    <img [src]="user?.photo || 'assets/default_avatar.png'">
+                    <img [src]="user?.photoId || 'assets/default_avatar.png'">
                 </div>
                 <div class="profile-description">
                     <div class="profile-name">

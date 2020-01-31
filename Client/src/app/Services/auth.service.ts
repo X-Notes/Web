@@ -34,7 +34,7 @@ export class AuthService {
         const dbuser: User = {
           name: this.userData.displayName,
           email: this.userData.email,
-          photo: this.userData.photoURL
+          photoId: this.userData.photoURL
         };
         localStorage.setItem('user', JSON.stringify(dbuser));
         JSON.parse(localStorage.getItem('user'));
@@ -59,10 +59,10 @@ export class AuthService {
             const user: User = {
               name: this.userData.displayName,
               email: this.userData.email,
-              photo: this.userData.photoURL
+              photoId: this.userData.photoURL
             };
-            this.photoService.GetPhoto(user.photo).then(base64 => {
-              user.photo = base64 as string;
+            this.photoService.GetPhoto(user.photoId).then(base64 => {
+              user.photoId = base64 as string;
               this.userService
                 .Get()
                 .pipe(takeUntil(this.unsubscribe))

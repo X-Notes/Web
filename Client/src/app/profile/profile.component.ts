@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  uploadFile(files) {
+  uploadFileProfile(files) {
 
     if (files.length === 0) {
       return;
@@ -40,7 +40,14 @@ export class ProfileComponent implements OnInit {
 
     this.userService.UpdatePhoto(formData)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => this.user.photo = x, error => console.log(error));
+    .subscribe(x => this.user.photoId = x, error => console.log(error));
   }
-
+  uploadBackground(files) {
+    if (files.length === 0) {
+      return;
+    }
+    if (files[0].type !== 'image/png' && files[0].type !== 'image/jpeg') {
+      return;
+    }
+  }
 }

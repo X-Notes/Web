@@ -3,19 +3,24 @@
         <p>Account</p>
         <div class="information">
             <div class="photo">
-                <img [src]="user?.photo">
+                <img [src]="user?.photoId">
                 <div class="hover">
                     <img id="profilePhoto" src="assets/profilePhoto.svg">
-                    <input type="file" name="upload" id="upload"  placeholder="" (change)="uploadFile($event.target.files)">  
+                    <input type="file" name="upload" id="upload"  placeholder="" (change)="uploadFileProfile($event.target.files)">  
                 </div>
             </div>
         </div>
         <p>Personalization</p>
-        <div class="backgrounds">
+        <div *ngIf="user?.backgrounds" class="backgrounds">
+            <div *ngFor="let item of user.backgrounds">
 
+            </div>
         </div>
         <div class="new">
-    
+            <div class="plus">
+                <img src="assets/profile/plus.svg">
+                <input type="file" name="upload" id="uploadBackground" placeholder="" (change)="uploadFile($event.target.files)"> 
+            </div>
         </div>
     </div>
 </div>
