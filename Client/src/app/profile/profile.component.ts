@@ -27,4 +27,20 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  uploadFile(files) {
+
+    if (files.length === 0) {
+      return;
+    }
+    if (files[0].type !== 'image/png' && files[0].type !== 'image/jpeg') {
+      return;
+    }
+    const formData = new FormData();
+    formData.append('photo', files[0]);
+
+    this.userService.UpdatePhoto(formData)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => this.user.photo = x, error => console.log(error));
+  }
+
 }

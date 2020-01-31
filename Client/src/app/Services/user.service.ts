@@ -25,4 +25,7 @@ export class UserService {
   public CreateUser(user: User) {
     return this.httpClient.post<User>(`${environment.nootsAPI + '/api/user'}`, user, this.httpOptions);
   }
+  public UpdatePhoto(photo: FormData) {
+    return this.httpClient.post(`${environment.nootsAPI + '/api/user/photo'}`, photo, {responseType: 'text'});
+  }
 }

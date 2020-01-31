@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Services;
 using NootsAPI.Infastructure;
@@ -18,11 +19,10 @@ namespace NootsAPI.Controllers
     public class UserController : Controller
     {
         private readonly UserService userService;
-        private readonly QueueService queueService;
-        public UserController(UserService userService, QueueService queueService)
+
+        public UserController(UserService userService)
         {
             this.userService = userService;
-            this.queueService = queueService;
         }
 
         [HttpGet]
@@ -41,6 +41,13 @@ namespace NootsAPI.Controllers
             await this.userService.Add(user);
             var dbuser = await userService.GetByEmail(currentUserEmail);
             return dbuser;
+        }
+
+        [HttpPost("photo")]
+        public async Task<string> ChangeProfilePhoto(IFormFile photo)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            return await userService.ChangeProfilePhoto(photo, currentUserEmail);
         }
     }
 }

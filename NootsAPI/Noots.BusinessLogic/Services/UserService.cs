@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.User;
@@ -14,10 +15,12 @@ namespace Noots.BusinessLogic.Services
     {
         private readonly UserRepository userRepository = null;
         private readonly IMapper mapper;
-        public UserService(UserRepository userRepository, IMapper mapper)
+        private readonly PhotoHandler photoHandler;
+        public UserService(UserRepository userRepository, IMapper mapper, PhotoHandler photoHandler)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this.photoHandler = photoHandler;
         }
 
         public async Task Add(DTOUser user)
@@ -37,6 +40,14 @@ namespace Noots.BusinessLogic.Services
             var user = await userRepository.GetByEmail(email);
             var bduser = mapper.Map<DTOUser>(user);
             return bduser;
+        }
+        public async Task<string> ChangeProfilePhoto(IFormFile photo, string email)
+        {
+            var bytes = await this.photoHandler.GetBytesFromFile(photo);
+            var base64 = Convert.ToBase64String(bytes);
+            base64 = "data:image/png;base64," + base64;
+            await userRepository.UpdateProfilePhoto(email, base64);
+            return base64;
         }
     }
 }

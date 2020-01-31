@@ -6,7 +6,7 @@
                 <img [src]="user?.photo">
                 <div class="hover">
                     <img id="profilePhoto" src="assets/profilePhoto.svg">
-                    <input type="file" name="upload" id="upload"  placeholder="">  
+                    <input type="file" name="upload" id="upload"  placeholder="" (change)="uploadFile($event.target.files)">  
                 </div>
             </div>
         </div>
