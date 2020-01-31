@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { User } from '../Models/User/User';
 import { FullUser } from '../Models/User/FullUser';
+import { Background } from '../Models/User/Background';
 
 
 @Injectable({
@@ -33,6 +34,6 @@ export class UserService {
     return this.httpClient.post(`${environment.nootsAPI + '/api/user/photo'}`, photo, {responseType: 'text'});
   }
   public NewBackgroundPhoto(photo: FormData) {
-    return this.httpClient.post(`${environment.nootsAPI + '/api/user/background'}`, photo);
+    return this.httpClient.post<Background>(`${environment.nootsAPI + '/api/user/background'}`, photo);
   }
 }

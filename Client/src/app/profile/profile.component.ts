@@ -55,6 +55,6 @@ export class ProfileComponent implements OnInit {
 
     this.userService.NewBackgroundPhoto(formData)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => console.log(x), error => console.log(error));
+    .subscribe(x => this.user.backgroundsId.push(x), error => console.log(error));
   }
 }
