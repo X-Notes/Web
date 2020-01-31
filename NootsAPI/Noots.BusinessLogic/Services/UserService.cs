@@ -27,6 +27,7 @@ namespace Noots.BusinessLogic.Services
         public async Task Add(DTOUser user)
         {
             var bduser = mapper.Map<User>(user);
+            bduser.BackgroundsId = new List<Background>();
             await userRepository.Add(bduser);
         }
         public async Task<DTOUser> GetByEmail(string email)
@@ -54,21 +55,17 @@ namespace Noots.BusinessLogic.Services
             var userBackgrounds = user.BackgroundsId;
 
             int key = 0;
-            if(userBackgrounds != null)
+
+            if (userBackgrounds.Count > 0)
             {
                 key = userBackgrounds.Select(x => x.Id).Max();
             }
-
             var newBackground = new Background()
             {
                 BackgroundId = base64,
                 Id = ++key
             };
 
-            if(userBackgrounds == null)
-            {
-                userBackgrounds = new List<Background>();
-            }
             userBackgrounds.Add(newBackground);
             await userRepository.UpdateBackgrounds(email, userBackgrounds, newBackground);
 
@@ -81,7 +78,16 @@ namespace Noots.BusinessLogic.Services
 
             var background = userBackgrounds.FirstOrDefault(x => x.Id == id);
             userBackgrounds.Remove(background);
-            background = userBackgrounds.Last();
+
+            if (userBackgrounds.Count != 0)
+            {
+                background = userBackgrounds.Last();
+            }
+            else
+            {
+                background = null;
+            }
+
             await userRepository.UpdateBackgrounds(email, userBackgrounds, background);
         }
     }
