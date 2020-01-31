@@ -2,7 +2,7 @@
     <div class="profile">
         <p>Account</p>
         <div class="information">
-            <div class="photo">
+            <div *ngIf="user?.photoId" class="photo">
                 <img [src]="user?.photoId">
                 <div class="hover">
                     <img id="profilePhoto" src="assets/profilePhoto.svg">

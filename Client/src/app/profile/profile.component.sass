@@ -7,7 +7,7 @@
     padding-top: 20px
 
     .profile
-        width: 600px
+        max-width: 600px
         padding: 20px
 
         p
@@ -52,7 +52,7 @@
                         position: absolute
                         z-index: 2
                         height: 20px
-                        width: 20px
+                        width: 22.66px
 
                     #upload                    
                         z-index: 3
@@ -74,7 +74,12 @@
                 height: 140px
                 border-radius: 5px
 
+                &:hover
+                    .close
+                        opacity: 1
                 .close
+                    opacity: 0
+                    display: flex
                     height: 20px
                     width: 20px
                     background: #EFEFEF
@@ -82,7 +87,6 @@
                     left: 100px
                     top: 20px
                     border-radius: 0 3px 0 7px
-                    display: flex
                     justify-content: center
                     align-items: center
                     img
