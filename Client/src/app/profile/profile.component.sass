@@ -5,27 +5,31 @@
     display: flex
     justify-content: center
     padding-top: 20px
-
+    background-position: center center
+    background-repeat: no-repeat
+    background-size: cover
     .profile
-        max-width: 600px
+        width: 850px
         padding: 20px
-
         p
             font-weight: 500
             color: #383838
-
+            padding: 5px
+            background: white
+            width: 130px
+            border-radius: 2px
         .information
             margin-top: 15px
             margin-bottom: 20px
             display: flex
             justify-content: center
-
+            padding: 0px 0px 0px 40px
             .photo
                 width: 120px
                 height: 120px
                 background: grey
                 border-radius: 50%
-
+                border: 2px solid white
                 img
                     border-radius: 50% 
                     object-fit: cover
@@ -38,7 +42,7 @@
                 .hover
                     display: none
                     height: 40px
-                    width: 100%
+                    width: 40px
                     bottom: 44px
                     z-index: 0
                     opacity: 30%
@@ -46,7 +50,8 @@
                     background: white
                     justify-content: center
                     align-items: center
-
+                    left: 33%
+                    border-radius: 2px 2px 15px 15px
                     img
                         border-radius: 0% 
                         position: absolute
@@ -67,6 +72,7 @@
             width: 100%
             display: flex
             flex-wrap: wrap
+            justify-content: center
             padding: 10px 0 20px 40px
             .background
                 width: 120px
@@ -90,19 +96,25 @@
                     justify-content: center
                     align-items: center
                     img
+                        border: none
                         height: 13px
                         width: 13px
                         &:hover
                             cursor: pointer
-                img
+                img                  
                     width: 120px
                     height: 120px    
                     object-fit: cover
-                    border-radius: 5px           
+                    border-radius: 5px   
+
+                    &:hover
+                        cursor: pointer
+                              
         .new
             margin-top: 15px
             margin-bottom: 20px
-
+            display: flex
+            justify-content: center
             .plus
                 height: 120px
                 width: 120px
@@ -112,7 +124,7 @@
                 margin-left: 40px
                 justify-content: center
                 align-items: center
-                    
+                background: white
                 #uploadBackground
                     height: 57px !important
                     width: 58px !important

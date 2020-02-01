@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit {
 
     this.userService.NewBackgroundPhoto(formData)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => this.user.backgroundsId.push(x), error => console.log(error));
+    .subscribe(x => {this.user.backgroundsId.push(x); this.user.currentBackgroundId = x; }, error => console.log(error));
   }
 
   deleteBackground(id: number) {
@@ -63,6 +63,14 @@ export class ProfileComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => {
       this.user.backgroundsId = this.user.backgroundsId.filter(z => z.id !== id);
+      this.user.currentBackgroundId = this.user.backgroundsId[this.user.backgroundsId.length - 1];
+      }, error => console.log(error));
+  }
+  changePhoto(id: number) {
+    this.userService.changeBackground(id)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => {
+      this.user.currentBackgroundId = this.user.backgroundsId.filter(z => z.id === id)[0];
       }, error => console.log(error));
   }
 }

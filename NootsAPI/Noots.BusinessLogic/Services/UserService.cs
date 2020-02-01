@@ -39,6 +39,7 @@ namespace Noots.BusinessLogic.Services
         public async Task<DTOFullUser> GetFullByEmail(string email)
         {
             var user = await userRepository.GetByEmail(email);
+            user.BackgroundsId = user.BackgroundsId.OrderBy(x => x.Id).ToList();
             var bduser = mapper.Map<DTOFullUser>(user);
             return bduser;
         }
@@ -88,6 +89,13 @@ namespace Noots.BusinessLogic.Services
                 background = null;
             }
 
+            await userRepository.UpdateBackgrounds(email, userBackgrounds, background);
+        }
+        public async Task UpdateBackgroundCover(string email, int id)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var userBackgrounds = user.BackgroundsId;
+            var background = userBackgrounds.FirstOrDefault(x => x.Id == id);
             await userRepository.UpdateBackgrounds(email, userBackgrounds, background);
         }
     }

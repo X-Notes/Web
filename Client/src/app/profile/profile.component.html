@@ -1,4 +1,4 @@
-<div class="container">
+<div *ngIf="user" [ngStyle]="{'background-image': 'url('+ user?.currentBackgroundId?.backgroundId +')'}" class="container">
     <div class="profile">
         <p>Account</p>
         <div class="information">
@@ -16,7 +16,7 @@
                 <div class="close">
                     <img src="assets/profile/close.svg" (click)="deleteBackground(item.id)">
                 </div>
-                <img [src]="item.backgroundId"/>
+                <img (click)="changePhoto(item.id)" [ngStyle]="{'border': user.currentBackgroundId.id === item.id ? '2px solid #2997ff' : '2px solid white'}" [src]="item.backgroundId"/>
             </div>
         </div>
         <div class="new">

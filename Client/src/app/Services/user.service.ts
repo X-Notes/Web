@@ -18,6 +18,7 @@ export class UserService {
 
   constructor(private httpClient: HttpClient) { }
 
+  // User
   public Get() {
     return this.httpClient.get<User>(`${environment.nootsAPI + '/api/user'}`);
   }
@@ -33,10 +34,15 @@ export class UserService {
   public UpdatePhoto(photo: FormData) {
     return this.httpClient.post(`${environment.nootsAPI + '/api/user/photo'}`, photo, {responseType: 'text'});
   }
+
+  // BackGrounds
   public NewBackgroundPhoto(photo: FormData) {
     return this.httpClient.post<Background>(`${environment.nootsAPI + '/api/user/background'}`, photo);
   }
   public deleteBackground(id: number) {
     return this.httpClient.delete(`${environment.nootsAPI}` + `/api/user/background/${id}`);
+  }
+  public changeBackground(id: number) {
+    return this.httpClient.get(`${environment.nootsAPI}` + `/api/user/background/${id}`, this.httpOptions);
   }
 }
