@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { isNull } from 'util';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.sass']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
   background = null;
   user: FullUser;
@@ -107,5 +107,9 @@ export class ProfileComponent implements OnInit {
   changeBackGround(background) {
       localStorage.setItem('background', background);
       this.background = background;
+  }
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.unsubscribe();
   }
 }
