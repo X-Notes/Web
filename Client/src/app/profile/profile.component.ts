@@ -80,4 +80,10 @@ export class ProfileComponent implements OnInit {
       .subscribe(x => this.user.name = this.newName, error => console.log(error));
     }
   }
+  changeBackgroundToDefault() {
+    this.userService
+    .changeToDefaultBackground()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => this.user.currentBackgroundId = null, error => console.log(error));
+  }
 }

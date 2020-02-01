@@ -49,4 +49,7 @@ export class UserService {
   public changeBackground(id: number) {
     return this.httpClient.get(`${environment.nootsAPI}` + `/api/user/background/${id}`, this.httpOptions);
   }
+  public changeToDefaultBackground() {
+    return this.httpClient.get(`${environment.nootsAPI}` + `/api/user/background/default`, this.httpOptions);
+  }
 }

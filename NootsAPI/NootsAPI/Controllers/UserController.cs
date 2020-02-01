@@ -85,5 +85,12 @@ namespace NootsAPI.Controllers
             var currentUserEmail = this.GetUserEmail();
             await userService.UpdateBackgroundCover(currentUserEmail, id);
         }
+
+        [HttpGet("background/default")]
+        public async Task DefaultBackgroundCover()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.DefaultBackgroundCover(currentUserEmail);
+        }
     }
 }

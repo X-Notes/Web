@@ -104,5 +104,11 @@ namespace Noots.BusinessLogic.Services
             var background = userBackgrounds.FirstOrDefault(x => x.Id == id);
             await userRepository.UpdateBackgrounds(email, userBackgrounds, background);
         }
+        public async Task DefaultBackgroundCover(string email)
+        {
+            var user = await userRepository.GetByEmail(email);
+            var userBackgrounds = user.BackgroundsId;
+            await userRepository.UpdateBackgrounds(email, userBackgrounds, null);
+        }
     }
 }
