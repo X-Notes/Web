@@ -1,4 +1,6 @@
-<div *ngIf="user" [ngStyle]="{'background-image': 'url('+ user?.currentBackgroundId?.backgroundId +')'}" class="container">
+<div *ngIf="user"
+    [ngStyle]="{'background-image': user?.currentBackgroundId?.backgroundId !== null ? 'url('+ user?.currentBackgroundId?.backgroundId +')' : ''}"
+    class="container">
     <div class="profile">
         <p>Account</p>
         <div class="information">
@@ -6,7 +8,21 @@
                 <img [src]="user?.photoId">
                 <div class="hover">
                     <img id="profilePhoto" src="assets/profilePhoto.svg">
-                    <input type="file" name="upload" id="upload"  placeholder="" (change)="uploadFileProfile($event.target.files)">  
+                    <input type="file" name="upload" id="upload" placeholder=""
+                        (change)="uploadFileProfile($event.target.files)">
+                </div>
+            </div>
+            <div class="name">
+                <div class="content">
+                    <input type="text" [(ngModel)]="newName">
+                    <div class="pen">
+                        <svg (click)="updateName()" [ngClass]="{'active-pen': newName !== user.name}" width="20"
+                            height="20" viewBox="0 0 25 25" fill="#cccccc" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 19.7911L0 25.0002H5.20905L20.5792 9.62995L15.3702 4.4209L0 19.7911Z" />
+                            <path
+                                d="M24.5937 3.64979L21.3502 0.406306C20.8084 -0.135435 19.9263 -0.135435 19.3846 0.406306L16.8426 2.94832L22.0516 8.15738L24.5936 5.61536C25.1354 5.07362 25.1354 4.19153 24.5937 3.64979Z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -16,13 +32,16 @@
                 <div class="close">
                     <img src="assets/profile/close.svg" (click)="deleteBackground(item.id)">
                 </div>
-                <img (click)="changePhoto(item.id)" [ngStyle]="{'border': user.currentBackgroundId.id === item.id ? '2px solid #2997ff' : '2px solid white'}" [src]="item.backgroundId"/>
+                <img (click)="changePhoto(item.id)"
+                    [ngStyle]="{'border': user.currentBackgroundId.id === item.id ? '2px solid #2997ff' : '2px solid white'}"
+                    [src]="item.backgroundId" />
             </div>
         </div>
         <div class="new">
             <div class="plus">
                 <img src="assets/profile/plus.svg">
-                <input type="file" name="upload" id="uploadBackground" placeholder="" (change)="uploadBackground($event.target.files)"> 
+                <input type="file" name="upload" id="uploadBackground" placeholder=""
+                    (change)="uploadBackground($event.target.files)">
             </div>
         </div>
     </div>

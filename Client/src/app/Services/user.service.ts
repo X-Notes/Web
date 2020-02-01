@@ -34,6 +34,10 @@ export class UserService {
   public UpdatePhoto(photo: FormData) {
     return this.httpClient.post(`${environment.nootsAPI + '/api/user/photo'}`, photo, {responseType: 'text'});
   }
+  public UpdateName(name: string) {
+    const newName = JSON.stringify(name);
+    return this.httpClient.post(`${environment.nootsAPI + '/api/user/name'}`, newName, this.httpOptions);
+  }
 
   // BackGrounds
   public NewBackgroundPhoto(photo: FormData) {

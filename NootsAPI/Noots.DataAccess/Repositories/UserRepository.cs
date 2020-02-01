@@ -30,6 +30,13 @@ namespace Noots.DataAccess.Repositories
         {
             return await _context.Users.Find(x => x.Email == email).FirstOrDefaultAsync();
         }
+        public async Task UpdateName(string email, string newName)
+        {
+            var filter = new BsonDocument("Email", email);
+            var update = Builders<User>.Update.Set("Name", newName);
+            var options = new FindOneAndUpdateOptions<User> { };
+            await _context.Users.FindOneAndUpdateAsync(filter, update, options);
+        }
         public async Task UpdateProfilePhoto(string email, string photoId)
         {
             var filter = new BsonDocument("Email", email);

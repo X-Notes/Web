@@ -20,7 +20,7 @@ import { TokenIntercepter } from './Services/token-intercepter';
 import { ContainerComponent } from './Containers/container/container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
 import { ProfileComponent } from './profile/profile.component';
-
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -42,6 +42,7 @@ import { ProfileComponent } from './profile/profile.component';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    FormsModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

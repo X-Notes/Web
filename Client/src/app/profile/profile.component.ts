@@ -14,7 +14,7 @@ export class ProfileComponent implements OnInit {
 
   user: FullUser;
   unsubscribe = new Subject();
-
+  newName = '';
   constructor(private router: Router, private userService: UserService) {
 
   }
@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.userService.GetFull()
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; }, error => {
+    .subscribe(user => { this.user = user; this.newName = this.user.name; }, error => {
       this.router.navigate(['/about']);
     });
   }
@@ -72,5 +72,12 @@ export class ProfileComponent implements OnInit {
     .subscribe(x => {
       this.user.currentBackgroundId = this.user.backgroundsId.filter(z => z.id === id)[0];
       }, error => console.log(error));
+  }
+  updateName() {
+    if (this.newName !== this.user.name) {
+      this.userService.UpdateName(this.newName)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(x => this.user.name = this.newName, error => console.log(error));
+    }
   }
 }

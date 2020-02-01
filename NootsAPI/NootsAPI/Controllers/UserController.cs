@@ -13,7 +13,7 @@ using Shared.DTO.User;
 
 namespace NootsAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : Controller
@@ -57,6 +57,14 @@ namespace NootsAPI.Controllers
             var currentUserEmail = this.GetUserEmail();
             return await userService.ChangeProfilePhoto(photo, currentUserEmail);
         }
+
+        [HttpPost("name")]
+        public async Task ChangeName([FromBody]string newName)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.UpdateUserName(newName, currentUserEmail);
+        }
+
 
         [HttpPost("background")]
         public async Task<DTOBackground> NewBackgroundPhoto(IFormFile photo)

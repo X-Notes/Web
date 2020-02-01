@@ -22,7 +22,8 @@
             margin-top: 15px
             margin-bottom: 20px
             display: flex
-            justify-content: center
+            align-items: center
+            flex-direction: column
             padding: 0px 0px 0px 40px
             .photo
                 width: 120px
@@ -65,6 +66,42 @@
                         position: absolute
                         width: 22.66px
                         height: 20px
+            .name
+                margin-top: 40px
+                width: 100%
+                display: flex
+                justify-content: center
+                .content
+                    display: flex
+                    align-items: stretch
+                    .pen
+                        height: 30px 
+                        width: 30px
+                        background: white
+                        display: flex
+                        justify-content: center
+                        align-items: center
+                    input[type=text]
+                        text-align: center
+                        border: 0
+                        border-radius: 3px 0 0 3px 
+                        -webkit-border-radius: 3px 0 0 3px 
+                        -moz-border-radius: 3px 0 0 3px 
+                        -khtml-border-radius: 3px 0 0 3px 
+                        background: #ffffff !important 
+                        outline: none 
+                        height: 30px 
+                        width: 380px 
+                        color: #383838 
+                        font-size: 22px 
+                        font-weight: 600
+                        padding: 5px 3px 5px 7px
+
+                    .active-pen
+                        cursor: pointer
+                        fill:#389bff
+
+
 
         .backgrounds
             margin-top: 15px

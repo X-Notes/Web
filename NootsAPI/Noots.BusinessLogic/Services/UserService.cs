@@ -49,6 +49,12 @@ namespace Noots.BusinessLogic.Services
             await userRepository.UpdateProfilePhoto(email, base64);
             return base64;
         }
+        public async Task UpdateUserName(string name,string email)
+        {
+            await userRepository.UpdateName(email, name);
+        }
+
+
         public async Task<DTOBackground> NewBackgroundPhoto(IFormFile photo, string email)
         {
             var user = await userRepository.GetByEmail(email);
