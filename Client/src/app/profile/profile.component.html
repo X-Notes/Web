@@ -1,5 +1,4 @@
-<div *ngIf="user"
-    [ngStyle]="{'background-image': user?.currentBackgroundId?.backgroundId !== null ? 'url('+ user?.currentBackgroundId?.backgroundId +')' : ''}"
+<div *ngIf="user" [ngStyle]="{'background-image': background !== null ? 'url('+ background +')' : 'none'}"
     class="container">
     <div class="profile">
         <p>Account</p>

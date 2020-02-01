@@ -13,7 +13,7 @@ using Shared.DTO.User;
 
 namespace NootsAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : Controller

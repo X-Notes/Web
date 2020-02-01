@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FullUser } from '../Models/User/FullUser';
+import { isNull } from 'util';
 
 @Component({
   selector: 'app-profile',
@@ -12,6 +13,7 @@ import { FullUser } from '../Models/User/FullUser';
 })
 export class ProfileComponent implements OnInit {
 
+  background = null;
   user: FullUser;
   unsubscribe = new Subject();
   newName = '';
@@ -20,9 +22,16 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.background = localStorage.getItem('background');
     this.userService.GetFull()
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; this.newName = this.user.name; }, error => {
+    .subscribe(user => {
+      this.user = user;
+      this.newName = this.user.name;
+      if (!isNull(this.user.currentBackgroundId)) {
+      this.changeBackGround(this.user.currentBackgroundId.backgroundId);
+      }
+     }, error => {
       this.router.navigate(['/about']);
     });
   }
@@ -55,7 +64,11 @@ export class ProfileComponent implements OnInit {
 
     this.userService.NewBackgroundPhoto(formData)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {this.user.backgroundsId.push(x); this.user.currentBackgroundId = x; }, error => console.log(error));
+    .subscribe(x => {
+      this.user.backgroundsId.push(x);
+      this.user.currentBackgroundId = x;
+      this.changeBackGround(x.backgroundId);
+     }, error => console.log(error));
   }
 
   deleteBackground(id: number) {
@@ -64,6 +77,7 @@ export class ProfileComponent implements OnInit {
     .subscribe(x => {
       this.user.backgroundsId = this.user.backgroundsId.filter(z => z.id !== id);
       this.user.currentBackgroundId = this.user.backgroundsId[this.user.backgroundsId.length - 1];
+      this.changeBackGround(this.user.currentBackgroundId.backgroundId);
       }, error => console.log(error));
   }
   changePhoto(id: number) {
@@ -71,6 +85,7 @@ export class ProfileComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => {
       this.user.currentBackgroundId = this.user.backgroundsId.filter(z => z.id === id)[0];
+      this.changeBackGround(this.user.currentBackgroundId.backgroundId);
       }, error => console.log(error));
   }
   updateName() {
@@ -84,6 +99,13 @@ export class ProfileComponent implements OnInit {
     this.userService
     .changeToDefaultBackground()
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => this.user.currentBackgroundId = null, error => console.log(error));
+    .subscribe(x => {
+      this.user.currentBackgroundId = null;
+      this.changeBackGround(null);
+    }, error => console.log(error));
+  }
+  changeBackGround(background) {
+      localStorage.setItem('background', background);
+      this.background = background;
   }
 }
