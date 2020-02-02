@@ -34,16 +34,55 @@ div
             text-decoration: underline
             padding: 10px 20px 10px 10px
             cursor: pointer
-        .notification-field
+            transition: .2s ease-in-out
+            &:hover
+                background-color: rgba(236, 236, 236, 0.6)
+        .notification-container
+            overflow: overlay
             flex-direction: column
-            .notification-field-help
-                justify-content: space-between
-                padding: 0 20px 0 10px
-                .notification-new
-                    color: #F87154
-                    font-size: 14px
-                .notification-date
-                    color: black
-                    font-size: 12px
-            .notification-field-inner
-
+            height: 100%
+            .notification-field
+                flex-direction: column
+                padding: 5px 20px 5px 10px
+                width: 100%
+                align-items: center
+                transition: .2s ease-in-out
+                &:hover
+                    background-color: rgba(236, 236, 236, 0.6)
+                .notification-field-help
+                    justify-content: space-between
+                    align-items: center
+                    width: 100%
+                    .notification-new
+                        margin-left: 3px
+                        color: #F87154
+                        font-size: 14px
+                    .notification-date
+                        color: black
+                        font-size: 12px
+                .notification-field-inner
+                    width: 100%
+                    flex-direction: row
+                    align-items: flex-start
+                    .profile-image
+                        width: 35px
+                        height: 35px
+                        border-radius: 50%
+                        overflow: hidden
+                        cursor: pointer
+                        img
+                            width: 100%
+                    .profile-description
+                        flex-direction: column
+                        width: calc(100% - 45px)
+                        margin-left: 10px
+                        margin-top: 2px
+                        .profile-name
+                            font-weight: bold
+                            font-size: 16px
+                            p
+                                overflow: hidden
+                                white-space: nowrap
+                                text-overflow: ellipsis 
+                        .profile-todo
+                            font-size: 12px
