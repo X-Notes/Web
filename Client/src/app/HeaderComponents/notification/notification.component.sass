@@ -63,7 +63,7 @@ div
                 .notification-field-inner
                     width: 100%
                     flex-direction: row
-                    align-items: flex-start
+                    align-items: center
                     .profile-image
                         width: 35px
                         height: 35px
@@ -76,7 +76,6 @@ div
                         flex-direction: column
                         width: calc(100% - 45px)
                         margin-left: 10px
-                        margin-top: 2px
                         .profile-name
                             font-weight: bold
                             font-size: 16px
@@ -86,3 +85,9 @@ div
                                 text-overflow: ellipsis 
                         .profile-todo
                             font-size: 12px
+                            span
+                                cursor: pointer
+                                color: #1b78cf
+                                text-decoration: underline
+                                &:hover
+                                    color: #1967b1
