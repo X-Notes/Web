@@ -55,6 +55,7 @@ namespace NootsAPI
         {
             services.AddScoped<UserService>();
             services.AddScoped<LabelService >();
+            services.AddScoped<PhotoHandler>();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {

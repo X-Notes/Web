@@ -32,7 +32,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 })
 export class AllNotesComponent implements OnInit, OnDestroy {
 
-
   unsubscribe = new Subject();
   constructor(private router: Router) { }
 

@@ -12,6 +12,7 @@ import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
 import { NotesContainerComponent} from './Notes/notes-container/notes-container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const ChildNotesRoutes: Routes = [
   { path: '', component: AllNotesComponent},
@@ -27,7 +28,8 @@ const RoutesMain: Routes =
   {path: 'folders', component: ContainersComponent, canActivate: [AuthGuard]},
   {path: 'people', component: PeopleComponent, canActivate: [AuthGuard]},
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
-  {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]}
+  {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]},
+  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]}
 ];
 
 const routes: Routes = [
