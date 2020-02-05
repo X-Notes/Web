@@ -9,6 +9,11 @@ import { User } from 'src/app/Models/User/User';
 export class NotificationComponent implements OnInit {
 
   @Input() user: User;
+  activeSettings = false;
+
+  toggle() {
+    this.activeSettings = !this.activeSettings;
+  }
 
   constructor() { }
 
