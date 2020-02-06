@@ -2,11 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/Models/User/User';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.sass']
+  selector: 'app-profile-modal',
+  templateUrl: './profile-modal.component.html',
+  styleUrls: ['./profile-modal.component.sass']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileModalComponent implements OnInit {
 
   @Input() user: User;
 

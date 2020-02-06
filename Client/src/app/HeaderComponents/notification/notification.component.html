@@ -45,11 +45,11 @@
                     </div>
                     <div class="notification-field-inner">
                         <div class="profile-image">
-                            <img [src]="user?.photo || 'assets/default_avatar.png'">
+                            <img [src]="user?.photoId || 'assets/default_avatar.png'">
                         </div>
                         <div class="profile-description">
                             <div class="profile-name">
-                                <p>Saint Moses</p>
+                                <p>{{user?.name}}</p>
                             </div>
                             <div class="profile-todo">
                                 <p>Shared with you note <span>Ведьмак 3</span></p>
