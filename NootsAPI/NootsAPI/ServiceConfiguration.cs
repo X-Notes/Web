@@ -46,6 +46,7 @@ namespace NootsAPI
             var database = configuration["Mongo:Database"];
             var connection = $@"mongodb://{host}:{port}";
 
+            services.AddTransient(x => new NoteRepository(connection, database));
             services.AddTransient(x => new UserRepository(connection, database));
             services.AddTransient(x => new LabelRepository(connection, database));
 
@@ -54,6 +55,7 @@ namespace NootsAPI
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<UserService>();
+            services.AddScoped<NoteService>();
             services.AddScoped<LabelService >();
             services.AddScoped<PhotoHandler>();
         }
