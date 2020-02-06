@@ -65,9 +65,6 @@ export class MainComponent implements OnInit, OnDestroy {
       this.router.navigate(['/about']);
     });
   }
-  GetUpdates() {
-    this.userService.GetUpdates().subscribe(x => x, error => console.log(error));
-  }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
