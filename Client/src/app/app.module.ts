@@ -19,6 +19,10 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenIntercepter } from './Services/token-intercepter';
 import { ContainerComponent } from './Containers/container/container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
+import { InvitesComponent } from './HeaderComponents/invites/invites.component';
+import { NotificationComponent } from './HeaderComponents/notification/notification.component';
+import { ProfileModalComponent } from './HeaderComponents/profile-modal/profile-modal.component';
+
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule } from '@angular/forms';
 
@@ -29,7 +33,10 @@ import { FormsModule } from '@angular/forms';
     MainComponent,
     ContainerComponent,
     ContainersComponent,
+    InvitesComponent,
+    NotificationComponent,
     ProfileComponent,
+    ProfileModalComponent
   ],
   imports: [
     BrowserModule,

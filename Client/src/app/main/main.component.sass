@@ -9,30 +9,43 @@ div
 
 header
     display: flex
+    position: relative
     width: 100%
-    height: 60px
+    height: 50px
     background: #303030
     align-items: center
     .left-content
         height: 100%
         width: 200px
-        padding: 0  0 0 20px
+        padding: 0  0 0 35px
         align-items: center
+        .is-active
+            .hamburger-inner
+                &::before
+                    top: 0px !important
+                &::after
+                    bottom: 0px !important
         .hamburger--squeeze
-            height: 30px
+            height: 20px
             cursor: pointer
             .hamburger-box
-                width: 25px
-                height: 30px
+                width: 20px
+                height: 20px
                 .hamburger-inner
                     background-color: #ffffff
-                    width: 25px
+                    width: 20px
+                    height: 2px
+                    margin-top: 0px
                     &::before
                         background-color: #ffffff
-                        width: 25px
+                        width: 20px
+                        height: 2px
+                        top: -8px
                     &::after
                         background-color: #ffffff
-                        width: 25px
+                        width: 20px
+                        height: 2px
+                        bottom: -8px
     .right-content
         height: 100%
         width: calc( 100% - 200px )
@@ -40,8 +53,8 @@ header
         align-items: center
         justify-content: space-between
         .svg-logo
-            height: 36px
-            width: 135px
+            width: 94px
+            height: 25px
             cursor: pointer
         .header-instruments
             align-items: center
@@ -78,11 +91,11 @@ header
                 cursor: pointer
                 margin-left: 25px
                 .header-icons-first
-                    width: 31px
-                    height: 30px
+                    width: 26px
+                    height: 25px
                 .header-icons-second
-                    width: 28px
-                    height: 30px
+                    width: 23px
+                    height: 25px
                 .push
                     justify-content: center
                     align-items: center
@@ -96,124 +109,20 @@ header
                     color: white
                     font-size: 12px
                 .profile
-                    width: 40px
-                    height: 40px
+                    width: 35px
+                    height: 35px
                     border-radius: 25px
                     overflow: hidden
 
                     img
-                        width: 40px
-                        height: 40px
-                        object-fit: cover
+                        width: 100%
             .fix-height
                 height: 30px
-        .profile-menu
-            flex-direction: column
+        .help-menu-wrapper
             position: absolute
             z-index: 100
-            top: 60px
+            top: 50px
             right: 0px
-            width: 300px
-            height: 250px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px  
-            .profile-info
-                flex-direction: row
-                align-items: center
-                padding: 0 10px
-                width: 100%
-                height: 100px
-                background-color: #FBFBFB
-                border-bottom: 1px solid #D6D6D6
-                .profile-image
-                    width: 60px
-                    height: 60px
-                    border-radius: 50%
-                    overflow: hidden
-                    img
-                        width: 100%
-                        height: 100%
-                        object-fit: cover
-                .profile-description
-                    flex-direction: column
-                    height: 60px
-                    width: calc(100% - 70px)
-                    justify-content: space-around
-                    margin-left: 10px
-                    p
-                        overflow: hidden
-                        white-space: nowrap
-                        text-overflow: ellipsis 
-                        -o-text-overflow: ellipsis
-                    .profile-name
-                        font-weight: bold
-                        font-size: 22px
-                    .profile-mail
-                        font-size: 14px
-            .profile-settings
-                flex-direction: column
-                width: 100%
-                height: 150px
-                padding: 20px 15px
-                justify-content: space-between
-                .profile-field
-                    align-items: center
-                    width: 100%
-                    font-size: 18px
-                    color: #484848
-                    cursor: pointer
-                    .profile-svg-icon
-                        width: 21px
-                        height: 21px
-                        svg
-                            width: 100%
-                            height: 100%
-                    .profile-field-text
-                        margin-left: 10px
-        .notification-menu
-            flex-direction: column
-            width: 300px
-            height: 485px
-            position: absolute
-            z-index: 100
-            top: 60px
-            right: 0px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px
-            .notification-info
-                align-items: center
-                justify-content: space-between
-                width: 100%
-                height: 50px
-                padding: 0 20px 0 10px
-                border-bottom: 1px solid #D6D6D6
-                .notification-title
-                    font-size: 22px
-                    font-weight: 500
-                    color: #303030
-                .notification-icon
-                    height: 21px
-                    width: 21px
-                    cursor: pointer
-        .invites-menu
-            flex-direction: column
-            width: 300px
-            height: 485px
-            position: absolute
-            z-index: 100
-            top: 60px
-            right: 0px
-            background: #FBFBFB
-            border-left: 1px solid
-            border-bottom: 1px solid
-            border-color: #D6D6D6
-            border-radius: 0px 0px 0px 5px
 
 .wrapper
     width: 100%
@@ -281,7 +190,10 @@ header
                         color: #8EEB97 !important
                     .sidebar-icon-help
                         circle
-                            fill: #8EEB97 !important
+                            fill: #8EEB97
+                    .sidebar-icon-help-plus
+                        path
+                            fill: #8EEB97
                 .field-help:not(.active-sidebar-field-help):hover
                     background: #2A2A2A
                     border-radius: 0px 0px 10px 0px
@@ -308,7 +220,7 @@ header
                     .sidebar-title-help
                         height: 100%
                         align-items: center
-                        font-size: 18px
+                        font-size: 16px
                         color: #DADADA 
             .field
                 width: 100%
@@ -345,10 +257,11 @@ header
                 .sidebar-title
                     height: 100%
                     align-items: center
-                    font-size: 24px
+                    font-size: 22px
                     color: #484848
 
 @media (min-width: 992px) and  (max-width: 1199px) //laptop
+    
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
 

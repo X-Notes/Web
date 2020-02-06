@@ -1,0 +1,115 @@
+div
+    display: flex
+    
+.notification-menu
+    flex-direction: column
+    width: 300px
+    height: 485px
+    background: #FBFBFB
+    border-left: 1px solid
+    border-bottom: 1px solid
+    border-color: #D6D6D6
+    border-radius: 0px 0px 0px 5px
+    .notification-all
+        flex-direction: column
+        width: 100%
+        height: 100%
+        .notification-info
+            align-items: center
+            justify-content: space-between
+            width: 100%
+            height: 50px
+            padding: 0 20px 0 10px
+            border-bottom: 1px solid #D6D6D6
+            .notification-title
+                font-size: 22px
+                font-weight: 500
+                color: #303030
+            .notification-icon
+                height: 34px
+                width: 34px
+                cursor: pointer
+                align-items: center
+                justify-content: center
+                border-radius: 50%
+                background-position: center
+                transition: background 0.8s
+                &:hover
+                    background: #f3f3f3 radial-gradient(circle, transparent 1%, #f3f3f3 1%) center/15000%
+                &:active
+                    background-color: #cecece
+                    background-size: 100%
+                    transition: background 0s
+                .notification-settings
+                    height: 22px
+                    width: 22px
+                .notification-settings-back
+                    height: 15px
+                    width: 15px
+        .notification-content
+            height: calc(100% - 50px)
+            flex-direction: column
+            .notification-read
+                font-size: 16px
+                color: #F87154
+                text-decoration: underline
+                padding: 10px 20px 10px 10px
+                cursor: pointer
+                transition: .2s ease-in-out
+                &:hover
+                    background-color: rgba(236, 236, 236, 0.6)
+            .notification-container
+                overflow: overlay
+                flex-direction: column
+                height: 100%
+                .notification-field
+                    flex-direction: column
+                    padding: 5px 20px 5px 10px
+                    width: 100%
+                    align-items: center
+                    transition: .2s ease-in-out
+                    &:hover
+                        background-color: rgba(236, 236, 236, 0.6)
+                    .notification-field-help
+                        justify-content: space-between
+                        align-items: center
+                        width: 100%
+                        .notification-new
+                            width: 35px
+                            justify-content: center
+                            color: #F87154
+                            font-size: 14px
+                        .notification-date
+                            color: black
+                            font-size: 12px
+                    .notification-field-inner
+                        width: 100%
+                        flex-direction: row
+                        align-items: center
+                        .profile-image
+                            width: 35px
+                            height: 35px
+                            border-radius: 50%
+                            overflow: hidden
+                            cursor: pointer
+                            img
+                                width: 100%
+                        .profile-description
+                            flex-direction: column
+                            width: calc(100% - 45px)
+                            margin-left: 10px
+                            .profile-name
+                                font-weight: bold
+                                font-size: 16px
+                                p
+                                    overflow: hidden
+                                    white-space: nowrap
+                                    text-overflow: ellipsis 
+                            .profile-todo
+                                font-size: 12px
+                                span
+                                    cursor: pointer
+                                    color: #1b78cf
+                                    text-decoration: underline
+                                    &:hover
+                                        color: #1967b1
