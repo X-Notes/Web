@@ -10,21 +10,6 @@ div
     border-bottom: 1px solid
     border-color: #D6D6D6
     border-radius: 0px 0px 0px 5px
-    .notification-settings
-        flex-direction: column
-        height: 100%
-        width: 100%
-        .notification-info-settings
-            align-items: center
-            justify-content: space-between
-            width: 100%
-            height: 50px
-            padding: 0 20px 0 10px
-            border-bottom: 1px solid #D6D6D6
-            .notification-title
-                font-size: 22px
-                font-weight: 500
-                color: #303030
     .notification-all
         flex-direction: column
         width: 100%
@@ -55,9 +40,12 @@ div
                     background-color: #cecece
                     background-size: 100%
                     transition: background 0s
-                svg
+                .notification-settings
                     height: 22px
                     width: 22px
+                .notification-settings-back
+                    height: 15px
+                    width: 15px
         .notification-content
             height: calc(100% - 50px)
             flex-direction: column
