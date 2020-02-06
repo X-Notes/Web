@@ -1,5 +1,17 @@
-import { Component, OnInit, HostListener, NgModule, OnDestroy } from '@angular/core';
-import { trigger, transition, animate, style, state } from '@angular/animations';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  NgModule,
+  OnDestroy
+} from '@angular/core';
+import {
+  trigger,
+  transition,
+  animate,
+  style,
+  state
+} from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -13,23 +25,22 @@ import { NotesService } from '../Services/notes.service';
 @NgModule({
   imports: [BrowserAnimationsModule, BrowserModule]
 })
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.sass'],
   animations: [
     trigger('slideInOut', [
-      state('in', style({ height: '0'})),
+      state('in', style({ height: '0' })),
       transition('void => *', [
-        style({ height: '0', overflow: 'hidden'}),
-        animate('300ms ease-in-out', style({height: '*'}))
+        style({ height: '0', overflow: 'hidden' }),
+        animate('300ms ease-in-out', style({ height: '*' }))
       ]),
-      state('out', style({ height: '*'})),
+      state('out', style({ height: '*' })),
       transition('* => void', [
-        style({ height: '*', opacity: 0}),
-        animate('300ms ease-in-out', style({ height: '0'}))
-      ]),
+        style({ height: '*', opacity: 0 }),
+        animate('300ms ease-in-out', style({ height: '0' }))
+      ])
     ]),
     trigger('sidebarCloseOpen', [
       state('out', style({ transform: 'translateX(0)' })),
@@ -61,24 +72,33 @@ export class MainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private notesService: NotesService
-    ) {}
+  ) {}
 
   ngOnInit() {
-    this.userService.Get()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; }, error => {
-      this.router.navigate(['/about']);
-    });
+    this.userService
+      .Get()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        user => {
+          this.user = user;
+        },
+        error => {
+          this.router.navigate(['/about']);
+        }
+      );
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
 
-
   New() {
-    this.notesService.newNote().subscribe(x => console.log(x), error => console.log('error'));
-   }
-
+    this.notesService.newNote().subscribe(
+      x => {
+        this.router.navigate(['/notes', x]);
+      },
+      error => console.log('error')
+    );
+  }
 
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;
