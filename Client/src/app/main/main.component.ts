@@ -8,6 +8,7 @@ import { AuthService } from '../Services/auth.service';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NotesService } from '../Services/notes.service';
 
 @NgModule({
   imports: [BrowserAnimationsModule, BrowserModule]
@@ -55,9 +56,13 @@ export class MainComponent implements OnInit, OnDestroy {
 
   unsubscribe = new Subject();
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private notesService: NotesService
+    ) {}
 
-  }
   ngOnInit() {
     this.userService.Get()
     .pipe(takeUntil(this.unsubscribe))
@@ -68,6 +73,12 @@ export class MainComponent implements OnInit, OnDestroy {
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
   }
+
+
+  New() {
+    this.notesService.newNote().subscribe(x => console.log(x), error => console.log('error'));
+   }
+
 
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;

@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="sidebar-field-help" [@slideInOut] *ngIf="isCurrentRouteRight('notes')">
-                <div class="field-help" routerLink="/notes/new" routerLinkActive="active-sidebar-field-help">
+                <div class="field-help" (click)="New()" routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help-plus">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">
