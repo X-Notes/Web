@@ -8,7 +8,6 @@ import {MainComponent} from './main/main.component';
 import {AllNotesComponent} from './Notes/all-notes/all-notes.component';
 import {SharedNotesComponent} from './Notes/shared-notes/shared-notes.component';
 import { LockedNotesComponent} from './Notes/locked-notes/locked-notes.component';
-import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
 import { NotesContainerComponent} from './Notes/notes-container/notes-container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
@@ -19,7 +18,6 @@ const ChildNotesRoutes: Routes = [
   { path: 'all', component: AllNotesComponent},
   { path: 'shared', component: SharedNotesComponent},
   { path: 'locked', component: LockedNotesComponent},
-  { path: 'new', component: NewNoteComponent}
 ];
 
 const RoutesMain: Routes =
