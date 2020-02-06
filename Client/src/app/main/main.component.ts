@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, NgModule } from '@angular/core';
+import { Component, OnInit, HostListener, NgModule, OnDestroy } from '@angular/core';
 import { trigger, transition, animate, style, state } from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -42,7 +42,7 @@ import { takeUntil } from 'rxjs/operators';
     ])
   ]
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   title = 'Client';
   user: User;
 
@@ -98,5 +98,9 @@ export class MainComponent implements OnInit {
   }
   exit() {
     this.authService.SignOut();
+  }
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.unsubscribe();
   }
 }

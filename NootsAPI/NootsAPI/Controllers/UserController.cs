@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Services;
 using NootsAPI.Infastructure;
@@ -18,13 +19,12 @@ namespace NootsAPI.Controllers
     public class UserController : Controller
     {
         private readonly UserService userService;
-        private readonly QueueService queueService;
-        public UserController(UserService userService, QueueService queueService)
+
+        public UserController(UserService userService)
         {
             this.userService = userService;
-            this.queueService = queueService;
         }
-        // GET: api/<controller>
+
         [HttpGet]
         public async Task<DTOUser> Get()
         {
@@ -33,14 +33,7 @@ namespace NootsAPI.Controllers
             return user;
         }
 
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public void Get(int id)
-        {
 
-        }
-
-        // POST api/<controller>
         [HttpPost]
         public async Task<DTOUser> Authorize([FromBody]DTOUser user)
         {
@@ -50,23 +43,54 @@ namespace NootsAPI.Controllers
             return dbuser;
         }
 
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
 
+        [HttpGet("full")]
+        public async Task<DTOFullUser> GetFullUser()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            var user = await this.userService.GetFullByEmail(currentUserEmail);
+            return user;
+        }
+        [HttpPost("photo")]
+        public async Task<string> ChangeProfilePhoto(IFormFile photo)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            return await userService.ChangeProfilePhoto(photo, currentUserEmail);
         }
 
-        // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("name")]
+        public async Task ChangeName([FromBody]string newName)
         {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.UpdateUserName(newName, currentUserEmail);
         }
 
-        [HttpGet("update")]
-        public void GetUpdate()
+
+        [HttpPost("background")]
+        public async Task<DTOBackground> NewBackgroundPhoto(IFormFile photo)
         {
-           this.queueService.PostValue("Get");
+            var currentUserEmail = this.GetUserEmail();
+            return await userService.NewBackgroundPhoto(photo, currentUserEmail);
+        }
+
+        [HttpDelete("background/{id}")]
+        public async Task DeleteBackground(int id)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.DeleteBackground(currentUserEmail, id);
+        }
+        [HttpGet("background/{id}")]
+        public async Task UpdateBackgroundCover(int id)
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.UpdateBackgroundCover(currentUserEmail, id);
+        }
+
+        [HttpGet("background/default")]
+        public async Task DefaultBackgroundCover()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            await userService.DefaultBackgroundCover(currentUserEmail);
         }
     }
 }

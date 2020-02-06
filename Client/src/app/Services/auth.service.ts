@@ -34,7 +34,8 @@ export class AuthService {
         const dbuser: User = {
           name: this.userData.displayName,
           email: this.userData.email,
-          photo: this.userData.photoURL
+          photoId: this.userData.photoURL,
+          backgroundId: ''
         };
         localStorage.setItem('user', JSON.stringify(dbuser));
         JSON.parse(localStorage.getItem('user'));
@@ -59,24 +60,25 @@ export class AuthService {
             const user: User = {
               name: this.userData.displayName,
               email: this.userData.email,
-              photo: this.userData.photoURL
+              photoId: this.userData.photoURL,
+              backgroundId: ''
             };
-            this.photoService.GetPhoto(user.photo).then(base64 => {
-              user.photo = base64 as string;
+            this.photoService.GetPhoto(user.photoId).then(base64 => {
+              user.photoId = base64 as string;
               this.userService
                 .Get()
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe(
                   x => {
                     if (!isUndefined(x) && !isNull(x)) {
-                      this.router.navigate(['/notes']);
+                      this.router.navigate(['/notes/all']);
                     } else {
                       this.userService
                         .CreateUser(user)
                         .pipe(takeUntil(this.unsubscribe))
                         .subscribe(newuser => {
                           if (!isUndefined(newuser) && !isNull(newuser)) {
-                            this.router.navigate(['/notes']);
+                            this.router.navigate(['/notes/all']);
                           }
                         });
                     }

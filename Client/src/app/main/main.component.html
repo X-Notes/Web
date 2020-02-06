@@ -55,7 +55,7 @@
             </div>
             <div class="header-icons">
                 <div class="profile" (click)="openProfileDialog()">
-                    <img [src]="user?.photo || 'assets/default_avatar.png'">
+                    <img [src]="user?.photoId || 'assets/default_avatar.svg'">
                 </div>
             </div>
         </div>
@@ -70,6 +70,8 @@
         </div>
     </div>
 </header>
+
+
 <div class="wrapper" (click)="close()">
     <aside [@sidebarCloseOpen] *ngIf='activeSidebar'>
         <div class="sidebar-field" routerLinkActive="active-sidebar-field">
@@ -241,7 +243,7 @@
             </div>
         </div>
     </aside>
-    <main>
+    <main >
         <router-outlet></router-outlet>
-    </main>
+    </main >
 </div>

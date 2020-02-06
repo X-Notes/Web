@@ -20,9 +20,11 @@ import { TokenIntercepter } from './Services/token-intercepter';
 import { ContainerComponent } from './Containers/container/container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
 import { InvitesComponent } from './HeaderComponents/invites/invites.component';
-import { ProfileComponent } from './HeaderComponents/profile/profile.component';
+import { ProfileModalComponent } from './HeaderComponents/profile/profile.component';
 import { NotificationComponent } from './HeaderComponents/notification/notification.component';
 
+import { ProfileComponent } from './profile/profile.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -32,8 +34,10 @@ import { NotificationComponent } from './HeaderComponents/notification/notificat
     ContainerComponent,
     ContainersComponent,
     InvitesComponent,
-    ProfileComponent,
+    ProfileModalComponent,
     NotificationComponent,
+    ProfileModalComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -46,6 +50,7 @@ import { NotificationComponent } from './HeaderComponents/notification/notificat
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    FormsModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

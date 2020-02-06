@@ -15,7 +15,6 @@ namespace Noots.DataAccess.Repositories
 
         public UserRepository(string connection,string database)
         {
-            Console.WriteLine(connection);
             _context = new DbContext(connection,database);
         }
 
@@ -30,6 +29,30 @@ namespace Noots.DataAccess.Repositories
         public async Task<User> GetByEmail(string email)
         {
             return await _context.Users.Find(x => x.Email == email).FirstOrDefaultAsync();
+        }
+        public async Task UpdateName(string email, string newName)
+        {
+            var filter = new BsonDocument("Email", email);
+            var update = Builders<User>.Update.Set("Name", newName);
+            var options = new FindOneAndUpdateOptions<User> { };
+            await _context.Users.FindOneAndUpdateAsync(filter, update, options);
+        }
+        public async Task UpdateProfilePhoto(string email, string photoId)
+        {
+            var filter = new BsonDocument("Email", email);
+            var update = Builders<User>.Update
+                .Set("PhotoId", photoId);
+            var options = new FindOneAndUpdateOptions<User>{};
+            await _context.Users.FindOneAndUpdateAsync(filter, update, options);
+        }
+        public async Task UpdateBackgrounds(string email, List<Background> backgrounds, Background currentBackGround)
+        {
+            var filter = new BsonDocument("Email", email);
+            var update = Builders<User>.Update
+                .Set("BackgroundsId", backgrounds)
+                .Set("CurrentBackgroundId", currentBackGround);
+            var options = new FindOneAndUpdateOptions<User> { };
+            await _context.Users.FindOneAndUpdateAsync(filter, update, options);
         }
     }
 }
