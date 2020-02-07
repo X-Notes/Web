@@ -14,7 +14,7 @@
                 &:hover
                     cursor: pointer
         .note
-            width: 1000px                 
+            width: 1000px                
             
             .youtube
                 width: 100%
@@ -22,6 +22,7 @@
                 box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25)
                 border-radius: 10px
                 margin-bottom: 10px
+
             .content
                 padding: 10px 5px 0 20px    
                 box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25)      
@@ -37,8 +38,8 @@
                         display: flex
                         flex-wrap: wrap
                         .label
-                            margin: 8px 0 0 8px
-                            width: 144px
+                            margin: 8px 8px 0 0
+                            min-width: 120px
                             height: 22px
                             border-radius: 40px
                             color:#808080
@@ -60,6 +61,46 @@
                             height: 9px
                             &:hover
                                 cursor: pointer
+
+                .title
+                    margin-top: 25px
+                    display: flex
+                    flex-direction: row
+                    .stick
+                        width: 4px
+                        border-radius: 10px
+                        background: #2997FF
+                        min-height: 100%
+
+                    .group
+                        margin-left: 10px
+                        position: relative
+                        width: calc(100% - 15px)
+                        padding: 0 40px 0 0
+                        .placeholder 
+                            color: #808080
+                            top: 0
+                            font-size: 22px
+                            pointer-events: none
+                            user-select: none
+                            position: absolute
+                            opacity: 0
+                            transition: 0.2s padding ease-in-out
+                        .input-text
+                            overflow-x: hidden
+                            overflow-y: auto
+                            white-space: pre-wrap
+                            word-wrap: break-word
+                            z-index: 1        
+                            padding: 0 0 0 2px
+                            outline: 0                        
+                            transition: 0.2s padding ease-in-out
+                            font-size: 22px
+
+                            &:empty + .placeholder
+                                opacity: 1
+                                margin-left: 3px
+
 
             
 
