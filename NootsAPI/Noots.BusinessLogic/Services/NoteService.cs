@@ -19,9 +19,9 @@ namespace Noots.BusinessLogic.Services
             this.mapper = mapper;
         }
 
-        public async Task<string> NewNote()
+        public async Task<string> NewNote(string Email)
         {
-            var newNote = await noteRepository.New(new Note());
+            var newNote = await noteRepository.New(new Note() { Email = Email});
             return newNote.Id.ToString();
         }
         public async Task<List<DTONote>> GetAll(string email)

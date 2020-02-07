@@ -25,7 +25,8 @@ namespace NootsAPI.Controllers
         [HttpGet("new")]
         public async Task<string> NewNote()
         {
-            return await noteService.NewNote();
+            var email = this.GetUserEmail();
+            return await noteService.NewNote(email);
         }
 
         [HttpGet("all")]
