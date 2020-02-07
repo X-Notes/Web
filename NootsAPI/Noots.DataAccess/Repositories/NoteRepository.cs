@@ -1,5 +1,7 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using Noots.DataAccess.Context;
+using Shared.DTO.Note;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,19 @@ namespace Noots.DataAccess.Repositories
         public async Task<List<Note>> GetAll(string email)
         {
             return await _context.Notes.Find(x => x.Email == email).ToListAsync();
+        }
+        public async Task UpdateTitle(UpdateTitle updateTitle)
+        {
+            if (ObjectId.TryParse(updateTitle.Id, out var dbId))
+            {
+                var filter = new BsonDocument("_id", dbId);
+                var update = Builders<Note>.Update
+                    .Set("Title", updateTitle.Title);
+                var options = new FindOneAndUpdateOptions<Note>
+                {
+                };
+                await _context.Notes.FindOneAndUpdateAsync(filter, update, options);
+            }
         }
     }
 }

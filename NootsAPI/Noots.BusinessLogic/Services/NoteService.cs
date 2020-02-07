@@ -30,5 +30,9 @@ namespace Noots.BusinessLogic.Services
             var notes = mapper.Map<List<DTONote>>(dbNotes);
             return notes;
         }
+        public async Task UpdateTitle(UpdateTitle updateTitle)
+        {
+           await noteRepository.UpdateTitle(updateTitle);
+        }
     }
 }

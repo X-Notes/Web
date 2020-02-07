@@ -28,12 +28,17 @@ namespace NootsAPI.Controllers
             var email = this.GetUserEmail();
             return await noteService.NewNote(email);
         }
-
         [HttpGet("all")]
         public async Task<List<DTONote>> GetAll()
         {
             var currentUserEmail = this.GetUserEmail();
             return await noteService.GetAll(currentUserEmail);
+        }
+
+        [HttpPut("title")]
+        public async Task UpdateName(UpdateTitle updateTitle)
+        {
+            await noteService.UpdateTitle(updateTitle);
         }
     }
 }

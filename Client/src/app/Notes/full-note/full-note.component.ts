@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Label } from 'src/app/Models/Labels/Label';
+import { NotesService } from 'src/app/Services/notes.service';
+import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 
 @Component({
   selector: 'app-full-note',
@@ -10,6 +12,10 @@ import { Label } from 'src/app/Models/Labels/Label';
 })
 export class FullNoteComponent implements OnInit {
 
+  // Content
+  private title: string;
+  private titleTimer;
+  //
   private id: string;
   private subscription: Subscription;
   private youtube = false;
@@ -29,14 +35,25 @@ export class FullNoteComponent implements OnInit {
     { id: '24', name: '23', color: '#FFCDCD'},
     { id: '24', name: '23', color: '#FFCDCD'},
   ];
-  constructor(private activateRoute: ActivatedRoute) {
+  constructor(private activateRoute: ActivatedRoute, private noteService: NotesService ) {
     this.subscription = activateRoute.params.subscribe(params => this.id = params.id);
    }
 
   ngOnInit() {
+
   }
 
   youTubeMenu() {
     this.youtube = !this.youtube;
+  }
+
+  changeTitle(event) {
+    this.title = event;
+    const newTitle: UpdateTitle = {
+      id: this.id,
+      title: this.title
+    };
+    clearTimeout(this.titleTimer);
+    this.titleTimer = setTimeout(() => this.noteService.updateTitle(newTitle).subscribe(x => console.log('updated')), 300);
   }
 }

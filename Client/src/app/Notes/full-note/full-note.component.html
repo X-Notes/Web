@@ -22,7 +22,7 @@
                 <div class="title">
                     <div class="stick"></div>
                     <div class="group">
-                        <div class="input-text" contenteditable></div>
+                        <div class="input-text" contenteditable="true" (input)="changeTitle($event.target.innerText)">{{}}</div>
                         <div class="placeholder">
                             Note Title
                         </div>
