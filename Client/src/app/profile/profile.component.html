@@ -6,7 +6,7 @@
             <div *ngIf="user?.photoId" class="photo">
                 <img [src]="user?.photoId">
                 <label for="upl" class="upload"></label>
-                <input type="file" name="upload" id="upl" placeholder="" value="123"
+                <input type="file" name="upload" id="upl" placeholder=""
                         (change)="uploadFileProfile($event.target.files)">
                 <div class="tooltip">
                     <div class="image-upload-icon">
