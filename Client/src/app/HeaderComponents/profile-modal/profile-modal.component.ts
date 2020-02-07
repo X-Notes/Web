@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from 'src/app/Models/User/User';
+import { AuthService } from 'src/app/Services/auth.service';
 
 @Component({
   selector: 'app-profile-modal',
@@ -9,10 +10,16 @@ import { User } from 'src/app/Models/User/User';
 export class ProfileModalComponent implements OnInit {
 
   @Input() user: User;
+  @Output() closeAll = new EventEmitter<boolean>();
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
+  exit() {
+    this.authService.SignOut();
+  }
+  allDisable() {
+    this.closeAll.emit();
+  }
   ngOnInit() {
   }
-
 }

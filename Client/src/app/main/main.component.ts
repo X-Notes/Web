@@ -1,10 +1,9 @@
-import { Component, OnInit, HostListener, NgModule, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, NgModule, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { trigger, transition, animate, style, state } from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
-import { AuthService } from '../Services/auth.service';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -55,7 +54,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   unsubscribe = new Subject();
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
+  constructor(private router: Router, private userService: UserService) {
 
   }
   ngOnInit() {
@@ -95,9 +94,6 @@ export class MainComponent implements OnInit, OnDestroy {
     this.activeProfileMenu = false;
     this.activeNotificationMenu = false;
     this.activeInvitesMenu = false;
-  }
-  exit() {
-    this.authService.SignOut();
   }
   ngOnDestroy() {
     this.unsubscribe.next();
