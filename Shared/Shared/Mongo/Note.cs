@@ -12,7 +12,7 @@ namespace Shared.Mongo
         public string Email { set; get; }
         public string Title { set; get; }
         public List<Part> Parts { set; get; }
-        public List<LabelSmall> Labels { set; get; }
+        public List<ObjectId> Labels { set; get; }
         public bool Deleted { set; get; }
         public bool Locked { set; get; }
         public string ReferanceForEdit { set; get; }

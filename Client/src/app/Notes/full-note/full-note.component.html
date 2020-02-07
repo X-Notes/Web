@@ -1,1 +1,25 @@
-<p>full-note works!</p>
+<div class="container">
+    <div class="background">
+        <div class="buttons">
+            <img src="assets/buttons-buttons/scope.svg">
+            <img src="assets/buttons-buttons/youtube.svg" (click)="youTubeMenu()">
+        </div>
+        <div class="note">
+            <div *ngIf="youtube" class="youtube">
+
+            </div>
+            <div class="content">
+                <div class="header">
+                    <div class="labels">
+                        <div *ngFor="let label of labels" class="label" [ngStyle]="{'background': label.color }">
+                            <span>{{label.name}}</span>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <img src="assets/options.svg"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
