@@ -75,7 +75,7 @@
 <div class="wrapper" (click)="close()">
     <aside [@sidebarCloseOpen] *ngIf='activeSidebar'>
         <div class="sidebar-field" routerLinkActive="active-sidebar-field">
-            <div class="field" routerLink="/notes/all">
+            <div class="field" routerLink="/notes">
                 <div class="sidebar-icon">
                     <div class="sidebar-icon-wrapper-first">
                         <svg fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +111,7 @@
                         <p>New note</p>
                     </div>
                 </div>
-                <div class="field-help" routerLink="/notes/all" routerLinkActive="active-sidebar-field-help">
+                <div class="field-help" routerLink="/notes" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active-sidebar-field-help">
                     <div class="sidebar-icon-help-wrapper">
                         <div class="sidebar-icon-help">
                             <svg fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -39,5 +39,17 @@ namespace Noots.BusinessLogic.Services
 
             return "success";
         }
+
+        public async Task<string> CreateIndexForNote()
+        {
+            var options = new CreateIndexOptions();
+            var field = new StringFieldDefinition<Note>("Email");
+            var indexDefinition = new IndexKeysDefinitionBuilder<Note>().Ascending(field);
+
+            var indexModel = new CreateIndexModel<Note>(indexDefinition, options);
+            await _context.Notes.Indexes.CreateOneAsync(indexModel);
+
+            return "success";
+        }
     }
 }

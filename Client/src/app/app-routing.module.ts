@@ -17,11 +17,10 @@ import { FullNoteComponent } from './Notes/full-note/full-note.component';
 
 const ChildNotesRoutes: Routes = [
   { path: '', component: AllNotesComponent},
-  { path: 'all', component: AllNotesComponent},
   { path: 'shared', component: SharedNotesComponent},
   { path: 'locked', component: LockedNotesComponent},
   { path: ':id', component: FullNoteComponent},
-  { path: '**', redirectTo: 'all'}
+  { path: '**', redirectTo: ''}
 ];
 
 const RoutesMain: Routes =

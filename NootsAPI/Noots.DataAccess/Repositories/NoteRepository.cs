@@ -1,4 +1,5 @@
-﻿using Noots.DataAccess.Context;
+﻿using MongoDB.Driver;
+using Noots.DataAccess.Context;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,10 @@ namespace Noots.DataAccess.Repositories
         {
             await _context.Notes.InsertOneAsync(note);
             return note;
+        }
+        public async Task<List<Note>> GetAll(string email)
+        {
+            return await _context.Notes.Find(x => x.Email == email).ToListAsync();
         }
     }
 }

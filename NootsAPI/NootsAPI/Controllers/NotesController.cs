@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Services;
+using NootsAPI.Infastructure;
+using Shared.DTO.Note;
 
 namespace NootsAPI.Controllers
 {
@@ -24,6 +26,13 @@ namespace NootsAPI.Controllers
         public async Task<string> NewNote()
         {
             return await noteService.NewNote();
+        }
+
+        [HttpGet("all")]
+        public async Task<List<DTONote>> GetAll()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            return await noteService.GetAll(currentUserEmail);
         }
     }
 }

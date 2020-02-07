@@ -1,4 +1,6 @@
-﻿using Noots.DataAccess.Repositories;
+﻿using AutoMapper;
+using Noots.DataAccess.Repositories;
+using Shared.DTO.Note;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
@@ -10,16 +12,23 @@ namespace Noots.BusinessLogic.Services
     public class NoteService
     {
         private readonly NoteRepository noteRepository;
-
-        public NoteService(NoteRepository noteRepository)
+        private readonly IMapper mapper;
+        public NoteService(NoteRepository noteRepository, IMapper mapper)
         {
             this.noteRepository = noteRepository;
+            this.mapper = mapper;
         }
 
         public async Task<string> NewNote()
         {
             var newNote = await noteRepository.New(new Note());
             return newNote.Id.ToString();
+        }
+        public async Task<List<DTONote>> GetAll(string email)
+        {
+            var dbNotes = await noteRepository.GetAll(email);
+            var notes = mapper.Map<List<DTONote>>(dbNotes);
+            return notes;
         }
     }
 }
