@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Shared.DTO.Note
 {
-    public class DTONote
+    public class DTOFullNote
     {
         public string Id { set; get; }
         public string Title { set; get; }

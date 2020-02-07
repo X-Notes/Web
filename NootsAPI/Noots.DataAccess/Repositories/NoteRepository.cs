@@ -40,5 +40,9 @@ namespace Noots.DataAccess.Repositories
                 await _context.Notes.FindOneAndUpdateAsync(filter, update, options);
             }
         }
+        public async Task<Note> GetById(ObjectId id)
+        {
+            return await _context.Notes.Find(x => x.Id == id).FirstAsync();
+        }
     }
 }

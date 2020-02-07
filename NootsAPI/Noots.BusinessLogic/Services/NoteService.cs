@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
 using Shared.Mongo;
@@ -32,7 +33,17 @@ namespace Noots.BusinessLogic.Services
         }
         public async Task UpdateTitle(UpdateTitle updateTitle)
         {
-           await noteRepository.UpdateTitle(updateTitle);
+            await noteRepository.UpdateTitle(updateTitle);
+        }
+        public async Task<DTOFullNote> GetById(string id)
+        {
+            if (ObjectId.TryParse(id, out var Id))
+            {
+                var dbnote = await noteRepository.GetById(Id);
+                var note = mapper.Map<DTOFullNote>(dbnote);
+                return note;
+            }
+            return null;
         }
     }
 }

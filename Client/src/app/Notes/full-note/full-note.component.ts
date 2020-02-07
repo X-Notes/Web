@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Label } from 'src/app/Models/Labels/Label';
 import { NotesService } from 'src/app/Services/notes.service';
 import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
+import { FullNote } from 'src/app/Models/Notes/FullNote';
 
 @Component({
   selector: 'app-full-note',
@@ -17,6 +18,7 @@ export class FullNoteComponent implements OnInit {
   private titleTimer;
   //
   private id: string;
+  private note: FullNote;
   private subscription: Subscription;
   private youtube = false;
   private labels: Label[] = [
@@ -40,7 +42,7 @@ export class FullNoteComponent implements OnInit {
    }
 
   ngOnInit() {
-
+    this.noteService.getById(this.id).subscribe(x => this.note = x , error => console.log(error));
   }
 
   youTubeMenu() {

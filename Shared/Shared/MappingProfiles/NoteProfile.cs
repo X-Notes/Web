@@ -12,6 +12,7 @@ namespace Shared.MappingProfiles
         public NoteProfile()
         {
             CreateMap<Note, DTONote>();
+            CreateMap<Note, DTOFullNote>();
         }
     }
 }

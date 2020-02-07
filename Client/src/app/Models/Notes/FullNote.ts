@@ -1,6 +1,6 @@
 import { Label } from '../Labels/Label';
 
-export interface SmallNote {
+export interface FullNote {
     id: string;
     title: string;
     labels: Label[];

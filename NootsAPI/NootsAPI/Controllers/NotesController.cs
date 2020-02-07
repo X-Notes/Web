@@ -40,5 +40,11 @@ namespace NootsAPI.Controllers
         {
             await noteService.UpdateTitle(updateTitle);
         }
+
+        [HttpGet("{id}")]
+        public async Task<DTOFullNote> GetById(string id)
+        {
+            return await noteService.GetById(id);
+        }
     }
 }
