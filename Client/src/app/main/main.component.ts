@@ -12,8 +12,6 @@ import {
   style,
   state
 } from '@angular/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
 import { AuthService } from '../Services/auth.service';
@@ -22,9 +20,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NotesService } from '../Services/notes.service';
 
-@NgModule({
-  imports: [BrowserAnimationsModule, BrowserModule]
-})
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',

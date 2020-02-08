@@ -2,16 +2,11 @@ import { OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { Component, OnInit, NgModule } from '@angular/core';
-import { trigger, transition, animate, style, state } from '@angular/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Component, OnInit} from '@angular/core';
 import { NotesService } from 'src/app/Services/notes.service';
 import { SmallNote } from 'src/app/Models/Notes/SmallNote';
 
-@NgModule({
-  imports: [BrowserAnimationsModule, BrowserModule]
-})
+
 
 @Component({
   selector: 'app-all-notes',

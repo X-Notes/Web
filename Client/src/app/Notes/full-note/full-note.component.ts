@@ -18,10 +18,10 @@ export class FullNoteComponent implements OnInit {
   private titleTimer;
   //
   private id: string;
-  private note: FullNote;
+  public note: FullNote;
   private subscription: Subscription;
-  private youtube = false;
-  private labels: Label[] = [
+  public youtube = false;
+  public labels: Label[] = [
     { id: '24', name: 'work', color: '#FFCDCD'},
     { id: '24', name: 'instanse', color: '#FFCDCD'},
     { id: '24', name: 'homework', color: '#FFCDCD'},
