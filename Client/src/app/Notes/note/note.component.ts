@@ -19,7 +19,7 @@ export class NoteComponent implements OnInit {
   @Output() AddChanged = new EventEmitter<string>();
   @Output() RemoveChanged = new EventEmitter<string>();
 
-  CallUpper() {
+  callUpper() {
     this.Update = !this.Update;
     if (this.Update === true) {
       this.color = 'rgba(101, 226, 113, 0.69)';
@@ -33,7 +33,7 @@ export class NoteComponent implements OnInit {
   ngOnInit() {
   }
 
-  Open() {
+  open() {
     this.OpenNote.emit(this.note.id);
   }
 }

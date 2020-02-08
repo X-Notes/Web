@@ -1,6 +1,6 @@
 <div class="main-note">
-    <div class="highlighting-note" (click)="CallUpper()" [ngStyle]="{backgroundColor: color}"></div>
-    <div class="note-container">
+    <div class="highlighting-note" (click)="callUpper()" [ngStyle]="{backgroundColor: color}"></div>
+    <div class="note-container" (click)="open()">
         <div class="note-header">
             <div *ngFor="let item of [1,5,6,7] | slice:0:2" class="note-label">
                 <p class="check note-label-paragraph">Label</p>
@@ -9,11 +9,11 @@
                 </div>
             </div>
             <div class="note-label note-plus-label">
-                <p>+Length</p>
+                <p>+76</p>
             </div>
         </div>
-        <div class="note-title" (click)="Open()">
-            <p>Title</p>
+        <div class="note-title">
+            <p>{{note?.title}}</p>
         </div>
         <div class="note-description">
             <p>Description</p>
