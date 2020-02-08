@@ -66,7 +66,7 @@
             <app-notification *ngIf='activeNotificationMenu' [user] = "user"></app-notification>
         </div>
         <div class="help-menu-wrapper">
-            <app-invites *ngIf='activeInvitesMenu'></app-invites>
+            <app-invites *ngIf='activeInvitesMenu' [user] = "user"></app-invites>
         </div>
     </div>
 </header>
