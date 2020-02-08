@@ -5,6 +5,7 @@ using Shared.DTO.Note;
 using Shared.Mongo;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,15 @@ namespace Noots.BusinessLogic.Services
 
         public async Task<string> NewNote(string Email)
         {
-            var newNote = await noteRepository.New(new Note() { Email = Email});
+            var dbNotes = await noteRepository.GetAll(Email);
+
+            int order = 0;
+            if(dbNotes.Count != 0)
+            {
+                order = dbNotes.Max(x => x.Order);
+                ++order;
+            }
+            var newNote = await noteRepository.New(new Note() { Email = Email, Order = order }) ;
             return newNote.Id.ToString();
         }
         public async Task<List<DTONote>> GetAll(string email)

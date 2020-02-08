@@ -11,6 +11,7 @@ namespace Shared.Mongo
         public ObjectId Id { set; get; }
         public string Email { set; get; }
         public string Title { set; get; }
+        public int Order { set; get; }
         public List<Part> Parts { set; get; }
         public List<ObjectId> Labels { set; get; }
         public bool Deleted { set; get; }

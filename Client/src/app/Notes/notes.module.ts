@@ -7,12 +7,14 @@ import { NoteComponent } from './note/note.component';
 import { NotesContainerComponent } from './notes-container/notes-container.component';
 import { AppRoutingModule } from '..//app-routing.module';
 import { FullNoteComponent } from './full-note/full-note.component';
+import { MaterialModule } from '../material.module';
 
 @NgModule({
   declarations: [AllNotesComponent, SharedNotesComponent, LockedNotesComponent, NoteComponent, NotesContainerComponent, FullNoteComponent],
   imports: [
     CommonModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MaterialModule,
   ],
   exports: []
 })

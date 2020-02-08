@@ -25,7 +25,6 @@ import { ProfileModalComponent } from './HeaderComponents/profile-modal/profile-
 
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -53,7 +52,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AngularFireAuthModule,
     FormsModule,
     BrowserAnimationsModule,
-    MaterialModule,
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
