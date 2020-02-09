@@ -1,3 +1,6 @@
+<div class="help-menu">
+    <app-header-menu *ngIf='update'></app-header-menu>
+</div>
 <div class="wrapper-main">
     <div class="wrapper-notes">
         <app-note class="note" *ngFor="let item of notes" [note]="item" (AddChanged)="AddChanged($event)" (RemoveChanged)="RemoveChanged($event)" (OpenNote)="OpenNoot($event)"></app-note>
