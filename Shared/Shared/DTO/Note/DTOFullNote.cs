@@ -1,4 +1,5 @@
 ﻿using Shared.DTO.Label;
+using Shared.DTO.PartDTO;
 using Shared.Mongo;
 using Shared.Mongo.Parts;
 using System;
@@ -11,7 +12,7 @@ namespace Shared.DTO.Note
     {
         public string Id { set; get; }
         public string Title { set; get; }
-        public List<Part> Parts { set; get; }
+        public List<DTOPart> Parts { set; get; }
         public List<LabelDTO> Labels { set; get; }
         public bool Locked { set; get; }
     }

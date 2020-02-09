@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Shared.DTO.PartDTO
 {
-    public class DTOCommonList
+    public class DTOCommonList : DTOPart
     {
         public string Description { set; get; }
     }
