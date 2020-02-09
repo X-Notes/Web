@@ -42,7 +42,7 @@ export class FullNoteComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.noteService.getById(this.id).subscribe(x => this.note = x , error => console.log(error));
+    this.noteService.getById(this.id).subscribe(x => {this.note = x; console.log(this.note); }, error => console.log(error));
   }
 
   youTubeMenu() {

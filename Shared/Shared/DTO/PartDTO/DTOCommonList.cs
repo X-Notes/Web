@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.Mongo.Parts
+namespace Shared.DTO.PartDTO
 {
-    public class CommonList : Part
+    public class DTOCommonList
     {
         public string Description { set; get; }
     }
