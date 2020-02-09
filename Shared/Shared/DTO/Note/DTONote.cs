@@ -9,7 +9,6 @@ namespace Shared.DTO.Note
     {
         public string Id { set; get; }
         public string Title { set; get; }
-        public int Order { set; get; }
         public List<LabelSmall> Labels { set; get; }
         public bool Locked { set; get; }
     }
