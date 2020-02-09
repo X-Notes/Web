@@ -8,8 +8,9 @@ import { NotesContainerComponent } from './notes-container/notes-container.compo
 import { AppRoutingModule } from '..//app-routing.module';
 import { FullNoteComponent } from './full-note/full-note.component';
 import { MaterialModule } from '../material.module';
-import { ContentMenuComponent } from '../NoteMenus/content-menu/content-menu.component';
-import { FontContentMenuComponent } from '../NoteMenus/font-content-menu/font-content-menu.component';
+import { ContentMenuComponent } from './content-menu/content-menu.component';
+import { FontContentMenuComponent } from './font-content-menu/font-content-menu.component';
+
 
 @NgModule({
   declarations: [
