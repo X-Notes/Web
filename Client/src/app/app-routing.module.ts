@@ -31,6 +31,7 @@ const RoutesMain: Routes =
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
   {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: '**', redirectTo: '/notes'}
 ];
 
 const routes: Routes = [

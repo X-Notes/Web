@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
 using Shared.Mongo;
+using Shared.Mongo.Parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,8 @@ namespace Noots.BusinessLogic.Services
 
         public async Task<string> NewNote(string Email)
         {
-            var newNote = await noteRepository.New(new Note() { Email = Email }) ;
+            var newNote = new Note() { Email = Email, Parts = new List<Part>(), Labels = new List<ObjectId>() };
+            newNote = await noteRepository.New(newNote);
             return newNote.Id.ToString();
         }
         public async Task<List<DTONote>> GetAll(string email)

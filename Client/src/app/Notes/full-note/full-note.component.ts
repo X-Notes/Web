@@ -56,6 +56,6 @@ export class FullNoteComponent implements OnInit {
       title: this.title
     };
     clearTimeout(this.titleTimer);
-    this.titleTimer = setTimeout(() => this.noteService.updateTitle(newTitle).subscribe(x => console.log('updated')), 300);
+    this.titleTimer = setTimeout(() => this.noteService.updateTitle(newTitle).subscribe(x => x ), 300);
   }
 }
