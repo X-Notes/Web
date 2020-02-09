@@ -45,9 +45,6 @@ namespace NootsAPI
                        .WithOrigins("http://localhost:4200", "http://localhost");
             }));
 
-            var connection = Configuration["Mongo:client"];
-            var database = Configuration["Mongo:database"];
-
 
 
             services.AddControllers();

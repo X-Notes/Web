@@ -29,5 +29,12 @@ namespace Noots.DataAccess.Context
                 return _database.GetCollection<Label>("labels");
             }
         }
+        public IMongoCollection<Note> Notes
+        {
+            get
+            {
+                return _database.GetCollection<Note>("notes");
+            }
+        }
     }
 }

@@ -2,41 +2,26 @@ import { OnDestroy } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { Component, OnInit, NgModule } from '@angular/core';
-import { trigger, transition, animate, style, state } from '@angular/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Component, OnInit} from '@angular/core';
+import { NotesService } from 'src/app/Services/notes.service';
+import { SmallNote } from 'src/app/Models/Notes/SmallNote';
 
-@NgModule({
-  imports: [BrowserAnimationsModule, BrowserModule]
-})
+
 
 @Component({
   selector: 'app-all-notes',
   templateUrl: './all-notes.component.html',
   styleUrls: ['./all-notes.component.sass'],
-  animations: [
-    trigger('slideInOut', [
-      state('out', style({ height: '*' , overflow: 'hidden'})),
-      transition('* => void', [
-        style({ height: '*', overflow: 'hidden'}),
-        animate('300ms ease-in', style({ height: '0', opacity: '0.3'}))
-      ]),
-      state('in', style({ height: '0' })),
-      transition('void => *', [
-        style({ height: '0', overflow: 'hidden'}),
-        animate('300ms ease-out', style({ height: '*' , overflow: 'hidden'}))
-      ])
-    ])
-  ]
+  animations: []
 })
 export class AllNotesComponent implements OnInit, OnDestroy {
 
   unsubscribe = new Subject();
-  constructor(private router: Router) { }
+  constructor(private router: Router, private notesService: NotesService) { }
 
   update = false;
   updateMenu: string[] = [];
+  notes: SmallNote[];
 
   RemoveChanged(id: string) {
     this.updateMenu = this.updateMenu.filter(x => x !== id);
@@ -52,6 +37,9 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.notesService.getAll()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => { this.notes = x; }, error => console.log(error));
   }
 
   OpenNoot(id: string) {
