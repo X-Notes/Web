@@ -100,38 +100,44 @@
                             &:empty + .placeholder
                                 opacity: 1
                                 margin-left: 3px
+
                 .content-note
                     position: relative
-                .group-new
                     margin-top: 30px
-                    margin-left: 14px
-                    position: relative
-                    width: calc(100% - 15px)
-                    padding: 0 40px 0 0
-                    .placeholder-new
-                        color: #808080
-                        top: 0
-                        font-size: 16px
-                        font-weight: 300
-                        pointer-events: none
-                        user-select: none
+                    .content-menu
+                        top: -4px
+                        left: 300px
                         position: absolute
-                        opacity: 0
-                        transition: 0.2s padding ease-in-out
-                    .input-text-new
-                        overflow-x: hidden
-                        overflow-y: auto
-                        white-space: pre-wrap
-                        word-wrap: break-word
-                        z-index: 1        
-                        padding: 0 0 0 2px
-                        outline: 0                        
-                        transition: 0.2s padding ease-in-out
-                        font-size: 16px
 
-                        &:empty + .placeholder-new
-                            opacity: 1
-                            margin-left: 3px
+                    .group-new
+                        margin-left: 14px
+                        position: relative
+                        width: calc(100% - 15px)
+                        padding: 0 40px 0 0
+                        .placeholder-new
+                            color: #808080
+                            top: 0
+                            font-size: 16px
+                            font-weight: 300
+                            pointer-events: none
+                            user-select: none
+                            position: absolute
+                            opacity: 0
+                            transition: 0.2s padding ease-in-out
+                        .input-text-new
+                            overflow-x: hidden
+                            overflow-y: auto
+                            white-space: pre-wrap
+                            word-wrap: break-word
+                            z-index: 1        
+                            padding: 0 0 0 2px
+                            outline: 0                        
+                            transition: 0.2s padding ease-in-out
+                            font-size: 16px
+
+                            &:empty + .placeholder-new
+                                opacity: 1
+                                margin-left: 3px
 
             
 
