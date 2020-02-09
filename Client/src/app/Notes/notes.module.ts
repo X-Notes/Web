@@ -8,9 +8,20 @@ import { NotesContainerComponent } from './notes-container/notes-container.compo
 import { AppRoutingModule } from '..//app-routing.module';
 import { FullNoteComponent } from './full-note/full-note.component';
 import { MaterialModule } from '../material.module';
+import { ContentMenuComponent } from '../NoteMenus/content-menu/content-menu.component';
+import { FontContentMenuComponent } from '../NoteMenus/font-content-menu/font-content-menu.component';
 
 @NgModule({
-  declarations: [AllNotesComponent, SharedNotesComponent, LockedNotesComponent, NoteComponent, NotesContainerComponent, FullNoteComponent],
+  declarations: [
+    AllNotesComponent,
+    SharedNotesComponent,
+    LockedNotesComponent,
+    NoteComponent,
+    NotesContainerComponent,
+    FullNoteComponent,
+    ContentMenuComponent,
+    FontContentMenuComponent,
+  ],
   imports: [
     CommonModule,
     AppRoutingModule,
