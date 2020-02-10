@@ -65,6 +65,10 @@ namespace Noots.BusinessLogic.Services
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
                 var item = parts.FirstOrDefault(x => x.Id == partId);
+                if (item == null)
+                {
+                    return;
+                }
                 parts.Remove(item);
                 foreach (var temp in parts)
                 {

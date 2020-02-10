@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef, AfterViewInit } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Label } from 'src/app/Models/Labels/Label';
@@ -16,6 +16,8 @@ import { DeleteUnknown } from 'src/app/Models/PartUnknown/DeleteUnknown';
   styleUrls: ['./full-note.component.sass']
 })
 export class FullNoteComponent implements OnInit {
+
+
 
   // Content
   private title: string;
@@ -67,6 +69,8 @@ export class FullNoteComponent implements OnInit {
     .subscribe(x => x ), 300);
   }
 
+
+
   newLine() {
     const part: NewUnknown = {
       noteId: this.note.id
@@ -82,6 +86,7 @@ export class FullNoteComponent implements OnInit {
     };
     this.partsService.deleteUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => x, error => console.log(error));
+    .subscribe(x => {this.note.parts = this.note.parts.filter(z => z.id !== id);  }, error => console.log(error));
   }
+
 }

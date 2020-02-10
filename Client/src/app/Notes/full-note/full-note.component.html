@@ -34,7 +34,10 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="unknown">
                                 <div [ngClass]="item.type">
-                                    <div class="input-unknown" contenteditable="true" (keyup.enter)="newLine()" (keyup.backspace)="deleteLine(item.id)">1</div>
+                                    <div class="input-unknown" id="{{item.order}}" #element contenteditable="true" (keyup.enter)="newLine()" (keyup.backspace)="deleteLine(item.id)"></div>
+                                    <div class="placeholder-unknown">
+                                        Input something or select option
+                                    </div>
                                 </div>
                             </ng-template>
                             <ng-template ngSwitchCase="2">2</ng-template>
