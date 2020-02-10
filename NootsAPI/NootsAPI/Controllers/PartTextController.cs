@@ -27,10 +27,9 @@ namespace NootsAPI.Controllers
         }
         
         [HttpPost("unknown")]
-        public async Task Post([FromBody] PartNewUnknown partUnknown)
+        public async Task New([FromBody] PartNewUnknown partUnknown)
         {
-            Console.WriteLine("s");
-            System.Console.WriteLine("ss");
+            await partTextService.NewUnknown(partUnknown);
         }
     }
 }
