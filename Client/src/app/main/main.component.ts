@@ -88,7 +88,9 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   New() {
-    this.notesService.newNote().subscribe(
+    this.notesService.newNote()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
       x => {
         this.router.navigate(['/notes', x]);
       },

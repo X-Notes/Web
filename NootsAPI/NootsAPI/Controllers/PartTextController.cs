@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Noots.BusinessLogic.Services;
 using Shared.DTO.PartText;
+using Shared.DTO.PartUnknown;
 
 namespace NootsAPI.Controllers
 {
@@ -23,6 +24,13 @@ namespace NootsAPI.Controllers
         public async Task New(DTONewPartText partText)
         {
             await partTextService.New(partText);
+        }
+        
+        [HttpPost("unknown")]
+        public async Task Post([FromBody] PartNewUnknown partUnknown)
+        {
+            Console.WriteLine("s");
+            System.Console.WriteLine("ss");
         }
     }
 }

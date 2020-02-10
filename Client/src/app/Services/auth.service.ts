@@ -24,11 +24,15 @@ export class AuthService {
     private userService: UserService,
     private photoService: PhotoService
   ) {
-    this.afAuth.idToken.subscribe(token => {
+    this.afAuth.idToken
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(token => {
       this.token = token;
       localStorage.setItem('idKey', this.token);
     });
-    this.afAuth.authState.subscribe(user => {
+    this.afAuth.authState
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(user => {
       if (user) {
         this.userData = user;
         const dbuser: User = {

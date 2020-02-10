@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Label } from 'src/app/Models/Labels/Label';
 import { NotesService } from 'src/app/Services/notes.service';
 import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 import { FullNote } from 'src/app/Models/Notes/FullNote';
+import { PartsService } from 'src/app/Services/parts.service';
+import { NewUnknown } from 'src/app/Models/PartUnknown/NewUnknow';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-full-note',
@@ -16,7 +19,7 @@ export class FullNoteComponent implements OnInit {
   // Content
   private title: string;
   private titleTimer;
-  //
+  unsubscribe = new Subject();
   private id: string;
   public note: FullNote;
   private subscription: Subscription;
@@ -37,12 +40,14 @@ export class FullNoteComponent implements OnInit {
     { id: '24', name: '23', color: '#FFCDCD'},
     { id: '24', name: '23', color: '#FFCDCD'},
   ];
-  constructor(private activateRoute: ActivatedRoute, private noteService: NotesService ) {
+  constructor(private activateRoute: ActivatedRoute, private noteService: NotesService, private partsService: PartsService) {
     this.subscription = activateRoute.params.subscribe(params => this.id = params.id);
    }
 
   ngOnInit() {
-    this.noteService.getById(this.id).subscribe(x => {this.note = x; console.log(this.note); }, error => console.log(error));
+    this.noteService.getById(this.id)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => {this.note = x; console.log(this.note); }, error => console.log(error));
   }
 
   youTubeMenu() {
@@ -56,6 +61,17 @@ export class FullNoteComponent implements OnInit {
       title: this.title
     };
     clearTimeout(this.titleTimer);
-    this.titleTimer = setTimeout(() => this.noteService.updateTitle(newTitle).subscribe(x => x ), 300);
+    this.titleTimer = setTimeout(() => this.noteService.updateTitle(newTitle)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => x ), 300);
+  }
+
+  newLine() {
+    const part: NewUnknown = {
+      noteId: this.note.id
+    };
+    this.partsService.newUnknown(part)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => x, error => console.log(error));
   }
 }

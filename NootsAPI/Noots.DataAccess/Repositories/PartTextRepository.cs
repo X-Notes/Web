@@ -18,10 +18,6 @@ namespace Noots.DataAccess.Repositories
             _context = new DbContext(connection, database);
         }
 
-        public async Task Update()
-        {
-
-        }
         public async Task New(ObjectId noteId, List<Part> parts)
         {
             var filter = new BsonDocument("_id", noteId);
