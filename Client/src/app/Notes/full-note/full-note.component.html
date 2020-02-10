@@ -22,17 +22,29 @@
                 <div class="title">
                     <div class="stick"></div>
                     <div class="group">
-                        <div class="input-text" contenteditable="true" (input)="changeTitle($event.target.innerText)">{{note?.title}}</div>
+                        <div class="input-text" contenteditable="true" (input)="changeTitle($event.target.innerText)">
+                            {{note?.title}}</div>
                         <div class="placeholder">
                             Note Title
                         </div>
                     </div>
                 </div>
                 <div class="content-note">
+                    <ng-template ngFor let-item [ngForOf]="note?.parts">
+                        <div [ngSwitch]="item.type">
+                            <ng-template ngSwitchCase="unknown">
+                                <div [ngClass]="item.type">
+                                    <div class="input-unknown" contenteditable="true" (keyup.enter)="newLine()" (keyup.backspace)="deleteLine(item.id)">1</div>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="2">2</ng-template>
+                            <ng-template ngSwitchDefault>3</ng-template>
+                        </div>
+                    </ng-template>
                     <app-content-menu class="content-menu"></app-content-menu>
-                    <div class="group-new">
-                        <div class="input-new" contenteditable="true" (keyup.enter)="newLine()"></div>
-                        <div class="placeholder-new">
+                    <div *ngIf="note?.parts.length === 0" class="group-default">
+                        <div class="input-default" contenteditable="true" (keyup.enter)="newLine()"></div>
+                        <div class="placeholder-default">
                             Description note
                         </div>
                     </div>

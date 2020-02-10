@@ -8,6 +8,7 @@ import { FullNote } from 'src/app/Models/Notes/FullNote';
 import { PartsService } from 'src/app/Services/parts.service';
 import { NewUnknown } from 'src/app/Models/PartUnknown/NewUnknow';
 import { takeUntil } from 'rxjs/operators';
+import { DeleteUnknown } from 'src/app/Models/PartUnknown/DeleteUnknown';
 
 @Component({
   selector: 'app-full-note',
@@ -71,6 +72,15 @@ export class FullNoteComponent implements OnInit {
       noteId: this.note.id
     };
     this.partsService.newUnknown(part)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => x, error => console.log(error));
+  }
+  deleteLine(id: string) {
+    const part: DeleteUnknown = {
+      noteId: this.note.id,
+      partId: id
+    };
+    this.partsService.deleteUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => x, error => console.log(error));
   }

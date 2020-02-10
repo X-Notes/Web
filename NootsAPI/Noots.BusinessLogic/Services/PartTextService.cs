@@ -4,6 +4,7 @@ using Shared.DTO.PartText;
 using Shared.Mongo.Parts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shared.DTO.PartUnknown;
@@ -32,7 +33,7 @@ namespace Noots.BusinessLogic.Services
                     Id = ObjectId.GenerateNewId(),
                     Description = partText.Text,
                     Order = ++order,
-                    Type = "Text"
+                    Type = "text"
                 };
                 parts.Add(newPart);
                 await partTextRepository.New(dbId, parts);
@@ -50,11 +51,31 @@ namespace Noots.BusinessLogic.Services
                 {
                     Id = ObjectId.GenerateNewId(),
                     Order = ++order,
-                    Type = "Unknown"
+                    Type = "unknown"
                 };
                 parts.Add(newPart);
                 await partTextRepository.New(dbId, parts);
             }
         }
+
+        public async Task DeleteUnknown(DeletePartUnknown part)
+        {
+            if (ObjectId.TryParse(part.NoteId, out var dbId) && ObjectId.TryParse(part.PartId, out var partId))
+            {
+                var note = await noteRepository.GetById(dbId);
+                var parts = note.Parts;
+                var item = parts.FirstOrDefault(x => x.Id == partId);
+                parts.Remove(item);
+                foreach (var temp in parts)
+                {
+                    if (temp.Order > item.Order)
+                    {
+                        ++temp.Order;
+                    }
+                }
+                await partTextRepository.New(dbId, parts);
+            }
+        }
+        
     }
 }

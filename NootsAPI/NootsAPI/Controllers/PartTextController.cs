@@ -31,5 +31,11 @@ namespace NootsAPI.Controllers
         {
             await partTextService.NewUnknown(partUnknown);
         }
+        
+        [HttpPost("unknown/delete")]
+        public async Task DeleteLine(DeletePartUnknown deletePartUnknown)
+        {
+            await partTextService.DeleteUnknown(deletePartUnknown);
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Noots.BusinessLogic.Services
                     Id = ObjectId.GenerateNewId(),
                     Description = partCommonList.Text,
                     Order = ++order,
-                    Type = "CommonList"
+                    Type = "commonList"
                 };
                 parts.Add(newPart);
                 await commonListRepository.New(dbId, parts);

@@ -104,18 +104,37 @@
                 .content-note
                     position: relative
                     margin-top: 30px
+                    padding: 0 40px 0 0
+
                     .content-menu
                         z-index: 2
                         top: -4px
                         left: 300px
                         position: absolute
 
-                    .group-new
+                    .unknown
+                        margin-top: 6px
+                        margin-left: 17px
+                        position: relative
+                        width: calc(100% - 15px)
+                        .input-unknown
+                            overflow-x: hidden
+                            overflow-y: auto
+                            white-space: pre-wrap
+                            word-wrap: break-word
+                            z-index: 1        
+                            padding: 0 0 0 2px
+                            outline: 0                        
+                            transition: 0.2s padding ease-in-out
+                            font-size: 16px
+                            
+                    .group-default
+                        margin-top: 6px
                         margin-left: 14px
                         position: relative
                         width: calc(100% - 15px)
-                        padding: 0 40px 0 0
-                        .placeholder-new
+
+                        .placeholder-default
                             color: #808080
                             top: 0
                             font-size: 16px
@@ -125,7 +144,8 @@
                             position: absolute
                             opacity: 0
                             transition: 0.2s padding ease-in-out
-                        .input-new
+
+                        .input-default
                             overflow-x: hidden
                             overflow-y: auto
                             white-space: pre-wrap
@@ -136,7 +156,7 @@
                             transition: 0.2s padding ease-in-out
                             font-size: 16px
 
-                            &:empty + .placeholder-new
+                            &:empty + .placeholder-default
                                 opacity: 1
                                 margin-left: 3px
 
