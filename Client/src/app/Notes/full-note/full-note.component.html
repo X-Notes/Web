@@ -34,7 +34,7 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="unknown">
                                 <div [ngClass]="item.type">
-                                    <div class="input-unknown" id="{{item.order}}" #element contenteditable="true" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id)"></div>
+                                    <div class="input-unknown" id="{{i}}" #element contenteditable="true" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id,i)"></div>
                                     <div class="placeholder-unknown">
                                         Input something or select option
                                     </div>

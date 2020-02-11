@@ -80,14 +80,15 @@ export class FullNoteComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => x, error => console.log(error));
   }
-  deleteLine(id: string) {
+  deleteLine(id: string, index: number) {
+    console.log(index);
     const part: DeleteUnknown = {
       noteId: this.note.id,
       partId: id
     };
     this.partsService.deleteUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {this.note.parts = this.note.parts.filter(z => z.id !== id);  }, error => console.log(error));
+    .subscribe(x => {this.note.parts = this.note.parts.filter(z => z.id !== id); document.getElementById(`${--index}`).focus(); }, error => console.log(error));
   }
 
 }
