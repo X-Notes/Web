@@ -12,6 +12,5 @@ namespace Shared.Mongo.Parts
     {
         public ObjectId Id { set; get; }
         public string Type { set; get; }
-        public int Order { set; get; }
     }
 }

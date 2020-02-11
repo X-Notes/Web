@@ -25,12 +25,10 @@ namespace Noots.BusinessLogic.Services
             {
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
-                var order = parts.Count;
                 var newPart = new CommonList()
                 {
                     Id = ObjectId.GenerateNewId(),
                     Description = partCommonList.Text,
-                    Order = ++order,
                     Type = "commonList"
                 };
                 parts.Add(newPart);

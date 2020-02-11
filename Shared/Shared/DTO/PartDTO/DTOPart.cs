@@ -8,6 +8,5 @@ namespace Shared.DTO.PartDTO
     {
         public string Id { set; get; }
         public string Type { set; get; }
-        public int Order { set; get; }
     }
 }

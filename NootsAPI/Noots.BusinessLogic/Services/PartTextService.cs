@@ -27,12 +27,10 @@ namespace Noots.BusinessLogic.Services
             {
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
-                var order = parts.Count;
                 var newPart = new Text()
                 {
                     Id = ObjectId.GenerateNewId(),
                     Description = partText.Text,
-                    Order = ++order,
                     Type = "text"
                 };
                 parts.Add(newPart);
@@ -46,14 +44,12 @@ namespace Noots.BusinessLogic.Services
             {
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
-                var order = parts.Count;
                 var newPart = new Unknown()
                 {
                     Id = ObjectId.GenerateNewId(),
-                    Order = ++order,
                     Type = "unknown"
                 };
-                parts.Add(newPart);
+                parts.Insert(partUnknown.Index, newPart);
                 await partTextRepository.New(dbId, parts);
             }
         }
@@ -70,13 +66,6 @@ namespace Noots.BusinessLogic.Services
                     return;
                 }
                 parts.Remove(item);
-                foreach (var temp in parts)
-                {
-                    if (temp.Order > item.Order)
-                    {
-                        ++temp.Order;
-                    }
-                }
                 await partTextRepository.New(dbId, parts);
             }
         }

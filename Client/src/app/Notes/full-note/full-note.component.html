@@ -30,11 +30,11 @@
                     </div>
                 </div>
                 <div class="content-note">
-                    <ng-template ngFor let-item [ngForOf]="note?.parts">
+                    <ng-template ngFor let-item [ngForOf]="note?.parts" let-i="index">
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="unknown">
                                 <div [ngClass]="item.type">
-                                    <div class="input-unknown" id="{{item.order}}" #element contenteditable="true" (keyup.enter)="newLine()" (keyup.backspace)="deleteLine(item.id)"></div>
+                                    <div class="input-unknown" id="{{item.order}}" #element contenteditable="true" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id)"></div>
                                     <div class="placeholder-unknown">
                                         Input something or select option
                                     </div>
@@ -46,7 +46,7 @@
                     </ng-template>
                     <app-content-menu class="content-menu"></app-content-menu>
                     <div *ngIf="note?.parts.length === 0" class="group-default">
-                        <div class="input-default" contenteditable="true" (keyup.enter)="newLine()"></div>
+                        <div class="input-default" contenteditable="true" (keyup.enter)="newLine(0)"></div>
                         <div class="placeholder-default">
                             Description note
                         </div>

@@ -50,7 +50,7 @@ export class FullNoteComponent implements OnInit {
   ngOnInit() {
     this.noteService.getById(this.id)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {this.note = x; console.log(this.note); }, error => console.log(error));
+    .subscribe(x => {this.note = x; }, error => console.log(error));
   }
 
   youTubeMenu() {
@@ -71,9 +71,10 @@ export class FullNoteComponent implements OnInit {
 
 
 
-  newLine() {
+  newLine(i: number) {
     const part: NewUnknown = {
-      noteId: this.note.id
+      noteId: this.note.id,
+      index: i
     };
     this.partsService.newUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
