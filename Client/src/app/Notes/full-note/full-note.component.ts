@@ -77,6 +77,7 @@ export class FullNoteComponent implements OnInit {
       noteId: this.note.id,
       index: i
     };
+    document.getElementById(`${i}`).innerHTML = '';
     this.partsService.newUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => {
@@ -84,9 +85,8 @@ export class FullNoteComponent implements OnInit {
         id: x,
         type: 'unknown'
       };
-      document.getElementById(`${i}`).innerHTML = '';
       this.note.parts.splice(++i, 0, unknown);
-      setTimeout(() => document.getElementById(`${i}`).focus(), 300);
+      setTimeout(() => document.getElementById(`${i}`).focus(), 50);
     }, error => console.log(error));
   }
   deleteLine(id: string, index: number) {
@@ -96,7 +96,13 @@ export class FullNoteComponent implements OnInit {
     };
     this.partsService.deleteUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {this.note.parts = this.note.parts.filter(z => z.id !== id); document.getElementById(`${--index}`).focus(); }, error => console.log(error));
+    .subscribe(x => {
+      this.note.parts = this.note.parts.filter(z => z.id !== id);
+      if (index === 0) {
+      return;
+      }
+      document.getElementById(`${--index}`).focus();
+    }, error => console.log(error));
   }
 
 }
