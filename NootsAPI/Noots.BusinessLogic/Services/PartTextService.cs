@@ -38,20 +38,23 @@ namespace Noots.BusinessLogic.Services
             }
         }
 
-        public async Task NewUnknown(PartNewUnknown partUnknown)
+        public async Task<string> NewUnknown(PartNewUnknown partUnknown)
         {
             if (ObjectId.TryParse(partUnknown.NoteId, out var dbId))
             {
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
+                var newId = ObjectId.GenerateNewId();
                 var newPart = new Unknown()
                 {
-                    Id = ObjectId.GenerateNewId(),
+                    Id = newId,
                     Type = "unknown"
                 };
                 parts.Insert(partUnknown.Index, newPart);
                 await partTextRepository.New(dbId, parts);
+                return newId.ToString();
             }
+            return null;
         }
 
         public async Task DeleteUnknown(DeletePartUnknown part)

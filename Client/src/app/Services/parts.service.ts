@@ -16,7 +16,7 @@ export class PartsService {
   constructor(private httpClient: HttpClient) { }
 
   newUnknown(part: NewUnknown) {
-    return this.httpClient.post(`${environment.nootsAPI + '/api/parttext/unknown'}`, part, this.httpOptions);
+    return this.httpClient.post(`${environment.nootsAPI + '/api/parttext/unknown'}`, part, {responseType: 'text'});
   }
   deleteUnknown(part: DeleteUnknown) {
     return this.httpClient.post(`${environment.nootsAPI + '/api/parttext/unknown/delete'}`, part, this.httpOptions);
