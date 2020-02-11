@@ -5,14 +5,37 @@ import { Router } from '@angular/router';
 import { Component, OnInit} from '@angular/core';
 import { NotesService } from 'src/app/Services/notes.service';
 import { SmallNote } from 'src/app/Models/Notes/SmallNote';
-
-
+import { trigger, state, style, transition, animate, group } from '@angular/animations';
 
 @Component({
   selector: 'app-all-notes',
   templateUrl: './all-notes.component.html',
   styleUrls: ['./all-notes.component.sass'],
-  animations: []
+  animations: [
+    // trigger('flyInOut', [
+    //   state('in', style({
+    //     transform: 'translatey(0px)',
+    //     opacity: 1,
+    //     overflow: 'hidden'
+    //   })),
+    //   transition('void => *', [
+    //     style({ transform: 'translatey(-100%)', opacity: 0, overflow: 'hidden' }),
+    //       animate('.5s ease-out', style({
+    //         transform: 'translatey(0px)',
+    //         opacity: 1,
+    //         overflow: 'hidden'
+    //       })),
+    //   ]),
+    //   transition('* => void', [
+    //     style({ overflow: 'hidden' }),
+    //       animate('.5s ease-in', style({
+    //         transform: 'translatey(-100%)',
+    //         opacity: 0,
+    //         overflow: 'hidden'
+    //       })),
+    //   ])
+    // ])
+  ]
 })
 export class AllNotesComponent implements OnInit, OnDestroy {
 
