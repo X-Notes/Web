@@ -104,5 +104,16 @@ export class FullNoteComponent implements OnInit {
       document.getElementById(`${--index}`).focus();
     }, error => console.log(error));
   }
-
+  up(index: number) {
+    const element = document.getElementById(`${index - 1}`);
+    if (element !== null) {
+    element.focus();
+    }
+  }
+  down(index: number) {
+    const element = document.getElementById(`${index + 1}`);
+    if (element !== null) {
+    element.focus();
+    }
+  }
 }
