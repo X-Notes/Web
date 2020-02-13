@@ -77,16 +77,35 @@ export class FullNoteComponent implements OnInit {
       noteId: this.note.id,
       index: i
     };
+    const unknown: Unknown = {
+      id: '',
+      type: 'unknown'
+    };
     document.getElementById(`${i}`).innerHTML = '';
+    this.note.parts.splice(++i, 0, unknown);
+    setTimeout(() => document.getElementById(`${i}`).focus(), 50);
     this.partsService.newUnknown(part)
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => {
-      const unknown: Unknown = {
-        id: x,
-        type: 'unknown'
-      };
-      this.note.parts.splice(++i, 0, unknown);
-      setTimeout(() => document.getElementById(`${i}`).focus(), 50);
+      unknown.id = x;
+    }, error => console.log(error));
+  }
+  newLineUnknown(i: number) {
+    const part: NewUnknown = {
+      noteId: this.note.id,
+      index: i
+    };
+    const unknown: Unknown = {
+      id: '',
+      type: 'unknown'
+    };
+    document.getElementById(`${i}`).innerHTML = '';
+    this.note.parts.splice(++i, 0, unknown);
+    setTimeout(() => document.getElementById(`${i - 1}`).focus(), 50);
+    this.partsService.newUnknown(part)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => {
+      unknown.id = x;
     }, error => console.log(error));
   }
   deleteLine(id: string, index: number) {

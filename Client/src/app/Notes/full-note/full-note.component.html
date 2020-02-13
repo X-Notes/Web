@@ -34,7 +34,7 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="unknown">
                                 <div [ngClass]="item.type">
-                                    <div class="input-unknown" id="{{i}}" #element contenteditable="true" (keyup.arrowup)="up(i)" (keyup.arrowdown)="down(i)" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id,i)"></div>
+                                    <div class="input-unknown" id="{{i}}" #element contenteditable="true" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id,i)"></div>
                                     <div class="placeholder-unknown">
                                         Input something or select option
                                     </div>
@@ -46,7 +46,7 @@
                     </ng-template>
                     <app-content-menu class="content-menu"></app-content-menu>
                     <div *ngIf="note?.parts.length === 0" class="group-default">
-                        <div class="input-default" id="0" contenteditable="true" (keyup.enter)="newLine(0)"></div>
+                        <div class="input-default" id="0" contenteditable="true" (keyup.enter)="newLineUnknown(0)"></div>
                         <div class="placeholder-default">
                             Description note
                         </div>
