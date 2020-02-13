@@ -126,8 +126,15 @@
                             outline: 0                        
                             transition: 0.2s padding ease-in-out
                             font-size: 16px
-                            
-                            &:empty + .placeholder-text
+
+                            &:not(:empty) + .placeholder-text
+                                opacity: 0 !important
+                                 
+                            &:empty + .placeholder-text-first
+                                opacity: 1
+                                margin-left: 3px
+
+                            &:focus + .placeholder-text
                                 opacity: 1
                                 margin-left: 3px
 
@@ -141,6 +148,17 @@
                             position: absolute
                             opacity: 0
                             transition: 0.2s padding ease-in-out
+                        .placeholder-text-first
+                            color: #808080
+                            top: 0
+                            font-size: 16px
+                            font-weight: 300
+                            pointer-events: none
+                            user-select: none
+                            position: absolute
+                            opacity: 0
+                            transition: 0.2s padding ease-in-out
+
 
 
 

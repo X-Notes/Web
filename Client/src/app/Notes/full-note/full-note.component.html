@@ -22,7 +22,9 @@
                 <div class="title">
                     <div class="stick"></div>
                     <div class="group">
-                        <div class="input-text" id="title" contenteditable="true" (input)="changeTitle($event.target.innerText)" (keydown.arrowdown)="downToContent()">{{note?.title}}</div>
+                        <div class="input-text" id="title" contenteditable="true" (input)="changeTitle($event.target.innerText)" (keydown.arrowdown)="downToContent()">{{
+                            note?.title
+                        }}</div>
                         <div class="placeholder">
                             Note Title
                         </div>
@@ -33,8 +35,13 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="text">
                                 <div [ngClass]="item.type">
-                                    <div class="input-text" id="{{i}}" contenteditable="true" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{item?.description}}</div>
-                                    <div class="placeholder-text">
+                                    <div class="input-text" id="{{i}}" contenteditable="true" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
+                                        item?.description
+                                    }}</div>
+                                    <div *ngIf="note?.parts.length > 1" class="placeholder-text">
+                                        Enter something
+                                    </div>
+                                    <div *ngIf="note?.parts.length === 1" class="placeholder-text-first">
                                         Description note
                                     </div>
                                 </div>
