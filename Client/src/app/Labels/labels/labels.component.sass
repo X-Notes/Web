@@ -3,35 +3,45 @@ $label-color: #EFCDFF
 div
     display: flex
 .wrapper
+    height: calc(100% - 50px)
     width: 100%
+    overflow: overlay
     justify-content: center
 .wrapper-label
-    margin-top: 20px
     width: 880px
     flex-direction: column
     .header-label
+        margin-top: 20px
         font-size: 40px
         color: #B8B8B8
         font-weight: 900
     .header-new-label
         flex-direction: row
-        align-items: center
         color:#B8B8B8
         font-size: 30px
         font-weight: 900
         margin-top: 10px
-        .size-image-plus
-            width: 30px
+        .new-label
+            align-items: center
+            cursor: pointer
+            .header-plus-icon
+                width: 30px
+                height: 30px
+                svg
+                    width: 100%
+                    height: 100%
         .margin-add
             margin-left: 10px
-        &:hover
-            cursor: pointer
             
     .many-label
+        margin-top: 10px
         flex-direction: row
         justify-content: flex-start
         flex-wrap: wrap
-        margin-top: 10px
+        .label-margin
+            margin: 6px 30px 6px 0px
+            &:nth-child(even)
+                margin-right: 0px
 
 @media only screen and (min-width: 1200px) //desktop
 
@@ -48,6 +58,9 @@ div
                 width: 25px
         .many-label
             margin-top: 5px
+            .label-margin
+                margin-right: 20px
+
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
     .wrapper-label
@@ -78,6 +91,9 @@ div
         .many-label
             flex-direction: column
             margin-top: 0px
+            .label-margin
+                margin-top: 15px
+                margin-right: 0px
 
 @media (min-width: 320px) and (max-width: 479px) //phone
     .wrapper-label
@@ -93,6 +109,9 @@ div
         .many-label
             flex-direction: column
             margin-top: 5px
+            .label-margin
+                margin-right: 0px
+                margin-top: 15px
 
 @media (min-width: 150px) and (max-width: 319px) //min width
     .wrapper-label
@@ -108,3 +127,6 @@ div
         .many-label
             flex-direction: column
             margin-top: 5px
+            .label-margin
+                margin-right: 0px
+                margin-top: 15px

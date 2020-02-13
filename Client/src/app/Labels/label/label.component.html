@@ -3,9 +3,8 @@
         <input class="text-label" (blur)="ChangeName()" [(ngModel)]="label.name"
             [ngStyle]="{'backgroundColor': label.color}" placeholder="Name your label...">
         <div class="options-label">
-            <div class="buttons">
-                <div class="button-show" [ngStyle]="{'transform': update == true ? 'rotate(180deg)' : 'rotate(0deg)' }"
-                    (click)="ChangeIcon()">
+            <div class="buttons" (click)="ChangeIcon()">
+                <div class="button-show" [ngStyle]="{'transform': update == true ? 'rotate(180deg)' : 'rotate(0deg)' }">
                     <svg fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M8.99619 3.55347L15.7302 10.2872C15.9152 10.4726 16.1625 10.5746 16.4262 10.5746C16.6901 10.5746 16.9373 10.4726 17.1225 10.2872L17.7123 9.69718C17.8979 9.51205 18 9.26459 18 9.00088C18 8.73717 17.8979 8.49001 17.7123 8.30474L9.69483 0.287126C9.50898 0.101125 9.26063 -0.000728169 8.99663 3.52713e-06C8.73146 -0.000728192 8.48341 0.100979 8.29741 0.287125L0.287708 8.29727C0.102148 8.48254 -3.81588e-07 8.72971 -3.93121e-07 8.99356C-4.04648e-07 9.25727 0.102148 9.50444 0.287708 9.68986L0.877464 10.2798C1.26132 10.6636 1.8862 10.6636 2.2699 10.2798L8.99619 3.55347Z"
@@ -14,8 +13,8 @@
                 </div>
             </div>
             <div class="note-info-line"></div>
-            <div class="buttons">
-                <div class="button-delete" (click)="Delete()">
+            <div class="buttons" (click)="Delete()">
+                <div class="button-delete">
                     <svg fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect y="8.33398" width="11.7846" height="2.35692" rx="1.17846"
                             transform="rotate(-45 0 8.33398)" fill="#303030" />
