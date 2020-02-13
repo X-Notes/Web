@@ -49,8 +49,7 @@ namespace NootsAPI
             services.AddTransient(x => new NoteRepository(connection, database));
             services.AddTransient(x => new UserRepository(connection, database));
             services.AddTransient(x => new LabelRepository(connection, database));
-            services.AddTransient(x => new PartTextRepository(connection, database));
-            services.AddTransient(x => new PartCommonListRepository(connection, database));
+            services.AddTransient(x => new PartsRepository(connection, database));
             services.AddScoped(x=> new DataBaseSettingsService(connection, database));
         }
         public static void BusinessServices(this IServiceCollection services, IConfiguration configuration)
@@ -60,7 +59,6 @@ namespace NootsAPI
             services.AddScoped<LabelService >();
             services.AddScoped<PhotoHandler>();
             services.AddScoped<PartTextService>();
-            services.AddScoped<PartCommonListService>();
         }
         public static void ElasticService(this IServiceCollection services, IConfiguration configuration)
         {

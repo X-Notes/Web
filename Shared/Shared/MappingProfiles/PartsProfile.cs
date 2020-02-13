@@ -11,8 +11,8 @@ namespace Shared.MappingProfiles
     {
         public PartsProfile()
         {
-            CreateMap<Part, DTOPart>();
-            CreateMap<CommonList, DTOCommonList>();
+            CreateMap<Part, DTOPart>()
+                .Include<Text, DTOText>();
             CreateMap<Text, DTOText>();
         }
     }

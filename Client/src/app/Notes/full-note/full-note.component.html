@@ -35,7 +35,7 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="text">
                                 <div [ngClass]="item.type">
-                                    <div class="input-text" id="{{i}}" contenteditable="true" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
+                                    <div class="input-text" id="{{i}}" contenteditable="true" (input)="updateText($event.target.innerText, item.id)" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
                                         item?.description
                                     }}</div>
                                     <div *ngIf="note?.parts.length > 1" class="placeholder-text">

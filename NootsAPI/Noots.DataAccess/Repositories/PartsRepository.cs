@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Noots.DataAccess.Repositories
 {
-    public class PartTextRepository
+    public class PartsRepository
     {
         private readonly DbContext _context = null;
-        public PartTextRepository(string connection, string database)
+        public PartsRepository(string connection, string database)
         {
             _context = new DbContext(connection, database);
         }
 
-        public async Task New(ObjectId noteId, List<Part> parts)
+        public async Task Update(ObjectId noteId, List<Part> parts)
         {
             var filter = new BsonDocument("_id", noteId);
             var update = Builders<Note>.Update.Set("Parts", parts);

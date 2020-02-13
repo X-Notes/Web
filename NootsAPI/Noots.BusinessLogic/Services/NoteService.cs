@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
+using Shared.DTO.PartDTO;
 using Shared.Mongo;
 using Shared.Mongo.Parts;
 using System;

@@ -19,11 +19,16 @@ namespace NootsAPI.Controllers
             this.partTextService = partTextService;
         }
 
-        [HttpPost("new")]
-        public async Task<string> New(DTONewPartText partText)
+        [HttpPost("line")]
+        public async Task<string> New(NewTextLine line)
         {
-            return await partTextService.New(partText);
-        }
+            return await partTextService.New(line);
         
+        }
+        [HttpPut]
+        public async Task Update(UpdateText text)
+        {
+            await partTextService.Update(text);
+        }
     }
 }

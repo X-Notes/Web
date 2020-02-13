@@ -12,17 +12,17 @@ namespace Noots.BusinessLogic.Services
 {
     public class PartTextService
     {
-        private readonly PartTextRepository partTextRepository;
+        private readonly PartsRepository partTextRepository;
         private readonly NoteRepository noteRepository;
-        public PartTextService(PartTextRepository partTextRepository, NoteRepository noteRepository)
+        public PartTextService(PartsRepository partTextRepository, NoteRepository noteRepository)
         {
             this.partTextRepository = partTextRepository;
             this.noteRepository = noteRepository;
         }
 
-        public async Task<string> New(DTONewPartText partText)
+        public async Task<string> New(NewTextLine line)
         {
-            if (ObjectId.TryParse(partText.NoteId, out var dbId))
+            if (ObjectId.TryParse(line.NoteId, out var dbId))
             {
                 var note = await noteRepository.GetById(dbId);
                 var parts = note.Parts;
@@ -30,16 +30,26 @@ namespace Noots.BusinessLogic.Services
                 var newPart = new Text()
                 {
                     Id = id,
-                    Description = partText.Text,
                     Type = "text"
                 };
-                parts[partText.Order] = newPart;
-                await partTextRepository.New(dbId, parts);
+                parts.Insert(line.Order, newPart);
+                await partTextRepository.Update(dbId, parts);
                 return id.ToString();
             }
-            return null;
+            throw new Exception();
         }
-
+        public async Task Update(UpdateText text)
+        {
+            if (ObjectId.TryParse(text.NoteId, out var dbId) && ObjectId.TryParse(text.PartId, out var partId))
+            {
+                var note = await noteRepository.GetById(dbId);
+                var parts = note.Parts;
+                var partText = parts.FirstOrDefault(x => x.Id == partId);
+                var cast = partText as Text;
+                cast.Description = text.Description;
+                await partTextRepository.Update(dbId, parts);
+            }
+         }
         
     }
 }

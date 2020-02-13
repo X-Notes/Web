@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Shared.DTO.PartText
 {
-    public class DTONewPartText
+    public class UpdateText
     {
         public string NoteId { set; get; }
-        public int Order { set; get; }
-        public string Text { set; get; }
+        public string PartId { set; get; }
+        public string Description { set; get; }
     }
 }

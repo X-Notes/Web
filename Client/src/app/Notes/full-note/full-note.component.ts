@@ -15,7 +15,8 @@ import { FullNote } from 'src/app/Models/Notes/FullNote';
 import { PartsService } from 'src/app/Services/parts.service';
 import { takeUntil, timeout } from 'rxjs/operators';
 import { Text } from 'src/app/Models/Parts/Text';
-import { NewText } from 'src/app/Models/PartText/NewText';
+import { NewLine } from 'src/app/Models/PartText/NewLine';
+import { UpdateText } from 'src/app/Models/PartText/UpdateText';
 
 @Component({
   selector: 'app-full-note',
@@ -63,7 +64,9 @@ export class FullNoteComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         x => {
+          console.log(x);
           this.note = x;
+          console.log(this.note);
         },
         error => console.log(error)
       );
@@ -99,6 +102,16 @@ export class FullNoteComponent implements OnInit {
     );
   }
 
+  updateText(str: string, index: string) {
+    const obj: UpdateText = {
+      noteId: this.note.id,
+      partId: index,
+      description: str
+    };
+    this.partsService.updateText(obj)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => x, error => console.log(error));
+  }
 
 
 
@@ -108,12 +121,19 @@ export class FullNoteComponent implements OnInit {
   }
   enter(index: number) {
     const text: Text = {
-      id: '',
+      id: null,
       description: null,
       type: 'text'
     };
     this.note.parts.splice(++index, 0, text);
     setTimeout(() => document.getElementById(`${index}`).focus(), 50);
+    const newLine: NewLine = {
+      noteId: this.note.id,
+      order: index
+    };
+    this.partsService.newLine(newLine)
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(x => text.id = x, error => console.log(error));
   }
   up(index: number) {
     let element = document.getElementById(`${index - 1}`);

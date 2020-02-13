@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.DTO.PartCommonList
+namespace Shared.DTO.PartText
 {
-    public class DTONewPartCommonList
+    public class NewTextLine
     {
         public string NoteId { set; get; }
-        public string Text { set; get; }
+        public int Order { set; get; }
     }
 }

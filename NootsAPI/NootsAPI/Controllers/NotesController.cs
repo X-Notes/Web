@@ -11,7 +11,7 @@ using Shared.DTO.Note;
 
 namespace NootsAPI.Controllers
 {
-    [Authorize]
+  
     [Route("api/[controller]")]
     [ApiController]
     public class NotesController : ControllerBase
