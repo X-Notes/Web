@@ -99,6 +99,13 @@ export class FullNoteComponent implements OnInit {
     );
   }
 
+
+
+
+  downToContent() {
+    const el = document.getElementById('0');
+    this.MovingCursorToEnd(el);
+  }
   enter(index: number) {
     const text: Text = {
       id: '',
@@ -114,7 +121,7 @@ export class FullNoteComponent implements OnInit {
       this.movingCursor(element);
     } else {
       element = document.getElementById('title');
-      element.focus();
+      this.MovingCursorToEnd(element);
     }
   }
   down(index: number) {
@@ -132,6 +139,15 @@ export class FullNoteComponent implements OnInit {
     } else {
       range.setStart(el.childNodes[0], sel.anchorOffset);
     }
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  MovingCursorToEnd(el: Node) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+    const child = el.childNodes[0];
+    range.setStart(el.childNodes[0], child.textContent.length);
     range.collapse(true);
     sel.removeAllRanges();
     sel.addRange(range);
