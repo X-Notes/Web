@@ -74,14 +74,14 @@ export class AuthService {
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe(
                   x => {
-                    if (!isUndefined(x) && !isNull(x)) {
+                    if (x !== undefined && x !== null) {
                       this.router.navigate(['/notes']);
                     } else {
                       this.userService
                         .CreateUser(user)
                         .pipe(takeUntil(this.unsubscribe))
                         .subscribe(newuser => {
-                          if (!isUndefined(newuser) && !isNull(newuser)) {
+                          if (newuser !== undefined && (newuser !== null)) {
                             this.router.navigate(['/notes']);
                           }
                         });

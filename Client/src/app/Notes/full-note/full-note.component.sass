@@ -119,8 +119,6 @@
                         width: calc(100% - 15px)
 
                         .input-text
-                            height: 19px
-                            overflow: hidden
                             white-space: pre-wrap
                             word-wrap: break-word
                             z-index: 1        
@@ -129,15 +127,11 @@
                             transition: 0.2s padding ease-in-out
                             font-size: 16px
 
+                            &:empty + .placeholder-text
+                                opacity: 1
+                                margin-left: 3px
 
-
-                    .group-default
-                        margin-top: 6px
-                        margin-left: 14px
-                        position: relative
-                        width: calc(100% - 15px)
-
-                        .placeholder-default
+                        .placeholder-text
                             color: #808080
                             top: 0
                             font-size: 16px
@@ -148,20 +142,7 @@
                             opacity: 0
                             transition: 0.2s padding ease-in-out
 
-                        .input-default
-                            overflow-x: hidden
-                            overflow-y: auto
-                            white-space: pre-wrap
-                            word-wrap: break-word
-                            z-index: 1        
-                            padding: 0 0 0 2px
-                            outline: 0                        
-                            transition: 0.2s padding ease-in-out
-                            font-size: 16px
 
-                            &:empty + .placeholder-default
-                                opacity: 1
-                                margin-left: 3px
 
             
 

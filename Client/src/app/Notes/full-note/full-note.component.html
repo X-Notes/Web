@@ -23,7 +23,10 @@
                     <div class="stick"></div>
                     <div class="group">
                         <div class="input-text" contenteditable="true" (input)="changeTitle($event.target.innerText)">
-                            {{note?.title}}</div>
+                            <div *ngIf="note?.title" class="title-description">
+                                {{note?.title}}
+                            </div>
+                        </div>
                         <div class="placeholder">
                             Note Title
                         </div>
@@ -34,19 +37,18 @@
                         <div [ngSwitch]="item.type">
                             <ng-template ngSwitchCase="text">
                                 <div [ngClass]="item.type">
-                                    <div class="input-text" id="{{i}}" contenteditable="true">{{item.description}}</div>
+                                    <div class="input-text" id="{{i}}" contenteditable="true" (keyup.enter)="newLineText(i)">
+                                        {{item.description}}
+                                    </div>
+                                    <div class="placeholder-text">
+                                        Description note
+                                    </div>
                                 </div>
                             </ng-template>
                             <ng-template ngSwitchDefault>3</ng-template>
                         </div>
                     </ng-template>
                     <app-content-menu class="content-menu"></app-content-menu>
-                    <div *ngIf="note?.parts.length === 0" class="group-default">
-                        <div class="input-default" id="0" contenteditable="true" (keyup.enter)="newLineText(0)"></div>
-                        <div class="placeholder-default">
-                            Description note
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

@@ -80,7 +80,12 @@ export class FullNoteComponent implements OnInit {
 
   }
   newLineText(i: number) {
-
+    const text: Text = {
+      id: '',
+      description: '',
+      type: 'text'
+    };
+    this.note.parts.splice(++i, 0, text);
   }
   deleteLine(id: string, index: number) {
 

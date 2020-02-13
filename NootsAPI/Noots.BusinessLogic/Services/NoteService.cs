@@ -24,7 +24,12 @@ namespace Noots.BusinessLogic.Services
 
         public async Task<string> NewNote(string Email)
         {
-            var newNote = new Note() { Email = Email, Parts = new List<Part>(), Labels = new List<ObjectId>() };
+            var text = new Text()
+            {
+                Id = ObjectId.GenerateNewId(),
+                Type = "text"
+            };
+            var newNote = new Note() { Email = Email, Parts = new List<Part>() { text }, Labels = new List<ObjectId>() };
             newNote = await noteRepository.New(newNote);
             return newNote.Id.ToString();
         }
