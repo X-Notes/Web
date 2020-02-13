@@ -6,10 +6,9 @@ import { NotesService } from 'src/app/Services/notes.service';
 import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 import { FullNote } from 'src/app/Models/Notes/FullNote';
 import { PartsService } from 'src/app/Services/parts.service';
-import { NewUnknown } from 'src/app/Models/PartUnknown/NewUnknow';
 import { takeUntil } from 'rxjs/operators';
-import { DeleteUnknown } from 'src/app/Models/PartUnknown/DeleteUnknown';
-import { Unknown } from 'src/app/Models/Parts/Unknown';
+import { Text } from 'src/app/Models/Parts/Text';
+import { NewText } from 'src/app/Models/PartText/NewText';
 
 @Component({
   selector: 'app-full-note',
@@ -72,56 +71,19 @@ export class FullNoteComponent implements OnInit {
 
 
 
+
+
+
+
+
   newLine(i: number) {
-    const part: NewUnknown = {
-      noteId: this.note.id,
-      index: i
-    };
-    const unknown: Unknown = {
-      id: '',
-      type: 'unknown'
-    };
-    document.getElementById(`${i}`).innerHTML = '';
-    this.note.parts.splice(++i, 0, unknown);
-    setTimeout(() => document.getElementById(`${i}`).focus(), 50);
-    this.partsService.newUnknown(part)
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {
-      unknown.id = x;
-    }, error => console.log(error));
+
   }
-  newLineUnknown(i: number) {
-    const part: NewUnknown = {
-      noteId: this.note.id,
-      index: i
-    };
-    const unknown: Unknown = {
-      id: '',
-      type: 'unknown'
-    };
-    document.getElementById(`${i}`).innerHTML = '';
-    this.note.parts.splice(++i, 0, unknown);
-    setTimeout(() => document.getElementById(`${i - 1}`).focus(), 50);
-    this.partsService.newUnknown(part)
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {
-      unknown.id = x;
-    }, error => console.log(error));
+  newLineText(i: number) {
+
   }
   deleteLine(id: string, index: number) {
-    const part: DeleteUnknown = {
-      noteId: this.note.id,
-      partId: id
-    };
-    this.partsService.deleteUnknown(part)
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => {
-      this.note.parts = this.note.parts.filter(z => z.id !== id);
-      if (index === 0) {
-      return;
-      }
-      document.getElementById(`${--index}`).focus();
-    }, error => console.log(error));
+
   }
   up(index: number) {
     const element = document.getElementById(`${index - 1}`);

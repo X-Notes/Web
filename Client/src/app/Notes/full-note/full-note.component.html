@@ -32,21 +32,17 @@
                 <div class="content-note">
                     <ng-template ngFor let-item [ngForOf]="note?.parts" let-i="index">
                         <div [ngSwitch]="item.type">
-                            <ng-template ngSwitchCase="unknown">
+                            <ng-template ngSwitchCase="text">
                                 <div [ngClass]="item.type">
-                                    <div class="input-unknown" id="{{i}}" #element contenteditable="true" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)" (keyup.enter)="newLine(i)" (keyup.backspace)="deleteLine(item.id,i)"></div>
-                                    <div class="placeholder-unknown">
-                                        Input something or select option
-                                    </div>
+                                    <div class="input-text" id="{{i}}" contenteditable="true">{{item.description}}</div>
                                 </div>
                             </ng-template>
-                            <ng-template ngSwitchCase="2">2</ng-template>
                             <ng-template ngSwitchDefault>3</ng-template>
                         </div>
                     </ng-template>
                     <app-content-menu class="content-menu"></app-content-menu>
                     <div *ngIf="note?.parts.length === 0" class="group-default">
-                        <div class="input-default" id="0" contenteditable="true" (keyup.enter)="newLineUnknown(0)"></div>
+                        <div class="input-default" id="0" contenteditable="true" (keyup.enter)="newLineText(0)"></div>
                         <div class="placeholder-default">
                             Description note
                         </div>
