@@ -1,7 +1,6 @@
 div
     display: flex
-
-
+      
 .help-menu
     position: absolute
     z-index: 100
@@ -13,13 +12,26 @@ div
     width: 100%
     justify-content: center
     height: calc(100% - 50px)
-    overflow: auto
+    overflow: overlay
     .wrapper-notes
+        margin-top: 20px
         width: 1200px
         flex-wrap: wrap
         justify-content: flex-start
         .note
-            margin: 0 0 10px 15px
+            margin: 20px 20px 20px 0
+            &:nth-child(3n)
+                margin-right: 0px
+
+// @media only screen  and (min-width: 1730px)
+//     .wrapper-main
+//         .wrapper-notes
+//             width: 1500px
+//             .note
+//                 &:nth-child(3n)
+//                     margin: 20px 20px 20px 0
+//                 &:nth-child(4n)
+//                     margin-right: 0px !important 
 
 @media only screen and (min-width: 1200px) and  (max-width: 1480px)
     .wrapper-main
