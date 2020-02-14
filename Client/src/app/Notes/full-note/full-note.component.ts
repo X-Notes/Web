@@ -104,7 +104,7 @@ export class FullNoteComponent implements OnInit {
 
   updateText(str: string, index: string) {
     const obj: UpdateText = {
-      noteId: this.note.id,
+      noteId: this.note.Id,
       partId: index,
       description: str
     };
@@ -121,19 +121,19 @@ export class FullNoteComponent implements OnInit {
   }
   enter(index: number) {
     const text: Text = {
-      id: null,
-      description: null,
-      type: 'text'
+      Id: null,
+      Description: null,
+      Type: 'text'
     };
-    this.note.parts.splice(++index, 0, text);
+    this.note.Parts.splice(++index, 0, text);
     setTimeout(() => document.getElementById(`${index}`).focus(), 50);
     const newLine: NewLine = {
-      noteId: this.note.id,
+      noteId: this.note.Id,
       order: index
     };
     this.partsService.newLine(newLine)
     .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => text.id = x, error => console.log(error));
+    .subscribe(x => text.Id = x, error => console.log(error));
   }
   up(index: number) {
     let element = document.getElementById(`${index - 1}`);

@@ -23,7 +23,7 @@
                     <div class="stick"></div>
                     <div class="group">
                         <div class="input-text" id="title" contenteditable="true" (input)="changeTitle($event.target.innerText)" (keydown.arrowdown)="downToContent()">{{
-                            note?.title
+                            note?.Title
                         }}</div>
                         <div class="placeholder">
                             Note Title
@@ -31,25 +31,27 @@
                     </div>
                 </div>
                 <div class="content-note">
-                    <ng-template ngFor let-item [ngForOf]="note?.parts" let-i="index">
-                        <div [ngSwitch]="item.type">
+                    <ng-template ngFor let-item [ngForOf]="note?.Parts" let-i="index">
+                        <div [ngSwitch]="item.Type">
                             <ng-template ngSwitchCase="text">
-                                <div [ngClass]="item.type">
-                                    <div class="input-text" id="{{i}}" contenteditable="true" (input)="updateText($event.target.innerText, item.id)" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
-                                        item?.description
+                                <div [ngClass]="item.Type">
+                                    <div class="input-text" id="{{i}}" contenteditable="true" (input)="updateText($event.target.innerText, item.Id)" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
+                                        item?.Description
                                     }}</div>
-                                    <div *ngIf="note?.parts.length > 1" class="placeholder-text">
+                                    <div *ngIf="note?.Parts.length > 1" class="placeholder-text">
                                         Enter something
                                     </div>
-                                    <div *ngIf="note?.parts.length === 1" class="placeholder-text-first">
+                                    <div *ngIf="note?.Parts.length === 1" class="placeholder-text-first">
                                         Description note
+                                    </div>
+                                    <div class="content-menu">
+                                      <app-content-menu></app-content-menu>
                                     </div>
                                 </div>
                             </ng-template>
-                            <ng-template ngSwitchDefault>3</ng-template>
+                            <ng-template ngSwitchDefault>default</ng-template>
                         </div>
                     </ng-template>
-                    <app-content-menu class="content-menu"></app-content-menu>
                 </div>
             </div>
         </div>

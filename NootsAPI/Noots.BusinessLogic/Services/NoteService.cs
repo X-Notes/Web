@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
 using Shared.DTO.PartDTO;
@@ -44,13 +45,15 @@ namespace Noots.BusinessLogic.Services
         {
             await noteRepository.UpdateTitle(updateTitle);
         }
-        public async Task<DTOFullNote> GetById(string id)
+        public async Task<string> GetById(string id)
         {
             if (ObjectId.TryParse(id, out var Id))
             {
                 var dbnote = await noteRepository.GetById(Id);
                 var note = mapper.Map<DTOFullNote>(dbnote);
-                return note;
+                JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                return JsonConvert.SerializeObject(note, settings);
+                // return note;
             }
             return null;
         }
