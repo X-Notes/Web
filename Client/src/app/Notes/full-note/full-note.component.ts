@@ -101,33 +101,44 @@ export class FullNoteComponent implements OnInit {
     );
   }
 
-  updateText(str: string, index: string) {
+  updateText(str: string, id: string, index: number) {
     const obj: UpdateText = {
       noteId: this.note.Id,
-      partId: index,
+      partId: id,
       description: str
     };
-    this.partsService.updateText(obj)
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => x, error => console.log(error));
+    const text = this.note.Parts[index] as Text;
+    if (text.Description !== str) {
+    this.partsService
+      .updateText(obj)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        x => x,
+        error => console.log(error)
+      );
+      }
   }
-  backSpace(str: string, id: string, index: number) {
+  backSpace(str: string, id: string, index: number, event) {
     if (str === '') {
       if (index > 0) {
-      this.note.Parts = this.note.Parts.filter(x => x.Id !== id);
-      const element = document.getElementById(`${--index}`);
-      this.MovingCursorToEnd(element);
-      const line: DeleteLine = {
-        noteId: this.note.Id,
-        partId: id
-      };
-      this.partsService.deleteLine(line)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(x => x, error => console.log(error));
+        event.preventDefault();
+        this.note.Parts = this.note.Parts.filter(x => x.Id !== id);
+        const element = document.getElementById(`${--index}`);
+        this.MovingCursorToEnd(element);
+        const line: DeleteLine = {
+          noteId: this.note.Id,
+          partId: id
+        };
+        this.partsService
+          .deleteLine(line)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(
+            x => x,
+            error => console.log(error)
+          );
       }
     }
   }
-
 
   downToContent() {
     const el = document.getElementById('0');
@@ -145,9 +156,13 @@ export class FullNoteComponent implements OnInit {
       noteId: this.note.Id,
       order: index
     };
-    this.partsService.newLine(newLine)
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(x => text.Id = x, error => console.log(error));
+    this.partsService
+      .newLine(newLine)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        x => (text.Id = x),
+        error => console.log(error)
+      );
   }
   up(index: number) {
     let element = document.getElementById(`${index - 1}`);
@@ -164,26 +179,34 @@ export class FullNoteComponent implements OnInit {
       this.movingCursor(el);
     }
   }
-  movingCursor(el: Node) {
+  movingCursor(el: any) {
     const range = document.createRange();
     const sel = window.getSelection();
     const child = el.childNodes[0];
-    if (child.textContent.length < sel.anchorOffset) {
-      range.setStart(el.childNodes[0], child.textContent.length);
+    if (child !== undefined) {
+      if (child.textContent.length < sel.anchorOffset) {
+        range.setStart(el.childNodes[0], child.textContent.length);
+      } else {
+        range.setStart(el.childNodes[0], sel.anchorOffset);
+      }
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
     } else {
-      range.setStart(el.childNodes[0], sel.anchorOffset);
+      el.focus();
     }
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
   }
-  MovingCursorToEnd(el: Node) {
+  MovingCursorToEnd(el: any) {
     const range = document.createRange();
     const sel = window.getSelection();
     const child = el.childNodes[0];
-    range.setStart(el.childNodes[0], child.textContent.length);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
+    if (child !== undefined) {
+      range.setStart(el.childNodes[0], child.textContent.length);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } else {
+      el.focus();
+    }
   }
 }
