@@ -1,15 +1,11 @@
-import { Component, OnInit, NgModule, OnDestroy } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LabelService } from 'src/app/Services/label.service';
 import { Label } from 'src/app/Models/Labels/Label';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NewLabel } from 'src/app/Models/Labels/NewLabel';
 
-@NgModule({
-  imports: [BrowserAnimationsModule, BrowserModule]
-})
+
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',

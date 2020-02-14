@@ -1,19 +1,19 @@
 div
     display: flex
 
-.wrapper-upper-menu
-    width: 100%
-    justify-content: center
 
 .wrapper-main
     width: 100%
     justify-content: center
-    height: calc(100% - 60px)
+    height: calc(100% - 50px)
     overflow: auto
     .wrapper-notes
         width: 1200px
         flex-wrap: wrap
-        justify-content: space-between
+        justify-content: flex-start
+
+        .note
+            margin: 0 0 10px 15px
 
 @media only screen and (min-width: 1200px) and  (max-width: 1480px)
     .wrapper-main
@@ -27,24 +27,24 @@ div
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
     .wrapper-main
-        justify-content: center
+        justify-content: flex-start
         .wrapper-notes
             width: 360px
 
 
 @media (min-width: 480px) and (max-width: 767px) //large phone
     .wrapper-main
-        justify-content: center
+        justify-content: flex-start
         .wrapper-notes
             width: 360px
 
 @media (min-width: 320px) and (max-width: 479px) //phone
     .wrapper-main
-        justify-content: center
+        justify-content: flex-start
         .wrapper-notes
             width: 300px
 @media (min-width: 150px) and (max-width: 319px) //min width
     .wrapper-main
-        justify-content: center
+        justify-content: flex-start
         .wrapper-notes
             width: 270px

@@ -1,0 +1,62 @@
+<div class="container">
+    <div class="background">
+        <div class="buttons">
+            <img src="assets/buttons-buttons/scope.svg">
+            <img src="assets/buttons-buttons/youtube.svg" (click)="youTubeMenu()">
+        </div>
+        <div class="note">
+            <div *ngIf="youtube" class="youtube">
+
+            </div>
+            <div class="content">
+                <div class="header">
+                    <div class="labels">
+                        <div *ngFor="let label of labels" class="label" [ngStyle]="{'background': label.color }">
+                            <span>{{label.name}}</span>
+                        </div>
+                    </div>
+                    <div class="options">
+                        <img src="assets/options.svg" />
+                    </div>
+                </div>
+                <div class="title">
+                    <div class="stick"></div>
+                    <div class="group">
+                        <div class="input-text" id="title" contenteditable="true" (input)="changeTitle($event.target.innerText)" (keydown.arrowdown)="downToContent()">{{
+                            note?.Title
+                        }}</div>
+                        <div class="placeholder">
+                            Note Title
+                        </div>
+                    </div>
+                </div>
+                <div class="content-note">
+                    <ng-template ngFor let-item [ngForOf]="note?.Parts" let-i="index">
+                        <div [ngSwitch]="item.Type">
+                            <ng-template ngSwitchCase="text">
+                                <div [ngClass]="item.Type">
+                                    <div class="input-text" id="{{i}}" contenteditable="true" (keydown.backSpace)="backSpace($event.target.innerText, item.Id, i, $event)" (input)="updateText($event.target.innerText, item.Id, i)" (keydown.enter)="enter(i)" (keydown.arrowup)="up(i)" (keydown.arrowdown)="down(i)">{{
+                                        item?.Description
+                                    }}</div>
+                                    <div *ngIf="note?.Parts.length > 1" class="placeholder-text">
+                                        Enter something
+                                    </div>
+                                    <div *ngIf="note?.Parts.length === 1" class="placeholder-text-first">
+                                        Description note
+                                    </div>
+                                    <div class="content-menu">
+                                      <app-content-menu></app-content-menu>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template ngSwitchCase="common">
+                                list
+                            </ng-template>
+                            <ng-template ngSwitchDefault>default</ng-template>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

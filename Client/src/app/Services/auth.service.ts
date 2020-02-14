@@ -24,11 +24,15 @@ export class AuthService {
     private userService: UserService,
     private photoService: PhotoService
   ) {
-    this.afAuth.idToken.subscribe(token => {
+    this.afAuth.idToken
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(token => {
       this.token = token;
       localStorage.setItem('idKey', this.token);
     });
-    this.afAuth.authState.subscribe(user => {
+    this.afAuth.authState
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(user => {
       if (user) {
         this.userData = user;
         const dbuser: User = {
@@ -70,15 +74,15 @@ export class AuthService {
                 .pipe(takeUntil(this.unsubscribe))
                 .subscribe(
                   x => {
-                    if (!isUndefined(x) && !isNull(x)) {
-                      this.router.navigate(['/notes/all']);
+                    if (x !== undefined && x !== null) {
+                      this.router.navigate(['/notes']);
                     } else {
                       this.userService
                         .CreateUser(user)
                         .pipe(takeUntil(this.unsubscribe))
                         .subscribe(newuser => {
-                          if (!isUndefined(newuser) && !isNull(newuser)) {
-                            this.router.navigate(['/notes/all']);
+                          if (newuser !== undefined && (newuser !== null)) {
+                            this.router.navigate(['/notes']);
                           }
                         });
                     }

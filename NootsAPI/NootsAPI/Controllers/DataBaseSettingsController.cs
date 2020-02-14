@@ -31,5 +31,10 @@ namespace NootsAPI.Controllers
         {
             return await settingsService.CreateIndexForLabel();
         }
+        [HttpGet("notes")]
+        public async Task<string> CreateIndexForNotes()
+        {
+            return await settingsService.CreateIndexForNote();
+        }
     }
 }

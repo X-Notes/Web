@@ -8,18 +8,19 @@ import {MainComponent} from './main/main.component';
 import {AllNotesComponent} from './Notes/all-notes/all-notes.component';
 import {SharedNotesComponent} from './Notes/shared-notes/shared-notes.component';
 import { LockedNotesComponent} from './Notes/locked-notes/locked-notes.component';
-import {NewNoteComponent} from './Notes/new-note/new-note.component';
 import { AuthGuard } from './Guards/auth.guard';
 import { NotesContainerComponent} from './Notes/notes-container/notes-container.component';
 import { ContainersComponent } from './Containers/containers/containers.component';
 import { ProfileComponent } from './profile/profile.component';
+import { NoteComponent } from './Notes/note/note.component';
+import { FullNoteComponent } from './Notes/full-note/full-note.component';
 
 const ChildNotesRoutes: Routes = [
   { path: '', component: AllNotesComponent},
-  { path: 'all', component: AllNotesComponent},
   { path: 'shared', component: SharedNotesComponent},
   { path: 'locked', component: LockedNotesComponent},
-  { path: 'new', component: NewNoteComponent}
+  { path: ':id', component: FullNoteComponent},
+  { path: '**', redirectTo: ''}
 ];
 
 const RoutesMain: Routes =
@@ -29,7 +30,8 @@ const RoutesMain: Routes =
   {path: 'people', component: PeopleComponent, canActivate: [AuthGuard]},
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
   {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]},
-  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]}
+  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: '**', redirectTo: '/about'}
 ];
 
 const routes: Routes = [

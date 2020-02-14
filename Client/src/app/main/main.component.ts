@@ -1,17 +1,25 @@
-import { Component, OnInit, HostListener, NgModule, OnDestroy } from '@angular/core';
-import { trigger, transition, animate, style, state } from '@angular/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  NgModule,
+  OnDestroy
+} from '@angular/core';
+import {
+  trigger,
+  transition,
+  animate,
+  style,
+  state
+} from '@angular/animations';
 import { Router } from '@angular/router';
 import { User } from '../Models/User/User';
 import { AuthService } from '../Services/auth.service';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NotesService } from '../Services/notes.service';
 
-@NgModule({
-  imports: [BrowserAnimationsModule, BrowserModule]
-})
 
 @Component({
   selector: 'app-main',
@@ -19,16 +27,16 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./main.component.sass'],
   animations: [
     trigger('slideInOut', [
-      state('in', style({ height: '0'})),
+      state('in', style({ height: '0' })),
       transition('void => *', [
-        style({ height: '0', overflow: 'hidden'}),
-        animate('300ms ease-in-out', style({height: '*'}))
+        style({ height: '0', overflow: 'hidden' }),
+        animate('300ms ease-in-out', style({ height: '*' }))
       ]),
-      state('out', style({ height: '*'})),
+      state('out', style({ height: '*' })),
       transition('* => void', [
-        style({ height: '*', opacity: 0}),
-        animate('300ms ease-in-out', style({ height: '0'}))
-      ]),
+        style({ height: '*', opacity: 0 }),
+        animate('300ms ease-in-out', style({ height: '0' }))
+      ])
     ]),
     trigger('sidebarCloseOpen', [
       state('out', style({ transform: 'translateX(0)' })),
@@ -55,21 +63,39 @@ export class MainComponent implements OnInit, OnDestroy {
 
   unsubscribe = new Subject();
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService,
+    private notesService: NotesService
+  ) {}
 
-  }
   ngOnInit() {
-    this.userService.Get()
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(user => { this.user = user; }, error => {
-      this.router.navigate(['/about']);
-    });
-  }
-  GetUpdates() {
-    this.userService.GetUpdates().subscribe(x => x, error => console.log(error));
+    this.userService
+      .Get()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(
+        user => {
+          this.user = user;
+        },
+        error => {
+          this.router.navigate(['/about']);
+        }
+      );
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
+  }
+
+  New() {
+    this.notesService.newNote()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
+      x => {
+        this.router.navigate(['/notes', x]);
+      },
+      error => console.log('error')
+    );
   }
 
   openSidebar() {

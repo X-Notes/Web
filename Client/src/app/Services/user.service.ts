@@ -25,9 +25,7 @@ export class UserService {
   public GetFull() {
     return this.httpClient.get<FullUser>(`${environment.nootsAPI + '/api/user/full'}`);
   }
-  public GetUpdates() {
-    return this.httpClient.get(`${environment.nootsAPI + '/api/user/update'}`);
-  }
+
   public CreateUser(user: User) {
     return this.httpClient.post<User>(`${environment.nootsAPI + '/api/user'}`, user, this.httpOptions);
   }

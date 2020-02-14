@@ -14,5 +14,7 @@ export class ProfileModalComponent implements OnInit {
 
   ngOnInit() {
   }
+  exit() {
 
+  }
 }
