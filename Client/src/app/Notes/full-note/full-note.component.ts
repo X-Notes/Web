@@ -18,6 +18,7 @@ import { Text } from 'src/app/Models/Parts/Text';
 import { NewLine } from 'src/app/Models/PartText/NewLine';
 import { UpdateText } from 'src/app/Models/PartText/UpdateText';
 import { DeleteLine } from 'src/app/Models/PartText/DeleteLine';
+import { CommonList } from 'src/app/Models/Parts/CommonList';
 
 @Component({
   selector: 'app-full-note',
@@ -60,12 +61,21 @@ export class FullNoteComponent implements OnInit {
   }
 
   ngOnInit() {
+    const commonList: CommonList[] = [
+      {Description: 'Fartu Masti1', Id: 'sss', Type: 'common'},
+      {Description: 'Fartu Masti2', Id: 'sss', Type: 'common'},
+      {Description: 'Fartu Masti3', Id: 'sss', Type: 'common'},
+      {Description: 'Fartu Masti4', Id: 'sss', Type: 'common'},
+      {Description: 'Fartu Masti5', Id: 'sss', Type: 'common'},
+      {Description: 'Fartu Masti6', Id: 'sss', Type: 'common'},
+    ];
     this.noteService
       .getById(this.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         x => {
           this.note = x;
+          this.note.Parts.push(...commonList);
         },
         error => console.log(error)
       );
