@@ -26,6 +26,7 @@ import { ProfileModalComponent } from './HeaderComponents/profile-modal/profile-
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DragNDropDirective } from './profile/drop/dragNdrop.directive';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     InvitesComponent,
     NotificationComponent,
     ProfileComponent,
-    ProfileModalComponent
+    ProfileModalComponent,
+    DragNDropDirective,
   ],
   imports: [
     BrowserModule,
