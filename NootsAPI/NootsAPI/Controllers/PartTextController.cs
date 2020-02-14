@@ -30,5 +30,11 @@ namespace NootsAPI.Controllers
         {
             await partTextService.Update(text);
         }
+
+        [HttpPut("delete")]
+        public async Task Delete(DeleteLine line)
+        {
+            await partTextService.Delete(line);
+        }
     }
 }

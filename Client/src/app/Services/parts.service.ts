@@ -3,6 +3,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { NewLine } from '../Models/PartText/NewLine';
 import { UpdateText } from '../Models/PartText/UpdateText';
+import { DeleteLine } from '../Models/PartText/DeleteLine';
 
 
 @Injectable({
@@ -22,5 +23,8 @@ export class PartsService {
   }
   updateText(text: UpdateText) {
     return this.httpClient.put(`${environment.nootsAPI + '/api/parttext'}`, text, this.httpOptions);
+  }
+  deleteLine(line: DeleteLine) {
+    return this.httpClient.put(`${environment.nootsAPI + '/api/parttext/delete'}`, line, this.httpOptions);
   }
 }

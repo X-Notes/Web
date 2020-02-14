@@ -50,6 +50,16 @@ namespace Noots.BusinessLogic.Services
                 await partTextRepository.Update(dbId, parts);
             }
          }
-        
+        public async Task Delete(DeleteLine line)
+        {
+            if (ObjectId.TryParse(line.NoteId, out var dbId) && ObjectId.TryParse(line.PartId, out var partId))
+            {
+                var note = await noteRepository.GetById(dbId);
+                var parts = note.Parts;
+                var find = parts.FirstOrDefault(x => x.Id == partId);
+                parts.Remove(find);
+                await partTextRepository.Update(dbId, parts);
+            }
+        }
     }
 }

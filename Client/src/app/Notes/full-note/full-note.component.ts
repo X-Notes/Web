@@ -17,6 +17,7 @@ import { takeUntil, timeout } from 'rxjs/operators';
 import { Text } from 'src/app/Models/Parts/Text';
 import { NewLine } from 'src/app/Models/PartText/NewLine';
 import { UpdateText } from 'src/app/Models/PartText/UpdateText';
+import { DeleteLine } from 'src/app/Models/PartText/DeleteLine';
 
 @Component({
   selector: 'app-full-note',
@@ -64,9 +65,7 @@ export class FullNoteComponent implements OnInit {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         x => {
-          console.log(x);
           this.note = x;
-          console.log(this.note);
         },
         error => console.log(error)
       );
@@ -112,7 +111,22 @@ export class FullNoteComponent implements OnInit {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(x => x, error => console.log(error));
   }
-
+  backSpace(str: string, id: string, index: number) {
+    if (str === '') {
+      if (index > 0) {
+      this.note.Parts = this.note.Parts.filter(x => x.Id !== id);
+      const element = document.getElementById(`${--index}`);
+      this.MovingCursorToEnd(element);
+      const line: DeleteLine = {
+        noteId: this.note.Id,
+        partId: id
+      };
+      this.partsService.deleteLine(line)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(x => x, error => console.log(error));
+      }
+    }
+  }
 
 
   downToContent() {
