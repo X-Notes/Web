@@ -60,36 +60,36 @@ export class AuthService {
       .then(result => {
         this.ngZone.run(() => {
           if (result.user) {
-            this.userData = result.user;
-            const user: User = {
-              name: this.userData.displayName,
-              email: this.userData.email,
-              photoId: this.userData.photoURL,
-              backgroundId: ''
-            };
-            this.photoService.GetPhoto(user.photoId).then(base64 => {
-              user.photoId = base64 as string;
-              this.userService
-                .Get()
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe(
-                  x => {
-                    if (x !== undefined && x !== null) {
-                      this.router.navigate(['/notes']);
-                    } else {
-                      this.userService
-                        .CreateUser(user)
-                        .pipe(takeUntil(this.unsubscribe))
-                        .subscribe(newuser => {
-                          if (newuser !== undefined && (newuser !== null)) {
-                            this.router.navigate(['/notes']);
-                          }
-                        });
-                    }
-                  },
-                  error => console.log(error)
-                );
-            });
+
+            this.userService.Get()
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(
+              x => {
+                if (x !== undefined && x !== null) {
+                  this.router.navigate(['/notes']);
+                } else {
+                  this.userData = result.user;
+                  const user: User = {
+                    name: this.userData.displayName,
+                    email: this.userData.email,
+                    photoId: this.userData.photoURL,
+                    backgroundId: ''
+                  };
+                  this.photoService.GetPhoto(user.photoId).then(base64 => {
+                    user.photoId = base64 as string;
+                    this.userService
+                    .CreateUser(user)
+                    .pipe(takeUntil(this.unsubscribe))
+                    .subscribe(newuser => {
+                      if (newuser !== undefined && (newuser !== null)) {
+                        this.router.navigate(['/notes']);
+                      }
+                    });
+                  });
+                }
+              },
+              error => console.log(error)
+            );
           }
         });
       })
@@ -108,6 +108,6 @@ export class AuthService {
 
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user'));
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null) ? true : false;
   }
 }
