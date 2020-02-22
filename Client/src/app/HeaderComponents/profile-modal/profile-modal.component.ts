@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/Models/User/User';
+import { AuthService } from 'src/app/Services/auth.service';
 
 @Component({
   selector: 'app-profile-modal',
@@ -10,11 +11,12 @@ export class ProfileModalComponent implements OnInit {
 
   @Input() user: User;
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
   }
-  exit() {
 
+  exit() {
+    this.authService.SignOut();
   }
 }

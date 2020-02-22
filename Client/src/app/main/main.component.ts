@@ -65,7 +65,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
     private userService: UserService,
     private notesService: NotesService
   ) {}
@@ -122,9 +121,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.activeNotificationMenu = false;
     this.activeInvitesMenu = false;
   }
-  exit() {
-    this.authService.SignOut();
-  }
+
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.unsubscribe();

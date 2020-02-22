@@ -60,36 +60,8 @@ export class AuthService {
       .then(result => {
         this.ngZone.run(() => {
           if (result.user) {
-
-            this.userService.Get()
-            .pipe(takeUntil(this.unsubscribe))
-            .subscribe(
-              x => {
-                if (x !== undefined && x !== null) {
-                  this.router.navigate(['/notes']);
-                } else {
-                  this.userData = result.user;
-                  const user: User = {
-                    name: this.userData.displayName,
-                    email: this.userData.email,
-                    photoId: this.userData.photoURL,
-                    backgroundId: ''
-                  };
-                  this.photoService.GetPhoto(user.photoId).then(base64 => {
-                    user.photoId = base64 as string;
-                    this.userService
-                    .CreateUser(user)
-                    .pipe(takeUntil(this.unsubscribe))
-                    .subscribe(newuser => {
-                      if (newuser !== undefined && (newuser !== null)) {
-                        this.router.navigate(['/notes']);
-                      }
-                    });
-                  });
-                }
-              },
-              error => console.log(error)
-            );
+            localStorage.setItem('idKey', (result.credential as any).idToken);
+            setTimeout(() => this.getUser(result), 200);
           }
         });
       })
@@ -97,7 +69,37 @@ export class AuthService {
         window.alert(error);
       });
   }
-
+  getUser(result) {
+    this.userService.Get()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
+      x => {
+        if (x !== undefined && x !== null) {
+          this.router.navigate(['/notes']);
+        } else {
+          this.userData = result.user;
+          const user: User = {
+            name: this.userData.displayName,
+            email: this.userData.email,
+            photoId: this.userData.photoURL,
+            backgroundId: ''
+          };
+          this.photoService.GetPhoto(user.photoId).then(base64 => {
+            user.photoId = base64 as string;
+            this.userService
+            .CreateUser(user)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(newuser => {
+              if (newuser !== undefined && (newuser !== null)) {
+                this.router.navigate(['/notes']);
+              }
+            });
+          });
+        }
+      },
+      error => console.log(error)
+    );
+  }
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
