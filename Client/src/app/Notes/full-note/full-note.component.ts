@@ -174,6 +174,20 @@ export class FullNoteComponent implements OnInit {
         error => console.log(error)
       );
   }
+  enterCommonList(index: number) {
+    if ((this.note.Parts[index] as CommonList).Description === null) {
+      this.note.Parts[index].Type = 'text';
+      setTimeout(() => document.getElementById(`${index}`).focus(), 50);
+    } else {
+    const list: CommonList = {
+      Id: null,
+      Description: null,
+      Type: 'common'
+    };
+    this.note.Parts.splice(++index, 0, list);
+    setTimeout(() => document.getElementById(`${index}`).focus(), 50);
+  }
+  }
   up(index: number) {
     let element = document.getElementById(`${index - 1}`);
     if (element !== null) {

@@ -91,7 +91,7 @@ export class MainComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(
       x => {
-        this.router.navigate(['/notes', x]);
+        this.router.navigate(['/notes/note', x]);
       },
       error => console.log('error')
     );
