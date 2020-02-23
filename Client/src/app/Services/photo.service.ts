@@ -8,7 +8,7 @@ export class PhotoService {
   constructor() { }
 
   GetPhoto(fetchURL) {
-    return fetch(`https://cors-anywhere.herokuapp.com/` + fetchURL)
+    return fetch(fetchURL)
   .then(response => response.blob())
   .then(async blob => {
       return await this.loadImage(blob);
