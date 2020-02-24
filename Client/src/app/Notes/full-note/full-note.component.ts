@@ -155,9 +155,9 @@ export class FullNoteComponent implements OnInit {
     document.execCommand('formatBlock', false, '<h1>');
   }
   hTwo() {
-    document.execCommand('formatBlock', false, 'h2');
+    document.execCommand('formatBlock', false, '<h2>');
   }
   hThree() {
-    document.execCommand('formatBlock', false, 'h3');
+    document.execCommand('formatBlock', false, '<h3>');
   }
 }
