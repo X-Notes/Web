@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div  class="content-note">
-                    <div class="description" contenteditable="true" (input)="onInput($event)" (keydown)="space($event)" (mouseup)="show($event)">
+                    <div class="description" contenteditable="true" (input)="onInput($event)" (keydown)="space($event)" (mouseup)="show($event)" #editor>
                         <div class="text"></div>
                     </div>
                     <app-content-menu [ngStyle]="{top: (cursorPosition - 252) + 'px',left: 250 + 'px'}" class="content-menu" (numberList)="numberList()" (dotList)="dotList()"></app-content-menu>

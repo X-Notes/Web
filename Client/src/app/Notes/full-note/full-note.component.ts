@@ -4,7 +4,8 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
+  ViewChild
 } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -27,6 +28,10 @@ import { CommonList } from 'src/app/Models/Parts/CommonList';
 })
 export class FullNoteComponent implements OnInit {
   // Content
+
+  @ViewChild('editor', {static: false}) editor: ElementRef;
+  cursorPosition = 0;
+
   private title: string;
   private titleTimer;
   unsubscribe = new Subject();
@@ -59,7 +64,6 @@ export class FullNoteComponent implements OnInit {
       params => (this.id = params.id)
     );
   }
-  cursorPosition = 0;
   ngOnInit() {
     const commonList: CommonList[] = [
       {Description: 'Fartu Masti1', Id: 'sss', Type: 'common'},
@@ -80,7 +84,7 @@ export class FullNoteComponent implements OnInit {
         error => console.log(error)
       );
     document.execCommand('styleWithCSS', true, null);
-    document.execCommand('defaultParagraphSeparator', false, 'p');
+    document.execCommand('defaultParagraphSeparator', false, 'div');
   }
 
   youTubeMenu() {
@@ -103,45 +107,24 @@ export class FullNoteComponent implements OnInit {
       300
     );
   }
+
+
   space($event: KeyboardEvent) {
     if ($event.keyCode === 8) {
-      const el = $event.srcElement as any;
-      console.log(el.innerText.length);
-      console.log(el.innerText);
-      if (el.innerText.length === 0 || el.innerText.length === '') {
-        console.log('deleted');
+      if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
         $event.preventDefault();
+        return;
       }
     }
+    this.cursorPosition  = window.getSelection().getRangeAt(0).getBoundingClientRect().y;
   }
   show(event) {
     this.cursorPosition  = window.getSelection().getRangeAt(0).getBoundingClientRect().y;
-    const el = window.getSelection().getRangeAt(0).commonAncestorContainer;
-  }
-  getCaretPosition() {
-    if (window.getSelection && window.getSelection().getRangeAt) {
-      const range = window.getSelection().getRangeAt(0);
-      const selectedObj = window.getSelection();
-      let rangeCount = 0;
-      const childNodes = selectedObj.anchorNode.parentNode.childNodes as any;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < childNodes.length; i++) {
-        if (childNodes[i] === selectedObj.anchorNode) {
-          break;
-        }
-        if (childNodes[i].outerHTML) {
-          rangeCount += childNodes[i].outerHTML.length;
-        } else if (childNodes[i].nodeType === 3) {
-          rangeCount += childNodes[i].textContent.length;
-        }
-      }
-      return range.startOffset + rangeCount;
-    }
-    return -1;
   }
 
+
   onInput(event) {
-    // console.log(event);
+
   }
 
   checkList() {
