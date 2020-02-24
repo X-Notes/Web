@@ -59,7 +59,7 @@ export class FullNoteComponent implements OnInit {
       params => (this.id = params.id)
     );
   }
-
+  cursorPosition = 0;
   ngOnInit() {
     const commonList: CommonList[] = [
       {Description: 'Fartu Masti1', Id: 'sss', Type: 'common'},
@@ -79,6 +79,8 @@ export class FullNoteComponent implements OnInit {
         },
         error => console.log(error)
       );
+    document.execCommand('styleWithCSS', true, null);
+    document.execCommand('defaultParagraphSeparator', false, 'p');
   }
 
   youTubeMenu() {
@@ -101,6 +103,54 @@ export class FullNoteComponent implements OnInit {
       300
     );
   }
+  space($event: KeyboardEvent) {
+    if ($event.keyCode === 8) {
+      const el = $event.srcElement as any;
+      console.log(el.innerText.length);
+      console.log(el.innerText);
+      if (el.innerText.length === 0 || el.innerText.length === '') {
+        console.log('deleted');
+        $event.preventDefault();
+      }
+    }
+  }
+  show(event) {
+    this.cursorPosition  = window.getSelection().getRangeAt(0).getBoundingClientRect().y;
+    const el = window.getSelection().getRangeAt(0).commonAncestorContainer;
+  }
+  getCaretPosition() {
+    if (window.getSelection && window.getSelection().getRangeAt) {
+      const range = window.getSelection().getRangeAt(0);
+      const selectedObj = window.getSelection();
+      let rangeCount = 0;
+      const childNodes = selectedObj.anchorNode.parentNode.childNodes as any;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < childNodes.length; i++) {
+        if (childNodes[i] === selectedObj.anchorNode) {
+          break;
+        }
+        if (childNodes[i].outerHTML) {
+          rangeCount += childNodes[i].outerHTML.length;
+        } else if (childNodes[i].nodeType === 3) {
+          rangeCount += childNodes[i].textContent.length;
+        }
+      }
+      return range.startOffset + rangeCount;
+    }
+    return -1;
+  }
 
+  onInput(event) {
+    // console.log(event);
+  }
 
+  checkList() {
+    console.log('check');
+  }
+  dotList() {
+    document.execCommand('insertUnorderedList');
+  }
+  numberList() {
+    document.execCommand('insertOrderedList');
+  }
 }

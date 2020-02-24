@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-content-menu',
@@ -7,9 +7,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentMenuComponent implements OnInit {
 
+  @Output() checkList = new EventEmitter();
+  @Output() dotList = new EventEmitter();
+  @Output() numberList = new EventEmitter();
+  @Output() image = new EventEmitter();
+  @Output() hOne = new EventEmitter();
+  @Output() hTwo = new EventEmitter();
+  @Output() hThree = new EventEmitter();
+  @Output() voice = new EventEmitter();
+  @Output() location = new EventEmitter();
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  CheckList() {
+    this.checkList.emit();
+  }
+  DotList() {
+    this.dotList.emit();
+  }
+  NumberList() {
+    this.numberList.emit();
+  }
 }
