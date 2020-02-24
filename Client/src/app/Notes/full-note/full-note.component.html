@@ -34,10 +34,9 @@
                     <div class="description" contenteditable="true" (input)="onInput($event)" (keydown)="space($event)" (mouseup)="show($event)" #editor>
                         <div class="text"></div>
                     </div>
-                    <app-content-menu *ngIf="viewMenu" [ngStyle]="{top: (cursorPosition - 4) + 'px',left: 250 + 'px'}" class="content-menu" (numberList)="numberList()" (dotList)="dotList()"></app-content-menu>
+                    <app-content-menu *ngIf="viewMenu" [ngStyle]="{top: (cursorPosition - 4) + 'px',left: 250 + 'px'}" class="content-menu" (numberList)="numberList()" (dotList)="dotList()" (hOne)="hOne()" (hTwo)="hTwo()" (hThree)="hThree()"></app-content-menu>
                 </div>
             </div>
-         
         </div>
     </div>
 </div>

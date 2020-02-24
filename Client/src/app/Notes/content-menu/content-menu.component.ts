@@ -31,4 +31,13 @@ export class ContentMenuComponent implements OnInit {
   NumberList() {
     this.numberList.emit();
   }
+  HOne() {
+    this.hOne.emit();
+  }
+  HTwo() {
+    this.hTwo.emit();
+  }
+  HThree() {
+    this.hThree.emit();
+  }
 }
