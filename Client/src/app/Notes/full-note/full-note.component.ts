@@ -31,7 +31,7 @@ export class FullNoteComponent implements OnInit {
 
   @ViewChild('editor', {static: false}) editor: ElementRef;
   cursorPosition = 0;
-
+  viewMenu = false;
   private title: string;
   private titleTimer;
   unsubscribe = new Subject();
@@ -116,10 +116,25 @@ export class FullNoteComponent implements OnInit {
         return;
       }
     }
-    this.cursorPosition  = window.getSelection().getRangeAt(0).getBoundingClientRect().y;
+    let el = window.getSelection().getRangeAt(0);
+    setTimeout(() => {
+      el = window.getSelection().getRangeAt(0);
+      const container = el.startContainer;
+      this.view(container);
+    }, 50);
   }
   show(event) {
-    this.cursorPosition  = window.getSelection().getRangeAt(0).getBoundingClientRect().y;
+    const el = window.getSelection().getRangeAt(0);
+    const container = el.startContainer;
+    this.view(container);
+  }
+  view(container: Node) {
+    if (container.textContent.length === 0) {
+      this.viewMenu = true;
+      setTimeout(() => this.cursorPosition = (container as any).offsetTop, 50);
+    } else {
+      this.viewMenu = false;
+    }
   }
 
 
@@ -128,12 +143,21 @@ export class FullNoteComponent implements OnInit {
   }
 
   checkList() {
-    console.log('check');
+
   }
   dotList() {
     document.execCommand('insertUnorderedList');
   }
   numberList() {
     document.execCommand('insertOrderedList');
+  }
+  hOne() {
+
+  }
+  hTwo() {
+
+  }
+  hThree() {
+
   }
 }
