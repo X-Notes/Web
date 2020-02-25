@@ -108,20 +108,35 @@ export class FullNoteComponent implements OnInit {
     );
   }
 
-
-  space($event: KeyboardEvent) {
-    if ($event.keyCode === 8) {
+  enter($event) {
+    const el = window.getSelection().getRangeAt(0);
+    if (el.startContainer.parentElement.tagName === 'OL') {
+      $event.preventDefault();
+      const prevDiv = el.startContainer.parentElement.parentElement;
+      const p = document.createElement('div');
+      p.classList.add('part');
+      p.innerHTML = '</br>';
+      prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.setStart(p, 0);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      (el.startContainer as Element).remove();
+    }
+  }
+  back($event: KeyboardEvent) {
       if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
         $event.preventDefault();
         return;
       }
-    }
-    let el = window.getSelection().getRangeAt(0);
-    setTimeout(() => {
-      el = window.getSelection().getRangeAt(0);
-      const container = el.startContainer;
-      this.view(container);
-    }, 50);
+      let el = window.getSelection().getRangeAt(0);
+      setTimeout(() => {
+        el = window.getSelection().getRangeAt(0);
+        const container = el.startContainer;
+        this.view(container);
+      }, 50);
   }
   show(event) {
     const el = window.getSelection().getRangeAt(0);
