@@ -12,29 +12,26 @@ import { trigger, state, style, transition, animate, group } from '@angular/anim
   templateUrl: './all-notes.component.html',
   styleUrls: ['./all-notes.component.sass'],
   animations: [
-    // trigger('flyInOut', [
-    //   state('in', style({
-    //     transform: 'translatey(0px)',
-    //     opacity: 1,
-    //     overflow: 'hidden'
-    //   })),
-    //   transition('void => *', [
-    //     style({ transform: 'translatey(-100%)', opacity: 0, overflow: 'hidden' }),
-    //       animate('.5s ease-out', style({
-    //         transform: 'translatey(0px)',
-    //         opacity: 1,
-    //         overflow: 'hidden'
-    //       })),
-    //   ]),
-    //   transition('* => void', [
-    //     style({ overflow: 'hidden' }),
-    //       animate('.5s ease-in', style({
-    //         transform: 'translatey(-100%)',
-    //         opacity: 0,
-    //         overflow: 'hidden'
-    //       })),
-    //   ])
-    // ])
+    trigger('flyInOut', [
+      state('in', style({
+        opacity: 1,
+        transform: 'translateY(-100%)'
+      })),
+      transition('void => *', [
+        style({ opacity: 0, transform: 'translateY(-100%)'}),
+          animate('.2s ease-out', style({
+            opacity: 1,
+            transform: 'translateY(0%)'
+          })),
+      ]),
+      transition('* => void', [
+        style({ opacity: 1, transform: 'translateY(0%)' }),
+          animate('.2s ease-in', style({
+            opacity: 0,
+            transform: 'translateY(-100%)'
+          })),
+      ])
+    ])
   ]
 })
 export class AllNotesComponent implements OnInit, OnDestroy {

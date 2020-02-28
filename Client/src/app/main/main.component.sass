@@ -46,17 +46,17 @@ header
                         width: 20px
                         height: 2px
                         bottom: -8px
+    .svg-logo
+        outline: none
+        width: 94px
+        height: 50px
+        cursor: pointer
     .right-content
         height: 100%
-        width: calc( 100% - 200px )
+        width: calc( 100% - 294px )
         padding: 0  20px 0 0
         align-items: center
-        justify-content: space-between
-        .svg-logo
-            outline: none
-            width: 94px
-            height: 25px
-            cursor: pointer
+        justify-content: flex-end
         .header-instruments
             align-items: center
             .main-search
@@ -144,7 +144,11 @@ header
     height: 100%
     main
         width: 100%
+        margin-left: 200px
     aside
+        position: absolute
+        z-index: 100
+        left: 0px
         margin-top: 1px
         display: flex
         flex-direction: column
@@ -191,7 +195,6 @@ header
                     color: #303030
         .sidebar-field
             flex-direction: column
-            width: 200px
             transition: .3s cubic-bezier(0,0,0,1)
             .sidebar-field-help
                 height: 180px
@@ -276,11 +279,154 @@ header
                     color: #484848
 
 @media (min-width: 992px) and  (max-width: 1199px) //laptop
-    
+    header
+        height: 45px
+        .svg-logo
+            width: 92px
+            height: 45px
+        .right-content
+            .header-instruments
+                .main-search
+                    input[type=text], select
+                        height: 28px
+                        width: 230px
+                        font-size: 15px
+                        &:focus
+                            width: 280px
+                    .search-area
+                        height: 28px
+                        width: 33px
+                        .search-icon
+                            width: 16px
+                            height: 17px
+                .header-icons
+                    height: 40px
+                    width: 40px
+                    .header-icons-first
+                        width: 24px
+                        height: 22px
+                    .header-icons-second
+                        width: 21px
+                        height: 23px
+                    .push
+                        height: 18px
+                        width: 18px
+                        font-size: 11px
+                    .profile
+                        width: 34px
+                        height: 34px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+    header
+        height: 45px
+        .svg-logo
+            width: 90px
+            height: 45px
+        .right-content
+            .header-instruments
+                .main-search
+                    input[type=text], select
+                        height: 26px
+                        width: 200px
+                        font-size: 15px
+                        &:focus
+                            width: 250px
+                    .search-area
+                        height: 26px
+                        width: 31px
+                        .search-icon
+                            width: 15px
+                            height: 16px
+                .header-icons
+                    height: 40px
+                    width: 40px
+                    margin-left: 5px
+                    &:nth-child(2)
+                        margin-left: 14.5px
+                    .header-icons-first
+                        width: 22px
+                        height: 20px
+                    .header-icons-second
+                        width: 19px
+                        height: 21px
+                    .push
+                        height: 16px
+                        width: 16px
+                        font-size: 10px
+                    .profile
+                        width: 32px
+                        height: 32px
 
 @media (min-width: 480px) and (max-width: 767px) //large phone
+    header
+        height: 45px
+        justify-content: space-between
+        .svg-logo
+            width: 90px
+            height: 45px
+        .left-content
+            padding: 0 0 0 25px
+            width: 135px
+        .right-content
+            padding: 0 25px 0 0
+            width: auto
+            .header-instruments
+                .hidden-search
+                    display: none
+                .main-search
+                    input[type=text], select
+                        height: 26px
+                        width: 180px
+                        font-size: 15px
+                        &:focus
+                            width: 230px
+                    .search-area
+                        height: 26px
+                        width: 31px
+                        .search-icon
+                            width: 15px
+                            height: 16px
+                .header-icons
+                    height: 40px
+                    width: 40px
+                    margin-left: 5px
+                    &:nth-child(2)
+                        margin-left: 0px
+                    .header-icons-first
+                        width: 22px
+                        height: 20px
+                    .header-icons-second
+                        width: 19px
+                        height: 21px
+                    .push
+                        height: 16px
+                        width: 16px
+                        font-size: 10px
+                    .profile
+                        width: 32px
+                        height: 32px
+    .wrapper
+        aside
+            width: 100%
+            .active-sidebar-field
+                border-radius: 0px
+            .sidebar-field
+                &:hover
+                    border-radius: 0px !important
+                .field
+                    justify-content: center
+                    padding: 0px
+                    .sidebar-title
+                        width: 80px
+                .sidebar-field-help
+                    .field-help
+                        padding: 0px
+                        justify-content: center
+                        .sidebar-title-help
+                            width: 70px
+        main
+            margin: 0px
+
 
 @media (min-width: 320px) and (max-width: 479px) //phone
 
