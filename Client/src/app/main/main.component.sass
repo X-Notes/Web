@@ -147,7 +147,7 @@ header
         margin-left: 200px
     aside
         position: absolute
-        z-index: 100
+        z-index: 99
         left: 0px
         margin-top: 1px
         display: flex
@@ -155,6 +155,8 @@ header
         width: 200px
         height: 100%
         background-color: #FBFBFB
+        .opened-search
+            display: none
         .active-sidebar-field
             background-color: #303030
             border-radius: 0px 0px 10px 0px
@@ -365,10 +367,10 @@ header
             width: 90px
             height: 45px
         .left-content
-            padding: 0 0 0 25px
-            width: 135px
+            padding: 0 0 0 20px
+            width: 150px
         .right-content
-            padding: 0 25px 0 0
+            padding: 0 20px 0 0
             width: auto
             .header-instruments
                 .hidden-search
@@ -408,26 +410,60 @@ header
     .wrapper
         aside
             width: 100%
+            margin: 0px
+            border-top: 1px solid #ababab
+            .opened-search
+                display: flex
+            .second-search
+                width: 100%
+                height: 60px
+                align-items: center
+                background-color: #303030
+                padding: 0px 20px
+                input[type=text], select
+                    width: calc(100% - 40px)
+                    height: 35px
+                    border: none
+                    outline: none
+                    border-radius: 8px 0px 0px 8px
+                    padding: 0 0 0 10px
+                    font-size: 16px
+                    background: #4A4A4A 
+                    color: #8E8E8E
+                    transition: .3s ease
+                    &:focus
+                        padding-left: 15px
+                .search-area
+                    height: 35px
+                    width: 40px
+                    align-items: center
+                    justify-content: center
+                    background: #515151 !important
+                    border-radius: 0px 8px 8px 0px
+                    cursor: pointer
+                    .search-icon
+                        width: 19px
+                        height: 20px
             .active-sidebar-field
                 border-radius: 0px
             .sidebar-field
+                &:nth-child(2)
+                    border-top: 1px solid #ababab
+                border-bottom: 1px solid #ababab
                 &:hover
                     border-radius: 0px !important
                 .field
-                    justify-content: center
-                    padding: 0px
+                    padding-left: 60px
                     .sidebar-title
                         width: 80px
                 .sidebar-field-help
                     .field-help
-                        padding: 0px
-                        justify-content: center
+                        padding-left: 95px
                         .sidebar-title-help
                             width: 70px
         main
             margin: 0px
-
-
+            
 @media (min-width: 320px) and (max-width: 479px) //phone
 
 @media (min-width: 150px) and (max-width: 319px) //min width
