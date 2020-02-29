@@ -7,6 +7,33 @@ svg
 div
     display: flex
 
+input[type=text], select
+    width: 250px
+    height: 30px
+    margin: 5px 0 5px 0px
+    border: none
+    outline: none
+    border-radius: 8px 0px 0px 8px
+    padding: 0 0 0 10px
+    font-size: 16px
+    background: #4A4A4A 
+    color: #8E8E8E
+    transition: .3s ease
+    &:focus
+        width: 300px
+        color: #cacaca
+.search-area
+    height: 30px
+    width: 35px
+    align-items: center
+    justify-content: center
+    background: #515151 !important
+    border-radius: 0px 8px 8px 0px
+    cursor: pointer
+    .search-icon
+        width: 18px
+        height: 19px
+
 header
     display: flex
     position: relative
@@ -61,32 +88,6 @@ header
             align-items: center
             .main-search
                 align-items: center
-                input[type=text], select
-                    width: 250px
-                    height: 30px
-                    margin: 5px 0 5px 0px
-                    border: none
-                    outline: none
-                    border-radius: 8px 0px 0px 8px
-                    padding: 0 0 0 10px
-                    font-size: 16px
-                    background: #4A4A4A 
-                    color: #8E8E8E
-                    transition: .3s ease
-                    &:focus
-                        width: 300px
-                        color: #cacaca
-                .search-area
-                    height: 30px
-                    width: 35px
-                    align-items: center
-                    justify-content: center
-                    background: #515151 !important
-                    border-radius: 0px 8px 8px 0px
-                    cursor: pointer
-                    .search-icon
-                        width: 18px
-                        height: 19px
             .header-icons
                 height: 45px
                 width: 45px
@@ -423,24 +424,13 @@ header
                 input[type=text], select
                     width: calc(100% - 40px)
                     height: 35px
-                    border: none
-                    outline: none
-                    border-radius: 8px 0px 0px 8px
-                    padding: 0 0 0 10px
-                    font-size: 16px
-                    background: #4A4A4A 
-                    color: #8E8E8E
-                    transition: .3s ease
                     &:focus
                         padding-left: 15px
+                    // &:not(:placeholder-shown)
+                    //     border: 1px solid black
                 .search-area
                     height: 35px
                     width: 40px
-                    align-items: center
-                    justify-content: center
-                    background: #515151 !important
-                    border-radius: 0px 8px 8px 0px
-                    cursor: pointer
                     .search-icon
                         width: 19px
                         height: 20px
@@ -454,16 +444,12 @@ header
                     border-radius: 0px !important
                 .field
                     padding-left: 60px
-                    .sidebar-title
-                        width: 80px
                 .sidebar-field-help
                     .field-help
                         padding-left: 95px
-                        .sidebar-title-help
-                            width: 70px
         main
             margin: 0px
-            
+
 @media (min-width: 320px) and (max-width: 479px) //phone
 
 @media (min-width: 150px) and (max-width: 319px) //min width
