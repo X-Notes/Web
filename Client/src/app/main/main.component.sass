@@ -10,7 +10,6 @@ div
 input[type=text], select
     width: 250px
     height: 30px
-    margin: 5px 0 5px 0px
     border: none
     outline: none
     border-radius: 8px 0px 0px 8px
@@ -21,7 +20,7 @@ input[type=text], select
     transition: .3s ease
     &:focus
         width: 300px
-        color: #cacaca
+        color: #dddddd
 .search-area
     height: 30px
     width: 35px
@@ -132,8 +131,6 @@ header
 
                     img
                         width: 100%
-            .fix-height
-                height: 30px
         .help-menu-wrapper
             position: absolute
             z-index: 100
@@ -285,7 +282,7 @@ header
     header
         height: 45px
         .svg-logo
-            width: 92px
+            width: 91px
             height: 45px
         .right-content
             .header-instruments
@@ -306,11 +303,11 @@ header
                     height: 40px
                     width: 40px
                     .header-icons-first
-                        width: 24px
+                        width: 23px
                         height: 22px
                     .header-icons-second
-                        width: 21px
-                        height: 23px
+                        width: 20px
+                        height: 22px
                     .push
                         height: 18px
                         width: 18px
@@ -318,8 +315,10 @@ header
                     .profile
                         width: 34px
                         height: 34px
+            .help-menu-wrapper
+                top: 45px
 
-@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+@media only screen and (min-width: 150px) and (max-width: 991px) //tablet
     header
         height: 45px
         .svg-logo
@@ -347,11 +346,11 @@ header
                     &:nth-child(2)
                         margin-left: 14.5px
                     .header-icons-first
-                        width: 22px
+                        width: 21px
                         height: 20px
                     .header-icons-second
-                        width: 19px
-                        height: 21px
+                        width: 18px
+                        height: 20px
                     .push
                         height: 16px
                         width: 16px
@@ -359,14 +358,12 @@ header
                     .profile
                         width: 32px
                         height: 32px
+            .help-menu-wrapper
+                top: 45px
 
-@media (min-width: 480px) and (max-width: 767px) //large phone
+@media (min-width: 150px) and (max-width: 767px) //large phone
     header
-        height: 45px
         justify-content: space-between
-        .svg-logo
-            width: 90px
-            height: 45px
         .left-content
             padding: 0 0 0 20px
             width: 150px
@@ -376,38 +373,9 @@ header
             .header-instruments
                 .hidden-search
                     display: none
-                .main-search
-                    input[type=text], select
-                        height: 26px
-                        width: 180px
-                        font-size: 15px
-                        &:focus
-                            width: 230px
-                    .search-area
-                        height: 26px
-                        width: 31px
-                        .search-icon
-                            width: 15px
-                            height: 16px
                 .header-icons
-                    height: 40px
-                    width: 40px
-                    margin-left: 5px
                     &:nth-child(2)
                         margin-left: 0px
-                    .header-icons-first
-                        width: 22px
-                        height: 20px
-                    .header-icons-second
-                        width: 19px
-                        height: 21px
-                    .push
-                        height: 16px
-                        width: 16px
-                        font-size: 10px
-                    .profile
-                        width: 32px
-                        height: 32px
     .wrapper
         aside
             width: 100%
@@ -420,7 +388,7 @@ header
                 height: 60px
                 align-items: center
                 background-color: #303030
-                padding: 0px 20px
+                padding: 0px 78px
                 input[type=text], select
                     width: calc(100% - 40px)
                     height: 35px
@@ -450,6 +418,54 @@ header
         main
             margin: 0px
 
-@media (min-width: 320px) and (max-width: 479px) //phone
+@media (min-width: 150px) and (max-width: 479px) //phone
+    header
+        .left-content
+            width: auto
+            padding: 0 0 0 15px
+        .right-content
+            padding: 0 15px 0 0
+    .wrapper
+        aside
+            .second-search
+                padding: 0px 58px
+                height: 50px
+                input[type=text], select
+                    font-size: 14px
+                    height: 30px
+                .search-area
+                    height: 30px
+                    width: 35px
+                    .search-icon
+                        width: 17px
+                        height: 18px
+            .sidebar-field
+                .field
+                    height: 45px
+                    padding-left: 40px
+                    .sidebar-title
+                        font-size: 21px
+                .sidebar-field-help
+                    height: auto
+                    .field-help
+                        height: 40px
+                        padding-left: 75px
+                        .sidebar-title-help
+                            font-size: 15px
 
 @media (min-width: 150px) and (max-width: 319px) //min width
+    header
+        .left-content
+            padding: 0 0 0 10px
+        .right-content
+            padding: 0 10px 0 0
+    .wrapper
+        aside
+            .second-search
+                padding: 0px 30px
+            .sidebar-field
+                .field
+                    padding-left: 12px
+                .sidebar-field-help
+                    .field-help
+                        padding-left: 47px
