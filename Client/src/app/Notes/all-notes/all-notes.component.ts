@@ -66,6 +66,16 @@ export class AllNotesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/notes', id]);
   }
 
+  // MoreNotes() { попытка сделать +1 заметку
+  //   const notesWidth = document.getElementsByClassName('wrapper-main')[0].scrollWidth;
+  //   const notes = document.getElementsByClassName('wrapper-main')[0];
+  //   if (notesWidth > 1720) {
+  //     notes.classList.add('wrapper-more');
+  //   } else {
+  //     notes.classList.remove('wrapper-more');
+  //   }
+  // }
+
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.unsubscribe();

@@ -88,6 +88,12 @@ export class MainComponent implements OnInit, OnDestroy {
 
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;
+    const thx = document.getElementsByClassName('wrapper')[0];
+    if (this.activeSidebar === false) {
+      thx.getElementsByTagName('main')[0].style.marginLeft = '0px';
+    } else {
+      thx.getElementsByTagName('main')[0].style.marginLeft = '200px';
+    }
   }
 
   openProfileDialog() {
