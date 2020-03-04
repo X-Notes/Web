@@ -32,7 +32,9 @@
                 </div>
                 <div  class="content-note">
                     <div class="description" contenteditable="true" (input)="onInput($event)" (keydown.backspace)="back($event)" (keydown.enter)="enter($event)" (mouseup)="show($event)" #editor>
-                        <div class="part"></div>
+                        <div class="part">
+                        <br>
+                        </div>
                     </div>
                     <app-content-menu *ngIf="viewMenu" [ngStyle]="{top: (cursorPosition - 4) + 'px',left: 250 + 'px'}" class="content-menu" (numberList)="numberList()" (dotList)="dotList()" (hOne)="hOne()" (hTwo)="hTwo()" (hThree)="hThree()"></app-content-menu>
                 </div>

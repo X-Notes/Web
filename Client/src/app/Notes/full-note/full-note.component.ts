@@ -110,21 +110,45 @@ export class FullNoteComponent implements OnInit {
 
   enter($event) {
     const el = window.getSelection().getRangeAt(0);
-    if (el.startContainer.parentElement.tagName === 'OL') {
-      $event.preventDefault();
-      const prevDiv = el.startContainer.parentElement.parentElement;
-      const p = document.createElement('div');
-      p.classList.add('part');
-      p.innerHTML = '</br>';
-      prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.setStart(p, 0);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
-      (el.startContainer as Element).remove();
+    console.log(el.startContainer.parentElement.tagName);
+
+    switch (el.startContainer.parentElement.tagName) {
+      case 'OL':
+        this.defaultSeparatorList($event, el);
+        break;
+      case 'H1':
+        this.defaultSeparatorH($event, el);
+        break;
     }
+  }
+  defaultSeparatorH($event, el: Range) {
+    $event.preventDefault();
+    const prevDiv = el.startContainer.parentElement.parentElement;
+    const p = document.createElement('div');
+    p.classList.add('part');
+    p.innerHTML = '</br>';
+    prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.setStart(p, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  defaultSeparatorList($event, el: Range) {
+    $event.preventDefault();
+    const prevDiv = el.startContainer.parentElement.parentElement;
+    const p = document.createElement('div');
+    p.classList.add('part');
+    p.innerHTML = '</br>';
+    prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.setStart(p, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    (el.startContainer as Element).remove();
   }
   back($event: KeyboardEvent) {
       if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
@@ -167,12 +191,35 @@ export class FullNoteComponent implements OnInit {
     document.execCommand('insertOrderedList');
   }
   hOne() {
-    document.execCommand('formatBlock', false, '<h1>');
+    const el2 = window.getSelection().getRangeAt(0);
+    if (el2.startContainer.firstChild.nodeName === 'H1') {
+    } else {
+      document.execCommand('insertParagraph');
+      const el = window.getSelection().getRangeAt(0);
+      const h = document.createElement('h1');
+      h.innerHTML = '</br>';
+      const block = el.startContainer as any;
+      block.innerHTML = '';
+      block.appendChild(h);
+    }
   }
   hTwo() {
-    document.execCommand('formatBlock', false, '<h2>');
+    document.execCommand('insertParagraph');
+    const el = window.getSelection().getRangeAt(0);
+    const h = document.createElement('h2');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
   }
   hThree() {
-    document.execCommand('formatBlock', false, '<h3>');
+    document.execCommand('insertParagraph');
+    const el = window.getSelection().getRangeAt(0);
+    console.log(el);
+    const h = document.createElement('h3');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
   }
 }

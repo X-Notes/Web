@@ -34,7 +34,7 @@ export class ContentMenuComponent implements OnInit {
   HOne() {
     this.hOne.emit();
   }
-  HTwo() {
+  HTwo($event) {
     this.hTwo.emit();
   }
   HThree() {
