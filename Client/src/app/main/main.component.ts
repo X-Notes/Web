@@ -57,7 +57,7 @@ export class MainComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private notesService: NotesService
+    private notesService: NotesService,
   ) {}
 
   ngOnInit() {
@@ -89,10 +89,13 @@ export class MainComponent implements OnInit, OnDestroy {
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;
     const thx = document.getElementsByClassName('wrapper')[0];
+    const notes = document.getElementsByClassName('wrapper-main')[0];
     if (this.activeSidebar === false) {
       thx.getElementsByTagName('main')[0].style.marginLeft = '0px';
+      notes.classList.add('wrapper-more');
     } else {
       thx.getElementsByTagName('main')[0].style.marginLeft = '200px';
+      notes.classList.remove('wrapper-more');
     }
   }
 

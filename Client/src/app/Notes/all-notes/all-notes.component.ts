@@ -39,6 +39,7 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   unsubscribe = new Subject();
   constructor(private router: Router, private notesService: NotesService) { }
 
+  width: any;
   update = false;
   updateMenu: string[] = [];
   notes: SmallNote[];
@@ -65,16 +66,6 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   OpenNoot(id: string) {
     this.router.navigate(['/notes', id]);
   }
-
-  // MoreNotes() { попытка сделать +1 заметку
-  //   const notesWidth = document.getElementsByClassName('wrapper-main')[0].scrollWidth;
-  //   const notes = document.getElementsByClassName('wrapper-main')[0];
-  //   if (notesWidth > 1720) {
-  //     notes.classList.add('wrapper-more');
-  //   } else {
-  //     notes.classList.remove('wrapper-more');
-  //   }
-  // }
 
   ngOnDestroy() {
     this.unsubscribe.next();
