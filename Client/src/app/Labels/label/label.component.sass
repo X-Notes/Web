@@ -7,12 +7,13 @@ div
 
 .default-label //Полностью весь лейбл с выпадающим список
     flex-direction: column
-    width: 380px
+    width: 370px
+    align-items: center
     .label-field
         flex-direction: row
         align-items: center
         justify-content: space-between
-        width: 380px
+        width: 370px
         height: 40px
         background-color: #DDFFCD
         border-radius: 5px
@@ -41,8 +42,8 @@ div
                 align-items: center
                 cursor: pointer
                 .button-show
-                    width: 18px
-                    height: 11px
+                    width: 17px
+                    height: 10px
                     transition: all 0.25s linear
                 .button-delete
                     height: 10px
@@ -56,7 +57,7 @@ div
                 cursor: default
     .hidden-colors
         display: flex
-        width: 380px
+        width: 370px
         height: 70px
         flex-wrap: wrap
         justify-content: center
@@ -73,11 +74,11 @@ div
             margin-right: 30px
 
 
-@media (min-width: 992px) and  (max-width: 1199px) //laptop
+@media (min-width: 768px) and  (max-width: 1199px) //laptop
     .default-label
-        width: 320px
+        width: 300px
         .label-field
-            width: 320px
+            width: 300px
             .text-label
                 font-size: 18px
                 height: 22px
@@ -86,10 +87,10 @@ div
                 .note-info-line
                     border-width: 0 0.7px 0 0
         .hidden-colors
-            width: 320px
+            width: 300px
             height: 70px
             .hidden-color-element
-                width: 48px
+                width: 45px
                 height: 24px
                 margin-top: 7px
             .margin-colors
@@ -109,7 +110,7 @@ div
         .label-field
             width: 290px
             .text-label
-                font-size: 16px
+                font-size: 15px
                 height: 20px
                 margin-left: 10px
         .hidden-colors
@@ -128,7 +129,7 @@ div
         .label-field
             width: 240px
             .text-label
-                font-size: 16px
+                font-size: 15px
                 height: 20px
                 margin-left: 10px
                 max-width: 140px
