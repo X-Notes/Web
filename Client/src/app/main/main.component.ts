@@ -61,6 +61,7 @@ export class MainComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.mobileSideBar();
     this.userService
       .Get()
       .pipe(takeUntil(this.unsubscribe))
@@ -90,15 +91,26 @@ export class MainComponent implements OnInit, OnDestroy {
     this.activeSidebar = !this.activeSidebar;
     const thx = document.getElementsByClassName('wrapper')[0];
     const notes = document.getElementsByClassName('wrapper-main')[0];
+    const body = document.getElementsByTagName('body')[0].clientWidth;
     if (this.activeSidebar === false) {
       thx.getElementsByTagName('main')[0].style.marginLeft = '0px';
-      notes.classList.add('wrapper-more');
+      if( body > 767) {
+        notes.classList.add('wrapper-more');
+      }
+      else {
+        notes.classList.remove('wrapper-more');
+      }
     } else {
       thx.getElementsByTagName('main')[0].style.marginLeft = '200px';
       notes.classList.remove('wrapper-more');
     }
   }
-
+  mobileSideBar() {
+    const body = document.getElementsByTagName('body')[0].clientWidth;
+    if(body < 767) {
+      this.activeSidebar = false;
+    }
+  }
   openProfileDialog() {
     this.activeNotificationMenu = false;
     this.activeInvitesMenu = false;
