@@ -108,15 +108,22 @@ export class FullNoteComponent implements OnInit {
     );
   }
 
+
+
   enter($event) {
     const el = window.getSelection().getRangeAt(0);
-    console.log(el.startContainer.parentElement.tagName);
 
     switch (el.startContainer.parentElement.tagName) {
       case 'OL':
         this.defaultSeparatorList($event, el);
         break;
       case 'H1':
+        this.defaultSeparatorH($event, el);
+        break;
+      case 'H2':
+        this.defaultSeparatorH($event, el);
+        break;
+      case 'H3':
         this.defaultSeparatorH($event, el);
         break;
     }
@@ -128,12 +135,9 @@ export class FullNoteComponent implements OnInit {
     p.classList.add('part');
     p.innerHTML = '</br>';
     prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
-    const range = document.createRange();
-    const sel = window.getSelection();
-    range.setStart(p, 0);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
+
+    this.customFocus(p);
+    this.view(p);
   }
   defaultSeparatorList($event, el: Range) {
     $event.preventDefault();
@@ -142,21 +146,24 @@ export class FullNoteComponent implements OnInit {
     p.classList.add('part');
     p.innerHTML = '</br>';
     prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
-    const range = document.createRange();
-    const sel = window.getSelection();
-    range.setStart(p, 0);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
+    this.customFocus(p);
     (el.startContainer as Element).remove();
   }
   back($event: KeyboardEvent) {
-      if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
-        $event.preventDefault();
-        return;
+    let el = window.getSelection().getRangeAt(0);
+
+    if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
+      $event.preventDefault();
+      const deleteElement = el.startContainer;
+      if (deleteElement.nodeName === 'H1' || deleteElement.nodeName === 'H2' || deleteElement.nodeName === 'H3') {
+        (deleteElement as Element).remove();
+      } else if (deleteElement.nodeName === 'LI') {
+        const parant = deleteElement.parentElement;
+        (parant as Element).remove();
       }
-      let el = window.getSelection().getRangeAt(0);
-      setTimeout(() => {
+      return;
+    }
+    setTimeout(() => {
         el = window.getSelection().getRangeAt(0);
         const container = el.startContainer;
         this.view(container);
@@ -178,7 +185,9 @@ export class FullNoteComponent implements OnInit {
 
 
   onInput(event) {
-
+    const el = window.getSelection().getRangeAt(0);
+    const container = el.startContainer;
+    this.view(container);
   }
 
   checkList() {
@@ -191,35 +200,41 @@ export class FullNoteComponent implements OnInit {
     document.execCommand('insertOrderedList');
   }
   hOne() {
-    const el2 = window.getSelection().getRangeAt(0);
-    if (el2.startContainer.firstChild.nodeName === 'H1') {
-    } else {
-      document.execCommand('insertParagraph');
-      const el = window.getSelection().getRangeAt(0);
-      const h = document.createElement('h1');
-      h.innerHTML = '</br>';
-      const block = el.startContainer as any;
-      block.innerHTML = '';
-      block.appendChild(h);
-    }
+    const el = window.getSelection().getRangeAt(0);
+    const h = document.createElement('h1');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
+
+    this.customFocus(h);
+  }
+  customFocus(element) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.setStart(element, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
   hTwo() {
-    document.execCommand('insertParagraph');
     const el = window.getSelection().getRangeAt(0);
     const h = document.createElement('h2');
     h.innerHTML = '</br>';
     const block = el.startContainer as any;
     block.innerHTML = '';
     block.appendChild(h);
+
+    this.customFocus(h);
   }
   hThree() {
-    document.execCommand('insertParagraph');
     const el = window.getSelection().getRangeAt(0);
-    console.log(el);
     const h = document.createElement('h3');
     h.innerHTML = '</br>';
     const block = el.startContainer as any;
     block.innerHTML = '';
     block.appendChild(h);
+
+    this.customFocus(h);
   }
 }

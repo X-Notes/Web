@@ -31,7 +31,7 @@ export class ContentMenuComponent implements OnInit {
   NumberList() {
     this.numberList.emit();
   }
-  HOne() {
+  HOne($event: MouseEvent) {
     this.hOne.emit();
   }
   HTwo($event) {
