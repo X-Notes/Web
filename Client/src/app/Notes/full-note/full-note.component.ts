@@ -15,11 +15,8 @@ import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 import { FullNote } from 'src/app/Models/Notes/FullNote';
 import { PartsService } from 'src/app/Services/parts.service';
 import { takeUntil, timeout } from 'rxjs/operators';
-import { Text } from 'src/app/Models/Parts/Text';
-import { NewLine } from 'src/app/Models/PartText/NewLine';
-import { UpdateText } from 'src/app/Models/PartText/UpdateText';
-import { DeleteLine } from 'src/app/Models/PartText/DeleteLine';
-import { CommonList } from 'src/app/Models/Parts/CommonList';
+import { UpdateFullNoteDescription } from 'src/app/Models/Notes/UpdateFullNoteDescription';
+
 
 @Component({
   selector: 'app-full-note',
@@ -34,6 +31,9 @@ export class FullNoteComponent implements OnInit {
   viewMenu = false;
   private title: string;
   private titleTimer;
+
+  private descriptionTimer;
+
   unsubscribe = new Subject();
   private id: string;
   public note: FullNote;
@@ -65,21 +65,13 @@ export class FullNoteComponent implements OnInit {
     );
   }
   ngOnInit() {
-    const commonList: CommonList[] = [
-      {Description: 'Fartu Masti1', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti2', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti3', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti4', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti5', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti6', Id: 'sss', Type: 'common'},
-    ];
+
     this.noteService
       .getById(this.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         x => {
           this.note = x;
-          this.note.Parts.push(...commonList);
         },
         error => console.log(error)
       );
@@ -107,7 +99,21 @@ export class FullNoteComponent implements OnInit {
       300
     );
   }
-
+  updateInnerHtml(html) {
+    const newDescription: UpdateFullNoteDescription = {
+      id: this.id,
+      innerHTML: html
+    };
+    clearTimeout(this.titleTimer);
+    this.titleTimer = setTimeout(
+      () =>
+        this.noteService
+          .updateDescription(newDescription)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(x => x),
+      300
+    );
+  }
 
 
   enter($event) {
@@ -188,6 +194,7 @@ export class FullNoteComponent implements OnInit {
     const el = window.getSelection().getRangeAt(0);
     const container = el.startContainer;
     this.view(container);
+    this.updateInnerHtml(this.editor.nativeElement.innerHTML);
   }
   customFocus(element) {
     const range = document.createRange();

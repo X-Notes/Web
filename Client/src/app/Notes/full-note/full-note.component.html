@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div  class="content-note">
-                    <div class="description" contenteditable="true" (input)="onInput($event)" (keydown.backspace)="back($event)" (keydown.enter)="enter($event)" (mouseup)="show($event)" #editor>
+                    <div class="description" [innerHTML]="note?.InnerHTML" contenteditable="true" (input)="onInput($event)" (keydown.backspace)="back($event)" (keydown.enter)="enter($event)" (mouseup)="show($event)" #editor>
                         <div class="part">
                         <br/>
                         </div>

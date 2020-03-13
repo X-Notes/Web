@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { SmallNote } from '../Models/Notes/SmallNote';
 import { UpdateTitle } from '../Models/Notes/UpdateTitle';
 import { FullNote } from '../Models/Notes/FullNote';
+import { UpdateFullNoteDescription } from '../Models/Notes/UpdateFullNoteDescription';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,9 @@ export class NotesService {
   }
   updateTitle(updateTitle: UpdateTitle) {
     return this.httpClient.put(`${environment.nootsAPI + '/api/notes/title'}`, updateTitle, this.httpOptions);
+  }
+  updateDescription(update: UpdateFullNoteDescription) {
+    return this.httpClient.post(`${environment.nootsAPI + '/api/FullNote'}`, update, this.httpOptions);
   }
   getById(id: string) {
     return this.httpClient.get<FullNote>(`${environment.nootsAPI + `/api/notes/${id}`}`, this.httpOptions);
