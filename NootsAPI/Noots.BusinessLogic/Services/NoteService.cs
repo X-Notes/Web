@@ -3,7 +3,6 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
-using Shared.DTO.PartDTO;
 using Shared.Mongo;
 using Shared.Mongo.Parts;
 using System;
@@ -26,12 +25,7 @@ namespace Noots.BusinessLogic.Services
 
         public async Task<string> NewNote(string Email)
         {
-            var text = new Text()
-            {
-                Id = ObjectId.GenerateNewId(),
-                Type = "text"
-            };
-            var newNote = new Note() { Email = Email, Parts = new List<Part>() { text }, Labels = new List<ObjectId>() };
+            var newNote = new Note() { Email = Email, Labels = new List<ObjectId>() };
             newNote = await noteRepository.New(newNote);
             return newNote.Id.ToString();
         }

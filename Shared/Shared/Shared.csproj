@@ -16,8 +16,4 @@
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTO\PartCommonList\" />
-  </ItemGroup>
-
 </Project>

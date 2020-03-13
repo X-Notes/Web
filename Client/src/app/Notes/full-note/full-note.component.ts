@@ -189,6 +189,15 @@ export class FullNoteComponent implements OnInit {
     const container = el.startContainer;
     this.view(container);
   }
+  customFocus(element) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.setStart(element, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
 
   checkList() {
 
@@ -208,14 +217,6 @@ export class FullNoteComponent implements OnInit {
     block.appendChild(h);
 
     this.customFocus(h);
-  }
-  customFocus(element) {
-    const range = document.createRange();
-    const sel = window.getSelection();
-    range.setStart(element, 0);
-    range.collapse(true);
-    sel.removeAllRanges();
-    sel.addRange(range);
   }
   hTwo() {
     const el = window.getSelection().getRangeAt(0);
