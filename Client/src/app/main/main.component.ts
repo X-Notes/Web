@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener, NgModule, OnDestroy, Output, EventEmit
 import { trigger, transition, animate, style, state } from '@angular/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { Router, RouterEvent, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { User } from '../Models/User/User';
 import { UserService } from '../Services/user.service';
 import { Subject } from 'rxjs';
@@ -45,7 +45,7 @@ export class MainComponent implements OnInit, OnDestroy {
   user: User;
 
   activeSidebar = true;
-
+  loading = true;
   activeProfileMenu = false;
   activeNotificationMenu = false;
   activeInvitesMenu = false;
@@ -58,7 +58,11 @@ export class MainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private notesService: NotesService,
-  ) {}
+  ) {
+    router.events.subscribe((event: RouterEvent) => {
+      this.navigationInterceptor(event);
+    });
+  }
 
   ngOnInit() {
     this.mobileSideBar();
@@ -73,6 +77,30 @@ export class MainComponent implements OnInit, OnDestroy {
           this.router.navigate(['/about']);
         }
       );
+  }
+  navigationInterceptor(event: RouterEvent): void {
+    if (event instanceof NavigationStart) {
+      this.loading = true;
+    }
+    if (event instanceof NavigationEnd) {
+      if( this.isCurrentRouteRight('profile') === true) {
+        setTimeout(() => {
+          this.loading = false;
+        }, 8000);
+      } else {
+        this.loading = false;
+      }
+    }
+    if (event instanceof NavigationCancel) {
+      setTimeout(() => { 
+        this.loading = false;
+      }, 2000);
+    }
+    if (event instanceof NavigationError) {
+      setTimeout(() => { 
+        this.loading = false;
+      }, 2000);
+    }
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
