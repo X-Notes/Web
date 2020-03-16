@@ -6,13 +6,19 @@
     .background
         display: flex
         padding-top: 15px
-        .buttons
-            display: flex
-            img
-                margin-right: 15px
-                height: 25px
-                &:hover
-                    cursor: pointer
+
+        .buttons-container
+            padding-left: 15px
+
+            .buttons
+                display: flex
+                width: 100%
+                img
+                    margin-right: 15px
+                    height: 25px
+                    width: 100%
+                    &:hover
+                        cursor: pointer
         .note
             width: 1000px                
             
@@ -34,7 +40,7 @@
                     width: 100%
 
                     .labels
-                        width: 95%
+                        width: calc(100% - 45px)
                         display: flex
                         flex-wrap: wrap
                         .label
@@ -53,7 +59,7 @@
                                 white-space: nowrap
                                 overflow: hidden
                     .options
-                        width: 5%
+                        width: 45px
                         display: flex
                         justify-content: center
                         margin-top: 5px
@@ -104,81 +110,80 @@
                 .content-note
                     position: relative
                     margin-top: 30px
-                    padding: 0 40px 0 0
-
-
-                    .text
-                        margin-top: 6px
-                        margin-left: 17px
-                        position: relative
-                        width: calc(100% - 15px)
-
-
-                        .input-text
-                            white-space: pre-wrap
-                            word-wrap: break-word
-                            z-index: 1        
-                            padding: 0 0 0 2px
-                            outline: 0                        
-                            transition: 0.2s padding ease-in-out
-                            font-size: 16px
-                                
-                            &:not(:empty) + .placeholder-text
-                                opacity: 0 !important
-                                 
-                            &:empty + .placeholder-text-first
-                                opacity: 1
-                                margin-left: 3px
-
-                            &:focus + .placeholder-text
-                                opacity: 1
-                                margin-left: 3px
-
-
-                        .content-menu
-                            z-index: 2
-                            top: -4px
-                            left: 300px
-                            position: absolute
-
-                        .placeholder-text
-                            color: #808080
-                            top: 0
-                            font-size: 16px
-                            font-weight: 300
-                            pointer-events: none
-                            user-select: none
-                            position: absolute
-                            opacity: 0
-                            transition: 0.2s padding ease-in-out
-                        .placeholder-text-first
-                            color: #808080
-                            top: 0
-                            font-size: 16px
-                            font-weight: 300
-                            pointer-events: none
-                            user-select: none
-                            position: absolute
-                            opacity: 0
-                            transition: 0.2s padding ease-in-out
-
-
-            
-
+                    padding: 0 40px 0 20px
+                    
+                    .description
+                        .part
+                            min-height: 22px
+                            width: 100%
+                            
+                    .content-menu
+                        position: absolute
 
 
 @media only screen and (min-width: 1200px) and  (max-width: 1480px)
+        .note
+            width: 100% !important
+            margin-right: 15px
+            margin-left: 10px
 
+        .buttons
+            flex-direction: column
+
+            img
+                &:nth-child(2)        
+                    margin-top: 15px
 
 @media (min-width: 992px) and  (max-width: 1199px) //laptop
+        .note
+            width: 100% !important
+            margin-right: 15px
+            margin-left: 10px
 
+        .buttons
+            flex-direction: column
+
+            img
+                &:nth-child(2)        
+                    margin-top: 15px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+        .note
+            width: 100% !important
+            margin-right: 15px
+            margin-left: 10px
 
-
+        .buttons
+            flex-direction: column
+            
+            img
+                &:nth-child(2)        
+                    margin-top: 15px
 
 @media (min-width: 480px) and (max-width: 767px) //large phone
+        .note
+            width: 100% !important
+            margin-right: 15px
+            margin-left: 10px
+
+        .buttons
+            flex-direction: column 
+
+            img
+                &:nth-child(2)        
+                    margin-top: 15px   
 
 @media (min-width: 320px) and (max-width: 479px) //phone
+        .note
+            width: 100% !important
+            margin-right: 15px
+            margin-left: 10px
+
+        .buttons
+            flex-direction: column 
+
+            img
+                &:nth-child(2)        
+                    margin-top: 15px   
 
 @media (min-width: 150px) and (max-width: 319px) //min width

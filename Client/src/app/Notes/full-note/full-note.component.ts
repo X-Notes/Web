@@ -4,7 +4,8 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
+  ViewChild
 } from '@angular/core';
 import { Subscription, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -14,11 +15,8 @@ import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 import { FullNote } from 'src/app/Models/Notes/FullNote';
 import { PartsService } from 'src/app/Services/parts.service';
 import { takeUntil, timeout } from 'rxjs/operators';
-import { Text } from 'src/app/Models/Parts/Text';
-import { NewLine } from 'src/app/Models/PartText/NewLine';
-import { UpdateText } from 'src/app/Models/PartText/UpdateText';
-import { DeleteLine } from 'src/app/Models/PartText/DeleteLine';
-import { CommonList } from 'src/app/Models/Parts/CommonList';
+import { UpdateFullNoteDescription } from 'src/app/Models/Notes/UpdateFullNoteDescription';
+
 
 @Component({
   selector: 'app-full-note',
@@ -27,8 +25,15 @@ import { CommonList } from 'src/app/Models/Parts/CommonList';
 })
 export class FullNoteComponent implements OnInit {
   // Content
+
+  @ViewChild('editor', {static: false}) editor: ElementRef;
+  cursorPosition = 0;
+  viewMenu = false;
   private title: string;
   private titleTimer;
+
+  private descriptionTimer;
+
   unsubscribe = new Subject();
   private id: string;
   public note: FullNote;
@@ -59,35 +64,19 @@ export class FullNoteComponent implements OnInit {
       params => (this.id = params.id)
     );
   }
-
   ngOnInit() {
-    const commonList: CommonList[] = [
-      {Description: 'Fartu Masti1', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti2', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti3', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti4', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti5', Id: 'sss', Type: 'common'},
-      {Description: 'Fartu Masti6', Id: 'sss', Type: 'common'},
-    ];
+
     this.noteService
       .getById(this.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
         x => {
           this.note = x;
-          this.note.Parts.push(...commonList);
         },
         error => console.log(error)
       );
-    window.addEventListener(
-      'keydown',
-      e => {
-        if ([38, 40, 13].indexOf(e.keyCode) > -1) {
-          e.preventDefault();
-        }
-      },
-      false
-    );
+    document.execCommand('styleWithCSS', true, null);
+    document.execCommand('defaultParagraphSeparator', false, 'div');
   }
 
   youTubeMenu() {
@@ -110,113 +99,150 @@ export class FullNoteComponent implements OnInit {
       300
     );
   }
-
-  updateText(str: string, id: string, index: number) {
-    const obj: UpdateText = {
-      noteId: this.note.Id,
-      partId: id,
-      description: str
+  updateInnerHtml(html) {
+    const newDescription: UpdateFullNoteDescription = {
+      id: this.id,
+      innerHTML: html
     };
-    const text = this.note.Parts[index] as Text;
-    if (text.Description !== str) {
-    this.partsService
-      .updateText(obj)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        x => x,
-        error => console.log(error)
-      );
-      }
-  }
-  backSpace(str: string, id: string, index: number, event) {
-    if (str === '') {
-      if (index > 0) {
-        event.preventDefault();
-        this.note.Parts = this.note.Parts.filter(x => x.Id !== id);
-        const element = document.getElementById(`${--index}`);
-        this.MovingCursorToEnd(element);
-        const line: DeleteLine = {
-          noteId: this.note.Id,
-          partId: id
-        };
-        this.partsService
-          .deleteLine(line)
+    clearTimeout(this.titleTimer);
+    this.titleTimer = setTimeout(
+      () =>
+        this.noteService
+          .updateDescription(newDescription)
           .pipe(takeUntil(this.unsubscribe))
-          .subscribe(
-            x => x,
-            error => console.log(error)
-          );
+          .subscribe(x => x),
+      300
+    );
+  }
+
+
+  enter($event) {
+    const el = window.getSelection().getRangeAt(0);
+
+    switch (el.startContainer.parentElement.tagName) {
+      case 'OL':
+        this.defaultSeparatorList($event, el);
+        break;
+      case 'H1':
+        this.defaultSeparatorH($event, el);
+        break;
+      case 'H2':
+        this.defaultSeparatorH($event, el);
+        break;
+      case 'H3':
+        this.defaultSeparatorH($event, el);
+        break;
+    }
+  }
+  defaultSeparatorH($event, el: Range) {
+    $event.preventDefault();
+    const prevDiv = el.startContainer.parentElement.parentElement;
+    const p = document.createElement('div');
+    p.classList.add('part');
+    p.innerHTML = '</br>';
+    prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
+
+    this.customFocus(p);
+    this.view(p);
+  }
+  defaultSeparatorList($event, el: Range) {
+    $event.preventDefault();
+    const prevDiv = el.startContainer.parentElement.parentElement;
+    const p = document.createElement('div');
+    p.classList.add('part');
+    p.innerHTML = '</br>';
+    prevDiv.parentNode.insertBefore(p, prevDiv.nextSibling);
+    this.customFocus(p);
+    (el.startContainer as Element).remove();
+  }
+  back($event: KeyboardEvent) {
+    let el = window.getSelection().getRangeAt(0);
+
+    if (this.editor.nativeElement.textContent.length === 0 && this.editor.nativeElement.childNodes.length === 1) {
+      $event.preventDefault();
+      const deleteElement = el.startContainer;
+      if (deleteElement.nodeName === 'H1' || deleteElement.nodeName === 'H2' || deleteElement.nodeName === 'H3') {
+        (deleteElement as Element).remove();
+      } else if (deleteElement.nodeName === 'LI') {
+        const parant = deleteElement.parentElement;
+        (parant as Element).remove();
       }
+      return;
+    }
+    setTimeout(() => {
+        el = window.getSelection().getRangeAt(0);
+        const container = el.startContainer;
+        this.view(container);
+      }, 50);
+  }
+  show(event) {
+    const el = window.getSelection().getRangeAt(0);
+    const container = el.startContainer;
+    this.view(container);
+  }
+  view(container: Node) {
+    if (container.textContent.length === 0) {
+      this.viewMenu = true;
+      setTimeout(() => this.cursorPosition = (container as any).offsetTop, 50);
+    } else {
+      this.viewMenu = false;
     }
   }
 
-  downToContent() {
-    const el = document.getElementById('0');
-    this.MovingCursorToEnd(el);
+
+  onInput(event) {
+    const el = window.getSelection().getRangeAt(0);
+    const container = el.startContainer;
+    this.view(container);
+    this.updateInnerHtml(this.editor.nativeElement.innerHTML);
   }
-  enter(index: number) {
-    const text: Text = {
-      Id: null,
-      Description: null,
-      Type: 'text'
-    };
-    this.note.Parts.splice(++index, 0, text);
-    setTimeout(() => document.getElementById(`${index}`).focus(), 50);
-    const newLine: NewLine = {
-      noteId: this.note.Id,
-      order: index
-    };
-    this.partsService
-      .newLine(newLine)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(
-        x => (text.Id = x),
-        error => console.log(error)
-      );
-  }
-  up(index: number) {
-    let element = document.getElementById(`${index - 1}`);
-    if (element !== null) {
-      this.movingCursor(element);
-    } else {
-      element = document.getElementById('title');
-      this.MovingCursorToEnd(element);
-    }
-  }
-  down(index: number) {
-    const el = document.getElementById(`${index + 1}`);
-    if (el !== null) {
-      this.movingCursor(el);
-    }
-  }
-  movingCursor(el: any) {
+  customFocus(element) {
     const range = document.createRange();
     const sel = window.getSelection();
-    const child = el.childNodes[0];
-    if (child !== undefined) {
-      if (child.textContent.length < sel.anchorOffset) {
-        range.setStart(el.childNodes[0], child.textContent.length);
-      } else {
-        range.setStart(el.childNodes[0], sel.anchorOffset);
-      }
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    } else {
-      el.focus();
-    }
+    range.setStart(element, 0);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
-  MovingCursorToEnd(el: any) {
-    const range = document.createRange();
-    const sel = window.getSelection();
-    const child = el.childNodes[0];
-    if (child !== undefined) {
-      range.setStart(el.childNodes[0], child.textContent.length);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
-    } else {
-      el.focus();
-    }
+
+
+  checkList() {
+
+  }
+  dotList() {
+    document.execCommand('insertUnorderedList');
+  }
+  numberList() {
+    document.execCommand('insertOrderedList');
+  }
+  hOne() {
+    const el = window.getSelection().getRangeAt(0);
+    const h = document.createElement('h1');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
+
+    this.customFocus(h);
+  }
+  hTwo() {
+    const el = window.getSelection().getRangeAt(0);
+    const h = document.createElement('h2');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
+
+    this.customFocus(h);
+  }
+  hThree() {
+    const el = window.getSelection().getRangeAt(0);
+    const h = document.createElement('h3');
+    h.innerHTML = '</br>';
+    const block = el.startContainer as any;
+    block.innerHTML = '';
+    block.appendChild(h);
+
+    this.customFocus(h);
   }
 }

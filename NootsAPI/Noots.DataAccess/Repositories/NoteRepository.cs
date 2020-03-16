@@ -40,6 +40,16 @@ namespace Noots.DataAccess.Repositories
                 await _context.Notes.FindOneAndUpdateAsync(filter, update, options);
             }
         }
+        public async Task UpdateDescription(ObjectId Id, string InnerHTML)
+        {
+            var filter = new BsonDocument("_id", Id);
+            var update = Builders<Note>.Update
+                .Set("InnerHTML", InnerHTML);
+            var options = new FindOneAndUpdateOptions<Note>
+            {
+            };
+            await _context.Notes.FindOneAndUpdateAsync(filter, update, options);
+        }
         public async Task<Note> GetById(ObjectId id)
         {
             return await _context.Notes.Find(x => x.Id == id).FirstAsync();
