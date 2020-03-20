@@ -1,68 +1,72 @@
 div
     display: flex
-
-.folder
-    height: 150px
-    width: 280px
-    border-radius: 25px
-    background-color: #EBFFEC
+    
+.wrapper-folder
     position: relative
-    &::after
-        content: ""
-        height: 150px
-        width: 280px
+    height: 150px !important
+    width: 280px
+    .outer-folder
         position: absolute
-        bottom: 10px 
-        left: 15px
+        height: 100%
+        width: 100%
         background-color: #CDFFD8
         border-radius: 20px
-        z-index: -1
-    .highligts
+        bottom: 10px 
+        left: 15px
+    .folder
+        position: relative
         height: 100%
-        width: 30px
-        background-color: #95EB9D
-        user-select: none
-        border-radius: 25px 0 0 25px
-        transition: .3s ease-out
-        cursor: pointer
-        &:hover
-            background-color: rgba(218, 218, 218, 0.69)
-    .folder-inner
-        height: 100%
-        width: 250px
-        flex-direction: column
-        input
-            height: 21px
-            font-size: 20px
-            margin: 10px 20px
-            border: none
-            outline: none
-            color: #505050
-            font-weight: bold
-            background: none
-            &:focus
-                border-bottom: 1px dashed #c5c5c5
-        .fields
-            height: calc( 100% - 41px )
-            width: 100%
-            padding: 0 30px
+        width: 100%
+        border-radius: 25px
+        background-color: #EBFFEC
+        z-index: 10
+        .highligts
+            height: 100%
+            width: 30px
+            background-color: #95EB9D
+            user-select: none
+            border-radius: 25px 0 0 25px
+            transition: .3s ease-out
+            cursor: pointer
+            &:hover
+                background-color: rgba(218, 218, 218, 0.69)
+        .folder-inner
+            height: 100%
+            width: 250px
             flex-direction: column
-            .field
+            input
+                height: 21px
+                font-size: 20px
+                margin: 10px 30px 10px 20px
+                border: none
+                outline: none
+                color: #505050
+                font-weight: bold
+                background: none
+                &:hover
+                    border-bottom: 1px dashed #c5c5c5
+                &:focus
+                    border-bottom: 1px dashed #9e9e9e
+            .fields
+                height: calc( 100% - 41px )
                 width: 100%
-                height: 30px
-                align-items: center
-                .field-icon
-                    width: 16px
-                    height: 16px
-                    svg
-                        width: 100%
-                        height: 100%
-                .field-information
-                    width: calc( 100% - 21px )
-                    margin-left: 5px
-                    color: #434343
-                    p
-                        overflow: hidden
-                        text-overflow: ellipsis
-                        white-space: nowrap
-
+                padding: 0 30px
+                flex-direction: column
+                .field
+                    width: 100%
+                    height: 30px
+                    align-items: center
+                    .field-icon
+                        width: 16px
+                        height: 16px
+                        svg
+                            width: 100%
+                            height: 100%
+                    .field-information
+                        width: calc( 100% - 21px )
+                        margin-left: 5px
+                        color: #434343
+                        p
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            white-space: nowrap

@@ -1,4 +1,5 @@
-<div *ngIf="user" [ngStyle]="{'background-image': background !== null ? 'url('+ background +')' : 'none'}"
+<app-spinner *ngIf="loading"></app-spinner>
+<div *ngIf="user"  [ngStyle]="{'background-image': background !== null ? 'url('+ background +')' : 'none'}"
     class="container">
     <div class="profile">
         <p>Account</p>

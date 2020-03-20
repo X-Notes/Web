@@ -14,6 +14,7 @@ import { isNull } from 'util';
 export class ProfileComponent implements OnInit, OnDestroy {
 
   background = null;
+  loading: boolean;
   user: FullUser;
   unsubscribe = new Subject();
   newName = '';
@@ -22,11 +23,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loading = true;
     this.background = localStorage.getItem('background');
     this.userService.GetFull()
     .pipe(takeUntil(this.unsubscribe))
     .subscribe(user => {
       this.user = user;
+      this.loading = false;
       this.newName = this.user.name;
       if (!isNull(this.user.currentBackgroundId)) {
       this.changeBackGround(this.user.currentBackgroundId.backgroundId);

@@ -8,10 +8,22 @@ div
     overflow: overlay
     .wrapper-notes
         margin-top: 20px
-        width: 1200px
+        width: 1120px
         flex-wrap: wrap
-        justify-content: center
+        justify-content: flex-start
+        align-content: flex-start
+        transition: .2s ease
         .note
-            margin: 20px 40px 20px 0
+            transition: .2s ease
+            margin: 40px 40px 40px 0
             &:nth-child(3n)
+                margin-right: 0px
+
+.wrapper-more
+    .wrapper-notes
+        width: 1500px !important
+        .note
+            &:nth-child(3n)
+                margin-right: 20px
+            &:nth-child(4n)
                 margin-right: 0px

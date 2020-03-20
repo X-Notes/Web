@@ -45,7 +45,7 @@ export class MainComponent implements OnInit, OnDestroy {
   user: User;
 
   activeSidebar = true;
-  loading = true;
+  loading:boolean;
   activeProfileMenu = false;
   activeNotificationMenu = false;
   activeInvitesMenu = false;
@@ -58,13 +58,10 @@ export class MainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private notesService: NotesService,
-  ) {
-    router.events.subscribe((event: RouterEvent) => {
-      this.navigationInterceptor(event);
-    });
-  }
+  ) {}
 
   ngOnInit() {
+    this.loading = true;
     this.mobileSideBar();
     this.userService
       .Get()
@@ -72,35 +69,12 @@ export class MainComponent implements OnInit, OnDestroy {
       .subscribe(
         user => {
           this.user = user;
+          this.loading = false;
         },
         error => {
           this.router.navigate(['/about']);
         }
       );
-  }
-  navigationInterceptor(event: RouterEvent): void {
-    if (event instanceof NavigationStart) {
-      this.loading = true;
-    }
-    if (event instanceof NavigationEnd) {
-      if( this.isCurrentRouteRight('profile') === true) {
-        setTimeout(() => {
-          this.loading = false;
-        }, 8000);
-      } else {
-        this.loading = false;
-      }
-    }
-    if (event instanceof NavigationCancel) {
-      setTimeout(() => { 
-        this.loading = false;
-      }, 2000);
-    }
-    if (event instanceof NavigationError) {
-      setTimeout(() => { 
-        this.loading = false;
-      }, 2000);
-    }
   }
   isCurrentRouteRight(route: string) {
     return route && this.router.url.search(route) !== -1;
@@ -122,10 +96,9 @@ export class MainComponent implements OnInit, OnDestroy {
     const body = document.getElementsByTagName('body')[0].clientWidth;
     if (this.activeSidebar === false) {
       thx.getElementsByTagName('main')[0].style.marginLeft = '0px';
-      if( body > 767) {
+      if ( body > 767) {
         notes.classList.add('wrapper-more');
-      }
-      else {
+      } else {
         notes.classList.remove('wrapper-more');
       }
     } else {
@@ -135,7 +108,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
   mobileSideBar() {
     const body = document.getElementsByTagName('body')[0].clientWidth;
-    if(body < 767) {
+    if (body < 767) {
       this.activeSidebar = false;
     }
   }
