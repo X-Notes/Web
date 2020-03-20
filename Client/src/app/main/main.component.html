@@ -257,6 +257,8 @@
     </aside>
     <main>
         <app-spinner *ngIf="loading"></app-spinner>
-        <router-outlet></router-outlet>
+        <div class="wrapper-main">
+            <router-outlet></router-outlet>
+        </div>
     </main>
 </div>

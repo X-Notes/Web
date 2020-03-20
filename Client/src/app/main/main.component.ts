@@ -92,7 +92,7 @@ export class MainComponent implements OnInit, OnDestroy {
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;
     const thx = document.getElementsByClassName('wrapper')[0];
-    const notes = document.getElementsByClassName('wrapper-main')[0];
+    const notes = document.getElementsByClassName('wrapper-items')[0];
     const body = document.getElementsByTagName('body')[0].clientWidth;
     if (this.activeSidebar === false) {
       thx.getElementsByTagName('main')[0].style.marginLeft = '0px';

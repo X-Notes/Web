@@ -146,9 +146,9 @@ header
         margin-left: 200px
         .wrapper-main
             width: 100%
-            height: 100%
-            overflow: overlay
             justify-content: center
+            height: calc(100% - 50px)
+            overflow: overlay
     aside
         position: absolute
         z-index: 99
@@ -323,6 +323,10 @@ header
                         height: 34px
             .help-menu-wrapper
                 top: 45px
+    .wrapper
+        main
+            .wrapper-main
+                height: calc(100% - 45px)
 
 @media only screen and (min-width: 150px) and (max-width: 991px) //tablet
     header
@@ -366,6 +370,10 @@ header
                         height: 32px
             .help-menu-wrapper
                 top: 45px
+    .wrapper
+        main
+            .wrapper-main
+                height: calc(100% - 45px)
 
 @media (min-width: 150px) and (max-width: 767px) //large phone
     header
@@ -383,6 +391,9 @@ header
                     &:nth-child(2)
                         margin-left: 0px
     .wrapper
+        main
+            .wrapper-main
+                height: calc(100% - 45px)
         aside
             width: 100%
             margin: 0px
@@ -432,6 +443,9 @@ header
         .right-content
             padding: 0 15px 0 0
     .wrapper
+        main
+            .wrapper-main
+                height: calc(100% - 45px)
         aside
             .second-search
                 padding: 0px 58px
@@ -466,6 +480,9 @@ header
         .right-content
             padding: 0 10px 0 0
     .wrapper
+        main
+            .wrapper-main
+                height: calc(100% - 45px)
         aside
             .second-search
                 padding: 0px 30px
