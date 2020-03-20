@@ -1,22 +1,23 @@
-<div class="wrapper-main">
-    <div class="wrapper-label">
-        <div class="header-label">
-            <p>Labels</p>
-        </div>
-        <div class="header-new-label">
-            <div class="new-label" (click)="Create()">
-                <div class="header-plus-icon">
-                    <svg fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M17.5 2.5C17.5 1.11929 16.3807 0 15 0C13.6193 0 12.5 1.11929 12.5 2.5V12.5H2.5C1.11926 12.5 0 13.6193 0 15C0 16.3807 1.11926 17.5 2.5 17.5H12.5V27.5C12.5 28.8807 13.6193 30 15 30C16.3807 30 17.5 28.8807 17.5 27.5V17.5H27.5C28.8807 17.5 30 16.3807 30 15C30 13.6193 28.8807 12.5 27.5 12.5H17.5V2.5Z" fill="#B8B8B8"/>
-                    </svg>
-                </div>
-                <div class="margin-add">
-                    <p>Add new label</p>
-                </div>
+<div class="wrapper-items">
+    <div class="header-label">
+        <p>Labels</p>
+    </div>
+    <div class="header-new-label">
+        <div class="new-label" (click)="Create()">
+            <div class="header-plus-icon">
+                <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M17.5 2.5C17.5 1.11929 16.3807 0 15 0C13.6193 0 12.5 1.11929 12.5 2.5V12.5H2.5C1.11926 12.5 0 13.6193 0 15C0 16.3807 1.11926 17.5 2.5 17.5H12.5V27.5C12.5 28.8807 13.6193 30 15 30C16.3807 30 17.5 28.8807 17.5 27.5V17.5H27.5C28.8807 17.5 30 16.3807 30 15C30 13.6193 28.8807 12.5 27.5 12.5H17.5V2.5Z"
+                        fill="#B8B8B8" />
+                </svg>
+            </div>
+            <div class="margin-add">
+                <p>Add new label</p>
             </div>
         </div>
-        <div class="many-label">
-            <app-label class="label-margin" *ngFor="let label of labels" (deleteLabel)="Delete($event)" (updateLabel)="Update($event)" [label]="label"></app-label>
-        </div>
+    </div>
+    <div class="many-label">
+        <app-label class="label-margin" *ngFor="let label of labels" (deleteLabel)="Delete($event)"
+            (updateLabel)="Update($event)" [label]="label"></app-label>
     </div>
 </div>
