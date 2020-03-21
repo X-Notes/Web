@@ -27,7 +27,9 @@ export class FullNoteComponent implements OnInit {
 
   @ViewChild('editor', {static: false}) editor: ElementRef;
   cursorPosition = 0;
+  cursorPositionFont = 0;
   viewMenu = false;
+  viewFontMenu = false;
   private title: string;
   private titleTimer;
 
@@ -174,17 +176,41 @@ export class FullNoteComponent implements OnInit {
       }, 50);
   }
   show(event) {
-    const el = window.getSelection().getRangeAt(0);
-    const container = el.startContainer;
+    const el = window.getSelection();
+    const container = el.getRangeAt(0).startContainer;
     this.view(container);
+    this.viewMenuFont(el);
   }
   view(container: Node) {
     if (container.textContent.length === 0) {
       this.viewMenu = true;
+      console.log(container);
       setTimeout(() => this.cursorPosition = (container as any).offsetTop, 50);
     } else {
       this.viewMenu = false;
     }
+  }
+  viewMenuFont(selection: Selection) {
+    const el = selection.toString();
+    if (el.length > 0) {
+      this.viewFontMenu = true;
+      setTimeout(() => { this.cursorPositionFont = this.getCursorPositionForFont(selection); } , 50);
+    } else {
+      this.viewFontMenu = false;
+    }
+  }
+  getCursorPositionForFont(selection: Selection) {
+    const cursor = selection.getRangeAt(0).startContainer.parentElement;
+    if (cursor.tagName === 'H1') {
+      return cursor.offsetTop + 10;
+    }
+    if (cursor.tagName === 'H2') {
+      return cursor.offsetTop + 10;
+    }
+    if (cursor.tagName === 'H3') {
+      return cursor.offsetTop + 10;
+    }
+    return cursor.offsetTop;
   }
 
 
