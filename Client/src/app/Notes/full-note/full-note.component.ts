@@ -13,7 +13,6 @@ import { Label } from 'src/app/Models/Labels/Label';
 import { NotesService } from 'src/app/Services/notes.service';
 import { UpdateTitle } from 'src/app/Models/Notes/UpdateTitle';
 import { FullNote } from 'src/app/Models/Notes/FullNote';
-import { PartsService } from 'src/app/Services/parts.service';
 import { takeUntil, timeout } from 'rxjs/operators';
 import { UpdateFullNoteDescription } from 'src/app/Models/Notes/UpdateFullNoteDescription';
 
@@ -58,7 +57,6 @@ export class FullNoteComponent implements OnInit {
   constructor(
     private activateRoute: ActivatedRoute,
     private noteService: NotesService,
-    private partsService: PartsService
   ) {
     this.subscription = activateRoute.params.subscribe(
       params => (this.id = params.id)
