@@ -230,6 +230,15 @@ export class FullNoteComponent implements OnInit {
   }
 
 
+
+
+
+
+  // Font Content Menu
+  bold() {
+    document.execCommand('bold', null, null);
+  }
+  // Content menu
   checkList() {
 
   }
