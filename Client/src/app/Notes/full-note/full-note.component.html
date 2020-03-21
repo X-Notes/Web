@@ -44,7 +44,7 @@
                     <app-content-menu *ngIf="viewMenu" [ngStyle]="{top: (cursorPosition - 6) + 'px',left: 250 + 'px'}"
                         class="content-menu" (numberList)="numberList()" (dotList)="dotList()" (hOne)="hOne()"
                         (hTwo)="hTwo()" (hThree)="hThree()"></app-content-menu>
-                        <app-font-content-menu *ngIf="viewFontMenu" class="font-content-menu"  [ngStyle]="{top: (cursorPositionFont - 4) + 'px',left: -67 + 'px'}" (bold)="bold()">
+                        <app-font-content-menu *ngIf="viewFontMenu" class="font-content-menu"  [ngStyle]="{top: (cursorPositionFont - 4) + 'px',left: -67 + 'px'}" (bold)="bold()" (italics)="italics()">
                         </app-font-content-menu>
                 </div>
             </div>

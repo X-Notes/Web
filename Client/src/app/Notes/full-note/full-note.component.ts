@@ -238,6 +238,9 @@ export class FullNoteComponent implements OnInit {
   bold() {
     document.execCommand('bold', null, null);
   }
+  italics() {
+    document.execCommand('italic', null, null);
+  }
   // Content menu
   checkList() {
 

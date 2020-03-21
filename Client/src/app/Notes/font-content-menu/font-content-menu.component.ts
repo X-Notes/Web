@@ -10,7 +10,7 @@ export class FontContentMenuComponent implements OnInit {
   @Output() bold = new EventEmitter();
   @Output() dotList = new EventEmitter();
   @Output() numberList = new EventEmitter();
-  @Output() cursor = new EventEmitter();
+  @Output() italics = new EventEmitter();
   @Output() hOne = new EventEmitter();
   @Output() hTwo = new EventEmitter();
   @Output() hThree = new EventEmitter();
@@ -23,5 +23,8 @@ export class FontContentMenuComponent implements OnInit {
 
   boldEvent() {
     this.bold.emit();
+  }
+  italicEvent() {
+    this.italics.emit();
   }
 }
