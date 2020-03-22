@@ -8,7 +8,7 @@ div
     cursor: pointer
     flex-direction: row
     background-color: $main-color
-    width: 360px
+    width: 320px
     padding: 0 20px 0 0
     border-radius: 25px
     &:hover
@@ -19,9 +19,6 @@ div
         justify-content: center
         border-radius: 25px 0 0 25px
         cursor: pointer
-        -moz-user-select: none
-        -webkit-user-select: none
-        -ms-user-select: none
         user-select: none
         background-color: #DDFFDF
         transition: .3s ease-out
@@ -29,7 +26,7 @@ div
             background-color: rgba(218, 218, 218, 0.69)
     .note-container
         flex-direction: column
-        width: 310px
+        width: 270px
         padding: 0 0 0 10px
         .note-header
             flex-direction: row
@@ -39,7 +36,7 @@ div
                 padding: 0 7px
                 align-items: center
                 font-size: 15px
-                width: 100px
+                width: 80px
                 height: 20px
                 background-color: $label-color
                 border-radius: 40px
@@ -84,18 +81,24 @@ div
             -webkit-line-clamp: 2
             -webkit-box-orient: vertical
             font-size: 24px
+            color: #101010
             font-weight: bold
-            margin-bottom: 15px
-            max-height: 74px
+            line-height: 1.2
+            margin-bottom: 10px
             text-overflow: ellipsis
+            white-space: pre-wrap
             overflow: hidden
+            p
+                width: 100%
+                text-overflow: ellipsis
+                overflow: hidden
         .note-description
             display: -webkit-box
             -webkit-line-clamp: 4
             -webkit-box-orient: vertical
             font-size: 18px
             font-weight: 300
-            margin-bottom: 15px
+            margin-bottom: 10px
             max-height: 150px
             text-overflow: ellipsis
             text-align: justify
@@ -103,10 +106,7 @@ div
         .note-image
             border-radius: 10px
             justify-content: center
-            margin-bottom: 15px
-            -moz-user-select: none
-            -webkit-user-select: none
-            -ms-user-select: none
+            margin-bottom: 10px
             user-select: none
             max-height: 220px
             .note-image-image
@@ -114,26 +114,26 @@ div
         .note-docs
             align-items: center
             justify-content: space-between
-            margin-bottom: 15px
-            svg
+            margin-bottom: 10px
+            .note-docs-icon
                 width: 26px
                 height: 28px
+                svg
+                    width: 100%
+                    height: 100%
             .note-docs-field
                 width: calc(100% - 36px)
-                height: 28px
-                padding: 0 5px
-                align-items: center
+                padding: 4.5px 5px
                 background-color: white
+                font-size: 16px
                 border-radius: 5px
                 .docs-name
                     font-weight: 400
-                    font-size: 16px
                     overflow: hidden
                     white-space: nowrap
                     text-overflow: ellipsis
-                    -o-text-overflow: ellipsis
         .note-author
-            font-size: 18px
+            font-size: 14px
             font-weight: 500
             margin-bottom: 5px
             color: #303030
@@ -141,16 +141,25 @@ div
             color: #C4C4C4
             align-items: center
             justify-content: space-between
-            margin-bottom: 15px
+            margin-bottom: 10px
             .note-date
-                font-size: 16px
+                font-size: 17px
             .note-help-icons
-                svg
-                    margin: 0 0 0 15px
-                    fill:#C4C4C4
-                    transition: .2s ease-in-out
-                    &:hover
-                        fill: #888888
+                .note-help-all
+                    margin-left: 15px
+                    svg
+                        transition: .2s ease-in-out
+                        height: 100%
+                        width: 100%
+                        fill:#C4C4C4
+                        &:hover
+                            fill: #888888
+                .note-help-pin
+                    width: 10px
+                    height: 20px
+                .note-help-lock
+                    width: 17px
+                    height: 20px
 
 @media only screen and (min-width: 1200px)
 
@@ -162,20 +171,18 @@ div
                 .note-label
                     font-size: 14px
             .note-title
-                margin-bottom: 12px
                 font-size: 22px
             .note-description
                 -webkit-line-clamp: 3
-                margin-bottom: 12px
                 font-size: 17px
-            .note-author
-                font-size: 17px
-            .note-image
-                margin-bottom: 12px
             .note-info
-                margin-bottom: 12px
                 .note-date
                     font-size: 15px
+                .note-help-icons
+                    .note-help-pin
+                        height: 18px
+                    .note-help-lock
+                        height: 18px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
     .main-note
@@ -187,20 +194,23 @@ div
                 .note-options
                     height: 19px
             .note-title
-                margin-bottom: 12px
                 font-size: 20px
             .note-description
                 -webkit-line-clamp: 3
-                margin-bottom: 12px
                 font-size: 16px
-            .note-author
-                font-size: 16px
-            .note-image
-                margin-bottom: 12px
+            .note-docs
+                .note-docs-icon
+                    height: 27px
+                .note-docs-field
+                    padding: 4px 5px
             .note-info
-                margin-bottom: 12px
                 .note-date
                     font-size: 14px
+                .note-help-icons
+                    .note-help-pin
+                        height: 17px
+                    .note-help-lock
+                        height: 17px
     
 @media (min-width: 480px) and (max-width: 767px) //large phone
     .main-note
@@ -212,33 +222,36 @@ div
                 .note-options
                     height: 18px
             .note-title
-                margin-bottom: 10px
                 font-size: 18px
             .note-description
                 -webkit-line-clamp: 3
-                margin-bottom: 10px
                 font-size: 15px
-            .note-author
-                font-size: 15px
-            .note-image
-                margin-bottom: 10px
+            .note-docs
+                .note-docs-icon
+                    height: 26px
+                .note-docs-field
+                    padding: 4px 5px
+                    font-size: 15px
             .note-info
-                margin-bottom: 10px
                 .note-date
                     font-size: 14px
+                .note-help-icons
+                    .note-help-pin
+                        height: 17px
+                    .note-help-lock
+                        height: 17px
 
 @media (min-width: 320px) and (max-width: 479px) //phone
     .main-note
-        width: 300px
+        width: 275px
         border-radius: 15px
-        padding: 0 10px 0 0
         .highlighting-note
-            width: 30px
+            width: 25px
             border-radius: 15px 0 0 15px
         .note-container
-            width: 260px
+            width: 230px
             .note-header
-                margin-bottom: 8px
+                margin-bottom: 10px
                 .note-label
                     font-size: 12px
                     width: 75px
@@ -261,30 +274,46 @@ div
                 -webkit-line-clamp: 3
                 margin-bottom: 8px
                 font-size: 15px
-            .note-author
-                font-size: 14px
+            .note-docs
+                margin-bottom: 8px
+                .note-docs-icon
+                    height: 26px !important
+                .note-docs-field
+                    padding: 4px 5px
+                    font-size: 15px
+            .note-docs
+                .note-docs-icon
+                    height: 27px
+                .note-docs-field
+                    padding: 4px 5px
+                    font-size: 15px
             .note-image
                 margin-bottom: 8px
             .note-info
                 margin-bottom: 8px
                 .note-date
                     font-size: 13px
-    #size-image-highlighting
-        width: 15px
+                .note-help-icons
+                    .note-help-all
+                        margin-left: 10px
+                    .note-help-pin
+                        height: 15px
+                    .note-help-lock
+                        height: 15px
 
 @media (min-width: 150px) and (max-width: 319px) //min width
     .main-note
-        width: 270px
+        width: 255px
         border-radius: 15px
         .highlighting-note
-            width: 30px
+            width: 25px
             border-radius: 15px 0 0 15px
         .note-container
-            width: 220px
+            width: 210px
             .note-header
-                margin-bottom: 8px
+                margin-bottom: 10px
                 .note-label
-                    font-size: 11px
+                    font-size: 12px
                     width: 60px
                     .tooltiptext
                         max-width: 152px
@@ -304,7 +333,14 @@ div
             .note-description
                 -webkit-line-clamp: 3
                 margin-bottom: 8px
-                font-size: 13px
+                font-size: 14px
+            .note-docs
+                margin-bottom: 8px
+                .note-docs-icon
+                    height: 25px
+                .note-docs-field
+                    padding: 4px 5px
+                    font-size: 14px
             .note-author
                 font-size: 12px
             .note-image
@@ -312,6 +348,11 @@ div
             .note-info
                 margin-bottom: 8px
                 .note-date
-                    font-size: 11px
-    #size-image-highlighting
-        width: 15px
+                    font-size: 12px
+                .note-help-icons
+                    .note-help-all
+                        margin-left: 8px
+                    .note-help-pin
+                        height: 14px
+                    .note-help-lock
+                        height: 14px

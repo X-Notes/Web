@@ -45,7 +45,7 @@ export class MainComponent implements OnInit, OnDestroy {
   user: User;
 
   activeSidebar = true;
-  loading:boolean;
+  loading: boolean;
   activeProfileMenu = false;
   activeNotificationMenu = false;
   activeInvitesMenu = false;
