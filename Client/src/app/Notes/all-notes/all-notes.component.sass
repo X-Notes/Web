@@ -3,89 +3,156 @@ div
       
 .help-menu
     position: absolute
-    z-index: 100
+    z-index: 98
     top: 0
     left: 50%
     transform: translate(-50%, 0)
-
-.wrapper-items
-    margin-top: 20px
-    width: 1000px
-    flex-wrap: wrap
-    justify-content: flex-start
-    transition: .2s ease
-    .note
-        transition: .2s ease
-        margin: 20px 20px 20px 0
-        &:nth-child(3n)
-            margin-right: 0px
-
-.wrapper-more
-    width: 1340px !important
-    .note
-        &:nth-child(3n)
-            margin-right: 20px
-        &:nth-child(4n)
-            margin-right: 0px
-
-@media only screen and (min-width: 1200px) and  (max-width: 1520px)
+    
+.wrapper-main
+    width: 100%
+    justify-content: center
+    height: calc(100% - 50px)
+    overflow: overlay
+    .margin-add
+        margin-top: 65px !important
     .wrapper-items
-        width: 660px
+        margin-top: 20px
+        width: 1000px
+        flex-wrap: wrap
+        justify-content: flex-start
+        transition: .2s ease
+        .note
+            transition: .2s ease
+            margin: 20px 20px 20px 0
+            &:nth-child(3n)
+                margin-right: 0px
+    .wrapper-more
+        width: 1340px !important
         .note
             &:nth-child(3n)
                 margin-right: 20px
-            &:nth-child(2n)
+            &:nth-child(4n)
                 margin-right: 0px
 
-    .wrapper-more
-        width: 1000px !important
-        .note
-            &:nth-child(2n)
-                margin-right: 20px !important
-            &:nth-child(3n)
-                margin-right: 0px !important
+@media only screen and (min-width: 1200px) and  (max-width: 1750px)
+    .help-menu
+        left: 200px
+        transform: translate( 0, 0)
 
-@media (min-width: 992px) and  (max-width: 1199px) //laptop
-    .wrapper-items
-        width: 660px
-        .note
-            &:nth-child(3n)
-                margin-right: 20px
-            &:nth-child(2n)
-                margin-right: 0px !important
-    .wrapper-more
-        width: 660px !important
-        .note
-            &:nth-child(3n)
-                margin-right: 20px !important
-            &:nth-child(2n)
-                margin-right: 0px !important
+@media only screen and (min-width: 1200px) and  (max-width: 1520px)
+    .wrapper-main
+        .wrapper-items
+            width: 660px
+            .note
+                &:nth-child(3n)
+                    margin-right: 20px
+                &:nth-child(2n)
+                    margin-right: 0px
+        .wrapper-more
+            width: 1000px !important
+            .note
+                &:nth-child(2n)
+                    margin-right: 20px !important
+                &:nth-child(3n)
+                    margin-right: 0px !important
+        .help-menu
+            left: 90px
+            transform: translate( 0, 0)
+
+@media (min-width: 768px) and  (max-width: 1199px) //laptop
+    .wrapper-main
+        height: calc(100% - 45px)
+        position: relative
+        .wrapper-items
+            width: 660px
+            .note
+                &:nth-child(3n)
+                    margin-right: 20px
+                &:nth-child(2n)
+                    margin-right: 0px !important
+        .wrapper-more
+            width: 660px !important
+            .note
+                &:nth-child(3n)
+                    margin-right: 20px !important
+                &:nth-child(2n)
+                    margin-right: 0px !important
+        .help-menu
+            position: fixed
+            border-top: 1px solid white
+            margin-left: 1px
+            width: calc( 100% - 201px )
+            overflow: auto
+            top: 45px
+            left: 200px
+            transform: translate( 0, 0)
+            .menu
+                width: 100%
+        .help-laptop
+            width: calc( 100% - 1px )
+            left: 0
+            margin-left: 0px
 
 @media only screen and (min-width: 768px) and (max-width: 991px) //tablet
-    .wrapper-items
-        width: 320px
-        .note
-            margin-right: 0px
-    .wrapper-more
-        width: 660px !important
-        .note
-            margin-right: 20px !important
-            &:nth-child(2n)
-                margin-right: 0px !important
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 320px
+            .note
+                margin-right: 0px
+        .wrapper-more
+            width: 660px !important
+            .note
+                margin-right: 20px !important
+                &:nth-child(2n)
+                    margin-right: 0px !important
 
 @media (min-width: 480px) and (max-width: 767px) //large phone
-    .wrapper-items
-        width: 320px
-        .note
-            margin-right: 0px
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 320px
+            .note
+                margin-right: 0px
+        .help-menu
+            position: fixed
+            top: 45px
+            overflow: auto
+            border-top: 1px solid white
+            margin-left: 0px
+            width: 100%
+            left: 0
+            transform: translate( 0, 0)
+            .menu
+                width: 100%
 
-@media (min-width: 320px) and (max-width: 479px) //phone
-    .wrapper-items
-        width: 275px
-        .note
-            margin-right: 0px
+@media (min-width: 150px) and (max-width: 479px) //phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 275px
+            .note
+                margin-right: 0px
+        .help-menu
+            position: fixed
+            margin-left: 0px
+            border-top: 1px solid white
+            width: 100%
+            overflow-y: auto
+            top: 45px
+            left: 0
+            transform: translate( 0, 0)
+            .menu
+                width: auto
+        ::-webkit-scrollbar
+                display: none
+
 @media (min-width: 150px) and (max-width: 319px) //min width
-    .wrapper-items
-        width: 255px
-        .note
-            margin-right: 0px
+    .wrapper-main
+        height: calc(100% - 45px)
+        .margin-add
+            margin-top: 55px !important
+        .wrapper-items
+            width: 255px
+            .note
+                margin-right: 0px

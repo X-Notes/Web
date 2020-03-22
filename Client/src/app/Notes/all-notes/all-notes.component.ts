@@ -1,4 +1,4 @@
-import { OnDestroy } from '@angular/core';
+import { OnDestroy, DoCheck } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
@@ -50,11 +50,37 @@ export class AllNotesComponent implements OnInit, OnDestroy {
       this.update = true;
     } else {
       this.update = false;
+      this.AddMarginItems();
     }
   }
   AddChanged(id: string) {
     this.updateMenu.push(id);
     this.update = true;
+    this.AddMarginItems();
+    this.CheckSideBar();
+  }
+
+  CheckSideBar() {
+    const body = document.getElementsByTagName('body')[0].clientWidth;
+    const item = document.getElementsByClassName('wrapper-main')[0].clientWidth;
+    const helpMenu = document.getElementsByClassName('help-menu')[0];
+    if ( body === item ) {
+      helpMenu.classList.add('help-laptop');
+    } else {
+      helpMenu.classList.remove('help-laptop');
+    }
+  }
+
+  AddMarginItems() {
+    const body = document.getElementsByTagName('body')[0].clientWidth;
+    const margin = document.getElementsByClassName('wrapper-items')[0];
+    if ( body < 1199) {
+      if ( this.update === true) {
+        margin.classList.add('margin-add');
+      } else {
+        margin.classList.remove('margin-add');
+      }
+    }
   }
 
   ngOnInit() {
@@ -66,7 +92,6 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   OpenNoot(id: string) {
     this.router.navigate(['/notes', id]);
   }
-
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.unsubscribe();

@@ -20,31 +20,66 @@ svg
         cursor: pointer
         &:hover
             background-color: #262626
+        .menu-icon-height
+            height: 25px
         .menu-icon-label
             width: 17px
-            height: 25px
         .menu-icon-pin
             width: 13px
-            height: 25px
         .menu-icon-color
             width: 26px
-            height: 25px
         .menu-icon-copy
             width: 20px
-            height: 25px
         .menu-icon-shared
             width: 25px
-            height: 25px
         .menu-icon-export
             width: 25px
-            height: 25px
         .menu-icon-lock
             width: 21px
-            height: 25px
         .menu-icon-bin
             width: 20px
-            height: 25px
         .menu-icon-cancel
             width: 25px
-            height: 25px
             
+@media only screen and (min-width: 1200px) and  (max-width: 1520px)
+    .menu-wrapper
+        .menu-icon
+            width: 65px
+            .menu-icon-height
+                height: 22px
+
+@media (min-width: 480px) and  (max-width: 1199px) //laptop
+    .menu-wrapper
+        justify-content: center
+        height: 45px
+        .menu-icon
+            width: calc(100% / 9)
+            .menu-icon-height
+                height: 22px
+
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+    .menu-wrapper
+        .menu-icon
+            .menu-icon-height
+                height: 20px
+
+@media (min-width: 480px) and (max-width: 767px) //large phone
+    .menu-wrapper
+        .menu-icon
+            .menu-icon-height
+                height: 18px
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+    .menu-wrapper
+        .menu-icon
+            width: 65px
+            .menu-icon-height
+                height: 18px
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .menu-wrapper
+        height: 40px
+        .menu-icon
+            width: 65px
+            .menu-icon-height
+                height: 18px
