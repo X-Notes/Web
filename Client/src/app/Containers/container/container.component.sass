@@ -2,21 +2,22 @@ div
     display: flex
     
 .wrapper-folder
-    position: relative
-    height: 150px !important
-    width: 280px
+    position: relative 
+    height: 160px 
+    width: 295px
+    align-items: flex-end
     .outer-folder
         position: absolute
-        height: 100%
-        width: 100%
+        height: 150px
+        width: 280px
         background-color: #CDFFD8
         border-radius: 20px
         bottom: 10px 
         left: 15px
     .folder
         position: relative
-        height: 100%
-        width: 100%
+        height: 150px
+        width: 280px
         border-radius: 25px
         background-color: #EBFFEC
         z-index: 10
@@ -70,3 +71,57 @@ div
                             overflow: hidden
                             text-overflow: ellipsis
                             white-space: nowrap
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+    .wrapper-folder
+        width: 275px
+        height: 150px 
+        .outer-folder
+            width: 260px
+            height: 140px
+        .folder
+            width: 260px
+            height: 140px
+            .highlights
+                width: 25px
+            .folder-inner
+                width: 235px
+                input
+                    height: 19px
+                    font-size: 18px
+                .fields
+                    height: calc( 100% - 39px )
+                    .field
+                        .field-icon
+                            width: 15px
+                            height: 15px
+                        .field-information
+                            font-size: 15px
+
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .wrapper-folder
+        width: 255px
+        height: 140px 
+        .outer-folder
+            width: 240px
+            height: 130px
+        .folder
+            width: 240px
+            height: 130px
+            .highlights
+                width: 20px
+            .folder-inner
+                width: 220px
+                input
+                    height: 19px
+                    font-size: 18px
+                    margin-bottom: 5px
+                .fields
+                    height: calc( 100% - 34px )
+                    .field
+                        .field-icon
+                            width: 15px
+                            height: 15px
+                        .field-information
+                            font-size: 15px
