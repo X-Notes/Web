@@ -1,24 +1,27 @@
-.container   
+.wrapper-main   
     width: 100%
     height: calc(100% - 50px)
-    overflow: auto
     display: flex
     padding: 20px 0
     justify-content: center
     background-position: center center
     background-repeat: no-repeat
     background-size: cover
+    ::-webkit-scrollbar
+        display: none
     .profile
         background-color: #fff
         border-radius: 5px
         width: 850px
         padding: 20px
+        overflow-y: auto
         p
             font-weight: 500
             color: #383838
             padding: 5px 0
             border-radius: 2px
         .information
+            width: 100%
             margin-top: 10px
             margin-bottom: 15px
             display: flex
@@ -165,18 +168,16 @@
                             width: 100%
                             height: 100%
                 img                  
-                    width: 120px
-                    height: 120px    
+                    width: 100%
+                    height: 100% 
                     object-fit: cover
                     border-radius: 5px
                     transition: .2s ease-in-out
-        .plus-hover
-            .plus
-                width: 780px !important
         .new
             padding: 10px
             border-radius: 5px
             display: flex
+            width: 100%
             justify-content: center
             transition: .2s ease-in-out
             .plus
@@ -215,3 +216,149 @@
                     left: 0px
                     width: 120px
                     height: 120px
+
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 750px
+
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 550px
+
+@media (min-width: 480px) and (max-width: 767px) //large phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 450px
+            .backgrounds
+                margin-bottom: 10px
+                .default
+                    margin-right: 0px !important
+                .background
+                    margin: 0 15px 5px 0px
+                    &:nth-child(3n)
+                        margin: 0 0px 5px 0px
+                    .close
+                        height: 23px
+                        width: 23px
+                        opacity: 1
+                        .icon-close
+                            width: 11px
+                            height: 11px
+
+@media (min-width: 150px) and (max-width: 479px) //phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 300px
+            padding: 10px 20px
+            p
+                font-size: 14px
+            .information
+                margin-bottom: 10px
+                .photo
+                    width: 100px
+                    height: 100px
+                    .upload
+                        height: 100px
+                        width: 100px
+                    .tooltip
+                        width: 100px
+                .name
+                    padding-top: 20px
+                    .content
+                        width: 250px
+                        input[type=text]
+                            width: 200px
+                            font-size: 18px
+                            height: 25px
+                            margin: 0 25px
+                        .pen
+                            width: 25px
+                            height: 25px
+                            svg
+                                width: 18px
+                                height: 18px
+                .email
+                    font-size: 16px
+                    padding: 20px 0
+            .backgrounds
+                margin-top: 10px
+                margin-bottom: 5px
+                .default
+                    width: 80px
+                    height: 80px !important
+                    font-size: 14px
+                    margin-right: 0px !important
+                    span
+                        width: 50px
+                .background
+                    width: 80px
+                    height: 80px
+                    margin: 0 10px 5px 0px
+                    &:nth-child(3n)
+                        margin: 0 0px 5px 0px
+                    .close
+                        height: 23px
+                        width: 23px
+                        opacity: 1
+                        .icon-close
+                            width: 11px
+                            height: 11px
+            .new
+                padding: 5px
+                .plus
+                    width: 80px
+                    height: 80px
+                    .icon-plus
+                        height: 40px
+                        width: 40px
+                    .uploadBackground
+                        width: 80px
+                        height: 80px
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 270px
+            padding: 10px 20px
+            .information
+                margin-bottom: 10px
+                .photo
+                    width: 80px
+                    height: 80px
+                    .upload
+                        height: 80px
+                        width: 80px
+                    .tooltip
+                        width: 80px
+                        height: 25px
+                        .image-upload-icon
+                            height: 15px
+                .name
+                    .content
+                        width: 244px
+                        input[type=text]
+                            font-size: 16px
+                            height: 22px
+                            margin: 0 22px
+                        .pen
+                            width: 22px
+                            height: 22px
+                            svg
+                                width: 15px
+                                height: 15px
+                .email
+                    font-size: 14px
+            .backgrounds
+                .background
+                     margin: 0 15px 5px 0px
+                     &:nth-child(3n)
+                        margin: 0 15px 5px 0px
+                     &:nth-child(2n)
+                        margin: 0 0px 5px 0px
