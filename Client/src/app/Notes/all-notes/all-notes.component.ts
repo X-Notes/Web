@@ -57,18 +57,6 @@ export class AllNotesComponent implements OnInit, OnDestroy {
     this.updateMenu.push(id);
     this.update = true;
     this.AddMarginItems();
-    this.CheckSideBar();
-  }
-
-  CheckSideBar() {
-    const body = document.getElementsByTagName('body')[0].clientWidth;
-    const item = document.getElementsByClassName('wrapper-main')[0].clientWidth;
-    const helpMenu = document.getElementsByClassName('help-menu')[0];
-    if ( body === item ) {
-      helpMenu.classList.add('help-laptop');
-    } else {
-      helpMenu.classList.remove('help-laptop');
-    }
   }
 
   AddMarginItems() {

@@ -89,12 +89,22 @@ export class MainComponent implements OnInit, OnDestroy {
     );
   }
 
+  CheckSideBar( item: number, flag: boolean) {
+    const helpMenu = document.getElementsByClassName('help-menu')[0];
+    if ( item >= 768  && item <= 1199 && flag === false) {
+      helpMenu.classList.add('help-laptop');
+    } else {
+      helpMenu.classList.remove('help-laptop');
+    }
+  }
+
   openSidebar() {
     this.activeSidebar = !this.activeSidebar;
     const thx = document.getElementsByClassName('wrapper')[0];
     const notes = document.getElementsByClassName('wrapper-items')[0];
     const body = document.getElementsByTagName('body')[0].clientWidth;
     if (this.activeSidebar === false) {
+      this.CheckSideBar(body, this.activeSidebar);
       thx.getElementsByTagName('main')[0].style.marginLeft = '0px';
       if ( body > 767) {
         notes.classList.add('wrapper-more');
@@ -102,6 +112,7 @@ export class MainComponent implements OnInit, OnDestroy {
         notes.classList.remove('wrapper-more');
       }
     } else {
+      this.CheckSideBar(body, this.activeSidebar);
       thx.getElementsByTagName('main')[0].style.marginLeft = '200px';
       notes.classList.remove('wrapper-more');
     }
