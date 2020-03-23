@@ -1,8 +1,10 @@
 <div class="container">
     <div class="background">
-        <div class="buttons">
-            <img src="assets/buttons-buttons/scope.svg">
-            <img src="assets/buttons-buttons/youtube.svg" (click)="youTubeMenu()">
+        <div class='buttons-container'>
+            <div class="buttons">
+                <img src="assets/buttons-buttons/scope.svg">
+                <img src="assets/buttons-buttons/youtube.svg" (click)="youTubeMenu()">
+            </div>
         </div>
         <div class="note">
             <div *ngIf="youtube" class="youtube">
@@ -22,20 +24,26 @@
                 <div class="title">
                     <div class="stick"></div>
                     <div class="group">
-                        <div class="input-text" contenteditable="true" (input)="changeTitle($event.target.innerText)">{{note?.title}}</div>
+                        <div class="input-text" id="title" contenteditable="true"
+                            (input)="changeTitle($event.target.innerText)">{{
+                            note?.Title
+                        }}</div>
                         <div class="placeholder">
                             Note Title
                         </div>
                     </div>
                 </div>
                 <div class="content-note">
-                    <app-content-menu class="content-menu"></app-content-menu>
-                    <div class="group-new">
-                        <div class="input-text-new" contenteditable="true"></div>
-                        <div class="placeholder-new">
-                            Description note
+                    <div class="description" [innerHTML]="note?.InnerHTML" contenteditable="true"
+                        (input)="onInput($event)" (keydown.backspace)="back($event)" (keydown.enter)="enter($event)"
+                        (mouseup)="show($event)" #editor>
+                        <div class="part">
+                            <br />
                         </div>
                     </div>
+                    <app-content-menu *ngIf="viewMenu" [ngStyle]="{top: (cursorPosition - 4) + 'px',left: 250 + 'px'}"
+                        class="content-menu" (numberList)="numberList()" (dotList)="dotList()" (hOne)="hOne()"
+                        (hTwo)="hTwo()" (hThree)="hThree()"></app-content-menu>
                 </div>
             </div>
         </div>

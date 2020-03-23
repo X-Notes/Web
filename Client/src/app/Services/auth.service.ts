@@ -24,11 +24,15 @@ export class AuthService {
     private userService: UserService,
     private photoService: PhotoService
   ) {
-    this.afAuth.idToken.subscribe(token => {
+    this.afAuth.idToken
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(token => {
       this.token = token;
       localStorage.setItem('idKey', this.token);
     });
-    this.afAuth.authState.subscribe(user => {
+    this.afAuth.authState
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(user => {
       if (user) {
         this.userData = user;
         const dbuser: User = {
@@ -56,36 +60,8 @@ export class AuthService {
       .then(result => {
         this.ngZone.run(() => {
           if (result.user) {
-            this.userData = result.user;
-            const user: User = {
-              name: this.userData.displayName,
-              email: this.userData.email,
-              photoId: this.userData.photoURL,
-              backgroundId: ''
-            };
-            this.photoService.GetPhoto(user.photoId).then(base64 => {
-              user.photoId = base64 as string;
-              this.userService
-                .Get()
-                .pipe(takeUntil(this.unsubscribe))
-                .subscribe(
-                  x => {
-                    if (!isUndefined(x) && !isNull(x)) {
-                      this.router.navigate(['/notes/all']);
-                    } else {
-                      this.userService
-                        .CreateUser(user)
-                        .pipe(takeUntil(this.unsubscribe))
-                        .subscribe(newuser => {
-                          if (!isUndefined(newuser) && !isNull(newuser)) {
-                            this.router.navigate(['/notes/all']);
-                          }
-                        });
-                    }
-                  },
-                  error => console.log(error)
-                );
-            });
+            localStorage.setItem('idKey', (result.credential as any).idToken);
+            setTimeout(() => this.getUser(result), 200);
           }
         });
       })
@@ -93,7 +69,37 @@ export class AuthService {
         window.alert(error);
       });
   }
-
+  getUser(result) {
+    this.userService.Get()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
+      x => {
+        if (x !== undefined && x !== null) {
+          this.router.navigate(['/notes']);
+        } else {
+          this.userData = result.user;
+          const user: User = {
+            name: this.userData.displayName,
+            email: this.userData.email,
+            photoId: this.userData.photoURL,
+            backgroundId: ''
+          };
+          this.photoService.GetPhoto(user.photoId).then(base64 => {
+            user.photoId = base64 as string;
+            this.userService
+            .CreateUser(user)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(newuser => {
+              if (newuser !== undefined && (newuser !== null)) {
+                this.router.navigate(['/notes']);
+              }
+            });
+          });
+        }
+      },
+      error => console.log(error)
+    );
+  }
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
@@ -104,6 +110,6 @@ export class AuthService {
 
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user'));
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null) ? true : false;
   }
 }

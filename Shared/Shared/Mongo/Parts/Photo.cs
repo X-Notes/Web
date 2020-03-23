@@ -6,6 +6,6 @@ namespace Shared.Mongo.Parts
 {
     public class Photo : Part
     {
-        public string Path { set; get; }
+        public string PhotoId { set; get; }
     }
 }

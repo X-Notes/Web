@@ -55,7 +55,6 @@ export class MainComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService,
     private userService: UserService,
     private notesService: NotesService,
   ) {}
@@ -81,9 +80,11 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   New() {
-    this.notesService.newNote().subscribe(
+    this.notesService.newNote()
+    .pipe(takeUntil(this.unsubscribe))
+    .subscribe(
       x => {
-        this.router.navigate(['/notes', x]);
+        this.router.navigate(['/notes/note', x]);
       },
       error => console.log('error')
     );

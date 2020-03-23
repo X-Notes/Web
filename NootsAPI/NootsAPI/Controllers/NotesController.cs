@@ -11,7 +11,7 @@ using Shared.DTO.Note;
 
 namespace NootsAPI.Controllers
 {
-    [Authorize]
+  
     [Route("api/[controller]")]
     [ApiController]
     public class NotesController : ControllerBase
@@ -42,7 +42,7 @@ namespace NootsAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<DTOFullNote> GetById(string id)
+        public async Task<string> GetById(string id)
         {
             return await noteService.GetById(id);
         }

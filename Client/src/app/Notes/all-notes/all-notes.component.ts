@@ -78,7 +78,7 @@ export class AllNotesComponent implements OnInit, OnDestroy {
   }
 
   OpenNoot(id: string) {
-    this.router.navigate(['/notes', id]);
+    this.router.navigate(['/notes/note', id]);
   }
   ngOnDestroy() {
     this.unsubscribe.next();

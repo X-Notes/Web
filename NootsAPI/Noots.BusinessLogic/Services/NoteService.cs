@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 using Noots.DataAccess.Repositories;
 using Shared.DTO.Note;
 using Shared.Mongo;
+using Shared.Mongo.Parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +25,8 @@ namespace Noots.BusinessLogic.Services
 
         public async Task<string> NewNote(string Email)
         {
-            var newNote = await noteRepository.New(new Note() { Email = Email }) ;
+            var newNote = new Note() { Email = Email, Labels = new List<ObjectId>() };
+            newNote = await noteRepository.New(newNote);
             return newNote.Id.ToString();
         }
         public async Task<List<DTONote>> GetAll(string email)
@@ -36,13 +39,15 @@ namespace Noots.BusinessLogic.Services
         {
             await noteRepository.UpdateTitle(updateTitle);
         }
-        public async Task<DTOFullNote> GetById(string id)
+        public async Task<string> GetById(string id)
         {
             if (ObjectId.TryParse(id, out var Id))
             {
                 var dbnote = await noteRepository.GetById(Id);
                 var note = mapper.Map<DTOFullNote>(dbnote);
-                return note;
+                JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                return JsonConvert.SerializeObject(note, settings);
+                // return note;
             }
             return null;
         }

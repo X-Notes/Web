@@ -6,6 +6,6 @@ namespace Shared.Mongo.Parts
 {
     public class CommonList : Part
     {
-        public List<string> List { set; get; }
+        public string Description { set; get; }
     }
 }

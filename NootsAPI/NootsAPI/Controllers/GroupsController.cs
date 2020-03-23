@@ -13,5 +13,6 @@ namespace NootsAPI.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
+        
     }
 }

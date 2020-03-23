@@ -14,12 +14,13 @@ import { ContainersComponent } from './Containers/containers/containers.componen
 import { ProfileComponent } from './profile/profile.component';
 import { NoteComponent } from './Notes/note/note.component';
 import { FullNoteComponent } from './Notes/full-note/full-note.component';
+import { DeAuthGuard } from './Guards/de-auth.guard';
 
 const ChildNotesRoutes: Routes = [
   { path: '', component: AllNotesComponent},
   { path: 'shared', component: SharedNotesComponent},
   { path: 'locked', component: LockedNotesComponent},
-  { path: ':id', component: FullNoteComponent},
+  { path: 'note/:id', component: FullNoteComponent},
   { path: '**', redirectTo: ''}
 ];
 
@@ -31,12 +32,13 @@ const RoutesMain: Routes =
   {path: 'labels', component: LabelsComponent, canActivate: [AuthGuard]},
   {path: 'bin', component: TrashComponent, canActivate: [AuthGuard]},
   {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: '**', redirectTo: 'notes'}
 ];
 
 const routes: Routes = [
 
-  {path: 'about', component: LandingComponent},
-  {path: '', component: MainComponent, children: RoutesMain, canActivate: [AuthGuard]  },
+  { path: 'about', component: LandingComponent,  canActivate: [DeAuthGuard]},
+  { path: '', component: MainComponent, children: RoutesMain, canActivate: [AuthGuard]  },
   { path: '**', redirectTo: '/about'}
 ];
 

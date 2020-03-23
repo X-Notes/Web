@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.user = user;
       this.loading = false;
       this.newName = this.user.name;
-      if (!isNull(this.user.currentBackgroundId)) {
+      if (this.user.currentBackgroundId !== null) {
       this.changeBackGround(this.user.currentBackgroundId.backgroundId);
       }
      }, error => {
