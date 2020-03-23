@@ -75,21 +75,25 @@ div
                     font-weight: bold
                     color: #303030
             .user-options
-                margin-right: 15px
-                -moz-user-select: none
-                -webkit-user-select: none
-                -ms-user-select: none
+                align-items: center
                 user-select: none
-                .image-options
+                .buttons
+                    height: 40px
+                    width: 40px
+                    justify-content: center
+                    align-items: center
                     cursor: pointer
-                    -moz-transition: all 0.25s linear
-                    -webkit-transition: all 0.25s linear
-                    transition: all 0.25s linear
+                    .button-delete
+                        height: 10px
+                        width: 10px
+                        transition: all 0.25s linear
+                        svg
+                            height: 100%
+                            width: 100%
                 .user-info-line
                     height: 20px
                     border-width: 0 1px 0 0
                     border-style: solid
-                    margin-right: 15px
                     color: #C6C6C6
                     cursor: default
 

@@ -1,82 +1,94 @@
-.container   
+.wrapper-main   
     width: 100%
-    height: calc(100% - 60px)
-    overflow: auto
+    height: calc(100% - 50px)
     display: flex
+    padding: 20px 0
     justify-content: center
-    padding-top: 20px
     background-position: center center
     background-repeat: no-repeat
     background-size: cover
+    ::-webkit-scrollbar
+        display: none
     .profile
+        background-color: #fff
+        border-radius: 5px
         width: 850px
         padding: 20px
+        overflow-y: auto
         p
             font-weight: 500
             color: #383838
-            padding: 5px
-            background: white
-            width: 130px
+            padding: 5px 0
             border-radius: 2px
         .information
+            width: 100%
             margin-top: 10px
             margin-bottom: 15px
             display: flex
             align-items: center
             flex-direction: column
             .photo
+                box-sizing: content-box
                 width: 120px
                 height: 120px
                 background: grey
+                position: relative
+                z-index: 15
                 border-radius: 50%
-                border: 2px solid white
-                img
-                    border-radius: 50% 
-                    object-fit: cover
-                    height: 100%
-                    width: 100%
-
+                overflow: hidden
+                transition: .2s ease-in-out
+                border: 2px solid #dddddd
                 &:hover
-                    .hover
-                        display: flex
-                .hover
+                    border-color: #389bff
+                    .tooltip
+                        opacity: 1
+                        background: rgba(255,255,255,0.8)
+                .upload
+                    cursor: pointer
+                    position: absolute
+                    z-index: 10
+                    top: 0
+                    left: 0
+                    height: 120px
+                    width: 120px
+                    opacity: 0
+                    border-radius: 50%
+                #upl
                     display: none
-                    height: 40px
-                    width: 40px
-                    bottom: 44px
-                    z-index: 0
-                    opacity: 30%
-                    position: relative
-                    background: white
+                img
+                    width: 100%
+                .tooltip
+                    opacity: 0
+                    display: flex
+                    height: 35px
+                    width: 120px
+                    bottom: 0px
+                    left: 0px
+                    position: absolute
+                    background: rgba(255,255,255,0.5)
                     justify-content: center
                     align-items: center
-                    left: 33%
-                    border-radius: 2px 2px 15px 15px
-                    img
-                        border-radius: 0% 
-                        position: absolute
-                        z-index: 2
-                        height: 20px
-                        width: 22.66px
-
-                    #upload                    
-                        z-index: 3
-                        opacity: 0
-                        position: absolute
-                        width: 22.66px
-                        height: 20px
+                    transition: .2s ease-in-out
+                    .image-upload-icon
+                        width: 20px
+                        height: 18px
+                        svg
+                            width: 100%
+                            height: 100%
             .name
-                margin-top: 30px
+                padding-top: 30px
                 width: 100%
                 display: flex
                 justify-content: center
                 .content
                     display: flex
-                    align-items: stretch
+                    position: relative
+                    width: 350px
                     .pen
+                        position: absolute
+                        right: 0px
                         height: 30px 
                         width: 30px
-                        background: white
                         display: flex
                         justify-content: center
                         align-items: center
@@ -84,18 +96,16 @@
                         text-align: center
                         border: 0
                         border-radius: 3px 0 0 3px 
-                        -webkit-border-radius: 3px 0 0 3px 
-                        -moz-border-radius: 3px 0 0 3px 
-                        -khtml-border-radius: 3px 0 0 3px 
                         background: #ffffff !important 
                         outline: none 
                         height: 30px 
-                        width: 380px 
+                        width: 350px 
                         color: #383838 
                         font-size: 22px 
                         font-weight: 600
-                        padding: 5px 3px 5px 7px
-
+                        margin: 0 30px
+                        &:focus
+                            border-bottom: 1px dashed #c5c5c5
                     .active-pen
                         cursor: pointer
                         fill:#389bff
@@ -103,15 +113,9 @@
                 width: 100%
                 display: flex
                 justify-content: center
-                padding: 25px
-                border-bottom: 2px solid #D6D6D6
-                span
-                    margin-right: 20px
-                    font-size: 18px
-                    padding: 5px
-                    background: white
-                    border-radius: 3px
-
+                padding: 30px
+                border-bottom: 1px solid #D6D6D6
+                font-size: 18px
 
         .backgrounds
             margin-top: 15px
@@ -123,55 +127,59 @@
             .default
                 background: white
                 height: 120px !important
-                margin-top: 20px !important
                 display: flex
                 justify-content: center
                 align-items: center
+                box-shadow: inset 0px 0px 4px rgba(0, 0, 0, 0.25)
+                cursor: pointer
+                transition: .2s ease-in-out
                 &:hover
-                    cursor: pointer
+                    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.25)
                 span
                     color: #CECECE
             .background
                 width: 120px
                 margin: 0 5px 5px 5px
-                height: 140px
+                height: 120px
                 border-radius: 5px
-
+                position: relative
+                cursor: pointer
                 &:hover
                     .close
                         opacity: 1
                 .close
+                    transition: .2s ease-in-out
                     opacity: 0
                     display: flex
                     height: 20px
                     width: 20px
                     background: #EFEFEF
-                    position: relative
-                    left: 100px
-                    top: 20px
+                    position: absolute
+                    top: 0px
+                    right: 0px
                     border-radius: 0 3px 0 7px
                     justify-content: center
                     align-items: center
-                    img
-                        border: none
-                        height: 13px
-                        width: 13px
-                        &:hover
-                            cursor: pointer
+                    .icon-close
+                        display: flex
+                        height: 10px
+                        width: 10px
+                        svg
+                            width: 100%
+                            height: 100%
                 img                  
-                    width: 120px
-                    height: 120px    
+                    width: 100%
+                    height: 100% 
                     object-fit: cover
-                    border-radius: 5px   
-
-                    &:hover
-                        cursor: pointer
-                              
+                    border-radius: 5px
+                    transition: .2s ease-in-out
         .new
-            margin-top: 15px
-            margin-bottom: 20px
+            padding: 10px
+            border-radius: 5px
             display: flex
+            width: 100%
             justify-content: center
+            transition: .2s ease-in-out
             .plus
                 height: 120px
                 width: 120px
@@ -181,20 +189,176 @@
                 justify-content: center
                 align-items: center
                 background: white
-                #uploadBackground
-                    height: 57px !important
-                    width: 58px !important
-                    z-index: 3
-                    opacity: 0
+                transition: .2s ease-in-out
+                position: relative
+                #upl2
+                    display: none
+                .icon-plus
+                    display: flex
                     position: absolute
-                    width: 22.66px
-                    height: 20px
-                    &:hover
-                        cursor: pointer
+                    top: 50%
+                    left: 50%
+                    transform: translate(-50%, -50%) rotate(0deg)
+                    height: 57px
+                    width: 57px
+                    transition: .2s ease-in-out
+                    svg
+                        width: 100%
+                        height: 100%
+                &:hover
+                    box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.25)
+                    .icon-plus
+                        transform: translate(-50%, -50%) rotate(90deg)
+                .uploadBackground
+                    cursor: pointer
+                    position: absolute
+                    top: 0px
+                    left: 0px
+                    width: 120px
+                    height: 120px
 
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 750px
 
+@media only screen and (min-width: 768px) and (max-width: 991px) //tablet
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 550px
 
-input[type=file]::-webkit-file-upload-button
-    cursor: pointer
+@media (min-width: 480px) and (max-width: 767px) //large phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 450px
+            .backgrounds
+                margin-bottom: 10px
+                .default
+                    margin-right: 0px !important
+                .background
+                    margin: 0 15px 5px 0px
+                    &:nth-child(3n)
+                        margin: 0 0px 5px 0px
+                    .close
+                        height: 23px
+                        width: 23px
+                        opacity: 1
+                        .icon-close
+                            width: 11px
+                            height: 11px
 
-            
+@media (min-width: 150px) and (max-width: 479px) //phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 300px
+            padding: 10px 20px
+            p
+                font-size: 14px
+            .information
+                margin-bottom: 10px
+                .photo
+                    width: 100px
+                    height: 100px
+                    .upload
+                        height: 100px
+                        width: 100px
+                    .tooltip
+                        width: 100px
+                .name
+                    padding-top: 20px
+                    .content
+                        width: 250px
+                        input[type=text]
+                            width: 200px
+                            font-size: 18px
+                            height: 25px
+                            margin: 0 25px
+                        .pen
+                            width: 25px
+                            height: 25px
+                            svg
+                                width: 18px
+                                height: 18px
+                .email
+                    font-size: 16px
+                    padding: 20px 0
+            .backgrounds
+                margin-top: 10px
+                margin-bottom: 5px
+                .default
+                    width: 80px
+                    height: 80px !important
+                    font-size: 14px
+                    margin-right: 0px !important
+                    span
+                        width: 50px
+                .background
+                    width: 80px
+                    height: 80px
+                    margin: 0 10px 5px 0px
+                    &:nth-child(3n)
+                        margin: 0 0px 5px 0px
+                    .close
+                        height: 23px
+                        width: 23px
+                        opacity: 1
+                        .icon-close
+                            width: 11px
+                            height: 11px
+            .new
+                padding: 5px
+                .plus
+                    width: 80px
+                    height: 80px
+                    .icon-plus
+                        height: 40px
+                        width: 40px
+                    .uploadBackground
+                        width: 80px
+                        height: 80px
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .wrapper-main
+        height: calc(100% - 45px)
+        .profile
+            width: 270px
+            padding: 10px 20px
+            .information
+                margin-bottom: 10px
+                .photo
+                    width: 80px
+                    height: 80px
+                    .upload
+                        height: 80px
+                        width: 80px
+                    .tooltip
+                        width: 80px
+                        height: 25px
+                        .image-upload-icon
+                            height: 15px
+                .name
+                    .content
+                        width: 244px
+                        input[type=text]
+                            font-size: 16px
+                            height: 22px
+                            margin: 0 22px
+                        .pen
+                            width: 22px
+                            height: 22px
+                            svg
+                                width: 15px
+                                height: 15px
+                .email
+                    font-size: 14px
+            .backgrounds
+                .background
+                     margin: 0 15px 5px 0px
+                     &:nth-child(3n)
+                        margin: 0 15px 5px 0px
+                     &:nth-child(2n)
+                        margin: 0 0px 5px 0px

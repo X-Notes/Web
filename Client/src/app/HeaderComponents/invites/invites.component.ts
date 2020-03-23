@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { User } from 'src/app/Models/User/User';
 
 @Component({
   selector: 'app-invites',
@@ -6,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./invites.component.sass']
 })
 export class InvitesComponent implements OnInit {
+
+  @Input() user: User;
+
+  toggleInvites = true;
 
   constructor() { }
 

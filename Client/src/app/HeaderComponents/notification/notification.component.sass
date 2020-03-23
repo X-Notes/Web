@@ -57,7 +57,7 @@ div
                 cursor: pointer
                 transition: .2s ease-in-out
                 &:hover
-                    background-color: rgba(236, 236, 236, 0.6)
+                    background-color: rgba(236, 236, 236, 1)
             .notification-container
                 overflow: overlay
                 flex-direction: column
@@ -69,7 +69,7 @@ div
                     align-items: center
                     transition: .2s ease-in-out
                     &:hover
-                        background-color: rgba(236, 236, 236, 0.6)
+                        background-color: rgba(236, 236, 236, 1)
                     .notification-field-help
                         justify-content: space-between
                         align-items: center
@@ -99,13 +99,15 @@ div
                             width: calc(100% - 45px)
                             margin-left: 10px
                             .profile-name
-                                font-weight: bold
+                                font-weight: 500
                                 font-size: 16px
+                                margin-bottom: 1px
                                 p
                                     overflow: hidden
                                     white-space: nowrap
                                     text-overflow: ellipsis 
                             .profile-todo
+                                margin-top: 1px
                                 font-size: 12px
                                 span
                                     cursor: pointer

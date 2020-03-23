@@ -1,0 +1,92 @@
+div
+    display: flex
+
+.wrapper-main
+    width: 100%
+    justify-content: center
+    height: calc(100% - 50px)
+    overflow: overlay
+    .wrapper-items
+        margin-top: 20px
+        width: 925px
+        flex-wrap: wrap
+        justify-content: flex-start
+        align-content: flex-start
+        transition: .2s ease
+        .folder
+            transition: .2s ease
+            margin: 20px 20px 20px 0
+            &:nth-child(3n)
+                margin-right: 0px
+    .wrapper-more
+        width: 1240px !important
+        .folder
+            &:nth-child(3n)
+                margin-right: 20px
+            &:nth-child(4n)
+                margin-right: 0px
+
+@media (min-width: 1200px) and  (max-width: 1350px) //laptop--==
+    .wrapper-main
+        .wrapper-more
+            width: 925px !important
+            .folder
+                &:nth-child(3n)
+                    margin-right: 0px !important
+                &:nth-child(4n)
+                    margin-right: 20px
+
+@media (min-width: 992px) and  (max-width: 1199px) //laptop
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 610px
+            .folder
+                &:nth-child(2n)
+                    margin-right: 0px !important
+                &:nth-child(3n)
+                    margin-right: 20px
+        .wrapper-more
+            width: 925px !important
+            .folder
+                &:nth-child(2n)
+                    margin-right: 20px !important
+                &:nth-child(3n)
+                    margin-right: 0px !important
+           
+@media only screen and (min-width: 150px) and (max-width: 991px) //tablet
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 295px
+            .folder
+                &:nth-child(2n)
+                    margin-right: 0px
+                &:nth-child(3n)
+                    margin-right: 20px
+        .wrapper-more
+            width: 610px !important
+            .folder
+                &:nth-child(2n) 
+                    margin-right: 0px !important
+                &:nth-child(3n)
+                    margin-right: 20px
+
+@media (min-width: 150px) and (max-width: 767px) //smth phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            .folder
+                margin-right: 0px     
+
+@media (min-width: 320px) and (max-width: 479px) //phone
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 275px   
+
+@media (min-width: 150px) and (max-width: 319px) //min width
+    .wrapper-main
+        height: calc(100% - 45px)
+        .wrapper-items
+            width: 255px   

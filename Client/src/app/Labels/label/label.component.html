@@ -1,22 +1,50 @@
 <div class="default-label">
     <div class="label-field" [ngStyle]="{backgroundColor: label.color}">
-        <input class="text-label" (blur)="ChangeName()" [(ngModel)]="label.name" [ngStyle]="{'backgroundColor': label.color}" placeholder="Name your label...">
+        <input class="text-label" (blur)="ChangeName()" [(ngModel)]="label.name"
+            [ngStyle]="{'backgroundColor': label.color}" placeholder="Name your label...">
         <div class="options-label">
-            <img src="assets/buttonList.svg"  [ngStyle]="{'transform': update == true ? 'rotate(180deg)' : 'rotate(0deg)' }"  class="image-options button-list-size" (click)="ChangeIcon()">
+            <div class="buttons" (click)="ChangeIcon()">
+                <div class="button-show" [ngStyle]="{'transform': update == true ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                    <svg viewBox="0 0 17 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M8.49641 3.36037L14.8563 9.7282C15.031 9.90354 15.2646 10 15.5137 10C15.7629 10 15.9963 9.90354 16.1713 9.7282L16.7283 9.17022C16.9035 8.99516 17 8.76114 17 8.51176C17 8.26239 16.9035 8.02865 16.7283 7.85345L9.15623 0.271523C8.9807 0.0956302 8.74615 -0.000688599 8.49682 3.33594e-06C8.24638 -0.00068862 8.01211 0.0954918 7.83645 0.271523L0.271723 7.84639C0.0964714 8.02159 -6.43974e-07 8.25533 -6.54881e-07 8.50484C-6.65781e-07 8.75422 0.0964713 8.98796 0.271723 9.1633L0.828715 9.72114C1.19124 10.0841 1.78141 10.0841 2.1438 9.72114L8.49641 3.36037Z"
+                            fill="#303030" />
+                    </svg>
+                </div>
+            </div>
             <div class="note-info-line"></div>
-            <img src="assets/buttonCancel.svg" class="image-options button-cancel-size" (click)="Delete()">
+            <div class="buttons" (click)="Delete()">
+                <div class="button-delete">
+                    <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect y="8.33398" width="11.7846" height="2.35692" rx="1.17846"
+                            transform="rotate(-45 0 8.33398)" fill="#303030" />
+                        <rect x="1.66663" width="11.7846" height="2.35692" rx="1.17846" transform="rotate(45 1.66663 0)"
+                            fill="#303030" />
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
     <ul class="hidden-colors" *ngIf="update" [@slideInOut]>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFCDCD'}" (click)="ChangeColor('#FFCDCD')"></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFEBCD'}" (click)="ChangeColor('#FFEBCD')" ></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFFDCD'}" (click)="ChangeColor('#FFFDCD')"></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#DDFFCD'}" (click)="ChangeColor('#DDFFCD')" ></li>
-        <li class="hidden-color-element" [ngStyle]="{'background-color': '#CDFFD8'}" (click)="ChangeColor('#CDFFD8')"></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDFFFC'}" (click)="ChangeColor('#CDFFFC')" ></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDEEFF'}" (click)="ChangeColor('#CDEEFF')" ></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDD5FF'}" (click)="ChangeColor('#CDD5FF')" ></li>
-        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#EFCDFF'}" (click)="ChangeColor('#EFCDFF')" ></li>
-        <li class="hidden-color-element" [ngStyle]="{'background-color': '#FFCDF4'}" (click)="ChangeColor('#FFCDF4')" ></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFCDCD'}"
+            (click)="ChangeColor('#FFCDCD')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFEBCD'}"
+            (click)="ChangeColor('#FFEBCD')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#FFFDCD'}"
+            (click)="ChangeColor('#FFFDCD')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#DDFFCD'}"
+            (click)="ChangeColor('#DDFFCD')"></li>
+        <li class="hidden-color-element" [ngStyle]="{'background-color': '#CDFFD8'}" (click)="ChangeColor('#CDFFD8')">
+        </li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDFFFC'}"
+            (click)="ChangeColor('#CDFFFC')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDEEFF'}"
+            (click)="ChangeColor('#CDEEFF')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#CDD5FF'}"
+            (click)="ChangeColor('#CDD5FF')"></li>
+        <li class="hidden-color-element margin-colors" [ngStyle]="{'background-color': '#EFCDFF'}"
+            (click)="ChangeColor('#EFCDFF')"></li>
+        <li class="hidden-color-element" [ngStyle]="{'background-color': '#FFCDF4'}" (click)="ChangeColor('#FFCDF4')">
+        </li>
     </ul>
 </div>

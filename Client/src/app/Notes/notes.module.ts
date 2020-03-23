@@ -10,7 +10,7 @@ import { FullNoteComponent } from './full-note/full-note.component';
 import { MaterialModule } from '../material.module';
 import { ContentMenuComponent } from './content-menu/content-menu.component';
 import { FontContentMenuComponent } from './font-content-menu/font-content-menu.component';
-
+import { HeaderModule} from '../HeaderComponents/header-comp.module';
 
 @NgModule({
   declarations: [
@@ -27,6 +27,7 @@ import { FontContentMenuComponent } from './font-content-menu/font-content-menu.
     CommonModule,
     AppRoutingModule,
     MaterialModule,
+    HeaderModule
   ],
   exports: []
 })
