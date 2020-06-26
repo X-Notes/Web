@@ -1,0 +1,3 @@
+ng build --prod
+http-server -p 8080 -c-1 dist/Client
+http://localhost:8080/
