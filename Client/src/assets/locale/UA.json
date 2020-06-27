@@ -1,16 +1,4 @@
 ﻿{
-  "log-out": "Log out3",
-  "buttons": {
-    "new": "Create",
-    "back": "Go back",
-    "edit": "Edit",
-    "update": "Update",
-    "publish": "Publish",
-    "delete": "Delete",
-    "save": "Save",
-    "cancel": "Cancel",
-    "endPreview": "End preview",
-    "download": "Download",
-    "me": "Me"
-  }
+  "notes": "Замітка",
+  "folders": "Папки"
 }
