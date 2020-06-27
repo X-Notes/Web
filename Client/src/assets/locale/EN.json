@@ -1,0 +1,16 @@
+﻿{
+  "log-out": "Log out1",
+  "buttons": {
+    "new": "Create",
+    "back": "Go back",
+    "edit": "Edit",
+    "update": "Update",
+    "publish": "Publish",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "endPreview": "End preview",
+    "download": "Download",
+    "me": "Me"
+  }
+}
