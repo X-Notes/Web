@@ -1,4 +1,20 @@
 ﻿{
-  "notes": "notes",
-  "folders": "folders"
+  "notes": {
+    "name": "Notes",
+    "all": "All",
+    "shared": "Shared",
+    "locked": "Locked",
+    "archive": "Archive",
+    "bin": "Bin",
+    "cancel": "Cancel"
+  },
+  "folders": {
+    "name": "Folders"
+  },
+  "labels": {
+    "name": "Labels"
+  },
+  "people": {
+    "people": "People"
+  }
 }

@@ -1,5 +1,93 @@
-.menu{
-    height: 100%;
-    width: 80px;
-    background-color: grey;
+@import 'variables';
+@import 'fonts';
+ 
+ nav {
+     display: flex;
+     flex-direction: column;
+     height: calc(100% - 50px);
+     width: 80px;
+     background-color: $dark-color;
+     border-right: 1px solid $light-separator;
+
+     .active {
+         background-color: $dark-backlight;
+         .main-icon, p {
+            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+         }
+         &:nth-child(2){
+             .main-icon {
+                background: none;
+                -webkit-text-fill-color: initial;
+                -webkit-background-clip: initial;
+                i {
+                    .path1 {
+                        &::before{
+                           color: white;
+                        }
+                    }
+        
+                    .path2 {
+                       &::before {
+                           background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                           background-clip: text;
+                           -webkit-background-clip: text;
+                           -webkit-text-fill-color: transparent;
+                       }
+                    }
+                }
+             }
+        }
+     }
+
+     .module {
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         height: 80px;
+         width: 100%;
+         user-select: none;
+         outline: none;
+         cursor: pointer;
+         transition: 0.2s ease;
+
+         .main-icon {
+             font-size: 2rem;
+         }
+
+         p {
+             margin-top: 5px;
+             font-size: 0.875rem;
+             color: #ffffff;
+         }
+
+         &:hover:not(.active) {
+             background-color: $dark-button;
+         }
+     }
+
+     .billing-field {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: 100%;
+        margin-top: auto;
+        background-color: $dark-backlight;
+
+        .billing {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 24px;
+            width: 24px;
+            border-radius: 5px;
+            background-color: white;
+            color: #515151;
+            font-size: 1.375rem;
+            cursor: pointer;
+        }
+    }
 }

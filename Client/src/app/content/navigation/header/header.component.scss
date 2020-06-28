@@ -1,5 +1,246 @@
-.content{
-    height: 60px;
+@import 'variables';
+@import 'fonts';
+
+header {
+    display: flex;
+    height: 50px;
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: $dark-color;
+    border-bottom: 1px solid $light-separator;
+    
+    .profile-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 250px;
+        height: inherit;
+        border-right: 1px solid $light-separator;
+        padding-right: 1rem;
+        padding-left: 1.25rem;
+
+        .profile {
+            display: flex;
+            align-items: center;
+            height: 30px;
+            font-weight: 500;
+            max-width: 180px;
+            padding: 0 0.375rem;
+            border-radius: 5px;
+            transition: 0.2s ease;
+            user-select: none;
+            outline: none;
+            cursor: pointer;
+
+            &:hover {
+                background-color: $dark-button;
+            }
+
+            .photo {
+                width: 25px;
+                height: 25px;
+                overflow: hidden;
+                border-radius: 50%;
+                border: 1px solid #ffffff;
+                margin-right: 0.9375rem;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+            p {
+                width: calc(100% - 40px);
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        .notification {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 30px;
+            border-radius: 5px;
+            transition: 0.2s ease;
+            font-size: 1.25rem;
+            border: 0;
+            padding: 0;
+            background-color: transparent;
+            user-select: none;
+            outline: none;
+            cursor: pointer;
+
+            .push {
+                position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                right: 1px;
+                top: 2px;
+                width: 15px;
+                height: 15px;
+                font-size: 0.625rem;
+                background-color: #ED6565;
+                color: #ffffff;
+                border-radius: 50%;
+            }
+
+            &:hover {
+                background-color: $dark-button;
+            }
+        }
+    }
+
+    .management-section {
+        display: flex;
+        align-items: center;
+        height: inherit;
+        padding-left: 3.75rem;
+
+        .new-note {
+            background-color: #ffffff;
+            color: #363636;
+        }
+
+        .filters {
+            background-color: $dark-button;
+            color: white;
+
+            .inner-content {
+                i::before {
+                    color: white;
+                }
+            }
+
+            &:last-child {
+                width: 30px;
+                .inner-content {
+                    justify-content: center;
+                    padding: 0;
+                }
+            }
+        }
+
+        .generic {
+            height: 30px;
+            width: 140px;
+            border: 0;
+            padding: 0;
+            outline: none;
+            user-select: none;
+            cursor: pointer;
+            margin-right: 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+
+            .inner-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 0.75rem;
+
+                p {
+                    line-height: 1.5;
+                }
+            }
+
+            &:not(:last-child) {
+                .inner-content {
+                    i{
+                        font-size: 0.75rem;
+                    }
+                }
+            }
+        }
+    }
+
+    .auxiliary-section {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        height: inherit;
+        padding-right: 3.75rem;
+
+        .search {
+            display: flex;
+            height: 30px;
+            width: 200px;
+            margin-right: 1.5rem;
+
+            input[type="search"] {
+                height: 100%;
+                width: calc(100% - 35px);
+                background-color: $dark-backlight;
+                border: 0;
+                border-radius: 10px 0 0 10px;
+                padding: 0;
+                padding-left: 0.625rem;
+                font-size: 1rem;
+                user-select: none;
+                outline: none;
+                color: #A8A8A8;
+                transition: 0.2s ease;
+
+                &:focus {
+                    background-color: white;
+                    color: #6D6D6D;
+                }
+            }
+
+            button[type="button"] {
+                height: 100%;
+                width: 35px;
+                border: 0;
+                user-select: none;
+                outline: none;
+                border-radius: 0 10px 10px 0;
+                background-color: #363942;
+                cursor: pointer;
+
+                .icon {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 1rem;
+
+                    i::before {
+                        color: #d8d8d8;
+                    }
+                }
+            }
+        }
+
+        .auxiliary-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 1.375rem;
+            font-size: 1.375rem;
+            transition: 0.2s ease;
+            cursor: pointer;
+
+            i::before {
+                transition: 0.2s ease;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &:hover {
+                background-color: $dark-button;
+                
+                i::before {
+                    color: white;
+                }
+            }
+        }
+    }
 }

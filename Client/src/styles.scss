@@ -5,7 +5,7 @@
     box-sizing: border-box
 }
 
-ul{
+ul, ol{
     list-style: none
 }
     
@@ -21,11 +21,15 @@ img, video{
 
 body,html{
     font-family: 'Roboto', sans-serif;
-    color: black;
+    color: white;
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100%;
+}
+
+button {
+    font-family: 'Roboto', sans-serif;
 }
 
  
