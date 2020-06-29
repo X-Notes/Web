@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
+enum subMenu {
+  All = 'all',
+  Bin = 'bin'
+}
+
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',
@@ -7,9 +12,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LabelsComponent implements OnInit {
 
+  current: subMenu;
+
   constructor() { }
 
   ngOnInit(): void {
+    this.current = subMenu.All;
+  }
+
+  switchSub(value: string) {
+    switch (value) {
+      case subMenu.All:
+        this.current = subMenu.All;
+        break;
+      case subMenu.Bin:
+        this.current = subMenu.Bin;
+        break;
+    }
   }
 
 }

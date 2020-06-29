@@ -1,28 +1,30 @@
 <div class="sub-nav">
-    <div class="sub-nav-item active">
-        <p>{{ 'notes.all' | translate }}</p>
-        <p>12</p>
+    <div class="sub-nav-item-section">
+        <div class="sub-nav-item" (click)="switchSub('all')" [ngClass]="{active: current === 'all'}">
+            <p>{{ 'subMenu.all' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="sub-nav-item" (click)="switchSub('shared')" [ngClass]="{active: current === 'shared'}">
+            <p>{{ 'subMenu.shared' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="sub-nav-item" (click)="switchSub('locked')" [ngClass]="{active: current === 'locked'}">
+            <p>{{ 'subMenu.locked' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="sub-nav-item" (click)="switchSub('archive')" [ngClass]="{active: current === 'archive'}">
+            <p>{{ 'subMenu.archive' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="sub-nav-item" (click)="switchSub('bin')" [ngClass]="{active: current === 'bin'}">
+            <p>{{ 'subMenu.bin' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="separator"></div>
     </div>
-    <div class="sub-nav-item">
-        <p>{{ 'notes.shared' | translate }}</p>
-        <p>12</p>
-    </div>
-    <div class="sub-nav-item">
-        <p>{{ 'notes.locked' | translate }}</p>
-        <p>12</p>
-    </div>
-    <div class="sub-nav-item">
-        <p>{{ 'notes.archive' | translate }}</p>
-        <p>12</p>
-    </div>
-    <div class="sub-nav-item">
-        <p>{{ 'notes.bin' | translate }}</p>
-        <p>12</p>
-    </div>
-    <div class="separator"></div>
     <div class="label-section">
         <div class="label-cancel">
-            <p>{{ 'notes.cancel' | translate }}</p>
+            <p>{{ 'subMenu.cancel' | translate }}</p>
         </div>
         <div class="label-container">
             <div class="label">

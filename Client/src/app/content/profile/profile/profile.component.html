@@ -1,1 +1,31 @@
-<p>profile works!</p>
+<div class="sub-nav">
+    <div class="background-section">
+        <div class="background">
+            <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+            <div class="thumbnail">
+                <i class="icon-plus"></i>
+            </div>
+        </div>
+        <div class="background" (click)="toggle()" [ngClass]="check ? 'active-background' : ''">
+            <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+            <div class="thumbnail">
+                <i class="icon-plus"></i>
+            </div>
+        </div>
+        <div class="background">
+            <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+            <div class="thumbnail">
+                <i class="icon-plus"></i>
+            </div>
+        </div>
+    </div>
+    <div class="information">
+        <div class="text">
+            <p>50mb of 100MB</p>
+        </div>
+        <div class="progress-bar">
+            <div class="indicator"></div>
+        </div>
+    </div>
+</div>
+<div class="content"></div>

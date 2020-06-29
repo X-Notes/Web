@@ -1,12 +1,6 @@
 ﻿{
   "notes": {
-    "name": "Notes",
-    "all": "All",
-    "shared": "Shared",
-    "locked": "Locked",
-    "archive": "Archive",
-    "bin": "Bin",
-    "cancel": "Cancel"
+    "name": "Notes"
   },
   "folders": {
     "name": "Folders"
@@ -15,6 +9,15 @@
     "name": "Labels"
   },
   "people": {
-    "people": "People"
+    "name": "People"
+  },
+  "subMenu": {
+    "all": "All",
+    "shared": "Shared",
+    "locked": "Locked",
+    "archive": "Archive",
+    "bin": "Bin",
+    "invitation": "Invitation",
+    "cancel": "Cancel"
   }
 }

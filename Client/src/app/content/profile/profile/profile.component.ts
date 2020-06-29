@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfileComponent implements OnInit {
 
+  check = true;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  toggle() {
+    this.check = !this.check;
   }
 
 }

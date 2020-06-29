@@ -1,1 +1,22 @@
-<p>labels works!</p>
+<div class="sub-nav">
+    <div class="sub-nav-item-section">
+        <div class="sub-nav-item" (click)="switchSub('all')" [ngClass]="{active: current === 'all'}">
+            <p>{{ 'subMenu.all' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="sub-nav-item" (click)="switchSub('bin')" [ngClass]="{active: current === 'bin'}">
+            <p>{{ 'subMenu.bin' | translate }}</p>
+            <p>12</p>
+        </div>
+        <div class="separator"></div>
+    </div>
+    <div class="information">
+        <div class="text">
+            <p>50mb of 100MB</p>
+        </div>
+        <div class="progress-bar">
+            <div class="indicator"></div>
+        </div>
+    </div>
+</div>
+<div class="content"></div>

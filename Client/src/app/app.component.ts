@@ -12,6 +12,6 @@ import { Language } from './shared/enums/Language';
 export class AppComponent {
 
   constructor(private translateService: TranslateService) {
-    this.translateService.use(Language.RU);
+    this.translateService.use(Language.EN);
   }
 }

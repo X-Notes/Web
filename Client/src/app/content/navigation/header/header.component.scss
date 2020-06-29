@@ -98,147 +98,173 @@ header {
     .management-section {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         height: inherit;
-        padding-left: 3.75rem;
+        width: calc(100% - 250px);
+        padding: 0 3.125%;
 
-        .new-note {
-            background-color: #ffffff;
-            color: #363636;
-        }
-
-        .filters {
-            background-color: $dark-button;
-            color: white;
-
-            .inner-content {
-                i::before {
-                    color: white;
-                }
-            }
-
-            &:last-child {
-                width: 30px;
-                .inner-content {
-                    justify-content: center;
-                    padding: 0;
-                }
-            }
-        }
-
-        .generic {
-            height: 30px;
-            width: 140px;
-            border: 0;
-            padding: 0;
-            outline: none;
-            user-select: none;
-            cursor: pointer;
-            margin-right: 1rem;
-            border-radius: 5px;
-            font-size: 1rem;
-
-            .inner-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 0.75rem;
-
-                p {
-                    line-height: 1.5;
-                }
-            }
-
-            &:not(:last-child) {
-                .inner-content {
-                    i{
-                        font-size: 0.75rem;
-                    }
-                }
-            }
-        }
-    }
-
-    .auxiliary-section {
-        display: flex;
-        align-items: center;
-        margin-left: auto;
-        height: inherit;
-        padding-right: 3.75rem;
-
-        .search {
+        .interactions {
             display: flex;
-            height: 30px;
-            width: 200px;
-            margin-right: 1.5rem;
-
-            input[type="search"] {
-                height: 100%;
-                width: calc(100% - 35px);
-                background-color: $dark-backlight;
-                border: 0;
-                border-radius: 10px 0 0 10px;
-                padding: 0;
-                padding-left: 0.625rem;
-                font-size: 1rem;
-                user-select: none;
-                outline: none;
-                color: #A8A8A8;
-                transition: 0.2s ease;
-
-                &:focus {
-                    background-color: white;
-                    color: #6D6D6D;
-                }
-            }
-
-            button[type="button"] {
-                height: 100%;
-                width: 35px;
-                border: 0;
-                user-select: none;
-                outline: none;
-                border-radius: 0 10px 10px 0;
-                background-color: #363942;
-                cursor: pointer;
-
-                .icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    font-size: 1rem;
-
-                    i::before {
-                        color: #d8d8d8;
-                    }
-                }
-            }
-        }
-
-        .auxiliary-icon {
-            display: flex;
-            justify-content: center;
             align-items: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            margin-right: 1.375rem;
-            font-size: 1.375rem;
-            transition: 0.2s ease;
-            cursor: pointer;
-
-            i::before {
+            height: inherit;
+    
+            .new-note {
+                background-color: #ffffff;
+                color: #363636;
                 transition: 0.2s ease;
+    
+                &:hover {
+                    background-color: #ececec;
+                }
             }
-
-            &:last-child {
-                margin-right: 0;
-            }
-
-            &:hover {
+    
+            .filters {
                 background-color: $dark-button;
-                
+                color: white;
+                transition: 0.2s ease;
+    
+                .inner-content {
+                    i::before {
+                        color: white;
+                    }
+                }
+    
+                &:hover {
+                    background-color: #3d4049;
+                }
+    
+                &:last-child {
+                    width: 30px;
+                    .inner-content {
+                        justify-content: center;
+                        padding: 0;
+                    }
+                }
+            }
+    
+            .generic {
+                height: 30px;
+                width: 140px;
+                border: 0;
+                padding: 0;
+                outline: none;
+                user-select: none;
+                cursor: pointer;
+                margin-right: 1rem;
+                border-radius: 5px;
+                font-size: 1rem;
+    
+                .inner-content {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 0 0.75rem;
+    
+                    p {
+                        line-height: 1.5;
+                    }
+                }
+    
+                &:not(:last-child) {
+                    .inner-content {
+                        i{
+                            font-size: 0.75rem;
+                        }
+                    }
+                }
+            }
+
+            .search {
+                display: flex;
+                height: 30px;
+                width: 200px;
+                margin-right: 1.5rem;
+                &:focus-within {
+                    input[type="search"] {
+                        background-color: white;
+                        color: #6D6D6D;
+                    }
+    
+                    button[type="button"] {
+                        background-color: #EBEBEB;
+                        .icon {
+                            i::before {
+                                color: #8C8C8C;
+                            }
+                        }
+                    }
+                }
+
+                input[type="search"]:not(:placeholder-shown) ~ button[type="button"] {
+                    cursor: pointer;
+                }
+    
+                input[type="search"] {
+                    height: 100%;
+                    width: calc(100% - 35px);
+                    background-color: $dark-backlight;
+                    border: 0;
+                    border-radius: 10px 0 0 10px;
+                    padding: 0;
+                    padding-left: 0.625rem;
+                    font-size: 0.875rem;
+                    user-select: none;
+                    outline: none;
+                    color: #A8A8A8;
+                    transition: 0.2s ease;
+                }
+    
+                button[type="button"] {
+                    height: 100%;
+                    width: 35px;
+                    border: 0;
+                    user-select: none;
+                    outline: none;
+                    border-radius: 0 10px 10px 0;
+                    background-color: #363942;
+                    cursor: not-allowed;
+                    transition: 0.2s ease;
+    
+                    .icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-size: 1rem;
+    
+                        i::before {
+                            transition: 0.2s ease;
+                            color: #d8d8d8;
+                        }
+                    }
+                }
+            }
+    
+            .auxiliary-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 30px;
+                height: 30px;
+                border-radius: 5px;
+                margin-right: 1.375rem;
+                font-size: 1.375rem;
+                transition: 0.2s ease;
+                cursor: pointer;
+    
                 i::before {
-                    color: white;
+                    transition: 0.2s ease;
+                }
+    
+                &:last-child {
+                    margin-right: 0;
+                }
+    
+                &:hover {
+                    background-color: $dark-button;
+                    
+                    i::before {
+                        color: white;
+                    }
                 }
             }
         }
