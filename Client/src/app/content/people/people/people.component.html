@@ -1,10 +1,10 @@
 <div class="sub-nav">
     <div class="sub-nav-item-section">
-        <div class="sub-nav-item" (click)="switchSub('all')" [ngClass]="{active: current === 'all'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}">
             <p>{{ 'subMenu.all' | translate }}</p>
             <p>12</p>
         </div>
-        <div class="sub-nav-item" (click)="switchSub('invitations')" [ngClass]="{active: current === 'invitations'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.Invitations)" [ngClass]="{active: current === menu.Invitations}">
             <p>{{ 'subMenu.invitation' | translate }}</p>
             <p>12</p>
         </div>

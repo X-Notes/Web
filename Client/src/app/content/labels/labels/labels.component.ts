@@ -13,6 +13,7 @@ enum subMenu {
 export class LabelsComponent implements OnInit {
 
   current: subMenu;
+  menu = subMenu;
 
   constructor() { }
 
@@ -20,15 +21,8 @@ export class LabelsComponent implements OnInit {
     this.current = subMenu.All;
   }
 
-  switchSub(value: string) {
-    switch (value) {
-      case subMenu.All:
-        this.current = subMenu.All;
-        break;
-      case subMenu.Bin:
-        this.current = subMenu.Bin;
-        break;
-    }
+  switchSub(value: subMenu) {
+    this.current = value;
   }
 
 }

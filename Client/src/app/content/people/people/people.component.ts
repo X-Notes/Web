@@ -13,6 +13,7 @@ enum subMenu {
 export class PeopleComponent implements OnInit {
 
   current: subMenu;
+  menu = subMenu;
 
   constructor() { }
 
@@ -20,15 +21,8 @@ export class PeopleComponent implements OnInit {
     this.current = subMenu.All;
   }
 
-  switchSub(value: string) {
-    switch (value) {
-      case subMenu.All:
-        this.current = subMenu.All;
-        break;
-      case subMenu.Invitations:
-        this.current = subMenu.Invitations;
-        break;
-    }
+  switchSub(value: subMenu) {
+    this.current = value;
   }
 
 }

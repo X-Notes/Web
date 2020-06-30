@@ -1,22 +1,22 @@
 <div class="sub-nav">
     <div class="sub-nav-item-section">
-        <div class="sub-nav-item" (click)="switchSub('all')" [ngClass]="{active: current === 'all'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}">
             <p>{{ 'subMenu.all' | translate }}</p>
             <p>12</p>
         </div>
-        <div class="sub-nav-item" (click)="switchSub('shared')" [ngClass]="{active: current === 'shared'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.Shared)" [ngClass]="{active: current === menu.Shared}">
             <p>{{ 'subMenu.shared' | translate }}</p>
             <p>12</p>
         </div>
-        <div class="sub-nav-item" (click)="switchSub('locked')" [ngClass]="{active: current === 'locked'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.Locked)" [ngClass]="{active: current === menu.Locked}">
             <p>{{ 'subMenu.locked' | translate }}</p>
             <p>12</p>
         </div>
-        <div class="sub-nav-item" (click)="switchSub('archive')" [ngClass]="{active: current === 'archive'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.Archive)" [ngClass]="{active: current === menu.Archive}">
             <p>{{ 'subMenu.archive' | translate }}</p>
             <p>12</p>
         </div>
-        <div class="sub-nav-item" (click)="switchSub('bin')" [ngClass]="{active: current === 'bin'}">
+        <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}">
             <p>{{ 'subMenu.bin' | translate }}</p>
             <p>12</p>
         </div>
