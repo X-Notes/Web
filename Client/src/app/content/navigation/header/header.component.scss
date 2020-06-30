@@ -186,7 +186,7 @@ header {
                     }
     
                     button[type="button"] {
-                        background-color: #EBEBEB;
+                        background-color: $light-search-submit;
                         .icon {
                             i::before {
                                 color: #8C8C8C;
@@ -221,7 +221,7 @@ header {
                     user-select: none;
                     outline: none;
                     border-radius: 0 10px 10px 0;
-                    background-color: #363942;
+                    background-color: $dark-search-submit;
                     cursor: not-allowed;
                     transition: 0.2s ease;
     
@@ -264,6 +264,99 @@ header {
                     
                     i::before {
                         color: white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.light {
+    background-color: white;
+    .profile-section {
+
+        .profile {
+            color: $light-text-color;
+
+            &:hover {
+                background-color: $light-nav-backlight;
+            }
+        }
+
+        .notification {
+
+            i::before {
+                color: $light-text-color;
+            }
+
+            &:hover {
+                background-color: $light-nav-backlight;
+            }
+        }
+    }
+
+    .management-section {
+        .interactions {
+            .generic {
+                border: 0.8px solid $light-button;
+                background-color: white;
+                color: $light-text-color;
+
+                .inner-content {
+                    i::before {
+                        color: $light-text-color;
+                    }
+                }
+
+                &:hover {
+                    background-color: $light-nav-backlight;
+                }
+            }
+
+            .search {
+
+                &:focus-within {
+                    input[type="search"] {
+                        background-color: white;
+                        color: #6D6D6D;
+                        box-shadow: inset 0 0 0 2px #0887a7;
+                    }
+    
+                    button[type="button"] {
+                        background-color: lighten($color: $light-search-submit, $amount: 4%);
+                        .icon {
+                            i::before {
+                                color: darken($color: $light-managment-hover, $amount: 10%);
+                            }
+                        }
+                    }
+                }
+                
+                input[type="search"] {
+                    background-color: $light-search;
+                }
+
+                button[type="button"] {
+                    background-color: $light-search-submit;
+
+                    .icon {
+                        i::before {
+                            color: $light-managment-hover;
+                        }
+                    }
+                }
+            }
+
+            .auxiliary-icon {
+                i::before {
+                    color: $light-managment;
+                }
+
+                &:hover {
+                    background-color: $light-nav-backlight;
+                    
+                    i::before {
+                        color: $light-managment-hover;
                     }
                 }
             }

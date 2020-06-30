@@ -21,19 +21,15 @@
                 -webkit-text-fill-color: initial;
                 -webkit-background-clip: initial;
                 i {
-                    .path1 {
-                        &::before{
-                           color: white;
-                        }
+                    .path1::before {
+                        color: white;
                     }
         
-                    .path2 {
-                       &::before {
-                           background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                           background-clip: text;
-                           -webkit-background-clip: text;
-                           -webkit-text-fill-color: transparent;
-                       }
+                    .path2::before {
+                        background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
                     }
                 }
              }
@@ -87,6 +83,50 @@
             color: #515151;
             font-size: 1.375rem;
             cursor: pointer;
+        }
+    }
+}
+
+.light {
+    background-color: $light-color;
+
+    .module {
+
+        &:hover:not(.active) {
+            background-color: $light-nav-backlight;
+        }
+        
+        .main-icon {
+
+            i::before {
+                color: $light-text-color;
+            }
+
+            i {
+                .path1::before {
+                    color: #D6D6D6;
+                }
+
+                .path2::before {
+                    color: $light-text-color;
+                }
+            }
+        }
+
+        p {
+            color: $light-text-color;
+        }
+    }
+    
+    .active {
+        background-color: $light-text-color;
+    }
+
+    .billing-field {
+        background-color: $light-billing-field;
+        .billing {
+            background-color: $light-text-color;
+            color: #F6F6F6;
         }
     }
 }

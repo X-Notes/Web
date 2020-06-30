@@ -216,3 +216,36 @@
         }
     }
 }
+
+.light {
+    .sub-nav-item-section {
+
+        .active {
+            background-color: $light-nav-backlight;
+        }
+
+        .sub-nav-item {
+            border-color: $light-theme-separator;
+            color: $light-text-color;
+
+            &:hover:not(.active) {
+                background-color: #f9f9f9;
+            }
+        }
+    }
+
+    .label-section {
+        .label-cancel {
+            background-color: $light-cancel-label;
+            color: $light-text-color;
+        }
+    }
+    
+    .information {
+        background-color: $light-billing-field;
+
+        .text {
+            color: $light-text-color;
+        }
+    }
+}

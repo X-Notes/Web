@@ -1,4 +1,4 @@
-<nav>
+<nav [ngClass]="pService.theme === theme.Light ? 'light' : ''">
     <div class="module" routerLink="/notes" routerLinkActive="active">
         <div class="main-icon">
             <i class="icon-notes"></i>

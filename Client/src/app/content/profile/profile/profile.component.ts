@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Theme } from 'src/app/shared/enums/Theme';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,8 +10,9 @@ import { Component, OnInit } from '@angular/core';
 export class ProfileComponent implements OnInit {
 
   check = true;
+  theme = Theme;
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
   }

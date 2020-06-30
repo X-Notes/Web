@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Theme } from 'src/app/shared/enums/Theme';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 enum subMenu {
   All = 'all',
@@ -14,8 +16,9 @@ export class LabelsComponent implements OnInit {
 
   current: subMenu;
   menu = subMenu;
+  theme = Theme;
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
     this.current = subMenu.All;

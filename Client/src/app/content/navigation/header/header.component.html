@@ -1,4 +1,4 @@
-<header>
+<header [ngClass]="pService.theme === theme.Light ? 'light' : ''">
     <div class="profile-section">
         <div class="profile" routerLink="/profile">
             <div class="photo">
@@ -40,7 +40,7 @@
                     </div>
                 </button>
             </div>
-            <div class="auxiliary-icon">
+            <div class="auxiliary-icon" (click)="toggleTheme()">
                 <i class="icon-theme_light"></i>
             </div>
             <div class="auxiliary-icon">
