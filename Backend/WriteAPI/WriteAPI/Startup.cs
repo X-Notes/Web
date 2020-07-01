@@ -1,3 +1,9 @@
+using Domain.Commands;
+using Domain.Ids;
+using Domain.Models;
+using Domain.Repository;
+using Marten;
+using Marten.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,8 +31,25 @@ namespace WriteAPI
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddSingleton<CommandsPushQueue>();
-            services.AddSingleton<CommandsGetQueue>();
+            services.AddHostedService<CommandsGetQueue>();
 
+            var connection = Configuration.GetSection("EventStore").Value;
+
+            services.AddMarten(opts =>
+            {
+   
+                opts.Connection(connection);
+                opts.AutoCreateSchemaObjects = AutoCreate.All;
+
+                opts.Events.AsyncProjections.AggregateStreamsWith<User>();
+
+
+                opts.Events.AddEventType(typeof(NewUser));
+                opts.Events.AddEventType(typeof(UpdateMainUserInfo));
+            });
+
+            services.AddScoped<IIdGenerator, MartenIdGenerator>();
+            services.AddTransient<IRepository<User>, MartenRepository<User>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,9 +70,6 @@ namespace WriteAPI
             {
                 endpoints.MapControllers();
             });
-
-            app.ApplicationServices.GetService<CommandsGetQueue>();
-            app.ApplicationServices.GetService<CommandsPushQueue>();
         }
     }
 }

@@ -13,20 +13,20 @@ namespace WriteAPI.Services
 {
     public class CommandsPushQueue
     {
-        private readonly IMessageProducerScope _messageProducerScope;
+        private IMessageProducerScope _messageProducerScope;
         private readonly ILogger<CommandsPushQueue> logger;
         public CommandsPushQueue(IMessageProducerScopeFactory messageProducerScopeFactory, ILogger<CommandsPushQueue> logger)
         {
-           _messageProducerScope = messageProducerScopeFactory.Open(new MessageScopeSettings
+            this.logger = logger;
+
+            _messageProducerScope = messageProducerScopeFactory.Open(new MessageScopeSettings
             {
                 ExchangeName = "ServerExchange",
                 ExchangeType = ExchangeType.Topic,
                 QueueName = "CommandNewUser",
                 RoutingKey = "new.user"
-           });
-            this.logger = logger;
+            });
         }
-
         public void CommandNewUser(string value)
         {
             try

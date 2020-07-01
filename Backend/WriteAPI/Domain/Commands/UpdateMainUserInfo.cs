@@ -4,11 +4,10 @@ using System.Text;
 
 namespace Domain.Commands
 {
-    public class NewUserCommand
+    public class UpdateMainUserInfo
     {
+        public Guid Id { set; get; }
         public string Name { set; get; }
         public string Email { set; get; }
-        public string PhotoId { set; get; }
-        public string BackgroundId { set; get; }
     }
 }
