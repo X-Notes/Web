@@ -1,12 +1,18 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
     <div class="sub-nav-item-section">
-        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}">
-            <p>{{ 'subMenu.all' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}" #sub1>
+            <div class="item">
+                <p>{{ 'subMenu.all' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
         </div>
-        <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}">
-            <p>{{ 'subMenu.bin' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}" #sub2>
+            <div class="item">
+                <p>{{ 'subMenu.bin' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
         </div>
         <div class="separator"></div>
     </div>

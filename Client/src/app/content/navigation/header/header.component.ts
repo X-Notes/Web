@@ -17,6 +17,11 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleTheme() {
+    if (this.pService.theme === Theme.Light) {
+      this.pService.theme = Theme.Dark;
+    } else {
+      this.pService.theme = Theme.Light;
+    }
   }
 
 }

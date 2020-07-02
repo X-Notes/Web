@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'fonts';
+@import 'generic';
  
  nav {
      display: flex;
@@ -7,6 +8,7 @@
      height: calc(100% - 50px);
      width: 80px;
      border-right: 1px solid $light-separator;
+     transition: 0.2s ease;
 
      .active {
          background-color: $dark-backlight;
@@ -37,10 +39,8 @@
      }
 
      .module {
+         position: relative;
          display: flex;
-         flex-direction: column;
-         justify-content: center;
-         align-items: center;
          height: 80px;
          width: 100%;
          user-select: none;
@@ -48,14 +48,34 @@
          cursor: pointer;
          transition: 0.2s ease;
 
-         .main-icon {
-             font-size: 2rem;
-         }
+         .item {
+             position: relative;
+             z-index: 5;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             height: 100%;
+             width: 100%;
 
-         p {
-             margin-top: 5px;
-             font-size: 0.875rem;
-             color: #ffffff;
+             .main-icon {
+                font-size: 2rem;
+                i {
+                    &::before {
+                        transition: 0.2s ease;
+                    }
+                    .path1::before, .path2::before {
+                        transition: 0.2s ease;
+                    }
+                }
+            }
+
+            p {
+                margin-top: 5px;
+                font-size: 0.875rem;
+                color: #ffffff;
+                transition: 0.2s ease;
+            }
          }
 
          &:hover:not(.active) {
@@ -70,6 +90,7 @@
         height: 40px;
         width: 100%;
         margin-top: auto;
+        transition: 0.2s ease;
         background-color: $dark-backlight;
 
         .billing {
@@ -82,6 +103,7 @@
             background-color: white;
             color: #515151;
             font-size: 1.375rem;
+            transition: 0.2s ease;
             cursor: pointer;
         }
     }
@@ -95,26 +117,28 @@
         &:hover:not(.active) {
             background-color: $light-nav-backlight;
         }
-        
-        .main-icon {
 
-            i::before {
-                color: $light-text-color;
-            }
+        .item {
+            .main-icon {
 
-            i {
-                .path1::before {
-                    color: #D6D6D6;
-                }
-
-                .path2::before {
+                i::before {
                     color: $light-text-color;
                 }
+    
+                i {
+                    .path1::before {
+                        color: #D6D6D6;
+                    }
+    
+                    .path2::before {
+                        color: $light-text-color;
+                    }
+                }
             }
-        }
-
-        p {
-            color: $light-text-color;
+    
+            p {
+                color: $light-text-color;
+            }
         }
     }
     

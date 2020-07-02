@@ -1,24 +1,39 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
     <div class="sub-nav-item-section">
-        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}">
-            <p>{{ 'subMenu.all' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}" #sub1>
+            <div class="item">
+                <p>{{ 'subMenu.all' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
         </div>
-        <div class="sub-nav-item" (click)="switchSub(menu.Shared)" [ngClass]="{active: current === menu.Shared}">
-            <p>{{ 'subMenu.shared' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.Shared)" [ngClass]="{active: current === menu.Shared}" #sub2>
+            <div class="item">
+                <p>{{ 'subMenu.shared' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
         </div>
-        <div class="sub-nav-item" (click)="switchSub(menu.Locked)" [ngClass]="{active: current === menu.Locked}">
-            <p>{{ 'subMenu.locked' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.Locked)" [ngClass]="{active: current === menu.Locked}" #sub3>
+            <div class="item">
+                <p>{{ 'subMenu.locked' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub3"></div>
         </div>
-        <div class="sub-nav-item" (click)="switchSub(menu.Archive)" [ngClass]="{active: current === menu.Archive}">
-            <p>{{ 'subMenu.archive' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.Archive)" [ngClass]="{active: current === menu.Archive}" #sub4>
+            <div class="item">
+                <p>{{ 'subMenu.archive' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
         </div>
-        <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}">
-            <p>{{ 'subMenu.bin' | translate }}</p>
-            <p>12</p>
+        <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}" #sub5>
+            <div class="item">
+                <p>{{ 'subMenu.bin' | translate }}</p>
+                <p>12</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="sub5"></div>
         </div>
         <div class="separator"></div>
     </div>

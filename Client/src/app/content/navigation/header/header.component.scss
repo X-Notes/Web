@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'fonts';
+@import 'generic';
 
 header {
     display: flex;
@@ -7,6 +8,7 @@ header {
     width: 100%;
     background-color: $dark-color;
     border-bottom: 1px solid $light-separator;
+    transition: 0.2s ease;
     
     .profile-section {
         display: flex;
@@ -19,15 +21,14 @@ header {
         padding-left: 1.25rem;
 
         .profile {
+            position: relative;
             display: flex;
-            align-items: center;
             height: 30px;
             font-weight: 500;
-            max-width: 180px;
-            padding: 0 0.375rem;
             border-radius: 5px;
             transition: 0.2s ease;
             user-select: none;
+            overflow: hidden;
             outline: none;
             cursor: pointer;
 
@@ -35,33 +36,42 @@ header {
                 background-color: $dark-button;
             }
 
-            .photo {
-                width: 25px;
-                height: 25px;
-                overflow: hidden;
-                border-radius: 50%;
-                border: 1px solid #ffffff;
-                margin-right: 0.9375rem;
+            .profile-data {
+                position: relative;
+                z-index: 5;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                padding: 0 0.375rem;
+                max-width: 180px;
 
-                img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
+                .photo {
+                    width: 25px;
+                    height: 25px;
+                    overflow: hidden;
+                    border-radius: 50%;
+                    border: 1px solid #ffffff;
+                    margin-right: 0.9375rem;
+    
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
                 }
-            }
-            p {
-                width: calc(100% - 40px);
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
+                p {
+                    width: calc(100% - 40px);
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
             }
         }
 
         .notification {
             position: relative;
             display: flex;
-            justify-content: center;
-            align-items: center;
             height: 30px;
             width: 30px;
             border-radius: 5px;
@@ -71,22 +81,37 @@ header {
             padding: 0;
             background-color: transparent;
             user-select: none;
+            overflow: hidden;
             outline: none;
             cursor: pointer;
 
-            .push {
-                position: absolute;
+            .notification-data {
+                position: relative;
+                z-index: 5;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                right: 1px;
-                top: 2px;
-                width: 15px;
-                height: 15px;
-                font-size: 0.625rem;
-                background-color: #ED6565;
-                color: #ffffff;
-                border-radius: 50%;
+                width: 100%;
+                height: 100%;
+
+                .push {
+                    position: absolute;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    right: 1px;
+                    top: 2px;
+                    width: 15px;
+                    height: 15px;
+                    font-size: 0.625rem;
+                    background-color: #ED6565;
+                    color: #ffffff;
+                    border-radius: 50%;
+                }
+
+                i::before {
+                    transition: 0.2s ease;
+                }
             }
 
             &:hover {
@@ -143,11 +168,13 @@ header {
             }
     
             .generic {
+                position: relative;
                 height: 30px;
                 width: 140px;
-                border: 0;
+                border: 0.8px solid transparent;
                 padding: 0;
                 outline: none;
+                overflow: hidden;
                 user-select: none;
                 cursor: pointer;
                 margin-right: 1rem;
@@ -155,6 +182,8 @@ header {
                 font-size: 1rem;
     
                 .inner-content {
+                    position: relative;
+                    z-index: 5;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
@@ -162,6 +191,10 @@ header {
     
                     p {
                         line-height: 1.5;
+                    }
+
+                    i::before {
+                        transition: 0.2s ease;
                     }
                 }
     
@@ -179,6 +212,9 @@ header {
                 height: 30px;
                 width: 200px;
                 margin-right: 1.5rem;
+                border-radius: 10px;
+                transition: 0.2s ease;
+                
                 &:focus-within {
                     input[type="search"] {
                         background-color: white;
@@ -240,19 +276,26 @@ header {
             }
     
             .auxiliary-icon {
+                position: relative;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 width: 30px;
                 height: 30px;
                 border-radius: 5px;
+                overflow: hidden;
                 margin-right: 1.375rem;
                 font-size: 1.375rem;
                 transition: 0.2s ease;
                 cursor: pointer;
     
-                i::before {
-                    transition: 0.2s ease;
+                i {
+                    position: relative;
+                    z-index: 5;
+
+                    &::before {
+                        transition: 0.2s ease;
+                    }
                 }
     
                 &:last-child {
@@ -298,7 +341,7 @@ header {
     .management-section {
         .interactions {
             .generic {
-                border: 0.8px solid $light-button;
+                border-color: $light-button;
                 background-color: white;
                 color: $light-text-color;
 
@@ -316,10 +359,11 @@ header {
             .search {
 
                 &:focus-within {
+                    box-shadow:  0 0 0 2px #0887a7;
+
                     input[type="search"] {
                         background-color: white;
                         color: #6D6D6D;
-                        box-shadow: inset 0 0 0 2px #0887a7;
                     }
     
                     button[type="button"] {
