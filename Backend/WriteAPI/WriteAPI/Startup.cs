@@ -6,10 +6,12 @@ using Marten;
 using Marten.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WriteAPI.Services;
+using WriteContext;
 
 namespace WriteAPI
 {
@@ -33,8 +35,12 @@ namespace WriteAPI
             services.AddSingleton<CommandsPushQueue>();
             services.AddHostedService<CommandsGetQueue>();
 
-            var connection = Configuration.GetSection("EventStore").Value;
 
+            string writeConnection = Configuration.GetSection("WriteDB").Value;
+            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
+
+
+            var connection = Configuration.GetSection("EventStore").Value;         
             services.AddMarten(opts =>
             {
    
