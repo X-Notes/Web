@@ -6,10 +6,12 @@ import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthAPIService } from './auth-api.service';
 
+export interface Status {
+  loggin: boolean;
+}
+
 @Injectable()
 export class AuthService {
-
-  unsubscribe = new Subject();
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -31,7 +33,10 @@ export class AuthService {
         console.log('we have a token');
         this.api.verifyToken(theToken).toPromise();
         localStorage.setItem('jwt', theToken);
-        this.api.tryGetFromAuthorize().toPromise();
+        const item: Status = {
+          loggin: true
+        };
+        localStorage.setItem('login', JSON.stringify(item));
       }, (failReason) => {
           this.logout();
       });
@@ -52,7 +57,16 @@ export class AuthService {
     return localStorage.getItem('jwt');
   }
 
+  getStatus(): Status {
+    const item = localStorage.getItem('login');
+    return JSON.parse(item);
+  }
+
   logout() {
+    const item: Status = {
+      loggin: false
+    };
+    localStorage.setItem('login', JSON.stringify(item));
     localStorage.removeItem('jwt');
     return this.afAuth.signOut();
   }

@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { ContentLoadGuard } from './core/guards/content-load.guard';
+import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 
 
 const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./content/content.module').then(m => m.ContentModule),
+    canActivate: [ContentActiveteGuard]
   },
   {
     path: 'about',
@@ -18,7 +21,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,      {
+    preloadingStrategy: PreloadAllModules
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

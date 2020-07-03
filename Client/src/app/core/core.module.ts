@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
 import { AuthAPIService } from './auth-api.service';
 import { TokenInterceptorService } from './token-interceptor.service';
+import { ContentLoadGuard } from './guards/content-load.guard';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
