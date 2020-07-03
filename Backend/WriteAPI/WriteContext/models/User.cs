@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,7 @@ namespace WriteContext.models
         public string Email { set; get; }
         public string PhotoId { set; get; }
         public string PersonalKey { set; get; }
+        public Language Language { set; get; }
         public NotificationSetting NotificationSettings { set; get; }
         public PersonalitionSetting PersonalitionSettings { set; get; }
         public List<Label> Labels { set; get; }

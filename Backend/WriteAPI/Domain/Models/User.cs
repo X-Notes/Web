@@ -34,7 +34,6 @@ namespace Domain.Models
                 Language = language,
                 Email = email,
                 Name = name,
-                Id = id
             };
             // Call Apply to mutate state of aggregate based on event
             Apply(@event, id);
@@ -56,7 +55,6 @@ namespace Domain.Models
         public void Apply(UpdateMainUserInfo @event)
         {
             Name = @event.Name;
-            Email = @event.Email;
 
             ++Version;
         }

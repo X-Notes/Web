@@ -1,4 +1,5 @@
-﻿using Domain.Commands;
+﻿using BI.services;
+using Domain.Commands;
 using Domain.Ids;
 using Domain.Models;
 using Domain.Repository;
@@ -40,78 +41,35 @@ namespace WriteAPI.Services
             {
                 ExchangeName = "ServerExchange",
                 ExchangeType = ExchangeType.Topic,
-                QueueName = "CommandNewUser",
-                RoutingKey = "new.user"
+                QueueName = "CommandUser",
+                RoutingKey = "user"
             });
-            _messageConsumerScope.MessageConsumer.Received += async (sender, e) => await RegisterUser(sender, e);
+            _messageConsumerScope.MessageConsumer.Received += async (sender, e) => await HandleUser(sender, e);
 
             return Task.CompletedTask;
         }
 
-        private async Task RegisterUser(object sender, BasicDeliverEventArgs e)
+        private async Task HandleUser(object sender, BasicDeliverEventArgs e)
         {
-            var processed = false;
+            var processed = true;
             try
             {
                 var value = Encoding.UTF8.GetString(e.Body.ToArray());
                 logger.LogInformation($"Received {value}");
-                await HandleDefineObject(value);
-                processed = true;
+
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<UserHandler>();
+                    await service.HandleRaw(value);
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.ToString());
-                processed = false;
             }
             finally
             {
                 _messageConsumerScope.MessageConsumer.SetAcknowledge(e.DeliveryTag, processed);
-            }
-        }
-        private async Task HandleDefineObject(string value)
-        {
-
-            var deserialized = JsonConvert.DeserializeObject<CommandGet>(value);
-            var messageType = Type.GetType($"{deserialized.Type}");
-            var type = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Data), messageType);
-            switch (type)
-            {
-                case NewUser command:
-                {
-                    await AddUser(command);
-                    break;
-                }
-                case UpdateMainUserInfo command:
-                {
-                    await UpdateUserInfo(command);
-                    break;
-                }
-            }       
-        }
-        private async Task AddUser(NewUser user)
-        {
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var repository = scope.ServiceProvider.GetRequiredService<IRepository<User>>();
-                var temp = new User();
-                temp.Create(user.Name, user.Email, user.Language, user.Id);
-                await repository.Add(temp);
-            }
-        }
-        private async Task UpdateUserInfo(UpdateMainUserInfo info)
-        {
-            using (var scope = serviceScopeFactory.CreateScope())
-            {
-                var repository = scope.ServiceProvider.GetRequiredService<IRepository<User>>();
-                var find = await repository.Find(info.Id);
-                Console.WriteLine("Version: " + find.Version);
-                Console.WriteLine("Name: " + find.Name);
-                Console.WriteLine("Email: " + find.Email);
-                Console.WriteLine("Id: " + find.Id);
-                var syka = await repository.Query();
-                Console.WriteLine(syka);
-                find.UpdateMainInfo(info);
-                await repository.Update(find);
             }
         }
     }

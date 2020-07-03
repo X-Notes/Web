@@ -19,6 +19,8 @@ namespace WriteContext
         {
             modelBuilder.Entity<RelantionShip>()
                 .HasKey(x => new { x.FirstUserId, x.SecondUserId});
+
+            modelBuilder.Entity<User>().HasIndex(x => new { x.Email });
         }
     }
 }

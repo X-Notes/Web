@@ -1,10 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {TranslateLoader, TranslateModule, MissingTranslationHandler, MissingTranslationHandlerParams} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { SharedModule } from '../shared/shared.module';
+
+// Auth
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { environment } from 'src/environments/environment';
+import { AuthService } from './auth.service';
+import { AuthAPIService } from './auth-api.service';
+import { TokenInterceptorService } from './token-interceptor.service';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -29,7 +38,15 @@ export class MissingTranslationService implements MissingTranslationHandler {
       },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MissingTranslationService },
       useDefaultLang: false,
-    })
-  ]
+    }),
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule
+  ],
+  providers: [AuthService, AuthAPIService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true
+    }]
 })
 export class CoreModule { }

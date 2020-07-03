@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain;
 using Domain.Commands;
 using Domain.Ids;
 using Domain.Models;
@@ -18,32 +19,23 @@ namespace WriteAPI.Controllers
     {
 
         private readonly CommandsPushQueue commandsPushQueue;
-        private readonly IIdGenerator idGenerator;
-        public UserController(CommandsPushQueue commandsPushQueue, IIdGenerator idGenerator)
+        public UserController(CommandsPushQueue commandsPushQueue)
         {
             this.commandsPushQueue = commandsPushQueue;
-            this.idGenerator = idGenerator;
         }
 
         [HttpPost]
         public void Authorize([FromBody]NewUser user)
         {
-            user.Id = idGenerator.New();
-            var command = new CommandGet();
-            command.Type = typeof(NewUser).AssemblyQualifiedName;
-            command.Data = user;
-            var serialized = JsonConvert.SerializeObject(command);
-            commandsPushQueue.CommandNewUser(serialized);
+            var str = FactoryQueueCommand.Transform(user);
+            commandsPushQueue.CommandNewUser(str);
         }
 
         [HttpPut("main")]
         public void UpdateMainInformation([FromBody]UpdateMainUserInfo info)
         {
-            var command = new CommandGet();
-            command.Type = typeof(UpdateMainUserInfo).AssemblyQualifiedName;
-            command.Data = info;
-            var serialized = JsonConvert.SerializeObject(command);
-            commandsPushQueue.CommandNewUser(serialized);
+            var str = FactoryQueueCommand.Transform(info);
+            commandsPushQueue.CommandNewUser(str);
         }
     }
 }

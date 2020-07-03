@@ -23,8 +23,8 @@ namespace WriteAPI.Services
             {
                 ExchangeName = "ServerExchange",
                 ExchangeType = ExchangeType.Topic,
-                QueueName = "CommandNewUser",
-                RoutingKey = "new.user"
+                QueueName = "CommandUser",
+                RoutingKey = "user"
             });
         }
         public void CommandNewUser(string value)
