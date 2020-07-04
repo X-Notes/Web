@@ -6,15 +6,14 @@ using WriteContext.helpers;
 
 namespace Domain.Commands.users
 {
-    public class UpdateLanguage : IRequest<Unit>
+    public class UpdateLanguage : BaseCommandEntity, IRequest<Unit>
     {
         public Language Language { set; get; }
-        public string Email { set; get; }
 
         public UpdateLanguage(Language Language, string Email)
+            :base(Email)
         {
             this.Language = Language;
-            this.Email = Email;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using BI.services;
 using Common.DTO;
+using Domain.Commands.backgrounds;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
@@ -71,6 +72,14 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<NewUser, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfo, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhoto, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateLanguage, Unit>, UserHandlerСommand>();
+
+            // Backgrounds
+            services.AddScoped<IRequestHandler<RemoveBackground, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<DefaultBackground, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateBackground, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewBackground, Unit>, BackgroundHandlerCommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -78,6 +87,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
             services.AddTransient<LabelRepository>();
             services.AddTransient<UserRepository>();
+            services.AddTransient<BackgroundRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

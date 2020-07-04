@@ -48,6 +48,8 @@ namespace WriteAPI.Controllers
         [HttpPut("main")]
         public async Task UpdateMainInformation([FromBody]UpdateMainUserInfo info)
         {
+            var currentUserEmail = this.GetUserEmail();
+            info.Email = currentUserEmail;
             await _mediator.Send(info);
         }
 

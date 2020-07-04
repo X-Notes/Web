@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Commands.backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,26 +24,29 @@ namespace WriteAPI.Controllers
         [HttpGet("background/default")]
         public async Task DefaultBackgroundCover()
         {
-
+            var email = this.GetUserEmail();
+            await _mediator.Send(new DefaultBackground(email));
         }
 
         [HttpDelete("background/{id}")]
         public async Task DeleteBackground(int id)
         {
-
+            var email = this.GetUserEmail();
+            await _mediator.Send(new RemoveBackground(email, id));
         }
 
         [HttpGet("background/{id}")]
         public async Task UpdateBackgroundCover(int id)
         {
-            var currentUserEmail = this.GetUserEmail();
+            var email = this.GetUserEmail();
+            await _mediator.Send(new UpdateBackground(email, id));
         }
 
         [HttpPost("background")]
-        public async Task<int> NewBackgroundPhoto(IFormFile photo)
+        public async Task NewBackgroundPhoto(IFormFile photo)
         {
-            var currentUserEmail = this.GetUserEmail();
-            return 0;
+            var email = this.GetUserEmail();
+            await _mediator.Send(new NewBackground(email, photo));
         }
     }
 }
