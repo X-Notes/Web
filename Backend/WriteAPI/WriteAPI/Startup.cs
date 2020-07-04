@@ -1,3 +1,5 @@
+using AutoMapper;
+using BI.Mapping;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
@@ -35,7 +37,10 @@ namespace WriteAPI
             });
 
             services.JWT(Configuration);
-            
+
+            services.AddAutoMapper(typeof(UserProfile).Assembly);
+
+
             services.AddControllers().AddNewtonsoftJson();
 
             //services.Queue(Configuration);

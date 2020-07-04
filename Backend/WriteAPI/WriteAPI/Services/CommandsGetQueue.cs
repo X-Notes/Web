@@ -64,7 +64,7 @@ namespace WriteAPI.Services
 
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<UserHandler>();
+                    var service = scope.ServiceProvider.GetRequiredService<UserHandlerСommand>();
                     // await service.HandleRaw(value);
                     await Task.Delay(500);
                 }

@@ -27,7 +27,7 @@ namespace WriteAPI.Controllers
             }
             catch (FirebaseException ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
 
             return BadRequest();

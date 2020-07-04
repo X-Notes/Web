@@ -5,10 +5,10 @@ using WriteContext.Repositories;
 
 namespace BI.services
 {
-    public class LabelHandler
+    public class LabelHandlerCommand
     {
         private readonly LabelRepository labelRepository;
-        public LabelHandler(LabelRepository labelRepository)
+        public LabelHandlerCommand(LabelRepository labelRepository)
         {
             this.labelRepository = labelRepository;
         }

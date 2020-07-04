@@ -63,8 +63,9 @@ namespace WriteAPI.ConfigureAPP
         public static void Mediatr(this IServiceCollection services)
         {
             services.AddMediatR(typeof(Startup));
-            services.AddScoped<LabelHandler>();
-            services.AddScoped<IRequestHandler<NewUser, string>, UserHandler>();
+
+
+            services.AddScoped<IRequestHandler<NewUser, Unit>, UserHandlerСommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {

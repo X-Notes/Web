@@ -1,9 +1,7 @@
 ﻿using Domain.Aggregates;
 using Domain.Commands;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+using WriteContext.helpers;
 
 namespace Domain.Models
 {
