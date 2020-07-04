@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 
 export enum subMenu {
   All = 'all',
@@ -13,7 +13,8 @@ export enum subMenu {
 @Component({
   selector: 'app-folders',
   templateUrl: './folders.component.html',
-  styleUrls: ['./folders.component.scss']
+  styleUrls: ['./folders.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 export class FoldersComponent implements OnInit {
 
@@ -29,6 +30,10 @@ export class FoldersComponent implements OnInit {
 
   switchSub(value: subMenu) {
     this.current = value;
+  }
+
+  cancelSideBar() {
+    this.pService.stateSidebar = false;
   }
 
 }

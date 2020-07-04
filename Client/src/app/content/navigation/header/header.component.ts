@@ -24,4 +24,8 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  toggleSidebar() {
+    this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
 }

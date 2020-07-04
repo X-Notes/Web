@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 
-enum subMenu {
+export enum subMenu {
   All = 'all',
   Invitations = 'invitations'
 }
@@ -10,7 +10,8 @@ enum subMenu {
 @Component({
   selector: 'app-people',
   templateUrl: './people.component.html',
-  styleUrls: ['./people.component.scss']
+  styleUrls: ['./people.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 export class PeopleComponent implements OnInit {
 
@@ -26,6 +27,10 @@ export class PeopleComponent implements OnInit {
 
   switchSub(value: subMenu) {
     this.current = value;
+  }
+
+  cancelSideBar() {
+    this.pService.stateSidebar = false;
   }
 
 }

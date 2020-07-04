@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 
-enum subMenu {
+export enum subMenu {
   All = 'all',
   Bin = 'bin'
 }
@@ -10,7 +10,8 @@ enum subMenu {
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',
-  styleUrls: ['./labels.component.scss']
+  styleUrls: ['./labels.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 export class LabelsComponent implements OnInit {
 
@@ -26,6 +27,10 @@ export class LabelsComponent implements OnInit {
 
   switchSub(value: subMenu) {
     this.current = value;
+  }
+
+  cancelSideBar() {
+    this.pService.stateSidebar = false;
   }
 
 }

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 export class ProfileComponent implements OnInit {
 
@@ -19,6 +20,10 @@ export class ProfileComponent implements OnInit {
 
   toggle() {
     this.check = !this.check;
+  }
+
+  cancelSideBar() {
+    this.pService.stateSidebar = false;
   }
 
 }

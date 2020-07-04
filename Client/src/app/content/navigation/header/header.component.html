@@ -19,6 +19,9 @@
     </div>
     <div class="management-section">
         <div class="interactions">
+            <div class="generic" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
+                <span></span>
+            </div>
             <button name="Create note" type="button" class="generic new-note" #new>
                 <div class="inner-content">
                     <p>New Note</p>
@@ -42,8 +45,8 @@
         </div>
         <div class="interactions">
             <div class="search">
-                <input type="search" placeholder="Search..." aria-label="Search search search" class="check1">
-                <button type="button" class="check2">
+                <input type="search" placeholder="Search..." aria-label="Search search search">
+                <button type="button">
                     <div class="icon">
                         <i class="icon-search"></i>
                     </div>
@@ -56,6 +59,15 @@
             <div class="auxiliary-icon" #question>
                 <i class="icon-question"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
+            </div>
+            <div class="auxiliary-icon" #notificationHeader>
+                <i class="icon-notification"></i>
+                <div class="push">1</div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
+            </div>
+            <div class="auxiliary-icon" #orientationNote>
+                <i class="icon-question"></i>
+                <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Action } from 'rxjs/internal/scheduler/Action';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
+import { trigger, state, style, transition, animate, useAnimation } from '@angular/animations';
 
 export enum subMenu {
   All = 'all',
@@ -19,7 +19,8 @@ export interface Label {
 @Component({
   selector: 'app-notes',
   templateUrl: './notes.component.html',
-  styleUrls: ['./notes.component.scss']
+  styleUrls: ['./notes.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 
 export class NotesComponent implements OnInit {
@@ -62,6 +63,10 @@ export class NotesComponent implements OnInit {
 
   switchSub(value: subMenu) {
     this.current = value;
+  }
+
+  cancelSideBar() {
+    this.pService.stateSidebar = false;
   }
 
 }
