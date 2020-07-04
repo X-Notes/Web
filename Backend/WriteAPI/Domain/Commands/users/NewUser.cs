@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using WriteContext.helpers;
 
-namespace Domain.Commands
+namespace Domain.Commands.users
 {
     public class NewUser : IRequest<Unit>
     {

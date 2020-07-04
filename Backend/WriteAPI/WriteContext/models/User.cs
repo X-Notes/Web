@@ -14,6 +14,11 @@ namespace WriteContext.models
         public NotificationSetting NotificationSettings { set; get; }
         public PersonalitionSetting PersonalitionSettings { set; get; }
         public List<Label> Labels { set; get; }
+        public List<Backgrounds> Backgrounds { set; get; }
+
+        public int? CurrentBackgroundId { set; get; }
+        public Backgrounds CurrentBackground { set; get; }
+
         public List<RelantionShip> RelantionShips { set; get; }
     }
 }

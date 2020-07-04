@@ -1,7 +1,10 @@
-﻿using BI.services;
-using Domain.Commands;
+﻿using BI.helpers;
+using BI.services;
+using Common.DTO;
+using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
+using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
 using MediatR;
@@ -64,8 +67,10 @@ namespace WriteAPI.ConfigureAPP
         {
             services.AddMediatR(typeof(Startup));
 
-
+            // USER
+            services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
             services.AddScoped<IRequestHandler<NewUser, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateMainUserInfo, Unit>, UserHandlerСommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -91,6 +96,10 @@ namespace WriteAPI.ConfigureAPP
                         ValidateLifetime = true
                     };
                 });
+        }
+        public static void BI(this IServiceCollection services)
+        {
+            services.AddScoped<PhotoHelpers>();
         }
     }
 }

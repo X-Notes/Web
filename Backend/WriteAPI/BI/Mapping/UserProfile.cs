@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Common.DTO;
-using Domain.Commands;
+using Domain.Commands.users;
 using WriteContext.models;
 
 namespace BI.Mapping

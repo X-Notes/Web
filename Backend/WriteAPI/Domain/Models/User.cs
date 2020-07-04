@@ -1,5 +1,5 @@
 ﻿using Domain.Aggregates;
-using Domain.Commands;
+using Domain.Commands.users;
 using System;
 using WriteContext.helpers;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO;
 using Domain;
-using Domain.Commands;
+using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
 using Domain.Queries.users;
@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Services;
+using WriteContext.helpers;
 
 namespace WriteAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace WriteAPI.Controllers
         {
             this._mediator = _mediator;
         }
+
 
         [HttpPost]
         public async Task<ShortUser> Authorize([FromBody]NewUser user)
@@ -47,6 +49,20 @@ namespace WriteAPI.Controllers
         public async Task UpdateMainInformation([FromBody]UpdateMainUserInfo info)
         {
             await _mediator.Send(info);
+        }
+
+        [HttpPost("photo")]
+        public async Task ChangeProfilePhoto(IFormFile photo)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new UpdatePhoto(photo, email));
+        }
+
+        [HttpPost("language")]
+        public async Task ChangeProfilePhoto(Language language)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new UpdateLanguage(language, email));
         }
     }
 }

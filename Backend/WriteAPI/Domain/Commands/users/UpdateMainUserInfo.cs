@@ -1,10 +1,7 @@
-﻿using Common;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
 
-namespace Domain.Commands
+
+namespace Domain.Commands.users
 {
     public class UpdateMainUserInfo : IRequest<Unit>
     {
