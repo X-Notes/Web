@@ -1,14 +1,18 @@
 ﻿using Domain.Commands;
+using MediatR;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
 namespace BI.services
 {
-    public class UserHandler
+    public class UserHandler : 
+        IRequestHandler<NewUser, string>,
+        IRequestHandler<UpdateMainUserInfo, string>
     {
         private readonly UserRepository userRepository;
 
@@ -17,34 +21,14 @@ namespace BI.services
             this.userRepository = userRepository;
         }
 
-        public async Task HandleRaw(string value)
+        public Task<string> Handle(NewUser request, CancellationToken cancellationToken)
         {
-
-            var deserialized = JsonConvert.DeserializeObject<CommandGet>(value);
-            var messageType = Type.GetType($"{deserialized.Type}");
-            var type = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Data), messageType);
-
-            switch (type)
-            {
-                case NewUser command:
-                    {
-                        await Handle(command);
-                        break;
-                    }
-                case UpdateMainUserInfo command:
-                    {
-                        await Handle(command);
-                        break;
-                    }
-            }
+            throw new Exception();
         }
-        private async Task Handle(NewUser user)
-        {
 
-        }
-        private async Task Handle(UpdateMainUserInfo info)
+        public Task<string> Handle(UpdateMainUserInfo request, CancellationToken cancellationToken)
         {
-
+            throw new NotImplementedException();
         }
     }
 }

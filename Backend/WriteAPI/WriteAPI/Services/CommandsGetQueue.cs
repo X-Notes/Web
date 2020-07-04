@@ -19,6 +19,11 @@ using System.Threading.Tasks;
 
 namespace WriteAPI.Services
 {
+    /*
+    var deserialized = JsonConvert.DeserializeObject<CommandGet>(value);
+    var messageType = Type.GetType($"{deserialized.Type}");
+    var type = JsonConvert.DeserializeObject(Convert.ToString(deserialized.Data), messageType);
+    */
     public class CommandsGetQueue : BackgroundService
     {
         private IMessageConsumerScope _messageConsumerScope;
@@ -60,7 +65,8 @@ namespace WriteAPI.Services
                 using (var scope = serviceScopeFactory.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<UserHandler>();
-                    await service.HandleRaw(value);
+                    // await service.HandleRaw(value);
+                    await Task.Delay(500);
                 }
             }
             catch (Exception ex)

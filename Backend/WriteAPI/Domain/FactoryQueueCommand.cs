@@ -17,5 +17,9 @@ namespace Domain
             };
             return JsonConvert.SerializeObject(command);
         }
+        /*
+            var str = FactoryQueueCommand.Transform(user);
+            commandsPushQueue.CommandNewUser(str);
+         */
     }
 }

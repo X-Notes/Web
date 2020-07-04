@@ -6,6 +6,7 @@ using Domain;
 using Domain.Commands;
 using Domain.Ids;
 using Domain.Models;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,25 +18,22 @@ namespace WriteAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-
-        private readonly CommandsPushQueue commandsPushQueue;
-        public UserController(CommandsPushQueue commandsPushQueue)
+        private readonly IMediator _mediator;
+        public UserController(IMediator _mediator)
         {
-            this.commandsPushQueue = commandsPushQueue;
+            this._mediator = _mediator;
         }
 
         [HttpPost]
-        public void Authorize([FromBody]NewUser user)
+        public async Task Authorize([FromBody]NewUser user)
         {
-            var str = FactoryQueueCommand.Transform(user);
-            commandsPushQueue.CommandNewUser(str);
+            var response = await _mediator.Send(user);
         }
 
         [HttpPut("main")]
-        public void UpdateMainInformation([FromBody]UpdateMainUserInfo info)
+        public async Task UpdateMainInformation([FromBody]UpdateMainUserInfo info)
         {
-            var str = FactoryQueueCommand.Transform(info);
-            commandsPushQueue.CommandNewUser(str);
+            var response = await _mediator.Send(info);
         }
     }
 }

@@ -31,20 +31,24 @@ export class AuthService {
     if (firebaseUser) {
       firebaseUser.getIdToken(true).then((theToken) => {
         console.log('we have a token');
-        this.api.verifyToken(theToken).toPromise();
-        localStorage.setItem('jwt', theToken);
-        const item: Status = {
-          loggin: true
-        };
-        localStorage.setItem('login', JSON.stringify(item));
+        this.setStatus(true);
+        this.api.verifyToken(theToken).toPromise().catch(error => this.setStatus(false));
       }, (failReason) => {
-          this.logout();
+        this.setStatus(false);
+        this.logout();
       });
     } else {
+      this.setStatus(false);
       this.logout();
     }
   }
 
+  private setStatus(flag: boolean) {
+    const item: Status = {
+      loggin: flag
+    };
+    localStorage.setItem('login', JSON.stringify(item));
+  }
   private AuthLogin(provider: firebase.auth.GoogleAuthProvider) {
     return this.afAuth.signInWithPopup(provider)
       .then(result => {})
