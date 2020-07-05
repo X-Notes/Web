@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20200705004121_note")]
+    partial class note
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +61,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Folders");
+                    b.ToTable("Folder");
                 });
 
             modelBuilder.Entity("WriteContext.models.Label", b =>
@@ -85,7 +87,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Labels");
+                    b.ToTable("Label");
                 });
 
             modelBuilder.Entity("WriteContext.models.NotificationSetting", b =>

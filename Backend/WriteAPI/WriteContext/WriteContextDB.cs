@@ -11,6 +11,8 @@ namespace WriteContext
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
         public DbSet<RelantionShip> RelantionShips { get; set; }
         public DbSet<Backgrounds> Backgrounds { set; get; }
+        public DbSet<Folder> Folders { set; get; }
+        public DbSet<Label> Labels { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
