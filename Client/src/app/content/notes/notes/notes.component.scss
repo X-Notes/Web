@@ -1,0 +1,12 @@
+@import 'submenu';
+
+.content {
+    width: calc(100% - 170px);
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .content {
+        width: 100%;
+    }
+}

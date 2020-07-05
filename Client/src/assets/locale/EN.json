@@ -1,4 +1,23 @@
 ﻿{
-  "notes": "notes",
-  "folders": "folders"
+  "notes": {
+    "name": "Notes"
+  },
+  "folders": {
+    "name": "Folders"
+  },
+  "labels": {
+    "name": "Labels"
+  },
+  "people": {
+    "name": "People"
+  },
+  "subMenu": {
+    "all": "All",
+    "shared": "Shared",
+    "locked": "Locked",
+    "archive": "Archive",
+    "bin": "Bin",
+    "invitation": "Invitation",
+    "cancel": "Cancel"
+  }
 }

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotesComponent } from './notes/notes.component';
 import { NoteRouting } from './notes-routing';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 
@@ -9,7 +10,8 @@ import { NoteRouting } from './notes-routing';
   declarations: [NotesComponent],
   imports: [
     CommonModule,
-    NoteRouting
+    NoteRouting,
+    SharedModule
   ]
 })
 export class NotesModule { }
