@@ -66,5 +66,6 @@ namespace WriteAPI.Controllers
             var email = this.GetUserEmail();
             await _mediator.Send(new UpdateLanguage(language, email));
         }
+        //TODO change Theme
     }
 }

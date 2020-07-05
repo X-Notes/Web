@@ -21,6 +21,20 @@ namespace WriteContext
             modelBuilder.Entity<RelantionShip>()
                 .HasKey(x => new { x.FirstUserId, x.SecondUserId});
 
+            modelBuilder.Entity<RelantionShip>()
+                .HasOne(x => x.FirstUser)
+                .WithMany(y => y.FriendRequestsMade)
+                .HasForeignKey(x => x.FirstUserId).OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RelantionShip>()
+                .HasOne(x => x.SecondUser)
+                .WithMany(y => y.FriendRequestsAccepted)
+                .HasForeignKey(x => x.SecondUserId);
+
+            modelBuilder.Entity<RelantionShip>()
+                .HasOne(e => e.ActionUser)
+                .WithOne().HasForeignKey<RelantionShip>(e => e.ActionUserId);
+
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
 
             modelBuilder.Entity<User>()

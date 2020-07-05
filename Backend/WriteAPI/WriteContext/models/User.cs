@@ -19,6 +19,10 @@ namespace WriteContext.models
         public int? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
-        public List<RelantionShip> RelantionShips { set; get; }
+        public ICollection<RelantionShip> FriendRequestsMade { get; set; }
+
+        public ICollection<RelantionShip> FriendRequestsAccepted { get; set; }
+
+        public List<Folder> Folders { set; get; }
     }
 }
