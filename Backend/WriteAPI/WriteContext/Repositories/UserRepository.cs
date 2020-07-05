@@ -20,10 +20,17 @@ namespace WriteContext.Repositories
         {
             return await contextDB.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
+
         public async Task<User> GetUserWithBackgrounds(string email)
         {
             return await contextDB.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
         }
+
+        public async Task<User> GetUserWithLabels(string email)
+        {
+            return await contextDB.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task Add(User user)
         {
             await contextDB.Users.AddAsync(user);

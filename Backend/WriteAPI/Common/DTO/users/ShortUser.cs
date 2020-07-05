@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Common.DTO
+namespace Common.DTO.users
 {
     public class ShortUser
     {

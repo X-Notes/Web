@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.DTO;
+using Common.DTO.users;
 using Domain.Queries.users;
 using MediatR;
 using System.Threading;

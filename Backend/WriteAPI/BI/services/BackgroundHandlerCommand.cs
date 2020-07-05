@@ -20,17 +20,14 @@ namespace BI.services
         IRequestHandler<NewBackground, Unit>
     {
         private readonly UserRepository userRepository;
-        private readonly IMapper imapper;
         private readonly BackgroundRepository backgroundRepository;
         private readonly PhotoHelpers photoHelpers;
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
-                                        IMapper imapper,
                                         PhotoHelpers photoHelpers)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
-            this.imapper = imapper;
             this.photoHelpers = photoHelpers;
         }
 
@@ -44,11 +41,11 @@ namespace BI.services
 
         public async Task<Unit> Handle(RemoveBackground request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            var backId = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
-            if(backId != null)
+            var user = await userRepository.GetUserWithBackgrounds(request.Email);
+            var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
+            if(back != null)
             {
-                await backgroundRepository.DeleteBackground(backId.Id);
+                await backgroundRepository.DeleteBackground(back);
             }
             return Unit.Value;
         }

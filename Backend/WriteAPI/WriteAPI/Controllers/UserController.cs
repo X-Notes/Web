@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DTO;
+using Common.DTO.users;
 using Domain;
 using Domain.Commands.users;
 using Domain.Ids;

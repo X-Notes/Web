@@ -15,9 +15,8 @@ namespace WriteContext.Repositories
             this.contextDB = contextDB;
         }
 
-        public async Task DeleteBackground(int id)
+        public async Task DeleteBackground(Backgrounds item)
         {
-            var item = this.contextDB.Backgrounds.FirstOrDefaultAsync(x => x.Id == id);
             this.contextDB.Remove(item);
             await this.contextDB.SaveChangesAsync();
         }

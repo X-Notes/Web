@@ -1,10 +1,13 @@
 ﻿using BI.helpers;
 using BI.services;
-using Common.DTO;
+using Common.DTO.labels;
+using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.labels;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
+using Domain.Queries.labels;
 using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
@@ -18,6 +21,7 @@ using RabbitMQ.Client;
 using Shared.Queue.Interfaces;
 using Shared.Queue.QueueServices;
 using System;
+using System.Collections.Generic;
 using WriteAPI.Services;
 using WriteContext;
 using WriteContext.Repositories;
@@ -70,6 +74,7 @@ namespace WriteAPI.ConfigureAPP
 
             // USER
             services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
+
             services.AddScoped<IRequestHandler<NewUser, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfo, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdatePhoto, Unit>, UserHandlerСommand>();
@@ -80,6 +85,13 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<DefaultBackground, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateBackground, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<NewBackground, Unit>, BackgroundHandlerCommand>();
+
+            //Labels
+            services.AddScoped<IRequestHandler<GetLabelsByEmail, List<LabelDTO>>, LabelHandlerQuery>();
+
+            services.AddScoped<IRequestHandler<NewLabel, int>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteLabel, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateLabel, Unit>, LabelHandlerCommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
