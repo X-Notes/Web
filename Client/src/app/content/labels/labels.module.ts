@@ -7,11 +7,12 @@ import { ApiService } from './api.service';
 import { NgxsModule } from '@ngxs/store';
 import { LabelStore } from './state/labels-state';
 import { environment } from 'src/environments/environment';
+import { LabelComponent } from './label/label.component';
 
 
 
 @NgModule({
-  declarations: [LabelsComponent],
+  declarations: [LabelsComponent, LabelComponent],
   imports: [
     CommonModule,
     LabelsRouting,

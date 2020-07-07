@@ -28,7 +28,7 @@ body,html{
     height: 100%;
 }
 
-button {
+button, input {
     font-family: 'Roboto', sans-serif;
 }
 
@@ -36,4 +36,8 @@ button {
 ::-webkit-scrollbar {
     width: 7px;
     height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c9c9c9;
 }

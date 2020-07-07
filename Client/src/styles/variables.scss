@@ -32,3 +32,11 @@ $blue-label: #CDEEFF;
 $dark-blue-label: #CDD5FF;
 $purple-label: #EFCDFF;
 $pink-label: #FFCDF4;
+
+
+//convert
+
+@function get-color($name) {
+    @return '$name';
+}
+

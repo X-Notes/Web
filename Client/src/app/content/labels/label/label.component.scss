@@ -1,0 +1,208 @@
+@import 'variables';
+@import 'fonts';
+
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 calc((100% / 3) - 1rem);
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    &:nth-child(3n) {
+        margin-right: 0;
+    }
+}
+
+.field {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    height: 40px;
+    background-color: $green-label;
+    border-radius: 10px;
+    transition: 0.2s ease;
+
+    &:hover {
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    &:focus-within {
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    }
+    
+    input[type="text"], button[type="button"] {
+        background-color: transparent;
+        border: 0;
+        padding: 0;
+        outline: none;
+        user-select: none;
+    }
+
+    input[type="text"] {
+        height: 100%;
+        width: 100%;
+        font-size: 1.25rem;
+        font-weight: 300;
+        padding-left: 1rem;
+        color: $light-text-color;
+        transition: 0.2s ease;
+
+        &:focus {
+            padding-left: 1.25rem;
+
+            &::placeholder {
+                color: inherit;
+            }
+        }
+    }
+
+    .options {
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        button[type="button"] {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 0.9375rem;
+            cursor: pointer;
+
+            .icon {
+                display: flex;
+                font-size: 0.625rem;
+            }
+        }
+
+        .separator {
+            height: 20px;
+            border-width: 0 1px 0 0;
+            border-style: solid;
+            color: #C6C6C6;
+            cursor: default;
+        }
+    }
+}
+
+ul {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+
+    li {
+        display: flex;
+        flex: 0 0 calc(100% / 5 - 1.6rem);
+        height: 25px;
+        border-radius: 5px;
+        margin-right: 2rem;
+        margin-top: 0.625rem;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+        transition: 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7;
+        }
+
+        &:nth-child(5), &:nth-child(10) {
+            margin-right: 0;
+        }
+
+        &:nth-child(1) {
+            background-color: $red-label;
+        }
+
+        &:nth-child(2) {
+            background-color: $orange-label;
+        }
+
+        &:nth-child(3) {
+            background-color: $yellow-label;
+        }
+
+        &:nth-child(4) {
+            background-color: $light-green-label;
+        }
+
+        &:nth-child(5) {
+            background-color: $green-label;
+        }
+
+        &:nth-child(6) {
+            background-color: $light-blue-label;
+        }
+
+        &:nth-child(7) {
+            background-color: $blue-label;
+        }
+
+        &:nth-child(8) {
+            background-color: $dark-blue-label;
+        }
+
+        &:nth-child(9) {
+            background-color: $purple-label;
+        }
+
+        &:nth-child(10) {
+            background-color: $pink-label;
+        }
+    }
+}
+
+@media (max-width: 1440px) {
+    :host {
+        flex: 0 0 calc((100% / 2) - 0.625rem);
+        margin-right: 1.25rem;
+        margin-bottom: 1.25rem;
+
+        &:nth-child(3n) {
+            margin-right: 1.25rem;
+        }
+
+        &:nth-child(2n) {
+            margin-right: 0;
+        }
+    }
+
+    .field {
+        input[type="text"] {
+            font-size: 1.125rem;
+            font-weight: normal;
+        }
+    }
+}
+@media (max-width: 1024px) {
+    .field {
+        height: 35px;
+
+        input[type="text"] {
+            font-size: 1rem;
+        }
+
+        .options {
+            button[type="button"] {
+                padding: 0 0.75rem;
+            }
+        }
+    }
+
+    ul {
+        li {
+            flex: 0 0 calc(100% / 5 - 1rem);
+            margin-right: 1rem;
+        }
+    }
+}
+@media (max-width: 600px) {
+    :host {
+        flex: 0 0 100%;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
