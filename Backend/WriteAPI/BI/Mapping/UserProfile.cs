@@ -10,7 +10,8 @@ namespace BI.Mapping
         public UserProfile()
         {
             CreateMap<User, ShortUser>();
-            CreateMap<NewUser, User>();
+            CreateMap<NewUserCommand, User>();
+            CreateMap<NewUser, NewUserCommand>();
         }
     }
 }

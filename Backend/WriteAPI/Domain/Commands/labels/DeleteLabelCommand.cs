@@ -5,15 +5,13 @@ using System.Text;
 
 namespace Domain.Commands.labels
 {
-    public class UpdateLabel : BaseCommandEntity, IRequest<Unit>
+    public class DeleteLabelCommand : BaseCommandEntity, IRequest<Unit>
     {
         public int Id { set; get; }
-        public string Name { set; get; }
-        public string Color { set; get; }
-        public UpdateLabel(string email)
+        public DeleteLabelCommand(string email, int id)
             :base(email)
         {
-
+            this.Id = id;
         }
     }
 }

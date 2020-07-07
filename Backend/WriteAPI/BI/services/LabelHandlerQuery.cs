@@ -28,8 +28,12 @@ namespace BI.services
         public async Task<List<LabelDTO>> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            var labels = await labelRepository.GetAll(user.Id);
-            return mapper.Map<List<LabelDTO>>(labels);
+            if (user != null)
+            {
+                var labels = await labelRepository.GetAll(user.Id);
+                return mapper.Map<List<LabelDTO>>(labels);
+            }
+            return null;
         }
     }
 }

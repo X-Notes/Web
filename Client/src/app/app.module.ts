@@ -9,6 +9,8 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { ContentLoadGuard } from './core/guards/content-load.guard';
 import { ContentActiveteGuard } from './core/guards/content-activete.guard';
+import { NgxsModule } from '@ngxs/store';
+import { LabelStore } from './content/labels/state/labels-state';
 
 @NgModule({
   declarations: [

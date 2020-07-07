@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Domain.Commands.backgrounds
 {
-    public class RemoveBackground : BaseCommandEntity, IRequest<Unit>
+    public class UpdateBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {
         public int Id { set; get; }
-        public RemoveBackground(string email, int id)
+        public UpdateBackgroundCommand(string email, int id)
             :base(email)
         {
             this.Id = id;

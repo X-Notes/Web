@@ -17,7 +17,7 @@ namespace Domain.Models
         {
 
         }
-        public void UpdateMainInfo(UpdateMainUserInfo @event)
+        public void UpdateMainInfo(UpdateMainUserInfoCommand @event)
         {
             // Call Apply to mutate state of aggregate based on event
             Apply(@event);
@@ -27,7 +27,7 @@ namespace Domain.Models
         }
         public void Create(string name, string email, Language language, Guid id)
         {
-            var @event = new NewUser()
+            var @event = new NewUserCommand()
             {
                 Language = language,
                 Email = email,
@@ -39,7 +39,7 @@ namespace Domain.Models
             // Add the event to uncommitted events to use it while persisting the events to Marten events store
             Append(@event);
         }
-        public void Apply(NewUser @event, Guid id)
+        public void Apply(NewUserCommand @event, Guid id)
         {
             Id = id;
             Name = @event.Name;
@@ -50,7 +50,7 @@ namespace Domain.Models
             //++Version;
         }
 
-        public void Apply(UpdateMainUserInfo @event)
+        public void Apply(UpdateMainUserInfoCommand @event)
         {
             Name = @event.Name;
 

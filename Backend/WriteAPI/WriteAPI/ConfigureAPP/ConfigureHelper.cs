@@ -60,8 +60,8 @@ namespace WriteAPI.ConfigureAPP
 
                 opts.Events.AsyncProjections.AggregateStreamsWith<User>();
 
-                opts.Events.AddEventType(typeof(NewUser));
-                opts.Events.AddEventType(typeof(UpdateMainUserInfo));
+                opts.Events.AddEventType(typeof(NewUserCommand));
+                opts.Events.AddEventType(typeof(UpdateMainUserInfoCommand));
 
             });
 
@@ -75,23 +75,23 @@ namespace WriteAPI.ConfigureAPP
             // USER
             services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewUser, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateMainUserInfo, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhoto, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdateLanguage, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
 
             // Backgrounds
-            services.AddScoped<IRequestHandler<RemoveBackground, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<DefaultBackground, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateBackground, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewBackground, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewBackgroundCommand, Unit>, BackgroundHandlerCommand>();
 
             //Labels
             services.AddScoped<IRequestHandler<GetLabelsByEmail, List<LabelDTO>>, LabelHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewLabel, int>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteLabel, Unit>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateLabel, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {

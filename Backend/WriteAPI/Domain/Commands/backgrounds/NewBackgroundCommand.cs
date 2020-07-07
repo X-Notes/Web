@@ -6,10 +6,10 @@ using System.Text;
 
 namespace Domain.Commands.backgrounds
 {
-    public class NewBackground : BaseCommandEntity, IRequest<Unit>
+    public class NewBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {
         public IFormFile File { set; get; }
-        public NewBackground(string email, IFormFile File)
+        public NewBackgroundCommand(string email, IFormFile File)
             :base(email)
         {
             this.File = File;

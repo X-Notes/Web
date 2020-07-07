@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Common.DTO.users;
 using Domain;
 using Domain.Commands.users;
@@ -9,6 +10,7 @@ using Domain.Ids;
 using Domain.Models;
 using Domain.Queries.users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -18,22 +20,27 @@ using WriteContext.helpers;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public UserController(IMediator _mediator)
+        private readonly IMapper mapper;
+        public UserController(IMediator _mediator, IMapper mapper)
         {
             this._mediator = _mediator;
+            this.mapper = mapper;
         }
 
 
         [HttpPost]
-        public async Task<ShortUser> Authorize([FromBody]NewUser user)
+        public async Task<ShortUser> Authorize(NewUser user)
         {
             var currentUserEmail = this.GetUserEmail();
-            await _mediator.Send(user);
+            var command = mapper.Map<NewUserCommand>(user);
+            command.Email = currentUserEmail;
+            await _mediator.Send(command);
             return await _mediator.Send(new GetShortUser(currentUserEmail));
         }
 
@@ -46,7 +53,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPut("main")]
-        public async Task UpdateMainInformation([FromBody]UpdateMainUserInfo info)
+        public async Task UpdateMainInformation([FromBody]UpdateMainUserInfoCommand info)
         {
             var currentUserEmail = this.GetUserEmail();
             info.Email = currentUserEmail;
@@ -57,14 +64,14 @@ namespace WriteAPI.Controllers
         public async Task ChangeProfilePhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new UpdatePhoto(photo, email));
+            await _mediator.Send(new UpdatePhotoCommand(photo, email));
         }
 
         [HttpPost("language")]
         public async Task ChangeProfilePhoto(Language language)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new UpdateLanguage(language, email));
+            await _mediator.Send(new UpdateLanguageCommand(language, email));
         }
         //TODO change Theme
     }

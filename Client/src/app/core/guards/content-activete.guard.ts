@@ -13,6 +13,7 @@ export class ContentActiveteGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if (!this.authservice.getStatus().loggin) {
       this.router.navigate(['/about']);
+      return false;
     }
       return true;
   }

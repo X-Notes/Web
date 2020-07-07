@@ -8,7 +8,7 @@ using WriteContext.helpers;
 
 namespace Domain.Commands.users
 {
-    public class NewUser : BaseCommandEntity, IRequest<Unit>
+    public class NewUserCommand : BaseCommandEntity, IRequest<Unit>
     {
         public string Name { set; get; }
         public string PhotoId { set; get; }

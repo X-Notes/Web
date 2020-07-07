@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-about',
@@ -8,13 +9,17 @@ import { AuthService } from 'src/app/core/auth.service';
 })
 export class AboutComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
   login() {
-    this.authService.GoogleAuth();
+    if (!this.authService.getStatus().loggin) {
+      this.authService.GoogleAuth();
+    } else {
+      this.router.navigate(['/notes']);
+    }
   }
 
   logout() {

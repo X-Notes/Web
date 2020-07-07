@@ -13,9 +13,9 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class LabelHandlerCommand:
-        IRequestHandler<NewLabel, int>,
-        IRequestHandler<DeleteLabel, Unit>,
-        IRequestHandler<UpdateLabel, Unit>
+        IRequestHandler<NewLabelCommand, int>,
+        IRequestHandler<DeleteLabelCommand, Unit>,
+        IRequestHandler<UpdateLabelCommand, Unit>
     {
         private readonly LabelRepository labelRepository;
         private readonly UserRepository userRepository;
@@ -28,7 +28,7 @@ namespace BI.services
         }
 
 
-        public async Task<Unit> Handle(DeleteLabel request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithLabels(request.Email);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
@@ -39,7 +39,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdateLabel request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithLabels(request.Email);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
@@ -50,7 +50,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<int> Handle(NewLabel request, CancellationToken cancellationToken)
+        public async Task<int> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             var label = mapper.Map<Label>(request);

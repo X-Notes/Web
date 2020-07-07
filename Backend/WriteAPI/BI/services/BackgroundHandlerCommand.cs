@@ -14,10 +14,10 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class BackgroundHandlerCommand: 
-        IRequestHandler<DefaultBackground, Unit>,
-        IRequestHandler<RemoveBackground, Unit>,
-        IRequestHandler<UpdateBackground, Unit>,
-        IRequestHandler<NewBackground, Unit>
+        IRequestHandler<DefaultBackgroundCommand, Unit>,
+        IRequestHandler<RemoveBackgroundCommand, Unit>,
+        IRequestHandler<UpdateBackgroundCommand, Unit>,
+        IRequestHandler<NewBackgroundCommand, Unit>
     {
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
@@ -31,7 +31,7 @@ namespace BI.services
             this.photoHelpers = photoHelpers;
         }
 
-        public async Task<Unit> Handle(DefaultBackground request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.CurrentBackgroundId = null;
@@ -39,7 +39,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(RemoveBackground request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RemoveBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithBackgrounds(request.Email);
             var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
@@ -50,7 +50,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdateBackground request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.CurrentBackgroundId = request.Id;
@@ -58,7 +58,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(NewBackground request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             var item = new Backgrounds()

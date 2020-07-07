@@ -6,12 +6,14 @@ using Common.DTO.labels;
 using Domain.Commands.labels;
 using Domain.Queries.labels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LabelController : ControllerBase
@@ -23,7 +25,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Add(NewLabel newLabel)
+        public async Task<JsonResult> Add(NewLabelCommand newLabel)
         {
             var email = this.GetUserEmail();
             newLabel.Email = email;
@@ -38,7 +40,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPut]
-        public async Task Update(UpdateLabel label)
+        public async Task Update(UpdateLabelCommand label)
         {
             var email = this.GetUserEmail();
             label.Email = email;
@@ -49,7 +51,7 @@ namespace WriteAPI.Controllers
         public async Task Delete(int id)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new DeleteLabel(email, id));
+            await _mediator.Send(new DeleteLabelCommand(email, id));
         }
 
 

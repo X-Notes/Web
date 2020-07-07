@@ -15,10 +15,10 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class UserHandlerСommand : 
-        IRequestHandler<NewUser, Unit>,
-        IRequestHandler<UpdateMainUserInfo, Unit>,
-        IRequestHandler<UpdatePhoto, Unit>,
-        IRequestHandler<UpdateLanguage, Unit>
+        IRequestHandler<NewUserCommand, Unit>,
+        IRequestHandler<UpdateMainUserInfoCommand, Unit>,
+        IRequestHandler<UpdatePhotoCommand, Unit>,
+        IRequestHandler<UpdateLanguageCommand, Unit>
     {
         private readonly UserRepository userRepository;
         private readonly IMapper imapper;
@@ -30,14 +30,14 @@ namespace BI.services
             this.photoHelpers = photoHelpers;
         }
 
-        public async Task<Unit> Handle(NewUser request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
             var user = imapper.Map<User>(request);
             await userRepository.Add(user);
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdateMainUserInfo request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateMainUserInfoCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.Name = request.Name;
@@ -45,7 +45,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdatePhoto request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.PhotoId = await photoHelpers.GetBase64(request.File);
@@ -53,7 +53,7 @@ namespace BI.services
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdateLanguage request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.Language = request.Language;
