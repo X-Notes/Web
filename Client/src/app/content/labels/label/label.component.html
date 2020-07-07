@@ -1,0 +1,28 @@
+<div class="field" [ngStyle]="{backgroundColor: color}">
+    <input type="text" placeholder="Name your label...">
+    <div class="options">
+        <button type="button" (click)="openColors()">
+            <div class="icon">
+                <i class="icon-plus"></i>
+            </div>
+        </button>
+        <div class="separator"></div>
+        <button type="button">
+            <div class="icon">
+                <i class="icon-plus"></i>
+            </div>
+        </button>
+    </div>
+</div>
+<ul *ngIf="isUpdate" [@changeColorLabel]>
+    <li (click)="changeColor('#FFCDCD')"></li>
+    <li (click)="changeColor('#FFEBCD')"></li>
+    <li (click)="changeColor('#FFFDCD')"></li>
+    <li (click)="changeColor('#DDFFCD')"></li>
+    <li (click)="changeColor('#CDFFD8')"></li>
+    <li (click)="changeColor('#CDFFFC')"></li>
+    <li (click)="changeColor('#CDEEFF')"></li>
+    <li (click)="changeColor('#CDD5FF')"></li>
+    <li (click)="changeColor('#EFCDFF')"></li>
+    <li (click)="changeColor('#FFCDF4')"></li>
+</ul>
