@@ -29,12 +29,11 @@ static all(state: LabelState): Label[] {
 }
 
 @Action(LoadLabels)
-loadContent({ patchState }: StateContext<LabelState>) {
-    return this.api.getAll().pipe(
-    tap(content => {
-        patchState({ labels: content });
-    })
-    );
+loadContent({ patchState, setState, getState }: StateContext<LabelState>) {
+    if (getState().labels.length > 0) {
+        return;
+    }
+    return this.api.getAll().pipe(tap(content => { setState({ labels: content }); }));
 }
 
 }
