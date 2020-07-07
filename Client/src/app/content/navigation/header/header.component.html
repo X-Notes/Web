@@ -1,3 +1,74 @@
-<div class="content">
-
-</div>
+<header [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+    <div class="profile-section">
+        <div class="profile" routerLink="/profile" #profile>
+            <div class="profile-data">
+                <div class="photo">
+                    <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+                </div>
+                <p>Fucking Name12321313213123</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
+        </div>
+        <button name="Notification" type="button" class="notification" #notification>
+            <div class="notification-data">
+                <i class="icon-notification"></i>
+                <div class="push">10</div>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
+        </button>
+    </div>
+    <div class="management-section">
+        <div class="interactions">
+            <div class="generic" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
+                <span></span>
+            </div>
+            <button name="Create note" type="button" class="generic new-note" #new>
+                <div class="inner-content">
+                    <p>New Note</p>
+                    <i class="icon-plus"></i>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
+            </button>
+            <button name="Select" type="button" class="generic filters" #select>
+                <div class="inner-content">
+                    <p>Select all</p>
+                    <i class="icon-select"></i>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
+            </button>
+            <button name="Filter" type="button" class="generic filters" #filter>
+                <div class="inner-content">
+                    <i class="icon-filter"></i>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
+            </button>
+        </div>
+        <div class="interactions">
+            <div class="search">
+                <input type="search" placeholder="Search..." aria-label="Search search search">
+                <button type="button">
+                    <div class="icon">
+                        <i class="icon-search"></i>
+                    </div>
+                </button>
+            </div>
+            <div class="auxiliary-icon" (click)="toggleTheme()" #themeApp>
+                <i class="icon-theme_light"></i>
+                <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
+            </div>
+            <div class="auxiliary-icon" #question>
+                <i class="icon-question"></i>
+                <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
+            </div>
+            <div class="auxiliary-icon" #notificationHeader>
+                <i class="icon-notification"></i>
+                <div class="push">1</div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
+            </div>
+            <div class="auxiliary-icon" #orientationNote>
+                <i class="icon-question"></i>
+                <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
+            </div>
+        </div>
+    </div>
+</header>

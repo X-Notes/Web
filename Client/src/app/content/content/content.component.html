@@ -1,5 +1,5 @@
 <app-header></app-header>
-<div class="content">
-    <app-side-bar></app-side-bar>
+<div class="content" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+    <app-side-bar class="sidebar"></app-side-bar>
     <router-outlet></router-outlet>
 </div>

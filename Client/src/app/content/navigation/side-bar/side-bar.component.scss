@@ -1,5 +1,201 @@
-.menu{
-    height: 100%;
-    width: 80px;
-    background-color: grey;
+@import 'variables';
+@import 'fonts';
+@import 'generic';
+
+:host {
+    position: relative;
+    z-index: 1;
+}
+ 
+ nav {
+     display: flex;
+     flex-direction: column;
+     height: 100%;
+     width: 80px;
+     border-right: 1px solid $light-separator;
+     transition: 0.2s ease;
+
+     .active {
+         background-color: $dark-backlight;
+         .main-icon, p {
+            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+         }
+         &:nth-child(2){
+             .main-icon {
+                background: none;
+                -webkit-text-fill-color: initial;
+                -webkit-background-clip: initial;
+                i {
+                    .path1::before {
+                        color: white;
+                    }
+        
+                    .path2::before {
+                        background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    }
+                }
+             }
+        }
+     }
+
+     .module {
+         position: relative;
+         display: flex;
+         height: 80px;
+         width: 100%;
+         user-select: none;
+         outline: none;
+         cursor: pointer;
+         transition: 0.2s ease;
+
+         .item {
+             position: relative;
+             z-index: 5;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             height: 100%;
+             width: 100%;
+
+             .main-icon {
+                font-size: 2rem;
+                i {
+                    &::before {
+                        transition: 0.2s ease;
+                    }
+                    .path1::before, .path2::before {
+                        transition: 0.2s ease;
+                    }
+                }
+            }
+
+            p {
+                margin-top: 0.3125rem;
+                font-size: 0.875rem;
+                color: #ffffff;
+                transition: 0.2s ease;
+            }
+         }
+
+         &:hover:not(.active) {
+             background-color: $dark-button;
+         }
+     }
+
+     .billing-field {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: 100%;
+        margin-top: auto;
+        transition: 0.2s ease;
+        background-color: $dark-backlight;
+    }
+}
+
+.light {
+    background-color: $light-color;
+
+    .module {
+
+        &:hover:not(.active) {
+            background-color: $light-nav-backlight;
+        }
+
+        .item {
+            .main-icon {
+
+                i::before {
+                    color: $light-text-color;
+                }
+    
+                i {
+                    .path1::before {
+                        color: #D6D6D6;
+                    }
+    
+                    .path2::before {
+                        color: $light-text-color;
+                    }
+                }
+            }
+    
+            p {
+                color: $light-text-color;
+            }
+        }
+    }
+    
+    .active {
+        background-color: $light-text-color;
+    }
+
+    .billing-field {
+        background-color: $light-billing-field;
+        .billing {
+            background-color: $light-text-color;
+            color: #F6F6F6;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: row;
+        height: 80px;
+        width: 100%;
+        border-right: 0;
+        border-top: 1px solid $light-separator;
+
+        .module {
+            height: 100%;
+        }
+
+        .billing-field {
+            display: none;
+        }
+    }
+}
+@media (max-width: 600px) {
+    nav {
+        height: 70px;
+
+        .module {
+            .item {
+                .main-icon {
+                    font-size: 1.75rem;
+                }
+
+                p {
+                    margin-top: 0.1875rem;
+                    font-size: 0.8125rem;
+                }
+            }
+        }
+    }
+}
+@media (max-width: 320px) {
+    nav {
+        height: 65px;
+
+        .module {
+            .item {
+                .main-icon {
+                    font-size: 1.5rem;
+                }
+
+                p {
+                    margin-top: 0.1875rem;
+                    font-size: 0.75rem;
+                }
+            }
+        }
+    }
 }

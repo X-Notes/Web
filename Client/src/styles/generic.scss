@@ -1,0 +1,44 @@
+.ripple-container {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.push {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15px;
+    height: 15px;
+    font-size: 0.625rem;
+    background-color: #ED6565;
+    color: #ffffff;
+    border-radius: 50%;
+}
+
+.billing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    width: 24px;
+    border-radius: 5px;
+    background-color: white;
+    color: #515151;
+    font-size: 1.375rem;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+
+.separator {
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(91.25deg, #CDEEFF 1.19%, #FFCDCD 98.41%);
+}

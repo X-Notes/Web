@@ -1,4 +1,23 @@
 ﻿{
-  "notes": "Замітка",
-  "folders": "Папки"
+  "notes": {
+    "name": "Замітки"
+  },
+  "folders": {
+    "name": "Папки"
+  },
+  "labels": {
+    "name": "Ярлики"
+  },
+  "people": {
+    "name": "Люди"
+  },
+  "subMenu": {
+    "all": "Все",
+    "shared": "Спільні",
+    "locked": "Приватні",
+    "archive": "Архив",
+    "bin": "Кошик",
+    "invitation": "Запрошення",
+    "cancel": "Скасувати"
+  }
 }
