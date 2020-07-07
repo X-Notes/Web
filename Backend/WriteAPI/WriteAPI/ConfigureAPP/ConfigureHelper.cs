@@ -1,0 +1,127 @@
+﻿using BI.helpers;
+using BI.services;
+using Common.DTO.labels;
+using Common.DTO.users;
+using Domain.Commands.backgrounds;
+using Domain.Commands.labels;
+using Domain.Commands.users;
+using Domain.Ids;
+using Domain.Models;
+using Domain.Queries.labels;
+using Domain.Queries.users;
+using Domain.Repository;
+using Marten;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using RabbitMQ.Client;
+using Shared.Queue.Interfaces;
+using Shared.Queue.QueueServices;
+using System;
+using System.Collections.Generic;
+using WriteAPI.Services;
+using WriteContext;
+using WriteContext.Repositories;
+
+namespace WriteAPI.ConfigureAPP
+{
+    public static class ConfigureHelper
+    {
+        public static void Queue(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var uri = Configuration.GetSection("Rabbit").Value;
+            services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(x => new RabbitMQ.Client.ConnectionFactory()
+            {
+                Uri = new Uri(uri),
+                RequestedConnectionTimeout = TimeSpan.FromTicks(30000),
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
+                AutomaticRecoveryEnabled = true,
+                TopologyRecoveryEnabled = true,
+                RequestedHeartbeat = TimeSpan.FromTicks(60),
+            });
+
+
+            services.AddSingleton<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
+            services.AddSingleton<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
+
+            services.AddSingleton<CommandsPushQueue>();
+            services.AddHostedService<CommandsGetQueue>();
+        }
+        public static void Marten(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var connection = Configuration.GetSection("EventStore").Value;
+            services.AddMarten(opts =>
+            {
+                opts.Connection(connection);
+                opts.AutoCreateSchemaObjects = AutoCreate.All;
+
+                opts.Events.AsyncProjections.AggregateStreamsWith<User>();
+
+                opts.Events.AddEventType(typeof(NewUserCommand));
+                opts.Events.AddEventType(typeof(UpdateMainUserInfoCommand));
+
+            });
+
+            services.AddScoped<IIdGenerator, MartenIdGenerator>();
+            services.AddTransient<IRepository<User>, MartenRepository<User>>();
+        }
+        public static void Mediatr(this IServiceCollection services)
+        {
+            services.AddMediatR(typeof(Startup));
+
+            // USER
+            services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
+
+            services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
+
+            // Backgrounds
+            services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+
+            //Labels
+            services.AddScoped<IRequestHandler<GetLabelsByEmail, List<LabelDTO>>, LabelHandlerQuery>();
+
+            services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
+        }
+        public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
+        {
+            string writeConnection = Configuration.GetSection("WriteDB").Value;
+            services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
+            services.AddTransient<LabelRepository>();
+            services.AddTransient<UserRepository>();
+            services.AddTransient<BackgroundRepository>();
+        }
+        public static void JWT(this IServiceCollection services, IConfiguration Configuration)
+        {
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+
+                    options.Authority = Configuration["FirebaseOptions:Authority"];
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = Configuration["FirebaseOptions:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["FirebaseOptions:Audience"],
+                        ValidateLifetime = true
+                    };
+                });
+        }
+        public static void BI(this IServiceCollection services)
+        {
+            services.AddScoped<PhotoHelpers>();
+        }
+    }
+}

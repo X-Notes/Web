@@ -16,6 +16,7 @@
     "@angular/common": "~9.0.6",
     "@angular/compiler": "~9.0.6",
     "@angular/core": "~9.0.6",
+    "@angular/fire": "^6.0.2",
     "@angular/forms": "~9.0.6",
     "@angular/material": "^9.2.4",
     "@angular/platform-browser": "~9.0.6",
@@ -25,6 +26,9 @@
     "@biesbjerg/ngx-translate-extract": "^7.0.2",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
+    "@ngxs/logger-plugin": "^3.6.2-dev.master-eaa5d86",
+    "@ngxs/store": "^3.6.2",
+    "firebase": "^7.15.5",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

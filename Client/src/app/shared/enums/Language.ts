@@ -1,3 +1,3 @@
 export enum Language {
-  EN = 'EN', UA = 'UA', RU = 'RU'
+  EN = 'EN', UA = 'Ukraine', RU = 'RU'
 }

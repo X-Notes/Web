@@ -1,5 +1,4 @@
 import { Injectable, HostListener } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Theme } from '../enums/Theme';
 import { Language } from '../enums/Language';
 import {
@@ -11,12 +10,22 @@ import {
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
-  transition('void => *', [
+  transition(':enter', [
     style({ transform: 'translateX(-100%)' }),
     animate('200ms ease')
   ]),
-  transition('* => void', [
+  transition(':leave', [
     animate('200ms ease', style({ transform: 'translateX(-100%)' }))
+  ])
+]);
+
+export const changeColorLabel = trigger('changeColorLabel', [
+  transition(':enter', [
+    style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)' }),
+    animate('0.3s ease', style({ opacity: 1, 'max-height': '110px', height: '*', transform: 'translateY(0)'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, height: 0, transform: 'translateY(-30%)' }))
   ])
 ]);
 

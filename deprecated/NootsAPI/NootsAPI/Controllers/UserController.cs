@@ -51,6 +51,7 @@ namespace NootsAPI.Controllers
             var user = await this.userService.GetFullByEmail(currentUserEmail);
             return user;
         }
+
         [HttpPost("photo")]
         public async Task<string> ChangeProfilePhoto(IFormFile photo)
         {
