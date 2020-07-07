@@ -23,8 +23,8 @@
                 <span></span>
             </div>
             <button name="Create note" type="button" class="generic new-note" #new>
-                <div class="inner-content">
-                    <p>New Note</p>
+                <div class="inner-content" (click)="newButton()">
+                    <p>New {{currentUrl}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>

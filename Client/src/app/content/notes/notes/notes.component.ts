@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { trigger, state, style, transition, animate, useAnimation } from '@angular/animations';
+import { Subject, ReplaySubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export enum subMenu {
   All = 'all',
@@ -23,8 +25,9 @@ export interface Label {
   animations: [ sideBarCloseOpen ]
 })
 
-export class NotesComponent implements OnInit {
+export class NotesComponent implements OnInit, OnDestroy {
 
+  destroy = new Subject<void>();
   current: subMenu;
   menu = subMenu;
   theme = Theme;
@@ -38,8 +41,21 @@ export class NotesComponent implements OnInit {
 
   constructor(public pService: PersonalizationService) { }
 
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
   ngOnInit(): void {
     this.current = subMenu.All;
+    this.pService.subject
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.newNote());
+  }
+
+  newNote() {
+    console.log('new note');
   }
 
   cancelLabel() {
@@ -68,5 +84,4 @@ export class NotesComponent implements OnInit {
   cancelSideBar() {
     this.pService.stateSidebar = false;
   }
-
 }
