@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable, Subject } from 'rxjs';
 import { Label } from '../models/label';
-import { LoadLabels } from '../state/labels-actions';
+import { LoadLabels, AddLabel } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 
 export enum subMenu {
@@ -45,8 +45,8 @@ export class LabelsComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newLabel());
   }
 
-  newLabel() {
-    console.log('new label');
+  async newLabel() {
+    await this.store.dispatch(new AddLabel('Name your label...', '#FFEBCD')).toPromise();
   }
 
   switchSub(value: subMenu) {

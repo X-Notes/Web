@@ -16,8 +16,7 @@ import { LabelComponent } from './label/label.component';
   imports: [
     CommonModule,
     LabelsRouting,
-    SharedModule,
-    NgxsModule.forRoot([LabelStore], { developmentMode: !environment.production }),
+    SharedModule
   ],
   providers: [ApiService]
 })

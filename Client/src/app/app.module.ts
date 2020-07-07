@@ -11,6 +11,7 @@ import { ContentLoadGuard } from './core/guards/content-load.guard';
 import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { NgxsModule } from '@ngxs/store';
 import { LabelStore } from './content/labels/state/labels-state';
+import { ApiService } from './content/labels/api.service';
 
 @NgModule({
   declarations: [
@@ -22,9 +23,10 @@ import { LabelStore } from './content/labels/state/labels-state';
     CoreModule,
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    SharedModule
+    SharedModule,
+    NgxsModule.forRoot([LabelStore]),
   ],
-  providers: [ContentLoadGuard, ContentActiveteGuard],
+  providers: [ContentLoadGuard, ContentActiveteGuard, ApiService],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

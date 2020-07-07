@@ -56,15 +56,9 @@
                 <p>{{ 'subMenu.cancel' | translate }}</p>
             </div>
             <div class="label-container">
-                <div class="label" (click)="cancelAdd(1)" [ngClass]="labels[0].active ? 'active-label' : ''">
+                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)" [ngClass]="true ? 'active-label' : ''">
                     <div class="label-item">
-                        <p>Hello darkness smile friend</p>
-                        <p>12</p>
-                    </div>
-                </div>
-                <div class="label" (click)="cancelAdd(2)" [ngClass]="labels[1].active ? 'active-label' : ''">
-                    <div class="label-item">
-                        <p>Hello </p>
+                        <p>{{item.name}}</p>
                         <p>12</p>
                     </div>
                 </div>

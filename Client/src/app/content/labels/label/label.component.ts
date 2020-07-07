@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { changeColorLabel } from 'src/app/shared/services/personalization.service';
+import { Label } from '../models/label';
 
 @Component({
   selector: 'app-label',
@@ -9,8 +10,9 @@ import { changeColorLabel } from 'src/app/shared/services/personalization.servic
 })
 export class LabelComponent implements OnInit {
 
+  @Input() label: Label;
+
   isUpdate = false;
-  color: string;
 
   constructor() { }
 
@@ -22,7 +24,7 @@ export class LabelComponent implements OnInit {
   }
 
   changeColor(value: string) {
-    this.color = value;
+    this.label.color = value;
     this.isUpdate = false;
   }
 

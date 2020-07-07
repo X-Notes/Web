@@ -2,8 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { trigger, state, style, transition, animate, useAnimation } from '@angular/animations';
-import { Subject, ReplaySubject } from 'rxjs';
+import { Subject, ReplaySubject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Select, Store } from '@ngxs/store';
+import { LabelStore } from '../../labels/state/labels-state';
+import { Label } from '../../labels/models/label';
+import { LoadLabels } from '../../labels/state/labels-actions';
 
 export enum subMenu {
   All = 'all',
@@ -13,10 +17,6 @@ export enum subMenu {
   Bin = 'bin'
 }
 
-export interface Label {
-  id: number;
-  active: boolean;
-}
 
 @Component({
   selector: 'app-notes',
@@ -32,14 +32,12 @@ export class NotesComponent implements OnInit, OnDestroy {
   menu = subMenu;
   theme = Theme;
   labelsActive: number[] = [];
-  labels: Label[] = [
-    {id: 1, active: false},
-    {id: 2, active: false},
-    {id: 3, active: false}
-  ];
   cancel = false;
 
-  constructor(public pService: PersonalizationService) { }
+  @Select(LabelStore.all)
+  public labels$: Observable<Label[]>;
+
+  constructor(public pService: PersonalizationService, private store: Store) { }
 
 
   ngOnDestroy(): void {
@@ -48,6 +46,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(new LoadLabels());
     this.current = subMenu.All;
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -61,20 +60,9 @@ export class NotesComponent implements OnInit, OnDestroy {
   cancelLabel() {
     this.cancel = false;
     this.labelsActive = [];
-    this.labels.map(x => x.active = false);
   }
   cancelAdd(id: number) {
-    if (this.labelsActive.includes(id)) {
-      this.labelsActive = this.labelsActive.filter(x => x !== id);
-      this.labels.filter(x => x.id === id).map(x => x.active = false);
-    } else {
-      this.labelsActive.push(id);
-      this.labels.filter(x => x.id === id).map(x => x.active = true);
-      this.cancel = true;
-    }
-    if (this.labelsActive.length === 0) {
-      this.cancel = false;
-    }
+
   }
 
   switchSub(value: subMenu) {

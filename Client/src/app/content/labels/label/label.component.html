@@ -1,5 +1,5 @@
-<div class="field" [ngStyle]="{backgroundColor: color}">
-    <input type="text" placeholder="Name your label...">
+<div class="field" [ngStyle]="{backgroundColor: label.color}">
+    <input type="text" placeholder="{{label.name}}">
     <div class="options">
         <button type="button" (click)="openColors()">
             <div class="icon">
