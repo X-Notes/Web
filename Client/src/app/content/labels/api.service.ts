@@ -20,4 +20,12 @@ export class ApiService {
     return this.httpClient.post<number>(environment.writeAPI + '/api/label', body);
   }
 
+  delete(id: number) {
+    return this.httpClient.delete(environment.writeAPI + `/api/label/${id}`);
+  }
+
+  update(label: Label) {
+    return this.httpClient.put(environment.writeAPI + `/api/label`, label);
+  }
+
 }

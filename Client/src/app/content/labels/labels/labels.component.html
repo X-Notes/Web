@@ -46,6 +46,6 @@
 </div>
 <div class="content">
     <div class="content-inner">
-        <app-label *ngFor="let item of labels$ | async" [label]="item"></app-label>
+        <app-label *ngFor="let item of labels$ | async" [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
     </div>
 </div>

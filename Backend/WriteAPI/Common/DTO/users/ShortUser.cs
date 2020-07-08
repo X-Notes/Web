@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WriteContext.helpers;
 
 namespace Common.DTO.users
 {
@@ -10,5 +11,6 @@ namespace Common.DTO.users
         public string Email { set; get; }
         public string PhotoId { set; get; }
         public string BackgroundId { set; get; }
+        public Language Language { set; get; }
     }
 }

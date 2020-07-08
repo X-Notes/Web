@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -33,7 +34,14 @@ export class HeaderComponent implements OnInit {
   }
 
   checkRout() {
-    switch (this.router.url) {
+    this.routeChange(this.router.url);
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd))
+      .subscribe(event => { this.routeChange((event as NavigationEnd).url); });
+  }
+
+  routeChange(url: string) {
+    switch (url) {
       case '/folders' : {
         this.currentUrl = 'folder';
         break;
@@ -52,6 +60,7 @@ export class HeaderComponent implements OnInit {
       }
     }
   }
+
   newButton() {
     this.pService.subject.next(true);
   }

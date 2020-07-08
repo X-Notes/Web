@@ -22,8 +22,8 @@
             <div class="generic" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button name="Create note" type="button" class="generic new-note" #new>
-                <div class="inner-content" (click)="newButton()">
+            <button name="Create note" type="button" class="generic new-note" (click)="newButton()" #new>
+                <div class="inner-content" >
                     <p>New {{currentUrl}}</p>
                     <i class="icon-plus"></i>
                 </div>

@@ -167,8 +167,7 @@
                         margin-top: 0.625rem;
                     }
         
-                    &::before {
-                        content: "";
+                    .dot {
                         position: absolute;
                         left: 0;
                         margin-right: 0.3125rem;
@@ -178,7 +177,7 @@
                         background-color: $red-label;
                         transition: 0.2s ease;
                     }
-        
+
                     .label-item {
                         display: flex;
                         justify-content: space-between;

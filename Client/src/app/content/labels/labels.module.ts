@@ -8,6 +8,7 @@ import { NgxsModule } from '@ngxs/store';
 import { LabelStore } from './state/labels-state';
 import { environment } from 'src/environments/environment';
 import { LabelComponent } from './label/label.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -16,7 +17,8 @@ import { LabelComponent } from './label/label.component';
   imports: [
     CommonModule,
     LabelsRouting,
-    SharedModule
+    SharedModule,
+    FormsModule
   ],
   providers: [ApiService]
 })
