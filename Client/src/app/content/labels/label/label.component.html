@@ -1,5 +1,5 @@
 <div class="field" [ngStyle]="{backgroundColor: label.color}">
-    <input type="text" placeholder="{{label.name}}">
+    <input type="text" placeholder="Name your label" [(ngModel)]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" (click)="openColors()">
             <div class="icon">
@@ -7,7 +7,7 @@
             </div>
         </button>
         <div class="separator"></div>
-        <button type="button">
+        <button type="button" (click)="delete()">
             <div class="icon">
                 <i class="icon-plus"></i>
             </div>
