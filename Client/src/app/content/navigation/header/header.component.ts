@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -9,11 +11,13 @@ import { Theme } from 'src/app/shared/enums/Theme';
 })
 export class HeaderComponent implements OnInit {
 
-  theme = Theme;
 
-  constructor(public pService: PersonalizationService) { }
+  theme = Theme;
+  currentUrl: string;
+  constructor(public pService: PersonalizationService, private router: Router) { }
 
   ngOnInit(): void {
+    this.checkRout();
   }
 
   toggleTheme() {
@@ -28,4 +32,27 @@ export class HeaderComponent implements OnInit {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
+  checkRout() {
+    switch (this.router.url) {
+      case '/folders' : {
+        this.currentUrl = 'folder';
+        break;
+      }
+      case '/notes' : {
+        this.currentUrl = 'note';
+        break;
+      }
+      case '/people' : {
+        this.currentUrl = 'people';
+        break;
+      }
+      case '/labels' : {
+        this.currentUrl = 'label';
+        break;
+      }
+    }
+  }
+  newButton() {
+    this.pService.subject.next(true);
+  }
 }

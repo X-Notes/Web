@@ -7,6 +7,9 @@ import {
   style,
   transition,
   animate } from '@angular/animations';
+import { Router, NavigationEnd } from '@angular/router';
+import { take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, AsyncSubject, Subject } from 'rxjs';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -35,13 +38,16 @@ export const changeColorLabel = trigger('changeColorLabel', [
 })
 export class PersonalizationService {
 
+  subject = new Subject();
+
   theme: Theme = Theme.Dark;
-  language: Language = Language.EN;
+  language: Language = Language.RU;
   stateSidebar = true;
 
   @HostListener('window:resize') onResize(): boolean {
     return window.innerWidth > 768 ? true : false;
   }
 
-  constructor() { }
+  constructor() {
+   }
 }

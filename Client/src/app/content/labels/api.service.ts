@@ -11,4 +11,13 @@ export class ApiService {
   getAll() {
     return this.httpClient.get<Label[]>(environment.writeAPI + '/api/label');
   }
+
+  new(name: string, color: string) {
+    const body = {
+      name,
+      color
+    };
+    return this.httpClient.post<number>(environment.writeAPI + '/api/label', body);
+  }
+
 }

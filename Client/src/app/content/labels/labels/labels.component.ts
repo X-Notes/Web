@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Label } from '../models/label';
-import { LoadLabels } from '../state/labels-actions';
+import { LoadLabels, AddLabel } from '../state/labels-actions';
+import { takeUntil } from 'rxjs/operators';
 
 export enum subMenu {
   All = 'all',
@@ -18,8 +19,9 @@ export enum subMenu {
   styleUrls: ['./labels.component.scss'],
   animations: [ sideBarCloseOpen ]
 })
-export class LabelsComponent implements OnInit {
+export class LabelsComponent implements OnInit, OnDestroy {
 
+  destroy = new Subject<void>();
   current: subMenu;
   menu = subMenu;
   theme = Theme;
@@ -30,9 +32,21 @@ export class LabelsComponent implements OnInit {
   constructor(public pService: PersonalizationService,
               private store: Store) { }
 
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
   ngOnInit(): void {
     this.current = subMenu.All;
     this.store.dispatch(new LoadLabels());
+    this.pService.subject
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.newLabel());
+  }
+
+  async newLabel() {
+    await this.store.dispatch(new AddLabel('Name your label...', '#FFEBCD')).toPromise();
   }
 
   switchSub(value: subMenu) {

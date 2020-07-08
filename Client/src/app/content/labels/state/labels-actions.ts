@@ -5,7 +5,7 @@ export class LoadLabels {
 
 export class AddLabel {
     static type = '[Labels] Add Label';
-    constructor() {}
+    constructor(public name: string, public color: string) {}
 }
 
 export class DeleteLabel {
