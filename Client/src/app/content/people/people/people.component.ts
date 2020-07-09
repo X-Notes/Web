@@ -3,10 +3,18 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Person } from '../models/person';
 
 export enum subMenu {
   All = 'all',
   Invitations = 'invitations'
+}
+
+export interface People {
+  id: number;
+  name: string;
+  email: string;
+  color: string;
 }
 
 @Component({
@@ -21,6 +29,12 @@ export class PeopleComponent implements OnInit, OnDestroy {
   current: subMenu;
   menu = subMenu;
   theme = Theme;
+
+  items: Person[] = [
+    {id: 1, name: '123', email: '123@sdks.com', color: '#CDFFD8'},
+    {id: 2, name: '123', email: '123@sdks.com', color: '#DDFFCD'},
+    {id: 3, name: '123', email: '123@sdks.com', color: '#FFFDCD'},
+  ];
 
   constructor(public pService: PersonalizationService) { }
 

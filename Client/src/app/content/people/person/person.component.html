@@ -1,5 +1,13 @@
-<div class="field" [ngStyle]="{backgroundColor: label.color}">
-    <input type="text" placeholder="{{label.name}}">
+<div class="field" [ngStyle]="{backgroundColor: person.color}">
+    <div class="contact-details">
+        <div class="photo">
+            <img alt="contact photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+        </div>
+        <div class="data">
+            <p>{{person.name}}</p>
+            <p>{{person.email}}</p>
+        </div>
+    </div>
     <div class="options">
         <button type="button" (click)="openColors()">
             <div class="icon">

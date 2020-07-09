@@ -50,4 +50,8 @@
     </div>
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content"></div>
+<div class="content">
+    <div class="content-inner">
+        <app-person *ngFor="let item of items" [person]="item"></app-person>
+    </div>
+</div>

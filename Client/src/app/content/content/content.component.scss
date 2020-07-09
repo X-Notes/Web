@@ -8,7 +8,7 @@
     height: 100%;
 }
 
-.content{
+main{
     height: calc(100% - 50px);
     width: 100%;
     display: flex;
@@ -27,7 +27,7 @@
 @media (max-width: 1440px) {}
 @media (max-width: 1024px) {}
 @media (max-width: 768px) {
-    .content {
+    main {
         flex-direction: column;
 
         .sidebar {
@@ -37,7 +37,7 @@
 }
 @media (max-width: 600px) {}
 @media (max-width: 320px) {
-    .content{
+    main {
         height: calc(100% - 45px);
     }
 }

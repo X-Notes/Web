@@ -1,3 +1,19 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 190px);
+    height: 100%;
+    overflow: auto;
+
+    .content-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        width: 100%;
+        padding: 2.5rem 3.125vw 0 3.125vw;
+    }
+}
+
 .ripple-container {
     position: absolute;
     z-index: 3;
@@ -41,4 +57,10 @@
     height: 2px;
     width: 100%;
     background: linear-gradient(91.25deg, #CDEEFF 1.19%, #FFCDCD 98.41%);
+}
+
+@media (max-width: 768px) {
+    .content {
+        width: 100%;
+    }
 }
