@@ -31,8 +31,10 @@ export class NotesComponent implements OnInit, OnDestroy {
   current: subMenu;
   menu = subMenu;
   theme = Theme;
+
   labelsActive: number[] = [];
-  cancel = false;
+  actives = new Map<number, boolean>();
+
 
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
@@ -58,11 +60,18 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   cancelLabel() {
-    this.cancel = false;
     this.labelsActive = [];
+    this.actives = new Map();
   }
-  cancelAdd(id: number) {
 
+  cancelAdd(id: number) {
+    const flag = (this.actives.get(id) === undefined) || (this.actives.get(id) === false) ? true : false;
+    this.actives.set(id, flag);
+    if (flag) {
+      this.labelsActive.push(id);
+    } else {
+      this.labelsActive = this.labelsActive.filter(x => x !== id);
+    }
   }
 
   switchSub(value: subMenu) {

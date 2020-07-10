@@ -45,6 +45,8 @@ namespace BI.services
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
+                label.Color = request.Color;
+                label.Name = request.Name;
                 await labelRepository.UpdateLabel(label);
             }
             return Unit.Value;

@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable, Subject } from 'rxjs';
 import { Label } from '../models/label';
-import { LoadLabels, AddLabel } from '../state/labels-actions';
+import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 
 export enum subMenu {
@@ -32,10 +32,6 @@ export class LabelsComponent implements OnInit, OnDestroy {
   constructor(public pService: PersonalizationService,
               private store: Store) { }
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
 
   ngOnInit(): void {
     this.current = subMenu.All;
@@ -55,6 +51,19 @@ export class LabelsComponent implements OnInit, OnDestroy {
 
   cancelSideBar() {
     this.pService.stateSidebar = false;
+  }
+
+  update(label: Label) {
+    this.store.dispatch(new UpdateLabel(label));
+  }
+
+  delete(id: number) {
+    this.store.dispatch(new DeleteLabel(id));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 
 }

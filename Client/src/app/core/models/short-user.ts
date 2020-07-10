@@ -5,4 +5,5 @@ export interface ShortUser {
     photoId: string;
     backgroundId: string;
     email: string;
+    language: Language;
 }
