@@ -34,6 +34,12 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
+        public async Task UpdateRangeLabels(List<Label> label)
+        {
+            this.contextDB.Labels.UpdateRange(label);
+            await contextDB.SaveChangesAsync();
+        }
+
         public async Task NewLabel(Label label)
         {
             await contextDB.Labels.AddAsync(label);
