@@ -34,7 +34,11 @@ namespace BI.services
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
+                var order = label.Order;
                 await labelRepository.DeleteLabel(label);
+                var labelsForUpdate = user.Labels.Where(x => x.Order > order).ToList();
+                labelsForUpdate.ForEach(x => x.Order = x.Order - 1);
+                await labelRepository.UpdateRangeLabels(labelsForUpdate);
             }
             return Unit.Value;
         }
@@ -54,9 +58,15 @@ namespace BI.services
 
         public async Task<int> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.GetUserWithLabels(request.Email);
             var label = mapper.Map<Label>(request);
             label.UserId = user.Id;
+
+            if (user.Labels.Count() > 0)
+            {
+                label.Order = user.Labels.Max(x => x.Order) + 1;
+            }
+
             await labelRepository.NewLabel(label);
             return label.Id;
         }
