@@ -1,4 +1,4 @@
-<div class="field" [ngStyle]="{backgroundColor: person.color}">
+<div class="field" [ngStyle]="{backgroundColor: person.color}" (drag)="person.active = false">
     <div class="contact-details">
         <div class="photo">
             <img alt="contact photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
@@ -22,7 +22,7 @@
         </button>
     </div>
 </div>
-<ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
+<ul class="colors" *ngIf="person.active" [@changeColorLabel]>
     <li class="color" (click)="changeColor('#FFCDCD')"></li>
     <li class="color" (click)="changeColor('#FFEBCD')"></li>
     <li class="color" (click)="changeColor('#FFFDCD')"></li>

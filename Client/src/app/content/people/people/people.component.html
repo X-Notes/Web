@@ -51,7 +51,12 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <div class="content-inner">
-        <app-person *ngFor="let item of items" [person]="item"></app-person>
+    <div class="content-inner" cdkDropListGroup>
+        <div cdkDropList [cdkDropListEnterPredicate]="dropListEnterPredicate"
+            (cdkDropListDropped)="dropListDropped()"></div>
+        <div cdkDropList *ngFor="let item of items" [cdkDropListEnterPredicate]="dropListEnterPredicate"
+            (cdkDropListDropped)="dropListDropped()">
+            <app-person [person]="item" cdkDrag (cdkDragMoved)="dragMoved($event);"></app-person>
+        </div>
     </div>
 </div>
