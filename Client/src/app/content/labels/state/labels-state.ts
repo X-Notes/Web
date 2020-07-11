@@ -2,7 +2,7 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiService } from '../api.service';
-import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel } from './labels-actions';
+import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel, PositionLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 
 interface LabelState {
@@ -40,7 +40,7 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
         const labels = getState().labels;
-        labels.push({name, color, id, isDeleted: false});
+        labels.push({name, color, id, isDeleted: false, order: 0});
         setState({
             ...getState(),
             labels
@@ -58,5 +58,13 @@ export class LabelStore {
     @Action(UpdateLabel)
     async updateLabels({setState, getState, patchState}: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
+    }
+
+    @Action(PositionLabel)
+    positionLabel({setState, getState, patchState}: StateContext<LabelState>, { labelOne, labelTwo }: PositionLabel) {
+        const labels = getState().labels;
+        labels.find(x => x.id = labelOne.id).order = labelTwo.order;
+        labels.find(x => x.id = labelTwo.id).order = labelOne.order;
+        patchState({labels});
     }
 }
