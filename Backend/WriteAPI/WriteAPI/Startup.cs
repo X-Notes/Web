@@ -1,5 +1,6 @@
 using AutoMapper;
 using BI.Mapping;
+using BI.signalR;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
@@ -43,6 +44,8 @@ namespace WriteAPI
 
             services.AddControllers().AddNewtonsoftJson();
 
+            services.AddSignalR();
+
             //services.Queue(Configuration);
             services.Marten(Configuration);
             services.Mediatr();
@@ -68,9 +71,11 @@ namespace WriteAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DocumentHub>("/hub");
             });
         }
     }

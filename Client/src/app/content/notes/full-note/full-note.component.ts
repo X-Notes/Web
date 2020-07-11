@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-full-note',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FullNoteComponent implements OnInit {
 
-  constructor() { }
+  constructor(private service: SignalRService) { }
 
   ngOnInit(): void {
   }

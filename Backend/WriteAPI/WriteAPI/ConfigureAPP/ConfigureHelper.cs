@@ -22,6 +22,7 @@ using Shared.Queue.Interfaces;
 using Shared.Queue.QueueServices;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WriteAPI.Services;
 using WriteContext;
 using WriteContext.Repositories;
@@ -107,7 +108,6 @@ namespace WriteAPI.ConfigureAPP
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-
                     options.Authority = Configuration["FirebaseOptions:Authority"];
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -116,6 +116,22 @@ namespace WriteAPI.ConfigureAPP
                         ValidateAudience = true,
                         ValidAudience = Configuration["FirebaseOptions:Audience"],
                         ValidateLifetime = true
+                    };
+
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/hub")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        },
                     };
                 });
         }
