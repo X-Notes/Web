@@ -62,9 +62,12 @@ namespace BI.services
             var label = mapper.Map<Label>(request);
             label.UserId = user.Id;
 
+            label.Order = 1;
+
             if (user.Labels.Count() > 0)
             {
-                label.Order = user.Labels.Max(x => x.Order) + 1;
+                user.Labels.ForEach(x => x.Order = x.Order + 1);
+                await labelRepository.UpdateRangeLabels(user.Labels);
             }
 
             await labelRepository.NewLabel(label);
