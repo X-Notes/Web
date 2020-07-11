@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Person } from '../models/person';
 import { CdkDropListGroup, CdkDropList, moveItemInArray, CdkDrag, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ViewportRuler } from '@angular/cdk/scrolling';
+import { DragService } from 'src/app/shared/services/drag.service';
 
 export enum subMenu {
   All = 'all',
@@ -53,7 +54,7 @@ export class PeopleComponent implements OnInit, OnDestroy, AfterViewInit {
     {id: 2, name: '123', email: '123@sdks.com', color: '#DDFFCD'},
   ];
 
-  constructor(public pService: PersonalizationService, private viewportRuler: ViewportRuler) {
+  constructor(public pService: PersonalizationService, public dragService: DragService) {
     this.target = null;
     this.source = null;
    }
@@ -90,9 +91,9 @@ export class PeopleComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   dragMoved(e: CdkDragMove) {
-    const point = this.getPointerPositionOnPage(e.event);
+    const point = this.dragService.getPointerPositionOnPage(e.event);
     this.listGroup._items.forEach(dropList => {
-      if (__isInsideDropListClientRect(dropList, point.x, point.y)) {
+      if (this.dragService.dragIsInsideDropListClientRect(dropList, point.x, point.y)) {
         this.activeContainer = dropList;
         return;
       }
@@ -131,8 +132,8 @@ export class PeopleComponent implements OnInit, OnDestroy, AfterViewInit {
     const phElement = this.placeholder.element.nativeElement;
     const sourceElement = drag.dropContainer.element.nativeElement;
     const dropElement = drop.element.nativeElement;
-    const dragIndex = __indexOf(dropElement.parentElement.children, (this.source ? phElement : sourceElement));
-    const dropIndex = __indexOf(dropElement.parentElement.children, dropElement);
+    const dragIndex = this.dragService.dragIndexOf(dropElement.parentElement.children, (this.source ? phElement : sourceElement));
+    const dropIndex = this.dragService.dragIndexOf(dropElement.parentElement.children, dropElement);
 
 
     if (!this.source) {
@@ -154,28 +155,4 @@ export class PeopleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.placeholder.enter(drag, drag.element.nativeElement.offsetLeft, drag.element.nativeElement.offsetTop);
     return false;
   }
-
-  getPointerPositionOnPage(event: MouseEvent | TouchEvent) {
-    const point = __isTouchEvent(event) ? (event.touches[0] || event.changedTouches[0]) : event;
-    const scrollPosition = this.viewportRuler.getViewportScrollPosition();
-
-    return {
-            x: point.pageX - scrollPosition.left,
-            y: point.pageY - scrollPosition.top
-        };
-    }
-
-}
-
-function __indexOf(collection, node) {
-  return Array.prototype.indexOf.call(collection, node);
-}
-
-function __isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
-  return event.type.startsWith('touch');
-}
-
-function __isInsideDropListClientRect(dropList: CdkDropList, x: number, y: number) {
-  const {top, bottom, left, right} = dropList.element.nativeElement.getBoundingClientRect();
-  return y >= top && y <= bottom && x >= left && x <= right;
 }
