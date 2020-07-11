@@ -1,9 +1,11 @@
 import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {NotesComponent} from './notes/notes.component';
+import { FullNoteComponent } from './full-note/full-note.component';
 
 const routes: Routes = [
-  { path: '', component: NotesComponent}];
+  { path: '', component: NotesComponent},
+  { path: ':id', component: FullNoteComponent}];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
