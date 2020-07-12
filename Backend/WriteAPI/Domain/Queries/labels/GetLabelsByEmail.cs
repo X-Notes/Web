@@ -6,12 +6,11 @@ using System.Text;
 
 namespace Domain.Queries.labels
 {
-    public class GetLabelsByEmail : IRequest<List<LabelDTO>>
+    public class GetLabelsByEmail : BaseQueryEntity, IRequest<List<LabelDTO>>
     {
-        public string Email { set; get; }
         public GetLabelsByEmail(string Email)
+            :base(Email)
         {
-            this.Email = Email;
         }
     }
 }

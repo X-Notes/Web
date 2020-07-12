@@ -1,13 +1,16 @@
 ﻿using BI.helpers;
 using BI.services;
 using Common.DTO.labels;
+using Common.DTO.notes;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
 using Domain.Commands.labels;
+using Domain.Commands.notes;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
 using Domain.Queries.labels;
+using Domain.Queries.notes;
 using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
@@ -93,6 +96,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
+
+            //Notes
+            services.AddScoped<IRequestHandler<NewNoteCommand, int>, NoteHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -101,6 +110,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddTransient<LabelRepository>();
             services.AddTransient<UserRepository>();
             services.AddTransient<BackgroundRepository>();
+            services.AddTransient<NoteRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

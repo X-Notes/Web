@@ -13,6 +13,7 @@ namespace WriteContext
         public DbSet<Backgrounds> Backgrounds { set; get; }
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
+        public DbSet<Note> Notes { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {

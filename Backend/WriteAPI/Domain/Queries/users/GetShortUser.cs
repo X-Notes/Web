@@ -4,12 +4,10 @@ using MediatR;
 
 namespace Domain.Queries.users
 {
-    public class GetShortUser : IRequest<ShortUser>
+    public class GetShortUser : BaseQueryEntity, IRequest<ShortUser>
     {
-        public string Email { set; get; }
-        public GetShortUser(string Email)
+        public GetShortUser(string Email) :base(Email)
         {
-            this.Email = Email;
         }
     }
 }

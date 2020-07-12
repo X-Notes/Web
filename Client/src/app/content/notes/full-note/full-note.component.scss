@@ -1,0 +1,14 @@
+:host{
+    width: 100%;
+}
+.content{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    .title{
+        margin-top: 15px;
+        width: 500px;
+        height: 40px;
+        background-color: #70788a;
+    }
+}

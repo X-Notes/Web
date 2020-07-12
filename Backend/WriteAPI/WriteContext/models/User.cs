@@ -24,5 +24,6 @@ namespace WriteContext.models
         // public ICollection<RelantionShip> FriendRequestsAccepted { get; set; }
 
         public List<Folder> Folders { set; get; }
+        public List<Note> Notes { set; get; }
     }
 }

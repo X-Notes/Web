@@ -42,8 +42,29 @@ namespace WriteContext.Repositories
 
         public async Task NewLabel(Label label)
         {
-            await contextDB.Labels.AddAsync(label);
-            await contextDB.SaveChangesAsync();
+            using(var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                    var labels = await GetAll(label.UserId);
+
+                    if (labels.Count() > 0)
+                    {
+                        labels.ForEach(x => x.Order = x.Order + 1);
+                        await UpdateRangeLabels(labels);
+                    }
+
+                    await contextDB.Labels.AddAsync(label);
+                    await contextDB.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                }
+                catch(Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
         }
     }
 }

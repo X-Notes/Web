@@ -58,17 +58,11 @@ namespace BI.services
 
         public async Task<int> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithLabels(request.Email);
+            var user = await userRepository.GetUserByEmail(request.Email);
+
             var label = mapper.Map<Label>(request);
             label.UserId = user.Id;
-
             label.Order = 1;
-
-            if (user.Labels.Count() > 0)
-            {
-                user.Labels.ForEach(x => x.Order = x.Order + 1);
-                await labelRepository.UpdateRangeLabels(user.Labels);
-            }
 
             await labelRepository.NewLabel(label);
             return label.Id;
