@@ -5,6 +5,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -45,6 +46,7 @@ namespace WriteAPI
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, IdProvider>();
 
             //services.Queue(Configuration);
             services.Marten(Configuration);

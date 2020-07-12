@@ -10,8 +10,7 @@ import { SignalRService } from './core/signal-r.service';
 })
 export class AppComponent {
 
-  constructor(private translateService: TranslateService, private pService: PersonalizationService,
-              private signal: SignalRService) {
+  constructor(private translateService: TranslateService, private pService: PersonalizationService) {
     this.translateService.use(pService.language);
   }
 }

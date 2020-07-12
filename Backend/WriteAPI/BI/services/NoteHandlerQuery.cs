@@ -40,7 +40,7 @@ namespace BI.services
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var note = noteRepository.GetFull(request.Id);
+                var note = await noteRepository.GetFull(request.Id);
                 return mapper.Map<FullNote>(note);
             }
             return null;

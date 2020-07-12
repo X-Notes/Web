@@ -7,14 +7,14 @@ import { AuthService } from './auth.service';
 })
 export class SignalRService {
 
-  constructor(public auth: AuthService) {
+  constructor(private auth: AuthService) {
     console.log('Create instance signalR');
     this.startConnection();
   }
 
-  private hubConnection: signalR.HubConnection;
+  public hubConnection: signalR.HubConnection;
 
-  public startConnection = () => {
+  private startConnection = () => {
 
     this.hubConnection = new signalR.HubConnectionBuilder()
                             // .configureLogging(signalR.LogLevel.None)
@@ -25,12 +25,6 @@ export class SignalRService {
       .start()
       .then(() => console.log('Connection started'))
       .catch(err => console.log('Error while starting connection: ' + err));
-  }
-
-  public addTransferChartDataListener = () => {
-    this.hubConnection.on('transferchartdata', (data) => {
-      console.log(data);
-    });
   }
 
 }

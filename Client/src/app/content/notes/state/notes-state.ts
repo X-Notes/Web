@@ -1,23 +1,24 @@
 import { SmallNote } from '../models/smallNote';
 import { FullNote } from '../models/fullNote';
-import { State, Selector, StateContext, Action } from '@ngxs/store';
+import { State, Selector, StateContext, Action, createSelector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
-import { LoadSmallNotes, AddNote } from './notes-actions';
+import { LoadSmallNotes, AddNote, LoadFullNote } from './notes-actions';
 import { tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
+import { type } from 'os';
 
 
 interface NoteState {
     smallNotes: SmallNote[];
-    fullNote: FullNote;
+    fullNotes: FullNote[];
 }
 
 @State<NoteState>({
     name: 'Notes',
     defaults: {
         smallNotes: [],
-        fullNote: null
+        fullNotes: []
     }
 })
 
@@ -33,8 +34,10 @@ export class NoteStore {
     }
 
     @Selector()
-    static oneFull(state: NoteState): FullNote {
-        return state.fullNote;
+    static oneFull(state: NoteState) {
+        return (id: number): FullNote => {
+            return state.fullNotes.find(x => x.id === id);
+        };
     }
 
     @Action(LoadSmallNotes)
@@ -51,4 +54,17 @@ export class NoteStore {
         notes.unshift({id, order: 1, title: ''});
         patchState({ smallNotes: notes });
     }
+
+
+    @Action(LoadFullNote)
+    async loadFull({ setState, getState, patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
+        const notes = getState().fullNotes;
+        const noteExist = notes.find(x => x.id === id);
+        if (!noteExist) {
+            const note = await this.api.get(id).toPromise();
+            notes.push(note);
+            patchState({fullNotes: notes});
+        }
+    }
+
 }
