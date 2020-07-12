@@ -41,17 +41,23 @@ export class PersonalizationService {
 
   onResize(): boolean {
     if (window.innerWidth > 768) {
+      if (this.stateSidebar === false) {
+      this.stateSidebar = true;
+      }
       return true;
     } else {
+      if (this.stateSidebar === true) {
+        this.stateSidebar = false;
+        }
       return false;
     }
   }
 
-  onChecked(): void {
-    if (this.onResize()) {
-      this.stateSidebar = true;
+  check(): boolean {
+    if (window.innerWidth > 768) {
+      return true;
     } else {
-      this.stateSidebar = false;
+      return false;
     }
   }
 

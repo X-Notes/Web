@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy,
+  ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
@@ -19,7 +20,7 @@ export enum subMenu {
   selector: 'app-labels',
   templateUrl: './labels.component.html',
   styleUrls: ['./labels.component.scss'],
-  animations: [ sideBarCloseOpen ]
+  animations: [ sideBarCloseOpen ],
 })
 export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -42,7 +43,8 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
   public labels$: Observable<Label[]>;
 
   constructor(public pService: PersonalizationService,
-              private store: Store, public dragService: DragService) {
+              private store: Store, public dragService: DragService,
+              private cdRef: ChangeDetectorRef) {
                 this.target = null;
                 this.source = null;
               }
@@ -55,6 +57,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newLabel());
   }
+
 
   ngAfterViewInit() {
     const phElement = this.placeholder.element.nativeElement;

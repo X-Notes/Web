@@ -14,7 +14,6 @@ export class ContentComponent implements OnInit {
   constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
-    this.pService.onChecked();
   }
 
 }
