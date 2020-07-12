@@ -23,13 +23,8 @@ export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [
-  transition(':enter', [
-    style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)' }),
-    animate('0.3s ease', style({ opacity: 1, 'max-height': '110px', height: '*', transform: 'translateY(0)'})),
-  ]),
-  transition(':leave', [
-    animate('0.3s ease', style({ opacity: 0, height: 0, transform: 'translateY(-30%)' }))
-  ])
+  state('inactive', style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)', overflow: 'hidden' })),
+  state('active', style({ opacity: 1, 'max-height': '110px', transform: 'translateY(0)'})),
 ]);
 
 
@@ -44,8 +39,20 @@ export class PersonalizationService {
   language: Language = Language.RU;
   stateSidebar = true;
 
-  @HostListener('window:resize') onResize(): boolean {
-    return window.innerWidth > 768 ? true : false;
+  onResize(): boolean {
+    if (window.innerWidth > 768) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  onChecked(): void {
+    if (this.onResize()) {
+      this.stateSidebar = true;
+    } else {
+      this.stateSidebar = false;
+    }
   }
 
   constructor() {

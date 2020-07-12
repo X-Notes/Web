@@ -20,7 +20,11 @@ export class DragService {
 
   dragIsInsideDropListClientRect(dropList: CdkDropList, x: number, y: number) {
     const {top, bottom, left, right} = dropList.element.nativeElement.getBoundingClientRect();
-    return y >= top && y <= bottom && x >= left && x <= right;
+    if ({top, bottom, left, right} !== undefined) {
+      return y >= top && y <= bottom && x >= left && x <= right;
+    } else {
+      return false;
+    }
   }
 
   getPointerPositionOnPage(event: MouseEvent | TouchEvent) {

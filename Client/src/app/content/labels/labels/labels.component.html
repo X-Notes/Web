@@ -50,7 +50,7 @@
             (cdkDropListDropped)="dropListDropped()"></div>
         <div cdkDropList *ngFor="let item of labels$ | async" [cdkDropListEnterPredicate]="dropListEnterPredicate"
             (cdkDropListDropped)="dropListDropped()">
-            <app-label cdkDrag (cdkDragMoved)="dragMoved($event);" [label]="item" (updateLabel)="update($event)"></app-label>
+            <app-label cdkDrag (cdkDragMoved)="dragMoved($event);" [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
         </div>
     </div>
 </div>
