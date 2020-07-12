@@ -23,7 +23,7 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet("new")]
         public async Task<JsonResult> Add()
         {
             var email = this.GetUserEmail();

@@ -1,7 +1,7 @@
 import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { ApiService } from '../api.service';
+import { ApiServiceLabels } from '../api.service';
 import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 
@@ -20,7 +20,7 @@ interface LabelState {
 export class LabelStore {
 
 
-    constructor(private api: ApiService) {
+    constructor(private api: ApiServiceLabels) {
     }
 
 

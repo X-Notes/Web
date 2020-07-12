@@ -35,14 +35,16 @@ export class LabelsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.current = subMenu.All;
+
     this.store.dispatch(new LoadLabels());
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newLabel());
   }
 
   async newLabel() {
-    await this.store.dispatch(new AddLabel('Name your label...', '#FFEBCD')).toPromise();
+    await this.store.dispatch(new AddLabel('', '#FFEBCD')).toPromise();
   }
 
   switchSub(value: subMenu) {

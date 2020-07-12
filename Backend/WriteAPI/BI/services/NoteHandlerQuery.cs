@@ -4,6 +4,7 @@ using Common.DTO.notes;
 using Domain.Queries.notes;
 using MediatR;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
@@ -26,15 +27,23 @@ namespace BI.services
         public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            var notes = noteRepository.GetByUserId(user.Id);
-            return mapper.Map<List<SmallNote>>(notes);
+            if (user != null)
+            {
+                var notes = (await noteRepository.GetByUserId(user.Id)).OrderBy(x => x.Order);
+                return mapper.Map<List<SmallNote>>(notes);
+            }
+            return null;
         }
 
         public async Task<FullNote> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            var note = noteRepository.GetFull(request.Id);
-            return mapper.Map<FullNote>(note);
+            if (user != null)
+            {
+                var note = noteRepository.GetFull(request.Id);
+                return mapper.Map<FullNote>(note);
+            }
+            return null;
         }
     }
 }
