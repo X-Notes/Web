@@ -8,7 +8,7 @@ import { SignalRService } from 'src/app/core/signal-r.service';
 })
 export class FullNoteComponent implements OnInit {
 
-  constructor(private service: SignalRService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
