@@ -2,14 +2,14 @@
     <input type="text" placeholder="Name your label" [(ngModel)]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" (click)="openColors()">
-            <div class="icon">
-                <i class="icon-plus"></i>
+            <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
+                <i class="icon-select-label"></i>
             </div>
         </button>
         <div class="separator-buttons"></div>
         <button type="button" (click)="delete()">
             <div class="icon">
-                <i class="icon-plus"></i>
+                <i class="icon-cancel"></i>
             </div>
         </button>
     </div>

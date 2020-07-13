@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectionStrategy,
-  ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
@@ -51,6 +50,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngOnInit(): void {
+    this.pService.onResize();
     this.current = subMenu.All;
     this.store.dispatch(new LoadLabels());
     this.pService.subject

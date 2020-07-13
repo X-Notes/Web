@@ -39,26 +39,20 @@ export class PersonalizationService {
   language: Language = Language.RU;
   stateSidebar = true;
 
-  onResize(): boolean {
-    if (window.innerWidth > 768) {
+  onResize(): void {
+    if (this.check()) {
       if (this.stateSidebar === false) {
       this.stateSidebar = true;
       }
-      return true;
     } else {
       if (this.stateSidebar === true) {
         this.stateSidebar = false;
         }
-      return false;
     }
   }
 
   check(): boolean {
-    if (window.innerWidth > 768) {
-      return true;
-    } else {
-      return false;
-    }
+    return window.innerWidth > 768 ? true : false;
   }
 
   constructor() {
