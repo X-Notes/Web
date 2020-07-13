@@ -40,7 +40,7 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
         const labels = getState().labels;
-        labels.push({name, color, id, isDeleted: false, order: 0});
+        labels.unshift({name, color, id, isDeleted: false, order: 0});
         setState({
             ...getState(),
             labels
