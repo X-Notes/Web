@@ -2,27 +2,27 @@
     <input type="text" placeholder="Name your label" [(ngModel)]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" (click)="openColors()">
-            <div class="icon">
-                <i class="icon-plus"></i>
+            <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
+                <i class="icon-select-label"></i>
             </div>
         </button>
-        <div class="separator"></div>
+        <div class="separator-buttons"></div>
         <button type="button" (click)="delete()">
             <div class="icon">
-                <i class="icon-plus"></i>
+                <i class="icon-cancel"></i>
             </div>
         </button>
     </div>
 </div>
-<ul *ngIf="isUpdate" [@changeColorLabel]>
-    <li (click)="changeColor('#FFCDCD')"></li>
-    <li (click)="changeColor('#FFEBCD')"></li>
-    <li (click)="changeColor('#FFFDCD')"></li>
-    <li (click)="changeColor('#DDFFCD')"></li>
-    <li (click)="changeColor('#CDFFD8')"></li>
-    <li (click)="changeColor('#CDFFFC')"></li>
-    <li (click)="changeColor('#CDEEFF')"></li>
-    <li (click)="changeColor('#CDD5FF')"></li>
-    <li (click)="changeColor('#EFCDFF')"></li>
-    <li (click)="changeColor('#FFCDF4')"></li>
+<ul class="colors" [@changeColorLabel]="isUpdate? 'active' : 'inactive'">
+    <li class="color" (click)="changeColor('#FFCDCD')"></li>
+    <li class="color" (click)="changeColor('#FFEBCD')"></li>
+    <li class="color" (click)="changeColor('#FFFDCD')"></li>
+    <li class="color" (click)="changeColor('#DDFFCD')"></li>
+    <li class="color" (click)="changeColor('#CDFFD8')"></li>
+    <li class="color" (click)="changeColor('#CDFFFC')"></li>
+    <li class="color" (click)="changeColor('#CDEEFF')"></li>
+    <li class="color" (click)="changeColor('#CDD5FF')"></li>
+    <li class="color" (click)="changeColor('#EFCDFF')"></li>
+    <li class="color" (click)="changeColor('#FFCDF4')"></li>
 </ul>

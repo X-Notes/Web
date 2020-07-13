@@ -19,10 +19,6 @@ const routes: Routes = [
           loadChildren: () => import('./content/folders/folders.module').then(m => m.FoldersModule),
       },
       {
-          path: 'people',
-          loadChildren: () => import('./content/people/people.module').then(m => m.PeopleModule),
-      },
-      {
           path: 'labels',
           loadChildren: () => import('./content/labels/labels.module').then(m => m.LabelsModule),
       },

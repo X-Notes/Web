@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 @Component({

@@ -1,5 +1,5 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
-    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.onResize()">
+    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">
@@ -83,7 +83,4 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <p>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</p>
-    <p>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</p>
-    <p>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</p>
 </div>

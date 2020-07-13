@@ -3,7 +3,7 @@
 :host{
     display: flex;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 80px);
 }
 
 .sub-nav {
@@ -475,6 +475,10 @@
 }
 
 @media (max-width: 768px) {
+    :host{
+        width: 100%;
+    }
+
     .sub-nav {
 
         .overlay {

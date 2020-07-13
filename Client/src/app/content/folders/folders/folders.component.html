@@ -1,5 +1,5 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
-    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.onResize()">
+    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">

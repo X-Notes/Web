@@ -16,6 +16,7 @@ export class ProfileComponent implements OnInit {
   constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
+    this.pService.onResize();
   }
 
   toggle() {

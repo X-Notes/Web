@@ -33,6 +33,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.pService.onResize();
     this.current = subMenu.All;
     this.pService.subject
     .pipe(takeUntil(this.destroy))
