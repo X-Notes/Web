@@ -15,6 +15,7 @@ export class DragService {
   }
 
   dragIsTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
+    event.preventDefault();
     return event.type.startsWith('touch');
   }
 

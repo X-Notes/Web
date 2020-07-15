@@ -34,7 +34,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
 
-
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 

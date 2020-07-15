@@ -45,12 +45,12 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <div class="content-inner" cdkDropListGroup>
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner" cdkDropListGroup>
         <div cdkDropList [cdkDropListEnterPredicate]="dropListEnterPredicate"
             (cdkDropListDropped)="dropListDropped()"></div>
         <div cdkDropList *ngFor="let item of labels$ | async" [cdkDropListEnterPredicate]="dropListEnterPredicate"
             (cdkDropListDropped)="dropListDropped()">
-            <app-label cdkDrag (cdkDragMoved)="dragMoved($event);" [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
+            <app-label cdkDrag [cdkDragStartDelay]="100" (cdkDragMoved)="dragMoved($event);" [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
         </div>
-    </div>
+    </ngx-simplebar>
 </div>
