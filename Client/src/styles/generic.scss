@@ -3,14 +3,12 @@
     flex-direction: column;
     width: calc(100% - 190px);
     height: 100%;
-    overflow: auto;
 
     .content-inner {
         display: flex;
-        flex-wrap: wrap;
-        align-content: flex-start;
         width: 100%;
         padding: 2.5rem 3.125vw 0 3.125vw;
+        overflow: hidden auto;
     }
 }
 

@@ -38,6 +38,7 @@ export class PersonalizationService {
   theme: Theme = Theme.Dark;
   language: Language = Language.RU;
   stateSidebar = true;
+  optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
 
   onResize(): void {
     if (this.check()) {

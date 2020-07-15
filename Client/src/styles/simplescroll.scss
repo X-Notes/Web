@@ -1,0 +1,38 @@
+
+.label-container, .background-section {
+    .simplebar-wrapper {
+        height: auto;
+    }
+
+    .simplebar-track.simplebar-vertical{
+        width: 10px;
+    }
+
+    .simplebar-scrollbar::before {
+        background-color: rgba(255,255,255, 0.4);
+    }
+}
+
+.content-inner {
+    .simplebar-wrapper {
+        width: auto;
+        
+        .simplebar-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+    }
+
+    .simplebar-scrollbar::before {
+        background-color: rgba(255,255,255, 0.4);
+    }
+}
+
+.light {
+    .content-inner, .label-container {
+        .simplebar-scrollbar::before {
+            background-color: rgba(0,0,0, 0.3);
+        }
+    }
+}

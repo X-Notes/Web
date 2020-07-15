@@ -149,6 +149,7 @@
             }
     
             .label-container {
+                display: flex;
                 height: 100%;
                 width: 100%;
                 overflow-y: auto;
@@ -477,6 +478,7 @@
 @media (max-width: 768px) {
     :host{
         width: 100%;
+        height: calc(100% - 80px);
     }
 
     .sub-nav {
@@ -583,6 +585,10 @@
 }
 
 @media (max-width: 600px) {
+    :host {
+        height: calc(100% - 70px);
+    }
+
     .sub-nav {
         .sub-nav-section {
             width: 180px;
@@ -590,6 +596,10 @@
     }
 }
 @media (max-width: 320px) {
+    :host {
+        height: calc(100% - 65px);
+    }
+
     .sub-nav {
         .sub-nav-section {
             width: 170px;
@@ -613,7 +623,7 @@
             }
             
             .label-section {
-                height: calc(100% - 286px);
+                height: calc(100% - 296px);
             }
 
             .background-section, .invitations-section {
