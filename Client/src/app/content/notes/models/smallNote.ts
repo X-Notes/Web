@@ -1,6 +1,6 @@
 
 export interface SmallNote {
-    id: number;
+    writeId: string;
     order: number;
     title: string;
 }

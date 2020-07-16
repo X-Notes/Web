@@ -98,10 +98,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
 
             //Notes
-            services.AddScoped<IRequestHandler<NewNoteCommand, int>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewNoteCommand, string>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -111,6 +113,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddTransient<UserRepository>();
             services.AddTransient<BackgroundRepository>();
             services.AddTransient<NoteRepository>();
+            services.AddTransient<UserOnNoteRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

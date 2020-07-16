@@ -1,6 +1,7 @@
 
 export interface FullNote {
-    id: number;
+    writeId: string;
+    readId: string;
     order: number;
     title: string;
 }

@@ -5,7 +5,7 @@ export class LoadSmallNotes {
 
 export class LoadFullNote {
     static type = '[Notes] Load full note';
-    constructor(public id: number) {    }
+    constructor(public id: string) {    }
 }
 
 export class AddNote {

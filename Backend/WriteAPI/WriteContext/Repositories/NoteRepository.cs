@@ -48,9 +48,9 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<Note> GetFull(int id)
+        public async Task<Note> GetFull(Guid id)
         {
-            return await contextDB.Notes.FirstOrDefaultAsync(x => x.Id == id);
+            return await contextDB.Notes.FirstOrDefaultAsync(x => x.WriteId == id);
         }
 
         public async Task<List<Note>> GetByUserId(int userId)

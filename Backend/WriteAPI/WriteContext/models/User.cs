@@ -25,5 +25,7 @@ namespace WriteContext.models
 
         public List<Folder> Folders { set; get; }
         public List<Note> Notes { set; get; }
+
+        public List<UserOnNote> UserOnNotes { set; get; }
     }
 }

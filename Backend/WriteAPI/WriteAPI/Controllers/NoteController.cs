@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.notes;
+using Common.DTO.users;
 using Domain.Commands.notes;
 using Domain.Queries.notes;
 using MediatR;
@@ -35,16 +36,23 @@ namespace WriteAPI.Controllers
         public async Task<List<SmallNote>> GetAll()
         {
             var email = this.GetUserEmail();
-            var command = new GetAllNotesQuery(email);
-            return await _mediator.Send(command);
+            var query = new GetAllNotesQuery(email);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("{id}")]
-        public async Task<FullNote> GetAll(int id)
+        public async Task<FullNote> GetAll(string id)
         {
             var email = this.GetUserEmail();
-            var command = new GetFullNoteQuery(email, id);
-            return await _mediator.Send(command);
+            var query = new GetFullNoteQuery(email, id);
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("user/{id}")]
+        public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(string id)
+        {
+            var query = new GetOnlineUsersOnNote(id);
+            return await _mediator.Send(query);
         }
     }
 }

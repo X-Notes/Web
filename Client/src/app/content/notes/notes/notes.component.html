@@ -84,6 +84,6 @@
 </div>
 <div class="content">
     <p *ngFor="let item of notes$ | async ">
-        <span [routerLink]="['/notes', item.id]" >{{item.id}}</span>
+        <span [routerLink]="['/notes', item.id]" >{{item.writeId}}</span>
     </p>
 </div>

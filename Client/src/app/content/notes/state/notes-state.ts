@@ -35,8 +35,8 @@ export class NoteStore {
 
     @Selector()
     static oneFull(state: NoteState) {
-        return (id: number): FullNote => {
-            return state.fullNotes.find(x => x.id === id);
+        return (id: string): FullNote => {
+            return state.fullNotes.find(x => x.writeId === id);
         };
     }
 
@@ -49,9 +49,9 @@ export class NoteStore {
 
     @Action(AddNote)
     async newNote({ setState, getState, patchState }: StateContext<NoteState>) {
-        const id = await this.api.new().toPromise();
+        const writeId = await this.api.new().toPromise();
         const notes = getState().smallNotes;
-        notes.unshift({id, order: 1, title: ''});
+        notes.unshift({writeId, order: 1, title: ''});
         patchState({ smallNotes: notes });
     }
 
@@ -59,7 +59,7 @@ export class NoteStore {
     @Action(LoadFullNote)
     async loadFull({ setState, getState, patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
         const notes = getState().fullNotes;
-        const noteExist = notes.find(x => x.id === id);
+        const noteExist = notes.find(x => x.writeId === id);
         if (!noteExist) {
             const note = await this.api.get(id).toPromise();
             notes.push(note);

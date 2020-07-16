@@ -99,16 +99,15 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("WriteContext.models.Note", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("WriteId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("NoteEditStatus")
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<Guid>("ReadId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -116,7 +115,7 @@ namespace WriteContext.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("WriteId");
 
                     b.HasIndex("UserId");
 
@@ -201,6 +200,28 @@ namespace WriteContext.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOnNote");
+                });
+
             modelBuilder.Entity("WriteContext.models.Backgrounds", b =>
                 {
                     b.HasOne("WriteContext.models.User", "User")
@@ -260,6 +281,21 @@ namespace WriteContext.Migrations
                     b.HasOne("WriteContext.models.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("WriteContext.models.User", "CurrentBackgroundId");
+                });
+
+            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+                {
+                    b.HasOne("WriteContext.models.Note", "Note")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WriteContext.models.User", "User")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -13,12 +13,12 @@ export class ApiServiceNotes {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note');
   }
 
-  get(id: number) {
+  get(id: string) {
     return this.httpClient.get<FullNote>(environment.writeAPI + `/api/note/${id}`);
   }
 
   new() {
-    return this.httpClient.get<number>(environment.writeAPI + `/api/note/new`);
+    return this.httpClient.get<string>(environment.writeAPI + `/api/note/new`);
   }
 
 }

@@ -7,11 +7,15 @@ namespace WriteContext.models
 {
     public class Note
     {
-        public int Id { set; get; }
+        public Guid WriteId { get; set; }
+        public Guid ReadId { set; get; }
+
         public string Title { set; get; }
         public int Order { set; get; }
-        public NoteEditStatus NoteEditStatus { set; get; }
+
         public int UserId { set; get; }
         public User User { set; get; }
+
+        public List<UserOnNote> UserOnNotes { set; get; }
     }
 }

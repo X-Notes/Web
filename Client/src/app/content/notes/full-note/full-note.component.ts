@@ -19,10 +19,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   note: FullNote;
 
   private routeSubscription: Subscription;
-  private id: number;
+  private id: string;
 
   constructor(private signal: SignalRService, private route: ActivatedRoute, private store: Store) {
-              this.routeSubscription = route.params.subscribe(params => this.id = parseInt(params.id, 10));
+              this.routeSubscription = route.params.subscribe(params => this.id = params.id);
             }
 
   ngOnInit(): void {
@@ -39,7 +39,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   connectToHub() {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
-    this.signal.hubConnection.invoke('JoinNote', this.id.toString());
+    this.signal.hubConnection.invoke('JoinNote', this.id);
     } else {
       setTimeout(() => this.connectToHub(), 100);
     }
@@ -47,6 +47,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routeSubscription.unsubscribe();
-    this.signal.hubConnection.invoke('LeaveNote', this.id.toString());
+    this.signal.hubConnection.invoke('LeaveNote', this.id);
   }
 }
