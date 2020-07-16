@@ -55,9 +55,11 @@ namespace WriteContext
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.WriteId });
 
-
             modelBuilder.Entity<Note>()
                 .HasIndex(x => new { x.ReadId }).IsUnique();
+
+            modelBuilder.Entity<UserOnNote>()
+                .HasKey(x => new { x.UserId, x.NoteId });
         }
     }
 }

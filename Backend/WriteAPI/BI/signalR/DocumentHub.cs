@@ -28,12 +28,16 @@ namespace BI.signalR
             var user = await userRepository.GetUserByEmail(Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var guid))
             {
-                var connectUser = new UserOnNote()
+                var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, guid);
+                if(existUser == null)
                 {
-                    UserId = user.Id,
-                    NoteId = guid
-                };
-                await userOnNoteRepository.Add(connectUser);
+                    var connectUser = new UserOnNote()
+                    {
+                        UserId = user.Id,
+                        NoteId = guid
+                    };
+                    await userOnNoteRepository.Add(connectUser);
+                }
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, noteId.ToString());
@@ -49,7 +53,6 @@ namespace BI.signalR
             Console.WriteLine(Context.UserIdentifier);
             Console.WriteLine();
             */
-
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId.ToString());
         }
