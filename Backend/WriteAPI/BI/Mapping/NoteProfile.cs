@@ -12,7 +12,8 @@ namespace BI.Mapping
         public NoteProfile()
         {
             CreateMap<Note, FullNote>();
-            CreateMap<Note, SmallNote>();
+            CreateMap<Note, SmallNote>()
+                .ForMember(x => x.WriteId, dest => dest.MapFrom(z => z.WriteId.ToString("N")));
         }
     }
 }

@@ -36,7 +36,7 @@ namespace BI.services
 
             await this.noteRepository.Add(note);
 
-            return note.WriteId.ToString();
+            return note.WriteId.ToString("N");
         }
     }
 }
