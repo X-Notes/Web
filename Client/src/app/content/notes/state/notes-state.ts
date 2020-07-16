@@ -48,11 +48,10 @@ export class NoteStore {
     }
 
     @Action(AddNote)
-    async newNote({ setState, getState, patchState }: StateContext<NoteState>) {
+    async newNote({ getState, patchState }: StateContext<NoteState>) {
         const writeId = await this.api.new().toPromise();
         const notes = getState().smallNotes;
-        notes.unshift({writeId, order: 1, title: ''});
-        patchState({ smallNotes: notes });
+        patchState({ smallNotes: [{writeId, order: 1, title: ''} , ...notes] });
     }
 
 
@@ -62,8 +61,7 @@ export class NoteStore {
         const noteExist = notes.find(x => x.writeId === id);
         if (!noteExist) {
             const note = await this.api.get(id).toPromise();
-            notes.push(note);
-            patchState({fullNotes: notes});
+            patchState({fullNotes: [...notes , note]});
         }
     }
 

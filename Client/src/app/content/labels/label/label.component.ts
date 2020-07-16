@@ -31,7 +31,11 @@ export class LabelComponent implements OnInit, OnDestroy {
     this.nameChanged.pipe(
       debounceTime(350),
       distinctUntilChanged())
-      .subscribe(model => this.updateLabel.emit(this.label));
+      .subscribe(name => {
+        const lab = {...this.label};
+        lab.name = name;
+        this.updateLabel.emit(lab);
+      });
   }
 
   openColors() {
@@ -39,9 +43,14 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   changeColor(value: string) {
-    this.label.color = value;
+    const label: Label = {
+      id: this.label.id,
+      color: value,
+      name: this.label.name,
+      isDeleted: this.label.isDeleted
+    };
     this.isUpdate = false;
-    this.updateLabel.emit(this.label);
+    this.updateLabel.emit(label);
   }
 
   delete() {

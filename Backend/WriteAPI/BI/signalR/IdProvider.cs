@@ -12,7 +12,6 @@ namespace BI.signalR
         public virtual string GetUserId(HubConnectionContext connection)
         {
             var email = connection.User.Claims.FirstOrDefault(x => x.Type.Contains("emailaddress"))?.Value;
-            Console.WriteLine(email);
             return email;
         }
     }

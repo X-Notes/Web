@@ -30,7 +30,7 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     SharedModule,
     ContentModule,
-    NgxsModule.forRoot([LabelStore, NoteStore, UserStore]),
+    NgxsModule.forRoot([LabelStore, NoteStore, UserStore], { developmentMode: !environment.production }),
     NgxsStoragePluginModule.forRoot({
       key: UserStore
     })

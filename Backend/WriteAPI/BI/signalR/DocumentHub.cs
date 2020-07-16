@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Common.DTO.parts;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,9 +19,10 @@ namespace BI.signalR
             this.userOnNoteRepository = userOnNoteRepository;
         }
 
-        public async Task SendMessage(string user, string message)
+        public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            IReadOnlyList<string> list = new List<string>() { Context.ConnectionId };
+            await Clients.GroupExcept(textPart.NoteId, list).SendAsync("updateDoc", textPart.RawHtml);
         }
 
         public async Task JoinNote(string noteId)

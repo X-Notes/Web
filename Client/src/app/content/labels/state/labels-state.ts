@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api.service';
 import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
+import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 
 interface LabelState {
     labels: Label[];
@@ -40,10 +41,8 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
         const labels = getState().labels;
-        labels.unshift({name, color, id, isDeleted: false});
         setState({
-            ...getState(),
-            labels
+            labels: [{name, color, id, isDeleted: false}, ...labels]
         });
     }
 
@@ -56,7 +55,12 @@ export class LabelStore {
     }
 
     @Action(UpdateLabel)
-    async updateLabels({setState, getState, patchState}: StateContext<LabelState>, { label }: UpdateLabel) {
+    async updateLabels({ setState }: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
+        setState(
+            patch({
+                labels: updateItem<Label>(label2 => label2.id === label.id , label)
+            })
+        );
     }
 }

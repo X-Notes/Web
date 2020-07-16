@@ -70,7 +70,7 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   async newNote() {
     await this.store.dispatch(new AddNote()).toPromise();
-    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/${x[0].writeId}`]));
+    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/w/${x[0].writeId}`]));
   }
 
   cancelLabel() {
