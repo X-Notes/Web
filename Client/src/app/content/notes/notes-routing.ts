@@ -5,7 +5,7 @@ import { FullNoteComponent } from './full-note/full-note.component';
 
 const routes: Routes = [
   { path: '', component: NotesComponent},
-  { path: ':id', component: FullNoteComponent},
+  { path: 'w/:id', component: FullNoteComponent},
 ];
 
 @NgModule({
