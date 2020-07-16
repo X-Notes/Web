@@ -24,52 +24,64 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  .icon-filter:before {
+  .icon-cancel:before {
     content: "\e900";
+    color: #505050;
+  }
+  .icon-filter:before {
+    content: "\e901";
     color: #fff;
   }
-  .icon-theme_light:before {
-    content: "\e901";
-    color: #616161;
-  }
-  .icon-question:before {
-    content: "\e902";
-    color: #616161;
-  }
-  .icon-plus:before {
-    content: "\e903";
-  }
-  .icon-select:before {
-    content: "\e904";
-    color: #515151;
-  }
-  .icon-search:before {
-    content: "\e905";
-    color: #828282;
-  }
   .icon-folders .path1:before {
-    content: "\e906";
+    content: "\e902";
     color: rgb(157, 157, 157);
   }
   .icon-folders .path2:before {
-    content: "\e907";
+    content: "\e903";
     margin-left: -0.8125em;
     color: rgb(255, 255, 255);
   }
   .icon-label:before {
-    content: "\e908";
-    color: #fff;
-  }
-  .icon-people:before {
-    content: "\e909";
-    color: #fff;
-  }
-  .icon-notification:before {
-    content: "\e90a";
+    content: "\e904";
     color: #fff;
   }
   .icon-notes:before {
+    content: "\e905";
+    color: #fff;
+  }
+  .icon-notification:before {
+    content: "\e906";
+    color: #fff;
+  }
+  .icon-people:before {
+    content: "\e907";
+    color: #fff;
+  }
+  .icon-plus:before {
+    content: "\e908";
+  }
+  .icon-question:before {
+    content: "\e909";
+    color: #616161;
+  }
+  .icon-search:before {
+    content: "\e90a";
+    color: #828282;
+  }
+  .icon-select:before {
     content: "\e90b";
+    color: #515151;
+  }
+  .icon-select-label:before {
+    content: "\e90c";
+    color: #505050;
+  }
+  .icon-theme_light:before {
+    content: "\e90d";
+    color: #616161;
+  }
+  .icon-view-change:before {
+    content: "\e90e";
     color: #fff;
   }
   

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
-import { trigger, state, style, transition, animate, useAnimation } from '@angular/animations';
 import { Subject, ReplaySubject, Observable } from 'rxjs';
 import { takeUntil, take, tap } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
@@ -39,7 +38,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
 
-
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
@@ -57,7 +55,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
+    this.pService.onResize();
     this.store.dispatch(new LoadLabels());
     this.store.dispatch(new LoadSmallNotes());
 

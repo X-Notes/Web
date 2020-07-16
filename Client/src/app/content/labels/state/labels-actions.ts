@@ -19,3 +19,8 @@ export class UpdateLabel {
     constructor(public label: Label) {}
 }
 
+export class PositionLabel {
+    static type = '[Labels] Position Label';
+    constructor(public labelOne: Label, public labelTwo: Label) {}
+}
+

@@ -1,5 +1,5 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
-    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.onResize()">
+    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">
@@ -55,7 +55,7 @@
             <div class="label-cancel" (click)="cancelLabel()">
                 <p>{{ 'subMenu.cancel' | translate }}</p>
             </div>
-            <div class="label-container">
+            <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
                 <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)" [ngClass]="actives.get(item.id)? 'active-label' : ''">
                     <div class="label-item" [ngStyle]="{'backgroundColor': item.color}">
                         <p>{{item.name}}</p>
@@ -63,7 +63,7 @@
                         <div class="dot" [ngStyle]="{'backgroundColor': item.color}"></div>
                     </div>
                 </div>
-            </div>
+            </ngx-simplebar>
         </div>
         <div class="information">
             <div class="separator"></div>

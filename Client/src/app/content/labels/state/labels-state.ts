@@ -2,7 +2,7 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api.service';
-import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel } from './labels-actions';
+import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel, PositionLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 
@@ -42,7 +42,7 @@ export class LabelStore {
         const id = await this.api.new(name, color).toPromise();
         const labels = getState().labels;
         setState({
-            labels: [{name, color, id, isDeleted: false}, ...labels]
+            labels: [{name, color, id, isDeleted: false, order: 1}, ...labels]
         });
     }
 
@@ -62,5 +62,13 @@ export class LabelStore {
                 labels: updateItem<Label>(label2 => label2.id === label.id , label)
             })
         );
+    }
+
+    @Action(PositionLabel)
+    positionLabel({setState, getState, patchState}: StateContext<LabelState>, { labelOne, labelTwo }: PositionLabel) {
+        const labels = getState().labels;
+        labels.find(x => x.id = labelOne.id).order = labelTwo.order;
+        labels.find(x => x.id = labelTwo.id).order = labelOne.order;
+        patchState({labels});
     }
 }

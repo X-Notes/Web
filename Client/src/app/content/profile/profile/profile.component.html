@@ -1,5 +1,5 @@
 <div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
-    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.onResize()">
+    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">
@@ -12,26 +12,14 @@
             </div>
             <div class="separator"></div>
         </div>
-        <div class="background-section">
-            <div class="background">
+        <ngx-simplebar [options]="pService.optionsScroll" class="background-section">
+            <div class="background" *ngFor="let item of items" (click)="toggle()" [ngClass]="check ? 'active-background' : ''">
                 <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
                 <div class="thumbnail">
                     <i class="icon-plus"></i>
                 </div>
             </div>
-            <div class="background" (click)="toggle()" [ngClass]="check ? 'active-background' : ''">
-                <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
-                <div class="thumbnail">
-                    <i class="icon-plus"></i>
-                </div>
-            </div>
-            <div class="background">
-                <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
-                <div class="thumbnail">
-                    <i class="icon-plus"></i>
-                </div>
-            </div>
-        </div>
+        </ngx-simplebar>
         <div class="information">
             <div class="separator"></div>
             <div class="progress-section">
