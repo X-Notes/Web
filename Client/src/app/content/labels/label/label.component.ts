@@ -47,7 +47,8 @@ export class LabelComponent implements OnInit, OnDestroy {
       id: this.label.id,
       color: value,
       name: this.label.name,
-      isDeleted: this.label.isDeleted
+      isDeleted: this.label.isDeleted,
+      order: this.label.order
     };
     this.isUpdate = false;
     this.updateLabel.emit(label);

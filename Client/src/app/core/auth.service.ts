@@ -10,6 +10,7 @@ import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
 import { Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
+import { SetToken } from './stateUser/user-action';
 
 
 @Injectable()
@@ -18,7 +19,8 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private store: Store) {
+    private store: Store,
+    private api: AuthAPIService) {
     this.afAuth.authState.subscribe(async (firebaseUser) => {
       this.configureAuthState(firebaseUser);
     });
@@ -33,9 +35,16 @@ export class AuthService {
       const token = await firebaseUser.getIdToken(true);
       const flag = this.store.selectSnapshot(UserStore.getStatus);
       if (!flag) {
+        await this.api.verifyToken(token).toPromise();
+        this.store.dispatch(new SetToken(token));
         this.store.dispatch(new Login(token, this.getUser(firebaseUser)))
         .subscribe(x => this.router.navigate(['/notes']));
       } else {
+        try {
+          await this.api.verifyToken(token).toPromise();
+        } catch (e) {
+          this.logout();
+        }
       }
     } else {
       this.logout();
@@ -61,6 +70,7 @@ export class AuthService {
 
   logout() {
     this.store.dispatch(new Logout());
-    return this.afAuth.signOut();
+    this.afAuth.signOut();
+    this.router.navigate(['/about']);
   }
 }

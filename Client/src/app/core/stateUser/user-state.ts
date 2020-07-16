@@ -43,8 +43,6 @@ export class UserStore {
 
     @Action(Login)
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
-        await this.api.verifyToken(token).toPromise();
-        dispatch(new SetToken(token));
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
             userdb = await this.api.newUser(user).toPromise();
