@@ -4,7 +4,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
   }
 
-  // Logic for updating on websockets
+  // TODO Logic for updating on websockets
   initModel(html): UpdateText {
     return {
       rawHtml: html,
@@ -46,21 +46,23 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   }
 
   updateDoc(str: string) {
-    this.note.title = str;
+    const note = {...this.note};
+    note.title = str;
+    this.store.dispatch(new UpdateFullNote(note));
   }
 
 
-  async load() {
+  async load() { // TODO MAKE UNSUBSCRIBE
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     this.store.select(NoteStore.oneFull)
-    .pipe(take(1), map(func => func(this.id)))
-    .subscribe(x => this.note = x);
+    .pipe(map(func => func(this.id)))
+    .subscribe(x => {this.note = x; });
   }
 
   connectToHub() {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
     this.signal.hubConnection.invoke('JoinNote', this.id);
-    this.signal.hubConnection.on('updateDoc', this.updateDoc);
+    this.signal.hubConnection.on('updateDoc', (str) => this.updateDoc(str));
     } else {
       setTimeout(() => this.connectToHub(), 100);
     }

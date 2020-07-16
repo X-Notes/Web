@@ -3,10 +3,11 @@ import { FullNote } from '../models/fullNote';
 import { State, Selector, StateContext, Action, createSelector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
-import { LoadSmallNotes, AddNote, LoadFullNote } from './notes-actions';
+import { LoadSmallNotes, AddNote, LoadFullNote, UpdateFullNote } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
+import { patch, updateItem } from '@ngxs/store/operators';
 
 
 interface NoteState {
@@ -63,6 +64,15 @@ export class NoteStore {
             const note = await this.api.get(id).toPromise();
             patchState({fullNotes: [...notes , note]});
         }
+    }
+
+    @Action(UpdateFullNote)
+    async updateLabels({ setState }: StateContext<NoteState>, { note }: UpdateFullNote) {
+        setState(
+            patch({
+                fullNotes: updateItem<FullNote>(note2 => note2.writeId === note.writeId , note)
+            })
+        );
     }
 
 }
