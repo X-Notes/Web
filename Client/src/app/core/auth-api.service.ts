@@ -26,7 +26,7 @@ export class AuthAPIService {
   }
 
   newUser(user: User) {
-    return this.httpClient.post(environment.writeAPI + '/api/user' , user);
+    return this.httpClient.post<ShortUser>(environment.writeAPI + '/api/user' , user);
   }
 
   getUser() {

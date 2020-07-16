@@ -15,6 +15,8 @@ import { AuthService } from './auth.service';
 import { AuthAPIService } from './auth-api.service';
 import { TokenInterceptorService } from './token-interceptor.service';
 import { ContentLoadGuard } from './guards/content-load.guard';
+import { ApiServiceLabels } from '../content/labels/api.service';
+import { ApiServiceNotes } from '../content/notes/api.service';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -48,6 +50,6 @@ export class MissingTranslationService implements MissingTranslationHandler {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
       multi: true
-    }]
+    }, ApiServiceLabels, ApiServiceNotes]
 })
 export class CoreModule { }

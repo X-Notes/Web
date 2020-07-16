@@ -28,6 +28,7 @@
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
     "@ngxs/logger-plugin": "^3.6.2-dev.master-eaa5d86",
+    "@ngxs/storage-plugin": "^3.6.2",
     "@ngxs/store": "^3.6.2",
     "firebase": "^7.15.5",
     "rxjs": "~6.5.4",
