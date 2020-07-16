@@ -52,7 +52,9 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.pService.onResize();
     this.current = subMenu.All;
+
     this.store.dispatch(new LoadLabels());
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newLabel());
@@ -66,7 +68,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async newLabel() {
-    await this.store.dispatch(new AddLabel('Name your label...', '#FFEBCD')).toPromise();
+    await this.store.dispatch(new AddLabel('', '#FFEBCD')).toPromise();
   }
 
   switchSub(value: subMenu) {

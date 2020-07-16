@@ -6,7 +6,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note/full-note.component';
 
 
-
 @NgModule({
   declarations: [NotesComponent, FullNoteComponent],
   imports: [

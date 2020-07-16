@@ -2,11 +2,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, ReplaySubject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take, tap } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
+import { SmallNote } from '../models/smallNote';
+import { NoteStore } from '../state/notes-state';
+import { LoadSmallNotes, AddNote } from '../state/notes-actions';
+import { Router } from '@angular/router';
 
 export enum subMenu {
   All = 'all',
@@ -37,7 +41,12 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
-  constructor(public pService: PersonalizationService, private store: Store) { }
+  @Select(NoteStore.allSmall)
+  public notes$: Observable<SmallNote[]>;
+
+  constructor(public pService: PersonalizationService,
+              private store: Store,
+              private router: Router) { }
 
 
   ngOnDestroy(): void {
@@ -48,14 +57,18 @@ export class NotesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pService.onResize();
     this.store.dispatch(new LoadLabels());
+    this.store.dispatch(new LoadSmallNotes());
+
     this.current = subMenu.All;
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
   }
 
-  newNote() {
-    console.log('new note');
+  async newNote() {
+    await this.store.dispatch(new AddNote()).toPromise();
+    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/w/${x[0].writeId}`]));
   }
 
   cancelLabel() {

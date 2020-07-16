@@ -97,6 +97,34 @@ namespace WriteContext.Migrations
                     b.ToTable("Labels");
                 });
 
+            modelBuilder.Entity("WriteContext.models.Note", b =>
+                {
+                    b.Property<Guid>("WriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ReadId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("WriteId");
+
+                    b.HasIndex("ReadId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notes");
+                });
+
             modelBuilder.Entity("WriteContext.models.NotificationSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -175,6 +203,21 @@ namespace WriteContext.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "NoteId");
+
+                    b.HasIndex("NoteId");
+
+                    b.ToTable("UserOnNote");
+                });
+
             modelBuilder.Entity("WriteContext.models.Backgrounds", b =>
                 {
                     b.HasOne("WriteContext.models.User", "User")
@@ -197,6 +240,15 @@ namespace WriteContext.Migrations
                 {
                     b.HasOne("WriteContext.models.User", "User")
                         .WithMany("Labels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WriteContext.models.Note", b =>
+                {
+                    b.HasOne("WriteContext.models.User", "User")
+                        .WithMany("Notes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -225,6 +277,21 @@ namespace WriteContext.Migrations
                     b.HasOne("WriteContext.models.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("WriteContext.models.User", "CurrentBackgroundId");
+                });
+
+            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+                {
+                    b.HasOne("WriteContext.models.Note", "Note")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WriteContext.models.User", "User")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

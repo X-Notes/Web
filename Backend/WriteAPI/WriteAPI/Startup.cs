@@ -1,9 +1,11 @@
 using AutoMapper;
 using BI.Mapping;
+using BI.signalR;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +30,7 @@ namespace WriteAPI
                 builder.AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials()
-                       .WithOrigins("http://localhost:4200", "http://localhost");
+                       .WithOrigins("http://localhost:4200", "http://localhost:8080");
             }));
 
             FirebaseApp.Create(new AppOptions
@@ -42,6 +44,9 @@ namespace WriteAPI
 
 
             services.AddControllers().AddNewtonsoftJson();
+
+            services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, IdProvider>();
 
             //services.Queue(Configuration);
             services.Marten(Configuration);
@@ -68,9 +73,11 @@ namespace WriteAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DocumentHub>("/hub");
             });
         }
     }

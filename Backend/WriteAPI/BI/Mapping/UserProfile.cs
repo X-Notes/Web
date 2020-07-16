@@ -12,6 +12,8 @@ namespace BI.Mapping
             CreateMap<User, ShortUser>();
             CreateMap<NewUserCommand, User>();
             CreateMap<NewUser, NewUserCommand>();
+
+            CreateMap<User, OnlineUserOnNote>();
         }
     }
 }

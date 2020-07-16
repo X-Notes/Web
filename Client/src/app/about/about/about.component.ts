@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-about',
@@ -9,13 +11,14 @@ import { Router } from '@angular/router';
 })
 export class AboutComponent implements OnInit {
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private store: Store) { }
 
   ngOnInit(): void {
   }
 
   login() {
-    if (!this.authService.getStatus().loggin) {
+    const flag = this.store.selectSnapshot(UserStore.getStatus);
+    if (!flag) {
       this.authService.GoogleAuth();
     } else {
       this.router.navigate(['/notes']);

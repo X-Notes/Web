@@ -83,4 +83,7 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
+    <p *ngFor="let item of notes$ | async ">
+        <span [routerLink]="['/notes/w', item.writeId]" >{{item.writeId}}</span>
+    </p>
 </div>

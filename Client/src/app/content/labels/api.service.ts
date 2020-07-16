@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Label } from './models/label';
 
 @Injectable()
-export class ApiService {
+export class ApiServiceLabels {
 
   constructor(private httpClient: HttpClient) { }
 
