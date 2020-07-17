@@ -83,4 +83,12 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner" cdkDropListGroup>
+        <div cdkDropList [cdkDropListEnterPredicate]="dropListEnterPredicate"
+            (cdkDropListDropped)="dropListDropped()"></div>
+        <div cdkDropList *ngFor="let item of notes" [cdkDropListEnterPredicate]="dropListEnterPredicate"
+            (cdkDropListDropped)="dropListDropped()">
+            <app-note cdkDrag [cdkDragStartDelay]="100" (cdkDragMoved)="dragMoved($event);"></app-note>
+        </div>
+    </ngx-simplebar>
 </div>

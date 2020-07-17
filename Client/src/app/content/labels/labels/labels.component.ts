@@ -42,8 +42,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
   public labels$: Observable<Label[]>;
 
   constructor(public pService: PersonalizationService,
-              private store: Store, public dragService: DragService,
-              private cdRef: ChangeDetectorRef) {
+              private store: Store, public dragService: DragService) {
                 this.target = null;
                 this.source = null;
               }

@@ -1,4 +1,9 @@
+//colors
+
+$text-color: #202020;
+
 //main app for dark theme
+
 $dark-color: #26282d;
 $dark-separator: #1f2024;
 $light-separator: #e7e7e7;
@@ -8,6 +13,7 @@ $dark-nav-backlight: #34373e;
 $dark-search-submit: #363942;
 
 //main app for light theme
+
 $light-text-color: #404040;
 $light-button: #959595;
 $light-managment: #E2E2E2;
@@ -33,6 +39,23 @@ $dark-blue-label: #CDD5FF;
 $purple-label: #EFCDFF;
 $pink-label: #FFCDF4;
 
+//notes color
+
+$red-note: #FFEBEB;
+$orange-note: #FFF5EB;
+$yellow-note: #FFFFEB;
+$green-note: #EBFFEC;
+$light-blue-note: #EBFEFF;
+$blue-note: #EBF8FF;
+$purple-note: #F7EBFF;
+$pink-note: #FFEBF9;
+$light-note: #F8F8F8;
+
+//notes help color
+
+$highlighting-note: rgba(101, 226, 113, 0.65);
+$unhighlighting-note: rgba(175, 175, 175, 0.3);
+$note-label-color: #606060;
 
 //convert
 
