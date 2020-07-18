@@ -32,6 +32,10 @@ export class HeaderComponent implements OnInit {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
+  toggleOrientation() {
+    this.pService.orientationMobile = !this.pService.orientationMobile;
+  }
+
   checkRout() {
     this.routeChange(this.router.url);
     this.router.events.pipe(

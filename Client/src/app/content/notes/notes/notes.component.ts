@@ -42,7 +42,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
   current: subMenu;
   menu = subMenu;
   theme = Theme;
-  notes: number[] = [1, 2];
+  notes: number[] = [1, 2, 3, 4];
 
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();

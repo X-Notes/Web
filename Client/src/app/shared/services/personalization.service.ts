@@ -38,6 +38,7 @@ export class PersonalizationService {
   theme: Theme = Theme.Dark;
   language: Language = Language.RU;
   stateSidebar = true;
+  orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
 
   onResize(): void {
@@ -53,7 +54,7 @@ export class PersonalizationService {
   }
 
   check(): boolean {
-    return window.innerWidth > 768 ? true : false;
+    return window.innerWidth > 1024 ? true : false;
   }
 
   constructor() {

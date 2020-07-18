@@ -467,34 +467,6 @@ header {
 
 @media (max-width: 1024px) {
     header {
-        .management-section {
-            .interactions {
-                .generic {
-                    width: 30px;
-
-                    .inner-content {
-                        padding: 0;
-                        justify-content: center;
-
-                        i {
-                            font-size: 1rem;
-                        }
-
-                        p {
-                            display: none;
-                        }
-                    }
-                }
-
-                .search, .auxiliary-icon {
-                    margin-right: 1rem;
-                }
-            }
-        }
-    }
-}
-@media (max-width: 768px) {
-    header {
         .profile-section {
             display: none;
         }

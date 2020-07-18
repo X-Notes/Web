@@ -13,10 +13,10 @@
     background-color: $green-note;
     color: $text-color;
     border-radius: 20px;
-    overflow: hidden;
+    transition: 0.2s ease;
 
-    &:nth-child(3n) {
-        margin-right: 0;
+    &:hover {
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
     }
 }
 
@@ -27,6 +27,7 @@
     width: 25px;
     background-color: $unhighlighting-note;
     transition: 0.3s ease;
+    border-radius: 20px 0 0 20px;
     cursor: pointer;
 
     &:hover {
@@ -49,7 +50,7 @@
             justify-content: center;
             align-items: center;
             height: 20px;
-            max-width: 120px;
+            max-width: 110px;
             font-size: 	0.9375rem;
             padding: 0 0.625rem;
             margin-right: 1.25rem;
@@ -175,5 +176,71 @@
     width: 100%;
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1024px) {
+    .highlighting-note {
+        width: 20px;
+    }
+    .note-inner {
+        width: calc(100% - 20px);
+
+        .labels {
+            .label {
+                margin-right: 1rem;
+                padding: 0 0.5rem;
+            }
+        }
+
+        .header {
+            -webkit-line-clamp: 1;
+        }
+    
+        .description {
+            -webkit-line-clamp: 3;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .note-inner {
+        .labels {
+            .label {
+                max-width: 95px;
+            }
+        }
+
+        .description {
+            -webkit-line-clamp: 2;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .note-inner {
+        .labels {
+            .label {
+                max-width: 110px;
+            }
+        }
+    }
+}
+
+@media (max-width: 320px) {
+    .note-inner {
+        .labels {
+            .label {
+                max-width: initial;
+                width: calc(50% - 0.5rem);
+            }
+        }
+
+        .footer {
+            overflow: hidden;
+
+            .help-icons {
+                .icon {
+                    margin-left: 1rem;
+                }
+            }
+        }
+    }
 }
