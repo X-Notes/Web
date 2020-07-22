@@ -108,6 +108,7 @@ namespace WriteAPI.ConfigureAPP
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
+            Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
             services.AddTransient<LabelRepository>();
             services.AddTransient<UserRepository>();
