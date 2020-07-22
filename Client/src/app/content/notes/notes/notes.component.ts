@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, ReplaySubject, Observable } from 'rxjs';
@@ -9,6 +9,8 @@ import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { CdkDropListGroup, CdkDropList, CdkDrag, CdkDragMove, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DragService } from 'src/app/shared/services/drag.service';
+import { Note } from '../models/Note';
+import Grid, { GridOptions } from 'muuri';
 
 export enum subMenu {
   All = 'all',
@@ -28,6 +30,10 @@ export enum subMenu {
 
 export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  constructor(public pService: PersonalizationService,
+              private store: Store,
+              public dragService: DragService) { }
+
   @ViewChild(CdkDropListGroup) listGroup: CdkDropListGroup<CdkDropList>;
   @ViewChild(CdkDropList) placeholder: CdkDropList;
 
@@ -42,18 +48,38 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
   current: subMenu;
   menu = subMenu;
   theme = Theme;
-  notes: number[] = [1, 2, 3, 4];
+  notes: Note[] = [{description: 'bla blabla bla bllabla bla blabla bla b bla111111111111111111111111111111111111111111111 12312 3123 12321312312312 312'},
+                  {description: 'bla bla bllabla bla blabla bla bla'},
+                  {description: 'bla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla bla'},
+                  {description: 'bla bla blabla bla a bla bla'},
+                  {description: 'bla bla blabla bla a bla bla'},
+                  {description: 'bla bla blabla bla a bla bla'}];
 
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
+  // container;
+  // items;
+  // gridCols;
+  // vertSum = [];
+  // gridItems = [];
 
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              public dragService: DragService) { }
+  public layoutConfig: GridOptions = {
+    items: [],
+    layoutOnInit: true,
+    dragEnabled: true,
+    layout: {
+        fillGaps: false,
+        horizontal: false,
+        alignRight: false,
+        alignBottom: false,
+        rounding: true
+    },
+  };
 
+  public grid;
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -67,12 +93,11 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
+    this.grid = new Grid(document.getElementsByClassName('grid')[0] as HTMLElement, this.layoutConfig);
   }
 
   ngAfterViewInit() {
-    const phElement = this.placeholder.element.nativeElement;
-    phElement.style.display = 'none';
-    phElement.parentElement.removeChild(phElement);
+    this.grid.refreshItems().layout();
   }
 
   newNote() {
@@ -100,75 +125,5 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   cancelSideBar() {
     this.pService.stateSidebar = false;
-  }
-
-  dragMoved(e: CdkDragMove) {
-    const point = this.dragService.getPointerPositionOnPage(e.event);
-
-    this.listGroup._items.forEach(dropList => {
-      if (this.dragService.dragIsInsideDropListClientRect(dropList, point.x, point.y)) {
-        this.activeContainer = dropList;
-        return;
-      }
-    });
-  }
-
-  dropListDropped() {
-    if (!this.target) {
-      return;
-    }
-
-    const phElement = this.placeholder.element.nativeElement;
-    const parent = phElement.parentElement;
-
-    phElement.style.display = 'none';
-
-    parent.removeChild(phElement);
-    parent.appendChild(phElement);
-    parent.insertBefore(this.source.element.nativeElement, parent.children[this.sourceIndex]);
-
-    this.target = null;
-    this.source = null;
-
-    if (this.sourceIndex !== this.targetIndex) {
-      moveItemInArray(this.notes, this.sourceIndex, this.targetIndex);
-    }
-  }
-
-  dropListEnterPredicate = (drag: CdkDrag, drop: CdkDropList) => {
-    if (drop === this.placeholder) {
-      return true;
-    }
-
-    if (drop !== this.activeContainer) {
-      return false;
-    }
-
-    const phElement = this.placeholder.element.nativeElement;
-    const sourceElement = drag.dropContainer.element.nativeElement;
-    const dropElement = drop.element.nativeElement;
-
-    const dragIndex = this.dragService.dragIndexOf(dropElement.parentElement.children, (this.source ? phElement : sourceElement));
-    const dropIndex = this.dragService.dragIndexOf(dropElement.parentElement.children, dropElement);
-
-    if (!this.source) {
-      this.sourceIndex = dragIndex;
-      this.source = drag.dropContainer;
-
-      phElement.style.width = sourceElement.clientWidth + 'px';
-      phElement.style.height = sourceElement.clientHeight + 'px';
-
-      sourceElement.parentElement.removeChild(sourceElement);
-    }
-
-    this.targetIndex = dropIndex;
-    this.target = drop;
-
-    phElement.style.display = '';
-    dropElement.parentElement.insertBefore(phElement, (dropIndex > dragIndex
-      ? dropElement.nextSibling : dropElement));
-
-    this.placeholder.enter(drag, drag.element.nativeElement.offsetLeft, drag.element.nativeElement.offsetTop);
-    return false;
   }
 }

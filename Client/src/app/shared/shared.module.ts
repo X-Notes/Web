@@ -4,11 +4,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import {MatRippleModule} from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SimplebarAngularModule } from 'simplebar-angular';
+import { MuuriModule } from 'muuri-angular';
 
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule , TranslateModule, DragDropModule, SimplebarAngularModule],
-  exports: [TranslateModule, MatRippleModule, DragDropModule, SimplebarAngularModule]
+  imports: [CommonModule , TranslateModule, DragDropModule, SimplebarAngularModule, MuuriModule],
+  exports: [TranslateModule, MatRippleModule, DragDropModule, SimplebarAngularModule, MuuriModule]
 })
 export class SharedModule { }

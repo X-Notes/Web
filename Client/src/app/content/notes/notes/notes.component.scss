@@ -1,51 +1,58 @@
 @import 'submenu';
 
-.cdk-drop-list {
+.content-note {
     display: flex;
-    flex: 0 0 calc(100% / 4 - 1.125rem);
-    margin-right: 1.5rem;
-    margin-bottom: 1.5rem;
-  
-    &:nth-child(4n) {
-      margin-right: 0;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 2.5rem calc(3.125vw - 0.75rem) 0 calc(3.125vw - 0.75rem);
+
+    .grid {
+        position: relative;
+
+        .grid-item {
+            position: absolute;
+            width: calc(100% / 4);
+            z-index: 1;
+
+            .item-content {
+                width: 100%;
+                height: 100%;
+                padding: 0 0.75rem 1.5rem;
+            }
+        }
     }
 }
-  
-.cdk-drag-placeholder {
-    opacity: .3;
+.item.muuri-item-dragging {
+    z-index: 3;
 }
-    
-.cdk-drag-animating {
-    transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1);
+.item.muuri-item-releasing {
+    z-index: 2;
+}
+.item.muuri-item-hidden {
+    z-index: 0;
 }
 
 @media (max-width: 1680px) {
-    .cdk-drop-list {
-        flex: 0 0 calc(100% / 3 - 1rem);
-        margin-right: 1.5rem;
-
-        &:nth-child(4n) {
-            margin-right: 1.5rem;
-        }
-
-        &:nth-child(3n) {
-            margin-right: 0;
+    .content-note {
+        .grid {
+            .grid-item {
+                width: calc(100% / 3);
+            }
         }
     }
 }
 
 @media (max-width: 1360px) {
-    .cdk-drop-list {
-        flex: 0 0 calc((100% / 2) - 0.625rem);
-        margin-right: 1.25rem;
-        margin-bottom: 1.25rem;
-  
-        &:nth-child(3n) {
-            margin-right: 1.25rem;
-        }
-  
-        &:nth-child(2n) {
-            margin-right: 0;
+    .content-note {
+        .grid {
+            .grid-item {
+                width: calc(100% / 2);
+                    
+                .item-content {
+                    padding: 0 0.625rem 1.25rem;
+                }
+            }
         }
     }
 }
@@ -55,15 +62,28 @@
 }
   
 @media (max-width: 600px) {
-    .cdk-drop-list {
-        flex: 0 0 100%;
-        margin-right: 0;
-        margin-bottom: 1rem;
+    .content-note {
+        padding: 2.5rem 3.125vw 0 3.125vw;
+
+        .grid {
+            .grid-item {
+                width: 100%;
+                    
+                .item-content {
+                    padding: 0;
+                    padding-bottom: 1rem;
+                }
+            }
+        }
     }
 }
 
 @media (max-width: 320px) {
-    .cdk-drop-list {
-        overflow: auto;
+    .content-note {
+        .grid {
+            .grid-item {
+                overflow: auto;
+            }
+        }
     }
 }

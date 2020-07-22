@@ -29,6 +29,8 @@
     "@ngxs/logger-plugin": "^3.6.2-dev.master-eaa5d86",
     "@ngxs/store": "^3.6.2",
     "firebase": "^7.15.5",
+    "muuri": "^0.9.1",
+    "muuri-angular": "0.0.4",
     "rxjs": "~6.5.4",
     "simplebar-angular": "^2.2.1",
     "tslib": "^1.10.0",

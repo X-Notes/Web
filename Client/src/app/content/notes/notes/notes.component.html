@@ -56,7 +56,8 @@
                 <p>{{ 'subMenu.cancel' | translate }}</p>
             </div>
             <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)" [ngClass]="actives.get(item.id)? 'active-label' : ''">
+                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)"
+                    [ngClass]="actives.get(item.id)? 'active-label' : ''">
                     <div class="label-item" [ngStyle]="{'backgroundColor': item.color}">
                         <p>{{item.name}}</p>
                         <p>12</p>
@@ -83,12 +84,16 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner" cdkDropListGroup>
-        <div cdkDropList [cdkDropListEnterPredicate]="dropListEnterPredicate"
-            (cdkDropListDropped)="dropListDropped()"></div>
-        <div cdkDropList *ngFor="let item of notes" [cdkDropListEnterPredicate]="dropListEnterPredicate"
-            (cdkDropListDropped)="dropListDropped()">
-            <app-note cdkDrag [cdkDragStartDelay]="100" (cdkDragMoved)="dragMoved($event);"></app-note>
+    <!-- <ngx-simplebar [options]="pService.optionsScroll" class="content-inner" cdkDropListGroup>
+
+    </ngx-simplebar> -->
+    <div class="content-note">
+        <div #grid class="grid" muuriGrid [config]="layoutConfig">
+            <div class="grid-item" muuriGridItem *ngFor="let item of notes">
+                <div class="item-content">
+                    <app-note [note]="item"></app-note>
+                </div>
+            </div>
         </div>
-    </ngx-simplebar>
+    </div>
 </div>

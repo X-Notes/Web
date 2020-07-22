@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { Note } from '../models/Note';
 
 @Component({
   selector: 'app-note',
@@ -7,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NoteComponent implements OnInit {
 
+  @Input() note: Note;
   isHighlight = false;
 
   constructor() { }
