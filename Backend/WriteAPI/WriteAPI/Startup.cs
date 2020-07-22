@@ -60,7 +60,13 @@ namespace WriteAPI
         {
             if (env.IsDevelopment())
             {
+                System.Console.WriteLine("Development");
                 app.UseDeveloperExceptionPage();
+            }
+
+            if(env.IsProduction())
+            {
+                System.Console.WriteLine("Production");
             }
 
             app.UseMiddleware<ExceptionMiddleware>();
