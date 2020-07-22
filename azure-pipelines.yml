@@ -16,8 +16,15 @@ variables:
     
 steps:
 - task: Docker@2
-  displayName: Build an image
+  displayName: Build client angukal
   inputs:
     repository: $(imageName)
     command: build
     Dockerfile: webClient.dockerfile
+
+- task: Docker@2
+  displayName: Build writeAPI
+  inputs:
+    repository: $(imageName)
+    command: build
+    Dockerfile: writeAPI.dockerfile
