@@ -32,10 +32,15 @@ namespace WriteAPI
         {
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
+                /*
                 builder.AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials()
-                       .WithOrigins("http://localhost:4200", "http://localhost:8080", "http://localhost", "http://noots.westeurope.cloudapp.azure.com");
+                       .WithOrigins("http://localhost:4200", "http://localhost:8080", "http://localhost", "http://noots.westeurope.cloudapp.azure.com");*/
+
+                builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin();
             }));
 
             FirebaseApp.Create(new AppOptions
