@@ -36,7 +36,7 @@ namespace WriteAPI.Controllers
         [HttpGet("work")]
         public ActionResult GETSTATUS()
         {
-            return Ok("WORK");
+            return Ok("WORK2");
         }
 
         [Authorize]
