@@ -32,7 +32,12 @@ namespace WriteAPI.Controllers
 
             return BadRequest();
         }
-        
+
+        [HttpGet("work")]
+        public ActionResult GETSTATUS()
+        {
+            return Ok("WORK");
+        }
 
         [Authorize]
         [HttpGet("get")]      

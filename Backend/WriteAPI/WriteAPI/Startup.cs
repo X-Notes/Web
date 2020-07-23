@@ -35,7 +35,7 @@ namespace WriteAPI
                 builder.AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials()
-                       .WithOrigins("http://localhost:4200", "http://localhost:8080");
+                       .WithOrigins("http://localhost:4200", "http://localhost:8080", "http://localhost");
             }));
 
             FirebaseApp.Create(new AppOptions
