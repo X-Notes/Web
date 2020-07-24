@@ -9,7 +9,6 @@ import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DragService } from 'src/app/shared/services/drag.service';
 import { Note } from '../models/Note';
-import Grid, { GridOptions } from 'muuri';
 import * as Muuri from 'muuri';
 
 export enum subMenu {
@@ -78,7 +77,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
       {description: 'bla bla blabla bla a bla bla'}];
 
     this.zone.runOutsideAngular(() => setTimeout(() => {
-      const gridds = new Muuri.default('.grid', {
+      this.pService.grid = new Muuri.default('.grid', {
         items: '.grid-item',
         dragEnabled: true,
         layout: {
@@ -93,8 +92,8 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
           useDragContainer: false
         },
         dragStartPredicate: {
-          // distance: 20,
-          // delay: 200
+          distance: 20,
+          delay: 200
         },
         dragPlaceholder: {
           enabled: true,

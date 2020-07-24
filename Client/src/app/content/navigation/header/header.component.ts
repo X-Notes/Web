@@ -3,6 +3,8 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
+import * as Muuri from 'muuri';
+
 
 @Component({
   selector: 'app-header',
@@ -34,6 +36,7 @@ export class HeaderComponent implements OnInit {
 
   toggleOrientation() {
     this.pService.orientationMobile = !this.pService.orientationMobile;
+    setTimeout( () => this.pService.grid.refreshItems().layout(), 0);
   }
 
   checkRout() {

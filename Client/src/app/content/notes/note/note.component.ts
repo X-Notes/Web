@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Note } from '../models/Note';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+
 
 @Component({
   selector: 'app-note',
@@ -12,7 +14,7 @@ export class NoteComponent implements OnInit {
   @Input() note: Note;
   isHighlight = false;
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
   }

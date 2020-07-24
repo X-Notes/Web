@@ -40,6 +40,7 @@ export class PersonalizationService {
   stateSidebar = true;
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
+  grid;
 
   onResize(): void {
     if (this.check()) {

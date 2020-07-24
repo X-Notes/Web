@@ -67,6 +67,10 @@
     .drag-helper {
         width: calc(100% - (6.25vw - 1.5rem));
     }
+
+    .grid-plus {
+        width: calc(100% / 3);
+    }
 }
   
 @media (max-width: 600px) {
@@ -84,5 +88,9 @@
 
     .drag-helper {
         width: calc(100% - 6.25vw);
+    }
+
+    .grid-plus {
+        width: calc(100% / 2);
     }
 }
