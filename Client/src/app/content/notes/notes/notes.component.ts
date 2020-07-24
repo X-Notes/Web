@@ -104,8 +104,8 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         dragAutoScroll: {
           targets: [
-            { element: window, priority: 0 },
-            { element: document.getElementsByClassName('simplebar-content-wrapper')[1] as HTMLElement, priority: 1, axis: 2 },
+            { element: window, priority: -1 },
+            { element: document.querySelector('.content-note .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
           ],
           sortDuringScroll: false,
           smoothStop: true,
