@@ -84,16 +84,12 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <!-- <ngx-simplebar [options]="pService.optionsScroll" class="content-inner" cdkDropListGroup>
-
-    </ngx-simplebar> -->
-    <div class="content-note">
-        <div #grid class="grid" muuriGrid [config]="layoutConfig">
-            <div class="grid-item" muuriGridItem *ngFor="let item of notes">
-                <div class="item-content">
-                    <app-note [note]="item"></app-note>
-                </div>
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner content-note">
+        <div class="grid">
+            <div class="grid-item" *ngFor="let item of notes">
+                <app-note [note]="item" class="note"></app-note>
             </div>
         </div>
-    </div>
+    </ngx-simplebar>
 </div>
+<div class="drag-helper"></div>

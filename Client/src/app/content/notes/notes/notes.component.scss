@@ -6,84 +6,83 @@
     width: 100%;
     height: 100%;
     padding: 2.5rem calc(3.125vw - 0.75rem) 0 calc(3.125vw - 0.75rem);
+}
 
-    .grid {
-        position: relative;
+.grid {
+    position: relative;
+    width: 100%;
+}
 
-        .grid-item {
-            position: absolute;
-            width: calc(100% / 4);
-            z-index: 1;
+.grid-item {
+    position: absolute;
+    width: calc(100% / 4);
+    padding: 0 0.75rem 1.5rem;
+    z-index: 1;
+}
 
-            .item-content {
-                width: 100%;
-                height: 100%;
-                padding: 0 0.75rem 1.5rem;
-            }
-        }
+.muuri-item-dragging {
+    z-index: 11;
+    cursor: move;
+
+    .note {
+        box-shadow: 0 0 0 2px rgb(236, 236, 236);
     }
 }
-.item.muuri-item-dragging {
-    z-index: 3;
+.muuri-item-releasing {
+    z-index: 11;
 }
-.item.muuri-item-releasing {
-    z-index: 2;
-}
-.item.muuri-item-hidden {
+.muuri-item-hidden {
     z-index: 0;
 }
 
+.muuri-item-placeholder {
+    opacity: 0.3;
+}
+
+.drag-helper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    height: 0;
+    width: calc(100% - 270px - (6.25vw - 1.5rem));
+}
+
 @media (max-width: 1680px) {
-    .content-note {
-        .grid {
-            .grid-item {
-                width: calc(100% / 3);
-            }
-        }
+    .grid-item {
+        width: calc(100% / 3);
     }
 }
 
 @media (max-width: 1360px) {
-    .content-note {
-        .grid {
-            .grid-item {
-                width: calc(100% / 2);
-                    
-                .item-content {
-                    padding: 0 0.625rem 1.25rem;
-                }
-            }
-        }
+    .grid-item {
+        width: calc(100% / 2);
+    }
+
+    .item-content {
+        padding: 0 0.625rem 1.25rem;
     }
 }
-
 @media (max-width: 1024px) {
-    
+    .drag-helper {
+        width: calc(100% - (6.25vw - 1.5rem));
+    }
 }
   
 @media (max-width: 600px) {
     .content-note {
         padding: 2.5rem 3.125vw 0 3.125vw;
-
-        .grid {
-            .grid-item {
-                width: 100%;
-                    
-                .item-content {
-                    padding: 0;
-                    padding-bottom: 1rem;
-                }
-            }
-        }
     }
-}
 
-@media (max-width: 320px) {
-    .content-note {
-        .grid {
-            .grid-item {
-                overflow: auto;
-            }
-        }
+    .grid-item {
+        width: 100%;
+    }
+    .item-content {
+        padding: 0;
+        padding-bottom: 1rem;
+    }
+
+    .drag-helper {
+        width: calc(100% - 6.25vw);
     }
 }

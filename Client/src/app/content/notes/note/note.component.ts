@@ -6,6 +6,7 @@ import { Note } from '../models/Note';
   templateUrl: './note.component.html',
   styleUrls: ['./note.component.scss']
 })
+
 export class NoteComponent implements OnInit {
 
   @Input() note: Note;
