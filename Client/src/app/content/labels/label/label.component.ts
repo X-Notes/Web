@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { changeColorLabel } from 'src/app/shared/services/personalization.service';
+import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   nameChanged: Subject<string> = new Subject<string>();
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnDestroy(): void {
     this.nameChanged.next();

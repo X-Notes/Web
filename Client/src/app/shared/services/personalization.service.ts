@@ -23,8 +23,13 @@ export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [
-  state('inactive', style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)', overflow: 'hidden' })),
-  state('active', style({ opacity: 1, 'max-height': '110px', transform: 'translateY(0)'})),
+  transition(':enter', [
+    style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)' }),
+    animate('0.3s ease', style({ opacity: 1, 'max-height': '110px', height: '*', transform: 'translateY(0)'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, height: 0, transform: 'translateY(-30%)' }))
+  ])
 ]);
 
 

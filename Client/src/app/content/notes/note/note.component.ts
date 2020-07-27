@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Note } from '../models/Note';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { SmallNote } from '../models/smallNote';
 
 
 @Component({
@@ -10,9 +10,8 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 
 export class NoteComponent implements OnInit {
-
-  @Input() note: Note;
   isHighlight = false;
+  @Input() note: SmallNote;
 
   constructor(public pService: PersonalizationService) { }
 

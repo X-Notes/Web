@@ -14,7 +14,7 @@
         </button>
     </div>
 </div>
-<ul class="colors" [@changeColorLabel]="isUpdate? 'active' : 'inactive'">
+<ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
     <li class="color" (click)="changeColor('#FFCDCD')"></li>
     <li class="color" (click)="changeColor('#FFEBCD')"></li>
     <li class="color" (click)="changeColor('#FFFDCD')"></li>
