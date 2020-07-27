@@ -12,4 +12,4 @@ RUN dotnet publish -c Release -o output
 
 FROM base AS final
 COPY --from=build /src/Backend/WriteAPI/WriteAPI/output .
-ENTRYPOINT ["dotnet", "WriteAPI.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet WriteAPI.dll

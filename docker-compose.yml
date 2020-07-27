@@ -2,6 +2,14 @@ version: '3'
 
 services:
 
+    postgres:
+        container_name: 'postgres'
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: password
+        networks:
+            - aspnetcoreapp-network
+
     noots-web:
         image: davydq/noots-web
         container_name: 'noots-web'
@@ -15,3 +23,11 @@ services:
             - "5000:80"
         environment: 
             ASPNETCORE_ENVIRONMENT: "Production"
+        depends_on:
+            - "postgres"
+        networks:
+            - aspnetcoreapp-network
+
+networks:
+    aspnetcoreapp-network:
+        driver: bridge

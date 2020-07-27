@@ -3,6 +3,7 @@ import * as signalR from '@aspnet/signalr';
 import { AuthService } from './auth.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from './stateUser/user-state';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class SignalRService {
     const token =  this.store.selectSnapshot(UserStore.getToken);
     this.hubConnection = new signalR.HubConnectionBuilder()
                             // .configureLogging(signalR.LogLevel.None)
-                            .withUrl('http://localhost:5000/hub', { accessTokenFactory: () => token })
+                            .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })
                             .build();
 
     this.hubConnection
