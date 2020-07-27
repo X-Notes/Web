@@ -1,0 +1,2 @@
+docker build -t davydq/noots-write_api . -f writeAPI.dockerfile
+docker build -t davydq/noots-web . -f webClient.dockerfile

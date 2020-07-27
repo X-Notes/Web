@@ -1,9 +1,11 @@
 using AutoMapper;
 using BI.Mapping;
+using BI.signalR;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,9 +15,14 @@ namespace WriteAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", reloadOnChange: true, optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -28,7 +35,7 @@ namespace WriteAPI
                 builder.AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials()
-                       .WithOrigins("http://localhost:4200", "http://localhost");
+                       .WithOrigins("http://localhost:4200", "http://localhost:8080");
             }));
 
             FirebaseApp.Create(new AppOptions
@@ -43,6 +50,9 @@ namespace WriteAPI
 
             services.AddControllers().AddNewtonsoftJson();
 
+            services.AddSignalR();
+            services.AddSingleton<IUserIdProvider, IdProvider>();
+
             //services.Queue(Configuration);
             services.Marten(Configuration);
             services.Mediatr();
@@ -55,7 +65,13 @@ namespace WriteAPI
         {
             if (env.IsDevelopment())
             {
+                System.Console.WriteLine("Development");
                 app.UseDeveloperExceptionPage();
+            }
+
+            if(env.IsProduction())
+            {
+                System.Console.WriteLine("Production");
             }
 
             app.UseMiddleware<ExceptionMiddleware>();
@@ -68,9 +84,11 @@ namespace WriteAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DocumentHub>("/hub");
             });
         }
     }

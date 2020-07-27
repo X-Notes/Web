@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { ContentComponent } from './content/content/content.component';
 
@@ -38,9 +38,14 @@ const routes: Routes = [
     loadChildren: () => import('./about/about.module').then(m => m.AboutModule),
   },
   {
+    path: 'note/:id',
+    loadChildren: () => import('./read/read.module').then(m => m.ReadModule),
+  },
+  {
     path: '**',
     loadChildren: () => import('./error-four/error-four.module').then(m => m.ErrorFourModule)
   },
+
 ];
 
 @NgModule({

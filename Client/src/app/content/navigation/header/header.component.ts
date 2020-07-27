@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import * as Muuri from 'muuri';
-
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user';
+import { Select } from '@ngxs/store';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +15,9 @@ import * as Muuri from 'muuri';
 })
 export class HeaderComponent implements OnInit {
 
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   theme = Theme;
   currentUrl: string;

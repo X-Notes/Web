@@ -13,11 +13,15 @@ namespace WriteContext
         public DbSet<Backgrounds> Backgrounds { set; get; }
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
+        public DbSet<Note> Notes { set; get; }
+        public DbSet<UserOnNote> UserOnNote { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
 
+
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             /*
@@ -46,6 +50,16 @@ namespace WriteContext
                 .HasOne(x => x.CurrentBackground)
                 .WithOne(z => z.CurrentUserBackground)
                 .HasForeignKey<User>(h => h.CurrentBackgroundId);
+
+
+            modelBuilder.Entity<Note>()
+                .HasKey(x => new { x.WriteId });
+
+            modelBuilder.Entity<Note>()
+                .HasIndex(x => new { x.ReadId }).IsUnique();
+
+            modelBuilder.Entity<UserOnNote>()
+                .HasKey(x => new { x.UserId, x.NoteId });
         }
     }
 }

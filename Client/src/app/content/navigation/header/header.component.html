@@ -3,9 +3,9 @@
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
                 <div class="photo">
-                    <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+                    <img alt="photo" [src]="(user$ | async).photoId">
                 </div>
-                <p>Fucking Name12321313213123</p>
+                <p>{{(user$ | async).name}}</p>
             </div>
             <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
         </div>

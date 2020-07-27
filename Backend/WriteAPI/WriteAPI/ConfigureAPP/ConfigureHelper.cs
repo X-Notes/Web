@@ -1,13 +1,16 @@
 ﻿using BI.helpers;
 using BI.services;
 using Common.DTO.labels;
+using Common.DTO.notes;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
 using Domain.Commands.labels;
+using Domain.Commands.notes;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
 using Domain.Queries.labels;
+using Domain.Queries.notes;
 using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
@@ -22,6 +25,7 @@ using Shared.Queue.Interfaces;
 using Shared.Queue.QueueServices;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WriteAPI.Services;
 using WriteContext;
 using WriteContext.Repositories;
@@ -92,14 +96,25 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
+
+            //Notes
+            services.AddScoped<IRequestHandler<NewNoteCommand, string>, NoteHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
+            Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
             services.AddTransient<LabelRepository>();
             services.AddTransient<UserRepository>();
             services.AddTransient<BackgroundRepository>();
+            services.AddTransient<NoteRepository>();
+            services.AddTransient<UserOnNoteRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -107,7 +122,6 @@ namespace WriteAPI.ConfigureAPP
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-
                     options.Authority = Configuration["FirebaseOptions:Authority"];
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -116,6 +130,22 @@ namespace WriteAPI.ConfigureAPP
                         ValidateAudience = true,
                         ValidAudience = Configuration["FirebaseOptions:Audience"],
                         ValidateLifetime = true
+                    };
+
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/hub")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        },
                     };
                 });
         }

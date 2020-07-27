@@ -2,14 +2,17 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, AfterViewChecke
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, ReplaySubject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take, tap } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DragService } from 'src/app/shared/services/drag.service';
-import { Note } from '../models/Note';
 import Grid, * as Muuri from 'muuri';
+import { SmallNote } from '../models/smallNote';
+import { NoteStore } from '../state/notes-state';
+import { LoadSmallNotes, AddNote } from '../state/notes-actions';
+import { Router } from '@angular/router';
 
 export enum subMenu {
   All = 'all',
@@ -29,23 +32,26 @@ export enum subMenu {
 
 export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              public dragService: DragService,
-              private zone: NgZone) { }
-
-
   destroy = new Subject<void>();
   current: subMenu;
   menu = subMenu;
   theme = Theme;
-  notes: Note[];
 
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
 
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
+
+  @Select(NoteStore.allSmall)
+  public notes$: Observable<SmallNote[]>;
+
+  constructor(public pService: PersonalizationService,
+              private store: Store,
+              private router: Router,
+              public dragService: DragService,
+              private zone: NgZone) { }
+
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -55,26 +61,15 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.pService.onResize();
     this.store.dispatch(new LoadLabels());
+    this.store.dispatch(new LoadSmallNotes());
+
     this.current = subMenu.All;
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
 
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-
-    this.notes = [
-      {description: 'bla blabla bla bllabla bla blabla bla b bla111111111111111111111111111111111111' +
-      '111111111 12312 3123 12321312312312 312 1111111111111 1111111111111 1111111111111 1111111111111 1111111111111 '},
-      {description: 'bla bla bllabla bla blabla bla bla'},
-      {description: 'bla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'},
-      {description: 'bla bla blabla bla a bla bla'}];
 
     this.zone.runOutsideAngular(() => setTimeout(() => {
       this.pService.grid = new Muuri.default('.grid', {
@@ -101,6 +96,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
               .getItems()
               .forEach(
                 elem => elem.getElement().style.touchAction = 'none');
+              console.log(item.getGrid().getItems().indexOf(item));
               return true;
             } else if (e.type === 'end' || e.type === 'cancel') {
               item.getGrid()
@@ -133,8 +129,9 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
   }
 
-  newNote() {
-    console.log('new note');
+  async newNote() {
+    await this.store.dispatch(new AddNote()).toPromise();
+    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/w/${x[0].writeId}`]));
   }
 
   cancelLabel() {

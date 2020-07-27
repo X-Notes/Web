@@ -7,7 +7,6 @@ import { FullNoteComponent } from './full-note/full-note.component';
 import { NoteComponent } from './note/note.component';
 
 
-
 @NgModule({
   declarations: [NotesComponent, FullNoteComponent, NoteComponent],
   imports: [
