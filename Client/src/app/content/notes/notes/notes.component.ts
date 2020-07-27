@@ -9,7 +9,7 @@ import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { DragService } from 'src/app/shared/services/drag.service';
 import { Note } from '../models/Note';
-import * as Muuri from 'muuri';
+import Grid, * as Muuri from 'muuri';
 
 export enum subMenu {
   All = 'all',
@@ -91,9 +91,25 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
         dragRelease: {
           useDragContainer: false
         },
-        dragStartPredicate: {
-          distance: 20,
-          delay: 200
+        dragCssProps: {
+          touchAction: 'auto'
+        },
+        dragStartPredicate(item, e) {
+          if ( e.deltaTime > 300) {
+            if ((e.type === 'move' || e.type === 'start')) {
+              item.getGrid()
+              .getItems()
+              .forEach(
+                elem => elem.getElement().style.touchAction = 'none');
+              return true;
+            } else if (e.type === 'end' || e.type === 'cancel') {
+              item.getGrid()
+              .getItems()
+              .forEach(
+                elem => elem.getElement().style.touchAction = 'auto');
+              return true;
+            }
+          }
         },
         dragPlaceholder: {
           enabled: true,
@@ -104,7 +120,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
         dragAutoScroll: {
           targets: [
             { element: window, priority: -1 },
-            { element: document.querySelector('.content-note .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
+            { element: document.querySelector('.content-inner .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
           ],
           sortDuringScroll: false,
           smoothStop: true,

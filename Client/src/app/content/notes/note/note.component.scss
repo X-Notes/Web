@@ -28,6 +28,7 @@
     background-color: $unhighlighting-note;
     transition: 0.3s ease;
     border-radius: 20px 0 0 20px;
+    overflow: hidden;
     cursor: pointer;
 
     &:hover {

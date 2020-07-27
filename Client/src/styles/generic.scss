@@ -6,8 +6,10 @@
 
     .content-inner {
         display: flex;
+        flex-direction: column;
         width: 100%;
-        padding: 2.5rem 3.125vw 0 3.125vw;
+        height: 100%;
+        padding: 2.5rem calc(3.125vw - 0.75rem) 0 calc(3.125vw - 0.75rem);
         overflow: hidden auto;
     }
 }
@@ -60,5 +62,13 @@
 @media (max-width: 1024px) {
     .content {
         width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .content {
+        .content-inner {
+            padding: 2.5rem 3.125vw 0 3.125vw;
+        }
     }
 }

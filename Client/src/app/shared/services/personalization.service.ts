@@ -50,7 +50,7 @@ export class PersonalizationService {
     } else {
       if (this.stateSidebar === true) {
         this.stateSidebar = false;
-        }
+      }
     }
   }
 
