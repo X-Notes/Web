@@ -57,11 +57,12 @@ export class LabelStore {
     @Action(UpdateLabel)
     async updateLabels({ setState }: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
+        /*
         setState(
             patch({
                 labels: updateItem<Label>(label2 => label2.id === label.id , label)
             })
-        );
+        );*/
     }
 
     @Action(PositionLabel)

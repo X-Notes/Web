@@ -1,4 +1,4 @@
-<div class="field" [ngStyle]="{backgroundColor: label.color}">
+<div class="field" [ngStyle]="{backgroundColor: color}">
     <input type="text" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" (click)="openColors()">

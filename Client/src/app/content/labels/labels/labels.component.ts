@@ -38,11 +38,11 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
               private zone: NgZone) {}
 
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.pService.onResize();
     this.current = subMenu.All;
 
-    this.store.dispatch(new LoadLabels());
+    await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -50,8 +50,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
 
-    this.zone.runOutsideAngular(() => setTimeout(() => {
-      this.pService.grid = new Muuri.default('.grid', {
+    this.pService.grid = new Muuri.default('.grid', {
         items: '.grid-item',
         dragEnabled: true,
         layout: {
@@ -102,7 +101,11 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
           safeZone: 0.1
         }
       });
-    }, 300));
+    this.pService.grid.on('dragEnd', (item, event) => {
+        console.log(event);
+        console.log(item);
+        console.log(item.getGrid().getItems().indexOf(item));
+      });
   }
 
 
@@ -124,14 +127,11 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   update(label: Label) {
     this.store.dispatch(new UpdateLabel(label));
-    this.pService.grid.refreshItems().layout();
   }
 
-  delete(id: number) {
-    this.store.dispatch(new DeleteLabel(id));
-    this.labels$.subscribe( () => {
-      this.pService.grid.refreshItems().layout();
-    });
+  async delete(id: number) {
+    await this.store.dispatch(new DeleteLabel(id)).toPromise();
+    this.pService.grid.refreshItems().layout();
   }
 
   ngOnDestroy(): void {

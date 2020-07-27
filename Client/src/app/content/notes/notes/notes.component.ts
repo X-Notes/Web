@@ -58,10 +58,10 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.pService.onResize();
-    this.store.dispatch(new LoadLabels());
-    this.store.dispatch(new LoadSmallNotes());
+    await this.store.dispatch(new LoadLabels()).toPromise();
+    await this.store.dispatch(new LoadSmallNotes()).toPromise();
 
     this.current = subMenu.All;
 
@@ -71,8 +71,8 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
 
-    this.zone.runOutsideAngular(() => setTimeout(() => {
-      this.pService.grid = new Muuri.default('.grid', {
+
+    this.pService.grid = new Muuri.default('.grid', {
         items: '.grid-item',
         dragEnabled: true,
         layout: {
@@ -123,7 +123,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
           safeZone: 0.1
         }
       });
-    }, 0));
+
   }
 
   ngAfterViewInit() {
