@@ -7,7 +7,6 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { DragService } from 'src/app/shared/services/drag.service';
 import Grid, * as Muuri from 'muuri';
 import { SmallNote } from '../models/smallNote';
 import { NoteStore } from '../state/notes-state';
@@ -30,7 +29,7 @@ export enum subMenu {
   animations: [ sideBarCloseOpen ]
 })
 
-export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class NotesComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
   current: subMenu;
@@ -48,9 +47,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router,
-              public dragService: DragService,
-              private zone: NgZone) { }
+              private router: Router) { }
 
 
   ngOnDestroy(): void {
@@ -69,64 +66,7 @@ export class NotesComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
 
-    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-
-
-    this.pService.grid = new Muuri.default('.grid', {
-        items: '.grid-item',
-        dragEnabled: true,
-        layout: {
-          fillGaps: false,
-          horizontal: false,
-          alignRight: false,
-          alignBottom: false,
-          rounding: true
-        },
-        dragContainer: dragHelper,
-        dragRelease: {
-          useDragContainer: false
-        },
-        dragCssProps: {
-          touchAction: 'auto'
-        },
-        dragStartPredicate(item, e) {
-          if ( e.deltaTime > 300) {
-            if ((e.type === 'move' || e.type === 'start')) {
-              item.getGrid()
-              .getItems()
-              .forEach(
-                elem => elem.getElement().style.touchAction = 'none');
-              console.log(item.getGrid().getItems().indexOf(item));
-              return true;
-            } else if (e.type === 'end' || e.type === 'cancel') {
-              item.getGrid()
-              .getItems()
-              .forEach(
-                elem => elem.getElement().style.touchAction = 'auto');
-              return true;
-            }
-          }
-        },
-        dragPlaceholder: {
-          enabled: true,
-          createElement(item: any) {
-            return item.getElement().cloneNode(true);
-          }
-        },
-        dragAutoScroll: {
-          targets: [
-            { element: window, priority: -1 },
-            { element: document.querySelector('.content-inner .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
-          ],
-          sortDuringScroll: false,
-          smoothStop: true,
-          safeZone: 0.1
-        }
-      });
-
-  }
-
-  ngAfterViewInit() {
+    this.pService.gridSettings();
   }
 
   async newNote() {

@@ -10,6 +10,7 @@ import {
 import { Router, NavigationEnd } from '@angular/router';
 import { take, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, AsyncSubject, Subject } from 'rxjs';
+import * as Muuri from 'muuri';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -36,7 +37,10 @@ export const changeColorLabel = trigger('changeColorLabel', [
 @Injectable({
   providedIn: 'root'
 })
+
 export class PersonalizationService {
+
+  constructor() {}
 
   subject = new Subject();
 
@@ -63,6 +67,59 @@ export class PersonalizationService {
     return window.innerWidth > 1024 ? true : false;
   }
 
-  constructor() {
-   }
+  gridSettings() {
+    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
+
+    this.grid = new Muuri.default('.grid', {
+      items: '.grid-item',
+      dragEnabled: true,
+      layout: {
+        fillGaps: false,
+        horizontal: false,
+        alignRight: false,
+        alignBottom: false,
+        rounding: true
+      },
+      dragContainer: dragHelper,
+      dragRelease: {
+        useDragContainer: false
+      },
+      dragCssProps: {
+        touchAction: 'auto'
+      },
+      dragStartPredicate(item, e) {
+        if ( e.deltaTime > 300) {
+          if ((e.type === 'move' || e.type === 'start')) {
+            item.getGrid()
+            .getItems()
+            .forEach(
+              elem => elem.getElement().style.touchAction = 'none');
+            console.log(item.getGrid().getItems().indexOf(item));
+            return true;
+          } else if (e.type === 'end' || e.type === 'cancel') {
+            item.getGrid()
+            .getItems()
+            .forEach(
+              elem => elem.getElement().style.touchAction = 'auto');
+            return true;
+          }
+        }
+      },
+      dragPlaceholder: {
+        enabled: true,
+        createElement(item: any) {
+          return item.getElement().cloneNode(true);
+        }
+      },
+      dragAutoScroll: {
+        targets: [
+          { element: window, priority: -1 },
+          { element: document.querySelector('.content-inner .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
+        ],
+        sortDuringScroll: false,
+        smoothStop: true,
+        safeZone: 0.1
+      }
+    });
+  }
 }

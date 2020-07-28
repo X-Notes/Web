@@ -7,8 +7,6 @@ import { Observable, Subject } from 'rxjs';
 import { Label } from '../models/label';
 import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel, PositionLabel } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
-import { CdkDragMove, CdkDropListGroup, CdkDropList, moveItemInArray, CdkDrag, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { DragService } from 'src/app/shared/services/drag.service';
 import Grid, * as Muuri from 'muuri';
 
 export enum subMenu {
@@ -22,7 +20,7 @@ export enum subMenu {
   styleUrls: ['./labels.component.scss'],
   animations: [ sideBarCloseOpen ],
 })
-export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LabelsComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
   current: subMenu;
@@ -33,9 +31,7 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
   public labels$: Observable<Label[]>;
 
   constructor(public pService: PersonalizationService,
-              private store: Store,
-              public dragService: DragService,
-              private zone: NgZone) {}
+              private store: Store) {}
 
 
   async ngOnInit() {
@@ -48,68 +44,13 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newLabel());
 
-    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
+    this.pService.gridSettings();
 
-    this.pService.grid = new Muuri.default('.grid', {
-        items: '.grid-item',
-        dragEnabled: true,
-        layout: {
-          fillGaps: false,
-          horizontal: false,
-          alignRight: false,
-          alignBottom: false,
-          rounding: true
-        },
-        dragContainer: dragHelper,
-        dragRelease: {
-          useDragContainer: false
-        },
-        dragCssProps: {
-          touchAction: 'auto'
-        },
-        dragStartPredicate(item, e) {
-          if ( e.deltaTime > 300) {
-            if ((e.type === 'move' || e.type === 'start')) {
-              item.getGrid()
-              .getItems()
-              .forEach(
-                elem => elem.getElement().style.touchAction = 'none');
-              console.log(item.getGrid().getItems().indexOf(item));
-              return true;
-            } else if (e.type === 'end' || e.type === 'cancel') {
-              item.getGrid()
-              .getItems()
-              .forEach(
-                elem => elem.getElement().style.touchAction = 'auto');
-              return true;
-            }
-          }
-        },
-        dragPlaceholder: {
-          enabled: true,
-          createElement(item: any) {
-            return item.getElement().cloneNode(true);
-          }
-        },
-        dragAutoScroll: {
-          targets: [
-            { element: window, priority: -1 },
-            { element: document.querySelector('.content-inner .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
-          ],
-          sortDuringScroll: false,
-          smoothStop: true,
-          safeZone: 0.1
-        }
-      });
     this.pService.grid.on('dragEnd', (item, event) => {
         console.log(event);
         console.log(item);
         console.log(item.getGrid().getItems().indexOf(item));
       });
-  }
-
-
-  ngAfterViewInit() {
   }
 
   async newLabel() {
@@ -138,5 +79,4 @@ export class LabelsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy.next();
     this.destroy.complete();
   }
-
 }

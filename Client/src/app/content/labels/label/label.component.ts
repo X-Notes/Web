@@ -41,14 +41,15 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   openColors() {
     this.isUpdate = !this.isUpdate;
-    this.timeout();
+    this.timeout(this.isUpdate);
   }
 
-  timeout() {
+  timeout(flag: boolean) {
     let count = 0;
     const timer = setInterval(() => {
-      if (count === 50) {
-        console.log(555);
+      if (count === 50 && flag) {
+        clearInterval(timer);
+      } else if (count === 30 && flag === false) {
         clearInterval(timer);
       }
       this.pService.grid.refreshItems().layout();
@@ -66,7 +67,7 @@ export class LabelComponent implements OnInit, OnDestroy {
     };
     this.color = value;
     this.isUpdate = false;
-    this.timeout();
+    this.timeout(this.isUpdate);
     this.updateLabel.emit(label);
   }
 
