@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, AfterViewChecked, NgZone } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, ReplaySubject, Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
+import Grid, * as Muuri from 'muuri';
 import { SmallNote } from '../models/smallNote';
 import { NoteStore } from '../state/notes-state';
 import { LoadSmallNotes, AddNote } from '../state/notes-actions';
@@ -54,16 +55,18 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.pService.onResize();
-    this.store.dispatch(new LoadLabels());
-    this.store.dispatch(new LoadSmallNotes());
+    await this.store.dispatch(new LoadLabels()).toPromise();
+    await this.store.dispatch(new LoadSmallNotes()).toPromise();
 
     this.current = subMenu.All;
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
+
+    this.pService.gridSettings();
   }
 
   async newNote() {

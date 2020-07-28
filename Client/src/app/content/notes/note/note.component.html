@@ -1,0 +1,55 @@
+<div class="highlighting-note" (click)="highlight()" [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightNote>
+    <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
+</div>
+<div [routerLink]="['/notes/w', note.writeId]" class="note-inner" [ngClass]="pService.orientationMobile? 'small' : ''">
+    <div class="labels">
+        <div class="label">
+            <p>Hello Hello Hello Hello Hello </p>
+        </div>
+        <div class="label">
+            <p>Hello Hello Hello Hello Hello </p>
+        </div>
+    </div>
+    <div class="header">
+        <h4>{{note.title}}</h4>
+    </div>
+    <div class="description">
+        <p>111 111 111 111 </p>
+    </div>
+    <div class="photos">
+        <div class="photo">
+            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+        </div>
+        <div class="photo">
+            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+        </div>
+        <div class="photo">
+            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+        </div>
+    </div>
+    <div class="footer">
+        <div class="date">
+            <p>02.09.1945</p>
+        </div>
+        <div class="help-icons">
+            <div class="icon">
+                <i class="icon-folders">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div>
+            <div class="icon">
+                <i class="icon-folders">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div>
+            <div class="icon">
+                <i class="icon-folders">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div>
+        </div>
+    </div>
+</div>

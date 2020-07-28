@@ -65,7 +65,7 @@
                 <div class="push">1</div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
             </div>
-            <div class="auxiliary-icon" #orientationNote>
+            <div class="auxiliary-icon" (click)="toggleOrientation()" #orientationNote>
                 <i class="icon-view-change"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
             </div>

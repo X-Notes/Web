@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { changeColorLabel } from 'src/app/shared/services/personalization.service';
+import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -17,10 +17,10 @@ export class LabelComponent implements OnInit, OnDestroy {
   @Output() deleteLabel = new EventEmitter<number>();
 
   isUpdate = false;
-
+  color;
   nameChanged: Subject<string> = new Subject<string>();
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnDestroy(): void {
     this.nameChanged.next();
@@ -28,6 +28,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.color = this.label.color;
     this.nameChanged.pipe(
       debounceTime(350),
       distinctUntilChanged())
@@ -40,6 +41,20 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   openColors() {
     this.isUpdate = !this.isUpdate;
+    this.timeout(this.isUpdate);
+  }
+
+  timeout(flag: boolean) {
+    let count = 0;
+    const timer = setInterval(() => {
+      if (count === 50 && flag) {
+        clearInterval(timer);
+      } else if (count === 30 && flag === false) {
+        clearInterval(timer);
+      }
+      this.pService.grid.refreshItems().layout();
+      count++;
+    }, 10);
   }
 
   changeColor(value: string) {
@@ -50,7 +65,9 @@ export class LabelComponent implements OnInit, OnDestroy {
       isDeleted: this.label.isDeleted,
       order: this.label.order
     };
+    this.color = value;
     this.isUpdate = false;
+    this.timeout(this.isUpdate);
     this.updateLabel.emit(label);
   }
 

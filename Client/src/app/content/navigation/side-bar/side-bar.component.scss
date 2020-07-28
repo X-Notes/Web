@@ -2,7 +2,7 @@
 
 :host {
     position: relative;
-    z-index: 1;
+    z-index: 5;
 }
  
  nav {
@@ -11,6 +11,7 @@
      height: 100%;
      width: 80px;
      border-right: 1px solid $light-separator;
+     background-color: $dark-color;
      transition: 0.2s ease;
 
      .active {
@@ -144,7 +145,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     nav {
         flex-direction: row;
         height: 80px;

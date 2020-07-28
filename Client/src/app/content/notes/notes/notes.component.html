@@ -56,7 +56,8 @@
                 <p>{{ 'subMenu.cancel' | translate }}</p>
             </div>
             <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)" [ngClass]="actives.get(item.id)? 'active-label' : ''">
+                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)"
+                    [ngClass]="actives.get(item.id)? 'active-label' : ''">
                     <div class="label-item" [ngStyle]="{'backgroundColor': item.color}">
                         <p>{{item.name}}</p>
                         <p>12</p>
@@ -83,7 +84,12 @@
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <p *ngFor="let item of notes$ | async ">
-        <span [routerLink]="['/notes/w', item.writeId]" >{{item.writeId}}</span>
-    </p>
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
+        <div class="grid">
+            <div class="grid-item" *ngFor="let item of notes$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+                <app-note [note]="item" class="note"></app-note>
+            </div>
+        </div>
+    </ngx-simplebar>
 </div>
+<div class="drag-helper"></div>

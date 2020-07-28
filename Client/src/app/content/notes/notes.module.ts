@@ -4,10 +4,11 @@ import { NotesComponent } from './notes/notes.component';
 import { NoteRouting } from './notes-routing';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note/full-note.component';
+import { NoteComponent } from './note/note.component';
 
 
 @NgModule({
-  declarations: [NotesComponent, FullNoteComponent],
+  declarations: [NotesComponent, FullNoteComponent, NoteComponent],
   imports: [
     CommonModule,
     NoteRouting,
