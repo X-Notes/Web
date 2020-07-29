@@ -8,6 +8,7 @@ import { Label } from '../models/label';
 import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel, PositionLabel } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 import Grid, * as Muuri from 'muuri';
+import { OrderService, Order, OrderEntity } from 'src/app/shared/services/order.service';
 
 export enum subMenu {
   All = 'all',
@@ -30,8 +31,12 @@ export class LabelsComponent implements OnInit, OnDestroy {
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
+  @Select(LabelStore.deleted)
+  public labelsDeleted$: Observable<Label[]>;
+
   constructor(public pService: PersonalizationService,
-              private store: Store) {}
+              private store: Store,
+              private orderService: OrderService) {}
 
 
   async ngOnInit() {
@@ -46,10 +51,13 @@ export class LabelsComponent implements OnInit, OnDestroy {
 
     this.pService.gridSettings();
 
-    this.pService.grid.on('dragEnd', (item, event) => {
-        console.log(event);
-        console.log(item);
-        console.log(item.getGrid().getItems().indexOf(item));
+    this.pService.grid.on('dragEnd', async (item, event) => {
+      const order: Order = {
+        orderEntity: OrderEntity.Label,
+        position: item.getGrid().getItems().indexOf(item) + 1,
+        entityId: item._element.id
+      };
+      await this.orderService.changeOrder(order).toPromise();
       });
   }
 
@@ -60,6 +68,13 @@ export class LabelsComponent implements OnInit, OnDestroy {
 
   switchSub(value: subMenu) {
     this.current = value;
+
+    setTimeout(() => {
+      this.pService.grid.destroy();
+      this.pService.gridSettings();
+      this.pService.grid.refreshItems().layout();
+    }, 50);
+
   }
 
   cancelSideBar() {

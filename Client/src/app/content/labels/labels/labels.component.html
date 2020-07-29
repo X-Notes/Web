@@ -46,8 +46,13 @@
 </div>
 <div class="content">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
-        <div class="grid">
-            <div class="grid-item" *ngFor="let item of labels$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+        <div class="grid" *ngIf="current === menu.All">2
+            <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+                <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
+            </div>
+        </div>
+        <div class="grid" *ngIf="current === menu.Bin">1
+            <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labelsDeleted$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
                 <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
             </div>
         </div>

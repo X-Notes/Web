@@ -47,13 +47,18 @@ namespace WriteAPI.Controllers
            await _mediator.Send(label);
         }
 
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        [HttpDelete("perm/{id}")]
+        public async Task DeletePerm(int id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new DeleteLabelCommand(email, id));
         }
 
-
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new SetDeletedLabelCommand(email, id));
+        }
     }
 }

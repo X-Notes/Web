@@ -23,7 +23,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<List<Label>> GetAll(int id)
+        public async Task<List<Label>> GetAllByUserID(int id)
         {
             return await this.contextDB.Labels.Where(x => x.UserId == id).ToListAsync();
         }
@@ -46,7 +46,7 @@ namespace WriteContext.Repositories
             {
                 try
                 {
-                    var labels = await GetAll(label.UserId);
+                    var labels = await GetAllByUserID(label.UserId);
 
                     if (labels.Count() > 0)
                     {

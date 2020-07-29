@@ -7,13 +7,15 @@ import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 
 interface LabelState {
-    labels: Label[];
+    labelsAll: Label[];
+    labelsDeleted: Label[];
 }
 
 @State<LabelState>({
     name: 'Labels',
     defaults: {
-        labels: []
+        labelsAll: [],
+        labelsDeleted: []
     }
 })
 
@@ -27,31 +29,39 @@ export class LabelStore {
 
     @Selector()
     static all(state: LabelState): Label[] {
-        return state.labels;
+        return state.labelsAll;
+    }
+
+    @Selector()
+    static deleted(state: LabelState): Label[] {
+        return state.labelsDeleted;
     }
 
     @Action(LoadLabels)
-    loadContent({ setState, getState }: StateContext<LabelState>) {
-        if (getState().labels.length === 0) {
-        return this.api.getAll().pipe(tap(content => { setState({ labels: content }); }));
+    loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
+        if (getState().labelsAll.length === 0) {
+        return this.api.getAll().pipe(tap(content => { patchState({
+            labelsAll: content.filter(x => x.isDeleted === false),
+            labelsDeleted: content.filter(x => x.isDeleted === true)
+         }); }));
         }
     }
 
     @Action(AddLabel)
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
-        const labels = getState().labels;
-        setState({
-            labels: [{name, color, id, isDeleted: false, order: 1}, ...labels]
+        const labels = getState().labelsAll;
+        patchState({
+            labelsAll: [{name, color, id, isDeleted: false, order: 1}, ...labels]
         });
     }
 
     @Action(DeleteLabel)
     async deleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
         await this.api.delete(id).toPromise();
-        let labels = getState().labels;
+        let labels = getState().labelsAll;
         labels = labels.filter(x => x.id !== id);
-        patchState({labels});
+        patchState({labelsAll: labels});
     }
 
     @Action(UpdateLabel)
@@ -67,9 +77,9 @@ export class LabelStore {
 
     @Action(PositionLabel)
     positionLabel({setState, getState, patchState}: StateContext<LabelState>, { labelOne, labelTwo }: PositionLabel) {
-        const labels = getState().labels;
+        const labels = getState().labelsAll;
         labels.find(x => x.id = labelOne.id).order = labelTwo.order;
         labels.find(x => x.id = labelTwo.id).order = labelOne.order;
-        patchState({labels});
+        patchState({labelsAll: labels});
     }
 }

@@ -31,7 +31,7 @@ namespace BI.services
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var labels = (await labelRepository.GetAll(user.Id)).OrderBy(x => x.Order);
+                var labels = (await labelRepository.GetAllByUserID(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<LabelDTO>>(labels);
             }
             return null;

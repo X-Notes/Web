@@ -12,6 +12,7 @@ import { SmallNote } from '../models/smallNote';
 import { NoteStore } from '../state/notes-state';
 import { LoadSmallNotes, AddNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
+import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 
 export enum subMenu {
   All = 'all',
@@ -47,7 +48,8 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router) { }
+              private router: Router,
+              private orderService: OrderService) { }
 
 
   ngOnDestroy(): void {
@@ -67,6 +69,16 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newNote());
 
     this.pService.gridSettings();
+
+    this.pService.grid.on('dragEnd', async (item, event) => {
+      console.log(item._element.id);
+      const order: Order = {
+        orderEntity: OrderEntity.Note,
+        position: item.getGrid().getItems().indexOf(item) + 1,
+        entityId: item._element.id
+      };
+      await this.orderService.changeOrder(order).toPromise();
+      });
   }
 
   async newNote() {
