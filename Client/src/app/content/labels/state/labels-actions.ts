@@ -9,6 +9,11 @@ export class AddLabel {
     constructor(public name: string, public color: string) {}
 }
 
+export class SetDeleteLabel {
+    static type = '[Labels] SetDelete Label';
+    constructor(public id: number) {}
+}
+
 export class DeleteLabel {
     static type = '[Labels] Delete Label';
     constructor(public id: number) {}

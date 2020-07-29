@@ -11,14 +11,14 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
-            <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}" #sub1>
+            <div class="sub-nav-item"   routerLink="/labels"[routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub1>
                 <div class="item">
                     <p>{{ 'subMenu.all' | translate }}</p>
                     <p>12</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}" #sub2>
+            <div class="sub-nav-item"  routerLink="/labels/deleted" routerLinkActive="active" #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
                     <p>12</p>
@@ -46,16 +46,7 @@
 </div>
 <div class="content">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
-        <div class="grid" *ngIf="current === menu.All">2
-            <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-                <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
-            </div>
-        </div>
-        <div class="grid" *ngIf="current === menu.Bin">1
-            <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labelsDeleted$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-                <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
-            </div>
-        </div>
+        <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>
 <div class="drag-helper"></div>

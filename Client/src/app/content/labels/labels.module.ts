@@ -9,11 +9,13 @@ import { LabelStore } from './state/labels-state';
 import { environment } from 'src/environments/environment';
 import { LabelComponent } from './label/label.component';
 import { FormsModule } from '@angular/forms';
+import { AllComponent } from './all/all.component';
+import { DeletedComponent } from './deleted/deleted.component';
 
 
 
 @NgModule({
-  declarations: [LabelsComponent, LabelComponent],
+  declarations: [LabelsComponent, LabelComponent, AllComponent, DeletedComponent],
   imports: [
     CommonModule,
     LabelsRouting,

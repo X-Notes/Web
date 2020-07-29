@@ -2,7 +2,7 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api.service';
-import { LoadLabels, AddLabel, DeleteLabel, UpdateLabel, PositionLabel } from './labels-actions';
+import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 
@@ -56,12 +56,25 @@ export class LabelStore {
         });
     }
 
+    @Action(SetDeleteLabel)
+    async setDeletetLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
+        await this.api.setDeleted(id).toPromise();
+
+        let labelsAll = getState().labelsAll;
+        const label = labelsAll.find(x => x.id === id);
+        labelsAll = labelsAll.filter(x => x.id !== id);
+
+        const labelsDeleted = getState().labelsDeleted;
+
+        patchState({labelsAll, labelsDeleted: [label, ...labelsDeleted]});
+    }
+
     @Action(DeleteLabel)
-    async deleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
+    async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
         await this.api.delete(id).toPromise();
-        let labels = getState().labelsAll;
-        labels = labels.filter(x => x.id !== id);
-        patchState({labelsAll: labels});
+        let labelsDeleted = getState().labelsDeleted;
+        labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+        patchState({labelsDeleted});
     }
 
     @Action(UpdateLabel)

@@ -20,8 +20,12 @@ export class ApiServiceLabels {
     return this.httpClient.post<number>(environment.writeAPI + '/api/label', body);
   }
 
-  delete(id: number) {
+  setDeleted(id: number) {
     return this.httpClient.delete(environment.writeAPI + `/api/label/${id}`);
+  }
+
+  delete(id: number) {
+    return this.httpClient.delete(environment.writeAPI + `/api/label/perm/${id}`);
   }
 
   update(label: Label) {
