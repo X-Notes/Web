@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FoldersComponent } from './folders/folders.component';
 import { FoldersRouting } from './folders-routing';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { FolderComponent } from './folder/folder.component';
 
 
 
 @NgModule({
-  declarations: [FoldersComponent],
+  declarations: [FoldersComponent, FolderComponent],
   imports: [
     CommonModule,
     FoldersRouting,

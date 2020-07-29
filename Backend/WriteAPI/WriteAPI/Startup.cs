@@ -44,7 +44,7 @@ namespace WriteAPI
             });
 
             services.JWT(Configuration);
-
+                
             services.AddAutoMapper(typeof(UserProfile).Assembly);
 
 

@@ -3,6 +3,7 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Folder } from '../models/folder';
 
 export enum subMenu {
   All = 'all',
@@ -24,6 +25,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
   current: subMenu;
   menu = subMenu;
   theme = Theme;
+  folders: Folder[] = [
+    {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}
+  ];
 
   constructor(public pService: PersonalizationService) { }
 
@@ -32,12 +36,17 @@ export class FoldersComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.pService.onResize();
     this.current = subMenu.All;
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newFolder());
+
+    await this.folders;
+
+    this.pService.gridSettings();
+
   }
 
   newFolder() {
