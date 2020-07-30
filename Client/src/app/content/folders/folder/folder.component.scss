@@ -1,0 +1,131 @@
+@import 'variables';
+
+:host {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    border-radius: 20px;
+}
+
+.outer {
+    position: absolute;
+    z-index: 2;
+    width: calc(100% - 25px);
+    height: 100%;
+    background-color: darken($green-note, 10%);
+    border-radius: inherit;
+}
+
+.folder {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    height: calc(100% - 0.75rem);
+    width: calc(100% - 0.75rem);
+    margin: 0.75rem 0.75rem 0 0;
+    background-color: $green-note;
+    border-radius: inherit;
+
+    .highligt {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        width: 25px;
+        background-color: $unhighlighting-note;
+        transition: 0.3s ease;
+        border-radius: 20px 0 0 20px;
+        overflow: hidden;
+        cursor: pointer;
+    
+        &:hover {
+            background-color: darken($unhighlighting-note, $amount: 20%);
+        }
+    }
+
+    .folder-inner {
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 25px);
+        padding-left: 1rem;
+        padding-right: 1.5rem;
+
+        input[type="text"] {
+            background-color: transparent;
+            border: 0;
+            padding: 0;
+            outline: none;
+            user-select: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 0.625rem;
+            color: $light-text-color;
+            transition: 0.3s ease;
+
+            &:focus {
+                padding-left: 0.25rem;
+    
+                &::placeholder {
+                    color: inherit;
+                }
+            }
+        }
+
+        .notes {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.625rem;
+
+            .note {
+                display: flex;
+                align-items: center;
+                color: $light-text-color;
+
+                .icon-notes {
+                    font-size: 0.9375rem;
+                    &::before {
+                        color: $light-text-color;
+                    }
+                }
+
+                p {
+                    @include text-overflow;
+                    white-space: nowrap;
+                    margin-left: 0.5rem;
+                }
+            }
+        }
+
+        .notes > .note {
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .outer {
+        width: calc(100% - 20px);
+    }
+    .folder {
+        .highligt {
+            width: 20px;
+        }
+        
+        .folder-inner {
+            width: calc(100% - 20px);
+
+            input[type="text"] {
+                font-size: 1.125rem;
+            }
+
+            .notes {
+                .note {
+                    p {
+                        font-size: 0.9375rem;
+                    }
+                }
+            }
+        }
+    }
+}   

@@ -63,3 +63,12 @@ $note-label-color: #606060;
     @return '$name';
 }
 
+//mixin 
+
+@mixin text-overflow {
+    width: 100%;
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
