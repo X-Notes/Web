@@ -60,5 +60,12 @@ namespace WriteAPI.Controllers
             var email = this.GetUserEmail();
             await _mediator.Send(new SetDeletedLabelCommand(email, id));
         }
+
+        [HttpGet("restore/{id}")]
+        public async Task RestoreLabel(int id)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new RestoreLabelCommand(email, id));
+        }
     }
 }

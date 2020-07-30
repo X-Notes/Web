@@ -98,6 +98,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
 
             //Notes
             services.AddScoped<IRequestHandler<NewNoteCommand, string>, NoteHandlerCommand>();

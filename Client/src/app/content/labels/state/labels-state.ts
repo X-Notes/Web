@@ -52,48 +52,25 @@ export class LabelStore {
     @Action(AddLabel)
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
-
-        const labels = [...getState().labelsAll];
-        const newLabels = labels.map((value) => ({...value, order: value.order + 1 }));
-
         patchState({
-            labelsAll: [{name, color, id, isDeleted: false, order: 1}, ...newLabels]
+            labelsAll: [{name, color, id, isDeleted: false}, ...getState().labelsAll]
         });
     }
 
     @Action(SetDeleteLabel)
     async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
         await this.api.setDeleted(id).toPromise();
-
-        // Todo decrement for all lables
-
         let labelsAll = getState().labelsAll;
         const label = labelsAll.find(x => x.id === id);
         labelsAll = labelsAll.filter(x => x.id !== id);
-
-        const labelsDeleted = [...getState().labelsDeleted];
-        const newLabelsDeleted = labelsDeleted.map((value) => ({...value, order: value.order + 1 }));
-
-        patchState({labelsAll, labelsDeleted: [{...label, order: 1}, ...newLabelsDeleted]});
+        patchState({labelsAll, labelsDeleted: [{...label}, ...getState().labelsDeleted]});
     }
 
     @Action(DeleteLabel)
     async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
         await this.api.delete(id).toPromise();
         let labelsDeleted = getState().labelsDeleted;
-
-        const labelOrder = labelsDeleted.find(x => x.id === id).order;
-
         labelsDeleted = labelsDeleted.filter(x => x.id !== id);
-
-        labelsDeleted = labelsDeleted.map(x => {
-            if (x.order > labelOrder) {
-                return {...x, order: x.order - 1};
-            }
-            return {...x};
-        });
-
-
         patchState({labelsDeleted});
     }
 
@@ -135,17 +112,10 @@ export class LabelStore {
 
     @Action(RestoreLabel)
     async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: RestoreLabel) {
-
+        await this.api.restore(id).toPromise();
         let deletedLables = getState().labelsDeleted;
         const restoreLabel = deletedLables.find(x => x.id === id);
         deletedLables = deletedLables.filter(x => x.id !== id);
-
-        deletedLables = deletedLables.map(x => {
-            if (x.order > restoreLabel.order) {
-                return {...x, order: x.order - 1};
-            }
-            return {...x};
-        });
         patchState({labelsAll: [restoreLabel, ...getState().labelsAll], labelsDeleted: deletedLables });
     }
 }

@@ -34,7 +34,7 @@ namespace WriteContext.Repositories
 
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                 }
@@ -108,7 +108,36 @@ namespace WriteContext.Repositories
 
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+        }
+
+        public async Task RestoreLabel(Label label, List<Label> labels)
+        {
+            using (var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                  
+                    // Update deleted labels
+                    var deletedLabels = labels.Where(x => x.IsDeleted == true && x.Order > label.Order).ToList();
+                    deletedLabels.ForEach(x => x.Order = x.Order - 1);
+                    await UpdateRangeLabels(deletedLabels);
+
+                    // Update all labels
+                    var allLabels = labels.Where(x => x.IsDeleted == false).ToList();
+                    allLabels.ForEach(x => x.Order = x.Order + 1);
+                    label.Order = 1;
+                    label.IsDeleted = false;
+                    allLabels.Add(label);
+                    await UpdateRangeLabels(allLabels);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
                 {
                     transaction.Rollback();
                 }

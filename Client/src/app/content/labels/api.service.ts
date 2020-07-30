@@ -33,4 +33,7 @@ export class ApiServiceLabels {
     return this.httpClient.put(environment.writeAPI + `/api/label`, label);
   }
 
+  restore(id: number) {
+    return this.httpClient.get(environment.writeAPI + `/api/label/restore/${id}`);
+  }
 }

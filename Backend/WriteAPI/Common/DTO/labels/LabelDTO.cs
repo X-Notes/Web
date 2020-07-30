@@ -10,6 +10,5 @@ namespace Common.DTO.labels
         public string Name { set; get; }
         public bool IsDeleted { set; get; }
         public string Color { set; get; }
-        public int Order { set; get; }
     }
 }

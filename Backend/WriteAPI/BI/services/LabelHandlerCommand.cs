@@ -16,7 +16,8 @@ namespace BI.services
         IRequestHandler<NewLabelCommand, int>,
         IRequestHandler<DeleteLabelCommand, Unit>,
         IRequestHandler<UpdateLabelCommand, Unit>,
-        IRequestHandler<SetDeletedLabelCommand, Unit>
+        IRequestHandler<SetDeletedLabelCommand, Unit>,
+        IRequestHandler<RestoreLabelCommand, Unit>
     {
         private readonly LabelRepository labelRepository;
         private readonly UserRepository userRepository;
@@ -72,6 +73,17 @@ namespace BI.services
             if (label != null)
             {
                 await labelRepository.SetDeletedLabel(label, user.Labels);
+            }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RestoreLabelCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithLabels(request.Email);
+            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            if (label != null)
+            {
+                await labelRepository.RestoreLabel(label, user.Labels);
             }
             return Unit.Value;
         }

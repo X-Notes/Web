@@ -4,5 +4,4 @@ export interface Label {
     name: string;
     isDeleted: boolean;
     color: string;
-    order: number;
 }
