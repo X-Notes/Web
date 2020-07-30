@@ -1,5 +1,5 @@
 <div class="grid">
     <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels"  [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-        <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="setDelete($event)"></app-label>
+        <app-label [label]="item" [deleted]="false" (updateLabel)="update($event)" (deleteLabel)="setDelete($event)"></app-label>
     </div>
 </div>

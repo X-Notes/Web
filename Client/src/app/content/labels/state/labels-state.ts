@@ -2,7 +2,7 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api.service';
-import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel } from './labels-actions';
+import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
@@ -64,6 +64,8 @@ export class LabelStore {
     @Action(SetDeleteLabel)
     async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
         await this.api.setDeleted(id).toPromise();
+
+        // Todo decrement for all lables
 
         let labelsAll = getState().labelsAll;
         const label = labelsAll.find(x => x.id === id);
@@ -129,5 +131,21 @@ export class LabelStore {
             labelsAll.splice(order.position - 1, 0 , slabel);
             patchState({labelsAll});
         }
+    }
+
+    @Action(RestoreLabel)
+    async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: RestoreLabel) {
+
+        let deletedLables = getState().labelsDeleted;
+        const restoreLabel = deletedLables.find(x => x.id === id);
+        deletedLables = deletedLables.filter(x => x.id !== id);
+
+        deletedLables = deletedLables.map(x => {
+            if (x.order > restoreLabel.order) {
+                return {...x, order: x.order - 1};
+            }
+            return {...x};
+        });
+        patchState({labelsAll: [restoreLabel, ...getState().labelsAll], labelsDeleted: deletedLables });
     }
 }

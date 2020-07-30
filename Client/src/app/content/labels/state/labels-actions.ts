@@ -30,3 +30,7 @@ export class PositionLabel {
     constructor(public deleted: boolean, public id: number, public order: Order) {}
 }
 
+export class RestoreLabel {
+    static type = '[Labels] Restore Label';
+    constructor(public id: number) {}
+}

@@ -47,6 +47,11 @@ export class DeletedComponent implements OnInit {
     this.store.dispatch(new UpdateLabel(label));
   }
 
+  restoreLabel(id: number) {
+    this.labels = this.labels.filter(x => x.id !== id);
+    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+  }
+
   async delete(id: number) {
     await this.store.dispatch(new DeleteLabel(id)).toPromise();
     this.labels = this.labels.filter(x => x.id !== id);

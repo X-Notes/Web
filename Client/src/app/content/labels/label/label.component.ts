@@ -3,6 +3,8 @@ import { changeColorLabel, PersonalizationService } from 'src/app/shared/service
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Store } from '@ngxs/store';
+import { RestoreLabel } from '../state/labels-actions';
 
 @Component({
   selector: 'app-label',
@@ -13,14 +15,17 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class LabelComponent implements OnInit, OnDestroy {
 
   @Input() label: Label;
+  @Input() deleted: boolean;
   @Output() updateLabel = new EventEmitter<Label>();
   @Output() deleteLabel = new EventEmitter<number>();
+  @Output() restoreLabel = new EventEmitter<number>();
 
   isUpdate = false;
   color;
   nameChanged: Subject<string> = new Subject<string>();
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService,
+              private store: Store) { }
 
   ngOnDestroy(): void {
     this.nameChanged.next();
@@ -43,6 +48,12 @@ export class LabelComponent implements OnInit, OnDestroy {
     this.isUpdate = !this.isUpdate;
     this.timeout(this.isUpdate);
   }
+
+  async restore() {
+    await this.store.dispatch(new RestoreLabel(this.label.id)).toPromise();
+    this.restoreLabel.emit(this.label.id);
+  }
+
 
   timeout(flag: boolean) {
     let count = 0;
