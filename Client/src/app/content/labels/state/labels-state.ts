@@ -10,13 +10,17 @@ import { OrderService } from 'src/app/shared/services/order.service';
 interface LabelState {
     labelsAll: Label[];
     labelsDeleted: Label[];
+    CountAll: number;
+    CountDeleted: number;
 }
 
 @State<LabelState>({
     name: 'Labels',
     defaults: {
         labelsAll: [],
-        labelsDeleted: []
+        labelsDeleted: [],
+        CountAll: 0,
+        CountDeleted: 0
     }
 })
 
@@ -28,6 +32,16 @@ export class LabelStore {
                 private orderService: OrderService) {
     }
 
+
+    @Selector()
+    static countAll(state: LabelState): number {
+        return state.CountAll;
+    }
+
+    @Selector()
+    static countDeleted(state: LabelState): number {
+        return state.CountDeleted;
+    }
 
     @Selector()
     static all(state: LabelState): Label[] {
@@ -44,7 +58,9 @@ export class LabelStore {
         if (getState().labelsAll.length === 0) {
         return this.api.getAll().pipe(tap(content => { patchState({
             labelsAll: content.labelsAll,
-            labelsDeleted: content.labelsDeleted
+            labelsDeleted: content.labelsDeleted,
+            CountAll: content.labelsAll.length,
+            CountDeleted: content.labelsDeleted.length
          }); }));
         }
     }
@@ -53,7 +69,8 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
         patchState({
-            labelsAll: [{name, color, id, isDeleted: false}, ...getState().labelsAll]
+            labelsAll: [{name, color, id, isDeleted: false}, ...getState().labelsAll],
+            CountAll: getState().CountAll + 1
         });
     }
 
@@ -63,7 +80,12 @@ export class LabelStore {
         let labelsAll = getState().labelsAll;
         const label = labelsAll.find(x => x.id === id);
         labelsAll = labelsAll.filter(x => x.id !== id);
-        patchState({labelsAll, labelsDeleted: [{...label}, ...getState().labelsDeleted]});
+        patchState({
+            labelsAll,
+            labelsDeleted: [{...label}, ...getState().labelsDeleted],
+            CountAll: getState().CountAll - 1,
+            CountDeleted: getState().CountDeleted + 1
+        });
     }
 
     @Action(DeleteLabel)
@@ -71,7 +93,10 @@ export class LabelStore {
         await this.api.delete(id).toPromise();
         let labelsDeleted = getState().labelsDeleted;
         labelsDeleted = labelsDeleted.filter(x => x.id !== id);
-        patchState({labelsDeleted});
+        patchState({
+            labelsDeleted,
+            CountDeleted: getState().CountDeleted - 1
+        });
     }
 
     @Action(UpdateLabel)
@@ -116,6 +141,11 @@ export class LabelStore {
         let deletedLables = getState().labelsDeleted;
         const restoreLabel = deletedLables.find(x => x.id === id);
         deletedLables = deletedLables.filter(x => x.id !== id);
-        patchState({labelsAll: [restoreLabel, ...getState().labelsAll], labelsDeleted: deletedLables });
+        patchState({
+            labelsAll: [restoreLabel, ...getState().labelsAll],
+            labelsDeleted: deletedLables,
+            CountAll: getState().CountAll + 1,
+            CountDeleted: getState().CountDeleted - 1
+         });
     }
 }

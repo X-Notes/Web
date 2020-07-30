@@ -14,14 +14,14 @@
             <div class="sub-nav-item"   routerLink="/labels"[routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub1>
                 <div class="item">
                     <p>{{ 'subMenu.all' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countAll$ | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
             </div>
             <div class="sub-nav-item"  routerLink="/labels/deleted" routerLinkActive="active" #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countDeleted$ | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
             </div>

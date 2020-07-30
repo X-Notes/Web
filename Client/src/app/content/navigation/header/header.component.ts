@@ -61,37 +61,33 @@ export class HeaderComponent implements OnInit {
     switch (url) {
       case '/folders' : {
         this.currentUrl = 'folder';
-        this.activeAll();
+        this.newButtonActive = true;
+        this.selectAllActive = true;
+        this.settingsActive = true;
         break;
       }
       case '/notes' : {
         this.currentUrl = 'note';
-        this.activeAll();
+        this.newButtonActive = true;
+        this.selectAllActive = true;
+        this.settingsActive = true;
         break;
       }
       case '/labels' : {
         this.currentUrl = 'label';
-        this.activeAll();
+        this.newButtonActive = true;
+        this.selectAllActive = false;
+        this.settingsActive = false;
         break;
       }
       case '/labels/deleted' : {
         this.currentUrl = 'label';
-        this.disableAll();
+        this.newButtonActive = false;
+        this.selectAllActive = false;
+        this.settingsActive = false;
         break;
       }
     }
-  }
-
-  disableAll() {
-    this.newButtonActive = false;
-    this.selectAllActive = false;
-    this.settingsActive = false;
-  }
-
-  activeAll() {
-    this.newButtonActive = true;
-    this.selectAllActive = true;
-    this.settingsActive = true;
   }
 
   newButton() {

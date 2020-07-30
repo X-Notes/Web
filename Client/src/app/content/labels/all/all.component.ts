@@ -21,8 +21,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   constructor(
     public pService: PersonalizationService,
-    private store: Store,
-    private orderService: OrderService) { }
+    private store: Store) { }
 
   async ngOnInit() {
 
