@@ -33,8 +33,8 @@ namespace BI.services
             {
                 var labels = await labelRepository.GetAllByUserID(user.Id);
 
-                var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order);
-                var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order);
+                var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();
+                var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order).ToList();
 
                 return new LabelsDTO()
                 {

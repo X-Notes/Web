@@ -37,7 +37,7 @@ export class NoteStore {
     @Selector()
     static oneFull(state: NoteState) {
         return (id: string): FullNote => {
-            return state.fullNotes.find(x => x.writeId === id);
+            return state.fullNotes.find(x => x.id === id);
         };
     }
 
@@ -52,14 +52,14 @@ export class NoteStore {
     async newNote({ getState, patchState }: StateContext<NoteState>) {
         const id = await this.api.new().toPromise();
         const notes = getState().smallNotes;
-        patchState({ smallNotes: [{id, order: 1, title: ''} , ...notes] });
+        patchState({ smallNotes: [{id, title: ''} , ...notes] });
     }
 
 
     @Action(LoadFullNote)
     async loadFull({ setState, getState, patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
         const notes = getState().fullNotes;
-        const noteExist = notes.find(x => x.writeId === id);
+        const noteExist = notes.find(x => x.id === id);
         if (!noteExist) {
             const note = await this.api.get(id).toPromise();
             patchState({fullNotes: [...notes , note]});
@@ -70,7 +70,7 @@ export class NoteStore {
     async updateLabels({ setState }: StateContext<NoteState>, { note }: UpdateFullNote) {
         setState(
             patch({
-                fullNotes: updateItem<FullNote>(note2 => note2.writeId === note.writeId , note)
+                fullNotes: updateItem<FullNote>(note2 => note2.id === note.id , note)
             })
         );
     }
