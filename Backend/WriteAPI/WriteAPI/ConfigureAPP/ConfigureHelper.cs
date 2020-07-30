@@ -6,6 +6,7 @@ using Common.DTO.users;
 using Domain.Commands.backgrounds;
 using Domain.Commands.labels;
 using Domain.Commands.notes;
+using Domain.Commands.orders;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
@@ -91,11 +92,13 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewBackgroundCommand, Unit>, BackgroundHandlerCommand>();
 
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsByEmail, List<LabelDTO>>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
 
             //Notes
             services.AddScoped<IRequestHandler<NewNoteCommand, string>, NoteHandlerCommand>();
@@ -103,6 +106,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+
+            //Order
+            services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
 
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)

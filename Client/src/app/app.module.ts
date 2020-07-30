@@ -11,10 +11,8 @@ import { ContentLoadGuard } from './core/guards/content-load.guard';
 import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { NgxsModule } from '@ngxs/store';
 import { LabelStore } from './content/labels/state/labels-state';
-import { ApiServiceLabels } from './content/labels/api.service';
 import { ContentModule } from './content/content.module';
 import { NoteStore } from './content/notes/state/notes-state';
-import { ApiServiceNotes } from './content/notes/api.service';
 import { UserStore } from './core/stateUser/user-state';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 

@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20200716130708_initial")]
-    partial class initial
+    [Migration("20200730162340_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -101,11 +101,18 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("WriteContext.models.Note", b =>
                 {
-                    b.Property<Guid>("WriteId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ReadId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AccessStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsArchive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -116,7 +123,7 @@ namespace WriteContext.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("WriteId", "ReadId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -203,28 +210,15 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("NoteReadId")
-                        .HasColumnType("uuid");
+                    b.HasKey("UserId", "NoteId");
 
-                    b.Property<Guid?>("NoteWriteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("NoteWriteId", "NoteReadId");
+                    b.HasIndex("NoteId");
 
                     b.ToTable("UserOnNote");
                 });
@@ -292,15 +286,17 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
                 {
+                    b.HasOne("WriteContext.models.Note", "Note")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WriteContext.models.User", "User")
                         .WithMany("UserOnNotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WriteContext.models.Note", "Note")
-                        .WithMany("UserOnNotes")
-                        .HasForeignKey("NoteWriteId", "NoteReadId");
                 });
 #pragma warning restore 612, 618
         }

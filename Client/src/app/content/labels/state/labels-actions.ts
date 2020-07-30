@@ -1,4 +1,5 @@
 import { Label } from '../models/label';
+import { Order } from 'src/app/shared/services/order.service';
 
 export class LoadLabels {
     static type = '[Labels] Load Labels';
@@ -7,6 +8,11 @@ export class LoadLabels {
 export class AddLabel {
     static type = '[Labels] Add Label';
     constructor(public name: string, public color: string) {}
+}
+
+export class SetDeleteLabel {
+    static type = '[Labels] SetDelete Label';
+    constructor(public id: number) {}
 }
 
 export class DeleteLabel {
@@ -21,6 +27,10 @@ export class UpdateLabel {
 
 export class PositionLabel {
     static type = '[Labels] Position Label';
-    constructor(public labelOne: Label, public labelTwo: Label) {}
+    constructor(public deleted: boolean, public id: number, public order: Order) {}
 }
 
+export class RestoreLabel {
+    static type = '[Labels] Restore Label';
+    constructor(public id: number) {}
+}

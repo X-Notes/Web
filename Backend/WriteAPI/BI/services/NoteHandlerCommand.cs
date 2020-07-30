@@ -28,15 +28,14 @@ namespace BI.services
 
             var note = new Note()
             {
-                WriteId = Guid.NewGuid(),
-                ReadId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 UserId = user.Id,
                 Order = 1
             };
 
             await this.noteRepository.Add(note);
 
-            return note.WriteId.ToString("N");
+            return note.Id.ToString("N");
         }
     }
 }

@@ -33,7 +33,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<List<LabelDTO>> GetUserLabels()
+        public async Task<LabelsDTO> GetUserLabels()
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new GetLabelsByEmail(email));
@@ -47,13 +47,25 @@ namespace WriteAPI.Controllers
            await _mediator.Send(label);
         }
 
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        [HttpDelete("perm/{id}")]
+        public async Task DeletePerm(int id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new DeleteLabelCommand(email, id));
         }
 
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new SetDeletedLabelCommand(email, id));
+        }
 
+        [HttpGet("restore/{id}")]
+        public async Task RestoreLabel(int id)
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new RestoreLabelCommand(email, id));
+        }
     }
 }

@@ -38,10 +38,6 @@ const routes: Routes = [
     loadChildren: () => import('./about/about.module').then(m => m.AboutModule),
   },
   {
-    path: 'note/:id',
-    loadChildren: () => import('./read/read.module').then(m => m.ReadModule),
-  },
-  {
     path: '**',
     loadChildren: () => import('./error-four/error-four.module').then(m => m.ErrorFourModule)
   },

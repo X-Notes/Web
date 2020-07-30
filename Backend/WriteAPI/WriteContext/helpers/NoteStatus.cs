@@ -6,5 +6,7 @@ namespace WriteContext.helpers
 {
     public enum NoteStatus
     {
+        Private,
+        Public
     }
 }

@@ -14,7 +14,7 @@ using System.Linq;
 namespace BI.services
 {
     public class LabelHandlerQuery:
-        IRequestHandler<GetLabelsByEmail, List<LabelDTO>>
+        IRequestHandler<GetLabelsByEmail, LabelsDTO>
     {
         private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
@@ -26,13 +26,21 @@ namespace BI.services
             this.userRepository = userRepository;
         }
 
-        public async Task<List<LabelDTO>> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
+        public async Task<LabelsDTO> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var labels = (await labelRepository.GetAll(user.Id)).OrderBy(x => x.Order);
-                return mapper.Map<List<LabelDTO>>(labels);
+                var labels = await labelRepository.GetAllByUserID(user.Id);
+
+                var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();
+                var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order).ToList();
+
+                return new LabelsDTO()
+                {
+                    LabelsAll = mapper.Map<List<LabelDTO>>(labelsAll),
+                    LabelsDeleted = mapper.Map<List<LabelDTO>>(labelsDeleted)
+                };
             }
             return null;
         }
