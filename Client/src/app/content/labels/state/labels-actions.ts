@@ -1,4 +1,5 @@
 import { Label } from '../models/label';
+import { Order } from 'src/app/shared/services/order.service';
 
 export class LoadLabels {
     static type = '[Labels] Load Labels';
@@ -26,6 +27,6 @@ export class UpdateLabel {
 
 export class PositionLabel {
     static type = '[Labels] Position Label';
-    constructor(public labelOne: Label, public labelTwo: Label) {}
+    constructor(public deleted: boolean, public id: number, public order: Order) {}
 }
 

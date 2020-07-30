@@ -4,7 +4,7 @@ import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { UpdateLabel, SetDeleteLabel, LoadLabels, DeleteLabel } from '../state/labels-actions';
+import { UpdateLabel, SetDeleteLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/labels-actions';
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take } from 'rxjs/operators';
 
@@ -38,7 +38,7 @@ export class DeletedComponent implements OnInit {
       position: item.getGrid().getItems().indexOf(item) + 1,
       entityId: item._element.id
     };
-    await this.orderService.changeOrder(order).toPromise();
+    this.store.dispatch(new PositionLabel(true, parseInt(order.entityId, 10), order));
     });
 }
 

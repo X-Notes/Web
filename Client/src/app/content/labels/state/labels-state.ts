@@ -5,6 +5,7 @@ import { ApiServiceLabels } from '../api.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
+import { OrderService } from 'src/app/shared/services/order.service';
 
 interface LabelState {
     labelsAll: Label[];
@@ -23,7 +24,8 @@ interface LabelState {
 export class LabelStore {
 
 
-    constructor(private api: ApiServiceLabels) {
+    constructor(private api: ApiServiceLabels,
+                private orderService: OrderService) {
     }
 
 
@@ -67,9 +69,10 @@ export class LabelStore {
         const label = labelsAll.find(x => x.id === id);
         labelsAll = labelsAll.filter(x => x.id !== id);
 
-        const labelsDeleted = getState().labelsDeleted;
+        const labelsDeleted = [...getState().labelsDeleted];
+        const newLabelsDeleted = labelsDeleted.map((value) => ({...value, order: value.order + 1 }));
 
-        patchState({labelsAll, labelsDeleted: [{...label, order: 1}, ...labelsDeleted]});
+        patchState({labelsAll, labelsDeleted: [{...label, order: 1}, ...newLabelsDeleted]});
     }
 
     @Action(DeleteLabel)
@@ -95,18 +98,36 @@ export class LabelStore {
     @Action(UpdateLabel)
     async updateLabels({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
-        setState(
-            patch({
-                labelsAll: updateItem<Label>(label2 => label2.id === label.id , label)
-            })
-        );
+        if (label.isDeleted) {
+            setState(
+                patch({
+                    labelsDeleted: updateItem<Label>(label2 => label2.id === label.id , label)
+                })
+            );
+        } else {
+            setState(
+                patch({
+                    labelsAll: updateItem<Label>(label2 => label2.id === label.id , label)
+                })
+            );
+        }
     }
 
     @Action(PositionLabel)
-    positionLabel({setState, getState, patchState}: StateContext<LabelState>, { labelOne, labelTwo }: PositionLabel) {
-        const labels = getState().labelsAll;
-        labels.find(x => x.id = labelOne.id).order = labelTwo.order;
-        labels.find(x => x.id = labelTwo.id).order = labelOne.order;
-        patchState({labelsAll: labels});
+    async positionLabel({setState, getState, patchState}: StateContext<LabelState>, { deleted, id, order }: PositionLabel) {
+        await this.orderService.changeOrder(order).toPromise();
+        if (deleted) {
+            let labelsDeleted = getState().labelsDeleted;
+            const slabel = labelsDeleted.find(x => x.id === id);
+            labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+            labelsDeleted.splice(order.position - 1, 0 , slabel);
+            patchState({labelsDeleted});
+        } else {
+            let labelsAll = getState().labelsAll;
+            const slabel = labelsAll.find(x => x.id === id);
+            labelsAll = labelsAll.filter(x => x.id !== id);
+            labelsAll.splice(order.position - 1, 0 , slabel);
+            patchState({labelsAll});
+        }
     }
 }
