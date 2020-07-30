@@ -99,15 +99,21 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("WriteContext.models.Note", b =>
                 {
-                    b.Property<Guid>("WriteId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Order")
+                    b.Property<int>("AccessStatus")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ReadId")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("IsArchive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -115,10 +121,7 @@ namespace WriteContext.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("WriteId");
-
-                    b.HasIndex("ReadId")
-                        .IsUnique();
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 

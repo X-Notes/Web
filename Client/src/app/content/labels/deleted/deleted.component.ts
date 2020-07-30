@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { LabelStore } from '../state/labels-state';
-import { Observable } from 'rxjs';
+import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { UpdateLabel, SetDeleteLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/labels-actions';
+import { UpdateLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/labels-actions';
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take } from 'rxjs/operators';
 

@@ -50,9 +50,9 @@ export class NoteStore {
 
     @Action(AddNote)
     async newNote({ getState, patchState }: StateContext<NoteState>) {
-        const writeId = await this.api.new().toPromise();
+        const id = await this.api.new().toPromise();
         const notes = getState().smallNotes;
-        patchState({ smallNotes: [{writeId, order: 1, title: ''} , ...notes] });
+        patchState({ smallNotes: [{id, order: 1, title: ''} , ...notes] });
     }
 
 

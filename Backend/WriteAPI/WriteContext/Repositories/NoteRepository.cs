@@ -50,7 +50,7 @@ namespace WriteContext.Repositories
 
         public async Task<Note> GetFull(Guid id)
         {
-            return await contextDB.Notes.FirstOrDefaultAsync(x => x.WriteId == id);
+            return await contextDB.Notes.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Note>> GetByUserId(int userId)
