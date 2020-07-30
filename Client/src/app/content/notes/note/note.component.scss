@@ -1,12 +1,5 @@
 @import 'variables';
 
-@mixin text-overflow {
-    width: 100%;
-    white-space: pre-wrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
 :host {
     display: flex;
     width: 100%;
@@ -195,6 +188,7 @@
 
         .header {
             -webkit-line-clamp: 1;
+            font-size: 1.125rem;
         }
     
         .description {

@@ -68,4 +68,13 @@
     </div>
     <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content"></div>
+<div class="content">
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
+        <div class="grid">
+            <div class="grid-item" *ngFor="let item of folders" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+                <app-folder [folder]="item"></app-folder>
+            </div>
+        </div>
+    </ngx-simplebar>
+</div>
+<div class="drag-helper"></div>
