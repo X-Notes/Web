@@ -41,8 +41,8 @@ export class LabelStore {
     loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
         if (getState().labelsAll.length === 0) {
         return this.api.getAll().pipe(tap(content => { patchState({
-            labelsAll: content.filter(x => x.isDeleted === false),
-            labelsDeleted: content.filter(x => x.isDeleted === true)
+            labelsAll: content.labelsAll,
+            labelsDeleted: content.labelsDeleted
          }); }));
         }
     }
@@ -50,14 +50,17 @@ export class LabelStore {
     @Action(AddLabel)
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
         const id = await this.api.new(name, color).toPromise();
-        const labels = getState().labelsAll;
+
+        const labels = [...getState().labelsAll];
+        const newLabels = labels.map((value) => ({...value, order: value.order + 1 }));
+
         patchState({
-            labelsAll: [{name, color, id, isDeleted: false, order: 1}, ...labels]
+            labelsAll: [{name, color, id, isDeleted: false, order: 1}, ...newLabels]
         });
     }
 
     @Action(SetDeleteLabel)
-    async setDeletetLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
+    async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
         await this.api.setDeleted(id).toPromise();
 
         let labelsAll = getState().labelsAll;
@@ -66,26 +69,37 @@ export class LabelStore {
 
         const labelsDeleted = getState().labelsDeleted;
 
-        patchState({labelsAll, labelsDeleted: [label, ...labelsDeleted]});
+        patchState({labelsAll, labelsDeleted: [{...label, order: 1}, ...labelsDeleted]});
     }
 
     @Action(DeleteLabel)
     async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
         await this.api.delete(id).toPromise();
         let labelsDeleted = getState().labelsDeleted;
+
+        const labelOrder = labelsDeleted.find(x => x.id === id).order;
+
         labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+
+        labelsDeleted = labelsDeleted.map(x => {
+            if (x.order > labelOrder) {
+                return {...x, order: x.order - 1};
+            }
+            return {...x};
+        });
+
+
         patchState({labelsDeleted});
     }
 
     @Action(UpdateLabel)
-    async updateLabels({ setState }: StateContext<LabelState>, { label }: UpdateLabel) {
+    async updateLabels({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
-        /*
         setState(
             patch({
-                labels: updateItem<Label>(label2 => label2.id === label.id , label)
+                labelsAll: updateItem<Label>(label2 => label2.id === label.id , label)
             })
-        );*/
+        );
     }
 
     @Action(PositionLabel)

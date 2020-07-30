@@ -35,17 +35,18 @@ namespace BI.services
                             var label = labels.FirstOrDefault(x => x.Id == id);
                             if (label != null)
                             {
+                                var tempLabels = labels.Where(x => x.IsDeleted == label.IsDeleted).ToList();
                                 if(label.Order < request.Position)
                                 {
-                                    labels.Where(x => x.Order <= request.Position && x.Order > label.Order).ToList().ForEach(x => x.Order = x.Order - 1);
+                                    tempLabels.Where(x => x.Order <= request.Position && x.Order > label.Order).ToList().ForEach(x => x.Order = x.Order - 1);
                                     label.Order = request.Position;
                                 }
                                 else if(label.Order > request.Position)
                                 {
-                                    labels.Where(x => x.Order >= request.Position && x.Order < label.Order).ToList().ForEach(x => x.Order = x.Order + 1);
+                                    tempLabels.Where(x => x.Order >= request.Position && x.Order < label.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                     label.Order = request.Position;
                                 }
-                                await labelRepository.UpdateRangeLabels(labels);
+                                await labelRepository.UpdateRangeLabels(tempLabels);
                             }
                         }
                         Console.WriteLine("Label");

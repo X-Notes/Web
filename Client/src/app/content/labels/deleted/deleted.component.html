@@ -1,5 +1,5 @@
 <div class="grid">
-    <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+    <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
         <app-label [label]="item" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
     </div>
 </div>

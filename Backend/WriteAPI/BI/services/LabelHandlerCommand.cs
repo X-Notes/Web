@@ -35,11 +35,7 @@ namespace BI.services
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
-                var order = label.Order;
-                await labelRepository.DeleteLabel(label);
-                var labelsForUpdate = user.Labels.Where(x => x.Order > order).ToList();
-                labelsForUpdate.ForEach(x => x.Order = x.Order - 1);
-                await labelRepository.UpdateRangeLabels(labelsForUpdate);
+                await labelRepository.DeleteLabel(label, user.Labels);
             }
             return Unit.Value;
         }
@@ -75,8 +71,7 @@ namespace BI.services
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
-                label.IsDeleted = true;
-                await labelRepository.UpdateLabel(label);
+                await labelRepository.SetDeletedLabel(label, user.Labels);
             }
             return Unit.Value;
         }

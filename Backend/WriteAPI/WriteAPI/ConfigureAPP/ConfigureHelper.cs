@@ -92,7 +92,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewBackgroundCommand, Unit>, BackgroundHandlerCommand>();
 
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsByEmail, List<LabelDTO>>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();

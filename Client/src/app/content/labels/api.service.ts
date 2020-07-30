@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Label } from './models/label';
+import { Labels } from './models/labels';
 
 @Injectable()
 export class ApiServiceLabels {
@@ -9,7 +10,7 @@ export class ApiServiceLabels {
   constructor(private httpClient: HttpClient) { }
 
   getAll() {
-    return this.httpClient.get<Label[]>(environment.writeAPI + '/api/label');
+    return this.httpClient.get<Labels>(environment.writeAPI + '/api/label');
   }
 
   new(name: string, color: string) {

@@ -18,35 +18,18 @@ import { OrderService, Order, OrderEntity } from 'src/app/shared/services/order.
   styleUrls: ['./labels.component.scss'],
   animations: [ sideBarCloseOpen ],
 })
-export class LabelsComponent implements OnInit, OnDestroy {
-
-  destroy = new Subject<void>();
+export class LabelsComponent implements OnInit {
 
   theme = Theme;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              private orderService: OrderService) {}
-
+  constructor(public pService: PersonalizationService) {}
 
   async ngOnInit() {
     this.pService.onResize();
-    this.pService.subject
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.newLabel());
-  }
-
-  async newLabel() {
-    await this.store.dispatch(new AddLabel('', '#FFEBCD')).toPromise();
-    this.pService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true});
   }
 
   cancelSideBar() {
     this.pService.stateSidebar = false;
   }
 
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
 }

@@ -33,7 +33,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<List<LabelDTO>> GetUserLabels()
+        public async Task<LabelsDTO> GetUserLabels()
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new GetLabelsByEmail(email));
