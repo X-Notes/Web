@@ -21,6 +21,12 @@ export class HeaderComponent implements OnInit {
 
   theme = Theme;
   currentUrl: string;
+
+
+  newButtonActive = true;
+  selectAllActive = true;
+  settingsActive = true;
+
   constructor(public pService: PersonalizationService, private router: Router) { }
 
   ngOnInit(): void {
@@ -55,21 +61,37 @@ export class HeaderComponent implements OnInit {
     switch (url) {
       case '/folders' : {
         this.currentUrl = 'folder';
+        this.activeAll();
         break;
       }
       case '/notes' : {
         this.currentUrl = 'note';
-        break;
-      }
-      case '/people' : {
-        this.currentUrl = 'people';
+        this.activeAll();
         break;
       }
       case '/labels' : {
         this.currentUrl = 'label';
+        this.activeAll();
+        break;
+      }
+      case '/labels/deleted' : {
+        this.currentUrl = 'label';
+        this.disableAll();
         break;
       }
     }
+  }
+
+  disableAll() {
+    this.newButtonActive = false;
+    this.selectAllActive = false;
+    this.settingsActive = false;
+  }
+
+  activeAll() {
+    this.newButtonActive = true;
+    this.selectAllActive = true;
+    this.settingsActive = true;
   }
 
   newButton() {

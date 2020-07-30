@@ -22,21 +22,21 @@
             <div class="generic" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button name="Create note" type="button" class="generic new-note" (click)="newButton()" #new>
+            <button *ngIf="newButtonActive" name="Create note" type="button" class="generic new-note" (click)="newButton()" #new>
                 <div class="inner-content" >
                     <p>New {{currentUrl}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button name="Select" type="button" class="generic filters" #select>
+            <button *ngIf="selectAllActive" name="Select" type="button" class="generic filters" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button name="Filter" type="button" class="generic filters" #filter>
+            <button *ngIf="settingsActive" name="Filter" type="button" class="generic filters" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>
