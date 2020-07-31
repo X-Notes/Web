@@ -9,6 +9,7 @@ import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { AddNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
+import { NoteStore } from '../state/notes-state';
 
 export enum subMenu {
   All = 'all',
@@ -38,6 +39,18 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
+
+  @Select(NoteStore.privateCount)
+  public countPrivate: Observable<number>;
+
+  @Select(NoteStore.sharedCount)
+  public countShared: Observable<number>;
+
+  @Select(NoteStore.deletedCount)
+  public countDeleted: Observable<number>;
+
+  @Select(NoteStore.archiveCount)
+  public countArchive: Observable<number>;
 
   constructor(public pService: PersonalizationService,
               private store: Store,

@@ -14,7 +14,11 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class NoteHandlerQuery : 
-        IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
+        IRequestHandler<GetPrivateNotesQuery, List<SmallNote>>,
+        IRequestHandler<GetSharedNotesQuery, List<SmallNote>>,
+        IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>,
+        IRequestHandler<GetDeletedNotesQuery, List<SmallNote>>,
+
         IRequestHandler<GetFullNoteQuery, FullNote>,
         IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>
     {
@@ -29,12 +33,12 @@ namespace BI.services
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
         }
-        public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
+        public async Task<List<SmallNote>> Handle(GetPrivateNotesQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = (await noteRepository.GetPrivateNotesByUserId(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return null;
@@ -57,6 +61,39 @@ namespace BI.services
             {
                 var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(guid);
                 return mapper.Map<List<OnlineUserOnNote>>(users);
+            }
+            return null;
+        }
+
+        public async Task<List<SmallNote>> Handle(GetSharedNotesQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                var notes = (await noteRepository.GetSharedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                return mapper.Map<List<SmallNote>>(notes);
+            }
+            return null;
+        }
+
+        public async Task<List<SmallNote>> Handle(GetArchiveNotesQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                var notes = (await noteRepository.GetArchiveNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                return mapper.Map<List<SmallNote>>(notes);
+            }
+            return null;
+        }
+
+        public async Task<List<SmallNote>> Handle(GetDeletedNotesQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                var notes = (await noteRepository.GetDeletedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                return mapper.Map<List<SmallNote>>(notes);
             }
             return null;
         }

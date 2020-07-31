@@ -14,7 +14,7 @@
             <div class="sub-nav-item"  routerLink="/notes"[routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub1>
                 <div class="item">
                     <p>{{ 'subMenu.private' | translate }}</p>
-                    <p>12</p>
+                    <p>{{ countPrivate | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
             </div>
@@ -22,7 +22,7 @@
                 #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.shared' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countShared | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
             </div>
@@ -30,14 +30,14 @@
                 #sub4>
                 <div class="item">
                     <p>{{ 'subMenu.archive' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countArchive | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
             </div>
             <div class="sub-nav-item"  routerLink="/notes/deleted" [routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub5>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countDeleted | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub5"></div>
             </div>

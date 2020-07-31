@@ -32,13 +32,38 @@ namespace WriteAPI.Controllers
             return new JsonResult(await _mediator.Send(command));
         }
 
-        [HttpGet]
-        public async Task<List<SmallNote>> GetAll()
+        [HttpGet("private")]
+        public async Task<List<SmallNote>> GetPrivateNotes()
         {
             var email = this.GetUserEmail();
-            var query = new GetAllNotesQuery(email);
+            var query = new GetPrivateNotesQuery(email);
             return await _mediator.Send(query);
         }
+
+        [HttpGet("shared")]
+        public async Task<List<SmallNote>> GetSharedNotes()
+        {
+            var email = this.GetUserEmail();
+            var query = new GetSharedNotesQuery(email);
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("archive")]
+        public async Task<List<SmallNote>> GetArchiveNotes()
+        {
+            var email = this.GetUserEmail();
+            var query = new GetArchiveNotesQuery(email);
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("deleted")]
+        public async Task<List<SmallNote>> GetDeletedNotes()
+        {
+            var email = this.GetUserEmail();
+            var query = new GetDeletedNotesQuery(email);
+            return await _mediator.Send(query);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<FullNote> GetAll(string id)

@@ -9,8 +9,20 @@ export class ApiServiceNotes {
 
   constructor(private httpClient: HttpClient) { }
 
-  getAll() {
-    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note');
+  getPrivateNotes() {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/private');
+  }
+
+  getSharedNotes() {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/shared');
+  }
+
+  getDeletedNotes() {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/deleted');
+  }
+
+  getArchiveNotes() {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/archive');
   }
 
   get(id: string) {

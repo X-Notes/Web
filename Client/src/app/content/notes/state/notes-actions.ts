@@ -1,7 +1,19 @@
 import { FullNote } from '../models/fullNote';
 
 export class LoadPrivateNotes {
-    static type = '[Notes] Load small notes';
+    static type = '[Notes] Load private notes';
+}
+
+export class LoadSharedNotes {
+    static type = '[Notes] Load shared notes';
+}
+
+export class LoadDeletedNotes {
+    static type = '[Notes] Load deleted notes';
+}
+
+export class LoadArchiveNotes {
+    static type = '[Notes] Load archive notes';
 }
 
 export class LoadFullNote {

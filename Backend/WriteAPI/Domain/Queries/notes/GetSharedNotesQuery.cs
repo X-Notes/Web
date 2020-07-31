@@ -6,10 +6,9 @@ using System.Text;
 
 namespace Domain.Queries.notes
 {
-    public class GetAllNotesQuery : BaseQueryEntity, IRequest<List<SmallNote>>
+    public class GetSharedNotesQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
-        public GetAllNotesQuery(string email)
-            :base(email)
+        public GetSharedNotesQuery(string email) : base(email)
         {
 
         }
