@@ -11,14 +11,14 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
-            <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}" #sub1>
+            <div class="sub-nav-item"  routerLink="/notes"[routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub1>
                 <div class="item">
-                    <p>{{ 'subMenu.all' | translate }}</p>
+                    <p>{{ 'subMenu.private' | translate }}</p>
                     <p>12</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Shared)" [ngClass]="{active: current === menu.Shared}"
+            <div class="sub-nav-item"  routerLink="/notes/shared" [routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active"
                 #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.shared' | translate }}</p>
@@ -26,15 +26,7 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Locked)" [ngClass]="{active: current === menu.Locked}"
-                #sub3>
-                <div class="item">
-                    <p>{{ 'subMenu.locked' | translate }}</p>
-                    <p>12</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="sub3"></div>
-            </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Archive)" [ngClass]="{active: current === menu.Archive}"
+            <div class="sub-nav-item" routerLink="/notes/archive" [routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active"
                 #sub4>
                 <div class="item">
                     <p>{{ 'subMenu.archive' | translate }}</p>
@@ -42,7 +34,7 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}" #sub5>
+            <div class="sub-nav-item"  routerLink="/notes/deleted" [routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub5>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
                     <p>12</p>
@@ -85,11 +77,7 @@
 </div>
 <div class="content">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
-        <div class="grid">
-            <div class="grid-item" id="{{item.writeId}}" *ngFor="let item of notes$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-                <app-note [note]="item" class="note"></app-note>
-            </div>
-        </div>
+        <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>
 <div class="drag-helper"></div>

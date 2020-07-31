@@ -18,6 +18,7 @@
     "archive": "Archive",
     "bin": "Bin",
     "invitation": "Invitation",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "private": "Private"
   }
 }

@@ -1,0 +1,5 @@
+<div class="grid">
+    <div class="grid-item" id="{{item.id}}" *ngFor="let item of notes$ | async" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+        <app-note [note]="item" class="note"></app-note>
+    </div>
+</div>

@@ -30,11 +30,8 @@ export enum subMenu {
   animations: [ sideBarCloseOpen ]
 })
 
-export class NotesComponent implements OnInit, OnDestroy {
+export class NotesComponent implements OnInit {
 
-  destroy = new Subject<void>();
-  current: subMenu;
-  menu = subMenu;
   theme = Theme;
 
   labelsActive: number[] = [];
@@ -43,47 +40,13 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
-  @Select(NoteStore.allSmall)
-  public notes$: Observable<SmallNote[]>;
 
   constructor(public pService: PersonalizationService,
-              private store: Store,
-              private router: Router,
-              private orderService: OrderService) { }
-
-
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-  }
+              private store: Store) { }
 
   async ngOnInit() {
     this.pService.onResize();
     await this.store.dispatch(new LoadLabels()).toPromise();
-    await this.store.dispatch(new LoadSmallNotes()).toPromise();
-
-    this.current = subMenu.All;
-
-    this.pService.subject
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.newNote());
-
-    this.pService.gridSettings();
-
-    this.pService.grid.on('dragEnd', async (item, event) => {
-      console.log(item._element.id);
-      const order: Order = {
-        orderEntity: OrderEntity.Note,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      await this.orderService.changeOrder(order).toPromise();
-      });
-  }
-
-  async newNote() {
-    await this.store.dispatch(new AddNote()).toPromise();
-    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/${x[0].id}`]));
   }
 
   cancelLabel() {
@@ -99,10 +62,6 @@ export class NotesComponent implements OnInit, OnDestroy {
     } else {
       this.labelsActive = this.labelsActive.filter(x => x !== id);
     }
-  }
-
-  switchSub(value: subMenu) {
-    this.current = value;
   }
 
   cancelSideBar() {

@@ -11,7 +11,7 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
-            <div class="sub-nav-item"   routerLink="/labels"[routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub1>
+            <div class="sub-nav-item"  routerLink="/labels"[routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub1>
                 <div class="item">
                     <p>{{ 'subMenu.all' | translate }}</p>
                     <p>{{countAll$ | async}}</p>
