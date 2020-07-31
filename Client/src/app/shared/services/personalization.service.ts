@@ -63,6 +63,10 @@ export class PersonalizationService {
     }
   }
 
+  cancelSideBar() {
+    this.stateSidebar = false;
+  }
+
   check(): boolean {
     return window.innerWidth > 1024 ? true : false;
   }

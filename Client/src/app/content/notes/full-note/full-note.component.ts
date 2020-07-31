@@ -4,33 +4,47 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote, UpdateFullNote } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote, LoadSmallNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime } from 'rxjs/operators';
 import { UpdateText } from '../models/parts/updateText';
+import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
+import { Theme } from 'src/app/shared/enums/Theme';
+import { SmallNote } from '../models/smallNote';
 
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
-  styleUrls: ['./full-note.component.scss']
+  styleUrls: ['./full-note.component.scss'],
+  animations: [ sideBarCloseOpen ]
 })
 export class FullNoteComponent implements OnInit, OnDestroy {
 
   note: FullNote;
+  theme = Theme;
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   private routeSubscription: Subscription;
   private id: string;
 
-  constructor(private signal: SignalRService, private route: ActivatedRoute, private store: Store) {
+  @Select(NoteStore.allSmall)
+  public notes$: Observable<SmallNote[]>;
+
+  constructor(private signal: SignalRService,
+              private route: ActivatedRoute,
+              private store: Store,
+              public pService: PersonalizationService) {
               this.routeSubscription = route.params.subscribe(params => this.id = params.id);
             }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.pService.onResize();
     this.load();
     this.connectToHub();
+
+    await this.store.dispatch(new LoadSmallNotes()).toPromise();
 
     this.nameChanged.pipe(
       debounceTime(50))

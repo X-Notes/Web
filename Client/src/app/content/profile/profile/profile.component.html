@@ -35,6 +35,6 @@
             </div>
         </div>
     </div>
-    <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
+    <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content"></div>

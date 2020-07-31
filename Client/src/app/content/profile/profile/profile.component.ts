@@ -23,9 +23,4 @@ export class ProfileComponent implements OnInit {
   toggle() {
     this.check = !this.check;
   }
-
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
-
 }

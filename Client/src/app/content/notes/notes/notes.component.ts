@@ -104,8 +104,4 @@ export class NotesComponent implements OnInit, OnDestroy {
   switchSub(value: subMenu) {
     this.current = value;
   }
-
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
 }
