@@ -4,7 +4,7 @@ import { State, Selector, StateContext, Action, createSelector } from '@ngxs/sto
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
 import { LoadPrivateNotes , AddNote, LoadFullNote, UpdateFullNote,
-    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes } from './notes-actions';
+    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
@@ -139,12 +139,17 @@ export class NoteStore {
     @Action(LoadDeletedNotes)
     loadDeletedNotes({ getState, patchState }: StateContext<NoteState>) {
         if (!getState().deletedLoaded) {
-        return this.api.getPrivateNotes().pipe(tap(content => { patchState({
+        return this.api.getDeletedNotes().pipe(tap(content => { patchState({
              deletedNotes: content ,
              deletedLoaded: true,
              countDeleted: content.length
             }); }));
         }
+    }
+
+    @Action(LoadAllNotes)
+    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
+        dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
     }
 
     @Action(AddNote)

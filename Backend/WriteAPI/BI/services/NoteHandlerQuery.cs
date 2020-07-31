@@ -41,7 +41,7 @@ namespace BI.services
                 var notes = (await noteRepository.GetPrivateNotesByUserId(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallNote>>(notes);
             }
-            return null;
+            return new List<SmallNote>();
         }
 
         public async Task<FullNote> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
@@ -73,7 +73,7 @@ namespace BI.services
                 var notes = (await noteRepository.GetSharedNotesByUserId(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallNote>>(notes);
             }
-            return null;
+            return new List<SmallNote>();
         }
 
         public async Task<List<SmallNote>> Handle(GetArchiveNotesQuery request, CancellationToken cancellationToken)
@@ -84,7 +84,7 @@ namespace BI.services
                 var notes = (await noteRepository.GetArchiveNotesByUserId(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallNote>>(notes);
             }
-            return null;
+            return new List<SmallNote>();
         }
 
         public async Task<List<SmallNote>> Handle(GetDeletedNotesQuery request, CancellationToken cancellationToken)
@@ -95,7 +95,7 @@ namespace BI.services
                 var notes = (await noteRepository.GetDeletedNotesByUserId(user.Id)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallNote>>(notes);
             }
-            return null;
+            return new List<SmallNote>();
         }
     }
 }

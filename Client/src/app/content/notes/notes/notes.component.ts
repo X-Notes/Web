@@ -7,7 +7,7 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote } from '../state/notes-actions';
+import { AddNote, LoadAllNotes } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 
@@ -63,7 +63,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newNote());
 
     this.pService.onResize();
-    await this.store.dispatch(new LoadLabels()).toPromise();
+    await this.store.dispatch(new LoadAllNotes()).toPromise();
   }
 
   async newNote() {

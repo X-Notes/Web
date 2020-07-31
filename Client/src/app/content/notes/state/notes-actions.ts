@@ -16,6 +16,11 @@ export class LoadArchiveNotes {
     static type = '[Notes] Load archive notes';
 }
 
+export class LoadAllNotes {
+    static type = '[Notes] Load all notes';
+}
+
+
 export class LoadFullNote {
     static type = '[Notes] Load full note';
     constructor(public id: string) {    }
