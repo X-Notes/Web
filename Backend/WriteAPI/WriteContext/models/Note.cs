@@ -12,6 +12,7 @@ namespace WriteContext.models
         public NoteStatus AccessStatus { set; get; }
 
         public string Title { set; get; }
+        public string Color { set; get; }
         public int Order { set; get; }
 
         public int UserId { set; get; }
