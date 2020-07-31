@@ -12,7 +12,7 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class NoteHandlerCommand : 
-        IRequestHandler<NewNoteCommand, string>
+        IRequestHandler<NewPrivateNoteCommand, string>
     {
 
         private readonly UserRepository userRepository;
@@ -22,7 +22,7 @@ namespace BI.services
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
         }
-        public async Task<string> Handle(NewNoteCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
 

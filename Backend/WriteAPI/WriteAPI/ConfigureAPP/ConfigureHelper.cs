@@ -101,7 +101,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
 
             //Notes
-            services.AddScoped<IRequestHandler<NewNoteCommand, string>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewPrivateNoteCommand, string>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();

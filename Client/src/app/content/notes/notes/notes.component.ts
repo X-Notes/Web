@@ -1,18 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, AfterViewChecked, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
-import { Subject, ReplaySubject, Observable } from 'rxjs';
-import { takeUntil, take, tap } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { takeUntil, take, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import Grid, * as Muuri from 'muuri';
-import { SmallNote } from '../models/smallNote';
-import { NoteStore } from '../state/notes-state';
-import { LoadSmallNotes, AddNote } from '../state/notes-actions';
+import { AddNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
-import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 
 export enum subMenu {
   All = 'all',
@@ -30,7 +26,9 @@ export enum subMenu {
   animations: [ sideBarCloseOpen ]
 })
 
-export class NotesComponent implements OnInit {
+export class NotesComponent implements OnInit, OnDestroy {
+
+  destroy = new Subject<void>();
 
   theme = Theme;
 
@@ -42,11 +40,22 @@ export class NotesComponent implements OnInit {
 
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private router: Router) { }
 
   async ngOnInit() {
+
+    this.pService.subject
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.newNote());
+
     this.pService.onResize();
     await this.store.dispatch(new LoadLabels()).toPromise();
+  }
+
+  async newNote() {
+    await this.store.dispatch(new AddNote()).toPromise();
+    this.store.select(state => state.Notes.privateNotes).pipe(take(1)).subscribe(x => this.router.navigate([`notes/${x[0].id}`]));
   }
 
   cancelLabel() {
@@ -66,5 +75,10 @@ export class NotesComponent implements OnInit {
 
   cancelSideBar() {
     this.pService.stateSidebar = false;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

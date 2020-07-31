@@ -3,7 +3,7 @@ import { FullNote } from '../models/fullNote';
 import { State, Selector, StateContext, Action, createSelector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
-import { LoadSmallNotes, AddNote, LoadFullNote, UpdateFullNote } from './notes-actions';
+import { LoadPrivateNotes as LoadPrivateNotes, AddNote, LoadFullNote, UpdateFullNote } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
@@ -11,15 +11,23 @@ import { patch, updateItem } from '@ngxs/store/operators';
 
 
 interface NoteState {
-    smallNotes: SmallNote[];
+    privateNotes: SmallNote[];
     fullNotes: FullNote[];
+    privateLoaded: boolean;
+    sharedLoaded: boolean;
+    archiveLoaded: boolean;
+    deletedLoaded: boolean;
 }
 
 @State<NoteState>({
     name: 'Notes',
     defaults: {
-        smallNotes: [],
-        fullNotes: []
+        privateNotes: [],
+        fullNotes: [],
+        privateLoaded: false,
+        sharedLoaded: false,
+        archiveLoaded: false,
+        deletedLoaded: false
     }
 })
 
@@ -30,8 +38,8 @@ export class NoteStore {
     }
 
     @Selector()
-    static allSmall(state: NoteState): SmallNote[] {
-        return state.smallNotes;
+    static privateNotes(state: NoteState): SmallNote[] {
+        return state.privateNotes;
     }
 
     @Selector()
@@ -41,18 +49,21 @@ export class NoteStore {
         };
     }
 
-    @Action(LoadSmallNotes)
-    loadSmallNotes({ setState, getState, patchState }: StateContext<NoteState>) {
-        if (getState().smallNotes.length === 0) {
-        return this.api.getAll().pipe(tap(content => { patchState({ smallNotes: content }); }));
+    @Action(LoadPrivateNotes)
+    loadPrivateNotes({ getState, patchState }: StateContext<NoteState>) {
+        if (!getState().privateLoaded) {
+        return this.api.getAll().pipe(tap(content => { patchState({
+             privateNotes: content ,
+             privateLoaded: true
+            }); }));
         }
     }
 
     @Action(AddNote)
     async newNote({ getState, patchState }: StateContext<NoteState>) {
         const id = await this.api.new().toPromise();
-        const notes = getState().smallNotes;
-        patchState({ smallNotes: [{id, title: ''} , ...notes] });
+        const notes = getState().privateNotes;
+        patchState({ privateNotes: [{id, title: ''} , ...notes] });
     }
 
 

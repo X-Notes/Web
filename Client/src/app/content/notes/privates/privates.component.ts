@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil, take } from 'rxjs/operators';
-import { AddNote, LoadSmallNotes } from '../state/notes-actions';
+import { AddNote, LoadPrivateNotes } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 
@@ -14,26 +14,22 @@ import { Order, OrderEntity } from 'src/app/shared/services/order.service';
   templateUrl: './privates.component.html',
   styleUrls: ['./privates.component.scss']
 })
-export class PrivatesComponent implements OnInit, OnDestroy {
+export class PrivatesComponent implements OnInit {
 
-  destroy = new Subject<void>();
-
-
-  @Select(NoteStore.allSmall)
-  public notes$: Observable<SmallNote[]>;
+  public notes: SmallNote[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store,
-              private router: Router,
+              private store: Store
     ) { }
 
   async ngOnInit() {
-    await this.store.dispatch(new LoadSmallNotes()).toPromise();
+    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
 
-    this.pService.subject
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.newNote());
+    this.store.select(x => x.Notes.privateNotes).pipe(take(1))
+    .subscribe(x => { this.notes = [...x]; setTimeout(() => this.initMurri()); });
+  }
 
+  initMurri() {
     this.pService.gridSettings();
 
     this.pService.grid.on('dragEnd', async (item, event) => {
@@ -44,15 +40,5 @@ export class PrivatesComponent implements OnInit, OnDestroy {
         entityId: item._element.id
       };
       });
-  }
-
-  async newNote() {
-    await this.store.dispatch(new AddNote()).toPromise();
-    this.notes$.pipe(take(1)).subscribe(x => this.router.navigate([`notes/${x[0].id}`]));
-  }
-
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
   }
 }

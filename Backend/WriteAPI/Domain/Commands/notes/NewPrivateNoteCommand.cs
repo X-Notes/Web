@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Domain.Commands.notes
 {
-    public class NewNoteCommand: BaseCommandEntity, IRequest<string>
+    public class NewPrivateNoteCommand: BaseCommandEntity, IRequest<string>
     {
-        public NewNoteCommand(string email)
+        public NewPrivateNoteCommand(string email)
             :base(email)
         {
 

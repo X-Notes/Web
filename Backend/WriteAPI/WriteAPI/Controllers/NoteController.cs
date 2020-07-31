@@ -28,7 +28,7 @@ namespace WriteAPI.Controllers
         public async Task<JsonResult> Add()
         {
             var email = this.GetUserEmail();
-            var command = new NewNoteCommand(email);
+            var command = new NewPrivateNoteCommand(email);
             return new JsonResult(await _mediator.Send(command));
         }
 

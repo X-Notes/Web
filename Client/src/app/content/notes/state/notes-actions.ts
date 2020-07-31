@@ -1,6 +1,6 @@
 import { FullNote } from '../models/fullNote';
 
-export class LoadSmallNotes {
+export class LoadPrivateNotes {
     static type = '[Notes] Load small notes';
 }
 
