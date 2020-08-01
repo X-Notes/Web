@@ -6,7 +6,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { UnSelectAllNote, SelectAllNote, ChangeColorNote } from '../../notes/state/notes-actions';
+import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { ColorPallete } from 'src/app/shared/enums/Colors';
 
 @Component({
   selector: 'app-header',
@@ -20,14 +24,16 @@ export class HeaderComponent implements OnInit {
   public user$: Observable<ShortUser>;
 
   theme = Theme;
-  currentUrl: string;
-
+  routePath: RoutePathes;
+  noteType: NoteType;
 
   newButtonActive = true;
   selectAllActive = true;
   settingsActive = true;
 
-  constructor(public pService: PersonalizationService, private router: Router) { }
+  constructor(public pService: PersonalizationService,
+              private router: Router,
+              private store: Store) { }
 
   ngOnInit(): void {
     this.checkRout();
@@ -60,37 +66,77 @@ export class HeaderComponent implements OnInit {
   routeChange(url: string) {
     switch (url) {
       case '/folders' : {
-        this.currentUrl = 'folder';
-        this.newButtonActive = true;
-        this.selectAllActive = true;
-        this.settingsActive = true;
+        this.routePath = RoutePathes.Folder;
+        this.showAllButtons();
         break;
       }
       case '/notes' : {
-        this.currentUrl = 'note';
-        this.newButtonActive = true;
-        this.selectAllActive = true;
-        this.settingsActive = true;
+        this.routePath = RoutePathes.Note;
+        this.showAllButtons();
+        this.noteType = NoteType.Private;
+        break;
+      }
+      case '/notes/shared' : {
+        this.routePath = RoutePathes.Note;
+        this.showAllButtons();
+        this.noteType = NoteType.Shared;
+        break;
+      }
+      case '/notes/deleted' : {
+        this.routePath = RoutePathes.Note;
+        this.showAllButtons();
+        this.noteType = NoteType.Deleted;
+        break;
+      }
+      case '/notes/archive' : {
+        this.routePath = RoutePathes.Note;
+        this.showAllButtons();
+        this.noteType = NoteType.Archive;
         break;
       }
       case '/labels' : {
-        this.currentUrl = 'label';
+        this.routePath = RoutePathes.Label;
+
         this.newButtonActive = true;
         this.selectAllActive = false;
         this.settingsActive = false;
         break;
       }
       case '/labels/deleted' : {
-        this.currentUrl = 'label';
-        this.newButtonActive = false;
-        this.selectAllActive = false;
-        this.settingsActive = false;
+        this.routePath =  RoutePathes.Label;
+        this.hideAllButtons();
         break;
       }
     }
   }
 
+  hideAllButtons() {
+    this.newButtonActive = false;
+    this.selectAllActive = false;
+    this.settingsActive = false;
+  }
+  showAllButtons() {
+    this.newButtonActive = true;
+    this.selectAllActive = true;
+    this.settingsActive = true;
+  }
+
   newButton() {
     this.pService.subject.next(true);
+  }
+
+  // Selection
+
+  selectAll() {
+   this.store.dispatch(new SelectAllNote(this.noteType));
+  }
+
+  unselectAll() {
+    this.store.dispatch(new UnSelectAllNote());
+  }
+
+  // UPPER MENU FUNCTION
+  changeColor() {
+    this.store.dispatch(new ChangeColorNote(ColorPallete.BlueOne, this.noteType));
   }
 }

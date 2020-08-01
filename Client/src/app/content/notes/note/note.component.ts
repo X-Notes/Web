@@ -1,6 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
+import { Store } from '@ngxs/store';
+import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 
 @Component({
@@ -9,17 +14,40 @@ import { SmallNote } from '../models/smallNote';
   styleUrls: ['./note.component.scss']
 })
 
-export class NoteComponent implements OnInit {
+export class NoteComponent implements OnInit, OnDestroy {
+
+  destroy = new Subject<void>();
+
   isHighlight = false;
   @Input() note: SmallNote;
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService,
+              private store: Store) { }
 
-  ngOnInit(): void {
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
 
-  highlight() {
-    this.isHighlight = !this.isHighlight;
+  ngOnInit(): void {
+    this.store.select(state => state.Notes.selectedIds)
+    .pipe(takeUntil(this.destroy))
+    .pipe(map(z => this.tryFind(z)))
+    .subscribe(flag => this.isHighlight = flag);
+  }
+
+  tryFind(z: string[]): boolean {
+    const exist = z.find(id => id === this.note.id);
+    return exist !== undefined ? true : false;
+  }
+
+  highlight(id: string) {
+    if (!this.isHighlight) {
+      this.store.dispatch(new SelectIdNote(id));
+    } else {
+      this.store.dispatch(new UnSelectIdNote(id));
+    }
   }
 
 }

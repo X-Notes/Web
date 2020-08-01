@@ -1,14 +1,19 @@
 import { SmallNote } from '../models/smallNote';
 import { FullNote } from '../models/fullNote';
-import { State, Selector, StateContext, Action, createSelector } from '@ngxs/store';
+import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
 import { LoadPrivateNotes , AddNote, LoadFullNote, UpdateFullNote,
-    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes } from './notes-actions';
+    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
+    UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes} from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
-import { patch, updateItem } from '@ngxs/store/operators';
+import { patch, updateItem} from '@ngxs/store/operators';
+import { ColorPallete } from 'src/app/shared/enums/Colors';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { stat } from 'fs';
+import { UpdateColorNote } from './updateColor';
 
 
 interface NoteState {
@@ -25,6 +30,8 @@ interface NoteState {
     countShared: number;
     countDeleted: number;
     countArchive: number;
+    selectedIds: string[];
+    updateColor: UpdateColorNote[];
 }
 
 @State<NoteState>({
@@ -42,7 +49,9 @@ interface NoteState {
         countPrivate: 0,
         countArchive: 0,
         countDeleted: 0,
-        countShared: 0
+        countShared: 0,
+        selectedIds: [],
+        updateColor: []
     }
 })
 
@@ -50,6 +59,17 @@ interface NoteState {
 export class NoteStore {
 
     constructor(private api: ApiServiceNotes) {
+    }
+
+
+    @Selector()
+    static updateColor(state: NoteState): UpdateColorNote[] {
+        return state.updateColor;
+    }
+
+    @Selector()
+    static selectedIds(state: NoteState): string[] {
+        return state.selectedIds;
     }
 
     // Get notes
@@ -156,7 +176,10 @@ export class NoteStore {
     async newNote({ getState, patchState }: StateContext<NoteState>) {
         const id = await this.api.new().toPromise();
         const notes = getState().privateNotes;
-        patchState({ privateNotes: [{id, title: ''} , ...notes] });
+        patchState({
+            privateNotes: [{id, title: '', color: ColorPallete.Green } , ...notes],
+            countPrivate: getState().countPrivate + 1
+        });
     }
 
 
@@ -171,7 +194,7 @@ export class NoteStore {
     }
 
     @Action(UpdateFullNote)
-    async updateLabels({ setState }: StateContext<NoteState>, { note }: UpdateFullNote) {
+    async updateFullNote({ setState }: StateContext<NoteState>, { note }: UpdateFullNote) {
         setState(
             patch({
                 fullNotes: updateItem<FullNote>(note2 => note2.id === note.id , note)
@@ -179,4 +202,134 @@ export class NoteStore {
         );
     }
 
+    @Action(UpdateSmallNote)
+    async updateSmallNote({ setState }: StateContext<NoteState>, { note, typeNote }: UpdateSmallNote) {
+        switch (typeNote) {
+            case NoteType.Archive : {
+                setState(
+                    patch({
+                        archiveNotes: updateItem<SmallNote>(note2 => note2.id === note.id , note)
+                    })
+                );
+                break;
+            }
+            case NoteType.Private : {
+                setState(
+                    patch({
+                        privateNotes: updateItem<SmallNote>(note2 => note2.id === note.id , note)
+                    })
+                );
+                break;
+            }
+            case NoteType.Shared : {
+                setState(
+                    patch({
+                        sharedNotes: updateItem<SmallNote>(note2 => note2.id === note.id , note)
+                    })
+                );
+                break;
+            }
+            case NoteType.Deleted : {
+                setState(
+                    patch({
+                        deletedNotes: updateItem<SmallNote>(note2 => note2.id === note.id , note)
+                    })
+                );
+                break;
+            }
+        }
+    }
+
+    // FUNCTION UPPER MENU
+    @Action(ChangeColorNote)
+    async changeColor({patchState, getState, dispatch}: StateContext<NoteState>, {color, typeNote}: ChangeColorNote) {
+
+        const selectedIds = getState().selectedIds;
+        await this.api.changeColor(selectedIds, color).toPromise();
+        let notes: SmallNote[];
+        switch (typeNote) {
+            case NoteType.Archive : {
+                notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id))
+                .map(note => { note = {...note}; return note; });
+                break;
+            }
+            case NoteType.Private : {
+                notes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id))
+                .map(note => { note = {...note}; return note; });
+                break;
+            }
+            case NoteType.Deleted : {
+                notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id))
+                .map(note => { note = {...note}; return note; });
+                break;
+            }
+            case NoteType.Shared : {
+                notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
+                .map(note => { note = {...note}; return note; });
+                break;
+            }
+        }
+        notes.forEach(z => z.color = color);
+        notes.forEach(note => dispatch(new UpdateSmallNote(note, typeNote)));
+        const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
+        patchState({updateColor});
+        dispatch([UnSelectAllNote, ClearColorNotes]);
+    }
+
+    mapFromNoteToUpdateColor(note: SmallNote) {
+        const obj: UpdateColorNote = {
+            id: note.id,
+            color: note.color
+        };
+        return obj;
+    }
+
+    @Action(ClearColorNotes)
+    clearColorNotes({patchState}: StateContext<NoteState>) {
+        patchState({updateColor: []});
+    }
+
+
+    // NOTES SELECTION
+    @Action(SelectIdNote)
+    select({patchState, getState}: StateContext<NoteState>, {id}: SelectIdNote) {
+        const ids = getState().selectedIds;
+        patchState({selectedIds: [id , ...ids]});
+    }
+
+    @Action(UnSelectIdNote)
+    unSelect({getState, patchState}: StateContext<NoteState>, {id}: UnSelectIdNote) {
+        let ids = getState().selectedIds;
+        ids = ids.filter(x => x !== id);
+        patchState({selectedIds: [...ids]});
+    }
+
+    @Action(UnSelectAllNote)
+    unselectAll({patchState, getState}: StateContext<NoteState>) {
+        patchState({selectedIds: []});
+    }
+
+    @Action(SelectAllNote)
+    selectAll({patchState, getState}: StateContext<NoteState>, {typeNote}: SelectAllNote) {
+        let ids;
+        switch (typeNote) {
+            case NoteType.Archive : {
+                ids = getState().archiveNotes.map(x => x.id);
+                break;
+            }
+            case NoteType.Private : {
+                ids = getState().privateNotes.map(x => x.id);
+                break;
+            }
+            case NoteType.Deleted : {
+                ids = getState().deletedNotes.map(x => x.id);
+                break;
+            }
+            case NoteType.Shared : {
+                ids = getState().sharedNotes.map(x => x.id);
+                break;
+            }
+        }
+        patchState({selectedIds: [...ids]});
+    }
 }

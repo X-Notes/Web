@@ -24,19 +24,19 @@
             </div>
             <button *ngIf="newButtonActive" name="Create note" type="button" class="generic new-note" (click)="newButton()" #new>
                 <div class="inner-content" >
-                    <p>New {{currentUrl}}</p>
+                    <p>New {{routePath}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button *ngIf="selectAllActive" name="Select" type="button" class="generic filters" #select>
+            <button *ngIf="selectAllActive" (click)="selectAll()" name="Select" type="button" class="generic filters" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="settingsActive" name="Filter" type="button" class="generic filters" #filter>
+            <button *ngIf="settingsActive" (click)="changeColor()" name="Filter" type="button" class="generic filters" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>

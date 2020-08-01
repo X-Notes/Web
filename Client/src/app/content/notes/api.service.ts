@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { SmallNote } from './models/smallNote';
 import { environment } from 'src/environments/environment';
 import { FullNote } from './models/fullNote';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -23,6 +24,14 @@ export class ApiServiceNotes {
 
   getArchiveNotes() {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/archive');
+  }
+
+  changeColor(ids: string[], color: string) {
+    const obj = {
+      ids,
+      color
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/color`, obj);
   }
 
   get(id: string) {

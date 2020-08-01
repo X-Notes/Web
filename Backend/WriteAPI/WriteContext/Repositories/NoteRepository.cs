@@ -43,7 +43,13 @@ namespace WriteContext.Repositories
             }
         }
 
-        private async Task UpdateRangeNotes(List<Note> notes)
+        public async Task UpdateNote(Note note)
+        {
+            this.contextDB.Notes.Update(note);
+            await contextDB.SaveChangesAsync();
+        }
+
+        public async Task UpdateRangeNotes(List<Note> notes)
         {
             this.contextDB.Notes.UpdateRange(notes);
             await contextDB.SaveChangesAsync();

@@ -1,4 +1,5 @@
-﻿using Domain.Commands.notes;
+﻿using Common;
+using Domain.Commands.notes;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ using WriteContext.Repositories;
 namespace BI.services
 {
     public class NoteHandlerCommand : 
-        IRequestHandler<NewPrivateNoteCommand, string>
+        IRequestHandler<NewPrivateNoteCommand, string>,
+        IRequestHandler<ChangeColorNoteCommand, Unit>
     {
 
         private readonly UserRepository userRepository;
@@ -30,12 +32,27 @@ namespace BI.services
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
-                Order = 1
+                Order = 1,
+                Color = ColorPallete.Green
             };
 
             await this.noteRepository.Add(note);
 
             return note.Id.ToString("N");
+        }
+
+        public async Task<Unit> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if(notes.Any())
+            {
+                notes.ForEach(x => x.Color = request.Color);
+                await noteRepository.UpdateRangeNotes(notes);
+            }
+
+            return Unit.Value;
         }
     }
 }
