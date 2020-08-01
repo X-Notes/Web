@@ -56,7 +56,6 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   changeColorHandler(updateColor: UpdateColorNote[]) {
-    console.log(updateColor);
     for (const update of updateColor) {
       this.notes.find(x => x.id === update.id).color = update.color;
     }

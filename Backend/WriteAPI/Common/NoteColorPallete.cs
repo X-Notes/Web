@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Common
 {
-    public static class ColorPallete
+    public static class NoteColorPallete
     {
         public static string Grey { get; } = "#F8F8F8";
         public static string Red { get; } = "#FFEBEB";

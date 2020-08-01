@@ -10,7 +10,7 @@ import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
 import { patch, updateItem} from '@ngxs/store/operators';
-import { ColorPallete } from 'src/app/shared/enums/Colors';
+import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { stat } from 'fs';
 import { UpdateColorNote } from './updateColor';
@@ -177,7 +177,7 @@ export class NoteStore {
         const id = await this.api.new().toPromise();
         const notes = getState().privateNotes;
         patchState({
-            privateNotes: [{id, title: '', color: ColorPallete.Green } , ...notes],
+            privateNotes: [{id, title: '', color: NoteColorPallete.Green } , ...notes],
             countPrivate: getState().countPrivate + 1
         });
     }

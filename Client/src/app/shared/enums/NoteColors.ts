@@ -1,4 +1,4 @@
-export enum ColorPallete {
+export enum NoteColorPallete {
     Grey = '#F8F8F8',
     Red  = '#FFEBEB',
     Purple  = '#F7EBFF',

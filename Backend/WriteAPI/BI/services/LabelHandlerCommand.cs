@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common;
 using Domain.Commands.labels;
 using MediatR;
 using System;
@@ -61,6 +62,8 @@ namespace BI.services
             var label = mapper.Map<Label>(request);
             label.UserId = user.Id;
             label.Order = 1;
+            label.Color = LabelsColorPallete.Red;
+            label.Name = "";
 
             await labelRepository.NewLabel(label);
             return label.Id;

@@ -10,7 +10,7 @@ import { Select, Store } from '@ngxs/store';
 import { UnSelectAllNote, SelectAllNote, ChangeColorNote } from '../../notes/state/notes-actions';
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { ColorPallete } from 'src/app/shared/enums/Colors';
+import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 
 @Component({
   selector: 'app-header',
@@ -137,6 +137,6 @@ export class HeaderComponent implements OnInit {
 
   // UPPER MENU FUNCTION
   changeColor() {
-    this.store.dispatch(new ChangeColorNote(ColorPallete.BlueOne, this.noteType));
+    this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, this.noteType));
   }
 }

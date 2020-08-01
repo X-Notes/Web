@@ -13,12 +13,8 @@ export class ApiServiceLabels {
     return this.httpClient.get<Labels>(environment.writeAPI + '/api/label');
   }
 
-  new(name: string, color: string) {
-    const body = {
-      name,
-      color
-    };
-    return this.httpClient.post<number>(environment.writeAPI + '/api/label', body);
+  new() {
+    return this.httpClient.post<number>(environment.writeAPI + '/api/label', {});
   }
 
   setDeleted(id: number) {

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { RestoreLabel } from '../state/labels-actions';
+import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 
 @Component({
   selector: 'app-label',
@@ -14,6 +15,8 @@ import { RestoreLabel } from '../state/labels-actions';
 })
 export class LabelComponent implements OnInit, OnDestroy {
 
+  pallete = LabelsColor;
+
   @Input() label: Label;
   @Input() deleted: boolean;
   @Output() updateLabel = new EventEmitter<Label>();
@@ -21,7 +24,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   @Output() restoreLabel = new EventEmitter<number>();
 
   isUpdate = false;
-  color;
+
   nameChanged: Subject<string> = new Subject<string>();
 
   constructor(public pService: PersonalizationService,
@@ -33,14 +36,12 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.color = this.label.color;
     this.nameChanged.pipe(
       debounceTime(350),
       distinctUntilChanged())
       .subscribe(name => {
-        const lab = {...this.label};
-        lab.name = name;
-        this.updateLabel.emit(lab);
+        this.label = {...this.label, name};
+        this.updateLabel.emit(this.label);
       });
   }
 
@@ -69,16 +70,10 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   changeColor(value: string) {
-    const label: Label = {
-      id: this.label.id,
-      color: value,
-      name: this.label.name,
-      isDeleted: this.label.isDeleted
-    };
-    this.color = value;
+    this.label = {...this.label, color: value};
     this.isUpdate = false;
     this.timeout(this.isUpdate);
-    this.updateLabel.emit(label);
+    this.updateLabel.emit(this.label);
   }
 
   delete() {

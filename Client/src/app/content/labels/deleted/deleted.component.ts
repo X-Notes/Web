@@ -16,15 +16,14 @@ export class DeletedComponent implements OnInit {
   public labels: Label[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store,
-              private orderService: OrderService) { }
+              private store: Store) { }
 
   async ngOnInit() {
 
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsDeleted).pipe(take(1))
-    .subscribe(x => { this.labels = [...x]; setTimeout(() => this.initMurri()); });
+    .subscribe(x => { this.labels = x; setTimeout(() => this.initMurri()); });
   }
 
   initMurri() {

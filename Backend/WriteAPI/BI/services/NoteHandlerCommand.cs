@@ -33,7 +33,7 @@ namespace BI.services
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
                 Order = 1,
-                Color = ColorPallete.Green
+                Color = NoteColorPallete.Green
             };
 
             await this.noteRepository.Add(note);
