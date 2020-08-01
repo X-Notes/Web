@@ -29,7 +29,7 @@
 }
 
 .light {
-    .content-inner, .label-container {
+    .content-inner, .label-container, .notes-section {
         .simplebar-scrollbar::before {
             background-color: rgba(0,0,0, 0.3);
         }
