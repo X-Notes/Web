@@ -24,64 +24,99 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  .icon-cancel:before {
+  .icon-archive:before {
     content: "\e900";
-    color: #505050;
-  }
-  .icon-filter:before {
-    content: "\e901";
     color: #fff;
   }
-  .icon-folders .path1:before {
+  .icon-cancel:before {
+    content: "\e901";
+    color: #505050;
+  }
+  .icon-change-color:before {
     content: "\e902";
-    color: rgb(157, 157, 157);
+    color: #fff;
   }
-  .icon-folders .path2:before {
+  .icon-copy:before {
     content: "\e903";
-    margin-left: -0.8125em;
-    color: rgb(255, 255, 255);
+    color: #fff;
   }
-  .icon-label:before {
+  .icon-delete:before {
     content: "\e904";
     color: #fff;
   }
-  .icon-notes:before {
+  .icon-download:before {
     content: "\e905";
     color: #fff;
   }
-  .icon-notification:before {
+  .icon-filter:before {
     content: "\e906";
     color: #fff;
   }
-  .icon-people:before {
+  .icon-folders .path1:before {
     content: "\e907";
+    color: rgb(157, 157, 157);
+  }
+  .icon-folders .path2:before {
+    content: "\e908";
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
+  }
+  .icon-label:before {
+    content: "\e909";
+    color: #fff;
+  }
+  .icon-lock:before {
+    content: "\e90a";
+    color: #fff;
+  }
+  .icon-notes:before {
+    content: "\e90b";
+    color: #fff;
+  }
+  .icon-notification:before {
+    content: "\e90c";
+    color: #fff;
+  }
+  .icon-people:before {
+    content: "\e90d";
     color: #fff;
   }
   .icon-plus:before {
-    content: "\e908";
+    content: "\e90e";
   }
   .icon-question:before {
-    content: "\e909";
+    content: "\e90f";
     color: #616161;
   }
+  .icon-restore:before {
+    content: "\e910";
+    color: #505050;
+  }
   .icon-search:before {
-    content: "\e90a";
+    content: "\e911";
     color: #828282;
   }
   .icon-select:before {
-    content: "\e90b";
+    content: "\e912";
     color: #515151;
   }
   .icon-select-label:before {
-    content: "\e90c";
+    content: "\e913";
     color: #505050;
   }
-  .icon-theme_light:before {
-    content: "\e90d";
-    color: #616161;
-  }
-  .icon-view-change:before {
-    content: "\e90e";
+  .icon-shared:before {
+    content: "\e914";
     color: #fff;
   }
-  
+  .icon-theme_light:before {
+    content: "\e915";
+    color: #616161;
+  }
+  .icon-video:before {
+    content: "\e916";
+    color: #fff;
+  }
+  .icon-view-change:before {
+    content: "\e917";
+    color: #fff;
+  }

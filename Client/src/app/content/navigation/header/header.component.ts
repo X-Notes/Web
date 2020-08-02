@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
   newButtonActive = true;
   selectAllActive = true;
   settingsActive = true;
+  sectionAdd = true;
 
   constructor(public pService: PersonalizationService, private router: Router) { }
 
@@ -64,6 +65,7 @@ export class HeaderComponent implements OnInit {
         this.newButtonActive = true;
         this.selectAllActive = true;
         this.settingsActive = true;
+        this.sectionAdd = true;
         break;
       }
       case '/notes' : {
@@ -71,6 +73,7 @@ export class HeaderComponent implements OnInit {
         this.newButtonActive = true;
         this.selectAllActive = true;
         this.settingsActive = true;
+        this.sectionAdd = true;
         break;
       }
       case '/labels' : {
@@ -78,6 +81,7 @@ export class HeaderComponent implements OnInit {
         this.newButtonActive = true;
         this.selectAllActive = false;
         this.settingsActive = false;
+        this.sectionAdd = true;
         break;
       }
       case '/labels/deleted' : {
@@ -85,6 +89,16 @@ export class HeaderComponent implements OnInit {
         this.newButtonActive = false;
         this.selectAllActive = false;
         this.settingsActive = false;
+        this.sectionAdd = true;
+        break;
+      }
+
+      case '/profile' : {
+        break;
+      }
+
+      default : {
+        this.sectionAdd = false;
         break;
       }
     }

@@ -18,7 +18,7 @@
         </button>
     </div>
     <div class="management-section">
-        <div class="interactions">
+        <div class="interactions" *ngIf="sectionAdd">
             <div class="generic" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
