@@ -23,10 +23,12 @@ export class HeaderComponent implements OnInit {
   currentUrl: string;
 
 
-  newButtonActive = true;
+  newButtonActive = false;
   selectAllActive = true;
   settingsActive = true;
   sectionAdd = true;
+  selected = true;
+  search = false;
 
   constructor(public pService: PersonalizationService, private router: Router) { }
 
@@ -44,6 +46,18 @@ export class HeaderComponent implements OnInit {
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
+  cancelSelect() {
+    this.selected = false;
+    this.search = true;
+    this.newButtonActive = true;
+  }
+
+  allSelected() {
+    this.selected = true;
+    this.search = false;
+    this.newButtonActive = false;
   }
 
   toggleOrientation() {
@@ -70,7 +84,7 @@ export class HeaderComponent implements OnInit {
       }
       case '/notes' : {
         this.currentUrl = 'note';
-        this.newButtonActive = true;
+        this.newButtonActive = false;
         this.selectAllActive = true;
         this.settingsActive = true;
         this.sectionAdd = true;

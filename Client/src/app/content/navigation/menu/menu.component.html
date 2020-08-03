@@ -1,0 +1,58 @@
+<div class="wrap" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+    <div class="icon" #label>
+        <div class="inner">
+            <i class="icon-label"></i>
+            <p>Label</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
+        </div>
+    </div>
+    <div class="icon" #shared>
+        <div class="inner">
+            <i class="icon-shared"></i>
+            <p>Shared</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
+        </div>
+    </div>
+    <div class="icon" #copy>
+        <div class="inner">
+            <i class="icon-copy"></i>
+            <p>Copy</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
+        </div>
+    </div>
+    <div class="icon" #color>
+        <div class="inner">
+            <i class="icon-change-color"></i>
+            <p>Colors</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
+        </div>
+    </div>
+    <div class="icon" #download>
+        <div class="inner">
+            <i class="icon-download"></i>
+            <p>Download</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="download"></div>
+        </div>
+    </div>
+    <div class="icon" #lock>
+        <div class="inner">
+            <i class="icon-lock"></i>
+            <p>Lock</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="lock"></div>
+        </div>
+    </div>
+    <div class="icon" #archive>
+        <div class="inner">
+            <i class="icon-archive"></i>
+            <p>Archive</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="archive"></div>
+        </div>
+    </div>
+    <div class="icon" #delete>
+        <div class="inner">
+            <i class="icon-delete"></i>
+            <p>Delete</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="delete"></div>
+        </div>
+    </div>
+</div>

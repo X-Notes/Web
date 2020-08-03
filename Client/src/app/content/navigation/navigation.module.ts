@@ -4,10 +4,11 @@ import { SideBarComponent } from './side-bar/side-bar.component';
 import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MenuComponent } from './menu/menu.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent],
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent],
   imports: [
     CommonModule,
     RouterModule,

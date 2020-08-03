@@ -29,22 +29,32 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button *ngIf="selectAllActive" name="Select" type="button" class="generic filters" #select>
+            <button *ngIf="selected" name="Selected" type="button" (click)="cancelSelect()" class="generic filters selected" [ngClass]="selected ? 'select-all' : ''" #selectedAll>
+                <div class="inner-content" >
+                    <p>Selected 3</p>
+                    <i class="icon-plus"></i>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
+            </button>
+            <button *ngIf="selectAllActive" name="Select" type="button" (click)="allSelected()" class="generic filters" [ngClass]="selected ? 'select-all' : ''" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="settingsActive" name="Filter" type="button" class="generic filters" #filter>
+            <button *ngIf="settingsActive" name="Filter" type="button" class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
             </button>
         </div>
-        <div class="interactions">
-            <div class="search">
+        <div class="interactions menu" *ngIf="selected">
+            <app-menu class="menu-inner"></app-menu>
+        </div>
+        <div class="interactions left" [ngClass]="selected ? 'help-func' : ''">
+            <div class="search" *ngIf="search">
                 <input type="search" placeholder="Search..." aria-label="Search search search">
                 <button type="button">
                     <div class="icon">
@@ -52,20 +62,20 @@
                     </div>
                 </button>
             </div>
-            <div class="auxiliary-icon" (click)="toggleTheme()" #themeApp>
+            <div class="auxiliary-icon" *ngIf="pService.helpIcons" (click)="toggleTheme()" #themeApp>
                 <i class="icon-theme_light"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
             </div>
-            <div class="auxiliary-icon" #question>
+            <div class="auxiliary-icon" *ngIf="pService.helpIcons" #question>
                 <i class="icon-question"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
             </div>
-            <div class="auxiliary-icon" #notificationHeader>
+            <div class="auxiliary-icon" *ngIf="!pService.helpIcons" #notificationHeader>
                 <i class="icon-notification"></i>
                 <div class="push">1</div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
             </div>
-            <div class="auxiliary-icon" (click)="toggleOrientation()" #orientationNote>
+            <div class="auxiliary-icon" *ngIf="!pService.helpIcons" (click)="toggleOrientation()" #orientationNote>
                 <i class="icon-view-change"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
             </div>

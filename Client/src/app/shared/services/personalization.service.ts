@@ -50,15 +50,18 @@ export class PersonalizationService {
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
   grid;
+  helpIcons = true;
 
   onResize(): void {
     if (this.check()) {
       if (this.stateSidebar === false) {
-      this.stateSidebar = true;
+        this.stateSidebar = true;
+        this.helpIcons = true;
       }
     } else {
       if (this.stateSidebar === true) {
-        this.stateSidebar = false;
+          this.stateSidebar = false;
+          this.helpIcons = false;
       }
     }
   }
