@@ -32,13 +32,9 @@ export class DeletedComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.deleteParmanentlyEvent)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.delete(x));
-
-    this.store.select(x => x.Notes.restoreNotesEvent)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.delete(x));
+    this.store.select(x => x.Notes.removeFromMurriEvent)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.delete(x));
   }
 
   initMurri() {

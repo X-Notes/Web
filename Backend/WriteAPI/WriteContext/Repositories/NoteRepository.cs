@@ -92,28 +92,23 @@ namespace WriteContext.Repositories
             {
                 try
                 {
-                    switch (noteType)
-                    {
-                        case NotesType.Private:
-                            {
-                                // Update table with deleted 
-                                var deletedNotes = allUserNotes.Where(x => x.NoteType == NotesType.Deleted).ToList();
-                                deletedNotes.ForEach(x => x.Order = x.Order + noteForDeleting.Count());
-                                await UpdateRangeNotes(deletedNotes);
 
-                                // Deleting notes
-                                noteForDeleting.ForEach(x => x.NoteType = NotesType.Deleted);
-                                ChangeOrderHelper(noteForDeleting);
-                                await UpdateRangeNotes(noteForDeleting);
+                    // Update table with deleted 
+                    var deletedNotes = allUserNotes.Where(x => x.NoteType == NotesType.Deleted).ToList();
+                    deletedNotes.ForEach(x => x.Order = x.Order + noteForDeleting.Count());
+                    await UpdateRangeNotes(deletedNotes);
 
-                                // Update private
-                                var privateNotes = allUserNotes.Where(x => x.NoteType == NotesType.Private).OrderBy(x => x.Order).ToList();
-                                ChangeOrderHelper(privateNotes);
-                                await UpdateRangeNotes(privateNotes);
+                    // Deleting notes
+                    noteForDeleting.ForEach(x => x.NoteType = NotesType.Deleted);
+                    ChangeOrderHelper(noteForDeleting);
+                    await UpdateRangeNotes(noteForDeleting);
 
-                                break;
-                            }
-                    }
+                    // Update private
+                    var privateNotes = allUserNotes.Where(x => x.NoteType == noteType).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(privateNotes);
+                    await UpdateRangeNotes(privateNotes);
+
+
                     transaction.Commit();
                 }
                 catch (Exception e)
@@ -181,6 +176,35 @@ namespace WriteContext.Repositories
             }
         }
 
+        public async Task ArchiveNotes(List<Note> notesForArchive, List<Note> allUserNotes, NotesType noteType)
+        {
+            using (var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Update archive notes
+                    var archiveNotes = allUserNotes.Where(x => x.NoteType == NotesType.Archive).ToList();
+                    archiveNotes.ForEach(x => x.Order = x.Order + notesForArchive.Count());
+                    await UpdateRangeNotes(archiveNotes);
+
+                    // Archive notes
+                    notesForArchive.ForEach(x => x.NoteType = NotesType.Archive);
+                    ChangeOrderHelper(notesForArchive);
+                    await UpdateRangeNotes(notesForArchive);
+
+                    // Update order for old notes
+                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteType).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(oldNotes);
+                    await UpdateRangeNotes(oldNotes);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+        }
 
         private void ChangeOrderHelper(List<Note> notes)
         {

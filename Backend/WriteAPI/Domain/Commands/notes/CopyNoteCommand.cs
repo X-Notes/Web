@@ -6,5 +6,6 @@ namespace Domain.Commands.notes
 {
     public class CopyNoteCommand
     {
+
     }
 }

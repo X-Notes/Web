@@ -18,7 +18,8 @@ namespace BI.services
         IRequestHandler<ChangeColorNoteCommand, Unit>,
         IRequestHandler<SetDeleteNoteCommand, Unit>,
         IRequestHandler<DeleteNotesCommand, Unit>,
-        IRequestHandler<RestoreNoteCommand, Unit>
+        IRequestHandler<RestoreNoteCommand, Unit>,
+        IRequestHandler<ArchiveNoteCommand, Unit>
     {
 
         private readonly UserRepository userRepository;
@@ -56,6 +57,10 @@ namespace BI.services
                 notes.ForEach(x => x.Color = request.Color);
                 await noteRepository.UpdateRangeNotes(notes);
             }
+            else
+            {
+                throw new Exception();
+            }
 
             return Unit.Value;
         }
@@ -65,9 +70,13 @@ namespace BI.services
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
-            if(notes.Any())
+            if(notes.Count == request.Ids.Count)
             {
                 await noteRepository.SetDeletedNotes(notes, user.Notes, request.NoteType);
+            }
+            else
+            {
+                throw new Exception();
             }
 
             return Unit.Value;
@@ -79,9 +88,13 @@ namespace BI.services
             var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
             var selectdeletenotes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
-            if (selectdeletenotes.Any())
+            if (selectdeletenotes.Count == request.Ids.Count)
             {
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
+            }
+            else
+            {
+                throw new Exception();
             }
 
             return Unit.Value;
@@ -93,9 +106,30 @@ namespace BI.services
             var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
             var notesForRestore = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
-            if (notesForRestore.Any())
+            if (notesForRestore.Count == request.Ids.Count)
             {
                 await noteRepository.RestoreRange(notesForRestore, user.Notes);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (notes.Count == request.Ids.Count)
+            {
+                await noteRepository.ArchiveNotes(notes, user.Notes, request.NoteType);
+            }
+            else
+            {
+                throw new Exception();
             }
 
             return Unit.Value;

@@ -68,19 +68,31 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpGet("copy/{id}")]
+        [HttpGet("copy")]
         public async Task CopyNote(string id)
         {
 
         }
 
+        [HttpPatch("archive")]
+        public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
 
-        [HttpGet("archive/{id}")]
-        public async Task ArchiveNote(string id)
+        [HttpGet("ref/public")]
+        public async Task MakePublic(string id)
         {
 
         }
 
+        [HttpGet("ref/private")]
+        public async Task MakePrivate(string id)
+        {
+
+        }
 
         // GET Entities
         [HttpGet("private")]

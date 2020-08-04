@@ -5,15 +5,12 @@ import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
 import { LoadPrivateNotes , AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
-    UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes,
-    SetDeleteNotesClear, DeleteNotesPermanently, DeleteNotesPermanentlyClear, RestoreNotes, RestoreNotesClear} from './notes-actions';
+    UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes
+    , DeleteNotesPermanently, RestoreNotes, ArchiveNotes, RemoveFromDomMurri} from './notes-actions';
 import { tap } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
-import { type } from 'os';
 import { patch, updateItem} from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { stat } from 'fs';
 import { UpdateColorNote } from './updateColor';
 
 
@@ -33,9 +30,7 @@ interface NoteState {
     countArchive: number;
     selectedIds: string[];
     updateColorEvent: UpdateColorNote[];
-    setdeleteNotesEvent: SmallNote[];
-    deleteParmanentlyEvent: string[];
-    restoreNotesEvent: string[];
+    removeFromMurriEvent: string[];
 }
 
 @State<NoteState>({
@@ -56,9 +51,7 @@ interface NoteState {
         countShared: 0,
         selectedIds: [],
         updateColorEvent: [],
-        setdeleteNotesEvent: [],
-        deleteParmanentlyEvent: [],
-        restoreNotesEvent: []
+        removeFromMurriEvent: [],
     }
 })
 
@@ -68,19 +61,13 @@ export class NoteStore {
     constructor(private api: ApiServiceNotes) {
     }
 
-
     @Selector()
-    static deleteParmanently(state: NoteState): string[] {
-        return state.deleteParmanentlyEvent;
+    static removeFromMurriEvent(state: NoteState): string[] {
+        return state.removeFromMurriEvent;
     }
 
     @Selector()
-    static setdeleteNotesEvent(state: NoteState): SmallNote[] {
-        return state.setdeleteNotesEvent;
-    }
-
-    @Selector()
-    static updateColor(state: NoteState): UpdateColorNote[] {
+    static updateColorEvent(state: NoteState): UpdateColorNote[] {
         return state.updateColorEvent;
     }
 
@@ -258,6 +245,9 @@ export class NoteStore {
     }
 
     // FUNCTION UPPER MENU
+
+
+    // Color change
     @Action(ChangeColorNote)
     async changeColor({patchState, getState, dispatch}: StateContext<NoteState>, {color, typeNote}: ChangeColorNote) {
 
@@ -307,7 +297,7 @@ export class NoteStore {
     }
 
 
-
+    // Set deleting
     @Action(SetDeleteNotes)
     async deleteNotes({getState, dispatch, patchState}: StateContext<NoteState>, {typeNote}: SetDeleteNotes) {
         const selectedIds = getState().selectedIds;
@@ -316,7 +306,15 @@ export class NoteStore {
         let notes;
         switch (typeNote) {
             case NoteType.Archive : {
-                notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id));
+                notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const deletedNotes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    archiveNotes: notes,
+                    deletedNotes: [...deletedNotes , ...getState().deletedNotes],
+                    countArchive: notes.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds]
+                });
                 break;
             }
             case NoteType.Private : {
@@ -327,46 +325,39 @@ export class NoteStore {
                     deletedNotes: [...deletedNotes , ...getState().deletedNotes],
                     countPrivate: notes.length,
                     countDeleted: getState().countDeleted + selectedIds.length,
-                    setdeleteNotesEvent: [...deletedNotes]
+                    removeFromMurriEvent: [...selectedIds]
                 });
                 break;
             }
-            case NoteType.Deleted : {
-                notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id));
-                break;
-            }
             case NoteType.Shared : {
-                notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id));
+                notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const deletedNotes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    sharedNotes: notes,
+                    deletedNotes: [...deletedNotes , ...getState().deletedNotes],
+                    countShared: notes.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds]
+                });
                 break;
             }
         }
-
-        dispatch([UnSelectAllNote]);
+        dispatch([UnSelectAllNote, RemoveFromDomMurri]);
     }
 
-    @Action(SetDeleteNotesClear)
-    setDeleteNotesClear({patchState}: StateContext<NoteState>) {
-        patchState({setdeleteNotesEvent: []});
-    }
-
+    // Deleting
     @Action(DeleteNotesPermanently)
     async deleteNotesPermanently({getState, dispatch, patchState}: StateContext<NoteState>) {
         const selectedIds = getState().selectedIds;
         await this.api.deleteNotes(selectedIds).toPromise();
         patchState({
-            deleteParmanentlyEvent: [...selectedIds],
+            removeFromMurriEvent: [...selectedIds],
             countDeleted: getState().countDeleted - selectedIds.length
         });
-        dispatch([UnSelectAllNote, DeleteNotesPermanentlyClear]);
+        dispatch([UnSelectAllNote, RemoveFromDomMurri]);
     }
 
-    @Action(DeleteNotesPermanentlyClear)
-    clearDeleteNotesPermanentlyClear({getState, dispatch, patchState}: StateContext<NoteState>) {
-        patchState({
-            deleteParmanentlyEvent: [],
-        });
-    }
-
+    // Restoring
     @Action(RestoreNotes)
     async restoreNotes({getState, patchState, dispatch}: StateContext<NoteState>) {
         const selectedIds = getState().selectedIds;
@@ -378,15 +369,64 @@ export class NoteStore {
             countDeleted: deletednotes.length,
             countPrivate: getState().countPrivate + addToPrivatenotes.length,
             privateNotes: [...addToPrivatenotes, ...getState().privateNotes],
-            restoreNotesEvent: [...selectedIds]
+            removeFromMurriEvent: [...selectedIds]
         });
-        dispatch([UnSelectAllNote, RestoreNotesClear]);
+        dispatch([UnSelectAllNote, RemoveFromDomMurri]);
     }
 
-    @Action(RestoreNotesClear)
-    restoreNotesClear({getState, dispatch, patchState}: StateContext<NoteState>) {
+    // Archive
+    @Action(ArchiveNotes)
+    async archiveNotes({getState, patchState, dispatch}: StateContext<NoteState>, {typeNote}: ArchiveNotes) {
+        const selectedIds = getState().selectedIds;
+        await this.api.archiveNotes(selectedIds, typeNote).toPromise();
+
+        switch (typeNote) {
+            case NoteType.Deleted: {
+                const notesDeleted = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const notesAdded = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countDeleted: getState().countDeleted - selectedIds.length,
+                    countArchive: getState().countArchive + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    deletedNotes: [...notesDeleted],
+                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
+                });
+                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                break;
+            }
+            case NoteType.Private: {
+                const notesPrivate = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const notesAdded = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countPrivate: getState().countPrivate - selectedIds.length,
+                    countArchive: getState().countArchive + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    privateNotes: [...notesPrivate],
+                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
+                });
+                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                break;
+            }
+            case NoteType.Shared: {
+                const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const notesAdded = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countShared: getState().countShared - selectedIds.length,
+                    countArchive: getState().countArchive + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    sharedNotes: [...notesShared],
+                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
+                });
+                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                break;
+            }
+        }
+    }
+
+    @Action(RemoveFromDomMurri)
+    removeFromDomMurri({patchState}: StateContext<NoteState>) {
         patchState({
-            restoreNotesEvent: [],
+            removeFromMurriEvent: [],
         });
     }
 

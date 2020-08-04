@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote, SetDeleteNotesClear } from '../state/notes-actions';
+import { LoadPrivateNotes, UnSelectAllNote } from '../state/notes-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -40,9 +40,9 @@ export class PrivatesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.setdeleteNotesEvent)
+    this.store.select(x => x.Notes.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.setDeleteNotes(x));
+      .subscribe(x => this.delete(x));
   }
 
   initMurri() {
@@ -65,20 +65,10 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     }
   }
 
-  setDeleteNotes(notes: SmallNote[]) {
-    if (notes.length !== 0) {
-      this.notes = this.notes.filter(x => this.customFilterPredicate(notes.map(z => z.id), x));
+  delete(ids: string[]) {
+    if (ids.length > 0) {
+      this.notes = this.notes.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
       setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
-      this.store.dispatch(new SetDeleteNotesClear());
     }
-  }
-
-  customFilterPredicate(ids: string[], note: SmallNote) {
-    for (const id of ids) {
-      if (id === note.id) {
-        return false;
-      }
-    }
-    return true;
   }
 }

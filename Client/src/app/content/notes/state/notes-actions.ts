@@ -56,39 +56,37 @@ export class ClearColorNotes {
     constructor() {    }
 }
 
-// Deleting
+// Set Deleting
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
     constructor(public typeNote: NoteType) {
     }
 }
 
-export class SetDeleteNotesClear {
-    static type = '[Notes] SetDelete notes clear';
-    constructor() {
-    }
-}
-
+// Deleting
 export class DeleteNotesPermanently {
     static type = '[Notes] Delete notes';
     constructor() {
     }
 }
 
-export class DeleteNotesPermanentlyClear {
-    static type = '[Notes] ClearDelete notes';
-    constructor() {
-    }
-}
-
-
+// Restoring
 export class RestoreNotes {
     static type = '[Notes] Restore notes';
     constructor() {
     }
 }
-export class RestoreNotesClear {
-    static type = '[Notes] ClearRestore notes';
+
+// Archive
+export class ArchiveNotes {
+    static type = '[Notes] Archive notes';
+    constructor(public typeNote: NoteType) {
+    }
+}
+
+// Muuri remove from dom
+export class RemoveFromDomMurri {
+    static type = '[Notes] MurriRemove notes';
     constructor() {
     }
 }

@@ -1,1 +1,5 @@
-<p>archive works!</p>
+<div class="grid">
+    <div class="grid-item" id="{{item.id}}" *ngFor="let item of notes" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+        <app-note [note]="item" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
+    </div>
+</div>
