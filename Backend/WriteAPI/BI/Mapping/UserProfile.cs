@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models;
 using Common.DTO.users;
 using Domain.Commands.users;
-using WriteContext.models;
 
 namespace BI.Mapping
 {
