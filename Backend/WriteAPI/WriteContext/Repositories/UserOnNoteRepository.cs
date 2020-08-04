@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using WriteContext.models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System;
+using Common.DatabaseModels.models;
 
 namespace WriteContext.Repositories
 {

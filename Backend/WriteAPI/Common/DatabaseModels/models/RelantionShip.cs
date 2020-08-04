@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common.DatabaseModels.helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
-using WriteContext.helpers;
 
-namespace WriteContext.models
+namespace Common.DatabaseModels.models
 {
     public class RelantionShip
     {

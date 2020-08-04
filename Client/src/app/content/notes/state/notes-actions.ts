@@ -44,6 +44,8 @@ export class UpdateSmallNote {
 
 
 // UPPER MENU FUNCTIONS
+
+// Color changing
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
     constructor(public color: string, public typeNote: NoteType) {    }
@@ -54,6 +56,30 @@ export class ClearColorNotes {
     constructor() {    }
 }
 
+// Deleting
+export class SetDeleteNotes {
+    static type = '[Notes] SetDelete notes';
+    constructor(public typeNote: NoteType) {
+    }
+}
+
+export class SetDeleteNotesClear {
+    static type = '[Notes] SetDelete notes clear';
+    constructor() {
+    }
+}
+
+export class DeleteNotesPermanently {
+    static type = '[Notes] Delete notes';
+    constructor() {
+    }
+}
+
+export class DeleteNotesPermanentlyClear {
+    static type = '[Notes] ClearDelete notes';
+    constructor() {
+    }
+}
 
 // SELECTION
 export class SelectIdNote {

@@ -36,12 +36,37 @@ namespace WriteAPI.Controllers
 
         // Commands
         [HttpPatch("color")]
-        public async Task ChangeColor([FromBody]ChangeColorNoteCommand model)
+        public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
-            model.Email = email;
-            await this._mediator.Send(model);
+            command.Email = email;
+            await this._mediator.Send(command);
         }
+
+        [HttpPatch("delete")]
+        public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPatch("delete/permanently")]
+        public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPatch("restore")]
+        public async Task RestoreNotes([FromBody]RestoreNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
 
         [HttpGet("copy/{id}")]
         public async Task CopyNote(string id)
@@ -49,11 +74,6 @@ namespace WriteAPI.Controllers
 
         }
 
-        [HttpGet("delete/{id}")]
-        public async Task DeleteNote(string id)
-        {
-
-        }
 
         [HttpGet("archive/{id}")]
         public async Task ArchiveNote(string id)
@@ -61,11 +81,6 @@ namespace WriteAPI.Controllers
 
         }
 
-        [HttpGet("restore/{id}")]
-        public async Task RestoreNote(string id)
-        {
-
-        }
 
         // GET Entities
         [HttpGet("private")]

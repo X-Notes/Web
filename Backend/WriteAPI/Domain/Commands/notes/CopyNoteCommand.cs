@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WriteContext.helpers
+namespace Domain.Commands.notes
 {
-    public enum Theme
+    public class CopyNoteCommand
     {
-        Light,
-        Dark
     }
 }

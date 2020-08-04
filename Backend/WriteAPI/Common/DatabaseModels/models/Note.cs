@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Common.DatabaseModels.helpers;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using WriteContext.helpers;
 
-namespace WriteContext.models
+namespace Common.DatabaseModels.models
 {
     public class Note
     {
         public Guid Id { get; set; }
 
-        public NoteStatus AccessStatus { set; get; }
+        public NotesType NoteType { set; get; }
 
         public string Title { set; get; }
         public string Color { set; get; }
@@ -17,9 +17,6 @@ namespace WriteContext.models
 
         public int UserId { set; get; }
         public User User { set; get; }
-
-        public bool IsDeleted { set; get; }
-        public bool IsArchive { set; get; }
 
         public List<UserOnNote> UserOnNotes { set; get; }
     }

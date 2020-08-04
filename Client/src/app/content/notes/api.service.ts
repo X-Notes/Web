@@ -4,6 +4,7 @@ import { SmallNote } from './models/smallNote';
 import { environment } from 'src/environments/environment';
 import { FullNote } from './models/fullNote';
 import { map } from 'rxjs/operators';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -33,6 +34,22 @@ export class ApiServiceNotes {
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/color`, obj);
   }
+
+  setDeleteNotes(ids: string[], noteType: NoteType) {
+    const obj = {
+      ids,
+      noteType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
+  }
+
+  deleteNotes(ids: string[]) {
+    const obj = {
+      ids,
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/delete/permanently`, obj);
+  }
+
 
   get(id: string) {
     return this.httpClient.get<FullNote>(environment.writeAPI + `/api/note/${id}`);

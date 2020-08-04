@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WriteContext.models;
+﻿using Common.DatabaseModels.models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WriteContext
 {

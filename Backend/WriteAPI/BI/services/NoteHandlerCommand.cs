@@ -1,4 +1,6 @@
 ﻿using Common;
+using Common.DatabaseModels.helpers;
+using Common.DatabaseModels.models;
 using Domain.Commands.notes;
 using MediatR;
 using System;
@@ -7,14 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.models;
 using WriteContext.Repositories;
 
 namespace BI.services
 {
     public class NoteHandlerCommand : 
         IRequestHandler<NewPrivateNoteCommand, string>,
-        IRequestHandler<ChangeColorNoteCommand, Unit>
+        IRequestHandler<ChangeColorNoteCommand, Unit>,
+        IRequestHandler<SetDeleteNoteCommand, Unit>,
+        IRequestHandler<DeleteNotesCommand, Unit>,
+        IRequestHandler<RestoreNoteCommand, Unit>
     {
 
         private readonly UserRepository userRepository;
@@ -33,7 +37,8 @@ namespace BI.services
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
                 Order = 1,
-                Color = NoteColorPallete.Green
+                Color = NoteColorPallete.Green,
+                NoteType = NotesType.Private
             };
 
             await this.noteRepository.Add(note);
@@ -50,6 +55,46 @@ namespace BI.services
             {
                 notes.ForEach(x => x.Color = request.Color);
                 await noteRepository.UpdateRangeNotes(notes);
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if(notes.Any())
+            {
+                await noteRepository.SetDeletedNotes(notes, user.Notes, request.NoteType);
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
+            var selectdeletenotes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (selectdeletenotes.Any())
+            {
+                await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RestoreNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notesForRestore = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (notesForRestore.Any())
+            {
+                await noteRepository.RestoreRange(notesForRestore, user.Notes);
             }
 
             return Unit.Value;

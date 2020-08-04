@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote, ChangeColorNote } from '../../notes/state/notes-actions';
+import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes, DeleteNotesPermanently } from '../../notes/state/notes-actions';
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -139,4 +139,13 @@ export class HeaderComponent implements OnInit {
   changeColor() {
     this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, this.noteType));
   }
+
+  setdeleteNotes() {
+    this.store.dispatch(new SetDeleteNotes(this.noteType));
+  }
+
+  deleteNotes() {
+    this.store.dispatch(new DeleteNotesPermanently());
+  }
+
 }

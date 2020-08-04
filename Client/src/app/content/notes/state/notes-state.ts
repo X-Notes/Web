@@ -5,7 +5,8 @@ import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api.service';
 import { LoadPrivateNotes , AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
-    UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes} from './notes-actions';
+    UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes,
+    SetDeleteNotesClear, DeleteNotesPermanently, DeleteNotesPermanentlyClear} from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
@@ -32,6 +33,8 @@ interface NoteState {
     countArchive: number;
     selectedIds: string[];
     updateColor: UpdateColorNote[];
+    setdeleteNotesEvent: SmallNote[];
+    deleteParmanently: string[];
 }
 
 @State<NoteState>({
@@ -51,7 +54,9 @@ interface NoteState {
         countDeleted: 0,
         countShared: 0,
         selectedIds: [],
-        updateColor: []
+        updateColor: [],
+        setdeleteNotesEvent: [],
+        deleteParmanently: []
     }
 })
 
@@ -61,6 +66,16 @@ export class NoteStore {
     constructor(private api: ApiServiceNotes) {
     }
 
+
+    @Selector()
+    static deleteParmanently(state: NoteState): string[] {
+        return state.deleteParmanently;
+    }
+
+    @Selector()
+    static setdeleteNotesEvent(state: NoteState): SmallNote[] {
+        return state.setdeleteNotesEvent;
+    }
 
     @Selector()
     static updateColor(state: NoteState): UpdateColorNote[] {
@@ -289,6 +304,66 @@ export class NoteStore {
         patchState({updateColor: []});
     }
 
+
+
+    @Action(SetDeleteNotes)
+    async deleteNotes({getState, dispatch, patchState}: StateContext<NoteState>, {typeNote}: SetDeleteNotes) {
+        const selectedIds = getState().selectedIds;
+        await this.api.setDeleteNotes(selectedIds, typeNote).toPromise();
+
+        let notes;
+        switch (typeNote) {
+            case NoteType.Archive : {
+                notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id));
+                break;
+            }
+            case NoteType.Private : {
+                notes = getState().privateNotes.filter(x => selectedIds.some(z => selectedIds.indexOf(x.id) !== -1 ? false : true));
+                const deletedNotes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    privateNotes: notes,
+                    deletedNotes: [...deletedNotes , ...getState().deletedNotes],
+                    countPrivate: notes.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    setdeleteNotesEvent: [...deletedNotes]
+                });
+                break;
+            }
+            case NoteType.Deleted : {
+                notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id));
+                break;
+            }
+            case NoteType.Shared : {
+                notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id));
+                break;
+            }
+        }
+
+        dispatch([UnSelectAllNote]);
+    }
+
+    @Action(SetDeleteNotesClear)
+    setDeleteNotesClear({patchState}: StateContext<NoteState>) {
+        patchState({setdeleteNotesEvent: []});
+    }
+
+    @Action(DeleteNotesPermanently)
+    async deleteNotesPermanently({getState, dispatch, patchState}: StateContext<NoteState>) {
+        const selectedIds = getState().selectedIds;
+        await this.api.deleteNotes(selectedIds).toPromise();
+        patchState({
+            deleteParmanently: [...selectedIds],
+            countDeleted: getState().countDeleted - selectedIds.length
+        });
+        dispatch([UnSelectAllNote, DeleteNotesPermanentlyClear]);
+    }
+
+    @Action(DeleteNotesPermanentlyClear)
+    clearDeleteNotesPermanentlyClear({getState, dispatch, patchState}: StateContext<NoteState>) {
+        patchState({
+            deleteParmanently: [],
+        });
+    }
 
     // NOTES SELECTION
     @Action(SelectIdNote)

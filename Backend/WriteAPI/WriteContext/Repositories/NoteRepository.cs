@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.DatabaseModels.helpers;
+using Common.DatabaseModels.models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WriteContext.helpers;
-using WriteContext.models;
 
 namespace WriteContext.Repositories
 {
@@ -63,25 +63,121 @@ namespace WriteContext.Repositories
         public async Task<List<Note>> GetPrivateNotesByUserId(int userId)
         {
             return await contextDB.Notes
-                .Where(x => x.UserId == userId && x.IsArchive == false && x.IsDeleted == false && x.AccessStatus == NoteStatus.Private).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteType == NotesType.Private).ToListAsync();
         }
 
         public async Task<List<Note>> GetSharedNotesByUserId(int userId)
         {
             return await contextDB.Notes
-                .Where(x => x.UserId == userId && x.IsArchive == false && x.IsDeleted == false && x.AccessStatus == NoteStatus.Public).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteType == NotesType.Shared).ToListAsync();
         }
 
         public async Task<List<Note>> GetArchiveNotesByUserId(int userId)
         {
             return await contextDB.Notes
-                .Where(x => x.UserId == userId && x.IsArchive == true && x.IsDeleted == false && x.AccessStatus == NoteStatus.Private).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteType == NotesType.Archive).ToListAsync();
         }
 
         public async Task<List<Note>> GetDeletedNotesByUserId(int userId)
         {
             return await contextDB.Notes
-                .Where(x => x.UserId == userId && x.IsArchive == false && x.IsDeleted == true && x.AccessStatus == NoteStatus.Private).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteType == NotesType.Deleted).ToListAsync();
+        }
+
+        // UPPER MENU FUNCTIONS
+
+        public async Task SetDeletedNotes(List<Note> noteForDeleting, List<Note> allUserNotes, NotesType noteType)
+        {
+            using (var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                    switch (noteType)
+                    {
+                        case NotesType.Private:
+                            {
+                                // Update table with deleted 
+                                var deletedNotes = allUserNotes.Where(x => x.NoteType == NotesType.Deleted).ToList();
+                                deletedNotes.ForEach(x => x.Order = x.Order + noteForDeleting.Count());
+                                await UpdateRangeNotes(deletedNotes);
+
+                                // Deleting notes
+                                noteForDeleting.ForEach(x => x.NoteType = NotesType.Deleted);
+                                ChangeOrderHelper(noteForDeleting);
+                                await UpdateRangeNotes(noteForDeleting);
+
+                                // Update private
+                                var privateNotes = allUserNotes.Where(x => x.NoteType == NotesType.Private).OrderBy(x => x.Order).ToList();
+                                ChangeOrderHelper(privateNotes);
+                                await UpdateRangeNotes(privateNotes);
+
+                                break;
+                            }
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+
+                    transaction.Rollback();
+                }
+            }
+        }
+
+        public async Task RestoreRange(List<Note> notesForRestore, List<Note> allNotes)
+        {
+            using (var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                    notesForRestore.ForEach(x => x.NoteType = NotesType.Private);
+                    await UpdateRangeNotes(notesForRestore);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+        }
+
+        public async Task DeleteRangeDeleted(List<Note> selectdeletenotes, List<Note> deletednotes)
+        {
+            using (var transaction = contextDB.Database.BeginTransaction())
+            {
+                try
+                {
+                    this.contextDB.Notes.RemoveRange(selectdeletenotes);
+                    await contextDB.SaveChangesAsync();
+
+                    foreach (var item in selectdeletenotes)
+                    {
+                        deletednotes.Remove(item);
+                    }
+
+                    deletednotes = deletednotes.OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(deletednotes);
+                    await UpdateRangeNotes(deletednotes);
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+        }
+
+
+        private void ChangeOrderHelper(List<Note> notes)
+        {
+            int order = 1;
+            foreach (var item in notes)
+            {
+                item.Order = order;
+                order++;
+            }
         }
     }
 }

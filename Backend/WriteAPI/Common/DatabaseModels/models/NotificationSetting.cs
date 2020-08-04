@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WriteContext.models
+namespace Common.DatabaseModels.models
 {
-    public class UserOnNote
+    public class NotificationSetting
     {
+        public int Id { set; get; }
         public int UserId { set; get; }
         public User User { set; get; }
-
-        public Guid NoteId { set; get; }
-        public Note Note { set; get; }
     }
 }

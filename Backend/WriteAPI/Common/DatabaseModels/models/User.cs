@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using WriteContext.helpers;
+﻿using Common.DatabaseModels.helpers;
+using System.Collections.Generic;
 
-namespace WriteContext.models
+namespace Common.DatabaseModels.models
 {
     public class User
     {
