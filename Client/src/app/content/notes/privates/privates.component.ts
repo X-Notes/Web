@@ -36,7 +36,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.select(x => x.Notes.privateNotes).pipe(take(1))
       .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
 
-    this.store.select(x => x.Notes.updateColor)
+    this.store.select(x => x.Notes.updateColorEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.changeColorHandler(x));
 

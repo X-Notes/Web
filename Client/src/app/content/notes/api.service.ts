@@ -50,6 +50,13 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete/permanently`, obj);
   }
 
+  restoreNotes(ids: string[]) {
+    const obj = {
+      ids,
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/restore`, obj);
+  }
+
 
   get(id: string) {
     return this.httpClient.get<FullNote>(environment.writeAPI + `/api/note/${id}`);

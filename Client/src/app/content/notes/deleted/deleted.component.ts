@@ -28,11 +28,15 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.select(x => x.Notes.deletedNotes).pipe(take(1))
     .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });
 
-    this.store.select(x => x.Notes.updateColor)
+    this.store.select(x => x.Notes.updateColorEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.deleteParmanently)
+    this.store.select(x => x.Notes.deleteParmanentlyEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.delete(x));
+
+    this.store.select(x => x.Notes.restoreNotesEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.delete(x));
   }

@@ -130,8 +130,20 @@ namespace WriteContext.Repositories
             {
                 try
                 {
+                    // Update private notes
+                    var privateNotes = allNotes.Where(x => x.NoteType == NotesType.Private).ToList();
+                    privateNotes.ForEach(x => x.Order = x.Order + notesForRestore.Count());
+                    await UpdateRangeNotes(privateNotes);
+
+                    // Insert from bin to private
                     notesForRestore.ForEach(x => x.NoteType = NotesType.Private);
+                    ChangeOrderHelper(notesForRestore);
                     await UpdateRangeNotes(notesForRestore);
+
+                    // Deleted notes order changing
+                    var deletednotes = allNotes.Where(x => x.NoteType == NotesType.Deleted).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(deletednotes);
+                    await UpdateRangeNotes(deletednotes);
 
                     transaction.Commit();
                 }

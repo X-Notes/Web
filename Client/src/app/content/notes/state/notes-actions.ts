@@ -81,6 +81,19 @@ export class DeleteNotesPermanentlyClear {
     }
 }
 
+
+export class RestoreNotes {
+    static type = '[Notes] Restore notes';
+    constructor() {
+    }
+}
+export class RestoreNotesClear {
+    static type = '[Notes] ClearRestore notes';
+    constructor() {
+    }
+}
+
+
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';

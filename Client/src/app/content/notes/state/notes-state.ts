@@ -6,7 +6,7 @@ import { ApiServiceNotes } from '../api.service';
 import { LoadPrivateNotes , AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes,
-    SetDeleteNotesClear, DeleteNotesPermanently, DeleteNotesPermanentlyClear} from './notes-actions';
+    SetDeleteNotesClear, DeleteNotesPermanently, DeleteNotesPermanentlyClear, RestoreNotes, RestoreNotesClear} from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import { type } from 'os';
@@ -32,9 +32,10 @@ interface NoteState {
     countDeleted: number;
     countArchive: number;
     selectedIds: string[];
-    updateColor: UpdateColorNote[];
+    updateColorEvent: UpdateColorNote[];
     setdeleteNotesEvent: SmallNote[];
-    deleteParmanently: string[];
+    deleteParmanentlyEvent: string[];
+    restoreNotesEvent: string[];
 }
 
 @State<NoteState>({
@@ -54,9 +55,10 @@ interface NoteState {
         countDeleted: 0,
         countShared: 0,
         selectedIds: [],
-        updateColor: [],
+        updateColorEvent: [],
         setdeleteNotesEvent: [],
-        deleteParmanently: []
+        deleteParmanentlyEvent: [],
+        restoreNotesEvent: []
     }
 })
 
@@ -69,7 +71,7 @@ export class NoteStore {
 
     @Selector()
     static deleteParmanently(state: NoteState): string[] {
-        return state.deleteParmanently;
+        return state.deleteParmanentlyEvent;
     }
 
     @Selector()
@@ -79,7 +81,7 @@ export class NoteStore {
 
     @Selector()
     static updateColor(state: NoteState): UpdateColorNote[] {
-        return state.updateColor;
+        return state.updateColorEvent;
     }
 
     @Selector()
@@ -287,7 +289,7 @@ export class NoteStore {
         notes.forEach(z => z.color = color);
         notes.forEach(note => dispatch(new UpdateSmallNote(note, typeNote)));
         const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-        patchState({updateColor});
+        patchState({updateColorEvent: updateColor});
         dispatch([UnSelectAllNote, ClearColorNotes]);
     }
 
@@ -301,7 +303,7 @@ export class NoteStore {
 
     @Action(ClearColorNotes)
     clearColorNotes({patchState}: StateContext<NoteState>) {
-        patchState({updateColor: []});
+        patchState({updateColorEvent: []});
     }
 
 
@@ -318,7 +320,7 @@ export class NoteStore {
                 break;
             }
             case NoteType.Private : {
-                notes = getState().privateNotes.filter(x => selectedIds.some(z => selectedIds.indexOf(x.id) !== -1 ? false : true));
+                notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
                     privateNotes: notes,
@@ -352,7 +354,7 @@ export class NoteStore {
         const selectedIds = getState().selectedIds;
         await this.api.deleteNotes(selectedIds).toPromise();
         patchState({
-            deleteParmanently: [...selectedIds],
+            deleteParmanentlyEvent: [...selectedIds],
             countDeleted: getState().countDeleted - selectedIds.length
         });
         dispatch([UnSelectAllNote, DeleteNotesPermanentlyClear]);
@@ -361,7 +363,30 @@ export class NoteStore {
     @Action(DeleteNotesPermanentlyClear)
     clearDeleteNotesPermanentlyClear({getState, dispatch, patchState}: StateContext<NoteState>) {
         patchState({
-            deleteParmanently: [],
+            deleteParmanentlyEvent: [],
+        });
+    }
+
+    @Action(RestoreNotes)
+    async restoreNotes({getState, patchState, dispatch}: StateContext<NoteState>) {
+        const selectedIds = getState().selectedIds;
+        await this.api.restoreNotes(selectedIds).toPromise();
+        const deletednotes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const addToPrivatenotes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        patchState({
+            deletedNotes: [...deletednotes],
+            countDeleted: deletednotes.length,
+            countPrivate: getState().countPrivate + addToPrivatenotes.length,
+            privateNotes: [...addToPrivatenotes, ...getState().privateNotes],
+            restoreNotesEvent: [...selectedIds]
+        });
+        dispatch([UnSelectAllNote, RestoreNotesClear]);
+    }
+
+    @Action(RestoreNotesClear)
+    restoreNotesClear({getState, dispatch, patchState}: StateContext<NoteState>) {
+        patchState({
+            restoreNotesEvent: [],
         });
     }
 

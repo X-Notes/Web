@@ -90,6 +90,7 @@ namespace BI.services
         public async Task<Unit> Handle(RestoreNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
+            var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
             var notesForRestore = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
             if (notesForRestore.Any())
