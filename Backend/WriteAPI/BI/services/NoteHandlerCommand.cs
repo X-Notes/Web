@@ -39,7 +39,8 @@ namespace BI.services
                 UserId = user.Id,
                 Order = 1,
                 Color = NoteColorPallete.Green,
-                NoteType = NotesType.Private
+                NoteType = NotesType.Private,
+                CreatedAt = DateTimeOffset.Now
             };
 
             await this.noteRepository.Add(note);

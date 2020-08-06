@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace Common.DatabaseModels.models
 {
     public class Label
@@ -10,5 +12,6 @@ namespace Common.DatabaseModels.models
         public bool IsDeleted { set; get; }
         public int UserId { set; get; }
         public User User { set; get; }
+        public List<LabelsNotes> LabelsNotes { get; set; }
     }
 }
