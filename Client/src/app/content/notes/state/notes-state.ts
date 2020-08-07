@@ -7,13 +7,15 @@ import {
     LoadPrivateNotes, AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes
-    , DeleteNotesPermanently, RestoreNotes, ArchiveNotes, RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes
+    , DeleteNotesPermanently, RestoreNotes, ArchiveNotes,
+    RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes, PositionNote
 } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UpdateColorNote } from './updateColor';
+import { OrderService } from 'src/app/shared/services/order.service';
 
 
 interface NoteState {
@@ -62,7 +64,8 @@ interface NoteState {
 @Injectable()
 export class NoteStore {
 
-    constructor(private api: ApiServiceNotes) {
+    constructor(private api: ApiServiceNotes,
+                private orderService: OrderService) {
     }
 
     @Selector()
@@ -559,6 +562,46 @@ export class NoteStore {
         patchState({
             notesAddingPrivate: [],
         });
+    }
+
+    @Action(PositionNote)
+    async changePosition({patchState, getState}: StateContext<NoteState>, {order, typeNote}: PositionNote) {
+        await this.orderService.changeOrder(order).toPromise();
+
+        switch (typeNote) {
+            case NoteType.Archive: {
+                let archiveNotes = getState().archiveNotes;
+                const changedNote = archiveNotes.find(x => x.id === order.entityId);
+                archiveNotes = archiveNotes.filter(x => x.id !== order.entityId);
+                archiveNotes.splice(order.position - 1, 0 , changedNote);
+                patchState({archiveNotes});
+                break;
+            }
+            case NoteType.Shared: {
+                let sharedNotes = getState().sharedNotes;
+                const changedNote = sharedNotes.find(x => x.id === order.entityId);
+                sharedNotes = sharedNotes.filter(x => x.id !== order.entityId);
+                sharedNotes.splice(order.position - 1, 0 , changedNote);
+                patchState({sharedNotes});
+                break;
+            }
+            case NoteType.Private: {
+                let privateNotes = getState().privateNotes;
+                const changedNote = privateNotes.find(x => x.id === order.entityId);
+                privateNotes = privateNotes.filter(x => x.id !== order.entityId);
+                privateNotes.splice(order.position - 1, 0 , changedNote);
+                patchState({privateNotes});
+                break;
+            }
+            case NoteType.Deleted: {
+                let deletedNotes = getState().deletedNotes;
+                const changedNote = deletedNotes.find(x => x.id === order.entityId);
+                deletedNotes = deletedNotes.filter(x => x.id !== order.entityId);
+                deletedNotes.splice(order.position - 1, 0 , changedNote);
+                patchState({deletedNotes});
+                break;
+            }
+        }
     }
 
     // NOTES SELECTION

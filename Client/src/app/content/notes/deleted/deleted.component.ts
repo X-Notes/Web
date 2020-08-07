@@ -3,10 +3,11 @@ import { Subject } from 'rxjs';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
-import { UnSelectAllNote, LoadDeletedNotes } from '../state/notes-actions';
+import { UnSelectAllNote, LoadDeletedNotes, PositionNote } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColorNote } from '../state/updateColor';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-deleted',
@@ -26,11 +27,11 @@ export class DeletedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadDeletedNotes()).toPromise();
 
     this.store.select(x => x.Notes.deletedNotes).pipe(take(1))
-    .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });
+      .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
 
     this.store.select(x => x.Notes.updateColorEvent)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.changeColorHandler(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.changeColorHandler(x));
 
     this.store.select(x => x.Notes.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
@@ -46,7 +47,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      });
+      this.store.dispatch(new PositionNote(order, NoteType.Deleted));
+    });
   }
 
   changeColorHandler(updateColor: UpdateColorNote[]) {

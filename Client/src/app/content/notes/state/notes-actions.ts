@@ -1,6 +1,7 @@
 import { FullNote } from '../models/fullNote';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { SmallNote } from '../models/smallNote';
+import { Order } from 'src/app/shared/services/order.service';
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -115,6 +116,11 @@ export class RemoveFromDomMurri {
     }
 }
 
+export class PositionNote {
+    static type = '[Notes] Position notes';
+    constructor(public order: Order, public typeNote: NoteType) {
+    }
+}
 
 // SELECTION
 export class SelectIdNote {

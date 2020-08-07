@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote } from '../state/notes-actions';
+import { LoadPrivateNotes, UnSelectAllNote, PositionNote } from '../state/notes-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UpdateColorNote } from '../state/updateColor';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-privates',
@@ -60,6 +61,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
+      this.store.dispatch(new PositionNote(order, NoteType.Private));
     });
   }
 

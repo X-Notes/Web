@@ -54,6 +54,32 @@ namespace BI.services
                     }
                 case OrderEntity.Note:
                     {
+                        if (Guid.TryParse(request.EntityId, out var guid))
+                        {
+                            var notes = (await userRepository.GetUserWithNotes(request.Email)).Notes;
+                            var note = notes.FirstOrDefault(x => x.Id == guid);
+
+                            if(note != null)
+                            {
+                                var notesWithType = notes.Where(x => x.NoteType == note.NoteType).ToList();
+
+                                if(note.Order < request.Position)
+                                {
+                                    notesWithType.Where(x => x.Order <= request.Position && x.Order > note.Order).ToList().ForEach(x => x.Order = x.Order - 1);
+                                    note.Order = request.Position;
+                                }
+                                else
+                                {
+                                    notesWithType.Where(x => x.Order >= request.Position && x.Order < note.Order).ToList().ForEach(x => x.Order = x.Order + 1);
+                                    note.Order = request.Position;
+                                }
+                                await noteRepository.UpdateRangeNotes(notesWithType);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
                         Console.WriteLine("Note");
                         break;
                     }

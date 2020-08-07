@@ -3,10 +3,11 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { LoadArchiveNotes, UnSelectAllNote } from '../state/notes-actions';
+import { LoadArchiveNotes, UnSelectAllNote, PositionNote } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
 import { OrderEntity, Order } from 'src/app/shared/services/order.service';
 import { UpdateColorNote } from '../state/updateColor';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-archive',
@@ -46,6 +47,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
+      this.store.dispatch(new PositionNote(order, NoteType.Archive));
       });
   }
 
