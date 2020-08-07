@@ -43,6 +43,30 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
   }
 
+  makePublicNotes(ids: string[], noteType: NoteType) {
+    const obj = {
+      ids,
+      noteType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/ref/public`, obj);
+  }
+
+  makePrivateNotes(ids: string[], noteType: NoteType) {
+    const obj = {
+      ids,
+      noteType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/ref/private`, obj);
+  }
+
+  copyNotes(ids: string[], noteType: NoteType) {
+    const obj = {
+      ids,
+      noteType
+    };
+    return this.httpClient.patch<SmallNote[]>(environment.writeAPI + `/api/note/copy`, obj);
+  }
+
   deleteNotes(ids: string[]) {
     const obj = {
       ids,

@@ -1,6 +1,8 @@
-﻿using Common;
+﻿using AutoMapper;
+using Common;
 using Common.DatabaseModels.helpers;
 using Common.DatabaseModels.models;
+using Common.DTO.notes;
 using Domain.Commands.notes;
 using MediatR;
 using System;
@@ -19,15 +21,20 @@ namespace BI.services
         IRequestHandler<SetDeleteNoteCommand, Unit>,
         IRequestHandler<DeleteNotesCommand, Unit>,
         IRequestHandler<RestoreNoteCommand, Unit>,
-        IRequestHandler<ArchiveNoteCommand, Unit>
+        IRequestHandler<ArchiveNoteCommand, Unit>,
+        IRequestHandler<MakePrivateNoteCommand, Unit>,
+        IRequestHandler<MakePublicNoteCommand, Unit>,
+        IRequestHandler<CopyNoteCommand, List<SmallNote>>
     {
 
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
-        public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository)
+        private readonly IMapper mapper;
+        public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository, IMapper mapper)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
+            this.mapper = mapper;
         }
         public async Task<string> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
@@ -73,7 +80,7 @@ namespace BI.services
 
             if(notes.Count == request.Ids.Count)
             {
-                await noteRepository.SetDeletedNotes(notes, user.Notes, request.NoteType);
+                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Deleted);
             }
             else
             {
@@ -109,7 +116,7 @@ namespace BI.services
 
             if (notesForRestore.Count == request.Ids.Count)
             {
-                await noteRepository.RestoreRange(notesForRestore, user.Notes);
+                await noteRepository.CastNotes(notesForRestore, user.Notes, NotesType.Deleted, NotesType.Private);
             }
             else
             {
@@ -126,7 +133,7 @@ namespace BI.services
 
             if (notes.Count == request.Ids.Count)
             {
-                await noteRepository.ArchiveNotes(notes, user.Notes, request.NoteType);
+                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Archive);
             }
             else
             {
@@ -134,6 +141,56 @@ namespace BI.services
             }
 
             return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (notes.Count == request.Ids.Count)
+            {
+                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Private);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(MakePublicNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (notes.Count == request.Ids.Count)
+            {
+                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Shared);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithNotes(request.Email);
+            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (notes.Count == request.Ids.Count)
+            {
+                var dbnotes =  await noteRepository.CopyNotes(notes, user.Notes, request.NoteType, NotesType.Private);
+                return mapper.Map<List<SmallNote>>(dbnotes);
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
     }
 }

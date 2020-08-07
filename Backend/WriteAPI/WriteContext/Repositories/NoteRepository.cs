@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.helpers;
 using Common.DatabaseModels.models;
+using Common.DTO.notes;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace WriteContext.Repositories
 
         public async Task Add(Note note)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -33,14 +34,21 @@ namespace WriteContext.Repositories
                     await contextDB.Notes.AddAsync(note);
                     await contextDB.SaveChangesAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
 
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
+        }
+
+
+        public async Task AddRange(List<Note> list)
+        {
+            contextDB.Notes.AddRange(list);
+            await contextDB.SaveChangesAsync();
         }
 
         public async Task UpdateNote(Note note)
@@ -86,72 +94,9 @@ namespace WriteContext.Repositories
 
         // UPPER MENU FUNCTIONS
 
-        public async Task SetDeletedNotes(List<Note> noteForDeleting, List<Note> allUserNotes, NotesType noteType)
-        {
-            using (var transaction = contextDB.Database.BeginTransaction())
-            {
-                try
-                {
-
-                    // Update table with deleted 
-                    var deletedNotes = allUserNotes.Where(x => x.NoteType == NotesType.Deleted).ToList();
-                    deletedNotes.ForEach(x => x.Order = x.Order + noteForDeleting.Count());
-                    await UpdateRangeNotes(deletedNotes);
-
-                    // Deleting notes
-                    noteForDeleting.ForEach(x => x.NoteType = NotesType.Deleted);
-                    ChangeOrderHelper(noteForDeleting);
-                    await UpdateRangeNotes(noteForDeleting);
-
-                    // Update private
-                    var privateNotes = allUserNotes.Where(x => x.NoteType == noteType).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(privateNotes);
-                    await UpdateRangeNotes(privateNotes);
-
-
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-
-                    transaction.Rollback();
-                }
-            }
-        }
-
-        public async Task RestoreRange(List<Note> notesForRestore, List<Note> allNotes)
-        {
-            using (var transaction = contextDB.Database.BeginTransaction())
-            {
-                try
-                {
-                    // Update private notes
-                    var privateNotes = allNotes.Where(x => x.NoteType == NotesType.Private).ToList();
-                    privateNotes.ForEach(x => x.Order = x.Order + notesForRestore.Count());
-                    await UpdateRangeNotes(privateNotes);
-
-                    // Insert from bin to private
-                    notesForRestore.ForEach(x => x.NoteType = NotesType.Private);
-                    ChangeOrderHelper(notesForRestore);
-                    await UpdateRangeNotes(notesForRestore);
-
-                    // Deleted notes order changing
-                    var deletednotes = allNotes.Where(x => x.NoteType == NotesType.Deleted).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(deletednotes);
-                    await UpdateRangeNotes(deletednotes);
-
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                }
-            }
-        }
-
         public async Task DeleteRangeDeleted(List<Note> selectdeletenotes, List<Note> deletednotes)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -167,42 +112,78 @@ namespace WriteContext.Repositories
                     ChangeOrderHelper(deletednotes);
                     await UpdateRangeNotes(deletednotes);
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
         }
 
-        public async Task ArchiveNotes(List<Note> notesForArchive, List<Note> allUserNotes, NotesType noteType)
+
+        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NotesType noteTypeFrom, NotesType noteTypeTo)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    // Update archive notes
-                    var archiveNotes = allUserNotes.Where(x => x.NoteType == NotesType.Archive).ToList();
-                    archiveNotes.ForEach(x => x.Order = x.Order + notesForArchive.Count());
-                    await UpdateRangeNotes(archiveNotes);
+                    var notesTo = allUserNotes.Where(x => x.NoteType == noteTypeTo).ToList();
+                    notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
+                    await UpdateRangeNotes(notesTo);
 
-                    // Archive notes
-                    notesForArchive.ForEach(x => x.NoteType = NotesType.Archive);
-                    ChangeOrderHelper(notesForArchive);
-                    await UpdateRangeNotes(notesForArchive);
+                    notesForCasting.ForEach(x => x.NoteType = noteTypeTo);
+                    ChangeOrderHelper(notesForCasting);
+                    await UpdateRangeNotes(notesForCasting);
 
-                    // Update order for old notes
-                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteType).OrderBy(x => x.Order).ToList();
+                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteTypeFrom).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
                     await UpdateRangeNotes(oldNotes);
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
+            }
+        }
+
+        public async Task<List<Note>> CopyNotes(List<Note> notesForCopy, List<Note> allUserNotes, NotesType noteTypeFrom, NotesType noteTypeTo)
+        {
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var notesTo = allUserNotes.Where(x => x.NoteType == noteTypeTo).ToList();
+                    notesTo.ForEach(x => x.Order = x.Order + notesForCopy.Count());
+                    await UpdateRangeNotes(notesTo);
+
+                    var newNotes = notesForCopy.Select(x => new Note() { 
+                        Color = x.Color,
+                        CreatedAt = DateTimeOffset.Now,
+                        NoteType = noteTypeTo,
+                        Title = x.Title,
+                        UserId = x.UserId,
+                        LabelsNotes = x.LabelsNotes,
+                    }).ToList();
+                    ChangeOrderHelper(newNotes);
+                    await AddRange(newNotes);
+
+                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteTypeFrom).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(oldNotes);
+                    await UpdateRangeNotes(oldNotes);
+
+                    await transaction.CommitAsync();
+
+                    return newNotes.OrderBy(x => x.Order).ToList();
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception();
+                }
+                
             }
         }
 

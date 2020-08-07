@@ -84,6 +84,30 @@ export class ArchiveNotes {
     }
 }
 
+export class MakePublicNotes {
+    static type = '[Notes] MakePublic notes';
+    constructor(public typeNote: NoteType) {
+    }
+}
+
+export class MakePrivateNotes {
+    static type = '[Notes] MakePrivate notes';
+    constructor(public typeNote: NoteType) {
+    }
+}
+
+export class CopyNotes {
+    static type = '[Notes] Copy notes';
+    constructor(public typeNote: NoteType) {
+    }
+}
+
+export class ClearAddedPrivateNotes {
+    static type = '[Notes] ClearAddedPrivate notes';
+    constructor() {
+    }
+}
+
 // Muuri remove from dom
 export class RemoveFromDomMurri {
     static type = '[Notes] MurriRemove notes';

@@ -1,5 +1,4 @@
 ﻿using Common.DatabaseModels.helpers;
-using Common.DTO.notes;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -7,11 +6,11 @@ using System.Text;
 
 namespace Domain.Commands.notes
 {
-    public class CopyNoteCommand : BaseCommandEntity, IRequest<List<SmallNote>>
+    public class MakePublicNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
         public List<string> Ids { set; get; }
         public NotesType NoteType { set; get; }
-        public CopyNoteCommand(string email) : base(email)
+        public MakePublicNoteCommand(string email) : base(email)
         {
 
         }

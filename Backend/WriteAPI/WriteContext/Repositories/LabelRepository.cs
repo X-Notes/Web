@@ -19,7 +19,7 @@ namespace WriteContext.Repositories
 
         public async Task DeleteLabel(Label label, List<Label> labels)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -32,11 +32,11 @@ namespace WriteContext.Repositories
                     labelsForUpdate.ForEach(x => x.Order = x.Order - 1);
                     await UpdateRangeLabels(labelsForUpdate);
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
 
@@ -61,7 +61,7 @@ namespace WriteContext.Repositories
 
         public async Task NewLabel(Label label)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -76,18 +76,18 @@ namespace WriteContext.Repositories
                     await contextDB.Labels.AddAsync(label);
                     await contextDB.SaveChangesAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
         }
 
         public async Task SetDeletedLabel(Label labelDeleted, List<Label> labels)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -106,18 +106,18 @@ namespace WriteContext.Repositories
                     labelDeleted.IsDeleted = true;
                     await UpdateLabel(labelDeleted);
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
         }
 
         public async Task RestoreLabel(Label label, List<Label> labels)
         {
-            using (var transaction = contextDB.Database.BeginTransaction())
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -135,11 +135,11 @@ namespace WriteContext.Repositories
                     allLabels.Add(label);
                     await UpdateRangeLabels(allLabels);
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
                 }
             }
         }

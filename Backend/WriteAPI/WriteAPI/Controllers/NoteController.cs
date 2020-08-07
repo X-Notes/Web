@@ -68,10 +68,12 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpGet("copy")]
-        public async Task CopyNote(string id)
+        [HttpPatch("copy")]
+        public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)
         {
-
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("archive")]
@@ -82,16 +84,20 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [HttpGet("ref/public")]
-        public async Task MakePublic(string id)
+        [HttpPatch("ref/public")]
+        public async Task MakePublic([FromBody]MakePublicNoteCommand command)
         {
-
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
         }
 
-        [HttpGet("ref/private")]
-        public async Task MakePrivate(string id)
+        [HttpPatch("ref/private")]
+        public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
         {
-
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
         }
 
         // GET Entities

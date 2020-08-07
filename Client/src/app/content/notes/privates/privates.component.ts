@@ -43,6 +43,10 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.select(x => x.Notes.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
+
+    this.store.select(x => x.Notes.notesAddingPrivate)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.addToDom(x));
   }
 
   initMurri() {
@@ -69,6 +73,19 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     if (ids.length > 0) {
       this.notes = this.notes.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
       setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    }
+  }
+
+  addToDom(notes: SmallNote[]) {
+    if (notes.length > 0) {
+      this.notes = [...notes, ...this.notes];
+      setTimeout(() => {
+        const DOMnodes = document.getElementsByClassName('grid-item');
+        for (let i = 0; i < notes.length; i++) {
+          const el = DOMnodes[i];
+          this.pService.grid.add(el, {index : 0, layout: true});
+        }
+      }, 0);
     }
   }
 }

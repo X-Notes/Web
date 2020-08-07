@@ -7,7 +7,8 @@ import { filter, map } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes, DeleteNotesPermanently, RestoreNotes, ArchiveNotes } from '../../notes/state/notes-actions';
+import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes,
+  DeleteNotesPermanently, RestoreNotes, ArchiveNotes, MakePublicNotes, MakePrivateNotes, CopyNotes } from '../../notes/state/notes-actions';
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -156,4 +157,15 @@ export class HeaderComponent implements OnInit {
     this.store.dispatch(new ArchiveNotes(this.noteType));
   }
 
+  makePublic() {
+    this.store.dispatch(new MakePublicNotes(this.noteType));
+  }
+
+  makePrivate() {
+    this.store.dispatch(new MakePrivateNotes(this.noteType));
+  }
+
+  copyNotes() {
+    this.store.dispatch(new CopyNotes(this.noteType));
+  }
 }
