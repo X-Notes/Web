@@ -33,6 +33,15 @@ export const changeColorLabel = trigger('changeColorLabel', [
   ])
 ]);
 
+export const showMenuLeftRight = trigger('showMenuLeftRight', [
+  transition(':enter', [
+    style({ opacity: 0,  transform: 'translateX(-20%)' }),
+    animate('0.3s ease', style({ opacity: 1, transform: 'translateY(0)'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, transform: 'translateX(10%)' }))
+  ])
+]);
 
 @Injectable({
   providedIn: 'root'
@@ -50,18 +59,48 @@ export class PersonalizationService {
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
   grid;
-  helpIcons = true;
+  hideInnerMenu = false;
+  innerNote = false;
+  AnimationInnerMenu = true;
+  AnimationInnerUsers = true;
+  users = true;
 
   onResize(): void {
     if (this.check()) {
-      if (this.stateSidebar === false) {
+      if (!this.hideInnerMenu) {
+        this.hideInnerMenu = true;
+      }
+      if (!this.stateSidebar) {
         this.stateSidebar = true;
-        this.helpIcons = true;
       }
     } else {
-      if (this.stateSidebar === true) {
+      if (this.hideInnerMenu) {
+        this.hideInnerMenu = false;
+      }
+      if (this.stateSidebar) {
           this.stateSidebar = false;
-          this.helpIcons = false;
+      }
+    }
+
+    if (this.check()) {
+      if (!this.AnimationInnerMenu) {
+        this.AnimationInnerMenu = true;
+      }
+    } else {
+      if (this.AnimationInnerMenu) {
+        this.AnimationInnerMenu = false;
+      }
+    }
+
+    if (this.checkWidth()) {
+      if (this.users) {
+        this.users = false;
+        this.AnimationInnerUsers = false;
+      }
+    } else {
+      if (!this.users) {
+        this.users = true;
+        this.AnimationInnerUsers = true;
       }
     }
   }
@@ -72,6 +111,10 @@ export class PersonalizationService {
 
   check(): boolean {
     return window.innerWidth > 1024 ? true : false;
+  }
+
+  checkWidth(): boolean {
+    return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
 
   gridSettings() {

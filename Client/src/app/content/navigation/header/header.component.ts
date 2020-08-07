@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { PersonalizationService,
+         showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -11,7 +12,8 @@ import { Select } from '@ngxs/store';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  animations: [ showMenuLeftRight ]
 })
 export class HeaderComponent implements OnInit {
 
@@ -23,17 +25,26 @@ export class HeaderComponent implements OnInit {
   currentUrl: string;
 
 
-  newButtonActive = false;
+  newButtonActive = true;
   selectAllActive = true;
   settingsActive = true;
   sectionAdd = true;
-  selected = true;
-  search = false;
+  selected = false;
+
+  user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
 
   constructor(public pService: PersonalizationService, private router: Router) { }
 
   ngOnInit(): void {
     this.checkRout();
+  }
+
+  showUsers() {
+    this.pService.users = !this.pService.users;
+  }
+
+  hideMenu() {
+    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
   toggleTheme() {
@@ -50,13 +61,11 @@ export class HeaderComponent implements OnInit {
 
   cancelSelect() {
     this.selected = false;
-    this.search = true;
     this.newButtonActive = true;
   }
 
   allSelected() {
     this.selected = true;
-    this.search = false;
     this.newButtonActive = false;
   }
 
@@ -80,14 +89,18 @@ export class HeaderComponent implements OnInit {
         this.selectAllActive = true;
         this.settingsActive = true;
         this.sectionAdd = true;
+        this.pService.innerNote = false;
+        this.selected = false;
         break;
       }
       case '/notes' : {
         this.currentUrl = 'note';
-        this.newButtonActive = false;
+        this.newButtonActive = true;
         this.selectAllActive = true;
         this.settingsActive = true;
         this.sectionAdd = true;
+        this.pService.innerNote = false;
+        this.selected = false;
         break;
       }
       case '/labels' : {
@@ -96,6 +109,8 @@ export class HeaderComponent implements OnInit {
         this.selectAllActive = false;
         this.settingsActive = false;
         this.sectionAdd = true;
+        this.pService.innerNote = false;
+        this.selected = false;
         break;
       }
       case '/labels/deleted' : {
@@ -104,6 +119,8 @@ export class HeaderComponent implements OnInit {
         this.selectAllActive = false;
         this.settingsActive = false;
         this.sectionAdd = true;
+        this.pService.innerNote = false;
+        this.selected = false;
         break;
       }
 
@@ -112,6 +129,8 @@ export class HeaderComponent implements OnInit {
       }
 
       default : {
+        this.pService.innerNote = true;
+        this.selected = false;
         this.sectionAdd = false;
         break;
       }

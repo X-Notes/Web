@@ -1,4 +1,10 @@
-<div class="wrap" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+<div class="wrap" [ngClass]="[pService.theme === theme.Light ? 'light' : '', pService.innerNote ? 'mobile-menu' : '']">
+    <div class="icon" #history>
+        <div class="inner">
+            <p>History</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
+        </div>
+    </div>
     <div class="icon" #label>
         <div class="inner">
             <i class="icon-label"></i>

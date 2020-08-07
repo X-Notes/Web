@@ -34,7 +34,7 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content full-content">
+<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
     <div class="main-content">
         <div class="note-color"></div>
         <div class="labels-section">

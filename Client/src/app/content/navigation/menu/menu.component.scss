@@ -21,6 +21,10 @@
         height: inherit;
         border-radius: 5px;
         transition: 0.2s ease;
+
+        &:first-child {
+            display: none;
+        }
     
         .inner {
             display: flex;
@@ -40,6 +44,9 @@
     
             i {
                 padding: 0 1.375rem;
+                &::before {
+                    transition: 0.2s ease;
+                }
             }
         }
     
@@ -79,7 +86,7 @@
     }
 }
 
-@media (max-width: 880px) {
+@media (max-width: 1024px) {
     :host {
         height: auto;
     }
@@ -103,6 +110,32 @@
     
             &::after {
                 content: none;
+            }
+        }
+    }
+
+    .mobile-menu {
+        .icon {
+            &:first-child {
+                display: flex;
+                
+                .inner {
+                    justify-content: center;
+                    align-items: center;
+                    font-weight: 700;
+        
+                    p {
+                        letter-spacing: 3px;
+                        padding: 0.75rem 0;
+                    }
+                }   
+            }
+            &:nth-child(2) {
+                display: none;
+            }
+
+            &:nth-child(3) {
+                display: none;
             }
         }
     }
