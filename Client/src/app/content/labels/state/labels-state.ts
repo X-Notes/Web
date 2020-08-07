@@ -6,6 +6,7 @@ import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, Delet
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
+import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 
 interface LabelState {
     labelsAll: Label[];
@@ -66,10 +67,10 @@ export class LabelStore {
     }
 
     @Action(AddLabel)
-    async newLabel({ setState, getState, patchState }: StateContext<LabelState>, { name, color }: AddLabel) {
-        const id = await this.api.new(name, color).toPromise();
+    async newLabel({ setState, getState, patchState }: StateContext<LabelState>) {
+        const id = await this.api.new().toPromise();
         patchState({
-            labelsAll: [{name, color, id, isDeleted: false}, ...getState().labelsAll],
+            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false}, ...getState().labelsAll],
             CountAll: getState().CountAll + 1
         });
     }

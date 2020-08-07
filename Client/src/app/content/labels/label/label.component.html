@@ -1,4 +1,4 @@
-<div class="field" [ngStyle]="{backgroundColor: color}">
+<div class="field" [ngStyle]="{backgroundColor: label.color}">
     <input type="text" [disabled]="deleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" *ngIf="!deleted" (click)="openColors()">
@@ -23,14 +23,14 @@
     </div>
 </div>
 <ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
-    <li class="color" (click)="changeColor('#FFCDCD')"></li>
-    <li class="color" (click)="changeColor('#FFEBCD')"></li>
-    <li class="color" (click)="changeColor('#FFFDCD')"></li>
-    <li class="color" (click)="changeColor('#DDFFCD')"></li>
-    <li class="color" (click)="changeColor('#CDFFD8')"></li>
-    <li class="color" (click)="changeColor('#CDFFFC')"></li>
-    <li class="color" (click)="changeColor('#CDEEFF')"></li>
-    <li class="color" (click)="changeColor('#CDD5FF')"></li>
-    <li class="color" (click)="changeColor('#EFCDFF')"></li>
-    <li class="color" (click)="changeColor('#FFCDF4')"></li>
+    <li class="color" (click)="changeColor(pallete.Red)"></li>
+    <li class="color" (click)="changeColor(pallete.Orange)"></li>
+    <li class="color" (click)="changeColor(pallete.Yellow)"></li>
+    <li class="color" (click)="changeColor(pallete.GreenOne)"></li>
+    <li class="color" (click)="changeColor(pallete.GreenTwo)"></li>
+    <li class="color" (click)="changeColor(pallete.BlueOne)"></li>
+    <li class="color" (click)="changeColor(pallete.BlueTwo)"></li>
+    <li class="color" (click)="changeColor(pallete.Purple)"></li>
+    <li class="color" (click)="changeColor(pallete.PinkOne)"></li>
+    <li class="color" (click)="changeColor(pallete.PinkTwo)"></li>
 </ul>

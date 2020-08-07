@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models;
 using Common.DTO.notes;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using WriteContext.models;
 
 namespace BI.Mapping
 {

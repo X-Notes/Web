@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BI.helpers;
+using Common.DatabaseModels.models;
 using Domain.Commands.backgrounds;
 using MediatR;
 using System;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.models;
 using WriteContext.Repositories;
 
 namespace BI.services

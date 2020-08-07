@@ -28,7 +28,7 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => { this.labels = [...x]; setTimeout(() => this.initMurri()); });
+    .subscribe(x => { this.labels = [...x];  setTimeout(() => this.initMurri()); });
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -53,7 +53,7 @@ export class AllComponent implements OnInit, OnDestroy  {
   }
 
   async newLabel() {
-    await this.store.dispatch(new AddLabel('', '#FFEBCD')).toPromise();
+    await this.store.dispatch(new AddLabel()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(x => {

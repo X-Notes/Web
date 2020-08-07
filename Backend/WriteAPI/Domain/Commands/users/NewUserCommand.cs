@@ -1,10 +1,10 @@
 ﻿using Common;
+using Common.DatabaseModels.helpers;
 using Domain.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using WriteContext.helpers;
 
 namespace Domain.Commands.users
 {
