@@ -2,9 +2,23 @@ import {RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {FoldersComponent} from './folders/folders.component';
 import { ContentActiveteGuard } from 'src/app/core/guards/content-activete.guard';
+import { FullFolderComponent } from './full-folder/full-folder.component';
+import { PrivateComponent } from './private/private.component';
+import { DeletedComponent } from './deleted/deleted.component';
+import { SharedComponent } from './shared/shared.component';
+import { ArchiveComponent } from './archive/archive.component';
+
+const itemRoutes: Routes = [
+  { path: '', component: PrivateComponent, canActivate: [ContentActiveteGuard]},
+  { path: 'deleted', component: DeletedComponent, canActivate: [ContentActiveteGuard]},
+  { path: 'shared', component: SharedComponent, canActivate: [ContentActiveteGuard]},
+  { path: 'archive', component: ArchiveComponent, canActivate: [ContentActiveteGuard]},
+];
 
 const routes: Routes = [
-  { path: '', component: FoldersComponent, canActivate: [ContentActiveteGuard]}, ];
+  { path: '', component: FoldersComponent, children: itemRoutes},
+  { path: ':id', component: FullFolderComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

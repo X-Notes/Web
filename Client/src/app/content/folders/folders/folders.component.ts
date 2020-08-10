@@ -5,13 +5,6 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Folder } from '../models/folder';
 
-export enum subMenu {
-  All = 'all',
-  Shared = 'shared',
-  Locked = 'locked',
-  Archive = 'archive',
-  Bin = 'bin'
-}
 
 @Component({
   selector: 'app-folders',
@@ -22,12 +15,8 @@ export enum subMenu {
 export class FoldersComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
-  current: subMenu;
-  menu = subMenu;
+
   theme = Theme;
-  folders: Folder[] = [
-    {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}
-  ];
 
   constructor(public pService: PersonalizationService) { }
 
@@ -38,23 +27,13 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.pService.onResize();
-    this.current = subMenu.All;
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newFolder());
-
-    await this.folders;
-
-    this.pService.gridSettings();
-
   }
 
   newFolder() {
     console.log('folder');
-  }
-
-  switchSub(value: subMenu) {
-    this.current = value;
   }
 
   cancelSideBar() {
