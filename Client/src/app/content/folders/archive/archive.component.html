@@ -1,1 +1,6 @@
-<p>archive works!</p>
+<div class="grid">
+    <div class="grid-item" *ngFor="let item of folders"
+        [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+        <app-folder [folder]="item"></app-folder>
+    </div>
+</div>
