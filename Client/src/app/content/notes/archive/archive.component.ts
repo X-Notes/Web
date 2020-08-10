@@ -8,6 +8,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { OrderEntity, Order } from 'src/app/shared/services/order.service';
 import { UpdateColorNote } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-archive',
@@ -24,6 +25,19 @@ export class ArchiveComponent implements OnInit, OnDestroy {
               private store: Store) { }
 
   async ngOnInit() {
+
+    this.store.select(UserStore.getStatus)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x: boolean) => {
+      if (x) {
+        await this.loadContent();
+      }
+    }
+    );
+
+  }
+
+  async loadContent() {
     await this.store.dispatch(new LoadArchiveNotes()).toPromise();
 
     this.store.select(x => x.Notes.archiveNotes).pipe(take(1))

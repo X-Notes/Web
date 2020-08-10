@@ -57,13 +57,14 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
+    await this.store.dispatch(new LoadLabels()).toPromise();
+    await this.store.dispatch(new LoadAllNotes()).toPromise();
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());
 
     this.pService.onResize();
-    await this.store.dispatch(new LoadAllNotes()).toPromise();
   }
 
   async newNote() {
