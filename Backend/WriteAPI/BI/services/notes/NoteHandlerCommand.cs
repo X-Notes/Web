@@ -13,9 +13,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services
+namespace BI.services.notes
 {
-    public class NoteHandlerCommand : 
+    public class NoteHandlerCommand :
         IRequestHandler<NewPrivateNoteCommand, string>,
         IRequestHandler<ChangeColorNoteCommand, Unit>,
         IRequestHandler<SetDeleteNoteCommand, Unit>,
@@ -50,7 +50,7 @@ namespace BI.services
                 CreatedAt = DateTimeOffset.Now
             };
 
-            await this.noteRepository.Add(note);
+            await noteRepository.Add(note);
 
             return note.Id.ToString("N");
         }
@@ -60,7 +60,7 @@ namespace BI.services
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
-            if(notes.Any())
+            if (notes.Any())
             {
                 notes.ForEach(x => x.Color = request.Color);
                 await noteRepository.UpdateRangeNotes(notes);
@@ -78,7 +78,7 @@ namespace BI.services
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
 
-            if(notes.Count == request.Ids.Count)
+            if (notes.Count == request.Ids.Count)
             {
                 await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Deleted);
             }
@@ -122,7 +122,7 @@ namespace BI.services
             {
                 throw new Exception();
             }
-            
+
             return Unit.Value;
         }
 
@@ -184,7 +184,7 @@ namespace BI.services
 
             if (notes.Count == request.Ids.Count)
             {
-                var dbnotes =  await noteRepository.CopyNotes(notes, user.Notes, request.NoteType, NotesType.Private);
+                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, request.NoteType, NotesType.Private);
                 return mapper.Map<List<SmallNote>>(dbnotes);
             }
             else

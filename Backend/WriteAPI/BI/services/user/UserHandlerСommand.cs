@@ -12,9 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services
+namespace BI.services.user
 {
-    public class UserHandlerСommand : 
+    public class UserHandlerСommand :
         IRequestHandler<NewUserCommand, Unit>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, Unit>,

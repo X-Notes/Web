@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services
+namespace BI.services.user
 {
     public class UserHandlerQuery :
         IRequestHandler<GetShortUser, ShortUser>
@@ -21,7 +21,7 @@ namespace BI.services
 
         public async Task<ShortUser> Handle(GetShortUser request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);          
+            var user = await userRepository.GetUserByEmail(request.Email);
             return imapper.Map<ShortUser>(user);
         }
     }

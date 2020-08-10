@@ -8,7 +8,7 @@ namespace Common.DatabaseModels.models
     public class Folder
     {
         public Guid Id { get; set; }
-        public NotesType NoteType { set; get; }
+        public FoldersType FolderType { set; get; }
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }

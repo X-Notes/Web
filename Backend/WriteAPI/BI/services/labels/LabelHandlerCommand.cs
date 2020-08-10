@@ -11,9 +11,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services
+namespace BI.services.labels
 {
-    public class LabelHandlerCommand:
+    public class LabelHandlerCommand :
         IRequestHandler<NewLabelCommand, int>,
         IRequestHandler<DeleteLabelCommand, Unit>,
         IRequestHandler<UpdateLabelCommand, Unit>,

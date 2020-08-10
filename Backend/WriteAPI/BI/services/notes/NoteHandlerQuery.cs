@@ -11,9 +11,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services
+namespace BI.services.notes
 {
-    public class NoteHandlerQuery : 
+    public class NoteHandlerQuery :
         IRequestHandler<GetPrivateNotesQuery, List<SmallNote>>,
         IRequestHandler<GetSharedNotesQuery, List<SmallNote>>,
         IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>,
@@ -57,7 +57,7 @@ namespace BI.services
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
         {
-            if(Guid.TryParse(request.Id, out var guid))
+            if (Guid.TryParse(request.Id, out var guid))
             {
                 var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(guid);
                 return mapper.Map<List<OnlineUserOnNote>>(users);

@@ -1,5 +1,10 @@
 ﻿using BI.helpers;
 using BI.services;
+using BI.services.folders;
+using BI.services.labels;
+using BI.services.notes;
+using BI.services.user;
+using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.users;
@@ -10,6 +15,7 @@ using Domain.Commands.orders;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
+using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.users;
@@ -119,6 +125,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
+            //FOLDERS
+            services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
 
@@ -132,6 +144,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddTransient<UserRepository>();
             services.AddTransient<BackgroundRepository>();
             services.AddTransient<NoteRepository>();
+            services.AddTransient<FolderRepository>();
             services.AddTransient<UserOnNoteRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)

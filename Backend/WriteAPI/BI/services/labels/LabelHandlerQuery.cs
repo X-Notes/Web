@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using WriteContext.Repositories;
 using System.Linq;
 
-namespace BI.services
+namespace BI.services.labels
 {
-    public class LabelHandlerQuery:
+    public class LabelHandlerQuery :
         IRequestHandler<GetLabelsByEmail, LabelsDTO>
     {
         private readonly UserRepository userRepository;
