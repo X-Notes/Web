@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Folder } from '../models/folder';
+import { FolderStore } from '../state/folders-state';
+import { Select, Store } from '@ngxs/store';
+import { LoadAllFolders } from '../state/folders-actions';
 
 
 @Component({
@@ -14,11 +17,25 @@ import { Folder } from '../models/folder';
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
+
+  @Select(FolderStore.privateCount)
+  public countPrivate: Observable<number>;
+
+  @Select(FolderStore.sharedCount)
+  public countShared: Observable<number>;
+
+  @Select(FolderStore.deletedCount)
+  public countDeleted: Observable<number>;
+
+  @Select(FolderStore.archiveCount)
+  public countArchive: Observable<number>;
+
+
   destroy = new Subject<void>();
 
   theme = Theme;
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService, private store: Store) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -26,6 +43,8 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    await this.store.dispatch(new LoadAllFolders()).toPromise();
+
     this.pService.onResize();
     this.pService.subject
     .pipe(takeUntil(this.destroy))

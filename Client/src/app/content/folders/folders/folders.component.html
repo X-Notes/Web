@@ -14,8 +14,8 @@
 
             <div class="sub-nav-item" routerLink="/folders" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub3>
                 <div class="item">
-                    <p>{{ 'subMenu.locked' | translate }}</p>
-                    <p>12</p>
+                    <p>{{ 'subMenu.private' | translate }}</p>
+                    <p>{{ countPrivate | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub3"></div>
             </div>
@@ -23,7 +23,7 @@
             <div class="sub-nav-item" routerLink="/folders/shared" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.shared' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countShared | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
             </div>
@@ -32,7 +32,7 @@
             <div class="sub-nav-item" routerLink="/folders/archive" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub4>
                 <div class="item">
                     <p>{{ 'subMenu.archive' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countArchive | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
             </div>
@@ -40,7 +40,7 @@
             <div class="sub-nav-item" routerLink="/folders/deleted" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub5>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countDeleted | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub5"></div>
             </div>

@@ -15,3 +15,7 @@ export class LoadDeletedFolders {
 export class LoadArchiveFolders {
     static type = '[Folders] Load archive folders';
 }
+
+export class LoadAllFolders {
+    static type = '[Folders] Load all folders';
+}
