@@ -24,7 +24,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("private")]
-        public async Task<List<SmallFolder>> GetPrivateNotes()
+        public async Task<List<SmallFolder>> GetPrivateFolders()
         {
             var email = this.GetUserEmail();
             var query = new GetPrivateFoldersQuery(email);
@@ -32,7 +32,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("shared")]
-        public async Task<List<SmallFolder>> GetSharedNotes()
+        public async Task<List<SmallFolder>> GetSharedFolders()
         {
             var email = this.GetUserEmail();
             var query = new GetSharedFoldersQuery(email);
@@ -40,7 +40,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("archive")]
-        public async Task<List<SmallFolder>> GetArchiveNotes()
+        public async Task<List<SmallFolder>> GetArchiveFolders()
         {
             var email = this.GetUserEmail();
             var query = new GetArchiveFoldersQuery(email);
@@ -48,7 +48,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("deleted")]
-        public async Task<List<SmallFolder>> GetDeletedNotes()
+        public async Task<List<SmallFolder>> GetDeletedFolders()
         {
             var email = this.GetUserEmail();
             var query = new GetDeletedFoldersQuery(email);
@@ -56,7 +56,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullFolder> GetAll(string id)
+        public async Task<FullFolder> Get(string id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullFolderQuery(email, id);
