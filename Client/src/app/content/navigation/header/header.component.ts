@@ -13,7 +13,7 @@ import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SelectAllFolder, UnSelectAllFolder } from '../../folders/state/folders-actions';
+import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders } from '../../folders/state/folders-actions';
 
 @Component({
   selector: 'app-header',
@@ -214,4 +214,11 @@ export class HeaderComponent implements OnInit {
   copyNotes() {
     this.store.dispatch(new CopyNotes(this.noteType));
   }
+
+  // UPPER MENU FUNCTIONS FOLDERS
+
+  archiveFolders() {
+    this.store.dispatch(new ArchiveFolders(this.folderType));
+  }
+
 }

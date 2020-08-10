@@ -45,6 +45,10 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.deletedFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
+
+    this.store.select(FolderStore.removeFromMurriEvent)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.delete(x));
   }
 
   initMurri() {
@@ -57,6 +61,13 @@ export class DeletedComponent implements OnInit, OnDestroy {
         entityId: item._element.id
       };
     });
+  }
+
+  delete(ids: string[]) {
+    if (ids.length > 0) {
+      this.folders = this.folders.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
+      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    }
   }
 
 }

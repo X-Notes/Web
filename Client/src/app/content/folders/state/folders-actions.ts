@@ -21,13 +21,24 @@ export class LoadAllFolders {
     static type = '[Folders] Load all folders';
 }
 
-// FUCNTIONS
+// FUNCTIONS
 
 export class AddFolder {
     static type = '[Folders] Add folder';
 }
 
+export class ArchiveFolders {
+    static type = '[Folders] Archive folders';
+    constructor(public typeFolder: FolderType) {
+    }
+}
 
+// Muuri remove from dom
+export class RemoveFromDomMurri {
+    static type = '[Folders] MurriRemove folders';
+    constructor() {
+    }
+}
 
 // SELECTION
 export class SelectIdFolder {
@@ -48,6 +59,6 @@ export class UnSelectAllFolder {
 
 export class SelectAllFolder {
     static type = '[Folders] Select all';
-    constructor(public typeNote: FolderType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
