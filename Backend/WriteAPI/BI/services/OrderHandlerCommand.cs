@@ -2,8 +2,6 @@
 using Domain.Commands.orders;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;

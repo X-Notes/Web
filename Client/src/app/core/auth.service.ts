@@ -32,23 +32,24 @@ export class AuthService {
 
   private async configureAuthState(firebaseUser: firebase.User) {
     if (firebaseUser) {
+      console.log(5);
       const token = await firebaseUser.getIdToken(true);
+      this.store.dispatch(new SetToken(token));
       const flag = this.store.selectSnapshot(UserStore.getStatus);
+      await this.api.verifyToken(token).toPromise();
       if (!flag) {
-        await this.api.verifyToken(token).toPromise();
-        this.store.dispatch(new SetToken(token));
-        this.store.dispatch(new Login(token, this.getUser(firebaseUser)))
-        .subscribe(x => this.router.navigate(['/notes']));
-      } else {
-        try {
-          await this.api.verifyToken(token).toPromise();
-        } catch (e) {
-          this.logout();
-        }
+        this.store.dispatch(new Login(token, this.getUser(firebaseUser))).subscribe(x => this.router.navigate(['/notes']));
       }
+      setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000);
     } else {
       this.logout();
     }
+  }
+
+  private async updateToken(firebaseUser: firebase.User) {
+    const token = await firebaseUser.getIdToken(true);
+    await this.api.verifyToken(token).toPromise();
+    this.store.dispatch(new SetToken(token));
   }
 
   private getUser(user: firebase.User) {

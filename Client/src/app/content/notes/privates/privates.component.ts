@@ -8,6 +8,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UpdateColorNote } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-privates',
@@ -32,6 +33,19 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
+    this.store.select(UserStore.getStatus)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x: boolean) => {
+      if (x) {
+        await this.loadContent();
+      }
+    }
+    );
+
+  }
+
+  async loadContent() {
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
 
     this.store.select(x => x.Notes.privateNotes).pipe(take(1))

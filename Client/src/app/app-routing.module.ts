@@ -8,23 +8,22 @@ const routes: Routes = [
   {
     path: '',
     component: ContentComponent,
-    canActivate: [ContentActiveteGuard],
     children: [
       {
           path: 'notes',
-          loadChildren: () => import('./content/notes/notes.module').then(m => m.NotesModule),
+          loadChildren: () => import('./content/notes/notes.module').then(m => m.NotesModule)
       },
       {
           path: 'folders',
-          loadChildren: () => import('./content/folders/folders.module').then(m => m.FoldersModule),
+          loadChildren: () => import('./content/folders/folders.module').then(m => m.FoldersModule)
       },
       {
           path: 'labels',
-          loadChildren: () => import('./content/labels/labels.module').then(m => m.LabelsModule),
+          loadChildren: () => import('./content/labels/labels.module').then(m => m.LabelsModule)
       },
       {
           path: 'profile',
-          loadChildren: () => import('./content/profile/profile.module').then(m => m.ProfileModule),
+          loadChildren: () => import('./content/profile/profile.module').then(m => m.ProfileModule)
       },
       {
         path: '',
