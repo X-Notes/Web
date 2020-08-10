@@ -4,8 +4,9 @@ import { Injectable } from '@angular/core';
 import { ApiFoldersService } from '../api-folders.service';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { FullFolder } from '../models/FullFolder';
-import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders, LoadAllFolders } from './folders-actions';
+import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders, LoadAllFolders, AddFolder } from './folders-actions';
 import { tap } from 'rxjs/operators';
+import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 
 
 interface FolderState {
@@ -72,7 +73,7 @@ export class FolderStore {
         return state.archiveFolders;
     }
 
-    // Get count notes
+    // Get count folders
     @Selector()
     static privateCount(state: FolderState): number {
         return state.countPrivate;
@@ -146,7 +147,20 @@ export class FolderStore {
     }
 
     @Action(LoadAllFolders)
-    async loadAllNotes({ dispatch }: StateContext<FolderState>) {
+    async loadAllFolders({ dispatch }: StateContext<FolderState>) {
         dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+    }
+
+
+
+
+    @Action(AddFolder)
+    async newFolder({ getState, patchState }: StateContext<FolderState>) {
+        const id = await this.api.new().toPromise();
+        const folders = getState().privateFolders;
+        patchState({
+            privateFolders: [{ id, title: '', color: FolderColorPallete.Green }, ...folders],
+            countPrivate: getState().countPrivate + 1
+        });
     }
 }

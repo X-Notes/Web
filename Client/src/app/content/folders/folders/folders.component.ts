@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { Folder } from '../models/folder';
 import { FolderStore } from '../state/folders-state';
 import { Select, Store } from '@ngxs/store';
-import { LoadAllFolders } from '../state/folders-actions';
+import { LoadAllFolders, AddFolder } from '../state/folders-actions';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -35,7 +36,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
-  constructor(public pService: PersonalizationService, private store: Store) { }
+  constructor(public pService: PersonalizationService,
+              private store: Store,
+              private router: Router) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -51,8 +54,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newFolder());
   }
 
-  newFolder() {
-    console.log('folder');
+  async newFolder() {
+    await this.store.dispatch(new AddFolder()).toPromise();
+    this.store.select(FolderStore.privateFolders).pipe(take(1)).subscribe(x => this.router.navigate([`folders/${x[0].id}`]));
   }
 
   cancelSideBar() {

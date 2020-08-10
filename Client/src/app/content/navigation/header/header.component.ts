@@ -12,6 +12,7 @@ import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes,
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +28,7 @@ export class HeaderComponent implements OnInit {
   theme = Theme;
   routePath: RoutePathes;
   noteType: NoteType;
+  folderType: FolderType;
 
   newButtonActive = true;
   selectAllActive = true;
@@ -66,11 +68,33 @@ export class HeaderComponent implements OnInit {
 
   routeChange(url: string) {
     switch (url) {
+
       case '/folders' : {
         this.routePath = RoutePathes.Folder;
         this.showAllButtons();
+        this.folderType = FolderType.Private;
         break;
       }
+      case '/folders/shared' : {
+        this.routePath = RoutePathes.Folder;
+        this.showAllButtons();
+        this.folderType = FolderType.Shared;
+        break;
+      }
+      case '/folders/deleted' : {
+        this.routePath = RoutePathes.Folder;
+        this.showAllButtons();
+        this.folderType = FolderType.Deleted;
+        break;
+      }
+      case '/folders/archive' : {
+        this.routePath = RoutePathes.Folder;
+        this.showAllButtons();
+        this.folderType = FolderType.Archive;
+        break;
+      }
+
+
       case '/notes' : {
         this.routePath = RoutePathes.Note;
         this.showAllButtons();
@@ -95,6 +119,8 @@ export class HeaderComponent implements OnInit {
         this.noteType = NoteType.Archive;
         break;
       }
+
+
       case '/labels' : {
         this.routePath = RoutePathes.Label;
 
@@ -108,6 +134,7 @@ export class HeaderComponent implements OnInit {
         this.hideAllButtons();
         break;
       }
+
     }
   }
 
@@ -136,7 +163,7 @@ export class HeaderComponent implements OnInit {
     this.store.dispatch(new UnSelectAllNote());
   }
 
-  // UPPER MENU FUNCTION
+  // UPPER MENU FUNCTION NOTES
   changeColor() {
     this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, this.noteType));
   }

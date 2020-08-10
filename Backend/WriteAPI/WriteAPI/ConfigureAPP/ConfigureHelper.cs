@@ -9,6 +9,7 @@ using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
@@ -126,6 +127,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
             //FOLDERS
+            services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
+
             services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();

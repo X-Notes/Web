@@ -29,4 +29,8 @@ export class ApiFoldersService {
     return this.httpClient.get<FullFolder>(environment.writeAPI + `/api/folder/${id}`);
   }
 
+  new() {
+    return this.httpClient.get<string>(environment.writeAPI + `/api/folder/new`);
+  }
+
 }

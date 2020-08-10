@@ -19,3 +19,9 @@ export class LoadArchiveFolders {
 export class LoadAllFolders {
     static type = '[Folders] Load all folders';
 }
+
+// FUCNTIONS
+
+export class AddFolder {
+    static type = '[Folders] Add folder';
+}

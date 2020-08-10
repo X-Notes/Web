@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.folders;
+using Domain.Commands.folders;
 using Domain.Queries.folders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,15 @@ namespace WriteAPI.Controllers
         public FolderController(IMediator _mediator)
         {
             this._mediator = _mediator;
+        }
+
+
+        [HttpGet("new")]
+        public async Task<JsonResult> Add()
+        {
+            var email = this.GetUserEmail();
+            var command = new NewFolderCommand(email);
+            return new JsonResult(await _mediator.Send(command));
         }
 
         [HttpGet("private")]
