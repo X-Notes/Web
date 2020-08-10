@@ -128,6 +128,7 @@ namespace WriteAPI.ConfigureAPP
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<ArchiveFolderCommand, Unit>, FolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();

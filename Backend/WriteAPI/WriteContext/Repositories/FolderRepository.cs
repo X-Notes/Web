@@ -60,6 +60,42 @@ namespace WriteContext.Repositories
                 }
             }
         }
+        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, FoldersType folderTypeFrom, FoldersType folderTypeTo)
+        {
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var foldersTo = allUserFolders.Where(x => x.FolderType == folderTypeTo).ToList();
+                    foldersTo.ForEach(x => x.Order = x.Order + foldersForCasting.Count());
+                    await UpdateRangeFolders(foldersTo);
+
+                    foldersForCasting.ForEach(x => x.FolderType = folderTypeTo);
+                    ChangeOrderHelper(foldersForCasting);
+                    await UpdateRangeFolders(foldersForCasting);
+
+                    var oldFolders = allUserFolders.Where(x => x.FolderType == folderTypeFrom).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(oldFolders);
+                    await UpdateRangeFolders(oldFolders);
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                }
+            }
+        }
+
+        private void ChangeOrderHelper(List<Folder> notes)
+        {
+            int order = 1;
+            foreach (var item in notes)
+            {
+                item.Order = order;
+                order++;
+            }
+        }
 
         public async Task<Folder> GetFull(Guid id)
         {

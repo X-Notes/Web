@@ -7,6 +7,7 @@ using Domain.Commands.folders;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,8 @@ using WriteContext.Repositories;
 namespace BI.services.folders
 {
     public class FolderHandlerCommand : 
-        IRequestHandler<NewFolderCommand, string>
+        IRequestHandler<NewFolderCommand, string>,
+        IRequestHandler<ArchiveFolderCommand, Unit>
     {
         private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
@@ -31,7 +33,7 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserByEmail(request.Email);
 
-            var note = new Folder()
+            var folder = new Folder()
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
@@ -41,9 +43,26 @@ namespace BI.services.folders
                 CreatedAt = DateTimeOffset.Now
             };
 
-            await folderRepository.Add(note);
+            await folderRepository.Add(folder);
 
-            return note.Id.ToString("N");
+            return folder.Id.ToString("N");
+        }
+
+        public async Task<Unit> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (folders.Count == request.Ids.Count)
+            {
+                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Archive);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
         }
     }
 }

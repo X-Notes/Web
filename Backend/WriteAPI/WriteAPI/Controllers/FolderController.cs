@@ -72,5 +72,15 @@ namespace WriteAPI.Controllers
             var query = new GetFullFolderQuery(email, id);
             return await _mediator.Send(query);
         }
+
+        // Commands 
+
+        [HttpPatch("archive")]
+        public async Task ArchiveFolder([FromBody]ArchiveFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
     }
 }
