@@ -1,6 +1,6 @@
 <div class="outer"></div>
 <div class="folder">
-    <div class="highligt" (click)="highlight()" [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
+    <div class="highligt" (click)="highlight(folder.id)" [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
         <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
     </div>
     <div class="folder-inner">

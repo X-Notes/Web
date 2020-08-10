@@ -5,7 +5,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
-import { LoadArchiveFolders } from '../state/folders-actions';
+import { LoadArchiveFolders, UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 
@@ -26,6 +26,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new UnSelectAllFolder());
   }
 
   ngOnInit(): void {

@@ -1,3 +1,4 @@
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 
 export class LoadPrivateFolders {
@@ -24,4 +25,29 @@ export class LoadAllFolders {
 
 export class AddFolder {
     static type = '[Folders] Add folder';
+}
+
+
+
+// SELECTION
+export class SelectIdFolder {
+    static type = '[Folders] Select folder';
+    constructor(public id: string) {    }
+}
+
+export class UnSelectIdFolder {
+    static type = '[Folders] Unselect folder';
+    constructor(public id: string) {    }
+}
+
+export class UnSelectAllFolder {
+    static type = '[Folders] Unselect all';
+    constructor() {
+    }
+}
+
+export class SelectAllFolder {
+    static type = '[Folders] Select all';
+    constructor(public typeNote: FolderType) {
+    }
 }

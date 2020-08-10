@@ -6,7 +6,7 @@ import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
-import { LoadSharedFolders } from '../state/folders-actions';
+import { LoadSharedFolders, UnSelectAllFolder } from '../state/folders-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 
 @Component({
@@ -26,6 +26,7 @@ export class SharedComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new UnSelectAllFolder());
   }
 
   ngOnInit(): void {

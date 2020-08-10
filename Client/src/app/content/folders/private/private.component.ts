@@ -4,7 +4,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
-import { LoadPrivateFolders } from '../state/folders-actions';
+import { LoadPrivateFolders, UnSelectAllFolder } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
@@ -26,6 +26,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new UnSelectAllFolder());
   }
 
   ngOnInit(): void {
