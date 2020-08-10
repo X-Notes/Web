@@ -2,7 +2,7 @@ import { SmallNote } from '../models/smallNote';
 import { FullNote } from '../models/fullNote';
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { ApiServiceNotes } from '../api.service';
+import { ApiServiceNotes } from '../api-notes.service';
 import {
     LoadPrivateNotes, AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
