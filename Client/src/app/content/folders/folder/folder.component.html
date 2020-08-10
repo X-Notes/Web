@@ -1,5 +1,5 @@
-<div class="outer"></div>
-<div class="folder">
+<div class="outer" [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"></div>
+<div class="folder" [ngStyle]="{'backgroundColor': folder.color}" >
     <div class="highligt" (click)="highlight(folder.id)" [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
         <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
     </div>

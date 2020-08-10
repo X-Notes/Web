@@ -13,7 +13,6 @@
     z-index: 2;
     width: calc(100% - 25px);
     height: 100%;
-    background-color: darken($green-note, 10%);
     border-radius: inherit;
 }
 
@@ -24,7 +23,6 @@
     height: calc(100% - 0.75rem);
     width: calc(100% - 0.75rem);
     margin: 0.75rem 0.75rem 0 0;
-    background-color: $green-note;
     border-radius: inherit;
 
     .highligt {

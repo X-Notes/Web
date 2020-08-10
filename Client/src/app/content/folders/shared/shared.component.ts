@@ -8,6 +8,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
 import { LoadSharedFolders, UnSelectAllFolder } from '../state/folders-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
+import { UpdateColor } from '../../notes/state/updateColor';
 
 @Component({
   selector: 'app-shared',
@@ -46,6 +47,10 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
 
+    this.store.select(FolderStore.updateColorEvent)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.changeColorHandler(x));
+
     this.store.select(FolderStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
@@ -67,6 +72,12 @@ export class SharedComponent implements OnInit, OnDestroy {
     if (ids.length > 0) {
       this.folders = this.folders.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
       setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    }
+  }
+
+  changeColorHandler(updateColor: UpdateColor[]) {
+    for (const update of updateColor) {
+      this.folders.find(x => x.id === update.id).color = update.color;
     }
   }
 

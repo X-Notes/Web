@@ -14,7 +14,7 @@ import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { UpdateColorNote } from './updateColor';
+import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
 
 
@@ -33,7 +33,7 @@ interface NoteState {
     countDeleted: number;
     countArchive: number;
     selectedIds: string[];
-    updateColorEvent: UpdateColorNote[];
+    updateColorEvent: UpdateColor[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
 }
@@ -79,7 +79,7 @@ export class NoteStore {
     }
 
     @Selector()
-    static updateColorEvent(state: NoteState): UpdateColorNote[] {
+    static updateColorEvent(state: NoteState): UpdateColor[] {
         return state.updateColorEvent;
     }
 
@@ -304,7 +304,7 @@ export class NoteStore {
     }
 
     mapFromNoteToUpdateColor(note: SmallNote) {
-        const obj: UpdateColorNote = {
+        const obj: UpdateColor = {
             id: note.id,
             color: note.color
         };

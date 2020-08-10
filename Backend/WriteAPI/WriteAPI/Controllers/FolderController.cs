@@ -82,5 +82,13 @@ namespace WriteAPI.Controllers
             command.Email = email;
             await this._mediator.Send(command);
         }
+
+        [HttpPatch("color")]
+        public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
     }
 }

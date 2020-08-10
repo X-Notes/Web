@@ -42,4 +42,12 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/archive`, obj);
   }
 
+  changeColor(ids: string[], color: string) {
+    const obj = {
+      ids,
+      color
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/color`, obj);
+  }
+
 }

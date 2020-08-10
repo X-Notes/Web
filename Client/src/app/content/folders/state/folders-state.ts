@@ -6,10 +6,13 @@ import { OrderService } from 'src/app/shared/services/order.service';
 import { FullFolder } from '../models/FullFolder';
 import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
-    UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri } from './folders-actions';
+    UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
+    ChangeColorFolder, ClearColorFolders, UpdateSmallFolder } from './folders-actions';
 import { tap } from 'rxjs/operators';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { UpdateColor } from '../../notes/state/updateColor';
+import { patch, updateItem } from '@ngxs/store/operators';
 
 
 interface FolderState {
@@ -27,6 +30,7 @@ interface FolderState {
     deletedLoaded: boolean;
     selectedIds: string[];
     removeFromMurriEvent: string[];
+    updateColorEvent: UpdateColor[];
 }
 
 
@@ -46,7 +50,8 @@ interface FolderState {
         archiveLoaded: false,
         deletedLoaded: false,
         selectedIds: [],
-        removeFromMurriEvent: []
+        removeFromMurriEvent: [],
+        updateColorEvent: []
     }
 })
 
@@ -113,6 +118,14 @@ export class FolderStore {
         return state.removeFromMurriEvent;
     }
 
+    // COLOR
+    @Selector()
+    static updateColorEvent(state: FolderState): UpdateColor[] {
+        return state.updateColorEvent;
+    }
+
+
+
     // LOAD CONTENT
     @Action(LoadPrivateFolders)
     loadPrivateFolders({ getState, patchState }: StateContext<FolderState>) {
@@ -171,6 +184,44 @@ export class FolderStore {
         dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
     }
 
+
+    @Action(UpdateSmallFolder)
+    async updateSmallNote({ setState }: StateContext<FolderState>, { folder, typeFolder }: UpdateSmallFolder) {
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                setState(
+                    patch({
+                        archiveFolders: updateItem<Folder>(note2 => note2.id === folder.id, folder)
+                    })
+                );
+                break;
+            }
+            case FolderType.Private: {
+                setState(
+                    patch({
+                        privateFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
+                    })
+                );
+                break;
+            }
+            case FolderType.Shared: {
+                setState(
+                    patch({
+                        sharedFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
+                    })
+                );
+                break;
+            }
+            case FolderType.Deleted: {
+                setState(
+                    patch({
+                        deletedFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
+                    })
+                );
+                break;
+            }
+        }
+    }
 
     // FUNCTIONS
     @Action(AddFolder)
@@ -231,6 +282,56 @@ export class FolderStore {
             }
         }
     }
+
+
+    @Action(ChangeColorFolder)
+    async changeColor({ patchState, getState, dispatch }: StateContext<FolderState>, { color, typeFolder }: ChangeColorFolder) {
+
+        const selectedIds = getState().selectedIds;
+        await this.api.changeColor(selectedIds, color).toPromise();
+        let folders: Folder[];
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                folders = getState().archiveFolders.filter(x => selectedIds.some(z => z === x.id))
+                    .map(folder => { folder = { ...folder }; return folder; });
+                break;
+            }
+            case FolderType.Private: {
+                folders = getState().privateFolders.filter(x => selectedIds.some(z => z === x.id))
+                    .map(folder => { folder = { ...folder }; return folder; });
+                break;
+            }
+            case FolderType.Deleted: {
+                folders = getState().deletedFolders.filter(x => selectedIds.some(z => z === x.id))
+                    .map(folder => { folder = { ...folder }; return folder; });
+                break;
+            }
+            case FolderType.Shared: {
+                folders = getState().sharedFolders.filter(x => selectedIds.some(z => z === x.id))
+                    .map(folder => { folder = { ...folder }; return folder; });
+                break;
+            }
+        }
+        folders.forEach(z => z.color = color);
+        folders.forEach(note => dispatch(new UpdateSmallFolder(note, typeFolder)));
+        const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+        patchState({ updateColorEvent: updateColor });
+        dispatch([UnSelectAllFolder, ClearColorFolders]);
+    }
+
+    mapFromNoteToUpdateColor(note: Folder) {
+        const obj: UpdateColor = {
+            id: note.id,
+            color: note.color
+        };
+        return obj;
+    }
+
+    @Action(ClearColorFolders)
+    clearColorNotes({ patchState }: StateContext<FolderState>) {
+        patchState({ updateColorEvent: [] });
+    }
+
 
 
     // Murri
