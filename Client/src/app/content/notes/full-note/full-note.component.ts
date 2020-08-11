@@ -4,7 +4,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote, UpdateFullNote, LoadSmallNotes } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote, LoadPrivateNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   private routeSubscription: Subscription;
   private id: string;
 
-  @Select(NoteStore.allSmall)
+  @Select(NoteStore.privateNotes)
   public notes$: Observable<SmallNote[]>;
 
   constructor(private signal: SignalRService,
@@ -44,7 +44,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     this.load();
     this.connectToHub();
 
-    await this.store.dispatch(new LoadSmallNotes()).toPromise();
+    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
 
     this.nameChanged.pipe(
       debounceTime(50))

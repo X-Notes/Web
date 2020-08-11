@@ -10,6 +10,9 @@ import { Theme } from 'src/app/shared/enums/Theme';
 export class MenuComponent implements OnInit {
 
   theme = Theme;
+  innerNote = [
+    'history', 'label', 'shared', 'copy', 'color', 'download', 'lock', 'archive', 'delete'
+  ];
 
   constructor(public pService: PersonalizationService) { }
 

@@ -40,6 +40,9 @@
             p {
                 display: none;
                 user-select: none;
+                &::first-letter {
+                    text-transform: uppercase;
+                }
             }
     
             i {
@@ -95,6 +98,12 @@
         flex-direction: column;
 
         .icon {
+            &:first-child {
+                i {
+                    display: none;
+                }
+            }
+
             .inner {
                 width: 100%;
     

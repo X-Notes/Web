@@ -92,64 +92,74 @@ export class HeaderComponent implements OnInit {
     switch (url) {
       case '/folders' : {
         this.routePath = RoutePathes.Folder;
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.showAllButtons();
         break;
       }
       case '/notes' : {
         this.routePath = RoutePathes.Note;
         this.showAllButtons();
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.noteType = NoteType.Private;
         break;
       }
       case '/notes/shared' : {
         this.routePath = RoutePathes.Note;
         this.showAllButtons();
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.noteType = NoteType.Shared;
         break;
       }
       case '/notes/deleted' : {
         this.routePath = RoutePathes.Note;
         this.showAllButtons();
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.noteType = NoteType.Deleted;
         break;
       }
       case '/notes/archive' : {
         this.routePath = RoutePathes.Note;
         this.showAllButtons();
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.noteType = NoteType.Archive;
         break;
       }
       case '/labels' : {
         this.routePath = RoutePathes.Label;
-        this.newButtonActive = true;
-        this.selectAllActive = false;
-        this.settingsActive = false;
-        this.sectionAdd = true;
-        this.pService.innerNote = false;
+        this.showAllButtons();
         this.selected = false;
+        this.pService.innerNote = false;
+        this.sectionAdd = true;
         break;
       }
       case '/labels/deleted' : {
         this.routePath =  RoutePathes.Label;
-        this.hideAllButtons();
+        this.selected = false;
+        this.pService.innerNote = false;
+        this.sectionAdd = true;
         break;
       }
       default : {
         this.pService.innerNote = true;
         this.selected = false;
         this.sectionAdd = false;
+        this.pService.innerNote = true;
         this.routePath =  RoutePathes.Label;
-        this.hideAllButtons();
         break;
       }
     }
   }
 
-  hideAllButtons() {
-    this.newButtonActive = false;
-    this.selectAllActive = false;
-    this.settingsActive = false;
-  }
   showAllButtons() {
     this.newButtonActive = true;
     this.selectAllActive = true;

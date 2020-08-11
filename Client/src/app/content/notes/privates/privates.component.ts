@@ -22,8 +22,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   public notes: SmallNote[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store
-  ) { }
+              private store: Store) { }
 
 
   ngOnDestroy(): void {
@@ -33,7 +32,6 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-
     this.store.select(UserStore.getStatus)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {

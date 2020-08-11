@@ -109,6 +109,7 @@ header {
     }
 
     .management-section {
+        position: relative;
         display: flex;
         align-items: center;
         height: 100%;
@@ -116,13 +117,17 @@ header {
         padding: 0 3.125vw;
 
         .left {
-            margin-left: auto;
+            position: absolute;
+            right: 0;
+            padding-right: 3.125vw;
+            background-color: $dark-color;
+            transition: 0.2s ease;
         }
 
         .interactions {
             display: flex;
             align-items: center;
-            height: inherit;
+            height: 100%;
     
             .filters {
                 background-color: $dark-button;
@@ -545,6 +550,9 @@ header {
     }
 
     .management-section {
+        .left {
+            background-color: white;
+        }
         .interactions {
             .menu-inner {
                 border-color: $light-button;
@@ -649,8 +657,6 @@ header {
     header {
         .inner-menu {
             .interactions {
-                position: relative;
-
                 .user-circle {
                     display: flex;
                 }
@@ -1018,7 +1024,7 @@ header {
                     width: auto;
 
                     &:focus-within {
-                        position: absolute;
+                        position: fixed;
                         left: 0;
                         margin-right: 3.125%;
                         margin-left: calc(3.125% + 46px);
