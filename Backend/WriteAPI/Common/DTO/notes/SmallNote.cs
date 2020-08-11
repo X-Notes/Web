@@ -8,5 +8,6 @@ namespace Common.DTO.notes
     {
         public string Id { get; set; }
         public string Title { set; get; }
+        public string Color { set; get; }
     }
 }

@@ -24,7 +24,6 @@ export class LabelsComponent implements OnInit {
   theme = Theme;
 
   constructor(
-    private store: Store,
     public pService: PersonalizationService) {}
 
   async ngOnInit() {

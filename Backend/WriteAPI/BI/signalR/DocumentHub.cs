@@ -1,10 +1,10 @@
-﻿using Common.DTO.parts;
+﻿using Common.DatabaseModels.models;
+using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using WriteContext.models;
 using WriteContext.Repositories;
 
 namespace BI.signalR

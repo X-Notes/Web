@@ -15,6 +15,9 @@ export class ContentActiveteGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       const flag = this.store.selectSnapshot(UserStore.getStatus);
+
+      console.log(state.url);
+
       if (flag) {
         return flag;
       } else {

@@ -19,7 +19,7 @@ namespace WriteContext.Migrations
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("WriteContext.models.Backgrounds", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Backgrounds");
                 });
 
-            modelBuilder.Entity("WriteContext.models.Folder", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,7 +68,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Folders");
                 });
 
-            modelBuilder.Entity("WriteContext.models.Label", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,20 +97,35 @@ namespace WriteContext.Migrations
                     b.ToTable("Labels");
                 });
 
-            modelBuilder.Entity("WriteContext.models.Note", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.LabelsNotes", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("LabelId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("NoteId", "LabelId");
+
+                    b.HasIndex("LabelId");
+
+                    b.ToTable("LabelsNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AccessStatus")
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("NoteType")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsArchive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -128,7 +143,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("WriteContext.models.NotificationSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +161,7 @@ namespace WriteContext.Migrations
                     b.ToTable("NotificationSettings");
                 });
 
-            modelBuilder.Entity("WriteContext.models.PersonalitionSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,7 +185,7 @@ namespace WriteContext.Migrations
                     b.ToTable("PersonalitionSettings");
                 });
 
-            modelBuilder.Entity("WriteContext.models.User", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -206,7 +221,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNote", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -221,76 +236,91 @@ namespace WriteContext.Migrations
                     b.ToTable("UserOnNote");
                 });
 
-            modelBuilder.Entity("WriteContext.models.Backgrounds", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Backgrounds")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.Folder", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Folders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.Label", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Labels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.Note", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.LabelsNotes", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.Label", "Label")
+                        .WithMany("LabelsNotes")
+                        .HasForeignKey("LabelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                        .WithMany("LabelsNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Notes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.NotificationSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithOne("NotificationSettings")
-                        .HasForeignKey("WriteContext.models.NotificationSetting", "UserId")
+                        .HasForeignKey("Common.DatabaseModels.models.NotificationSetting", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.PersonalitionSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
                 {
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithOne("PersonalitionSettings")
-                        .HasForeignKey("WriteContext.models.PersonalitionSetting", "UserId")
+                        .HasForeignKey("Common.DatabaseModels.models.PersonalitionSetting", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WriteContext.models.User", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
-                    b.HasOne("WriteContext.models.Backgrounds", "CurrentBackground")
+                    b.HasOne("Common.DatabaseModels.models.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
-                        .HasForeignKey("WriteContext.models.User", "CurrentBackgroundId");
+                        .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
                 });
 
-            modelBuilder.Entity("WriteContext.models.UserOnNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNote", b =>
                 {
-                    b.HasOne("WriteContext.models.Note", "Note")
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("UserOnNotes")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WriteContext.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("UserOnNotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

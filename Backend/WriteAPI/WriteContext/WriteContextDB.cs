@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WriteContext.models;
+﻿using Common.DatabaseModels.models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WriteContext
 {
@@ -15,6 +15,7 @@ namespace WriteContext
         public DbSet<Label> Labels { set; get; }
         public DbSet<Note> Notes { set; get; }
         public DbSet<UserOnNote> UserOnNote { set; get; }
+        public DbSet<LabelsNotes> LabelsNotes { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
@@ -57,6 +58,17 @@ namespace WriteContext
 
             modelBuilder.Entity<UserOnNote>()
                 .HasKey(x => new { x.UserId, x.NoteId });
+
+            modelBuilder.Entity<LabelsNotes>()
+                .HasKey(bc => new { bc.NoteId, bc.LabelId });
+            modelBuilder.Entity<LabelsNotes>()
+                .HasOne(bc => bc.Label)
+                .WithMany(b => b.LabelsNotes)
+                .HasForeignKey(bc => bc.LabelId);
+            modelBuilder.Entity<LabelsNotes>()
+                .HasOne(bc => bc.Note)
+                .WithMany(c => c.LabelsNotes)
+                .HasForeignKey(bc => bc.NoteId);
         }
     }
 }

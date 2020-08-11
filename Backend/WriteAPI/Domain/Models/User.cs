@@ -1,7 +1,7 @@
-﻿using Domain.Aggregates;
+﻿using Common.DatabaseModels.helpers;
+using Domain.Aggregates;
 using Domain.Commands.users;
 using System;
-using WriteContext.helpers;
 
 namespace Domain.Models
 {

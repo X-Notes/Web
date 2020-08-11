@@ -3,10 +3,11 @@ import {NgModule} from '@angular/core';
 import {LabelsComponent} from './labels/labels.component';
 import { AllComponent } from './all/all.component';
 import { DeletedComponent } from './deleted/deleted.component';
+import { ContentActiveteGuard } from 'src/app/core/guards/content-activete.guard';
 
 const itemRoutes: Routes = [
-  { path: '', component: AllComponent},
-  { path: 'deleted', component: DeletedComponent},
+  { path: '', component: AllComponent, canActivate: [ContentActiveteGuard]},
+  { path: 'deleted', component: DeletedComponent, canActivate: [ContentActiveteGuard]},
 ];
 
 const routes: Routes = [

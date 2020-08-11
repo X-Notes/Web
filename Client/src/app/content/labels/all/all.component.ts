@@ -7,6 +7,7 @@ import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, PositionLabel } from
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-all',
@@ -25,10 +26,22 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   async ngOnInit() {
 
+    this.store.select(UserStore.getStatus)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x: boolean) => {
+      if (x) {
+        await this.loadContent();
+      }
+    }
+    );
+
+  }
+
+  async loadContent() {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => { this.labels = [...x]; setTimeout(() => this.initMurri()); });
+    .subscribe(x => { this.labels = [...x];  setTimeout(() => this.initMurri()); });
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -53,7 +66,7 @@ export class AllComponent implements OnInit, OnDestroy  {
   }
 
   async newLabel() {
-    await this.store.dispatch(new AddLabel('', '#FFEBCD')).toPromise();
+    await this.store.dispatch(new AddLabel()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(x => {

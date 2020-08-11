@@ -24,7 +24,7 @@
             </div>
             <button *ngIf="newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
                 <div class="inner-content" >
-                    <p>New {{currentUrl}}</p>
+                    <p>New {{routePath}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="settingsActive" name="Filter" type="button" class="generic filters filter" #filter>
+            <button *ngIf="settingsActive" (click)="copyNotes()" name="Filter" type="button" class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>

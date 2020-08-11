@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models;
 using Common.DTO.labels;
 using Domain.Commands.labels;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using WriteContext.models;
 
 namespace BI.Mapping
 {

@@ -5,11 +5,23 @@ import { NoteRouting } from './notes-routing';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note/full-note.component';
 import { NoteComponent } from './note/note.component';
+import { PrivatesComponent } from './privates/privates.component';
+import { SharedComponent } from './shared/shared.component';
+import { DeletedComponent } from './deleted/deleted.component';
+import { ArchiveComponent } from './archive/archive.component';
 import { ReplacePipe } from './pipes/replace.pipe';
 
 
 @NgModule({
-  declarations: [NotesComponent, FullNoteComponent, NoteComponent, ReplacePipe],
+  declarations: [
+    NotesComponent,
+    FullNoteComponent,
+    NoteComponent,
+    PrivatesComponent,
+    SharedComponent,
+    DeletedComponent,
+    ArchiveComponent,
+    ReplacePipe],
   imports: [
     CommonModule,
     NoteRouting,

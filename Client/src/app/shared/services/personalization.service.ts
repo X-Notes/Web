@@ -7,9 +7,7 @@ import {
   style,
   transition,
   animate } from '@angular/animations';
-import { Router, NavigationEnd } from '@angular/router';
-import { take, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, AsyncSubject, Subject } from 'rxjs';
+import {  Subject } from 'rxjs';
 import * as Muuri from 'muuri';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [

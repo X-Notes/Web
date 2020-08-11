@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Common.DatabaseModels.helpers;
 using Common.DTO.users;
 using Domain;
 using Domain.Commands.users;
@@ -16,7 +17,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Services;
-using WriteContext.helpers;
 
 namespace WriteAPI.Controllers
 {

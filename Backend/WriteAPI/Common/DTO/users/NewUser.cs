@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Common.DatabaseModels.helpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using WriteContext.helpers;
 
 namespace Common.DTO.users
 {
