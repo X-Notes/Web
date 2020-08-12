@@ -34,8 +34,8 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
-    <div class="main-content">
+<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''" >
+    <ngx-simplebar [options]="pService.optionsScroll" class="main-content">
         <div class="note-color"></div>
         <div class="labels-section">
             <div class="label">
@@ -53,6 +53,12 @@
             <div class="placeholder">Give title suka</div>
             <div class="left-border"></div>
         </div>
+    </ngx-simplebar>
+    <div class="secondary-content" appHammer (tap)="startAnimation('wobble')">
+        <div class="open" #open>
+            <i class="icon-plus"></i>
+            <p>open note or file</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
+        </div>
     </div>
-    <div class="secondary-content"></div>
 </div>

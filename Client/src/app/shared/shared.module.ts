@@ -6,7 +6,6 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 
 
 @NgModule({
-  declarations: [],
   imports: [CommonModule , TranslateModule, SimplebarAngularModule],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule]
 })

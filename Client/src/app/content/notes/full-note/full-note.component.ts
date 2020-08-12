@@ -51,6 +51,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
   }
 
+  startAnimation(state) {
+    console.log(state);
+  }
+
   // TODO Logic for updating on websockets
   initModel(html): UpdateText {
     return {

@@ -1,3 +1,10 @@
+.main-content {
+    .simplebar-track {
+        .simplebar-scrollbar {
+            visibility: hidden;
+        }
+    }
+}
 
 .label-container, .background-section, .notes-section {
     .simplebar-wrapper {
