@@ -31,7 +31,7 @@ export class SharedComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select(UserStore.getStatus)
+    this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

@@ -25,7 +25,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
               private store: Store) { }
 
   async ngOnInit() {
-    this.store.select(UserStore.getStatus)
+    this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
