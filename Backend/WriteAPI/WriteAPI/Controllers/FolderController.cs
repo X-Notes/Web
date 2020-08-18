@@ -90,5 +90,22 @@ namespace WriteAPI.Controllers
             command.Email = email;
             await this._mediator.Send(command);
         }
+
+
+        [HttpPatch("restore")]
+        public async Task RestoreNotes([FromBody]RestoreFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPatch("delete")]
+        public async Task SetDeleteNotes([FromBody]SetDeleteFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
     }
 }

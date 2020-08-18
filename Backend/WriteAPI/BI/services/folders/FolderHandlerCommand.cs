@@ -18,7 +18,9 @@ namespace BI.services.folders
     public class FolderHandlerCommand : 
         IRequestHandler<NewFolderCommand, string>,
         IRequestHandler<ArchiveFolderCommand, Unit>,
-        IRequestHandler<ChangeColorFolderCommand, Unit>
+        IRequestHandler<ChangeColorFolderCommand, Unit>,
+        IRequestHandler<RestoreFolderCommand, Unit>,
+        IRequestHandler<SetDeleteFolderCommand, Unit>
     {
         private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
@@ -75,6 +77,40 @@ namespace BI.services.folders
             {
                 folders.ForEach(x => x.Color = request.Color);
                 await folderRepository.UpdateRangeFolders(folders);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RestoreFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var deletedFolders = user.Folders.Where(x => x.FolderType == FoldersType.Deleted).ToList();
+            var foldersForRestore = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (foldersForRestore.Count == request.Ids.Count)
+            {
+                await folderRepository.CastFolders(foldersForRestore, user.Folders, FoldersType.Deleted, FoldersType.Private);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (folders.Count == request.Ids.Count)
+            {
+                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Deleted);
             }
             else
             {

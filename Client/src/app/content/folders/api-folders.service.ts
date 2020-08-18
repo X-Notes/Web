@@ -34,12 +34,27 @@ export class ApiFoldersService {
     return this.httpClient.get<string>(environment.writeAPI + `/api/folder/new`);
   }
 
-  archiveNotes(ids: string[], folderType: FolderType) {
+  archiveFolder(ids: string[], folderType: FolderType) {
     const obj = {
       ids,
       folderType
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/archive`, obj);
+  }
+
+  setDeleteFolder(ids: string[], folderType: FolderType) {
+    const obj = {
+      ids,
+      folderType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/delete`, obj);
+  }
+
+  restoreFolder(ids: string[]) {
+    const obj = {
+      ids,
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/restore`, obj);
   }
 
   changeColor(ids: string[], color: string) {

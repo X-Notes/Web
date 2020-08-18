@@ -49,6 +49,18 @@ export class UpdateSmallFolder {
     constructor(public folder: Folder, public typeFolder: FolderType) {    }
 }
 
+export class SetDeleteFolders {
+    static type = '[Folders] SetDelete folder';
+    constructor(public typeFolder: FolderType) {
+    }
+}
+
+
+export class RestoreFolders {
+    static type = '[Folders] Restore folders';
+    constructor() {
+    }
+}
 
 
 // Muuri remove from dom

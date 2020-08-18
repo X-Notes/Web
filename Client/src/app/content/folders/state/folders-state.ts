@@ -7,7 +7,7 @@ import { FullFolder } from '../models/FullFolder';
 import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
-    ChangeColorFolder, ClearColorFolders, UpdateSmallFolder } from './folders-actions';
+    ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders, RestoreFolders } from './folders-actions';
 import { tap } from 'rxjs/operators';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -238,7 +238,7 @@ export class FolderStore {
     @Action(ArchiveFolders)
     async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder }: ArchiveFolders) {
         const selectedIds = getState().selectedIds;
-        await this.api.archiveNotes(selectedIds, typeFolder).toPromise();
+        await this.api.archiveFolder(selectedIds, typeFolder).toPromise();
 
         switch (typeFolder) {
             case FolderType.Deleted: {
@@ -333,6 +333,68 @@ export class FolderStore {
     }
 
 
+    @Action(SetDeleteFolders)
+    async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder }: SetDeleteFolders) {
+        const selectedIds = getState().selectedIds;
+        await this.api.setDeleteFolder(selectedIds, typeFolder).toPromise();
+
+        let folders;
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                folders = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const deletedFolders = getState().archiveFolders.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    archiveFolders: folders,
+                    deletedFolders: [...deletedFolders, ...getState().deletedFolders],
+                    countArchive: folders.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds]
+                });
+                break;
+            }
+            case FolderType.Private: {
+                folders = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const deletedNotes = getState().privateFolders.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    privateFolders: folders,
+                    deletedFolders: [...deletedNotes, ...getState().deletedFolders],
+                    countPrivate: folders.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds]
+                });
+                break;
+            }
+            case FolderType.Shared: {
+                folders = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const deletedNotes = getState().sharedFolders.filter(x => selectedIds.some(z => z === x.id));
+                patchState({
+                    sharedFolders: folders,
+                    deletedFolders: [...deletedNotes, ...getState().deletedFolders],
+                    countShared: folders.length,
+                    countDeleted: getState().countDeleted + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds]
+                });
+                break;
+            }
+        }
+        dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+    }
+
+    @Action(RestoreFolders)
+    async restoreFolders({ getState, patchState, dispatch }: StateContext<FolderState>) {
+        const selectedIds = getState().selectedIds;
+        await this.api.restoreFolder(selectedIds).toPromise();
+        const deletedFolders = getState().deletedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const addToPrivateFolders = getState().deletedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        patchState({
+            deletedFolders: [...deletedFolders],
+            countDeleted: deletedFolders.length,
+            countPrivate: getState().countPrivate + addToPrivateFolders.length,
+            privateFolders: [...addToPrivateFolders, ...getState().privateFolders],
+            removeFromMurriEvent: [...selectedIds]
+        });
+        dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+    }
 
     // Murri
 
