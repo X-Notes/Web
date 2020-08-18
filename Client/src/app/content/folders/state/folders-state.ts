@@ -7,7 +7,8 @@ import { FullFolder } from '../models/FullFolder';
 import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
-    ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders, RestoreFolders } from './folders-actions';
+    ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders,
+    RestoreFolders, DeleteFoldersPermanently, CopyFolders, ClearAddedPrivateFolders } from './folders-actions';
 import { tap } from 'rxjs/operators';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -31,6 +32,7 @@ interface FolderState {
     selectedIds: string[];
     removeFromMurriEvent: string[];
     updateColorEvent: UpdateColor[];
+    foldersAddingPrivate: Folder[];
 }
 
 
@@ -51,7 +53,8 @@ interface FolderState {
         deletedLoaded: false,
         selectedIds: [],
         removeFromMurriEvent: [],
-        updateColorEvent: []
+        updateColorEvent: [],
+        foldersAddingPrivate: []
     }
 })
 
@@ -124,7 +127,10 @@ export class FolderStore {
         return state.updateColorEvent;
     }
 
-
+    @Selector()
+    static foldersAddingPrivate(state: FolderState): Folder[] {
+        return state.foldersAddingPrivate;
+    }
 
     // LOAD CONTENT
     @Action(LoadPrivateFolders)
@@ -392,6 +398,59 @@ export class FolderStore {
             countPrivate: getState().countPrivate + addToPrivateFolders.length,
             privateFolders: [...addToPrivateFolders, ...getState().privateFolders],
             removeFromMurriEvent: [...selectedIds]
+        });
+        dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+    }
+
+
+    @Action(CopyFolders)
+    async copyFolders({ getState, dispatch, patchState }: StateContext<FolderState>, { typeFolder }: CopyFolders) {
+        const selectedIds = getState().selectedIds;
+        const newFolders = await this.api.copyFolders(selectedIds, typeFolder).toPromise();
+
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateFolders: [...newFolders, ...getState().privateFolders]
+                });
+                dispatch([UnSelectAllFolder]);
+                break;
+            }
+            case FolderType.Shared: {
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateFolders: [...newFolders, ...getState().privateFolders]
+                });
+                dispatch([UnSelectAllFolder]);
+                break;
+            }
+            case FolderType.Private: {
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateFolders: [...newFolders, ...getState().privateFolders],
+                    foldersAddingPrivate: [...newFolders]
+                });
+                dispatch([UnSelectAllFolder, ClearAddedPrivateFolders]);
+                break;
+            }
+        }
+    }
+
+    @Action(ClearAddedPrivateFolders)
+    clearAddedPrivateFoldersEvent({ patchState }: StateContext<FolderState>) {
+        patchState({
+            foldersAddingPrivate: [],
+        });
+    }
+
+    @Action(DeleteFoldersPermanently)
+    async deleteFoldersPermanently({ getState, dispatch, patchState }: StateContext<FolderState>) {
+        const selectedIds = getState().selectedIds;
+        await this.api.deleteFolders(selectedIds).toPromise();
+        patchState({
+            removeFromMurriEvent: [...selectedIds],
+            countDeleted: getState().countDeleted - selectedIds.length
         });
         dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
     }

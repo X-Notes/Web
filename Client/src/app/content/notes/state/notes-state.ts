@@ -523,19 +523,17 @@ export class NoteStore {
             case NoteType.Archive: {
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
                     privateNotes: [...newNotes, ...getState().privateNotes]
                 });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                dispatch([UnSelectAllNote]);
                 break;
             }
             case NoteType.Shared: {
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
                     privateNotes: [...newNotes, ...getState().privateNotes]
                 });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                dispatch([UnSelectAllNote]);
                 break;
             }
             case NoteType.Private: {

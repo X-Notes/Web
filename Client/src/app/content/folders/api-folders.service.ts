@@ -50,6 +50,21 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/delete`, obj);
   }
 
+  deleteFolders(ids: string[]) {
+    const obj = {
+      ids,
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/delete/permanently`, obj);
+  }
+
+  copyFolders(ids: string[], folderType: FolderType) {
+    const obj = {
+      ids,
+      folderType
+    };
+    return this.httpClient.patch<Folder[]>(environment.writeAPI + `/api/folder/copy`, obj);
+  }
+
   restoreFolder(ids: string[]) {
     const obj = {
       ids,

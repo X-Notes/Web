@@ -107,5 +107,21 @@ namespace WriteAPI.Controllers
             command.Email = email;
             await this._mediator.Send(command);
         }
+
+        [HttpPatch("copy")]
+        public async Task<List<SmallFolder>> CopyNote([FromBody]CopyFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("delete/permanently")]
+        public async Task DeleteNotes([FromBody]DeleteFoldersCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
     }
 }

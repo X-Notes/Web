@@ -20,7 +20,9 @@ namespace BI.services.folders
         IRequestHandler<ArchiveFolderCommand, Unit>,
         IRequestHandler<ChangeColorFolderCommand, Unit>,
         IRequestHandler<RestoreFolderCommand, Unit>,
-        IRequestHandler<SetDeleteFolderCommand, Unit>
+        IRequestHandler<SetDeleteFolderCommand, Unit>,
+        IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
+        IRequestHandler<DeleteFoldersCommand, Unit>
     {
         private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
@@ -111,6 +113,40 @@ namespace BI.services.folders
             if (folders.Count == request.Ids.Count)
             {
                 await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Deleted);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<List<SmallFolder>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (folders.Count == request.Ids.Count)
+            {
+                var dbnotes = await folderRepository.CopyFolders(folders, user.Folders, request.FolderType, FoldersType.Private);
+                return mapper.Map<List<SmallFolder>>(dbnotes);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+        public async Task<Unit> Handle(DeleteFoldersCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var deletedFolders = user.Folders.Where(x => x.FolderType == FoldersType.Deleted).ToList();
+            var selectdeleteFolders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (selectdeleteFolders.Count == request.Ids.Count)
+            {
+                await folderRepository.DeleteRangeDeleted(selectdeleteFolders, deletedFolders);
             }
             else
             {

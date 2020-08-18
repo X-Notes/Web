@@ -97,6 +97,72 @@ namespace WriteContext.Repositories
             }
         }
 
+        public async Task DeleteRangeDeleted(List<Folder> selectdeletefolders, List<Folder> deletedfolders)
+        {
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    this.contextDB.Folders.RemoveRange(selectdeletefolders);
+                    await contextDB.SaveChangesAsync();
+
+                    foreach (var item in selectdeletefolders)
+                    {
+                        deletedfolders.Remove(item);
+                    }
+
+                    deletedfolders = deletedfolders.OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(deletedfolders);
+                    await UpdateRangeFolders(deletedfolders);
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                }
+            }
+        }
+
+        public async Task<List<Folder>> CopyFolders(List<Folder> foldersForCopy, List<Folder> allUserFolders, FoldersType folderTypeFrom, FoldersType folderTypeTo)
+        {
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var foldersTo = allUserFolders.Where(x => x.FolderType == folderTypeTo).ToList();
+                    foldersTo.ForEach(x => x.Order = x.Order + foldersForCopy.Count());
+                    await UpdateRangeFolders(foldersTo);
+
+                    var newFolders = foldersForCopy.Select(x => new Folder()
+                    {
+                        Color = x.Color,
+                        CreatedAt = DateTimeOffset.Now,
+                        FolderType = folderTypeTo,
+                        Title = x.Title,
+                        UserId = x.UserId
+                    }).ToList();
+                    ChangeOrderHelper(newFolders);
+                    await AddRange(newFolders);
+
+                    var oldFolders = allUserFolders.Where(x => x.FolderType == folderTypeFrom).OrderBy(x => x.Order).ToList();
+                    ChangeOrderHelper(oldFolders);
+                    await UpdateRangeFolders(oldFolders);
+
+                    await transaction.CommitAsync();
+
+                    return newFolders.OrderBy(x => x.Order).ToList();
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception();
+                }
+
+            }
+        }
+
+
         public async Task<Folder> GetFull(Guid id)
         {
             return await contextDB.Folders.FirstOrDefaultAsync(x => x.Id == id);

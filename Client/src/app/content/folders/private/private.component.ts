@@ -56,6 +56,10 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
+
+    this.store.select(FolderStore.foldersAddingPrivate)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.addToDom(x));
   }
 
   initMurri() {
@@ -80,6 +84,19 @@ export class PrivateComponent implements OnInit, OnDestroy {
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
       this.folders.find(x => x.id === update.id).color = update.color;
+    }
+  }
+
+  addToDom(folders: Folder[]) {
+    if (folders.length > 0) {
+      this.folders = [...folders, ...this.folders];
+      setTimeout(() => {
+        const DOMnodes = document.getElementsByClassName('grid-item');
+        for (let i = 0; i < folders.length; i++) {
+          const el = DOMnodes[i];
+          this.pService.grid.add(el, {index : 0, layout: true});
+        }
+      }, 0);
     }
   }
 

@@ -62,6 +62,23 @@ export class RestoreFolders {
     }
 }
 
+export class DeleteFoldersPermanently {
+    static type = '[Folders] Delete folders';
+    constructor() {
+    }
+}
+
+export class ClearAddedPrivateFolders {
+    static type = '[Folders] ClearAddedPrivate folders';
+    constructor() {
+    }
+}
+
+export class CopyFolders {
+    static type = '[Folders] Copy folders';
+    constructor(public typeFolder: FolderType) {
+    }
+}
 
 // Muuri remove from dom
 export class RemoveFromDomMurri {
