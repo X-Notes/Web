@@ -1,5 +1,6 @@
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { Folder } from '../models/folder';
+import { Order } from 'src/app/shared/services/order.service';
 
 
 export class LoadPrivateFolders {
@@ -89,6 +90,12 @@ export class MakePublicFolders {
 export class MakePrivateFolders {
     static type = '[Folders] MakePrivate folders';
     constructor(public typeFolder: FolderType) {
+    }
+}
+
+export class PositionFolder {
+    static type = '[Folders] Position folders';
+    constructor(public order: Order, public typeFolder: FolderType) {
     }
 }
 

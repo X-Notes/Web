@@ -4,11 +4,12 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
-import { LoadPrivateFolders, UnSelectAllFolder } from '../state/folders-actions';
+import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 @Component({
   selector: 'app-private',
@@ -71,6 +72,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
+      this.store.dispatch(new PositionFolder(order, FolderType.Private));
     });
   }
 

@@ -6,9 +6,10 @@ import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
-import { LoadSharedFolders, UnSelectAllFolder } from '../state/folders-actions';
+import { LoadSharedFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 @Component({
   selector: 'app-shared',
@@ -65,6 +66,7 @@ export class SharedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
+      this.store.dispatch(new PositionFolder(order, FolderType.Shared));
     });
   }
 
