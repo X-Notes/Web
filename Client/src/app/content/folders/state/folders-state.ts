@@ -8,7 +8,8 @@ import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders,
-    RestoreFolders, DeleteFoldersPermanently, CopyFolders, ClearAddedPrivateFolders } from './folders-actions';
+    RestoreFolders, DeleteFoldersPermanently, CopyFolders,
+    ClearAddedPrivateFolders, MakePublicFolders, MakePrivateFolders } from './folders-actions';
 import { tap } from 'rxjs/operators';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -453,6 +454,76 @@ export class FolderStore {
             countDeleted: getState().countDeleted - selectedIds.length
         });
         dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+    }
+
+    @Action(MakePublicFolders)
+    async MakePublicFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePublicFolders) {
+        const selectedIds = getState().selectedIds;
+        await this.api.makePublicFolders(selectedIds, typeFolder).toPromise();
+
+        switch (typeFolder) {
+            case FolderType.Private: {
+                const folderPrivate = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const foldersAdded = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countPrivate: getState().countPrivate - selectedIds.length,
+                    countShared: getState().countShared + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    privateFolders: [...folderPrivate],
+                    sharedFolders: [...foldersAdded, ...getState().sharedFolders]
+                });
+                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+                break;
+            }
+            case FolderType.Archive: {
+                const folderArchive = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const foldersAdded = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countArchive: getState().countArchive - selectedIds.length,
+                    countShared: getState().countShared + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    archiveFolders: [...folderArchive],
+                    sharedFolders: [...foldersAdded, ...getState().sharedFolders]
+                });
+                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+                break;
+            }
+        }
+    }
+
+    @Action(MakePrivateFolders)
+    async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePrivateFolders) {
+        const selectedIds = getState().selectedIds;
+        await this.api.makePrivateFolders(selectedIds, typeFolder).toPromise();
+
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                const foldersArchive = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const foldersAdded = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countArchive: getState().countArchive - selectedIds.length,
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    archiveFolders: [...foldersArchive],
+                    privateFolders: [...foldersAdded, ...getState().privateFolders]
+                });
+                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+                break;
+            }
+            case FolderType.Shared: {
+                const foldersShared = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+                const foldersAdded = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+                patchState({
+                    countShared: getState().countShared - selectedIds.length,
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    removeFromMurriEvent: [...selectedIds],
+                    sharedFolders: [...foldersShared],
+                    privateFolders: [...foldersAdded, ...getState().privateFolders]
+                });
+                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+                break;
+            }
+        }
     }
 
     // Murri

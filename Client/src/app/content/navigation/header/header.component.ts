@@ -13,7 +13,7 @@ import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder, SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders } from '../../folders/state/folders-actions';
+import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder, SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders, MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 
 @Component({
   selector: 'app-header',
@@ -241,4 +241,11 @@ export class HeaderComponent implements OnInit {
     this.store.dispatch(new CopyFolders(this.folderType));
   }
 
+  makePublicFolder() {
+    this.store.dispatch(new MakePublicFolders(this.folderType));
+  }
+
+  makePrivateFolder() {
+    this.store.dispatch(new MakePrivateFolders(this.folderType));
+  }
 }

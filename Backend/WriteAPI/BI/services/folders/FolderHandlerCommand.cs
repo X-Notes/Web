@@ -22,7 +22,9 @@ namespace BI.services.folders
         IRequestHandler<RestoreFolderCommand, Unit>,
         IRequestHandler<SetDeleteFolderCommand, Unit>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
-        IRequestHandler<DeleteFoldersCommand, Unit>
+        IRequestHandler<DeleteFoldersCommand, Unit>,
+        IRequestHandler<MakePrivateFolderCommand, Unit>,
+        IRequestHandler<MakePublicFolderCommand, Unit>
     {
         private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
@@ -147,6 +149,40 @@ namespace BI.services.folders
             if (selectdeleteFolders.Count == request.Ids.Count)
             {
                 await folderRepository.DeleteRangeDeleted(selectdeleteFolders, deletedFolders);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (folders.Count == request.Ids.Count)
+            {
+                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Private);
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(MakePublicFolderCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithFolders(request.Email);
+            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+
+            if (folders.Count == request.Ids.Count)
+            {
+                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Shared);
             }
             else
             {

@@ -80,4 +80,21 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/color`, obj);
   }
 
+  makePublicFolders(ids: string[], folderType: FolderType) {
+    const obj = {
+      ids,
+      folderType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/ref/public`, obj);
+  }
+
+  makePrivateFolders(ids: string[], folderType: FolderType) {
+    const obj = {
+      ids,
+      folderType
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/folder/ref/private`, obj);
+  }
+
+
 }

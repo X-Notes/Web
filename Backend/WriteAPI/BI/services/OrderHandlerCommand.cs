@@ -13,12 +13,18 @@ namespace BI.services
     {
         private readonly LabelRepository labelRepository;
         private readonly NoteRepository noteRepository;
+        private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
-        public OrderHandlerCommand(LabelRepository labelRepository, NoteRepository noteRepository, UserRepository userRepository)
+        public OrderHandlerCommand(
+            LabelRepository labelRepository, 
+            NoteRepository noteRepository, 
+            UserRepository userRepository,
+            FolderRepository folderRepository)
         {
             this.labelRepository = labelRepository;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
+            this.folderRepository = folderRepository;
         }
         public async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
@@ -72,6 +78,37 @@ namespace BI.services
                                     note.Order = request.Position;
                                 }
                                 await noteRepository.UpdateRangeNotes(notesWithType);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                        Console.WriteLine("Note");
+                        break;
+                    }
+                case OrderEntity.Folder:
+                    {
+                        if (Guid.TryParse(request.EntityId, out var guid))
+                        {
+                            var folders = (await userRepository.GetUserWithFolders(request.Email)).Folders;
+                            var folder = folders.FirstOrDefault(x => x.Id == guid);
+
+                            if (folder != null)
+                            {
+                                var foldersWithType = folders.Where(x => x.FolderType == folder.FolderType).ToList();
+
+                                if (folder.Order < request.Position)
+                                {
+                                    foldersWithType.Where(x => x.Order <= request.Position && x.Order > folder.Order).ToList().ForEach(x => x.Order = x.Order - 1);
+                                    folder.Order = request.Position;
+                                }
+                                else
+                                {
+                                    foldersWithType.Where(x => x.Order >= request.Position && x.Order < folder.Order).ToList().ForEach(x => x.Order = x.Order + 1);
+                                    folder.Order = request.Position;
+                                }
+                                await folderRepository.UpdateRangeFolders(foldersWithType);
                             }
                         }
                         else

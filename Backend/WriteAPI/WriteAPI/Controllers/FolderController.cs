@@ -123,5 +123,21 @@ namespace WriteAPI.Controllers
             command.Email = email;
             await this._mediator.Send(command);
         }
+
+        [HttpPatch("ref/public")]
+        public async Task MakePublic([FromBody]MakePublicFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPatch("ref/private")]
+        public async Task MakePrivate([FromBody]MakePrivateFolderCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
     }
 }

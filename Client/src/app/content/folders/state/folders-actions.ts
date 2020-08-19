@@ -80,6 +80,18 @@ export class CopyFolders {
     }
 }
 
+export class MakePublicFolders {
+    static type = '[Folders] MakePublic folders';
+    constructor(public typeFolder: FolderType) {
+    }
+}
+
+export class MakePrivateFolders {
+    static type = '[Folders] MakePrivate folders';
+    constructor(public typeFolder: FolderType) {
+    }
+}
+
 // Muuri remove from dom
 export class RemoveFromDomMurri {
     static type = '[Folders] MurriRemove folders';
