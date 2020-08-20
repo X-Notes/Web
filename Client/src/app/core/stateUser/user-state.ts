@@ -2,12 +2,13 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { AuthAPIService } from '../auth-api.service';
-import { Login, Logout, SetToken } from './user-action';
+import { Login, Logout, SetToken, TokenSetNoUpdate } from './user-action';
 
 interface UserState {
     user: ShortUser;
     isLogin: boolean;
     token: string;
+    tokenUpdated: boolean;
 }
 
 @State<UserState>({
@@ -15,7 +16,8 @@ interface UserState {
     defaults: {
         user: null,
         isLogin: false,
-        token: null
+        token: null,
+        tokenUpdated: false
     }
 })
 
@@ -24,6 +26,11 @@ export class UserStore {
 
     constructor(private api: AuthAPIService) {
 
+    }
+
+    @Selector()
+    static getTokenUpdated(state: UserState): boolean {
+        return state.tokenUpdated;
     }
 
     @Selector()
@@ -47,16 +54,21 @@ export class UserStore {
         if (userdb === null) {
             userdb = await this.api.newUser(user).toPromise();
         }
-        setState({user: userdb, isLogin: true, token});
+        setState({user: userdb, isLogin: true, token, tokenUpdated: true});
     }
 
     @Action(Logout)
     logout({ setState }: StateContext<UserState>) {
-        setState({user: null, isLogin: false, token: null});
+        setState({user: null, isLogin: false, token: null, tokenUpdated: false});
     }
 
     @Action(SetToken)
     setToken({ patchState }: StateContext<UserState>, { token }: SetToken) {
-        patchState({token});
+        patchState({token, tokenUpdated: true});
+    }
+
+    @Action(TokenSetNoUpdate)
+    setNoUpdateToken({ patchState }: StateContext<UserState>) {
+        patchState({tokenUpdated: false});
     }
 }

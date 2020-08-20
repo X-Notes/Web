@@ -22,5 +22,6 @@ namespace Common.DatabaseModels.models
 
         public List<UserOnNote> UserOnNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
+        public List<FoldersNotes> FoldersNotes { set; get; }
     }
 }

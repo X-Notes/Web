@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WriteContext
 {
-    public class WriteContextDB: DbContext
+    public class WriteContextDB : DbContext
     {
 
         public DbSet<User> Users { get; set; }
@@ -16,7 +16,7 @@ namespace WriteContext
         public DbSet<Note> Notes { set; get; }
         public DbSet<UserOnNote> UserOnNote { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
-
+        public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
             Database.EnsureCreated();
@@ -51,10 +51,8 @@ namespace WriteContext
                 .WithOne(z => z.CurrentUserBackground)
                 .HasForeignKey<User>(h => h.CurrentBackgroundId);
 
-
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
-
 
             modelBuilder.Entity<UserOnNote>()
                 .HasKey(x => new { x.UserId, x.NoteId });
@@ -68,6 +66,18 @@ namespace WriteContext
             modelBuilder.Entity<LabelsNotes>()
                 .HasOne(bc => bc.Note)
                 .WithMany(c => c.LabelsNotes)
+                .HasForeignKey(bc => bc.NoteId);
+
+
+            modelBuilder.Entity<FoldersNotes>()
+                .HasKey(bc => new { bc.NoteId, bc.FolderId });
+            modelBuilder.Entity<FoldersNotes>()
+                .HasOne(bc => bc.Folder)
+                .WithMany(b => b.FoldersNotes)
+                .HasForeignKey(bc => bc.FolderId);
+            modelBuilder.Entity<FoldersNotes>()
+                .HasOne(bc => bc.Note)
+                .WithMany(c => c.FoldersNotes)
                 .HasForeignKey(bc => bc.NoteId);
         }
     }

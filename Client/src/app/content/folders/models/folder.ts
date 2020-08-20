@@ -1,3 +1,5 @@
 export interface Folder {
-    name: string;
+    id: string;
+    title: string;
+    color: string;
 }
