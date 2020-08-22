@@ -1,8 +1,11 @@
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { AuthAPIService } from '../auth-api.service';
-import { Login, Logout, SetToken, TokenSetNoUpdate } from './user-action';
+import { UserAPIService } from '../user-api.service';
+import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage, ChangeFontSize } from './user-action';
+import { Theme } from 'src/app/shared/enums/Theme';
+import { Language } from 'src/app/shared/enums/Language';
+import { TranslateService } from '@ngx-translate/core';
 
 interface UserState {
     user: ShortUser;
@@ -24,7 +27,8 @@ interface UserState {
 @Injectable()
 export class UserStore {
 
-    constructor(private api: AuthAPIService) {
+    constructor(private api: UserAPIService,
+                private translateService: TranslateService) {
 
     }
 
@@ -36,6 +40,16 @@ export class UserStore {
     @Selector()
     static getUser(state: UserState): ShortUser {
         return state.user;
+    }
+
+    @Selector()
+    static getUserTheme(state: UserState): Theme {
+        return state.user.theme;
+    }
+
+    @Selector()
+    static getUserLanguage(state: UserState): Language {
+        return state.user.language;
     }
 
     @Selector()
@@ -54,21 +68,47 @@ export class UserStore {
         if (userdb === null) {
             userdb = await this.api.newUser(user).toPromise();
         }
-        setState({user: userdb, isLogin: true, token, tokenUpdated: true});
+        setState({ user: userdb, isLogin: true, token, tokenUpdated: true });
     }
 
     @Action(Logout)
     logout({ setState }: StateContext<UserState>) {
-        setState({user: null, isLogin: false, token: null, tokenUpdated: false});
+        setState({ user: null, isLogin: false, token: null, tokenUpdated: false });
     }
 
     @Action(SetToken)
     setToken({ patchState }: StateContext<UserState>, { token }: SetToken) {
-        patchState({token, tokenUpdated: true});
+        patchState({ token, tokenUpdated: true });
     }
 
     @Action(TokenSetNoUpdate)
     setNoUpdateToken({ patchState }: StateContext<UserState>) {
-        patchState({tokenUpdated: false});
+        patchState({ tokenUpdated: false });
+    }
+
+    @Action(ChangeTheme)
+    async changeTheme({ patchState, getState }: StateContext<UserState>) {
+        let user = getState().user;
+        if (user.theme === Theme.Light) {
+            await this.api.changeTheme(Theme.Dark).toPromise();
+            user = {...user, theme: Theme.Dark};
+        } else {
+            await this.api.changeTheme(Theme.Light).toPromise();
+            user = {...user, theme: Theme.Light};
+        }
+        patchState({ user });
+    }
+
+    @Action(ChangeLanguage)
+    async changeLanguage({ patchState, getState }: StateContext<UserState>, {language}: ChangeLanguage ) {
+        await this.api.changeLanguage(language).toPromise();
+        await this.translateService.use(language).toPromise();
+        patchState({ user: {...getState().user, language}});
+    }
+
+    @Action(ChangeFontSize)
+    async changeFontSize({ patchState, getState }: StateContext<UserState>, {fontSize}: ChangeFontSize ) {
+        await this.api.changeFontSize(fontSize).toPromise();
+        patchState({ user: {...getState().user, fontSize}});
     }
 }

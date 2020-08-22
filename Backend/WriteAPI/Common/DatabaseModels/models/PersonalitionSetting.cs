@@ -9,7 +9,7 @@ namespace Common.DatabaseModels.models
     {
         public int Id { set; get; }
         public Theme Theme { set; get; }
-        public int FontSize { set; get; }
+        public FontSize FontSize { set; get; }
         public int UserId { set; get; }
         public User User { set; get; }
     }

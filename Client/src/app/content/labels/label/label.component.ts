@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { RestoreLabel } from '../state/labels-actions';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
+import { EnumUtil } from 'src/app/shared/services/enum.util';
 
 @Component({
   selector: 'app-label',
@@ -15,8 +16,7 @@ import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 })
 export class LabelComponent implements OnInit, OnDestroy {
 
-  pallete = LabelsColor;
-
+  pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Input() deleted: boolean;
   @Output() updateLabel = new EventEmitter<Label>();

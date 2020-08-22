@@ -1,4 +1,6 @@
 import { Language } from 'src/app/shared/enums/Language';
+import { Theme } from 'src/app/shared/enums/Theme';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 export interface ShortUser {
     name: string;
@@ -6,4 +8,6 @@ export interface ShortUser {
     backgroundId: string;
     email: string;
     language: Language;
+    theme: Theme;
+    fontSize: FontSize;
 }

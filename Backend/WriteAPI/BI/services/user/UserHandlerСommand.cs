@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BI.helpers;
 using Common;
+using Common.DatabaseModels.helpers;
 using Common.DatabaseModels.models;
 using Domain.Commands.users;
 using MediatR;
@@ -18,7 +19,9 @@ namespace BI.services.user
         IRequestHandler<NewUserCommand, Unit>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
         IRequestHandler<UpdatePhotoCommand, Unit>,
-        IRequestHandler<UpdateLanguageCommand, Unit>
+        IRequestHandler<UpdateLanguageCommand, Unit>,
+        IRequestHandler<UpdateThemeCommand, Unit>,
+        IRequestHandler<UpdateFontSizeCommand, Unit>
     {
         private readonly UserRepository userRepository;
         private readonly IMapper imapper;
@@ -33,6 +36,11 @@ namespace BI.services.user
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
             var user = imapper.Map<User>(request);
+            user.PersonalitionSettings = new PersonalitionSetting()
+            {
+                Theme = Theme.Dark,
+                FontSize = FontSize.Medium,
+            };
             await userRepository.Add(user);
             return Unit.Value;
         }
@@ -57,6 +65,22 @@ namespace BI.services.user
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.Language = request.Language;
+            await userRepository.Update(user);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(UpdateThemeCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmailWithPersonalization(request.Email);
+            user.PersonalitionSettings.Theme = request.Theme;
+            await userRepository.Update(user);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(UpdateFontSizeCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmailWithPersonalization(request.Email);
+            user.PersonalitionSettings.FontSize = request.FontSize;
             await userRepository.Update(user);
             return Unit.Value;
         }

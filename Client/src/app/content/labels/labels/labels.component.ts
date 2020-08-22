@@ -4,6 +4,7 @@ import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/service
 import { Store, Select } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 
 
@@ -14,6 +15,9 @@ import { Observable } from 'rxjs';
   animations: [ sideBarCloseOpen ],
 })
 export class LabelsComponent implements OnInit {
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
 
   @Select(LabelStore.countAll)
   countAll$: Observable<number>;

@@ -1,4 +1,4 @@
-<header [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+<header [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
@@ -24,7 +24,7 @@
             </div>
             <button *ngIf="pService.newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
                 <div class="inner-content" >
-                    <p>New {{routePath}}</p>
+                    <p>New {{route$ | async}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
