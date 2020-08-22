@@ -12,7 +12,6 @@ import { ArchiveComponent } from './archive/archive.component';
 import { ReplacePipe } from './pipes/replace.pipe';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
-import { HammerDirective } from 'src/app/shared/directives/hammer.directive';
 
 
 @NgModule({
@@ -24,8 +23,7 @@ import { HammerDirective } from 'src/app/shared/directives/hammer.directive';
     SharedComponent,
     DeletedComponent,
     ArchiveComponent,
-    ReplacePipe,
-    HammerDirective],
+    ReplacePipe],
   imports: [
     CommonModule,
     NoteRouting,

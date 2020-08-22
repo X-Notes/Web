@@ -78,7 +78,7 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
             </button>
             <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerMenu"></app-menu>
-            <button name="History" type="button" class="generic filters history" #history>
+            <button name="History" type="button" class="generic filters history" #history (click)="pService.toggleHistoryMethod()">
                 <div class="inner-content" >
                     <p>History</p>
                 </div>

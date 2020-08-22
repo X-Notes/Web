@@ -64,7 +64,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   initMurri() {
 
-    this.pService.gridSettings();
+    this.pService.gridSettings('.grid-item');
 
     this.pService.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);

@@ -34,31 +34,76 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''" >
-    <ngx-simplebar [options]="pService.optionsScroll" class="main-content">
-        <div class="note-color"></div>
-        <div class="labels-section">
-            <div class="label">
-                <p>Hello Hello Hello Hello Hello</p>
+<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+    <div class="wrapper" #fullWrap (panstart)="panStart($event)" (panmove)="panMove($event)" (panend)="panEnd($event)">
+        <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="mainWidth" class="main-content">
+            <div class="note-color"></div>
+            <div class="labels-section">
+                <div class="label">
+                    <p>Hello Hello Hello Hello Hello</p>
+                </div>
+                <div class="label">
+                    <p>Hello Hello </p>
+                </div>
+                <div class="label">
+                    <p>Hello Hello Hello Hello Hello Hello Hello</p>
+                </div>
             </div>
-            <div class="label">
-                <p>Hello Hello </p>
+            <div class="title-section">
+                <div contenteditable="true" class="title" (input)="onInput($event)"></div>
+                <div class="placeholder">Give title suka</div>
+                <div class="left-border"></div>
             </div>
-            <div class="label">
-                <p>Hello Hello Hello Hello Hello Hello Hello</p>
+        </ngx-simplebar>
+        <div class="secondary-content" [style.width.px]="mainWidth">
+            <div class="open" #open>
+                <i class="icon-plus"></i>
+                <p>open note or file</p>
+                <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
             </div>
-        </div>
-        <div class="title-section">
-            <div contenteditable="true" class="title" (input)="onInput($event)"></div>
-            <div class="placeholder">Give title suka</div>
-            <div class="left-border"></div>
-        </div>
-    </ngx-simplebar>
-    <div class="secondary-content" appHammer (tap)="startAnimation('wobble')">
-        <div class="open" #open>
-            <i class="icon-plus"></i>
-            <p>open note or file</p>
-            <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
+            <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
+            <ngx-simplebar [options]="pService.optionsScroll" class="small-notes autoscroll-helper" [ngClass]="pService.toggleHistory? 'history-plus' : ''">
+                <div class="grid">
+                    <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
+                        <div class="small-note">
+                            <div class="header">
+                                <button type="button" (click)="turnUpSmallNote()">
+                                    <div class="icon">
+                                        <i class="icon-select-label"></i>
+                                    </div>
+                                </button>
+                                <button type="button" (click)="deleteSmallNote(item)">
+                                    <div class="icon">
+                                        <i class="icon-cancel"></i>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="content" [ngClass]="turnUpNote? 'turn-up-note' : ''">
+                                <div class="note-color"></div>
+                                <div class="labels-section">
+                                    <div class="label">
+                                        <p>Hello Hello Hello Hello Hello</p>
+                                    </div>
+                                    <div class="label">
+                                        <p>Hello Hello </p>
+                                    </div>
+                                    <div class="label">
+                                        <p>Hello Hello Hello Hello Hello Hello Hello</p>
+                                    </div>
+                                </div>
+                                <div class="title-section">
+                                    <div class="left-border"></div>
+                                    <p>GIVE TITLE SUKA GIVE TITLE SUKA</p>
+                                </div>
+                                <div class="description">
+                                    <p>Hello Hello Hello Hello</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="drag-helper second-helper"></div>
+            </ngx-simplebar>
         </div>
     </div>
 </div>

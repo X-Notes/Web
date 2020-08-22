@@ -26,6 +26,13 @@
     z-index: 1;
 }
 
+.grid-item-small {
+    position: absolute;
+    width: 100%;
+    padding-bottom: 1rem;
+    z-index: 1;
+}
+
 .muuri-item-dragging {
     z-index: 11;
     cursor: move;
@@ -43,13 +50,20 @@
     opacity: 0.3;
 }
 
+.main-helper {
+    width: calc(100% - 270px - (6.25vw - 1.5rem));
+}
+
+.second-helper {
+    width: calc(30% - 4vw);
+}
+
 .drag-helper {
     position: fixed;
     left: 0;
     top: 0;
     z-index: 4;
     height: 0;
-    width: calc(100% - 270px - (6.25vw - 1.5rem));
 }
 
 .ripple-container {
@@ -114,12 +128,16 @@
         width: 100%;
     }
 
-    .drag-helper {
+    .main-helper {
         width: calc(100% - (6.25vw - 1.5rem));
     }
 
     .grid-plus {
         width: calc(100% / 3);
+    }
+
+    .second-helper {
+        width: calc(50% - 8vw);
     }
 }
 
@@ -134,7 +152,7 @@
         width: 100%;
     }
 
-    .drag-helper {
+    .main-helper {
         width: calc(100% - 6.25vw);
     }
 

@@ -76,8 +76,8 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>
-<div class="drag-helper"></div>
+<div class="drag-helper main-helper"></div>

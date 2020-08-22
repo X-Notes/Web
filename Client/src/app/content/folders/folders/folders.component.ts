@@ -45,7 +45,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
     await this.folders;
 
-    this.pService.gridSettings();
+    this.pService.gridSettings('.grid-item');
 
   }
 

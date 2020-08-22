@@ -42,7 +42,7 @@ export class DeletedComponent implements OnInit {
   }
 
   initMurri() {
-    this.pService.gridSettings();
+    this.pService.gridSettings('.grid-item');
 
     this.pService.grid.on('dragEnd', async (item, event) => {
     const order: Order = {
