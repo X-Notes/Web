@@ -1,0 +1,29 @@
+<div class="header">
+    <span>{{data.title}}</span>
+    <i class="icon-plus" mat-dialog-close></i>
+</div>
+<div class="preview_container">
+    <div *ngIf="(pathType$ | async) === routePath.Note" class="note" [ngStyle]="{'backgroundColor': current}">
+        <div class="labels">
+            <span>IT</span>
+        </div>
+        <span class="title">Preview</span>
+        <span class="description">Document is a written, drawn, presented, or memorialized representation of thought.</span>
+        <span class="date">{{date | date:'dd.MM.yyyy'}}</span>
+    </div>
+    <div *ngIf="(pathType$ | async) === routePath.Folder" class="folder" [ngStyle]="{'backgroundColor': current}">
+        pizdec
+    </div>
+</div>
+<div class="color_container">
+    <div class="color_pallete">
+        <div *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeCurrent(item)">
+            <div [ngStyle]="item === current ? {'boxShadow': '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7'} : {}"></div>
+        </div>
+    </div>
+</div>
+<div class="button_container">
+    <div class="save_button" (click)="changeColor()" [ngClass]="(theme$ | async) === theme.Light ? 'white_button' : 'dark_button'">
+        <span>Save</span>
+    </div>
+</div>

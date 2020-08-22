@@ -13,7 +13,15 @@ import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder, SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders, MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
+import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder,
+  SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders,
+   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
+import { DialogService } from 'src/app/shared/modal_components/dialog.service';
+import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
+import { MatDialogConfig } from '@angular/material/dialog';
+import { ChangeTheme } from 'src/app/core/stateUser/user-action';
+import { UpdateRoutePath, UpdateFolderType, UpdateNoteType } from 'src/app/core/stateApp/app-action';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-header',
@@ -23,13 +31,16 @@ import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder, 
 export class HeaderComponent implements OnInit {
 
 
+  @Select(AppStore.getRoutePath)
+  public route$: Observable<RoutePathes>;
+
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
+
   theme = Theme;
-  routePath: RoutePathes;
-  noteType: NoteType;
-  folderType: FolderType;
 
   newButtonActive = true;
   selectAllActive = true;
@@ -37,18 +48,15 @@ export class HeaderComponent implements OnInit {
 
   constructor(public pService: PersonalizationService,
               private router: Router,
-              private store: Store) { }
+              private store: Store,
+              private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.checkRout();
   }
 
   toggleTheme() {
-    if (this.pService.theme === Theme.Light) {
-      this.pService.theme = Theme.Dark;
-    } else {
-      this.pService.theme = Theme.Light;
-    }
+    this.store.dispatch(new ChangeTheme());
   }
 
   toggleSidebar() {
@@ -71,67 +79,66 @@ export class HeaderComponent implements OnInit {
     switch (url) {
 
       case '/folders' : {
-        this.routePath = RoutePathes.Folder;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.folderType = FolderType.Private;
+        this.store.dispatch(new UpdateFolderType(FolderType.Private));
         break;
       }
       case '/folders/shared' : {
-        this.routePath = RoutePathes.Folder;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.folderType = FolderType.Shared;
+        this.store.dispatch(new UpdateFolderType(FolderType.Shared));
         break;
       }
       case '/folders/deleted' : {
-        this.routePath = RoutePathes.Folder;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.folderType = FolderType.Deleted;
+        this.store.dispatch(new UpdateFolderType(FolderType.Deleted));
         break;
       }
       case '/folders/archive' : {
-        this.routePath = RoutePathes.Folder;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.folderType = FolderType.Archive;
+        this.store.dispatch(new UpdateFolderType(FolderType.Archive));
         break;
       }
 
 
       case '/notes' : {
-        this.routePath = RoutePathes.Note;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.noteType = NoteType.Private;
+        this.store.dispatch(new UpdateNoteType(NoteType.Private));
         break;
       }
       case '/notes/shared' : {
-        this.routePath = RoutePathes.Note;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.noteType = NoteType.Shared;
+        this.store.dispatch(new UpdateNoteType(NoteType.Shared));
         break;
       }
       case '/notes/deleted' : {
-        this.routePath = RoutePathes.Note;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.noteType = NoteType.Deleted;
+        this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
         break;
       }
       case '/notes/archive' : {
-        this.routePath = RoutePathes.Note;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.noteType = NoteType.Archive;
+        this.store.dispatch(new UpdateNoteType(NoteType.Archive));
         break;
       }
 
 
       case '/labels' : {
-        this.routePath = RoutePathes.Label;
-
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
         this.newButtonActive = true;
         this.selectAllActive = false;
         this.settingsActive = false;
         break;
       }
       case '/labels/deleted' : {
-        this.routePath =  RoutePathes.Label;
+        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
         this.hideAllButtons();
         break;
       }
@@ -157,20 +164,24 @@ export class HeaderComponent implements OnInit {
   // Selection
 
   selectAll() {
-    switch (this.routePath) {
+    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
+    switch (routePath) {
       case RoutePathes.Folder: {
-        this.store.dispatch(new SelectAllFolder(this.folderType));
+        const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+        this.store.dispatch(new SelectAllFolder(folderType));
         break;
       }
       case RoutePathes.Note: {
-        this.store.dispatch(new SelectAllNote(this.noteType));
+        const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+        this.store.dispatch(new SelectAllNote(noteType));
         break;
       }
     }
   }
 
   unselectAll() {
-    switch (this.routePath) {
+    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
+    switch (routePath) {
       case RoutePathes.Folder: {
         this.store.dispatch(new UnSelectAllFolder());
         break;
@@ -184,11 +195,13 @@ export class HeaderComponent implements OnInit {
 
   // UPPER MENU FUNCTION NOTES
   changeColor() {
-    this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, noteType));
   }
 
   setdeleteNotes() {
-    this.store.dispatch(new SetDeleteNotes(this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new SetDeleteNotes(noteType));
   }
 
   deleteNotes() {
@@ -200,36 +213,44 @@ export class HeaderComponent implements OnInit {
   }
 
   archiveNotes() {
-    this.store.dispatch(new ArchiveNotes(this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new ArchiveNotes(noteType));
   }
 
   makePublic() {
-    this.store.dispatch(new MakePublicNotes(this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new MakePublicNotes(noteType));
   }
 
   makePrivate() {
-    this.store.dispatch(new MakePrivateNotes(this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new MakePrivateNotes(noteType));
   }
 
   copyNotes() {
-    this.store.dispatch(new CopyNotes(this.noteType));
+    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    this.store.dispatch(new CopyNotes(noteType));
   }
 
   // UPPER MENU FUNCTIONS FOLDERS
 
   archiveFolders() {
-    this.store.dispatch(new ArchiveFolders(this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new ArchiveFolders(folderType));
   }
 
   changeColorFolder() {
-    this.store.dispatch(new ChangeColorFolder(NoteColorPallete.BlueOne, this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new ChangeColorFolder(NoteColorPallete.BlueOne, folderType));
   }
 
   setDeleteFolders() {
-    this.store.dispatch(new SetDeleteFolders(this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new SetDeleteFolders(folderType));
   }
 
   restoreFolders() {
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
     this.store.dispatch(new RestoreFolders());
   }
 
@@ -238,14 +259,32 @@ export class HeaderComponent implements OnInit {
   }
 
   copyFolders() {
-    this.store.dispatch(new CopyFolders(this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new CopyFolders(folderType));
   }
 
   makePublicFolder() {
-    this.store.dispatch(new MakePublicFolders(this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new MakePublicFolders(folderType));
   }
 
   makePrivateFolder() {
-    this.store.dispatch(new MakePrivateFolders(this.folderType));
+    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    this.store.dispatch(new MakePrivateFolders(folderType));
+  }
+
+  // Modal Windows
+
+  changeColorNote() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const config: MatDialogConfig =  {
+      width: '450px',
+      minHeight: '380px',
+      data: {
+        title: 'Colors'
+      },
+      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+    };
+    this.dialogService.openDialog(ChangeColorComponent, config);
   }
 }
