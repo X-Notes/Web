@@ -7,11 +7,12 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
+import { HammerModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent],
-  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule],
-  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule],
+  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule],
+  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule],
   providers: [DialogService]
 })
 export class SharedModule { }
