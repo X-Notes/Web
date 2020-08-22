@@ -9,7 +9,9 @@ namespace BI.Mapping
     {
         public UserProfile()
         {
-            CreateMap<User, ShortUser>();
+            CreateMap<User, ShortUser>()
+                .ForMember(x => x.FontSize, dest => dest.MapFrom(z => z.PersonalitionSettings.FontSize))
+                .ForMember(x => x.Theme, dest => dest.MapFrom(z => z.PersonalitionSettings.Theme));
             CreateMap<NewUserCommand, User>();
             CreateMap<NewUser, NewUserCommand>();
 

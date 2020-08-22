@@ -42,7 +42,6 @@ export class PersonalizationService {
 
   subject = new Subject();
 
-  theme: Theme = Theme.Dark;
   language: Language = Language.RU;
   stateSidebar = true;
   orientationMobile = false;

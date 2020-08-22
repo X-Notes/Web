@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BI.helpers;
 using Common;
+using Common.DatabaseModels.helpers;
 using Common.DatabaseModels.models;
 using Domain.Commands.users;
 using MediatR;
@@ -33,6 +34,11 @@ namespace BI.services.user
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
             var user = imapper.Map<User>(request);
+            user.PersonalitionSettings = new PersonalitionSetting()
+            {
+                Theme = Theme.Dark,
+                FontSize = FontSize.Medium,
+            };
             await userRepository.Add(user);
             return Unit.Value;
         }

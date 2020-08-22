@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-side-bar',
@@ -9,9 +12,12 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 export class SideBarComponent implements OnInit {
 
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
+
   theme = Theme;
 
-  constructor(public pService: PersonalizationService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }

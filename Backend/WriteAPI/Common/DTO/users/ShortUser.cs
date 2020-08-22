@@ -12,5 +12,7 @@ namespace Common.DTO.users
         public string PhotoId { set; get; }
         public string BackgroundId { set; get; }
         public Language Language { set; get; }
+        public Theme Theme { set; get; }
+        public FontSize FontSize { set; get; }
     }
 }

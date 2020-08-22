@@ -19,3 +19,8 @@ export class TokenSetNoUpdate {
     static type = '[User] Set noUpdateToken';
     constructor() {  }
 }
+
+export class ChangeTheme {
+    static type = '[User] Change theme';
+    constructor() {}
+}

@@ -8,6 +8,7 @@ import { FolderStore } from '../state/folders-state';
 import { Select, Store } from '@ngxs/store';
 import { LoadAllFolders, AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 
 @Component({
@@ -18,6 +19,9 @@ import { Router } from '@angular/router';
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
 
   @Select(FolderStore.privateCount)
   public countPrivate: Observable<number>;

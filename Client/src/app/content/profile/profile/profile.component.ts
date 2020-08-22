@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -9,6 +12,9 @@ import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/service
   animations: [ sideBarCloseOpen ]
 })
 export class ProfileComponent implements OnInit {
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
 
   check = true;
   theme = Theme;
