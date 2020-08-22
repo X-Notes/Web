@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
+import { Language } from 'src/app/shared/enums/Language';
+import { ChangeLanguage, ChangeFontSize } from 'src/app/core/stateUser/user-action';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +23,8 @@ export class ProfileComponent implements OnInit {
   theme = Theme;
   items: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 , 12, 13];
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService,
+              private store: Store) { }
 
   ngOnInit(): void {
     this.pService.onResize();
@@ -34,4 +38,11 @@ export class ProfileComponent implements OnInit {
     this.pService.stateSidebar = false;
   }
 
+  changeLanguage() {
+    this.store.dispatch(new ChangeLanguage(Language.EN));
+  }
+
+  changeFontSize() {
+    this.store.dispatch(new ChangeFontSize(FontSize.Big));
+  }
 }

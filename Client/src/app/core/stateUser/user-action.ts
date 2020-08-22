@@ -1,4 +1,6 @@
 import { User } from '../models/user';
+import { Language } from 'src/app/shared/enums/Language';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 export class Login {
     static type = '[User] Login User';
@@ -23,4 +25,14 @@ export class TokenSetNoUpdate {
 export class ChangeTheme {
     static type = '[User] Change theme';
     constructor() {}
+}
+
+export class ChangeLanguage {
+    static type = '[User] Change Language';
+    constructor(public language: Language) {}
+}
+
+export class ChangeFontSize {
+    static type = '[User] Change FontSize';
+    constructor(public fontSize: FontSize) {}
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PersonalizationService } from './shared/services/personalization.service';
 import { SignalRService } from './core/signal-r.service';
@@ -11,10 +11,14 @@ import { Language } from './shared/enums/Language';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   constructor(private translateService: TranslateService, private store: Store) {
-    const lang  = this.store.selectSnapshot(UserStore.getUserLanguage);
-    this.translateService.use(lang);
   }
+
+  async ngOnInit() {
+    const lang  = this.store.selectSnapshot(UserStore.getUserLanguage);
+    await this.translateService.use(lang).toPromise();
+  }
+
 }

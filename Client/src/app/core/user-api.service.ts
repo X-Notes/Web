@@ -6,6 +6,7 @@ import { User } from './models/user';
 import { ShortUser } from './models/short-user';
 import { Theme } from '../shared/enums/Theme';
 import { FontSize } from '../shared/enums/FontSize';
+import { Language } from '../shared/enums/Language';
 
 export interface Token {
   token: string;
@@ -47,6 +48,13 @@ export class UserAPIService {
       fontSize
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/font' , obj);
+  }
+
+  changeLanguage(language: Language) {
+    const obj = {
+      language
+    };
+    return this.httpClient.post(environment.writeAPI + '/api/user/language' , obj);
   }
 
 }

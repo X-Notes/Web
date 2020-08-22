@@ -2,8 +2,10 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { UserAPIService } from '../user-api.service';
-import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme } from './user-action';
+import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage, ChangeFontSize } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
+import { Language } from 'src/app/shared/enums/Language';
+import { TranslateService } from '@ngx-translate/core';
 
 interface UserState {
     user: ShortUser;
@@ -25,7 +27,8 @@ interface UserState {
 @Injectable()
 export class UserStore {
 
-    constructor(private api: UserAPIService) {
+    constructor(private api: UserAPIService,
+                private translateService: TranslateService) {
 
     }
 
@@ -42,6 +45,11 @@ export class UserStore {
     @Selector()
     static getUserTheme(state: UserState): Theme {
         return state.user.theme;
+    }
+
+    @Selector()
+    static getUserLanguage(state: UserState): Language {
+        return state.user.language;
     }
 
     @Selector()
@@ -89,5 +97,18 @@ export class UserStore {
             user = {...user, theme: Theme.Light};
         }
         patchState({ user });
+    }
+
+    @Action(ChangeLanguage)
+    async changeLanguage({ patchState, getState }: StateContext<UserState>, {language}: ChangeLanguage ) {
+        await this.api.changeLanguage(language).toPromise();
+        await this.translateService.use(language).toPromise();
+        patchState({ user: {...getState().user, language}});
+    }
+
+    @Action(ChangeFontSize)
+    async changeFontSize({ patchState, getState }: StateContext<UserState>, {fontSize}: ChangeFontSize ) {
+        await this.api.changeFontSize(fontSize).toPromise();
+        patchState({ user: {...getState().user, fontSize}});
     }
 }
