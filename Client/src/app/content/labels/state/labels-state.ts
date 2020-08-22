@@ -1,7 +1,7 @@
 import { Label } from '../models/label';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { ApiServiceLabels } from '../api.service';
+import { ApiServiceLabels } from '../api-labels.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';

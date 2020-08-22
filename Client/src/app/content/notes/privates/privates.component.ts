@@ -6,7 +6,7 @@ import { LoadPrivateNotes, UnSelectAllNote, PositionNote } from '../state/notes-
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UpdateColorNote } from '../state/updateColor';
+import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 
@@ -32,7 +32,8 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.store.select(UserStore.getStatus)
+
+    this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -77,7 +78,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     });
   }
 
-  changeColorHandler(updateColor: UpdateColorNote[]) {
+  changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
       this.notes.find(x => x.id === update.id).color = update.color;
     }

@@ -2,7 +2,7 @@ import { SmallNote } from '../models/smallNote';
 import { FullNote } from '../models/fullNote';
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { ApiServiceNotes } from '../api.service';
+import { ApiServiceNotes } from '../api-notes.service';
 import {
     LoadPrivateNotes, AddNote, LoadFullNote, UpdateFullNote,
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
@@ -14,7 +14,7 @@ import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { UpdateColorNote } from './updateColor';
+import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
 
 
@@ -33,7 +33,7 @@ interface NoteState {
     countDeleted: number;
     countArchive: number;
     selectedIds: string[];
-    updateColorEvent: UpdateColorNote[];
+    updateColorEvent: UpdateColor[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
 }
@@ -79,7 +79,7 @@ export class NoteStore {
     }
 
     @Selector()
-    static updateColorEvent(state: NoteState): UpdateColorNote[] {
+    static updateColorEvent(state: NoteState): UpdateColor[] {
         return state.updateColorEvent;
     }
 
@@ -304,7 +304,7 @@ export class NoteStore {
     }
 
     mapFromNoteToUpdateColor(note: SmallNote) {
-        const obj: UpdateColorNote = {
+        const obj: UpdateColor = {
             id: note.id,
             color: note.color
         };
@@ -523,19 +523,17 @@ export class NoteStore {
             case NoteType.Archive: {
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
                     privateNotes: [...newNotes, ...getState().privateNotes]
                 });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                dispatch([UnSelectAllNote]);
                 break;
             }
             case NoteType.Shared: {
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
                     privateNotes: [...newNotes, ...getState().privateNotes]
                 });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+                dispatch([UnSelectAllNote]);
                 break;
             }
             case NoteType.Private: {

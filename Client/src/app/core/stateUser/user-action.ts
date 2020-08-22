@@ -15,3 +15,7 @@ export class SetToken {
     constructor(public token: string) {  }
 }
 
+export class TokenSetNoUpdate {
+    static type = '[User] Set noUpdateToken';
+    constructor() {  }
+}

@@ -26,7 +26,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   async ngOnInit() {
 
-    this.store.select(UserStore.getStatus)
+    this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

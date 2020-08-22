@@ -11,44 +11,40 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
-            <div class="sub-nav-item" (click)="switchSub(menu.All)" [ngClass]="{active: current === menu.All}" #sub1>
+
+            <div class="sub-nav-item" routerLink="/folders" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub3>
                 <div class="item">
-                    <p>{{ 'subMenu.all' | translate }}</p>
-                    <p>12</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
-            </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Shared)" [ngClass]="{active: current === menu.Shared}"
-                #sub2>
-                <div class="item">
-                    <p>{{ 'subMenu.shared' | translate }}</p>
-                    <p>12</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
-            </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Locked)" [ngClass]="{active: current === menu.Locked}"
-                #sub3>
-                <div class="item">
-                    <p>{{ 'subMenu.locked' | translate }}</p>
-                    <p>12</p>
+                    <p>{{ 'subMenu.private' | translate }}</p>
+                    <p>{{ countPrivate | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub3"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Archive)" [ngClass]="{active: current === menu.Archive}"
-                #sub4>
+
+            <div class="sub-nav-item" routerLink="/folders/shared" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub2>
+                <div class="item">
+                    <p>{{ 'subMenu.shared' | translate }}</p>
+                    <p>{{countShared | async}}</p>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
+            </div>
+
+
+            <div class="sub-nav-item" routerLink="/folders/archive" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub4>
                 <div class="item">
                     <p>{{ 'subMenu.archive' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countArchive | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
             </div>
-            <div class="sub-nav-item" (click)="switchSub(menu.Bin)" [ngClass]="{active: current === menu.Bin}" #sub5>
+
+            <div class="sub-nav-item" routerLink="/folders/deleted" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub5>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
-                    <p>12</p>
+                    <p>{{countDeleted | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub5"></div>
             </div>
+
             <div class="separator"></div>
         </div>
         <div class="information">
@@ -69,12 +65,8 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
-        <div class="grid">
-            <div class="grid-item" *ngFor="let item of folders" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-                <app-folder [folder]="item"></app-folder>
-            </div>
-        </div>
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
+        <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>
 <div class="drag-helper main-helper"></div>

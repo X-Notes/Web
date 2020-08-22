@@ -1,4 +1,4 @@
-export interface UpdateColorNote {
+export interface UpdateColor {
     id: string;
     color: string;
 }

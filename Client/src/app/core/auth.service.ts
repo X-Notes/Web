@@ -8,7 +8,7 @@ import { AuthAPIService } from './auth-api.service';
 import { User } from './models/user';
 import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
-import { Login, Logout } from './stateUser/user-action';
+import { Login, Logout, TokenSetNoUpdate } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateUser/user-action';
 
@@ -21,9 +21,13 @@ export class AuthService {
     private router: Router,
     private store: Store,
     private api: AuthAPIService) {
-    this.afAuth.authState.subscribe(async (firebaseUser) => {
+
+      this.store.dispatch(new TokenSetNoUpdate());
+
+      this.afAuth.authState.subscribe(async (firebaseUser) => {
       this.configureAuthState(firebaseUser);
     });
+
   }
 
   GoogleAuth() {

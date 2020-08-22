@@ -1,17 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { takeUntil, take } from 'rxjs/operators';
 import { Folder } from '../models/folder';
+import { FolderStore } from '../state/folders-state';
+import { Select, Store } from '@ngxs/store';
+import { LoadAllFolders, AddFolder } from '../state/folders-actions';
+import { Router } from '@angular/router';
 
-export enum subMenu {
-  All = 'all',
-  Shared = 'shared',
-  Locked = 'locked',
-  Archive = 'archive',
-  Bin = 'bin'
-}
 
 @Component({
   selector: 'app-folders',
@@ -21,15 +18,27 @@ export enum subMenu {
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
-  destroy = new Subject<void>();
-  current: subMenu;
-  menu = subMenu;
-  theme = Theme;
-  folders: Folder[] = [
-    {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}, {name: 'helllo'}
-  ];
 
-  constructor(public pService: PersonalizationService) { }
+  @Select(FolderStore.privateCount)
+  public countPrivate: Observable<number>;
+
+  @Select(FolderStore.sharedCount)
+  public countShared: Observable<number>;
+
+  @Select(FolderStore.deletedCount)
+  public countDeleted: Observable<number>;
+
+  @Select(FolderStore.archiveCount)
+  public countArchive: Observable<number>;
+
+
+  destroy = new Subject<void>();
+
+  theme = Theme;
+
+  constructor(public pService: PersonalizationService,
+              private store: Store,
+              private router: Router) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -37,23 +46,16 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    await this.store.dispatch(new LoadAllFolders()).toPromise();
+
     this.pService.onResize();
-    this.current = subMenu.All;
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newFolder());
-
-    await this.folders;
-
-    this.pService.gridSettings('.grid-item');
-
   }
 
-  newFolder() {
-    console.log('folder');
-  }
-
-  switchSub(value: subMenu) {
-    this.current = value;
+  async newFolder() {
+    await this.store.dispatch(new AddFolder()).toPromise();
+    this.store.select(FolderStore.privateFolders).pipe(take(1)).subscribe(x => this.router.navigate([`folders/${x[0].id}`]));
   }
 }

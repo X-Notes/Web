@@ -134,12 +134,13 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullNote> GetAll(string id)
+        public async Task<FullNote> Get(string id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullNoteQuery(email, id);
             return await _mediator.Send(query);
         }
+
         [HttpGet("user/{id}")]
         public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(string id)
         {

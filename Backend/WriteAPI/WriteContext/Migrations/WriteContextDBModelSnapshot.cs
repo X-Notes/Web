@@ -41,22 +41,24 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Color")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<int>("FolderType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -66,6 +68,21 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("NoteId", "FolderId");
+
+                    b.HasIndex("FolderId");
+
+                    b.ToTable("FoldersNotes");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
@@ -250,6 +267,21 @@ namespace WriteContext.Migrations
                     b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Folders")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Folder", "Folder")
+                        .WithMany("FoldersNotes")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                        .WithMany("FoldersNotes")
+                        .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

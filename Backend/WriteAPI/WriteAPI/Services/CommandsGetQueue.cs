@@ -1,4 +1,4 @@
-﻿using BI.services;
+﻿using BI.services.user;
 using Domain.Commands;
 using Domain.Ids;
 using Domain.Models;
