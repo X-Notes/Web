@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AuthAPIService } from './auth-api.service';
+import { UserAPIService } from './user-api.service';
 import { User } from './models/user';
 import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
@@ -20,7 +20,7 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private router: Router,
     private store: Store,
-    private api: AuthAPIService) {
+    private api: UserAPIService) {
 
       this.store.dispatch(new TokenSetNoUpdate());
 

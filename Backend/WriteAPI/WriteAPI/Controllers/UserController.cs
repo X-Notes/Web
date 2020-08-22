@@ -68,11 +68,27 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("language")]
-        public async Task ChangeProfilePhoto(Language language)
+        public async Task ChangeLanguage(UpdateLanguageCommand languageCommand)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new UpdateLanguageCommand(language, email));
+            languageCommand.Email = email;
+            await _mediator.Send(languageCommand);
         }
-        //TODO change Theme
+
+        [HttpPost("theme")]
+        public async Task ChangeTheme(UpdateThemeCommand themeCommand)
+        {
+            var email = this.GetUserEmail();
+            themeCommand.Email = email;
+            await _mediator.Send(themeCommand);
+        }
+
+        [HttpPost("font")]
+        public async Task ChangeFontSize(UpdateFontSizeCommand fontSizeCommand)
+        {
+            var email = this.GetUserEmail();
+            fontSizeCommand.Email = email;
+            await _mediator.Send(fontSizeCommand);
+        }
     }
 }

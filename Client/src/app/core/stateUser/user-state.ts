@@ -1,7 +1,7 @@
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { AuthAPIService } from '../auth-api.service';
+import { UserAPIService } from '../user-api.service';
 import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
 
@@ -25,7 +25,7 @@ interface UserState {
 @Injectable()
 export class UserStore {
 
-    constructor(private api: AuthAPIService) {
+    constructor(private api: UserAPIService) {
 
     }
 
@@ -79,11 +79,13 @@ export class UserStore {
     }
 
     @Action(ChangeTheme)
-    changeTheme({ patchState, getState }: StateContext<UserState>) {
+    async changeTheme({ patchState, getState }: StateContext<UserState>) {
         let user = getState().user;
         if (user.theme === Theme.Light) {
+            await this.api.changeTheme(Theme.Dark).toPromise();
             user = {...user, theme: Theme.Dark};
         } else {
+            await this.api.changeTheme(Theme.Light).toPromise();
             user = {...user, theme: Theme.Light};
         }
         patchState({ user });

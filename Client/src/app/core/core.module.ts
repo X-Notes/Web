@@ -12,7 +12,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
-import { AuthAPIService } from './auth-api.service';
+import { UserAPIService } from './user-api.service';
 import { TokenInterceptorService } from './token-interceptor.service';
 import { ContentLoadGuard } from './guards/content-load.guard';
 import { ApiServiceLabels } from '../content/labels/api-labels.service';
@@ -46,7 +46,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule
   ],
-  providers: [AuthService, AuthAPIService,
+  providers: [AuthService, UserAPIService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
