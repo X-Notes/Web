@@ -79,6 +79,7 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+  newButtonActive = true;
 
   onResize(): void {
     if (this.check()) {

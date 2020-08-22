@@ -383,6 +383,7 @@ header {
             }
 
             .user-circle {
+                position: relative;
                 display: none;
                 justify-content: center;
                 align-items: center;
@@ -393,7 +394,14 @@ header {
                 background-color: $dark-button;
                 transition: 0.2s ease;
                 margin-right: 1rem;
+                overflow: hidden;
                 cursor: pointer;
+
+                p {
+                    position: relative;
+                    user-select: none;
+                    z-index: 5;
+                }
 
                 &:hover {
                     background-color: #3d4049;
@@ -515,7 +523,7 @@ header {
 
         .interactions:last-child {
             width: 30%;
-            padding-right: 4vw;
+            padding-right: 2vw;
             justify-content: flex-end;
         }
 

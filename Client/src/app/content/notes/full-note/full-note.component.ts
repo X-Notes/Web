@@ -39,6 +39,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   active = 0;
   total = 2;
   animMS = 700;
+  helper: Element;
   note: FullNote;
   theme = Theme;
 
@@ -68,7 +69,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     this.pService.onResize();
-    this.sizeChange();
+    this.initWidthSlide();
     this.load();
     this.connectToHub();
 
@@ -94,6 +95,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getSize() {
     this.mainWidth = window.innerWidth;
+  }
+
+  initWidthSlide() {
+    if (!this.pService.check()) {
+      this.getSize();
+    } else {
+      this.mainWidth = null;
+    }
   }
 
   goTo(to: number) {
@@ -138,17 +147,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   panMove(e) {
-    const helper = document.getElementsByClassName('second-helper')[0];
+    this.helper = document.getElementsByClassName('second-helper')[0];
     if (!this.pService.check()) {
       this.perc = 100 / this.total * e.deltaX / (this.mainWidth * this.total);
       this.pos = this.perc - 100 / this.total * this.active;
-      if (this.active === 0 && (this.pos > 2 || this.pos < -52)) {
+      if (this.active === 0 && (this.pos > 2 || this.pos > 0)) {
         return;
       }
-      if (this.active === 1 && (this.pos > 2 || this.pos < -52)) {
+      if (this.active === 1 && (this.pos > 2 || this.pos < -50)) {
         return;
       }
-      if (helper.hasChildNodes()) {
+      if (this.helper.hasChildNodes()) {
         return;
       }
       this.rend.setStyle(this.wrap.nativeElement, 'transform', 'translate3d( ' +  this.pos + '%,0,0)');
@@ -158,25 +167,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   panEnd(e) {
     if (!this.pService.check()) {
       if (e.velocityX > 1) {
-        if (this.active === 0 && this.pos > 2) {
+        if (this.active === 0 && this.pos > 0) {
           this.goTo(this.active);
         }
         this.animMS = this.animMS / e.velocityX;
         this.goTo(this.active - 1);
       } else if (e.velocityX < -1) {
-        if (this.active === 1 && this.pos < -52) {
+        if (this.active === 1 && this.pos < -50) {
           this.goTo(this.active);
         }
         this.animMS = this.animMS / -e.velocityX;
         this.goTo(this.active + 1);
       } else {
         if (this.perc <= -(25 / this.total)) {
-          if (this.active === 1 && this.pos < -52) {
+          if (this.active === 1 && this.pos < -50) {
             this.goTo(this.active);
           }
           this.goTo(this.active + 1);
         } else if (this.perc >= (25 / this.total)) {
-          if (this.active === 0 && this.pos > 2) {
+          if (this.active === 0 && this.pos > 0) {
             this.goTo(this.active);
           }
           this.goTo(this.active - 1);

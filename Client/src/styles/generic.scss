@@ -111,6 +111,38 @@
     background: linear-gradient(91.25deg, #CDEEFF 1.19%, #FFCDCD 98.41%);
 }
 
+.add-mobile {
+    position: absolute;
+    right: 5vw;
+    bottom: calc(5vh + 80px);
+    z-index: 9;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 0.8px solid transparent;
+    padding: 0;
+    outline: none;
+    user-select: none;
+    overflow: hidden;
+    background-color: #1FB86E;
+
+    .icon {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        font-size: 2.5rem;
+        user-select: none;
+
+        i::before {
+            color: white;
+        }
+    }
+}
+
 @media (max-width: 1680px) {
     .grid-item {
         width: calc(100% / 3);
@@ -139,6 +171,10 @@
     .second-helper {
         width: calc(50% - 8vw);
     }
+    
+    .add-mobile {
+        display: flex;
+    }
 }
 
 @media (max-width: 600px) {
@@ -158,5 +194,26 @@
 
     .grid-plus {
         width: calc(100% / 2);
+    }
+
+    .add-mobile {
+        bottom: calc(5vh + 70px);
+    }
+}
+
+@media (max-width: 400px)  {
+    .add-mobile {
+        width: 85px;
+        height: 85px;
+
+        .icon {
+            font-size: 2.3rem;
+        }
+    }
+}
+
+@media (max-width: 320px) {
+    .add-mobile {
+        bottom: calc(5vh + 65px);
     }
 }

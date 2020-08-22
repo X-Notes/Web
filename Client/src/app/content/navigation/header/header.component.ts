@@ -30,7 +30,6 @@ export class HeaderComponent implements OnInit {
   routePath: RoutePathes;
   noteType: NoteType;
 
-  newButtonActive = true;
   selectAllActive = true;
   settingsActive = true;
   sectionAdd = true;
@@ -68,12 +67,12 @@ export class HeaderComponent implements OnInit {
 
   cancelSelect() {
     this.selected = false;
-    this.newButtonActive = true;
+    this.pService.newButtonActive = true;
   }
 
   allSelected() {
     this.selected = true;
-    this.newButtonActive = false;
+    this.pService.newButtonActive = false;
   }
 
   toggleOrientation() {
@@ -140,6 +139,8 @@ export class HeaderComponent implements OnInit {
         this.selected = false;
         this.pService.innerNote = false;
         this.sectionAdd = true;
+        this.settingsActive = false;
+        this.selectAllActive = false;
         break;
       }
       case '/labels/deleted' : {
@@ -147,6 +148,9 @@ export class HeaderComponent implements OnInit {
         this.selected = false;
         this.pService.innerNote = false;
         this.sectionAdd = true;
+        this.settingsActive = false;
+        this.selectAllActive = false;
+        this.pService.newButtonActive = false;
         break;
       }
       default : {
@@ -154,6 +158,7 @@ export class HeaderComponent implements OnInit {
         this.selected = false;
         this.sectionAdd = false;
         this.pService.innerNote = true;
+        this.pService.newButtonActive = false;
         this.routePath =  RoutePathes.Label;
         break;
       }
@@ -161,7 +166,7 @@ export class HeaderComponent implements OnInit {
   }
 
   showAllButtons() {
-    this.newButtonActive = true;
+    this.pService.newButtonActive = true;
     this.selectAllActive = true;
     this.settingsActive = true;
   }

@@ -22,7 +22,7 @@
             <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button *ngIf="newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
+            <button *ngIf="pService.newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
                 <div class="inner-content" >
                     <p>New {{routePath}}</p>
                     <i class="icon-plus"></i>
@@ -60,10 +60,13 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="back"></div>
             </button>
-            <div class="user-circle" (click)="showUsers()">8</div>
+            <div class="user-circle" (click)="showUsers()" #userCircle>
+                <p>8</p>
+                <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
+            </div>
             <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerUsers">
                 <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
-                    <div class="person" *ngFor="let item of user">
+                    <div class="person" *ngFor="let item of user" title="fucking person">
                         <div class="inner-person">
                             <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg" alt="contributor">
                         </div>
