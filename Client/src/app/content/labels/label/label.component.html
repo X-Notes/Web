@@ -23,14 +23,5 @@
     </div>
 </div>
 <ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
-    <li class="color" (click)="changeColor(pallete.Red)"></li>
-    <li class="color" (click)="changeColor(pallete.Orange)"></li>
-    <li class="color" (click)="changeColor(pallete.Yellow)"></li>
-    <li class="color" (click)="changeColor(pallete.GreenOne)"></li>
-    <li class="color" (click)="changeColor(pallete.GreenTwo)"></li>
-    <li class="color" (click)="changeColor(pallete.BlueOne)"></li>
-    <li class="color" (click)="changeColor(pallete.BlueTwo)"></li>
-    <li class="color" (click)="changeColor(pallete.Purple)"></li>
-    <li class="color" (click)="changeColor(pallete.PinkOne)"></li>
-    <li class="color" (click)="changeColor(pallete.PinkTwo)"></li>
+    <li *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeColor(item)"></li>
 </ul>
