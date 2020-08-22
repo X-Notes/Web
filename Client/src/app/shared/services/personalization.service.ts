@@ -42,7 +42,6 @@ export class PersonalizationService {
 
   subject = new Subject();
 
-  language: Language = Language.RU;
   stateSidebar = true;
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
