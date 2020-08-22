@@ -31,6 +31,31 @@ export const changeColorLabel = trigger('changeColorLabel', [
   ])
 ]);
 
+export const showMenuLeftRight = trigger('showMenuLeftRight', [
+  transition(':enter', [
+    style({ opacity: 0,  transform: 'translateX(-20%)' }),
+    animate('0.3s ease', style({ opacity: 1, transform: 'translateY(0)'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, transform: 'translateX(10%)' }))
+  ])
+]);
+
+export const deleteSmallNote = trigger('deleteSmallNote', [
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, height: '0', overflow: 'hidden'}))
+  ])
+]);
+
+export const showHistory = trigger('showHistory', [
+  transition(':enter', [
+    style({ opacity: 0,  height: 0 }),
+    animate('0.3s ease', style({ opacity: 1,  height: '*'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ opacity: 0, height: 0, overflow: 'hidden' }))
+  ])
+]);
 
 @Injectable({
   providedIn: 'root'
@@ -46,28 +71,75 @@ export class PersonalizationService {
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
   grid;
+  hideInnerMenu = false;
+  innerNote = false;
+  AnimationInnerMenu = true;
+  AnimationInnerUsers = true;
+  users = true;
+  toggleHistory = false;
+  newButtonActive = true;
 
   onResize(): void {
     if (this.check()) {
-      if (this.stateSidebar === false) {
-      this.stateSidebar = true;
+      if (!this.hideInnerMenu) {
+        this.hideInnerMenu = true;
+      }
+      if (!this.stateSidebar) {
+        this.stateSidebar = true;
       }
     } else {
-      if (this.stateSidebar === true) {
-        this.stateSidebar = false;
+      if (this.hideInnerMenu) {
+        this.hideInnerMenu = false;
+      }
+      if (this.stateSidebar) {
+          this.stateSidebar = false;
       }
     }
+
+    if (this.check()) {
+      if (!this.AnimationInnerMenu) {
+        this.AnimationInnerMenu = true;
+      }
+    } else {
+      if (this.AnimationInnerMenu) {
+        this.AnimationInnerMenu = false;
+      }
+    }
+
+    if (this.checkWidth()) {
+      if (this.users) {
+        this.users = false;
+        this.AnimationInnerUsers = false;
+      }
+    } else {
+      if (!this.users) {
+        this.users = true;
+        this.AnimationInnerUsers = true;
+      }
+    }
+  }
+
+  cancelSideBar() {
+    this.stateSidebar = false;
+  }
+
+  toggleHistoryMethod() {
+    this.toggleHistory = !this.toggleHistory;
   }
 
   check(): boolean {
     return window.innerWidth > 1024 ? true : false;
   }
 
-  gridSettings() {
+  checkWidth(): boolean {
+    return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
+  }
+
+  gridSettings(element: string) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
 
     this.grid = new Muuri.default('.grid', {
-      items: '.grid-item',
+      items: element,
       dragEnabled: true,
       layout: {
         fillGaps: false,
@@ -84,21 +156,8 @@ export class PersonalizationService {
         touchAction: 'auto'
       },
       dragStartPredicate(item, e) {
-        if ( e.deltaTime > 300) {
-          if ((e.type === 'move' || e.type === 'start')) {
-            item.getGrid()
-            .getItems()
-            .forEach(
-              elem => elem.getElement().style.touchAction = 'none');
-            console.log(item.getGrid().getItems().indexOf(item));
-            return true;
-          } else if (e.type === 'end' || e.type === 'cancel') {
-            item.getGrid()
-            .getItems()
-            .forEach(
-              elem => elem.getElement().style.touchAction = 'auto');
-            return true;
-          }
+        if ( e.deltaTime > 300 && e.distance <= 30) {
+          return true;
         }
       },
       dragPlaceholder: {
@@ -110,7 +169,7 @@ export class PersonalizationService {
       dragAutoScroll: {
         targets: [
           { element: window, priority: -1 },
-          { element: document.querySelector('.content-inner .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
+          { element: document.querySelector('.autoscroll-helper .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
         ],
         sortDuringScroll: false,
         smoothStop: true,

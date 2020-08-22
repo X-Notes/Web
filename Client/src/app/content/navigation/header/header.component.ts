@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { Component, OnInit, HostListener } from '@angular/core';
+import { PersonalizationService,
+         showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -26,7 +27,8 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  animations: [ showMenuLeftRight ]
 })
 export class HeaderComponent implements OnInit {
 
@@ -42,9 +44,12 @@ export class HeaderComponent implements OnInit {
 
   theme = Theme;
 
-  newButtonActive = true;
   selectAllActive = true;
   settingsActive = true;
+  sectionAdd = true;
+  selected = false;
+
+  user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
 
   constructor(public pService: PersonalizationService,
               private router: Router,
@@ -55,12 +60,30 @@ export class HeaderComponent implements OnInit {
     this.checkRout();
   }
 
+  showUsers() {
+    this.pService.users = !this.pService.users;
+  }
+
+  hideMenu() {
+    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
+  }
+
   toggleTheme() {
     this.store.dispatch(new ChangeTheme());
   }
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
+  cancelSelect() {
+    this.selected = false;
+    this.pService.newButtonActive = true;
+  }
+
+  allSelected() {
+    this.selected = true;
+    this.pService.newButtonActive = false;
   }
 
   toggleOrientation() {
@@ -80,6 +103,9 @@ export class HeaderComponent implements OnInit {
 
       case '/folders' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         this.showAllButtons();
         this.store.dispatch(new UpdateFolderType(FolderType.Private));
         break;
@@ -107,52 +133,75 @@ export class HeaderComponent implements OnInit {
       case '/notes' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Private));
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         break;
       }
       case '/notes/shared' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Shared));
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         break;
       }
       case '/notes/deleted' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         break;
       }
       case '/notes/archive' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Archive));
+        this.pService.innerNote = false;
+        this.selected = false;
+        this.sectionAdd = true;
         break;
       }
 
 
       case '/labels' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.newButtonActive = true;
         this.selectAllActive = false;
+        this.showAllButtons();
+        this.selected = false;
+        this.pService.innerNote = false;
+        this.sectionAdd = true;
         this.settingsActive = false;
+        this.selectAllActive = false;
         break;
       }
       case '/labels/deleted' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.hideAllButtons();
+        this.selected = false;
+        this.pService.innerNote = false;
+        this.sectionAdd = true;
+        this.settingsActive = false;
+        this.selectAllActive = false;
+        this.pService.newButtonActive = false;
+        break;
+      }
+      default : {
+        this.pService.innerNote = true;
+        this.selected = false;
+        this.sectionAdd = false;
+        this.pService.innerNote = true;
+        this.pService.newButtonActive = false;
         break;
       }
 
     }
   }
 
-  hideAllButtons() {
-    this.newButtonActive = false;
-    this.selectAllActive = false;
-    this.settingsActive = false;
-  }
   showAllButtons() {
-    this.newButtonActive = true;
+    this.pService.newButtonActive = true;
     this.selectAllActive = true;
     this.settingsActive = true;
   }

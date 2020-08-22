@@ -2,7 +2,6 @@
     <input type="text" [disabled]="deleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" *ngIf="!deleted" (click)="openColors()">
-
             <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
                 <i class="icon-select-label"></i>
             </div>
@@ -10,7 +9,7 @@
 
         <button type="button" *ngIf="deleted" (click)="restore()">
             <div class="icon">
-                <i class="icon-select-label"></i>
+                <i class="icon-restore"></i>
             </div>
         </button>
 

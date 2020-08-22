@@ -62,11 +62,11 @@
             </div>
         </div>
     </div>
-    <div class="overlay" (click)="cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
+    <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner">
         <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>
-<div class="drag-helper"></div>
+<div class="drag-helper main-helper"></div>

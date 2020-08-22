@@ -62,9 +62,4 @@ export class FoldersComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new AddFolder()).toPromise();
     this.store.select(FolderStore.privateFolders).pipe(take(1)).subscribe(x => this.router.navigate([`folders/${x[0].id}`]));
   }
-
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
-
 }

@@ -33,9 +33,4 @@ export class LabelsComponent implements OnInit {
   async ngOnInit() {
     this.pService.onResize();
   }
-
-  cancelSideBar() {
-    this.pService.stateSidebar = false;
-  }
-
 }

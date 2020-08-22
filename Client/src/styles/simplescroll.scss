@@ -1,11 +1,71 @@
+.wrapper {
+    .main-content {
+        .simplebar-track {
+            .simplebar-scrollbar {
+                visibility: hidden;
+            }
+        }
 
-.label-container, .background-section {
+        .simplebar-content-wrapper {
+            touch-action: pan-y;
+        }
+
+        .simplebar-scrollbar::before {
+            background-color: rgba(255,255,255, 0.4);
+        }
+    }
+
+    .secondary-content {
+        .small-notes {
+            .simplebar-wrapper {
+                height: auto;
+                width: auto;
+                
+                .simplebar-mask {
+                    z-index: 6;
+                    .simplebar-content-wrapper {
+                        touch-action: pan-y;
+                    }
+                }
+            }
+
+            .simplebar-scrollbar::before {
+                background-color: rgba(255,255,255, 0.4);
+            }
+        }
+    }
+}
+
+.label-container, .background-section, .notes-section {
     .simplebar-wrapper {
         height: auto;
     }
 
     .simplebar-track.simplebar-vertical{
         width: 10px;
+    }
+
+    .simplebar-scrollbar::before {
+        background-color: rgba(255,255,255, 0.4);
+    }
+}
+
+.people-editing {
+    .simplebar-wrapper {
+        width: auto;
+
+        .simplebar-content-wrapper {
+
+            .simplebar-content {
+                display: flex;
+                align-items: center;
+                height: inherit;
+            }
+        }
+    }
+
+    .simplebar-track.simplebar-horizontal{
+        height: 7px;
     }
 
     .simplebar-scrollbar::before {
@@ -29,9 +89,41 @@
 }
 
 .light {
-    .content-inner, .label-container {
+    .content-inner, .label-container, .notes-section, .people-editing {
         .simplebar-scrollbar::before {
             background-color: rgba(0,0,0, 0.3);
+        }
+    }
+}
+
+@media (max-width: 1440px) {
+    .people-editing {
+        .simplebar-wrapper {
+    
+            .simplebar-content-wrapper {
+    
+                .simplebar-content {
+                    display: flex;
+                    flex-direction: column;
+                    height: auto;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .people-editing {
+        .simplebar-wrapper {
+    
+            .simplebar-content-wrapper {
+    
+                .simplebar-content {
+                    display: flex;
+                    flex-direction: row;
+                    height: 100%;
+                }
+            }
         }
     }
 }

@@ -29,6 +29,14 @@
             }
         }
     }
+
+    .options {
+        button[type="button"]:first-child {
+            .icon {
+                font-size: 0.9375rem;
+            }
+        }
+    }
 }
 
 @media (max-width: 1440px) {

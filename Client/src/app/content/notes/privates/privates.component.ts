@@ -22,8 +22,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   public notes: SmallNote[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store
-  ) { }
+              private store: Store) { }
 
 
   ngOnDestroy(): void {
@@ -66,7 +65,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   initMurri() {
 
-    this.pService.gridSettings();
+    this.pService.gridSettings('.grid-item');
 
     this.pService.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
