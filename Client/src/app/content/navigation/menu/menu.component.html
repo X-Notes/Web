@@ -1,4 +1,4 @@
-<div class="wrap" [ngClass]="[pService.theme === theme.Light ? 'light' : '', pService.innerNote ? 'mobile-menu' : '']">
+<div class="wrap" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.innerNote ? 'mobile-menu' : '']">
     <div class="icon" *ngFor="let item of innerNote" #trigger (click)="pService.toggleHistoryMethod()">
         <div class="inner">
             <i class="icon-{{item}}"></i>

@@ -17,6 +17,7 @@ import {
 import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-full-note',
@@ -28,6 +29,10 @@ import { AnimationBuilder, animate, style } from '@angular/animations';
     showHistory ]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
+
 
   @ViewChild('fullWrap') wrap: ElementRef;
   mainWidth = 0;

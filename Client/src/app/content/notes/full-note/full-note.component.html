@@ -1,4 +1,4 @@
-<div class="sub-nav" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+<div class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>
@@ -34,7 +34,7 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content full-content" [ngClass]="pService.theme === theme.Light ? 'light' : ''">
+<div class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="wrapper" #fullWrap (panstart)="panStart($event)" (panmove)="panMove($event)" (panend)="panEnd($event)">
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="mainWidth" class="main-content">
             <div class="note-color"></div>
