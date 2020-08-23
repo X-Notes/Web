@@ -51,7 +51,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   selectAllActive = true;
   settingsActive = true;
-  sectionAdd = true;
   selected = false;
 
   user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
@@ -121,7 +120,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (url) {
 
       case '/folders' : {
-        this.sectionAdd = true;
         this.showAllButtons();
         break;
       }
@@ -141,42 +139,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       case '/notes' : {
         this.showAllButtons();
-        this.sectionAdd = true;
         break;
       }
       case '/notes/shared' : {
         this.showAllButtons();
-        this.sectionAdd = true;
         break;
       }
       case '/notes/deleted' : {
         this.showAllButtons();
-        this.sectionAdd = true;
         break;
       }
       case '/notes/archive' : {
         this.showAllButtons();
-        this.sectionAdd = true;
         break;
       }
 
       case '/labels' : {
         this.selectAllActive = false;
         this.showAllButtons();
-        this.sectionAdd = true;
         this.settingsActive = false;
         this.selectAllActive = false;
         break;
       }
       case '/labels/deleted' : {
-        this.sectionAdd = true;
         this.settingsActive = false;
         this.selectAllActive = false;
         this.pService.newButtonActive = false;
         break;
       }
       default : {
-        this.sectionAdd = false;
         this.pService.newButtonActive = false;
         break;
       }

@@ -21,7 +21,7 @@
 
     <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
 
-        <div class="interactions" *ngIf="sectionAdd">
+        <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
