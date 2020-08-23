@@ -16,6 +16,7 @@ import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
+import { exception } from 'console';
 
 
 interface NoteState {
@@ -66,6 +67,11 @@ export class NoteStore {
 
     constructor(private api: ApiServiceNotes,
                 private orderService: OrderService) {
+    }
+
+    @Selector()
+    static activeMenu(state: NoteState): boolean {
+        return state.selectedIds.length > 0 ? true : false;
     }
 
     @Selector()
@@ -630,6 +636,7 @@ export class NoteStore {
                 break;
             }
             case NoteType.Private: {
+
                 ids = getState().privateNotes.map(x => x.id);
                 break;
             }
@@ -640,6 +647,9 @@ export class NoteStore {
             case NoteType.Shared: {
                 ids = getState().sharedNotes.map(x => x.id);
                 break;
+            }
+            default: {
+                throw new Error('Incorrect type note');
             }
         }
         patchState({ selectedIds: [...ids] });

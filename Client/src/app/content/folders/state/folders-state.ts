@@ -66,6 +66,11 @@ export class FolderStore {
                 private orderService: OrderService) {
     }
 
+    @Selector()
+    static activeMenu(state: FolderState): boolean {
+        return state.selectedIds.length > 0 ? true : false;
+    }
+
     // Get folders
     @Selector()
     static privateFolders(state: FolderState): Folder[] {

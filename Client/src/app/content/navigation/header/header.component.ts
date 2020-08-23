@@ -1,10 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { PersonalizationService,
          showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
@@ -23,6 +23,8 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UpdateRoutePath, UpdateFolderType, UpdateNoteType } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteStore } from '../../notes/state/notes-state';
+import { FolderStore } from '../../folders/state/folders-state';
 
 @Component({
   selector: 'app-header',
@@ -30,7 +32,9 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   styleUrls: ['./header.component.scss'],
   animations: [ showMenuLeftRight ]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+
+  destroy = new Subject<void>();
 
 
   @Select(AppStore.getRoutePath)
@@ -56,7 +60,21 @@ export class HeaderComponent implements OnInit {
               private store: Store,
               private dialogService: DialogService) { }
 
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
   ngOnInit(): void {
+
+    this.store.select(NoteStore.activeMenu)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.configShowMenu(x));
+
+    this.store.select(FolderStore.activeMenu)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.configShowMenu(x));
+
     this.checkRout();
   }
 
@@ -76,14 +94,14 @@ export class HeaderComponent implements OnInit {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
-  cancelSelect() {
-    this.selected = false;
-    this.pService.newButtonActive = true;
-  }
-
-  allSelected() {
-    this.selected = true;
-    this.pService.newButtonActive = false;
+  configShowMenu(flag: boolean) {
+    if (flag) {
+      this.selected = true;
+      this.pService.newButtonActive = false;
+    } else {
+      this.selected = false;
+      this.pService.newButtonActive = true;
+    }
   }
 
   toggleOrientation() {
@@ -104,7 +122,6 @@ export class HeaderComponent implements OnInit {
       case '/folders' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.pService.innerNote = false;
-        this.selected = false;
         this.sectionAdd = true;
         this.showAllButtons();
         this.store.dispatch(new UpdateFolderType(FolderType.Private));
@@ -133,8 +150,8 @@ export class HeaderComponent implements OnInit {
       case '/notes' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
+        this.store.dispatch(new UpdateNoteType(NoteType.Private));
         this.pService.innerNote = false;
-        this.selected = false;
         this.sectionAdd = true;
         break;
       }
@@ -143,7 +160,6 @@ export class HeaderComponent implements OnInit {
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Shared));
         this.pService.innerNote = false;
-        this.selected = false;
         this.sectionAdd = true;
         break;
       }
@@ -152,7 +168,6 @@ export class HeaderComponent implements OnInit {
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
         this.pService.innerNote = false;
-        this.selected = false;
         this.sectionAdd = true;
         break;
       }
@@ -161,7 +176,6 @@ export class HeaderComponent implements OnInit {
         this.showAllButtons();
         this.store.dispatch(new UpdateNoteType(NoteType.Archive));
         this.pService.innerNote = false;
-        this.selected = false;
         this.sectionAdd = true;
         break;
       }
@@ -171,7 +185,6 @@ export class HeaderComponent implements OnInit {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
         this.selectAllActive = false;
         this.showAllButtons();
-        this.selected = false;
         this.pService.innerNote = false;
         this.sectionAdd = true;
         this.settingsActive = false;
@@ -180,7 +193,6 @@ export class HeaderComponent implements OnInit {
       }
       case '/labels/deleted' : {
         this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.selected = false;
         this.pService.innerNote = false;
         this.sectionAdd = true;
         this.settingsActive = false;
@@ -190,7 +202,6 @@ export class HeaderComponent implements OnInit {
       }
       default : {
         this.pService.innerNote = true;
-        this.selected = false;
         this.sectionAdd = false;
         this.pService.innerNote = true;
         this.pService.newButtonActive = false;
