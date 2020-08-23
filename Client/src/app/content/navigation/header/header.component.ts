@@ -21,7 +21,6 @@ import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
-import { UpdateRoutePath, UpdateFolderType, UpdateNoteType } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
@@ -36,6 +35,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
+  @Select(AppStore.isNoteInner)
+  public isNoteInner$: Observable<boolean>;
 
   @Select(AppStore.getRoutePath)
   public route$: Observable<RoutePathes>;
@@ -120,80 +121,54 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (url) {
 
       case '/folders' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Private));
         break;
       }
       case '/folders/shared' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Shared));
         break;
       }
       case '/folders/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Deleted));
         break;
       }
       case '/folders/archive' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Archive));
         break;
       }
 
 
       case '/notes' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Private));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         break;
       }
       case '/notes/shared' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Shared));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         break;
       }
       case '/notes/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         break;
       }
       case '/notes/archive' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Archive));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         break;
       }
 
-
       case '/labels' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
         this.selectAllActive = false;
         this.showAllButtons();
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         this.settingsActive = false;
         this.selectAllActive = false;
         break;
       }
       case '/labels/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.pService.innerNote = false;
         this.sectionAdd = true;
         this.settingsActive = false;
         this.selectAllActive = false;
@@ -201,9 +176,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       default : {
-        this.pService.innerNote = true;
         this.sectionAdd = false;
-        this.pService.innerNote = true;
         this.pService.newButtonActive = false;
         break;
       }

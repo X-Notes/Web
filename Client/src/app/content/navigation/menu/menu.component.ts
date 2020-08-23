@@ -4,6 +4,9 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
+import { NoteStore } from '../../notes/state/notes-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-menu',
@@ -12,12 +15,51 @@ import { Observable } from 'rxjs';
 })
 export class MenuComponent implements OnInit, OnDestroy {
 
+  @Select(AppStore.isNoteInner)
+  public isNoteInner$: Observable<boolean>;
+
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
   theme = Theme;
-  innerNote = [
-    'history', 'label', 'shared', 'copy', 'color', 'download', 'lock', 'archive', 'delete'
+
+  items: MenuItem[] = [
+    {
+      icon: 'history',
+      operation: () => 5
+    },
+    {
+      icon: 'label',
+      operation: () => 5
+    },
+    {
+      icon: 'shared',
+      operation: () => 5
+    },
+    {
+      icon: 'copy',
+      operation: () => 5
+    },
+    {
+      icon: 'color',
+      operation: () => 5
+    },
+    {
+      icon: 'download',
+      operation: () => 5
+    },
+    {
+      icon: 'lock',
+      operation: () => 5
+    },
+    {
+      icon: 'archive',
+      operation: () => 5
+    },
+    {
+      icon: 'delete',
+      operation: () => 5
+    }
   ];
 
   constructor(public pService: PersonalizationService) { }
@@ -30,4 +72,10 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log('init');
   }
 
+
+}
+
+export interface MenuItem {
+  icon: string;
+  operation: () => void; // arrow function
 }

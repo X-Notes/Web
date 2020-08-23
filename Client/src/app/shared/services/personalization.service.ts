@@ -72,7 +72,6 @@ export class PersonalizationService {
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
   grid;
   hideInnerMenu = false;
-  innerNote = false;
   AnimationInnerMenu = true;
   AnimationInnerUsers = true;
   users = true;

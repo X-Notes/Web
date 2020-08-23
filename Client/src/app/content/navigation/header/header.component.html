@@ -19,7 +19,7 @@
         </button>
     </div>
 
-    <div class="management-section" [ngClass]="pService.innerNote ? 'inner-menu' : ''">
+    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
 
         <div class="interactions" *ngIf="sectionAdd">
             <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
@@ -60,7 +60,7 @@
         </div>
 
 
-        <div class="interactions" *ngIf="pService.innerNote">
+        <div class="interactions" *ngIf="(isNoteInner$ | async)">
             <button type="button" name="Back" class="generic filters mobile-buttons" #back>
                 <div class="inner-content">
                     <i class="icon-select-label"></i>

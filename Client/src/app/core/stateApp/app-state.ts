@@ -34,8 +34,18 @@ export class AppStore {
     }
 
     @Selector()
+    static isNoteInner(state: AppState): boolean {
+        return state.noteType === NoteType.Inner;
+    }
+
+    @Selector()
     static getFolderType(state: AppState): FolderType {
         return state.folderType;
+    }
+
+    @Selector()
+    static isFolderInner(state: AppState): boolean {
+        return state.folderType === FolderType.Inner;
     }
 
     @Action(UpdateRoutePath)
