@@ -13,6 +13,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { RoutePathes } from '../../enums/RoutePathes';
+import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
+import { FolderType } from '../../enums/FolderTypes';
 
 @Component({
   selector: 'app-change-color',
@@ -47,7 +49,19 @@ export class ChangeColorComponent implements OnInit {
   }
 
   async changeColor() { // TODO
-    // await this.store.dispatch(new ChangeColorNote(this.current, NoteType.Private)).toPromise();
+    const route = this.store.selectSnapshot(AppStore.getRoutePath);
+    switch (route) {
+      case RoutePathes.Folder: {
+        const type = this.store.selectSnapshot(AppStore.getFolderType);
+        await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
+        break;
+      }
+      case RoutePathes.Note: {
+        const type = this.store.selectSnapshot(AppStore.getNoteType);
+        await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
+        break;
+      }
+    }
     this.dialogRef.close();
   }
 

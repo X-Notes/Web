@@ -55,7 +55,13 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
 
-    await this.store.dispatch(new LoadAllFolders()).toPromise();
+    this.store.select(UserStore.getTokenUpdated)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x: boolean) => {
+      if (x) {
+        await this.store.dispatch(new LoadAllFolders()).toPromise();
+      }
+    });
 
     this.pService.onResize();
     this.pService.subject

@@ -73,8 +73,8 @@ export class NotesComponent implements OnInit, OnDestroy {
         await this.store.dispatch(new LoadLabels()).toPromise();
         await this.store.dispatch(new LoadAllNotes()).toPromise();
       }
-    }
-    );
+    });
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());

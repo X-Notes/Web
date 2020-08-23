@@ -26,6 +26,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { UpdateNewButton, UpdateSettingsButton, UpdateSelectAllButton, UpdateMenuActive } from 'src/app/core/stateApp/app-action';
+import { MenuButtonsService } from '../menu-buttons.service';
 
 @Component({
   selector: 'app-header',
@@ -70,7 +71,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private dialogService: DialogService) { }
+              private menuButtonService: MenuButtonsService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -129,43 +130,52 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (type) {
       case EntityType.FolderPrivate: {
         this.showAllButtons();
+        this.menuButtonService.setFolders();
         break;
       }
       case EntityType.FolderShared: {
         this.showAllButtons();
+        this.menuButtonService.setFolders();
         break;
       }
       case EntityType.FolderArchive: {
         this.showAllButtons();
+        this.menuButtonService.setFolders();
         break;
       }
       case EntityType.FolderDeleted: {
         this.showAllButtons();
+        this.menuButtonService.setFolders();
         break;
       }
       case EntityType.FolderInner: {
-        console.log('inner folder');
+        this.menuButtonService.setInnerFolder();
         break;
       }
 
       case EntityType.NotePrivate: {
         this.showAllButtons();
+        this.menuButtonService.setNotes();
         break;
       }
       case EntityType.NoteShared: {
         this.showAllButtons();
+        this.menuButtonService.setNotes();
         break;
       }
       case EntityType.NoteArchive: {
         this.showAllButtons();
+        this.menuButtonService.setNotes();
         break;
       }
       case EntityType.NoteDeleted: {
         this.showAllButtons();
+        this.menuButtonService.setNotes();
         break;
       }
       case EntityType.NoteInner: {
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+        this.menuButtonService.setInnerNote();
         break;
       }
 
@@ -310,17 +320,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   // Modal Windows
-
-  changeColorNote() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
-      width: '450px',
-      minHeight: '380px',
-      data: {
-        title: 'Colors'
-      },
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
-    };
-    this.dialogService.openDialog(ChangeColorComponent, config);
+  settingsClick() {
+    console.log('settings');
   }
 }

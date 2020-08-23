@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { NoteStore } from '../../notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { MenuButtonsService } from '../menu-buttons.service';
 
 @Component({
   selector: 'app-menu',
@@ -23,46 +24,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
-  items: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5
-    },
-    {
-      icon: 'label',
-      operation: () => 5
-    },
-    {
-      icon: 'shared',
-      operation: () => 5
-    },
-    {
-      icon: 'copy',
-      operation: () => 5
-    },
-    {
-      icon: 'color',
-      operation: () => 5
-    },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
-    {
-      icon: 'archive',
-      operation: () => 5
-    },
-    {
-      icon: 'delete',
-      operation: () => 5
-    }
-  ];
-
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService,
+              public buttonService: MenuButtonsService) { }
 
   ngOnDestroy(): void {
 
