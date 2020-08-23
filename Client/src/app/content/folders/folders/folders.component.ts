@@ -9,6 +9,8 @@ import { Select, Store } from '@ngxs/store';
 import { LoadAllFolders, AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateRoutePath } from 'src/app/core/stateApp/app-action';
+import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 
 
 @Component({
@@ -50,6 +52,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
+    this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
+
     await this.store.dispatch(new LoadAllFolders()).toPromise();
 
     this.pService.onResize();

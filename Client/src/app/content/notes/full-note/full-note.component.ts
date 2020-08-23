@@ -18,6 +18,8 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateNoteType } from 'src/app/core/stateApp/app-action';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-full-note',
@@ -73,6 +75,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+
+    this.store.dispatch(new UpdateNoteType(NoteType.Inner));
+
     this.pService.onResize();
     this.initWidthSlide();
     this.load();

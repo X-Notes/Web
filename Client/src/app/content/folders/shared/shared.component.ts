@@ -10,6 +10,7 @@ import { LoadSharedFolders, UnSelectAllFolder, PositionFolder } from '../state/f
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { UpdateFolderType } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-shared',
@@ -32,6 +33,9 @@ export class SharedComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.store.dispatch(new UpdateFolderType(FolderType.Shared));
+
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {

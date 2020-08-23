@@ -5,6 +5,8 @@ import { Store, Select } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateRoutePath } from 'src/app/core/stateApp/app-action';
+import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 
 
 
@@ -28,9 +30,13 @@ export class LabelsComponent implements OnInit {
   theme = Theme;
 
   constructor(
-    public pService: PersonalizationService) {}
+    public pService: PersonalizationService,
+    private store: Store, ) {}
 
   async ngOnInit() {
+
+    this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
+
     this.pService.onResize();
   }
 }

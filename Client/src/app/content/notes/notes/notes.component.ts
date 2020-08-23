@@ -11,6 +11,8 @@ import { AddNote, LoadAllNotes } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateRoutePath } from 'src/app/core/stateApp/app-action';
+import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 
 export enum subMenu {
   All = 'all',
@@ -61,6 +63,8 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
+
+    this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
