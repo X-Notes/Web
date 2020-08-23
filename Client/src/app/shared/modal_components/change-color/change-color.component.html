@@ -11,8 +11,26 @@
         <span class="description">Document is a written, drawn, presented, or memorialized representation of thought.</span>
         <span class="date">{{date | date:'dd.MM.yyyy'}}</span>
     </div>
-    <div *ngIf="(pathType$ | async) === routePath.Folder" class="folder" [ngStyle]="{'backgroundColor': current}">
-        pizdec
+    <div *ngIf="(pathType$ | async) === routePath.Folder" class="folder">
+        <div class="outer" [ngStyle]="{'backgroundColor': shadeColor(current, -20)}">         
+        </div>
+        <div class="inner" [ngStyle]="{'backgroundColor': current}">
+            <p>Preview</p>
+            <div class="notes_folder">
+                <div class="note_folder">
+                    <i class="icon-notes"></i>
+                    <p>Hello Hello Hello Hello</p>
+                </div>
+                <div class="note_folder">
+                    <i class="icon-notes"></i>
+                    <p>Hello Hello Hello Hello</p>
+                </div>
+                <div class="note_folder">
+                    <i class="icon-notes"></i>
+                    <p>Hello Hello Hello Hello</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="color_container">

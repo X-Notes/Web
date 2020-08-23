@@ -3,7 +3,6 @@
 :host {
     position: relative;
     display: flex;
-    justify-content: flex-end;
     width: 100%;
     border-radius: 20px;
 }
@@ -12,17 +11,19 @@
     position: absolute;
     z-index: 2;
     width: calc(100% - 25px);
-    height: 100%;
+    height: calc(100% - 25px);
+    top: 5px;
+    left: 25px;
     border-radius: inherit;
 }
 
 .folder {
+    margin-top: 20px;
     position: relative;
     z-index: 5;
     display: flex;
     height: calc(100% - 0.75rem);
-    width: calc(100% - 0.75rem);
-    margin: 0.75rem 0.75rem 0 0;
+    width: calc(100% - 15px);
     border-radius: inherit;
 
     .highligt {
