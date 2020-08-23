@@ -25,28 +25,28 @@
             <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button *ngIf="pService.newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
+            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
                 <div class="inner-content" >
                     <p>New {{route$ | async}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button *ngIf="selected" name="Selected" type="button" (click)="unselectAll()" class="generic filters selected custom-create" [ngClass]="selected ? 'select-all' : ''" #selectedAll>
+            <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()" class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #selectedAll>
                 <div class="inner-content" >
                     <p>Selected 3</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
             </button>
-            <button *ngIf="selectAllActive" name="Select" type="button" (click)="selectAll()" class="generic filters custom-create" [ngClass]="selected ? 'select-all' : ''" #select>
+            <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()" class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="settingsActive" (click)="changeColorNote()" name="Filter" type="button" class="generic filters filter" #filter>
+            <button *ngIf="(settingsButtonActive$ | async)" (click)="changeColorNote()" name="Filter" type="button" class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>
@@ -55,7 +55,7 @@
         </div>
 
 
-        <div class="interactions menu" *ngIf="selected" [@showMenuLeftRight]>
+        <div class="interactions menu" *ngIf="(menuActive$ | async)" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
 
@@ -115,7 +115,7 @@
         </div>
 
 
-        <div class="interactions left" [ngClass]="selected ? 'help-func' : ''">
+        <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
             <div class="search">
                 <input type="search" placeholder="Search..." aria-label="Search search search">
                 <button type="button">

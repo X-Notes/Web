@@ -10,7 +10,8 @@ import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { UpdateFolderType } from 'src/app/core/stateApp/app-action';
+import { UpdateFolderType, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
   selector: 'app-private',
@@ -34,6 +35,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate));
     this.store.dispatch(new UpdateFolderType(FolderType.Private));
 
     this.store.select(UserStore.getTokenUpdated)

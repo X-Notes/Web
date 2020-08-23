@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { PersonalizationService,
          showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
@@ -24,6 +24,8 @@ import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { UpdateNewButton, UpdateSettingsButton, UpdateSelectAllButton, UpdateMenuActive } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-header',
@@ -34,6 +36,21 @@ import { FolderStore } from '../../folders/state/folders-state';
 export class HeaderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
+
+  // Upper Menu
+
+  @Select(AppStore.getNewButtonActive)
+  public newButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getSettingsButtonActive)
+  public settingsButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getSelectAllButtonActive)
+  public selectAllButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getMenuActive)
+  public menuActive$: Observable<boolean>;
+  //
 
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
@@ -49,14 +66,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
-  selectAllActive = true;
-  settingsActive = true;
-  selected = false;
-
   user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
 
   constructor(public pService: PersonalizationService,
-              private router: Router,
               private store: Store,
               private dialogService: DialogService) { }
 
@@ -75,7 +87,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.configShowMenu(x));
 
-    this.checkRout();
+    this.store.select(AppStore.getRouting)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.routeChange(x));
   }
 
   showUsers() {
@@ -96,11 +110,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   configShowMenu(flag: boolean) {
     if (flag) {
-      this.selected = true;
-      this.pService.newButtonActive = false;
+      this.store.dispatch(new UpdateNewButton(false));
+      this.store.dispatch(new UpdateMenuActive(true));
     } else {
-      this.selected = false;
-      this.pService.newButtonActive = true;
+      this.store.dispatch(new UpdateNewButton(true));
+      this.store.dispatch(new UpdateMenuActive(false));
     }
   }
 
@@ -109,76 +123,74 @@ export class HeaderComponent implements OnInit, OnDestroy {
     setTimeout( () => this.pService.grid.refreshItems().layout(), 0);
   }
 
-  checkRout() {
-    this.routeChange(this.router.url);
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd))
-      .subscribe(event => { this.routeChange((event as NavigationEnd).url); });
-  }
 
-  routeChange(url: string) {
-    switch (url) {
+  async routeChange(type: EntityType) {
 
-      case '/folders' : {
+    switch (type) {
+      case EntityType.FolderPrivate: {
         this.showAllButtons();
         break;
       }
-      case '/folders/shared' : {
+      case EntityType.FolderShared: {
         this.showAllButtons();
         break;
       }
-      case '/folders/deleted' : {
+      case EntityType.FolderArchive: {
         this.showAllButtons();
         break;
       }
-      case '/folders/archive' : {
+      case EntityType.FolderDeleted: {
         this.showAllButtons();
+        break;
+      }
+      case EntityType.FolderInner: {
+        console.log('inner folder');
         break;
       }
 
-
-      case '/notes' : {
+      case EntityType.NotePrivate: {
         this.showAllButtons();
         break;
       }
-      case '/notes/shared' : {
+      case EntityType.NoteShared: {
         this.showAllButtons();
         break;
       }
-      case '/notes/deleted' : {
+      case EntityType.NoteArchive: {
         this.showAllButtons();
         break;
       }
-      case '/notes/archive' : {
+      case EntityType.NoteDeleted: {
         this.showAllButtons();
         break;
       }
-
-      case '/labels' : {
-        this.selectAllActive = false;
-        this.showAllButtons();
-        this.settingsActive = false;
-        this.selectAllActive = false;
-        break;
-      }
-      case '/labels/deleted' : {
-        this.settingsActive = false;
-        this.selectAllActive = false;
-        this.pService.newButtonActive = false;
-        break;
-      }
-      default : {
-        this.pService.newButtonActive = false;
+      case EntityType.NoteInner: {
+        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         break;
       }
 
+      case EntityType.LabelPrivate: {
+        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        break;
+      }
+      case EntityType.LabelDeleted: {
+        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
+        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        break;
+      }
+      default: {
+        console.log('default');
+      }
     }
   }
 
-  showAllButtons() {
-    this.pService.newButtonActive = true;
-    this.selectAllActive = true;
-    this.settingsActive = true;
+  async showAllButtons() {
+    await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
+    await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+    await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
   }
 
   newButton() {

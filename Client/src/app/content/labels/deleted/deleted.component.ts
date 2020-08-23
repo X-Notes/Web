@@ -7,6 +7,8 @@ import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
   selector: 'app-deleted',
@@ -22,6 +24,8 @@ export class DeletedComponent implements OnInit {
               private store: Store) { }
 
   async ngOnInit() {
+
+    this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted));
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))

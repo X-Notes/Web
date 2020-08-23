@@ -9,7 +9,8 @@ import { Subject } from 'rxjs';
 import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateNoteType } from 'src/app/core/stateApp/app-action';
+import { UpdateNoteType, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
   selector: 'app-privates',
@@ -34,6 +35,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
+    this.store.dispatch(new UpdateRoute(EntityType.NotePrivate));
     this.store.dispatch(new UpdateNoteType(NoteType.Private));
 
     this.store.select(UserStore.getTokenUpdated)
