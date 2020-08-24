@@ -27,6 +27,8 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
+  public countSelected: number;
+
   destroy = new Subject<void>();
 
   // Upper Menu
@@ -83,6 +85,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.routeChange(x));
 
+    this.store.select(NoteStore.selectedCount)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => {
+      if (x > 0) {
+        this.countSelected = x;
+      }
+    });
+
+    this.store.select(FolderStore.selectedCount)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => {
+      if (x > 0) {
+        this.countSelected = x;
+      }
+    });
   }
 
   showUsers() {
@@ -103,6 +120,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   configShowMenu(flag: boolean) {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      this.store.dispatch(new UpdateNewButton(false));
       return;
     }
     if (flag) {
@@ -170,7 +188,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.NoteInner: {
-        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+       // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         this.menuButtonService.setInnerNote();
         break;
       }

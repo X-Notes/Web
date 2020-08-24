@@ -68,6 +68,11 @@ export class FolderStore {
     }
 
     @Selector()
+    static selectedCount(state: FolderState): number {
+        return state.selectedIds.length;
+    }
+
+    @Selector()
     static activeMenu(state: FolderState): boolean {
         return state.selectedIds.length > 0 ? true : false;
     }

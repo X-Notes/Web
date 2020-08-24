@@ -71,6 +71,11 @@ export class NoteStore {
     }
 
     @Selector()
+    static selectedCount(state: NoteState): number {
+        return state.selectedIds.length;
+    }
+
+    @Selector()
     static activeMenu(state: NoteState): boolean {
         return state.selectedIds.length > 0 ? true : false;
     }
@@ -279,6 +284,7 @@ export class NoteStore {
     async changeColor({ patchState, getState, dispatch }: StateContext<NoteState>, { color, typeNote }: ChangeColorNote) {
 
         const selectedIds = getState().selectedIds;
+
         await this.api.changeColor(selectedIds, color).toPromise();
         let notes: SmallNote[];
         switch (typeNote) {
@@ -300,6 +306,10 @@ export class NoteStore {
             case EntityType.NoteShared: {
                 notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
+                break;
+            }
+            case EntityType.NoteInner: {
+
                 break;
             }
         }

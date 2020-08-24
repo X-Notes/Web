@@ -34,7 +34,7 @@
             </button>
             <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()" class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #selectedAll>
                 <div class="inner-content" >
-                    <p>Selected 3</p>
+                    <p>Selected {{countSelected}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>

@@ -35,7 +35,8 @@ export class AppStore {
         return state.routing === EntityType.FolderShared ||
         state.routing === EntityType.FolderDeleted ||
         state.routing === EntityType.FolderPrivate ||
-        state.routing === EntityType.FolderArchive;
+        state.routing === EntityType.FolderArchive ||
+        state.routing === EntityType.FolderInner;
     }
 
     @Selector()
@@ -43,7 +44,8 @@ export class AppStore {
         return state.routing === EntityType.NoteShared ||
         state.routing === EntityType.NoteDeleted ||
         state.routing === EntityType.NotePrivate ||
-        state.routing === EntityType.NoteArchive;
+        state.routing === EntityType.NoteArchive ||
+        state.routing === EntityType.NoteInner;
     }
 
     @Selector()
