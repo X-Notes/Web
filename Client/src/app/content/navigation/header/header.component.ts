@@ -249,15 +249,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // UPPER MENU FUNCTION NOTES
 
-  deleteNotes() {
-    this.store.dispatch(new DeleteNotesPermanently());
-  }
 
 
-  archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new ArchiveNotes(noteType));
-  }
 
   makePublic() {
     const noteType = this.store.selectSnapshot(AppStore.getRouting);
@@ -271,16 +264,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   // UPPER MENU FUNCTIONS FOLDERS
-
-  archiveFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new ArchiveFolders(folderType));
-  }
-
-
-  deleteFolders() {
-    this.store.dispatch(new DeleteFoldersPermanently());
-  }
 
 
   makePublicFolder() {

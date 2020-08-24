@@ -18,6 +18,7 @@ import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { exception } from 'console';
 
 
 interface NoteState {
@@ -363,6 +364,9 @@ export class NoteStore {
                 dispatch([ClearColorNotes]);
                 break;
             }
+            default: {
+                throw new Error('Inccorect type');
+            }
         }
     }
 
@@ -431,6 +435,9 @@ export class NoteStore {
                     removeFromMurriEvent: [...selectedIds]
                 });
                 break;
+            }
+            default: {
+                throw new Error('Inccorect type');
             }
         }
         dispatch([UnSelectAllNote, RemoveFromDomMurri]);
@@ -519,6 +526,9 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
+            default: {
+                throw new Error('Inccorect type');
+            }
         }
     }
 
@@ -560,6 +570,9 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
+            default: {
+                throw new Error('Inccorect type');
+            }
         }
     }
 
@@ -599,6 +612,9 @@ export class NoteStore {
                 });
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
+            }
+            default: {
+                throw new Error('Inccorect type');
             }
         }
     }
@@ -646,6 +662,9 @@ export class NoteStore {
                 });
                 dispatch([UnSelectAllNote, ClearAddedPrivateNotes]);
                 break;
+            }
+            default: {
+                throw new Error('Inccorect type');
             }
         }
     }
@@ -700,6 +719,9 @@ export class NoteStore {
                 deletedNotes.splice(order.position - 1, 0 , changedNote);
                 patchState({deletedNotes});
                 break;
+            }
+            default: {
+                throw new Error('Inccorect type');
             }
         }
     }

@@ -37,8 +37,3 @@ export class MenuComponent implements OnInit, OnDestroy {
 
 
 }
-
-export interface MenuItem {
-  icon: string;
-  operation: () => void; // arrow function
-}

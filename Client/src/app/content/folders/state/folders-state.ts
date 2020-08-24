@@ -489,6 +489,18 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder, ClearAddedPrivateFolders]);
                 break;
             }
+            case EntityType.FolderDeleted: {
+
+                const newFolders = await this.api.copyFolders(selectedIds, FolderType.Deleted).toPromise();
+
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateFolders: [...newFolders, ...getState().privateFolders],
+                    foldersAddingPrivate: [...newFolders]
+                });
+                dispatch([UnSelectAllFolder, ClearAddedPrivateFolders]);
+                break;
+            }
         }
     }
 

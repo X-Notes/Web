@@ -7,8 +7,8 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { CopyNotes, SetDeleteNotes, RestoreNotes } from '../notes/state/notes-actions';
-import { CopyFolders, SetDeleteFolders, RestoreFolders } from '../folders/state/folders-actions';
+import { CopyNotes, SetDeleteNotes, RestoreNotes, ArchiveNotes, DeleteNotesPermanently } from '../notes/state/notes-actions';
+import { CopyFolders, SetDeleteFolders, RestoreFolders, ArchiveFolders, DeleteFoldersPermanently } from '../folders/state/folders-actions';
 
 @Injectable({providedIn: 'root'})
 export class MenuButtonsService {
@@ -49,7 +49,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveNotes.bind(this)
     },
     {
       icon: 'delete',
@@ -87,7 +87,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveNotes.bind(this)
     },
     {
       icon: 'delete',
@@ -125,11 +125,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveNotes.bind(this)
     },
     {
       icon: 'delete',
-      operation: () => 5
+      operation: this.deleteNotes.bind(this)
     },
     {
       icon: 'restore',
@@ -163,10 +163,6 @@ export class MenuButtonsService {
     },
     {
       icon: 'lock',
-      operation: () => 5
-    },
-    {
-      icon: 'archive',
       operation: () => 5
     },
     {
@@ -206,7 +202,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveFolders.bind(this)
     },
     {
       icon: 'delete',
@@ -244,7 +240,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveFolders.bind(this)
     },
     {
       icon: 'delete',
@@ -282,11 +278,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: () => 5
+      operation: this.archiveFolders.bind(this)
     },
     {
       icon: 'delete',
-      operation: () => 5
+      operation: this.deleteFolders.bind(this)
     },
     {
       icon: 'restore',
@@ -320,10 +316,6 @@ export class MenuButtonsService {
     },
     {
       icon: 'lock',
-      operation: () => 5
-    },
-    {
-      icon: 'archive',
       operation: () => 5
     },
     {
@@ -461,6 +453,9 @@ export class MenuButtonsService {
     this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
+  // FUNCTIONS
+
+  // COPY
   private copyNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new CopyNotes(noteType));
@@ -471,6 +466,7 @@ export class MenuButtonsService {
     this.store.dispatch(new CopyFolders(folderType));
   }
 
+  // SET DELETE
   private setdeleteNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new SetDeleteNotes(noteType));
@@ -481,6 +477,7 @@ export class MenuButtonsService {
     this.store.dispatch(new SetDeleteFolders(folderType));
   }
 
+  // RESTORE
   private restoreNotes() {
     this.store.dispatch(new RestoreNotes());
   }
@@ -488,6 +485,28 @@ export class MenuButtonsService {
   private restoreFolders() {
     const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new RestoreFolders());
+  }
+
+  // ARCHIVE
+
+  archiveNotes() {
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    this.store.dispatch(new ArchiveNotes(noteType));
+  }
+
+  archiveFolders() {
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    this.store.dispatch(new ArchiveFolders(folderType));
+  }
+
+  // DELETE PERMANENTLY
+
+  deleteNotes() {
+    this.store.dispatch(new DeleteNotesPermanently());
+  }
+
+  deleteFolders() {
+    this.store.dispatch(new DeleteFoldersPermanently());
   }
 
 }
