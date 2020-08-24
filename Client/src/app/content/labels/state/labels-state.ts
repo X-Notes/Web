@@ -13,6 +13,7 @@ interface LabelState {
     labelsDeleted: Label[];
     CountAll: number;
     CountDeleted: number;
+    loaded: boolean;
 }
 
 @State<LabelState>({
@@ -21,7 +22,8 @@ interface LabelState {
         labelsAll: [],
         labelsDeleted: [],
         CountAll: 0,
-        CountDeleted: 0
+        CountDeleted: 0,
+        loaded: false
     }
 })
 
@@ -56,12 +58,13 @@ export class LabelStore {
 
     @Action(LoadLabels)
     loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
-        if (getState().labelsAll.length === 0) {
-        return this.api.getAll().pipe(tap(content => { patchState({
+        if (!getState().loaded) {
+            return this.api.getAll().pipe(tap(content => { patchState({
             labelsAll: content.labelsAll,
             labelsDeleted: content.labelsDeleted,
             CountAll: content.labelsAll.length,
-            CountDeleted: content.labelsDeleted.length
+            CountDeleted: content.labelsDeleted.length,
+            loaded: true
          }); }));
         }
     }

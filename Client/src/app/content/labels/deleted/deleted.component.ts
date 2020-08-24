@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -16,13 +16,18 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
   templateUrl: './deleted.component.html',
   styleUrls: ['./deleted.component.scss']
 })
-export class DeletedComponent implements OnInit {
+export class DeletedComponent implements OnInit, OnDestroy {
 
   public labels: Label[];
   destroy = new Subject<void>();
 
   constructor(public pService: PersonalizationService,
               private store: Store) { }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   async ngOnInit() {
 
