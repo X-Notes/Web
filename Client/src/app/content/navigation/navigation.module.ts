@@ -5,7 +5,6 @@ import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
-import { MenuButtonsService } from './menu-buttons.service';
 
 
 @NgModule({
@@ -16,6 +15,6 @@ import { MenuButtonsService } from './menu-buttons.service';
     SharedModule
   ],
   exports: [SideBarComponent, HeaderComponent],
-  providers: [MenuButtonsService]
+  providers: []
 })
 export class NavigationModule { }

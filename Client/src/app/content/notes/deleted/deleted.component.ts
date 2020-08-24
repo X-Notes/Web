@@ -9,7 +9,8 @@ import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateNoteType, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
@@ -28,8 +29,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
-    this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted));
-    this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
+    await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))

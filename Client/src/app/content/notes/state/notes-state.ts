@@ -13,10 +13,11 @@ import {
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+
 import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { exception } from 'console';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 
 interface NoteState {
@@ -543,6 +544,15 @@ export class NoteStore {
                 break;
             }
             case NoteType.Private: {
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateNotes: [...newNotes, ...getState().privateNotes],
+                    notesAddingPrivate: [...newNotes]
+                });
+                dispatch([UnSelectAllNote, ClearAddedPrivateNotes]);
+                break;
+            }
+            case NoteType.Deleted: {
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateNotes: [...newNotes, ...getState().privateNotes],

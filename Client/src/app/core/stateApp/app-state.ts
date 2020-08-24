@@ -99,7 +99,7 @@ export class AppStore {
     }
 
     @Action(UpdateRoute)
-    updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
+    async updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
         patchState({routing: type});
     }
 

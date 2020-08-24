@@ -4,7 +4,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote, UpdateFullNote, LoadPrivateNotes } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime, filter } from 'rxjs/operators';
@@ -18,8 +18,9 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateNoteType, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
@@ -77,8 +78,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
 
-    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
-    this.store.dispatch(new UpdateNoteType(NoteType.Inner));
+    await this.store.dispatch(new UpdateRoute(EntityType.NoteInner)).toPromise();
+    await this.store.dispatch(new SelectIdNote(this.id)).toPromise();
+
 
     this.pService.onResize();
     this.initWidthSlide();
@@ -263,6 +265,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.store.dispatch(new UnSelectIdNote(this.id));
     this.routeSubscription.unsubscribe();
     this.signal.hubConnection.invoke('LeaveNote', this.id);
   }

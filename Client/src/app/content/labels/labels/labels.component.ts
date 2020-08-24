@@ -5,7 +5,7 @@ import { Store, Select } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateRoutePath } from 'src/app/core/stateApp/app-action';
+import { UpdateRoutePath, UpdateNewButton } from 'src/app/core/stateApp/app-action';
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 
 

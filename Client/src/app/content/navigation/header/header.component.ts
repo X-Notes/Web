@@ -1,32 +1,24 @@
-import { Component, OnInit, HostListener, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService,
          showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import {  Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes,
-  DeleteNotesPermanently, RestoreNotes, ArchiveNotes, MakePublicNotes, MakePrivateNotes, CopyNotes } from '../../notes/state/notes-actions';
+import { UnSelectAllNote, SelectAllNote,
+  DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
 import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder,
-  SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders,
-   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { DialogService } from 'src/app/shared/modal_components/dialog.service';
-import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
+  MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { UpdateNewButton, UpdateSettingsButton, UpdateSelectAllButton, UpdateMenuActive } from 'src/app/core/stateApp/app-action';
+import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
   selector: 'app-header',
@@ -71,7 +63,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private menuButtonService: MenuButtonsService) { }
+              public menuButtonService: MenuButtonsService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -91,6 +83,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.select(AppStore.getRouting)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.routeChange(x));
+
   }
 
   showUsers() {
@@ -110,12 +103,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   configShowMenu(flag: boolean) {
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      return;
+    }
     if (flag) {
       this.store.dispatch(new UpdateNewButton(false));
       this.store.dispatch(new UpdateMenuActive(true));
     } else {
-      this.store.dispatch(new UpdateNewButton(true));
-      this.store.dispatch(new UpdateMenuActive(false));
+     this.store.dispatch(new UpdateNewButton(true));
+     this.store.dispatch(new UpdateMenuActive(false));
     }
   }
 
@@ -125,27 +121,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
 
+
   async routeChange(type: EntityType) {
 
     switch (type) {
       case EntityType.FolderPrivate: {
         this.showAllButtons();
-        this.menuButtonService.setFolders();
+        this.menuButtonService.setFoldersPrivate();
         break;
       }
       case EntityType.FolderShared: {
         this.showAllButtons();
-        this.menuButtonService.setFolders();
+        this.menuButtonService.setFoldersShared();
         break;
       }
       case EntityType.FolderArchive: {
         this.showAllButtons();
-        this.menuButtonService.setFolders();
+        this.menuButtonService.setFoldersArchive();
         break;
       }
       case EntityType.FolderDeleted: {
         this.showAllButtons();
-        this.menuButtonService.setFolders();
+        this.menuButtonService.setFoldersDeleted();
         break;
       }
       case EntityType.FolderInner: {
@@ -155,22 +152,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       case EntityType.NotePrivate: {
         this.showAllButtons();
-        this.menuButtonService.setNotes();
+        this.menuButtonService.setNotesPrivate();
         break;
       }
       case EntityType.NoteShared: {
         this.showAllButtons();
-        this.menuButtonService.setNotes();
+        this.menuButtonService.setNotesShared();
         break;
       }
       case EntityType.NoteArchive: {
         this.showAllButtons();
-        this.menuButtonService.setNotes();
+        this.menuButtonService.setNotesArchive();
         break;
       }
       case EntityType.NoteDeleted: {
         this.showAllButtons();
-        this.menuButtonService.setNotes();
+        this.menuButtonService.setNotesDeleted();
         break;
       }
       case EntityType.NoteInner: {
@@ -240,23 +237,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   // UPPER MENU FUNCTION NOTES
-  changeColor() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, noteType));
-  }
-
-  setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new SetDeleteNotes(noteType));
-  }
 
   deleteNotes() {
     this.store.dispatch(new DeleteNotesPermanently());
   }
 
-  restoreNotes() {
-    this.store.dispatch(new RestoreNotes());
-  }
 
   archiveNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getNoteType);
@@ -273,10 +258,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.dispatch(new MakePrivateNotes(noteType));
   }
 
-  copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new CopyNotes(noteType));
-  }
 
   // UPPER MENU FUNCTIONS FOLDERS
 
@@ -285,29 +266,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ArchiveFolders(folderType));
   }
 
-  changeColorFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new ChangeColorFolder(NoteColorPallete.BlueOne, folderType));
-  }
-
-  setDeleteFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new SetDeleteFolders(folderType));
-  }
-
-  restoreFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new RestoreFolders());
-  }
 
   deleteFolders() {
     this.store.dispatch(new DeleteFoldersPermanently());
   }
 
-  copyFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new CopyFolders(folderType));
-  }
 
   makePublicFolder() {
     const folderType = this.store.selectSnapshot(AppStore.getFolderType);

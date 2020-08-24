@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UpdateFolderType, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
@@ -13,10 +14,9 @@ export class FullFolderComponent implements OnInit {
 
   constructor(private store: Store) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
-    this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
-    this.store.dispatch(new UpdateFolderType(FolderType.Inner));
+    await this.store.dispatch(new UpdateRoute(EntityType.FolderInner)).toPromise();
 
   }
 

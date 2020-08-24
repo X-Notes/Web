@@ -10,7 +10,8 @@ import { LoadSharedFolders, UnSelectAllFolder, PositionFolder } from '../state/f
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { UpdateFolderType, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
@@ -33,10 +34,9 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UnSelectAllFolder());
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
-    this.store.dispatch(new UpdateRoute(EntityType.FolderShared));
-    this.store.dispatch(new UpdateFolderType(FolderType.Shared));
+    await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))

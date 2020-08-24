@@ -8,8 +8,9 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+
 
 @Component({
   selector: 'app-all',
@@ -28,7 +29,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   async ngOnInit() {
 
-    this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate));
+    await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
