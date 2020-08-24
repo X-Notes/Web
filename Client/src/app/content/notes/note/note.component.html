@@ -1,7 +1,7 @@
 <div class="highlighting-note" (click)="highlight(note.id)" [ngStyle]="{'backgroundColor': isHighlight ? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightNote>
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
-<div [routerLink]="['/notes/', note.id]" class="note-inner" [ngClass]="pService.orientationMobile? 'small' : ''">
+<div (click)="toNote()" class="note-inner" [ngClass]="pService.orientationMobile? 'small' : ''" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}">
     <div class="labels">
         <div class="label">
             <p>Hello Hello Hello Hello Hello </p>
