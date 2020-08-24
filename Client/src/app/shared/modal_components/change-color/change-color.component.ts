@@ -57,13 +57,11 @@ export class ChangeColorComponent implements OnInit {
     if (routePath) {
       const type = this.store.selectSnapshot(AppStore.getRouting);
       await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
-      return;
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const type = this.store.selectSnapshot(AppStore.getRouting);
       await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
-      return;
     }
     this.dialogRef.close();
   }

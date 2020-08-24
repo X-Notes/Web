@@ -32,7 +32,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.nameChanged.next();
-    this.nameChanged.unsubscribe();
+    this.nameChanged.complete();
   }
 
   ngOnInit(): void {

@@ -15,7 +15,7 @@ import { isUndefined, isNull } from 'util';
 export class AuthService {
   token: string;
   userData: any; // Save logged in user data
-  unsubscribe = new Subject();
+  destroy = new Subject();
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -25,13 +25,13 @@ export class AuthService {
     private photoService: PhotoService
   ) {
     this.afAuth.idToken
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(token => {
       this.token = token;
       localStorage.setItem('idKey', this.token);
     });
     this.afAuth.authState
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(user => {
       if (user) {
         this.userData = user;
@@ -71,7 +71,7 @@ export class AuthService {
   }
   getUser(result) {
     this.userService.Get()
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(
       x => {
         if (x !== undefined && x !== null) {
@@ -88,7 +88,7 @@ export class AuthService {
             user.photoId = base64 as string;
             this.userService
             .CreateUser(user)
-            .pipe(takeUntil(this.unsubscribe))
+            .pipe(takeUntil(this.destroy))
             .subscribe(newuser => {
               if (newuser !== undefined && (newuser !== null)) {
                 this.router.navigate(['/notes']);

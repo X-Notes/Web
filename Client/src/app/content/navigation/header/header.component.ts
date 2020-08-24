@@ -210,13 +210,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (routePath) {
       const noteType = this.store.selectSnapshot(AppStore.getRouting);
       this.store.dispatch(new SelectAllNote(noteType));
-      return;
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const folderType = this.store.selectSnapshot(AppStore.getRouting);
       this.store.dispatch(new SelectAllFolder(folderType));
-      return;
     }
   }
 
@@ -224,12 +222,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
       this.store.dispatch(new UnSelectAllNote());
-      return;
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       this.store.dispatch(new UnSelectAllFolder());
-      return;
     }
   }
 
