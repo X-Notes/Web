@@ -2,6 +2,7 @@ import { FullNote } from '../models/fullNote';
 import { SmallNote } from '../models/smallNote';
 import { Order } from 'src/app/shared/services/order.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -40,7 +41,7 @@ export class UpdateFullNote {
 
 export class UpdateSmallNote {
     static type = '[Notes] Update small note';
-    constructor(public note: SmallNote, public typeNote: EntityType) {    }
+    constructor(public note: SmallNote, public typeNote: NoteType) {    }
 }
 
 

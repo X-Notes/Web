@@ -1,6 +1,7 @@
 import { Folder } from '../models/folder';
 import { Order } from 'src/app/shared/services/order.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 
 export class LoadPrivateFolders {
@@ -47,7 +48,7 @@ export class ClearColorFolders {
 
 export class UpdateSmallFolder {
     static type = '[Folders] Update small folder';
-    constructor(public folder: Folder, public typeFolder: EntityType) {    }
+    constructor(public folder: Folder, public typeFolder: FolderType) {    }
 }
 
 export class SetDeleteFolders {

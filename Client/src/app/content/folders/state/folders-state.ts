@@ -206,7 +206,7 @@ export class FolderStore {
     @Action(UpdateSmallFolder)
     async updateSmallNote({ setState }: StateContext<FolderState>, { folder, typeFolder }: UpdateSmallFolder) {
         switch (typeFolder) {
-            case EntityType.FolderArchive: {
+            case FolderType.Archive: {
                 setState(
                     patch({
                         archiveFolders: updateItem<Folder>(note2 => note2.id === folder.id, folder)
@@ -214,7 +214,7 @@ export class FolderStore {
                 );
                 break;
             }
-            case EntityType.FolderPrivate: {
+            case FolderType.Private: {
                 setState(
                     patch({
                         privateFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
@@ -222,7 +222,7 @@ export class FolderStore {
                 );
                 break;
             }
-            case EntityType.FolderShared: {
+            case FolderType.Shared: {
                 setState(
                     patch({
                         sharedFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
@@ -230,7 +230,7 @@ export class FolderStore {
                 );
                 break;
             }
-            case EntityType.FolderDeleted: {
+            case FolderType.Deleted: {
                 setState(
                     patch({
                         deletedFolders: updateItem<Folder>(folder2 => folder2.id === folder.id, folder)
@@ -320,29 +320,48 @@ export class FolderStore {
             case EntityType.FolderArchive: {
                 folders = getState().archiveFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Archive)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
             case EntityType.FolderPrivate: {
                 folders = getState().privateFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Private)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
             case EntityType.FolderDeleted: {
                 folders = getState().deletedFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Deleted)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
             case EntityType.FolderShared: {
                 folders = getState().sharedFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Shared)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
         }
-        folders.forEach(z => z.color = color);
-        folders.forEach(note => dispatch(new UpdateSmallFolder(note, typeFolder)));
-        const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
-        patchState({ updateColorEvent: updateColor });
-        dispatch([UnSelectAllFolder, ClearColorFolders]);
     }
 
     mapFromNoteToUpdateColor(note: Folder) {
