@@ -97,7 +97,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   addToDom(notes: SmallNote[]) {
     if (notes.length > 0) {
-      this.notes = [...notes, ...this.notes];
+      this.notes = [...notes.map(note => { note = { ...note }; return note; }).reverse() , ...this.notes];
       setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < notes.length; i++) {
