@@ -12,7 +12,6 @@ import { NoteType } from '../../enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { RoutePathes } from '../../enums/RoutePathes';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
 import { FolderType } from '../../enums/FolderTypes';
 
@@ -23,8 +22,13 @@ import { FolderType } from '../../enums/FolderTypes';
 })
 export class ChangeColorComponent implements OnInit {
 
-  @Select(AppStore.getRoutePath)
-  public pathType$: Observable<RoutePathes>;
+  @Select(AppStore.isNote)
+  public isNote$: Observable<boolean>;
+
+  @Select(AppStore.isFolder)
+  public isFolder$: Observable<boolean>;
+
+
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -32,7 +36,7 @@ export class ChangeColorComponent implements OnInit {
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
   current;
   theme = Theme;
-  routePath = RoutePathes;
+
   date: Date;
   constructor(public dialogRef: MatDialogRef<ChangeColorComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -49,18 +53,17 @@ export class ChangeColorComponent implements OnInit {
   }
 
   async changeColor() { // TODO
-    const route = this.store.selectSnapshot(AppStore.getRoutePath);
-    switch (route) {
-      case RoutePathes.Folder: {
-        const type = this.store.selectSnapshot(AppStore.getFolderType);
-        await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
-        break;
-      }
-      case RoutePathes.Note: {
-        const type = this.store.selectSnapshot(AppStore.getNoteType);
-        await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
-        break;
-      }
+    let routePath = this.store.selectSnapshot(AppStore.isNote);
+    if (routePath) {
+      const type = this.store.selectSnapshot(AppStore.getRouting);
+      await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
+      return;
+    }
+    routePath = this.store.selectSnapshot(AppStore.isFolder);
+    if (routePath) {
+      const type = this.store.selectSnapshot(AppStore.getRouting);
+      await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
+      return;
     }
     this.dialogRef.close();
   }

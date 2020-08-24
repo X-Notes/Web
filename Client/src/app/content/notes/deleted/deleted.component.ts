@@ -65,7 +65,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionNote(order, NoteType.Deleted));
+      this.store.dispatch(new PositionNote(order, EntityType.NoteDeleted));
     });
   }
 

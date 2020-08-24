@@ -10,7 +10,6 @@ import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 @Component({
@@ -79,7 +78,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionNote(order, NoteType.Private));
+      this.store.dispatch(new PositionNote(order, EntityType.NotePrivate));
     });
   }
 

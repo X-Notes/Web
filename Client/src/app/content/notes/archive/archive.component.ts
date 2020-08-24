@@ -66,7 +66,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionNote(order, NoteType.Archive));
+      this.store.dispatch(new PositionNote(order, EntityType.NoteArchive));
       });
   }
 

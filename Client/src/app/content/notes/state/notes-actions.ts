@@ -1,7 +1,7 @@
 import { FullNote } from '../models/fullNote';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { SmallNote } from '../models/smallNote';
 import { Order } from 'src/app/shared/services/order.service';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -40,7 +40,7 @@ export class UpdateFullNote {
 
 export class UpdateSmallNote {
     static type = '[Notes] Update small note';
-    constructor(public note: SmallNote, public typeNote: NoteType) {    }
+    constructor(public note: SmallNote, public typeNote: EntityType) {    }
 }
 
 
@@ -49,7 +49,7 @@ export class UpdateSmallNote {
 // Color changing
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
-    constructor(public color: string, public typeNote: NoteType) {    }
+    constructor(public color: string, public typeNote: EntityType) {    }
 }
 
 export class ClearColorNotes {
@@ -60,7 +60,7 @@ export class ClearColorNotes {
 // Set Deleting
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
@@ -81,25 +81,25 @@ export class RestoreNotes {
 // Archive
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class MakePublicNotes {
     static type = '[Notes] MakePublic notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class CopyNotes {
     static type = '[Notes] Copy notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
@@ -118,7 +118,7 @@ export class RemoveFromDomMurri {
 
 export class PositionNote {
     static type = '[Notes] Position notes';
-    constructor(public order: Order, public typeNote: NoteType) {
+    constructor(public order: Order, public typeNote: EntityType) {
     }
 }
 
@@ -141,6 +141,6 @@ export class UnSelectAllNote {
 
 export class SelectAllNote {
     static type = '[Notes] Select all';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }

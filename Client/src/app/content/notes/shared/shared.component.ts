@@ -73,7 +73,7 @@ export class SharedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionNote(order, NoteType.Shared));
+      this.store.dispatch(new PositionNote(order, EntityType.NoteShared));
     });
   }
 

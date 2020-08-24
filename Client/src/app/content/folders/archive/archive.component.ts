@@ -73,7 +73,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionFolder(order, FolderType.Archive));
+      this.store.dispatch(new PositionFolder(order, EntityType.FolderArchive));
     });
   }
 

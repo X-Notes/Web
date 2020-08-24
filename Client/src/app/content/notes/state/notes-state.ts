@@ -16,8 +16,8 @@ import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 
 import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
-import { exception } from 'console';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 
 interface NoteState {
@@ -236,7 +236,7 @@ export class NoteStore {
     @Action(UpdateSmallNote)
     async updateSmallNote({ setState }: StateContext<NoteState>, { note, typeNote }: UpdateSmallNote) {
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
                 setState(
                     patch({
                         archiveNotes: updateItem<SmallNote>(note2 => note2.id === note.id, note)
@@ -244,7 +244,7 @@ export class NoteStore {
                 );
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
                 setState(
                     patch({
                         privateNotes: updateItem<SmallNote>(note2 => note2.id === note.id, note)
@@ -252,7 +252,7 @@ export class NoteStore {
                 );
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
                 setState(
                     patch({
                         sharedNotes: updateItem<SmallNote>(note2 => note2.id === note.id, note)
@@ -260,7 +260,7 @@ export class NoteStore {
                 );
                 break;
             }
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
                 setState(
                     patch({
                         deletedNotes: updateItem<SmallNote>(note2 => note2.id === note.id, note)
@@ -282,22 +282,22 @@ export class NoteStore {
         await this.api.changeColor(selectedIds, color).toPromise();
         let notes: SmallNote[];
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
                 notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
                 notes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
                 break;
             }
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
                 notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
                 notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
                 break;
@@ -328,11 +328,13 @@ export class NoteStore {
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: SetDeleteNotes) {
         const selectedIds = getState().selectedIds;
-        await this.api.setDeleteNotes(selectedIds, typeNote).toPromise();
 
         let notes;
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
+
+                await this.api.setDeleteNotes(selectedIds, NoteType.Archive).toPromise();
+
                 notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -344,7 +346,10 @@ export class NoteStore {
                 });
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
+
+                await this.api.setDeleteNotes(selectedIds, NoteType.Private).toPromise();
+
                 notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -356,7 +361,10 @@ export class NoteStore {
                 });
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
+
+                await this.api.setDeleteNotes(selectedIds, NoteType.Shared).toPromise();
+
                 notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -405,10 +413,12 @@ export class NoteStore {
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: ArchiveNotes) {
         const selectedIds = getState().selectedIds;
-        await this.api.archiveNotes(selectedIds, typeNote).toPromise();
 
         switch (typeNote) {
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
+
+                await this.api.archiveNotes(selectedIds, NoteType.Deleted).toPromise();
+
                 const notesDeleted = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -421,7 +431,10 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
+
+                await this.api.archiveNotes(selectedIds, NoteType.Private).toPromise();
+
                 const notesPrivate = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -434,7 +447,10 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
+
+                await this.api.archiveNotes(selectedIds, NoteType.Shared).toPromise();
+
                 const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -453,10 +469,13 @@ export class NoteStore {
     @Action(MakePublicNotes)
     async makePublicNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: MakePublicNotes) {
         const selectedIds = getState().selectedIds;
-        await this.api.makePublicNotes(selectedIds, typeNote).toPromise();
+
 
         switch (typeNote) {
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
+
+                await this.api.makePublicNotes(selectedIds, NoteType.Private).toPromise();
+
                 const notePrivate = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -469,7 +488,10 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
+
+                await this.api.makePublicNotes(selectedIds, NoteType.Archive).toPromise();
+
                 const noteArchive = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -488,10 +510,12 @@ export class NoteStore {
     @Action(MakePrivateNotes)
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: MakePrivateNotes) {
         const selectedIds = getState().selectedIds;
-        await this.api.makePrivateNotes(selectedIds, typeNote).toPromise();
 
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
+
+                await this.api.makePrivateNotes(selectedIds, NoteType.Archive).toPromise();
+
                 const notesArchive = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -504,7 +528,10 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, RemoveFromDomMurri]);
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
+
+                await this.api.makePrivateNotes(selectedIds, NoteType.Shared).toPromise();
+
                 const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const notesAdded = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -524,10 +551,10 @@ export class NoteStore {
     @Action(CopyNotes)
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: CopyNotes) {
         const selectedIds = getState().selectedIds;
-        const newNotes = await this.api.copyNotes(selectedIds, typeNote).toPromise();
 
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
+                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Archive).toPromise();
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateNotes: [...newNotes, ...getState().privateNotes]
@@ -535,7 +562,8 @@ export class NoteStore {
                 dispatch([UnSelectAllNote]);
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
+                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Shared).toPromise();
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateNotes: [...newNotes, ...getState().privateNotes]
@@ -543,7 +571,8 @@ export class NoteStore {
                 dispatch([UnSelectAllNote]);
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
+                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Private).toPromise();
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateNotes: [...newNotes, ...getState().privateNotes],
@@ -552,7 +581,8 @@ export class NoteStore {
                 dispatch([UnSelectAllNote, ClearAddedPrivateNotes]);
                 break;
             }
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
+                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Deleted).toPromise();
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateNotes: [...newNotes, ...getState().privateNotes],
@@ -583,7 +613,7 @@ export class NoteStore {
         await this.orderService.changeOrder(order).toPromise();
 
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
                 let archiveNotes = getState().archiveNotes;
                 const changedNote = archiveNotes.find(x => x.id === order.entityId);
                 archiveNotes = archiveNotes.filter(x => x.id !== order.entityId);
@@ -591,7 +621,7 @@ export class NoteStore {
                 patchState({archiveNotes});
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
                 let sharedNotes = getState().sharedNotes;
                 const changedNote = sharedNotes.find(x => x.id === order.entityId);
                 sharedNotes = sharedNotes.filter(x => x.id !== order.entityId);
@@ -599,7 +629,7 @@ export class NoteStore {
                 patchState({sharedNotes});
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
                 let privateNotes = getState().privateNotes;
                 const changedNote = privateNotes.find(x => x.id === order.entityId);
                 privateNotes = privateNotes.filter(x => x.id !== order.entityId);
@@ -607,7 +637,7 @@ export class NoteStore {
                 patchState({privateNotes});
                 break;
             }
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
                 let deletedNotes = getState().deletedNotes;
                 const changedNote = deletedNotes.find(x => x.id === order.entityId);
                 deletedNotes = deletedNotes.filter(x => x.id !== order.entityId);
@@ -641,20 +671,20 @@ export class NoteStore {
     selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
         let ids;
         switch (typeNote) {
-            case NoteType.Archive: {
+            case EntityType.NoteArchive: {
                 ids = getState().archiveNotes.map(x => x.id);
                 break;
             }
-            case NoteType.Private: {
+            case EntityType.NotePrivate: {
 
                 ids = getState().privateNotes.map(x => x.id);
                 break;
             }
-            case NoteType.Deleted: {
+            case EntityType.NoteDeleted: {
                 ids = getState().deletedNotes.map(x => x.id);
                 break;
             }
-            case NoteType.Shared: {
+            case EntityType.NoteShared: {
                 ids = getState().sharedNotes.map(x => x.id);
                 break;
             }

@@ -1,17 +1,10 @@
-import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoutePath, UpdateNoteType, UpdateFolderType, UpdateRoute,
-    UpdateMenuActive, UpdateSelectAllButton, UpdateNewButton, UpdateSettingsButton } from './app-action';
+import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton, UpdateNewButton, UpdateSettingsButton } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 
 interface AppState {
-    routePath: RoutePathes;
-    noteType: NoteType;
-    folderType: FolderType;
     routing: EntityType;
     newButtonActive: boolean;
     selectAllButtonActive: boolean;
@@ -22,9 +15,6 @@ interface AppState {
 @State<AppState>({
     name: 'App',
     defaults: {
-        routePath: null,
-        noteType: null,
-        folderType: null,
         routing: null,
         newButtonActive: true,
         selectAllButtonActive: true,
@@ -36,23 +26,63 @@ interface AppState {
 export class AppStore {
 
     @Selector()
-    static getRoutePath(state: AppState): RoutePathes {
-        return state.routePath;
-    }
-
-    @Selector()
-    static getNoteType(state: AppState): NoteType {
-        return state.noteType;
-    }
-
-    @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
     }
 
     @Selector()
-    static getFolderType(state: AppState): FolderType {
-        return state.folderType;
+    static isFolder(state: AppState): boolean {
+        return state.routing === EntityType.FolderShared ||
+        state.routing === EntityType.FolderDeleted ||
+        state.routing === EntityType.FolderPrivate ||
+        state.routing === EntityType.FolderArchive;
+    }
+
+    @Selector()
+    static isNote(state: AppState): boolean {
+        return state.routing === EntityType.NoteShared ||
+        state.routing === EntityType.NoteDeleted ||
+        state.routing === EntityType.NotePrivate ||
+        state.routing === EntityType.NoteArchive;
+    }
+
+    @Selector()
+    static getName(state: AppState): string {
+        switch (state.routing) {
+
+            case EntityType.FolderPrivate: {
+                return 'folder';
+            }
+            case EntityType.FolderShared: {
+                return 'folder';
+            }
+            case EntityType.FolderDeleted: {
+                return 'folder';
+            }
+            case EntityType.FolderArchive: {
+                return 'folder';
+            }
+
+            case EntityType.NotePrivate: {
+                return 'note';
+            }
+            case EntityType.NoteArchive: {
+                return 'note';
+            }
+            case EntityType.NoteDeleted: {
+                return 'note';
+            }
+            case EntityType.NoteShared: {
+                return 'note';
+            }
+
+            case EntityType.LabelPrivate: {
+                return 'label';
+            }
+            case EntityType.LabelDeleted: {
+                return 'label';
+            }
+        }
     }
 
     @Selector()
@@ -80,22 +110,6 @@ export class AppStore {
     @Selector()
     static getMenuActive(state: AppState): boolean {
         return state.menuActive;
-    }
-
-
-    @Action(UpdateRoutePath)
-    updateRoutePath({patchState}: StateContext<AppState>, {routePath}: UpdateRoutePath) {
-        patchState({routePath});
-    }
-
-    @Action(UpdateNoteType)
-    updateNoteType({patchState}: StateContext<AppState>, {typeNote}: UpdateNoteType) {
-        patchState({noteType: typeNote});
-    }
-
-    @Action(UpdateFolderType)
-    updateFolderType({patchState}: StateContext<AppState>, {typeFolder}: UpdateFolderType) {
-        patchState({folderType: typeFolder});
     }
 
     @Action(UpdateRoute)

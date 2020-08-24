@@ -9,7 +9,6 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
 import { UnSelectAllNote, SelectAllNote,
   DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
-import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
 import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
@@ -48,8 +47,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.getRoutePath)
-  public route$: Observable<RoutePathes>;
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -207,32 +206,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Selection
 
   selectAll() {
-    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
-    switch (routePath) {
-      case RoutePathes.Folder: {
-        const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-        this.store.dispatch(new SelectAllFolder(folderType));
-        break;
-      }
-      case RoutePathes.Note: {
-        const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-        this.store.dispatch(new SelectAllNote(noteType));
-        break;
-      }
+    let routePath = this.store.selectSnapshot(AppStore.isNote);
+    if (routePath) {
+      const noteType = this.store.selectSnapshot(AppStore.getRouting);
+      this.store.dispatch(new SelectAllNote(noteType));
+      return;
+    }
+    routePath = this.store.selectSnapshot(AppStore.isFolder);
+    if (routePath) {
+      const folderType = this.store.selectSnapshot(AppStore.getRouting);
+      this.store.dispatch(new SelectAllFolder(folderType));
+      return;
     }
   }
 
   unselectAll() {
-    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
-    switch (routePath) {
-      case RoutePathes.Folder: {
-        this.store.dispatch(new UnSelectAllFolder());
-        break;
-      }
-      case RoutePathes.Note: {
-        this.store.dispatch(new UnSelectAllNote());
-        break;
-      }
+    let routePath = this.store.selectSnapshot(AppStore.isNote);
+    if (routePath) {
+      this.store.dispatch(new UnSelectAllNote());
+      return;
+    }
+    routePath = this.store.selectSnapshot(AppStore.isFolder);
+    if (routePath) {
+      this.store.dispatch(new UnSelectAllFolder());
+      return;
     }
   }
 
@@ -244,17 +241,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new ArchiveNotes(noteType));
   }
 
   makePublic() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePublicNotes(noteType));
   }
 
   makePrivate() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateNotes(noteType));
   }
 
@@ -262,7 +259,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // UPPER MENU FUNCTIONS FOLDERS
 
   archiveFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new ArchiveFolders(folderType));
   }
 
@@ -273,12 +270,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   makePublicFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePublicFolders(folderType));
   }
 
   makePrivateFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateFolders(folderType));
   }
 

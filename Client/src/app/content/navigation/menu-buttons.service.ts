@@ -462,22 +462,22 @@ export class MenuButtonsService {
   }
 
   private copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new CopyNotes(noteType));
   }
 
   private copyFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new CopyFolders(folderType));
   }
 
   private setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new SetDeleteNotes(noteType));
   }
 
   private setDeleteFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new SetDeleteFolders(folderType));
   }
 
@@ -486,7 +486,7 @@ export class MenuButtonsService {
   }
 
   private restoreFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new RestoreFolders());
   }
 

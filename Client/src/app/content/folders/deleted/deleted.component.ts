@@ -72,7 +72,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionFolder(order, FolderType.Deleted));
+      this.store.dispatch(new PositionFolder(order, EntityType.FolderDeleted));
     });
   }
 
