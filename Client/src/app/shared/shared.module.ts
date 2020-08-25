@@ -9,11 +9,12 @@ import { ChangeColorComponent } from './modal_components/change-color/change-col
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
 import { HammerModule } from '@angular/platform-browser';
 import { ReplacePipe } from './pipes/replace.pipe';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe],
-  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule],
-  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe],
+  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
+  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule ],
   providers: [DialogService]
 })
 export class SharedModule { }

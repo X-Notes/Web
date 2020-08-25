@@ -18,7 +18,6 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
-  @Input() deleted: boolean;
   @Output() updateLabel = new EventEmitter<Label>();
   @Output() deleteLabel = new EventEmitter<number>();
   @Output() restoreLabel = new EventEmitter<number>();

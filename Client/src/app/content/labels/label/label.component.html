@@ -1,13 +1,13 @@
 <div class="field" [ngStyle]="{backgroundColor: label.color}">
-    <input type="text" [disabled]="deleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
+    <input type="text" [disabled]="label.isDeleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
-        <button type="button" *ngIf="!deleted" (click)="openColors()">
+        <button type="button" *ngIf="!label.isDeleted" (click)="openColors()">
             <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
                 <i class="icon-select-label"></i>
             </div>
         </button>
 
-        <button type="button" *ngIf="deleted" (click)="restore()">
+        <button type="button" *ngIf="label.isDeleted" (click)="restore()">
             <div class="icon">
                 <i class="icon-restore"></i>
             </div>
