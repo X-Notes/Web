@@ -3,17 +3,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogData } from '../dialog_data';
 import { EnumUtil } from '../../services/enum.util';
 import { NoteColorPallete } from '../../enums/NoteColors';
-import { LabelsColor } from '../../enums/LabelsColors';
 import { PersonalizationService } from '../../services/personalization.service';
 import { Theme } from '../../enums/Theme';
 import { Store, Select } from '@ngxs/store';
 import { ChangeColorNote } from 'src/app/content/notes/state/notes-actions';
-import { NoteType } from '../../enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
-import { FolderType } from '../../enums/FolderTypes';
 
 @Component({
   selector: 'app-change-color',
@@ -40,7 +37,6 @@ export class ChangeColorComponent implements OnInit {
   date: Date;
   constructor(public dialogRef: MatDialogRef<ChangeColorComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
-              public pService: PersonalizationService,
               private store: Store, ) { }
 
   ngOnInit(): void {
