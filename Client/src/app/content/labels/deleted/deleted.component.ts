@@ -7,6 +7,7 @@ import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-deleted',
@@ -15,6 +16,7 @@ import { Subject } from 'rxjs';
 })
 export class DeletedComponent implements OnInit {
 
+  fontSize = FontSize;
   public labels: Label[];
   destroy = new Subject<void>();
 

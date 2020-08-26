@@ -8,6 +8,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-all',
@@ -16,6 +17,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 })
 export class AllComponent implements OnInit, OnDestroy  {
 
+  fontSize = FontSize;
   public labels: Label[];
 
   destroy = new Subject<void>();

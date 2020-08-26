@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-privates',
@@ -17,6 +18,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 })
 export class PrivatesComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   public notes: SmallNote[];

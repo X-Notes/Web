@@ -63,10 +63,10 @@
 
     .color {
         display: flex;
-        flex: 0 0 calc(100% / 5 - 1.6rem);
+        flex: 0 0 calc(100% / 5 - 1.5rem);
         height: 25px;
         border-radius: 5px;
-        margin-right: 2rem;
+        margin-right: 1.875rem;
         margin-top: 0.625rem;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
         transition: 0.2s ease;
@@ -87,8 +87,6 @@
     .field {
         .options {
             button[type="button"] {
-                padding: 0 0.75rem;
-
                 .icon {
                     font-size: 0.5625rem;
                 }

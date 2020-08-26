@@ -1,4 +1,4 @@
-<div class="field" [ngStyle]="{backgroundColor: label.color}">
+<div class="field" [ngStyle]="{backgroundColor: label.color}" [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''">
     <input type="text" [disabled]="deleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" *ngIf="!deleted" (click)="openColors()">

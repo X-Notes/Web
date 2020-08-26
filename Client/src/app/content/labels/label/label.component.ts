@@ -7,6 +7,7 @@ import { Store } from '@ngxs/store';
 import { RestoreLabel } from '../state/labels-actions';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-label',
@@ -16,6 +17,7 @@ import { EnumUtil } from 'src/app/shared/services/enum.util';
 })
 export class LabelComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Input() deleted: boolean;
@@ -59,9 +61,9 @@ export class LabelComponent implements OnInit, OnDestroy {
   timeout(flag: boolean) {
     let count = 0;
     const timer = setInterval(() => {
-      if (count === 50 && flag) {
+      if (count === 60 && flag) {
         clearInterval(timer);
-      } else if (count === 30 && flag === false) {
+      } else if (count === 40 && flag === false) {
         clearInterval(timer);
       }
       this.pService.grid.refreshItems().layout();
