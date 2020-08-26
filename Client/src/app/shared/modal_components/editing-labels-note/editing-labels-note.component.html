@@ -1,1 +1,22 @@
-<p>editing-labels-note works!</p>
+<div class="header">
+    <span>{{data.title}}</span>
+    <i class="icon-plus" mat-dialog-close></i>
+</div>
+<div class="content_editing_label">
+    <div class="search">
+        <div class="search-content">
+            <input type="search" placeholder="Label name...">
+            <div class="button">
+                <i class="icon-search"></i>
+            </div>
+        </div>
+        <i class="icon-plus" (click)="newLabel()"></i>
+    </div>
+    <div class="labels">
+        <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
+            <div *ngFor="let item of labels$ | async" class="label" @fadeIn>
+                <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)"></app-label>
+            </div>
+        </ngx-simplebar>
+    </div>
+</div>

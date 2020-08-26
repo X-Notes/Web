@@ -10,7 +10,7 @@ import { DeletedComponent } from './deleted/deleted.component';
 
 
 @NgModule({
-  declarations: [LabelsComponent, LabelComponent, AllComponent, DeletedComponent],
+  declarations: [LabelsComponent, AllComponent, DeletedComponent],
   imports: [
     CommonModule,
     LabelsRouting,

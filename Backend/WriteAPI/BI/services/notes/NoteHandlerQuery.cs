@@ -38,7 +38,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetPrivateNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetPrivateNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -50,6 +52,7 @@ namespace BI.services.notes
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var note = await noteRepository.GetFull(guid);
+                note.LabelsNotes = note.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList();
                 return mapper.Map<FullNote>(note);
             }
             return null;
@@ -70,7 +73,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetSharedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetSharedNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -81,7 +86,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetArchiveNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetArchiveNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -92,7 +99,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetDeletedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetDeletedNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();

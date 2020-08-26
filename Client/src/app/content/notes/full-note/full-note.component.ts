@@ -79,7 +79,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
 
     await this.store.dispatch(new UpdateRoute(EntityType.NoteInner)).toPromise();
-    await this.store.dispatch(new SelectIdNote(this.id)).toPromise();
 
 
     this.pService.onResize();
@@ -245,8 +244,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async load() { // TODO MAKE UNSUBSCRIBE
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     this.store.select(NoteStore.oneFull)
-    .pipe(map(func => func(this.id)))
-    .subscribe(x => {this.note = x; });
+    .pipe(take(1), map(func => func(this.id)))
+    .subscribe((x) => {
+      this.note = x;
+      console.log(this.id);
+      this.store.dispatch(new SelectIdNote(this.id, this.note.labelsIds));
+    });
   }
 
   connectToHub() {

@@ -10,11 +10,13 @@ import { EditingLabelsNoteComponent } from './modal_components/editing-labels-no
 import { HammerModule } from '@angular/platform-browser';
 import { ReplacePipe } from './pipes/replace.pipe';
 import { FormsModule } from '@angular/forms';
+import { LabelComponent } from '../content/labels/label/label.component';
 
 @NgModule({
-  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe],
+  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe, LabelComponent],
   imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
-  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule ],
+  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
+    LabelComponent ],
   providers: [DialogService]
 })
 export class SharedModule { }

@@ -58,7 +58,8 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   highlight(id: string) {
     if (!this.isHighlight) {
-      this.store.dispatch(new SelectIdNote(id));
+      const labelsIds = this.note.labelsIds;
+      this.store.dispatch(new SelectIdNote(id, labelsIds));
     } else {
       this.store.dispatch(new UnSelectIdNote(id));
     }

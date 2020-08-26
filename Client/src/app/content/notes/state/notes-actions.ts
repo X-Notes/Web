@@ -110,6 +110,18 @@ export class ClearAddedPrivateNotes {
     }
 }
 
+// Labels
+
+export class AddLabelOnNote {
+    static type = '[Notes] Add label';
+    constructor(public id: number, public typeNote: EntityType) {}
+}
+
+export class RemoveLabelFromNote {
+    static type = '[Notes] Remove label';
+    constructor(public id: number, public typeNote: EntityType) {}
+}
+
 // Muuri remove from dom
 export class RemoveFromDomMurri {
     static type = '[Notes] MurriRemove notes';
@@ -126,7 +138,7 @@ export class PositionNote {
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';
-    constructor(public id: string) {    }
+    constructor(public id: string, public labelIds: number[]) {    }
 }
 
 export class UnSelectIdNote {

@@ -9,6 +9,7 @@ import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { CopyNotes, SetDeleteNotes, RestoreNotes, ArchiveNotes, DeleteNotesPermanently } from '../notes/state/notes-actions';
 import { CopyFolders, SetDeleteFolders, RestoreFolders, ArchiveFolders, DeleteFoldersPermanently } from '../folders/state/folders-actions';
+import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 
 @Injectable({providedIn: 'root'})
 export class MenuButtonsService {
@@ -25,7 +26,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => 5
+      operation: this.changeLabels.bind(this)
     },
     {
       icon: 'shared',
@@ -63,7 +64,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => 5
+      operation: this.changeLabels.bind(this)
     },
     {
       icon: 'shared',
@@ -101,7 +102,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => 5
+      operation: this.changeLabels.bind(this)
     },
     {
       icon: 'shared',
@@ -143,7 +144,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => 5
+      operation: this.changeLabels.bind(this)
     },
     {
       icon: 'shared',
@@ -440,6 +441,9 @@ export class MenuButtonsService {
     this.items = this.folderInnerItems;
   }
 
+  // FUNCTIONS
+
+  // COLOR
   private changeColor() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
@@ -453,7 +457,20 @@ export class MenuButtonsService {
     this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
-  // FUNCTIONS
+  // LABELS
+  private changeLabels() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const config: MatDialogConfig =  {
+      width: '450px',
+      height: '510px',
+      data: {
+        title: 'Labels'
+      },
+      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+    };
+    this.dialogService.openDialog(EditingLabelsNoteComponent, config);
+  }
+
 
   // COPY
   private copyNotes() {
