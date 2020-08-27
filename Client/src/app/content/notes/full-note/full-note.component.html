@@ -1,17 +1,5 @@
 <div class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <div class="sub-nav-item-section">
-            <div class="sub-nav-item" routerLink="/profile" #profile>
-                <div class="item">
-                    <div class="photo">
-                        <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
-                    </div>
-                    <p>2ss2Davyd Konopatskyi</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
-            </div>
-            <div class="separator"></div>
-        </div>
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
             <div class="note" *ngFor="let item of notes$ | async" [routerLink]="['/notes/', item.id]">
                 <p>Hello Hello Hello Hello Hello Hello Hello Hello </p>

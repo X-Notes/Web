@@ -21,8 +21,12 @@ export class LoadArchiveNotes {
 }
 
 export class LoadAllExceptNotes {
-    static type = '[Notes] Load all notes';
+    static type = '[Notes] Load excepted notes';
     constructor(public typeNote: NoteType) {    }
+}
+
+export class LoadAllNotes {
+    static type = '[Notes] Load all notes';
 }
 
 

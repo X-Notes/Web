@@ -4,7 +4,8 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote, UnSelectIdNote, LoadAllExceptNotes } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote,
+  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime, filter, takeUntil } from 'rxjs/operators';
@@ -88,7 +89,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.load();
     this.connectToHub();
 
-    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
 
     this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
@@ -259,7 +259,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async load() { // TODO MAKE UNSUBSCRIBE
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
 
-    this.store.dispatch(new LoadAllExceptNotes(NoteType.Inner));
+    this.store.dispatch(new LoadAllNotes());
 
     this.store.select(NoteStore.oneFull)
     .pipe(take(1), map(func => func(this.id)))
