@@ -326,82 +326,6 @@ export class MenuButtonsService {
   ];
 
 
-  private noteInnerItems: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5
-    },
-    {
-      icon: 'label',
-      operation: () => 5
-    },
-    {
-      icon: 'shared',
-      operation: () => 5
-    },
-    {
-      icon: 'copy',
-      operation: () => 5
-    },
-    {
-      icon: 'color',
-      operation: this.changeColor.bind(this)
-    },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
-    {
-      icon: 'archive',
-      operation: () => 5
-    },
-    {
-      icon: 'delete',
-      operation: () => 5
-    }
-  ];
-  private folderInnerItems: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5
-    },
-    {
-      icon: 'label',
-      operation: () => 5
-    },
-    {
-      icon: 'shared',
-      operation: () => 5
-    },
-    {
-      icon: 'copy',
-      operation: () => 5
-    },
-    {
-      icon: 'color',
-      operation: () => 5
-    },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
-    {
-      icon: 'archive',
-      operation: () => 5
-    },
-    {
-      icon: 'delete',
-      operation: () => 5
-    }
-  ];
 
   setNotesPrivate() {
     this.items = this.notesItemsPrivate;
@@ -419,11 +343,6 @@ export class MenuButtonsService {
     this.items = this.notesItemsArchive;
   }
 
-  setInnerNote() {
-    this.items = this.noteInnerItems;
-  }
-
-
   setFoldersPrivate() {
     this.items = this.foldersItemsPrivate;
   }
@@ -437,9 +356,6 @@ export class MenuButtonsService {
     this.items = this.foldersItemsDeleted;
   }
 
-  setInnerFolder() {
-    this.items = this.folderInnerItems;
-  }
 
   // FUNCTIONS
 

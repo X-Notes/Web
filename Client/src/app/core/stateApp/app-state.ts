@@ -1,7 +1,9 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton, UpdateNewButton, UpdateSettingsButton } from './app-action';
+import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
+    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 
 interface AppState {
@@ -10,6 +12,7 @@ interface AppState {
     selectAllButtonActive: boolean;
     menuActive: boolean;
     settingsButtonActive: boolean;
+    innerNoteType: NoteType;
 }
 
 @State<AppState>({
@@ -20,6 +23,7 @@ interface AppState {
         selectAllButtonActive: true,
         settingsButtonActive: true,
         menuActive: false,
+        innerNoteType: null
     }
 })
 @Injectable()
@@ -92,6 +96,11 @@ export class AppStore {
         return state.routing;
     }
 
+    @Selector()
+    static getInnerNoteType(state: AppState): NoteType {
+        return state.innerNoteType;
+    }
+
     // UPPER MENU SELECTORS
 
     @Selector()
@@ -117,6 +126,11 @@ export class AppStore {
     @Action(UpdateRoute)
     async updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
         patchState({routing: type});
+    }
+
+    @Action(UpdateRouteWithNoteType)
+    async updateRouteWithNoteType({patchState}: StateContext<AppState>, {type, noteType}: UpdateRouteWithNoteType) {
+        patchState({routing: type, innerNoteType: noteType});
     }
 
     // UPPER MENU BUTTONS

@@ -18,6 +18,7 @@ import { FolderStore } from '../../folders/state/folders-state';
 import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-header',
@@ -163,7 +164,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
-        this.menuButtonService.setInnerFolder();
+        // this.menuButtonService.setInnerFolder();
         break;
       }
 
@@ -189,7 +190,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       case EntityType.NoteInner: {
        // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
-        this.menuButtonService.setInnerNote();
+        switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
+          case NoteType.Private: {
+            this.menuButtonService.setNotesPrivate();
+            break;
+          }
+          case NoteType.Shared: {
+            this.menuButtonService.setNotesShared();
+            break;
+          }
+          case NoteType.Deleted: {
+            this.menuButtonService.setNotesDeleted();
+            break;
+          }
+          case NoteType.Archive: {
+            this.menuButtonService.setNotesArchive();
+            break;
+          }
+        }
         break;
       }
 

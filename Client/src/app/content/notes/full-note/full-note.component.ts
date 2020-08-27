@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote,
-  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes } from '../state/notes-actions';
+  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime, filter, takeUntil } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute, UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -80,9 +80,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-
-    await this.store.dispatch(new UpdateRoute(EntityType.NoteInner)).toPromise();
-
 
     this.pService.onResize();
     this.initWidthSlide();
@@ -259,14 +256,32 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async load() { // TODO MAKE UNSUBSCRIBE
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
 
-    this.store.dispatch(new LoadAllNotes());
-
     this.store.select(NoteStore.oneFull)
     .pipe(take(1), map(func => func(this.id)))
-    .subscribe((x) => {
+    .subscribe(async (x) => {
       this.note = {...x};
-      console.log(this.id);
+      console.log(this.note);
+      this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, this.note.noteType));
       this.store.dispatch(new SelectIdNote(this.id, this.note.labelsIds));
+
+      switch (this.note.noteType) {
+        case NoteType.Private: {
+          this.store.dispatch(new LoadPrivateNotes());
+          break;
+        }
+        case NoteType.Archive: {
+          this.store.dispatch(new LoadArchiveNotes());
+          break;
+        }
+        case NoteType.Shared: {
+          this.store.dispatch(new LoadSharedNotes());
+          break;
+        }
+        case NoteType.Deleted: {
+          this.store.dispatch(new LoadDeletedNotes());
+          break;
+        }
+      }
     });
   }
 
