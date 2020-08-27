@@ -12,6 +12,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteStore } from '../state/notes-state';
 
 @Component({
   selector: 'app-archive',
@@ -45,14 +46,14 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadArchiveNotes()).toPromise();
 
-    this.store.select(x => x.Notes.archiveNotes).pipe(take(1))
+    this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });
 
-    this.store.select(x => x.Notes.updateColorEvent)
+    this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.removeFromMurriEvent)
+    this.store.select(NoteStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
   }

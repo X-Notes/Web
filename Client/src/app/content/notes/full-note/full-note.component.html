@@ -6,7 +6,7 @@
                     <div class="photo">
                         <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
                     </div>
-                    <p>Davyd Konopatskyi</p>
+                    <p>2ss2Davyd Konopatskyi</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
@@ -37,7 +37,7 @@
 <div class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="wrapper" #fullWrap (panstart)="panStart($event)" (panmove)="panMove($event)" (panend)="panEnd($event)">
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="mainWidth" class="main-content">
-            <div class="note-color"></div>
+            <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
                 <div class="label">
                     <p>Hello Hello Hello Hello Hello</p>

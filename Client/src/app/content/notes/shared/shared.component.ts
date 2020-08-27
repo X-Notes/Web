@@ -12,6 +12,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteStore } from '../state/notes-state';
 
 @Component({
   selector: 'app-shared',
@@ -46,14 +47,14 @@ export class SharedComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadSharedNotes()).toPromise();
 
-    this.store.select(x => x.Notes.sharedNotes).pipe(take(1))
+    this.store.select(NoteStore.sharedNotes).pipe(take(1))
     .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
 
-    this.store.select(x => x.Notes.updateColorEvent)
+    this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.removeFromMurriEvent)
+    this.store.select(NoteStore.removeFromMurriEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.delete(x));
   }

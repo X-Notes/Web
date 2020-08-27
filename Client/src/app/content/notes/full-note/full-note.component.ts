@@ -7,7 +7,7 @@ import { Store, Select } from '@ngxs/store';
 import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
-import { take, map, mergeMap, debounceTime, filter } from 'rxjs/operators';
+import { take, map, mergeMap, debounceTime, filter, takeUntil } from 'rxjs/operators';
 import { UpdateText } from '../models/parts/updateText';
 import {
   PersonalizationService,
@@ -22,6 +22,7 @@ import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { UpdateColor } from '../state/updateColor';
 
 @Component({
   selector: 'app-full-note',
@@ -37,6 +38,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
+  destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
   mainWidth = 0;
@@ -88,11 +90,24 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
 
+    this.store.select(NoteStore.updateColorEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.changeColorHandler(x));
+
     this.nameChanged.pipe(
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
     setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
+  }
+
+
+  changeColorHandler(updateColor: UpdateColor[]) {
+    for (const update of updateColor) {
+      if (this.note.id === update.id) {
+        this.note.color = update.color;
+      }
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -246,7 +261,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(NoteStore.oneFull)
     .pipe(take(1), map(func => func(this.id)))
     .subscribe((x) => {
-      this.note = x;
+      this.note = {...x};
       console.log(this.id);
       this.store.dispatch(new SelectIdNote(this.id, this.note.labelsIds));
     });
