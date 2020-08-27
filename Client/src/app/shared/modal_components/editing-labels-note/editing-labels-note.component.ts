@@ -17,10 +17,10 @@ import { trigger, transition, animate, style } from '@angular/animations';
   animations: [trigger('fadeIn', [
     transition(':enter', [
       style({  height: 0,  }),
-      animate('1.2s ease-out', style({ height: '*', })),
+      animate('0.2s ease', style({ height: '*', })),
     ]),
     transition(':leave', [
-      animate('1.2s ease', style({ opacity: 0, height: 0 }))
+      animate('0.2s ease', style({ opacity: 0, height: 0 }))
     ]),
   ]), ]
 })
@@ -34,6 +34,7 @@ export class EditingLabelsNoteComponent implements OnInit {
   @Select(LabelStore.all)
   public labels$: Observable<Label[]>;
 
+  searchStr = '';
   ngOnInit(): void {
   }
 

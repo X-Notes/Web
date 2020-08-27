@@ -5,7 +5,7 @@
 <div class="content_editing_label">
     <div class="search">
         <div class="search-content">
-            <input type="search" placeholder="Label name...">
+            <input type="search" placeholder="Label name..." [(ngModel)]="searchStr">
             <div class="button">
                 <i class="icon-search"></i>
             </div>
@@ -14,7 +14,7 @@
     </div>
     <div class="labels">
         <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-            <div *ngFor="let item of labels$ | async" class="label" @fadeIn>
+            <div *ngFor="let item of labels$ | async | searchLabel: searchStr" class="label" @fadeIn>
                 <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)"></app-label>
             </div>
         </ngx-simplebar>

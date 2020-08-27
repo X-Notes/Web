@@ -11,12 +11,13 @@ import { HammerModule } from '@angular/platform-browser';
 import { ReplacePipe } from './pipes/replace.pipe';
 import { FormsModule } from '@angular/forms';
 import { LabelComponent } from '../content/labels/label/label.component';
+import { SearchLabelPipe } from './pipes/search-label.pipe';
 
 @NgModule({
-  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe, LabelComponent],
+  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe, LabelComponent, SearchLabelPipe],
   imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
-    LabelComponent ],
+    LabelComponent, SearchLabelPipe ],
   providers: [DialogService]
 })
 export class SharedModule { }
