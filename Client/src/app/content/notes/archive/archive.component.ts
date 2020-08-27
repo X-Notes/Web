@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { LoadArchiveNotes, UnSelectAllNote, PositionNote } from '../state/notes-actions';
+import { LoadArchiveNotes, UnSelectAllNote, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
 import { OrderEntity, Order } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../state/updateColor';
@@ -45,6 +45,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadArchiveNotes()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
 
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });

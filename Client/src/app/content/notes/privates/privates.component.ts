@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote, PositionNote } from '../state/notes-actions';
+import { LoadPrivateNotes, UnSelectAllNote, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -51,6 +51,8 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
       .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });

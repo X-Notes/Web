@@ -4,6 +4,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { LoadAllExceptFolders } from '../state/folders-actions';
 
 @Component({
   selector: 'app-full-folder',
@@ -17,7 +18,7 @@ export class FullFolderComponent implements OnInit {
   async ngOnInit() {
 
     await this.store.dispatch(new UpdateRoute(EntityType.FolderInner)).toPromise();
-
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Inner));
   }
 
 }

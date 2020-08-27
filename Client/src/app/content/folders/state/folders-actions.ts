@@ -20,8 +20,9 @@ export class LoadArchiveFolders {
     static type = '[Folders] Load archive folders';
 }
 
-export class LoadAllFolders {
+export class LoadAllExceptFolders {
     static type = '[Folders] Load all folders';
+    constructor(public typeFolder: FolderType) {    }
 }
 
 // FUNCTIONS

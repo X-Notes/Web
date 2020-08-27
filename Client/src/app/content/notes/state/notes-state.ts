@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
     LoadPrivateNotes, AddNote, LoadFullNote, UpdateFullNote,
-    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllNotes, ChangeColorNote, SelectIdNote,
+    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllExceptNotes, ChangeColorNote, SelectIdNote,
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, RestoreNotes, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
@@ -211,9 +211,33 @@ export class NoteStore {
         }
     }
 
-    @Action(LoadAllNotes)
-    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
-        dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
+    @Action(LoadAllExceptNotes)
+    async loadAllNotes({ dispatch }: StateContext<NoteState>, {typeNote}: LoadAllExceptNotes) {
+        switch (typeNote) {
+            case NoteType.Archive: {
+                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Private: {
+                dispatch([LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Shared: {
+                dispatch([LoadPrivateNotes, LoadArchiveNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Deleted: {
+                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes]);
+                break;
+            }
+            case NoteType.Inner: {
+                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
+                break;
+            }
+            default: {
+                throw new Error('Inccorect type');
+            }
+        }
     }
 
     @Action(AddNote)

@@ -5,7 +5,7 @@ import { ApiFoldersService } from '../api-folders.service';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { FullFolder } from '../models/FullFolder';
 import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
-    LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
+    LoadDeletedFolders, LoadAllExceptFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders,
     RestoreFolders, DeleteFoldersPermanently, CopyFolders,
@@ -197,9 +197,31 @@ export class FolderStore {
         }
     }
 
-    @Action(LoadAllFolders)
-    async loadAllFolders({ dispatch }: StateContext<FolderState>) {
-        dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+    @Action(LoadAllExceptFolders)
+    async loadAllFolders({ dispatch }: StateContext<FolderState>, {typeFolder}: LoadAllExceptFolders) {
+
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Private: {
+                dispatch([LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Shared: {
+                dispatch([LoadPrivateFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Deleted: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders]);
+                break;
+            }
+            case FolderType.Inner: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+        }
     }
 
 

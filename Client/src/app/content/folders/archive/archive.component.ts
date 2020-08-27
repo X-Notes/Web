@@ -5,7 +5,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
-import { LoadArchiveFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
+import { LoadArchiveFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
@@ -51,6 +51,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadArchiveFolders()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
 
     this.store.select(FolderStore.archiveFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });

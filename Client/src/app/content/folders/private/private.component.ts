@@ -4,7 +4,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
-import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
+import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
@@ -51,6 +51,8 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateFolders()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
     this.store.select(FolderStore.privateFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(folder => { folder = { ...folder }; return folder; });

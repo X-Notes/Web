@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
-import { UnSelectAllNote, LoadDeletedNotes, PositionNote } from '../state/notes-actions';
+import { UnSelectAllNote, LoadDeletedNotes, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../state/updateColor';
@@ -44,6 +44,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadDeletedNotes()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
       .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });

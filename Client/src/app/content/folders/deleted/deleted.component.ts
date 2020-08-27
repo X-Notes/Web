@@ -5,7 +5,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
-import { LoadDeletedFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
+import { LoadDeletedFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
@@ -50,6 +50,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadDeletedFolders()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Deleted));
 
     this.store.select(FolderStore.deletedFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
