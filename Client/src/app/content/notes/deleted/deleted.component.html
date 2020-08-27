@@ -1,5 +1,8 @@
 <div class="grid">
-    <div class="grid-item" id="{{item.id}}" *ngFor="let item of notes" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
+    <div class="grid-item"
+        id="{{item.id}}"
+        *ngFor="let item of notes"
+        [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
         <app-note [note]="item" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
     </div>
 </div>

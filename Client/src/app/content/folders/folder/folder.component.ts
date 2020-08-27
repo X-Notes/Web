@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 import { FolderStore } from '../state/folders-state';
 import { takeUntil, map } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
+import { FontSize } from 'src/app/shared/enums/FontSize';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-folder',
@@ -13,12 +15,13 @@ import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
 })
 export class FolderComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   isHighlight = false;
   @Input() folder: Folder;
 
-  constructor(private store: Store) { }
+  constructor(private store: Store, public pService: PersonalizationService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();

@@ -14,6 +14,7 @@
     width: calc(100% - 25px);
     height: 100%;
     border-radius: inherit;
+    outline: none;
 }
 
 .folder {
@@ -57,7 +58,7 @@
             font-size: 1.25rem;
             font-weight: 700;
             margin-top: 0.625rem;
-            color: $light-text-color;
+            color: $text-color;
             transition: 0.3s ease;
 
             &:focus {
@@ -72,11 +73,15 @@
         .notes {
             display: flex;
             flex-direction: column;
+            width: 100%;
             margin-bottom: 0.625rem;
+            outline: none;
 
             .note {
                 display: flex;
                 align-items: center;
+                width: 100%;
+                margin-top: 0.5rem;
                 color: $light-text-color;
 
                 .icon-notes {
@@ -93,10 +98,24 @@
                 }
             }
         }
+    }
+}
 
-        .notes > .note {
-            margin-top: 0.5rem;
-            width: 100%;
+.big-size {
+    .folder-inner {
+        input[type="text"] {
+            font-size: 1.5rem;
+        }
+
+        .notes {
+            .note {
+                font-size: 1.125rem;
+                margin-top: 0.625rem;
+
+                .icon-notes {
+                    font-size: 1rem;
+                }
+            }
         }
     }
 }
@@ -125,5 +144,31 @@
                 }
             }
         }
+    }
+
+    .big-size {
+        .highligt {
+            width: 25px;
+        }
+
+        .folder-inner {
+            width: calc(100% - 25px);
+
+            input[type="text"] {
+                font-size: 1.25rem;
+            }
+    
+            .notes {
+                .note {
+                    p {
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+    }
+
+    .big-size + .outer {
+        width: calc(100% - 25px);
     }
 }   

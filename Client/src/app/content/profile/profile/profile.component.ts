@@ -43,6 +43,6 @@ export class ProfileComponent implements OnInit {
   }
 
   changeFontSize() {
-    this.store.dispatch(new ChangeFontSize(FontSize.Big));
+    this.store.dispatch(new ChangeFontSize(FontSize.Medium));
   }
 }

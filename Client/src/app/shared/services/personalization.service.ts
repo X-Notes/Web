@@ -7,8 +7,11 @@ import {
   style,
   transition,
   animate } from '@angular/animations';
-import {  Subject } from 'rxjs';
+import {  Subject, Observable } from 'rxjs';
 import * as Muuri from 'muuri';
+import { Select } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { FontSize } from '../enums/FontSize';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -78,6 +81,9 @@ export class PersonalizationService {
   users = true;
   toggleHistory = false;
   newButtonActive = true;
+
+  @Select(UserStore.getUserFontSize)
+  public fontSize$: Observable<FontSize>;
 
   onResize(): void {
     if (this.check()) {

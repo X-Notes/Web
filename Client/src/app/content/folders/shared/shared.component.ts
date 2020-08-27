@@ -10,6 +10,7 @@ import { LoadSharedFolders, UnSelectAllFolder, PositionFolder } from '../state/f
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-shared',
@@ -18,6 +19,7 @@ import { FolderType } from 'src/app/shared/enums/FolderTypes';
 })
 export class SharedComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   folders: Folder[] = [];

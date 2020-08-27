@@ -10,6 +10,7 @@ import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-deleted',
@@ -18,6 +19,7 @@ import { FolderType } from 'src/app/shared/enums/FolderTypes';
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   folders: Folder[] = [];
