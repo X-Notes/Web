@@ -2,12 +2,15 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
+import { SelectIdNote, UnSelectIdNote, ClearUpdatelabelEvent } from '../state/notes-actions';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
+import { Label } from '../../labels/models/label';
+import { NoteLabel } from '../models/noteLabel';
+import { UpdateLabelEvent } from '../state/updateLabels';
 
 
 @Component({
@@ -23,7 +26,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   isHighlight = false;
   @Input() note: SmallNote;
-
+  labels: NoteLabel[];
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router) { }
@@ -35,7 +38,9 @@ export class NoteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.note.labels = this.note.labels.slice(0, 2);
+
+    this.labels = this.note.labels.slice(0, 2);
+
     this.store.select(state => state.Notes.selectedIds)
     .pipe(takeUntil(this.destroy))
     .pipe(map(z => this.tryFind(z)))
@@ -48,6 +53,17 @@ export class NoteComponent implements OnInit, OnDestroy {
         this.selectedFlag = true;
       } else {
         this.selectedFlag = false;
+      }
+    });
+
+    this.store.select(NoteStore.updateLabelEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe((values: UpdateLabelEvent[]) => {
+      const value = values.find(x => x.id === this.note.id);
+      if (value !== undefined) {
+        this.note.labels = value.labels;
+        this.labels = this.note.labels.slice(0, 2);
+        this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });
   }

@@ -128,6 +128,11 @@ export class RemoveLabelFromNote {
     constructor(public label: Label, public typeNote: EntityType) {}
 }
 
+export class ClearUpdatelabelEvent {
+    static type = '[Notes] Update label';
+    constructor(public noteId: string) {}
+}
+
 // Muuri remove from dom
 export class RemoveFromDomMurri {
     static type = '[Notes] MurriRemove notes';

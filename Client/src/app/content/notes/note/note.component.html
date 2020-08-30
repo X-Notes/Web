@@ -3,7 +3,7 @@
 </div>
 <div (click)="toNote()" class="note-inner" [ngClass]="pService.orientationMobile? 'small' : ''" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}">
     <div class="labels">
-        <div class="label" *ngFor="let label of note.labels">
+        <div class="label" *ngFor="let label of labels">
             <p>{{label.name}}</p>
         </div>
     </div>

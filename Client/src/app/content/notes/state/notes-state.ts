@@ -9,7 +9,7 @@ import {
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, RestoreNotes, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
-    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes
+    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent
 } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
@@ -20,6 +20,9 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LabelsOnSelectedNotes } from '../models/labelsOnSelectedNotes';
 import { Label } from '../../labels/models/label';
+import { UpdateLabel } from '../../labels/state/labels-actions';
+import { UpdateLabelEvent } from './updateLabels';
+import { ClearColorFolders } from '../../folders/state/folders-actions';
 
 
 interface NoteState {
@@ -39,6 +42,7 @@ interface NoteState {
     selectedIds: string[];
     labelsIdsFromSelectedIds: LabelsOnSelectedNotes[];
     updateColorEvent: UpdateColor[];
+    updateLabelsEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
 }
@@ -62,6 +66,7 @@ interface NoteState {
         selectedIds: [],
         labelsIdsFromSelectedIds: [],
         updateColorEvent: [],
+        updateLabelsEvent: [],
         removeFromMurriEvent: [],
         notesAddingPrivate: []
     }
@@ -97,6 +102,11 @@ export class NoteStore {
     @Selector()
     static updateColorEvent(state: NoteState): UpdateColor[] {
         return state.updateColorEvent;
+    }
+
+    @Selector()
+    static updateLabelEvent(state: NoteState): UpdateLabelEvent[] {
+        return state.updateLabelsEvent;
     }
 
     @Selector()
@@ -702,25 +712,29 @@ export class NoteStore {
         }
     }
 
+    @Action(ClearUpdatelabelEvent)
+    clearUpdateEventLabel({patchState, getState}: StateContext<NoteState>, {noteId}: ClearUpdatelabelEvent) {
+        patchState({
+            updateLabelsEvent: getState().updateLabelsEvent.filter(x => x.id !== noteId)
+        });
+    }
 
     // LABELS ADD
-    addLabelOnNote(notes: SmallNote[], label: Label) {
+    addLabelOnNote(notes: SmallNote[], label: Label, patchState: (val: Partial<NoteState>) => NoteState) {
 
+        const labelUpdate: UpdateLabelEvent[] = [];
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
                 x.labels = [{id: label.id , color: label.color, name: label.name }, ...x.labels];
-                labelsArray.push({
-                    labelsIds: x.labels.map(z => z.id),
-                    id: x.id
-                });
-            } else {
-                labelsArray.push({
-                    labelsIds: [...x.labels.map(z => z.id)],
-                    id: x.id
-                });
+                labelUpdate.push({id: x.id, labels: x.labels});
             }
+            labelsArray.push({
+                labelsIds: [...x.labels.map(z => z.id)],
+                id: x.id
+            });
         });
+        patchState({updateLabelsEvent: labelUpdate});
         return labelsArray;
     }
 
@@ -736,7 +750,7 @@ export class NoteStore {
                 const notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.addLabelOnNote(notes, label);
+                const labelsArray = this.addLabelOnNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Private)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -747,7 +761,7 @@ export class NoteStore {
                 const notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.addLabelOnNote(notes, label);
+                const labelsArray = this.addLabelOnNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Archive)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -759,7 +773,7 @@ export class NoteStore {
                 const notes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.addLabelOnNote(notes, label);
+                const labelsArray = this.addLabelOnNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Deleted)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -771,7 +785,7 @@ export class NoteStore {
                 const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.addLabelOnNote(notes, label);
+                const labelsArray = this.addLabelOnNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Shared)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -785,7 +799,8 @@ export class NoteStore {
     }
 
 
-    removeLabelFromNote(notes: SmallNote[], label: Label) {
+    removeLabelFromNote(notes: SmallNote[], label: Label, patchState: (val: Partial<NoteState>) => NoteState) {
+        const labelUpdate: UpdateLabelEvent[] = [];
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => x.labels = x.labels.filter(z => z.id !== label.id));
         notes.forEach(x => {
@@ -793,7 +808,9 @@ export class NoteStore {
                 labelsIds: [...x.labels.map(z => z.id)],
                 id: x.id
             });
+            labelUpdate.push({id: x.id, labels: x.labels});
         });
+        patchState({updateLabelsEvent: labelUpdate});
         return labelsArray;
     }
 
@@ -809,7 +826,7 @@ export class NoteStore {
                 const notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.removeLabelFromNote(notes, label);
+                const labelsArray = this.removeLabelFromNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Private)));
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
                 break;
@@ -819,7 +836,7 @@ export class NoteStore {
                 const notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.removeLabelFromNote(notes, label);
+                const labelsArray = this.removeLabelFromNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Archive)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -830,7 +847,7 @@ export class NoteStore {
                 const notes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.removeLabelFromNote(notes, label);
+                const labelsArray = this.removeLabelFromNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Deleted)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
@@ -842,7 +859,7 @@ export class NoteStore {
                 const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                 .map(note => { note = { ...note }; return note; });
 
-                const labelsArray = this.removeLabelFromNote(notes, label);
+                const labelsArray = this.removeLabelFromNote(notes, label, patchState);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Shared)));
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
