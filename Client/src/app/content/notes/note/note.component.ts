@@ -35,6 +35,7 @@ export class NoteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.note.labels = this.note.labels.slice(0, 2);
     this.store.select(state => state.Notes.selectedIds)
     .pipe(takeUntil(this.destroy))
     .pipe(map(z => this.tryFind(z)))
@@ -58,7 +59,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   highlight(id: string) {
     if (!this.isHighlight) {
-      const labelsIds = this.note.labelsIds;
+      const labelsIds = this.note.labels.map(x => x.id);
       this.store.dispatch(new SelectIdNote(id, labelsIds));
     } else {
       this.store.dispatch(new UnSelectIdNote(id));

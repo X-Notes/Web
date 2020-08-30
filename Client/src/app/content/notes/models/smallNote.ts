@@ -1,7 +1,8 @@
+import { NoteLabel } from './noteLabel';
 
 export interface SmallNote {
     id: string;
     title: string;
     color: string;
-    labelsIds: number[];
+    labels: NoteLabel[];
 }

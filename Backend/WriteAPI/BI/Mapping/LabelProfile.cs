@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common.DatabaseModels.models;
 using Common.DTO.labels;
+using Common.DTO.notes;
 using Domain.Commands.labels;
 
 namespace BI.Mapping
@@ -11,6 +12,7 @@ namespace BI.Mapping
         {
             CreateMap<NewLabelCommand, Label>().ReverseMap();
             CreateMap<Label, LabelDTO>().ReverseMap();
+            CreateMap<Label, LabelNote>().ReverseMap();
         }
     }
 }

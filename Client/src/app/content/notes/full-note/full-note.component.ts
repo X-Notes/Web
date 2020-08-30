@@ -262,7 +262,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.note = {...x};
       console.log(this.note);
       this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, this.note.noteType));
-      this.store.dispatch(new SelectIdNote(this.id, this.note.labelsIds));
+      this.store.dispatch(new SelectIdNote(this.id, this.note.labels.map(z => z.id)));
 
       switch (this.note.noteType) {
         case NoteType.Private: {

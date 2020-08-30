@@ -104,6 +104,7 @@ namespace WriteContext.Repositories
                     // New Deleted Label
                     labelDeleted.Order = 1;
                     labelDeleted.IsDeleted = true;
+                    labelDeleted.DeletedAt = DateTimeOffset.Now;
                     await UpdateLabel(labelDeleted);
 
                     await transaction.CommitAsync();

@@ -18,6 +18,7 @@ namespace Common.DatabaseModels.models
         public int UserId { set; get; }
         public User User { set; get; }
 
+        public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
 
         public List<UserOnNote> UserOnNotes { set; get; }

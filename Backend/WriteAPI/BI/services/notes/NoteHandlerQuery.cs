@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.users;
@@ -39,7 +40,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetPrivateNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -52,7 +53,7 @@ namespace BI.services.notes
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var note = await noteRepository.GetFull(guid);
-                note.LabelsNotes = note.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList();
+                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 return mapper.Map<FullNote>(note);
             }
             return null;
@@ -74,7 +75,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetSharedNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -87,7 +88,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetArchiveNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -100,11 +101,23 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetDeletedNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.Label.IsDeleted == false).ToList());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
+        }
+    }
+
+    public static class LabelHelper {
+        public static List<LabelsNotes> GetLabelsDesc(this List<LabelsNotes> labels)
+        {
+            return labels.Where(x => x.Label.IsDeleted == false).OrderByDescending(x => x.AddedAt).ToList();
+        }
+
+        public static List<LabelsNotes> GetLabelUnDesc(this List<LabelsNotes> labels)
+        {
+            return labels.Where(x => x.Label.IsDeleted == false).OrderBy(x => x.AddedAt).ToList();
         }
     }
 }

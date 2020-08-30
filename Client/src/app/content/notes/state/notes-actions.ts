@@ -3,6 +3,7 @@ import { SmallNote } from '../models/smallNote';
 import { Order } from 'src/app/shared/services/order.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { Label } from '../../labels/models/label';
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -119,12 +120,12 @@ export class ClearAddedPrivateNotes {
 
 export class AddLabelOnNote {
     static type = '[Notes] Add label';
-    constructor(public id: number, public typeNote: EntityType) {}
+    constructor(public label: Label, public typeNote: EntityType) {}
 }
 
 export class RemoveLabelFromNote {
     static type = '[Notes] Remove label';
-    constructor(public id: number, public typeNote: EntityType) {}
+    constructor(public label: Label, public typeNote: EntityType) {}
 }
 
 // Muuri remove from dom

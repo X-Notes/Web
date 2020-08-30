@@ -82,6 +82,7 @@ namespace BI.services.notes
 
             if (notes.Count == request.Ids.Count)
             {
+                user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
                 await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Deleted);
             }
             else
@@ -220,7 +221,7 @@ namespace BI.services.notes
 
             var noteWithoutLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId != request.LabelId) || x.LabelsNotes.Count == 0).ToList();
 
-            noteWithoutLabels.ForEach(x => x.LabelsNotes.Add(new LabelsNotes() { LabelId = request.LabelId, NoteId = x.Id }));
+            noteWithoutLabels.ForEach(x => x.LabelsNotes.Add(new LabelsNotes() { LabelId = request.LabelId, NoteId = x.Id, AddedAt = DateTimeOffset.Now }));;
 
             await noteRepository.UpdateRangeNotes(noteWithoutLabels);
 
