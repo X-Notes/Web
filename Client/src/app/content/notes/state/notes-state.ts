@@ -9,7 +9,7 @@ import {
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateSmallNote, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, RestoreNotes, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
-    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent
+    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent, UpdateLabelOnNote
 } from './notes-actions';
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
@@ -986,6 +986,51 @@ export class NoteStore {
             }
         }
     }
+
+
+    @Action(UpdateLabelOnNote)
+    updateLabelOnNote({ patchState, getState, dispatch }: StateContext<NoteState>, {label}: UpdateLabelOnNote) {
+        let labelUpdate: UpdateLabelEvent[] = [];
+        const noteP = getState().privateNotes.filter(x => x.labels.some(z => z.id === label.id));
+        for (const note of noteP) {
+            console.log(note);
+            const updateNote = this.updateLabel(note, label);
+            labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
+            dispatch(new UpdateSmallNote(updateNote, NoteType.Private));
+            patchState({updateLabelsEvent: labelUpdate});
+        }
+        const noteS = getState().sharedNotes.filter(x => x.labels.some(z => z.id === label.id));
+        for (const note of noteS) {
+            const updateNote = this.updateLabel(note, label);
+            labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
+            dispatch(new UpdateSmallNote(updateNote, NoteType.Shared));
+            patchState({updateLabelsEvent: labelUpdate});
+        }
+        const noteD = getState().deletedNotes.filter(x => x.labels.some(z => z.id === label.id));
+        for (const note of noteD) {
+            console.log(note);
+            const updateNote = this.updateLabel(note, label);
+            labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
+            dispatch(new UpdateSmallNote(updateNote, NoteType.Deleted));
+            patchState({updateLabelsEvent: labelUpdate});
+        }
+        const noteA = getState().archiveNotes.filter(x => x.labels.some(z => z.id === label.id));
+        for (const note of noteA) {
+            const updateNote = this.updateLabel(note, label);
+            labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
+            dispatch(new UpdateSmallNote(updateNote, NoteType.Archive));
+            patchState({updateLabelsEvent: labelUpdate});
+        }
+    }
+
+    updateLabel(note: SmallNote, label: Label): SmallNote {
+        const noteLabels = [...note.labels];
+        const index = noteLabels.findIndex(x => x.id === label.id);
+        noteLabels[index] = {...label};
+        const updateNote: SmallNote = {...note , labels: noteLabels};
+        return updateNote;
+    }
+
 
     @Action(RemoveFromDomMurri)
     removeFromDomMurri({ patchState }: StateContext<NoteState>) {

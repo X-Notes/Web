@@ -1,5 +1,5 @@
 import { Label } from '../models/label';
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api-labels.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
+import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
 
 interface LabelState {
     labelsAll: Label[];
@@ -32,7 +33,8 @@ export class LabelStore {
 
 
     constructor(private api: ApiServiceLabels,
-                private orderService: OrderService) {
+                private orderService: OrderService,
+                private store: Store) {
     }
 
 
@@ -106,6 +108,7 @@ export class LabelStore {
     @Action(UpdateLabel)
     async updateLabels({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
+        this.store.dispatch(new UpdateLabelOnNote(label));
         if (label.isDeleted) {
             setState(
                 patch({

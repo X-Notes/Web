@@ -102,7 +102,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(NoteStore.updateLabelEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe((values: UpdateLabelEvent[]) => {
-      const value = values.find(x => x.id === this.note.id);
+      const value = values.find(x => x.id === this.id);
       if (value !== undefined) {
         this.note.labels = value.labels;
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));

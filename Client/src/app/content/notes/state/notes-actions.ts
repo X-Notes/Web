@@ -118,6 +118,11 @@ export class ClearAddedPrivateNotes {
 
 // Labels
 
+export class UpdateLabelOnNote {
+    static type = '[Notes] Update label';
+    constructor(public label: Label) {}
+}
+
 export class AddLabelOnNote {
     static type = '[Notes] Add label';
     constructor(public label: Label, public typeNote: EntityType) {}
@@ -129,7 +134,7 @@ export class RemoveLabelFromNote {
 }
 
 export class ClearUpdatelabelEvent {
-    static type = '[Notes] Update label';
+    static type = '[Notes] Clear label';
     constructor(public noteId: string) {}
 }
 
