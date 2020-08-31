@@ -15,15 +15,7 @@ import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
   selector: 'app-editing-labels-note',
   templateUrl: './editing-labels-note.component.html',
   styleUrls: ['./editing-labels-note.component.scss'],
-  animations: [trigger('fadeIn', [
-    transition(':enter', [
-      style({  height: 0,  }),
-      animate('0.2s ease', style({ height: '*', })),
-    ]),
-    transition(':leave', [
-      animate('0.2s ease', style({ opacity: 0, height: 0 }))
-    ]),
-  ]), ]
+  animations: []
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 

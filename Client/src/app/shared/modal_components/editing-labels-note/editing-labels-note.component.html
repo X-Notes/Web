@@ -14,7 +14,7 @@
     </div>
     <div class="labels">
         <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-            <div *ngFor="let item of labels$ | async | searchLabel: searchStr" class="label" @fadeIn>
+            <div *ngFor="let item of labels$ | async | searchLabel: searchStr" class="label" >
                 <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)"></app-label>
             </div>
         </ngx-simplebar>
