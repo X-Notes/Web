@@ -9,7 +9,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
 import {UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-deleted',
@@ -18,6 +18,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   public labels: Label[];
   destroy = new Subject<void>();
 

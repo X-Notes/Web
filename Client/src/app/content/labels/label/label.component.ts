@@ -11,6 +11,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { LabelsOnSelectedNotes } from '../../notes/models/labelsOnSelectedNotes';
 import { AddLabelOnNote, RemoveLabelFromNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-label',
@@ -23,6 +24,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
   isHighlight = false;
 
+  fontSize = FontSize;
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Output() updateLabel = new EventEmitter<Label>();
@@ -99,10 +101,10 @@ export class LabelComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       let count = 0;
       const timer = setInterval(() => {
-        if (count === 50 && flag) {
+        if (count === 60 && flag) {
           clearInterval(timer);
           resolve();
-        } else if (count === 30 && flag === false) {
+        } else if (count === 40 && flag === false) {
           clearInterval(timer);
           resolve();
         }

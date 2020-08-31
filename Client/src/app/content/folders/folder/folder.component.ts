@@ -6,6 +6,7 @@ import { FolderStore } from '../state/folders-state';
 import { takeUntil, map } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-folder',
@@ -15,6 +16,7 @@ import { Router } from '@angular/router';
 export class FolderComponent implements OnInit, OnDestroy {
 
   selectedFlag = false;
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   isHighlight = false;

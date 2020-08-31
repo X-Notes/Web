@@ -11,9 +11,8 @@ import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-archive',
@@ -22,6 +21,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   folders: Folder[] = [];

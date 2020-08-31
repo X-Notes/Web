@@ -3,14 +3,13 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
 import { SelectIdNote, UnSelectIdNote, ClearUpdatelabelEvent } from '../state/notes-actions';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
-import { Label } from '../../labels/models/label';
 import { NoteLabel } from '../models/noteLabel';
 import { UpdateLabelEvent } from '../state/updateLabels';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 
 @Component({
@@ -22,6 +21,7 @@ import { UpdateLabelEvent } from '../state/updateLabels';
 export class NoteComponent implements OnInit, OnDestroy {
 
   selectedFlag = false;
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   isHighlight = false;

@@ -47,20 +47,58 @@
     }
 }
 
-@media (max-width: 1440px) {
-    .field {
-        input[type="text"] {
-            font-size: 1.125rem;
-            font-weight: normal;
+.big-size {
+    height: 46px;
+
+    input[type="text"] {
+        font-size: 1.5rem;
+    }
+
+    .options {
+        button[type="button"] {
+            padding: 0 1rem;
+            
+            .icon {
+                font-size: 0.75rem;
+            }
+
+            &:first-child {
+                .icon {
+                    font-size: 1.0625rem;
+                }
+            }
         }
     }
 }
+
 @media (max-width: 1024px) {
     .field {
-        height: 35px;
+        height: 36px;
 
         input[type="text"] {
-            font-size: 1rem;
+            font-size: 1.125rem;
+        }
+    }
+
+    .big-size {
+        height: 40px;
+
+        input[type="text"] {
+            font-size: 1.25rem;
+        }
+    
+        .options {
+            button[type="button"] {
+                .icon {
+                    font-size: 0.625rem;
+                }
+    
+                &:first-child {
+                    .icon {
+                        font-size: 0.9375rem;
+                    }
+                }
+            }
         }
     }
 }

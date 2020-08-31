@@ -6,6 +6,7 @@ import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage,
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Language } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 interface UserState {
     user: ShortUser;
@@ -45,6 +46,11 @@ export class UserStore {
     @Selector()
     static getUserTheme(state: UserState): Theme {
         return state.user.theme;
+    }
+
+    @Selector()
+    static getUserFontSize(state: UserState): FontSize {
+        return state.user.fontSize;
     }
 
     @Selector()
