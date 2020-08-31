@@ -728,7 +728,7 @@ export class NoteStore {
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
-                x.labels = [...x.labels, {id: label.id , color: label.color, name: label.name }];
+                x.labels = [...x.labels, {id: label.id , color: label.color, name: label.name, isDeleted: label.isDeleted }];
                 labelUpdate.push({id: x.id, labels: x.labels});
             }
             labelsArray.push({

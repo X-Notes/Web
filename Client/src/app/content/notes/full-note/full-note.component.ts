@@ -5,10 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote,
-  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent } from '../state/notes-actions';
+  UnSelectIdNote,
+  LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
-import { take, map, mergeMap, debounceTime, filter, takeUntil } from 'rxjs/operators';
+import { take, map, debounceTime, takeUntil } from 'rxjs/operators';
 import { UpdateText } from '../models/parts/updateText';
 import {
   PersonalizationService,
@@ -19,13 +20,13 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute, UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
+import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { UpdateColor } from '../state/updateColor';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from '../state/updateLabels';
+import { Label } from '../../labels/models/label';
 
 @Component({
   selector: 'app-full-note',
@@ -80,6 +81,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.goTo(this.active);
   }
+
+  transformLabels(labels: Label[]): Label[] {
+    return this.note.labels.filter(x => x.isDeleted === false)
+    .slice(this.note.labels.length - 2, this.note.labels.length);
+  }
+
 
   async ngOnInit() {
 
@@ -272,7 +279,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(take(1), map(func => func(this.id)))
     .subscribe(async (x) => {
       this.note = {...x};
-      console.log(this.note);
+      this.note.labels = this.transformLabels(this.note.labels);
       this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, this.note.noteType));
       this.store.dispatch(new SelectIdNote(this.id, this.note.labels.map(z => z.id)));
 

@@ -110,14 +110,10 @@ namespace BI.services.notes
     }
 
     public static class LabelHelper {
-        public static List<LabelsNotes> GetLabelsDesc(this List<LabelsNotes> labels)
-        {
-            return labels.Where(x => x.Label.IsDeleted == false).OrderByDescending(x => x.AddedAt).ToList();
-        }
 
         public static List<LabelsNotes> GetLabelUnDesc(this List<LabelsNotes> labels)
         {
-            return labels.Where(x => x.Label.IsDeleted == false).OrderBy(x => x.AddedAt).ToList();
+            return labels.OrderBy(x => x.AddedAt).ToList();
         }
     }
 }

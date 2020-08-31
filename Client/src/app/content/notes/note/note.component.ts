@@ -7,9 +7,9 @@ import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
-import { NoteLabel } from '../models/noteLabel';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { Label } from '../../labels/models/label';
 
 
 @Component({
@@ -26,7 +26,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   isHighlight = false;
   @Input() note: SmallNote;
-  labels: NoteLabel[] = [];
+  labels: Label[] = [];
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router) { }
@@ -37,9 +37,14 @@ export class NoteComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
+  transformLabels(labels: Label[]): Label[] {
+    return this.note.labels.filter(x => x.isDeleted === false)
+    .slice(this.note.labels.length - 2, this.note.labels.length);
+  }
+
   ngOnInit(): void {
 
-    this.labels = this.note.labels.slice(this.note.labels.length - 2, this.note.labels.length);
+    this.labels = this.transformLabels(this.labels);
 
     this.store.select(state => state.Notes.selectedIds)
     .pipe(takeUntil(this.destroy))
@@ -62,7 +67,7 @@ export class NoteComponent implements OnInit, OnDestroy {
       const value = values.find(x => x.id === this.note.id);
       if (value !== undefined) {
         this.note.labels = value.labels;
-        this.labels = this.note.labels.slice(this.note.labels.length - 2, this.note.labels.length);
+        this.labels = this.transformLabels(this.labels);
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });

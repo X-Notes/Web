@@ -12,7 +12,6 @@ namespace BI.Mapping
         {
             CreateMap<NewLabelCommand, Label>().ReverseMap();
             CreateMap<Label, LabelDTO>().ReverseMap();
-            CreateMap<Label, LabelNote>().ReverseMap();
         }
     }
 }

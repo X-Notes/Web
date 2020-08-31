@@ -1,6 +1,6 @@
-import { NoteLabel } from '../models/noteLabel';
+import { Label } from '../../labels/models/label';
 
 export interface UpdateLabelEvent {
     id: string;
-    labels: NoteLabel[];
+    labels: Label[];
 }

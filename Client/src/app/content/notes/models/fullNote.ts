@@ -1,10 +1,10 @@
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { NoteLabel } from './noteLabel';
+import { Label } from '../../labels/models/label';
 
 export interface FullNote {
     id: string;
     title: string;
     color: string;
-    labels: NoteLabel[];
+    labels: Label[];
     noteType: NoteType;
 }
