@@ -83,8 +83,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   transformLabels(labels: Label[]): Label[] {
-    return this.note.labels.filter(x => x.isDeleted === false)
-    .slice(this.note.labels.length - 2, this.note.labels.length);
+    return labels.filter(x => x.isDeleted === false);
   }
 
 

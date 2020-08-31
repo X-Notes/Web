@@ -38,13 +38,13 @@ export class NoteComponent implements OnInit, OnDestroy {
   }
 
   transformLabels(labels: Label[]): Label[] {
-    return this.note.labels.filter(x => x.isDeleted === false)
-    .slice(this.note.labels.length - 2, this.note.labels.length);
+    const labelsNoDeleted = labels.filter(x => x.isDeleted === false);
+    return labelsNoDeleted.slice(labelsNoDeleted.length - 2, labelsNoDeleted.length);
   }
 
   ngOnInit(): void {
 
-    this.labels = this.transformLabels(this.labels);
+    this.labels = this.transformLabels(this.note.labels);
 
     this.store.select(state => state.Notes.selectedIds)
     .pipe(takeUntil(this.destroy))
