@@ -28,8 +28,8 @@ export class LabelComponent implements OnInit, OnDestroy {
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Output() updateLabel = new EventEmitter<Label>();
-  @Output() deleteLabel = new EventEmitter<number>();
-  @Output() restoreLabel = new EventEmitter<number>();
+  @Output() deleteLabel = new EventEmitter<Label>();
+  @Output() restoreLabel = new EventEmitter<Label>();
 
   @Input() selectedMode: boolean;
 
@@ -92,8 +92,8 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   async restore() {
-    await this.store.dispatch(new RestoreLabel(this.label.id)).toPromise();
-    this.restoreLabel.emit(this.label.id);
+    await this.store.dispatch(new RestoreLabel(this.label)).toPromise();
+    this.restoreLabel.emit(this.label);
   }
 
 
@@ -122,7 +122,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   delete() {
-    this.deleteLabel.emit(this.label.id);
+    this.deleteLabel.emit(this.label);
   }
 
   changed(text: string) {

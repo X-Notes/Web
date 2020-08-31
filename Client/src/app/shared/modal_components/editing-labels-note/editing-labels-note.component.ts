@@ -41,8 +41,8 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateLabel(label));
   }
 
-  delete(id: number) {
-    this.store.dispatch(new SetDeleteLabel(id));
+  delete(label: Label) {
+    this.store.dispatch(new SetDeleteLabel(label));
   }
 
   async newLabel() {

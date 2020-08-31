@@ -81,24 +81,24 @@ export class LabelStore {
     }
 
     @Action(SetDeleteLabel)
-    async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
-        await this.api.setDeleted(id).toPromise();
+    async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: SetDeleteLabel) {
+        await this.api.setDeleted(label.id).toPromise();
         let labelsAll = getState().labelsAll;
-        const label = labelsAll.find(x => x.id === id);
-        labelsAll = labelsAll.filter(x => x.id !== id);
+        const Newlabel = labelsAll.find(x => x.id === label.id);
+        labelsAll = labelsAll.filter(x => x.id !== label.id);
         patchState({
             labelsAll,
-            labelsDeleted: [{...label}, ...getState().labelsDeleted],
+            labelsDeleted: [{...Newlabel}, ...getState().labelsDeleted],
             CountAll: getState().CountAll - 1,
             CountDeleted: getState().CountDeleted + 1
         });
     }
 
     @Action(DeleteLabel)
-    async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
-        await this.api.delete(id).toPromise();
+    async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: DeleteLabel) {
+        await this.api.delete(label.id).toPromise();
         let labelsDeleted = getState().labelsDeleted;
-        labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+        labelsDeleted = labelsDeleted.filter(x => x.id !== label.id);
         patchState({
             labelsDeleted,
             CountDeleted: getState().CountDeleted - 1
@@ -143,11 +143,11 @@ export class LabelStore {
     }
 
     @Action(RestoreLabel)
-    async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: RestoreLabel) {
-        await this.api.restore(id).toPromise();
+    async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: RestoreLabel) {
+        await this.api.restore(label.id).toPromise();
         let deletedLables = getState().labelsDeleted;
-        const restoreLabel = deletedLables.find(x => x.id === id);
-        deletedLables = deletedLables.filter(x => x.id !== id);
+        const restoreLabel = deletedLables.find(x => x.id === label.id);
+        deletedLables = deletedLables.filter(x => x.id !== label.id);
         patchState({
             labelsAll: [restoreLabel, ...getState().labelsAll],
             labelsDeleted: deletedLables,
