@@ -1,6 +1,6 @@
 import { SmallNote } from '../models/smallNote';
 import { FullNote } from '../models/fullNote';
-import { State, Selector, StateContext, Action } from '@ngxs/store';
+import { State, Selector, StateContext, Action, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
@@ -23,6 +23,7 @@ import { Label } from '../../labels/models/label';
 import { UpdateLabel } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from './updateLabels';
 import { ClearColorFolders } from '../../folders/state/folders-actions';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 interface NoteState {
@@ -76,7 +77,8 @@ interface NoteState {
 export class NoteStore {
 
     constructor(private api: ApiServiceNotes,
-                private orderService: OrderService) {
+                private orderService: OrderService,
+                private store: Store) {
     }
 
     @Selector()
@@ -726,7 +728,7 @@ export class NoteStore {
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
-                x.labels = [{id: label.id , color: label.color, name: label.name }, ...x.labels];
+                x.labels = [...x.labels, {id: label.id , color: label.color, name: label.name }];
                 labelUpdate.push({id: x.id, labels: x.labels});
             }
             labelsArray.push({
@@ -790,6 +792,64 @@ export class NoteStore {
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
 
+                break;
+            }
+            case EntityType.NoteInner: {
+
+                switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
+                    case NoteType.Archive: {
+
+                        const notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.addLabelOnNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Archive)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    case NoteType.Deleted: {
+
+                        const notes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.addLabelOnNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Deleted)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+
+                        break;
+                    }
+                    case NoteType.Private: {
+
+                        const notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.addLabelOnNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Private)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    case NoteType.Shared: {
+
+                        const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.addLabelOnNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Shared)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    default: {
+                        throw new Error('Inccorect type');
+                    }
+                }
                 break;
             }
             default: {
@@ -864,6 +924,61 @@ export class NoteStore {
 
                 patchState({labelsIdsFromSelectedIds: [...labelsArray]});
 
+                break;
+            }
+            case EntityType.NoteInner: {
+
+                switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
+                    case NoteType.Archive: {
+
+                        const notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.removeLabelFromNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Archive)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    case NoteType.Deleted: {
+
+                        const notes = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.removeLabelFromNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Deleted)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    case NoteType.Private: {
+
+                        const notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.removeLabelFromNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Private)));
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+
+                        break;
+                    }
+                    case NoteType.Shared: {
+
+                        const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+                        .map(note => { note = { ...note }; return note; });
+
+                        const labelsArray = this.removeLabelFromNote(notes, label, patchState);
+                        notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Shared)));
+
+                        patchState({labelsIdsFromSelectedIds: [...labelsArray]});
+                        break;
+                    }
+                    default: {
+                        throw new Error('Inccorect type');
+                    }
+                }
                 break;
             }
             default: {

@@ -27,14 +27,8 @@
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="mainWidth" class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
-                <div class="label">
-                    <p>Hello Hello Hello Hello Hello</p>
-                </div>
-                <div class="label">
-                    <p>Hello Hello </p>
-                </div>
-                <div class="label">
-                    <p>Hello Hello Hello Hello Hello Hello Hello</p>
+                <div class="label" *ngFor="let label of note?.labels" [ngStyle]="{backgroundColor: label.color}">
+                    <p>{{label.name}}</p>
                 </div>
             </div>
             <div class="title-section">

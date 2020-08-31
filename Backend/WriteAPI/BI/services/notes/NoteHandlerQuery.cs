@@ -40,7 +40,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetPrivateNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -75,7 +75,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetSharedNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -88,7 +88,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetArchiveNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
@@ -101,7 +101,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetDeletedNotesByUserId(user.Id);
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelsDesc());
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }

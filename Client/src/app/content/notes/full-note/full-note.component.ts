@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote,
-  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes } from '../state/notes-actions';
+  UnSelectIdNote, LoadAllExceptNotes, LoadAllNotes, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { take, map, mergeMap, debounceTime, filter, takeUntil } from 'rxjs/operators';
@@ -24,6 +24,8 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { UpdateColor } from '../state/updateColor';
+import { LoadLabels } from '../../labels/state/labels-actions';
+import { UpdateLabelEvent } from '../state/updateLabels';
 
 @Component({
   selector: 'app-full-note',
@@ -96,6 +98,16 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
     setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
+
+    this.store.select(NoteStore.updateLabelEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe((values: UpdateLabelEvent[]) => {
+      const value = values.find(x => x.id === this.note.id);
+      if (value !== undefined) {
+        this.note.labels = value.labels;
+        this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
+      }
+    });
   }
 
 
@@ -283,6 +295,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
+
+    this.store.dispatch(new LoadLabels());
   }
 
   connectToHub() {

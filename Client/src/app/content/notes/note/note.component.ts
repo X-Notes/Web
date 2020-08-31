@@ -26,7 +26,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   isHighlight = false;
   @Input() note: SmallNote;
-  labels: NoteLabel[];
+  labels: NoteLabel[] = [];
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router) { }
@@ -39,7 +39,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.labels = this.note.labels.slice(0, 2);
+    this.labels = this.note.labels.slice(this.note.labels.length - 2, this.note.labels.length);
 
     this.store.select(state => state.Notes.selectedIds)
     .pipe(takeUntil(this.destroy))
@@ -62,7 +62,7 @@ export class NoteComponent implements OnInit, OnDestroy {
       const value = values.find(x => x.id === this.note.id);
       if (value !== undefined) {
         this.note.labels = value.labels;
-        this.labels = this.note.labels.slice(0, 2);
+        this.labels = this.note.labels.slice(this.note.labels.length - 2, this.note.labels.length);
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });
