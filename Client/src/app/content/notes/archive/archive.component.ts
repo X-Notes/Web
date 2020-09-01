@@ -14,6 +14,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { NotesService } from '../notes.service';
 
 @Component({
   selector: 'app-archive',
@@ -29,7 +30,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService) { }
+              private murriService: MurriService,
+              private noteService: NotesService) { }
 
   async ngOnInit() {
 
@@ -57,18 +59,11 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.changeColorHandler(x));
+    .subscribe(x => this.noteService.changeColorHandler(this.notes, x));
 
     this.store.select(NoteStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
-  }
-
-
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      this.notes.find(x => x.id === update.id).color = update.color;
-    }
   }
 
   delete(ids: string[]) {

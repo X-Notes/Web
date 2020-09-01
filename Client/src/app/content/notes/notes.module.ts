@@ -11,6 +11,7 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
+import { NotesService } from './notes.service';
 
 
 @NgModule({
@@ -30,6 +31,6 @@ import { MyHammerConfig } from 'src/app/shared/hammer.config';
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }],
+  }, NotesService],
 })
 export class NotesModule { }

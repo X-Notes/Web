@@ -27,6 +27,7 @@ import { UpdateColor } from '../state/updateColor';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { Label } from '../../labels/models/label';
+import { NotesService } from '../notes.service';
 
 @Component({
   selector: 'app-full-note',
@@ -74,7 +75,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private store: Store,
               public pService: PersonalizationService,
               private rend: Renderer2,
-              private builder: AnimationBuilder) {
+              private builder: AnimationBuilder,
+              private noteService: NotesService) {
               this.routeSubscription = route.params.subscribe(params => this.id = params.id);
             }
 
@@ -97,7 +99,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.changeColorHandler(x));
+    .subscribe(x => this.noteService.changeColorHandlerFullNote(this.note, x));
 
     this.nameChanged.pipe(
       debounceTime(50))
@@ -117,13 +119,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      if (this.note.id === update.id) {
-        this.note.color = update.color;
-      }
-    }
-  }
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
