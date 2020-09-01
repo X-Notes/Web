@@ -28,6 +28,7 @@ import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { Label } from '../../labels/models/label';
 import { NotesService } from '../notes.service';
+import { FullNoteSliderService } from '../full-note-slider.service';
 
 @Component({
   selector: 'app-full-note',
@@ -46,16 +47,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
-  mainWidth = 0;
-  public perc: number;
-  public player;
-  public pos: number;
-  private animating = false;
-  private animFactory: any;
-  active = 0;
-  total = 2;
-  animMS = 700;
-  helper: Element;
   note: FullNote;
   theme = Theme;
 
@@ -75,13 +66,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private store: Store,
               public pService: PersonalizationService,
               private rend: Renderer2,
-              private builder: AnimationBuilder,
-              private noteService: NotesService) {
+              private noteService: NotesService,
+              public sliderService: FullNoteSliderService) {
               this.routeSubscription = route.params.subscribe(params => this.id = params.id);
             }
 
   ngAfterViewInit(): void {
-    this.goTo(this.active);
+    this.sliderService.goTo(this.sliderService.active, this.wrap);
   }
 
   transformLabels(labels: Label[]): Label[] {
@@ -92,7 +83,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
 
     this.pService.onResize();
-    this.initWidthSlide();
+    this.sliderService.rend = this.rend;
+    this.sliderService.initWidthSlide();
     this.load();
     this.connectToHub();
 
@@ -122,117 +114,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
+    console.log(5);
     if (!this.pService.check()) {
-      this.getSize();
+      this.sliderService.getSize();
     } else {
-      this.mainWidth = null;
+      this.sliderService.mainWidth = null;
       this.rend.setStyle(this.wrap.nativeElement, 'transform', 'translate3d( ' + 0 + '%,0,0)');
-      this.active = 0;
-    }
-  }
-
-  getSize() {
-    this.mainWidth = window.innerWidth;
-  }
-
-  initWidthSlide() {
-    if (!this.pService.check()) {
-      this.getSize();
-    } else {
-      this.mainWidth = null;
-    }
-  }
-
-  goTo(to: number) {
-    if (!this.animating) {
-      this.active = to;
-      this.pos = -(100 / this.total) * to;
-      this.animating = true;
-      this.animFactory = this.builder.build(this.buildAnim());
-      this.player = this.animFactory.create(this.wrap.nativeElement);
-      this.player.onDone(() => {
-        this.animEnd();
-        this.animating = false;
-        this.animMS = 700;
-      });
-      this.player.play();
-    }
-  }
-
-  buildAnim() {
-    const arr = [];
-    arr.push(animate(this.animMS + 'ms ease', style({ transform: 'translate3d( ' + this.pos + '% ,0,0)' })) );
-    return arr;
-  }
-
-  animEnd() {
-    this.perc = 0;
-    if (this.active < 0) {
-      this.active = this.total - 1;
-    }
-    if (this.active > this.total - 1) {
-      this.active = 0;
-    }
-    this.pos = -(100 / this.total) * this.active;
-    this.rend.setStyle(this.wrap.nativeElement, 'transform', 'translate3d( ' + this.pos + '%,0,0)');
-    this.player.destroy();
-  }
-
-  panStart(e) {
-    if (!this.pService.check()) {
-      this.getSize();
+      this.sliderService.active = 0;
     }
   }
 
   panMove(e) {
-    this.helper = document.getElementsByClassName('second-helper')[0];
-    if (!this.pService.check()) {
-      this.perc = 100 / this.total * e.deltaX / (this.mainWidth * this.total);
-      this.pos = this.perc - 100 / this.total * this.active;
-      if (this.active === 0 && (this.pos > 2 || this.pos > 0)) {
-        return;
-      }
-      if (this.active === 1 && (this.pos > 2 || this.pos < -50)) {
-        return;
-      }
-      if (this.helper.hasChildNodes()) {
-        return;
-      }
-      this.rend.setStyle(this.wrap.nativeElement, 'transform', 'translate3d( ' +  this.pos + '%,0,0)');
-    }
+    this.sliderService.panMove(e, this.wrap);
   }
 
   panEnd(e) {
-    if (!this.pService.check()) {
-      if (e.velocityX > 1) {
-        if (this.active === 0 && this.pos > 0) {
-          this.goTo(this.active);
-        }
-        this.animMS = this.animMS / e.velocityX;
-        this.goTo(this.active - 1);
-      } else if (e.velocityX < -1) {
-        if (this.active === 1 && this.pos < -50) {
-          this.goTo(this.active);
-        }
-        this.animMS = this.animMS / -e.velocityX;
-        this.goTo(this.active + 1);
-      } else {
-        if (this.perc <= -(25 / this.total)) {
-          if (this.active === 1 && this.pos < -50) {
-            this.goTo(this.active);
-          }
-          this.goTo(this.active + 1);
-        } else if (this.perc >= (25 / this.total)) {
-          if (this.active === 0 && this.pos > 0) {
-            this.goTo(this.active);
-          }
-          this.goTo(this.active - 1);
-        } else {
-          this.goTo(this.active);
-        }
-      }
-    }
+    this.sliderService.panEnd(e, this.wrap);
   }
+
+
 
   deleteSmallNote(item: any) {
     let counter = 0;
