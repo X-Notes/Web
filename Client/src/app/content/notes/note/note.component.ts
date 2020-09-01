@@ -67,7 +67,7 @@ export class NoteComponent implements OnInit, OnDestroy {
       const value = values.find(x => x.id === this.note.id);
       if (value !== undefined) {
         this.note.labels = value.labels;
-        this.labels = this.transformLabels(this.labels);
+        this.labels = this.transformLabels(value.labels);
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });

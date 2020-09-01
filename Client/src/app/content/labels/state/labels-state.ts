@@ -84,11 +84,13 @@ export class LabelStore {
     async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: SetDeleteLabel) {
         await this.api.setDeleted(label.id).toPromise();
         let labelsAll = getState().labelsAll;
-        const Newlabel = labelsAll.find(x => x.id === label.id);
+        let Newlabel = labelsAll.find(x => x.id === label.id);
+        Newlabel = {...Newlabel, isDeleted: true};
         labelsAll = labelsAll.filter(x => x.id !== label.id);
+        this.store.dispatch(new UpdateLabelOnNote(Newlabel));
         patchState({
             labelsAll,
-            labelsDeleted: [{...Newlabel}, ...getState().labelsDeleted],
+            labelsDeleted: [Newlabel, ...getState().labelsDeleted],
             CountAll: getState().CountAll - 1,
             CountDeleted: getState().CountDeleted + 1
         });
@@ -146,8 +148,10 @@ export class LabelStore {
     async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: RestoreLabel) {
         await this.api.restore(label.id).toPromise();
         let deletedLables = getState().labelsDeleted;
-        const restoreLabel = deletedLables.find(x => x.id === label.id);
+        let restoreLabel = deletedLables.find(x => x.id === label.id);
+        restoreLabel = {...restoreLabel, isDeleted: false};
         deletedLables = deletedLables.filter(x => x.id !== label.id);
+        this.store.dispatch(new UpdateLabelOnNote(restoreLabel));
         patchState({
             labelsAll: [restoreLabel, ...getState().labelsAll],
             labelsDeleted: deletedLables,

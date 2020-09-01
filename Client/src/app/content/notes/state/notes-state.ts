@@ -400,7 +400,6 @@ export class NoteStore {
                     noteType = NoteType.Shared;
                 }
 
-                console.log(notes);
 
                 notes.forEach(z => z.color = color);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, noteType)));
@@ -993,7 +992,6 @@ export class NoteStore {
         let labelUpdate: UpdateLabelEvent[] = [];
         const noteP = getState().privateNotes.filter(x => x.labels.some(z => z.id === label.id));
         for (const note of noteP) {
-            console.log(note);
             const updateNote = this.updateLabel(note, label);
             labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
             dispatch(new UpdateSmallNote(updateNote, NoteType.Private));
@@ -1008,7 +1006,6 @@ export class NoteStore {
         }
         const noteD = getState().deletedNotes.filter(x => x.labels.some(z => z.id === label.id));
         for (const note of noteD) {
-            console.log(note);
             const updateNote = this.updateLabel(note, label);
             labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
             dispatch(new UpdateSmallNote(updateNote, NoteType.Deleted));
