@@ -27,7 +27,7 @@
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth" class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
-                <div class="label" *ngFor="let label of note?.labels" [ngStyle]="{backgroundColor: label.color}">
+                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels" [ngStyle]="{backgroundColor: label.color}">
                     <p>{{label.name}}</p>
                 </div>
             </div>

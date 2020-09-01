@@ -18,12 +18,10 @@ import {
   showHistory } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
-import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { UpdateColor } from '../state/updateColor';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { Label } from '../../labels/models/label';
@@ -75,11 +73,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.goTo(this.sliderService.active, this.wrap);
   }
 
-  transformLabels(labels: Label[]): Label[] {
-    return labels.filter(x => x.isDeleted === false);
-  }
-
-
   async ngOnInit() {
 
     this.pService.onResize();
@@ -104,7 +97,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     .subscribe((values: UpdateLabelEvent[]) => {
       const value = values.find(x => x.id === this.id);
       if (value !== undefined) {
-        this.note.labels = this.transformLabels(value.labels);
+        this.note.labels = value.labels;
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });
@@ -173,7 +166,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     .pipe(take(1), map(func => func(this.id)))
     .subscribe(async (x) => {
       this.note = {...x};
-      this.note.labels = this.transformLabels(this.note.labels);
       this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, this.note.noteType));
       this.store.dispatch(new SelectIdNote(this.id, this.note.labels.map(z => z.id)));
 
