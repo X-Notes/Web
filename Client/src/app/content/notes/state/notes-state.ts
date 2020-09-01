@@ -1024,6 +1024,13 @@ export class NoteStore {
             dispatch(new UpdateSmallNote(updateNote, NoteType.Archive));
             patchState({updateLabelsEvent: labelUpdate});
         }
+        const noteF = getState().fullNotes.filter(x => x.labels.some(z => z.id === label.id));
+        for (const note of noteF) {
+            const updateNote = this.updateLabelFull(note, label);
+            labelUpdate = [{id: updateNote.id, labels: updateNote.labels}, ...labelUpdate];
+            dispatch(new UpdateFullNote(updateNote));
+            patchState({updateLabelsEvent: labelUpdate});
+        }
     }
 
     updateLabel(note: SmallNote, label: Label): SmallNote {
@@ -1033,6 +1040,15 @@ export class NoteStore {
         const updateNote: SmallNote = {...note , labels: noteLabels};
         return updateNote;
     }
+
+    updateLabelFull(note: FullNote, label: Label): FullNote {
+        const noteLabels = [...note.labels];
+        const index = noteLabels.findIndex(x => x.id === label.id);
+        noteLabels[index] = {...label};
+        const updateNote: FullNote = {...note , labels: noteLabels};
+        return updateNote;
+    }
+
 
 
     @Action(RemoveFromDomMurri)
