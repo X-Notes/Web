@@ -12,12 +12,14 @@ import { ReplacePipe } from './pipes/replace.pipe';
 import { FormsModule } from '@angular/forms';
 import { LabelComponent } from '../content/labels/label/label.component';
 import { SearchLabelPipe } from './pipes/search-label.pipe';
+import { MurriService } from './services/murri.service';
+import { OrderService } from './services/order.service';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe, LabelComponent, SearchLabelPipe],
   imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe ],
-  providers: [DialogService]
+  providers: [DialogService, MurriService, OrderService]
 })
 export class SharedModule { }

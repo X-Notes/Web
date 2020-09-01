@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit {
   }
 
   changeLanguage() {
-    this.store.dispatch(new ChangeLanguage(Language.EN));
+    this.store.dispatch(new ChangeLanguage(Language.UA));
   }
 
   changeFontSize() {

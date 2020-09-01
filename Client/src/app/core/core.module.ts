@@ -32,7 +32,6 @@ export class MissingTranslationService implements MissingTranslationHandler {
   declarations: [],
   imports: [
     CommonModule,
-    SharedModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {

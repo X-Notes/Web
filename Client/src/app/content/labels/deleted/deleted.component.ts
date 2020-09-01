@@ -3,11 +3,11 @@ import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { UpdateLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/labels-actions';
-import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
+import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
-import {UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import {UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 
