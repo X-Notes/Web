@@ -13,6 +13,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-archive',
@@ -27,7 +28,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   public notes: SmallNote[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private murriService: MurriService) { }
 
   async ngOnInit() {
 
@@ -50,7 +52,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
 
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
-    .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });
+    .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; });
+                      setTimeout(() => this.murriService.initMurriNote(EntityType.NoteArchive)); });
 
     this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
@@ -61,18 +64,6 @@ export class ArchiveComponent implements OnInit, OnDestroy {
       .subscribe(x => this.delete(x));
   }
 
-  initMurri() {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
-      console.log(item._element.id);
-      const order: Order = {
-        orderEntity: OrderEntity.Note,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      this.store.dispatch(new PositionNote(order, EntityType.NoteArchive));
-      });
-  }
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {

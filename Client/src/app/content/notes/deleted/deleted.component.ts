@@ -13,6 +13,7 @@ import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-deleted',
@@ -27,7 +28,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
   public notes: SmallNote[];
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private murriService: MurriService) { }
 
   async ngOnInit() {
 
@@ -49,7 +51,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
-      .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
+      .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; });
+                        setTimeout(() => this.murriService.initMurriNote(EntityType.NoteDeleted)); });
 
     this.store.select(NoteStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -60,18 +63,6 @@ export class DeletedComponent implements OnInit, OnDestroy {
       .subscribe(x => this.delete(x));
   }
 
-  initMurri() {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
-      console.log(item._element.id);
-      const order: Order = {
-        orderEntity: OrderEntity.Note,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      this.store.dispatch(new PositionNote(order, EntityType.NoteDeleted));
-    });
-  }
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
