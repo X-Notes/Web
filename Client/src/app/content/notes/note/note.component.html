@@ -3,7 +3,7 @@
     [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''">
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
-<div (click)="toNote()" class="note-inner"
+<div (click)="toNote()" class="note-inner" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}"
     [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
     <div class="labels">
         <div class="label" *ngFor="let label of labels" [ngStyle]="{backgroundColor: label.color}">
