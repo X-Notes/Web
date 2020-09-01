@@ -400,6 +400,12 @@ export class NoteStore {
                     noteType = NoteType.Shared;
                 }
 
+                const fullNote = getState().fullNotes.filter(x => selectedIds.some(z => z === x.id))
+                                                        .map(note => { note = { ...note }; return note; });
+                if (fullNote !== undefined) {
+                    fullNote.forEach(z => z.color = color);
+                    fullNote.forEach(note => dispatch(new UpdateFullNote(note)));
+                }
 
                 notes.forEach(z => z.color = color);
                 notes.forEach(note => dispatch(new UpdateSmallNote(note, noteType)));
