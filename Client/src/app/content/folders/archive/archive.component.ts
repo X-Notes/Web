@@ -14,6 +14,7 @@ import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { FolderService } from '../folder.service';
 
 @Component({
   selector: 'app-archive',
@@ -29,7 +30,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService) { }
+              private murriService: MurriService,
+              private folderService: FolderService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -62,7 +64,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.changeColorHandler(x));
+      .subscribe(x => this.folderService.changeColorHandler(this.folders, x));
 
     this.store.select(FolderStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
@@ -76,10 +78,5 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      this.folders.find(x => x.id === update.id).color = update.color;
-    }
-  }
 
 }

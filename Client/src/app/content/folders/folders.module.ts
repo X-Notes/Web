@@ -9,6 +9,7 @@ import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
+import { FolderService } from './folder.service';
 
 
 
@@ -25,6 +26,7 @@ import { FullFolderComponent } from './full-folder/full-folder.component';
     CommonModule,
     FoldersRouting,
     SharedModule
-  ]
+  ],
+  providers: [FolderService]
 })
 export class FoldersModule { }
