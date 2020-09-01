@@ -68,7 +68,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   delete(ids: string[]) {
     if (ids.length > 0) {
-      this.notes = this.notes.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
+      this.notes = this.notes.filter(x => !ids.some(z => z === x.id));
       setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
     }
   }

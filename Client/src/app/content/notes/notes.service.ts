@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { UpdateColor } from './state/updateColor';
 import { SmallNote } from './models/smallNote';
 import { FullNote } from './models/fullNote';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Injectable()
 export class NotesService {
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   changeColorHandler(notes: SmallNote[], updateColor: UpdateColor[]) {
     for (const update of updateColor) {
@@ -21,4 +22,6 @@ export class NotesService {
       }
     }
   }
+
+
 }
