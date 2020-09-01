@@ -26,12 +26,11 @@ export class PrivateComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
 
-  folders: Folder[] = [];
 
   constructor(public pService: PersonalizationService,
               private store: Store,
               private murriService: MurriService,
-              private folderService: FolderService) { }
+              public folderService: FolderService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -60,41 +59,13 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
     this.store.select(FolderStore.privateFolders).pipe(take(1))
-      .subscribe(x => { this.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
+      .subscribe(x => { this.folderService.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
                         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
-
-    this.store.select(FolderStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.folderService.changeColorHandler(this.folders, x));
-
-    this.store.select(FolderStore.removeFromMurriEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.delete(x));
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.addToDom(x));
+      .subscribe(x => this.folderService.addToDom(x));
   }
 
-
-  delete(ids: string[]) {
-    if (ids.length > 0) {
-      this.folders = this.folders.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
-      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
-    }
-  }
-
-  addToDom(folders: Folder[]) {
-    if (folders.length > 0) {
-      this.folders = [...folders.map(folder => { folder = { ...folder }; return folder; }).reverse(), ...this.folders];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < folders.length; i++) {
-          const el = DOMnodes[i];
-          this.pService.grid.add(el, {index : 0, layout: true});
-        }
-      }, 0);
-    }
-  }
 
 }

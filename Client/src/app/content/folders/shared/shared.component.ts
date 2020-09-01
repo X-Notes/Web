@@ -26,12 +26,10 @@ export class SharedComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
 
-  folders: Folder[] = [];
-
   constructor(public pService: PersonalizationService,
               private store: Store,
               private murriService: MurriService,
-              private folderService: FolderService) { }
+              public folderService: FolderService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -59,26 +57,9 @@ export class SharedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
 
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
-      .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; });
+      .subscribe(x => { this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
                         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
 
-    this.store.select(FolderStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.folderService.changeColorHandler(this.folders, x));
-
-    this.store.select(FolderStore.removeFromMurriEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.delete(x));
   }
-
-
-
-  delete(ids: string[]) {
-    if (ids.length > 0) {
-      this.folders = this.folders.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
-      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
-    }
-  }
-
 
 }
