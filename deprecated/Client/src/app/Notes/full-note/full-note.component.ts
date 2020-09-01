@@ -35,7 +35,7 @@ export class FullNoteComponent implements OnInit {
 
   private descriptionTimer;
 
-  unsubscribe = new Subject();
+  destroy = new Subject();
   private id: string;
   public note: FullNote;
   private subscription: Subscription;
@@ -68,7 +68,7 @@ export class FullNoteComponent implements OnInit {
 
     this.noteService
       .getById(this.id)
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(
         x => {
           this.note = x;
@@ -94,7 +94,7 @@ export class FullNoteComponent implements OnInit {
       () =>
         this.noteService
           .updateTitle(newTitle)
-          .pipe(takeUntil(this.unsubscribe))
+          .pipe(takeUntil(this.destroy))
           .subscribe(x => x),
       300
     );
@@ -109,7 +109,7 @@ export class FullNoteComponent implements OnInit {
       () =>
         this.noteService
           .updateDescription(newDescription)
-          .pipe(takeUntil(this.unsubscribe))
+          .pipe(takeUntil(this.destroy))
           .subscribe(x => x),
       300
     );

@@ -4,12 +4,14 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
-import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
+import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
@@ -33,7 +35,9 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UnSelectAllFolder());
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+
+    await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
@@ -49,8 +53,11 @@ export class PrivateComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadPrivateFolders()).toPromise();
 
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
+
     this.store.select(FolderStore.privateFolders).pipe(take(1))
-      .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
+      .subscribe(x => { this.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
+                        setTimeout(() => this.initMurri()); });
 
     this.store.select(FolderStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -74,7 +81,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionFolder(order, FolderType.Private));
+      this.store.dispatch(new PositionFolder(order, EntityType.FolderPrivate));
     });
   }
 
@@ -93,7 +100,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   addToDom(folders: Folder[]) {
     if (folders.length > 0) {
-      this.folders = [...folders, ...this.folders];
+      this.folders = [...folders.map(folder => { folder = { ...folder }; return folder; }).reverse(), ...this.folders];
       setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < folders.length; i++) {

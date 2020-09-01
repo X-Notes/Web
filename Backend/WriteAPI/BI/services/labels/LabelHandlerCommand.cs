@@ -64,6 +64,7 @@ namespace BI.services.labels
             label.Order = 1;
             label.Color = LabelsColorPallete.Red;
             label.Name = "";
+            label.CreatedAt = DateTimeOffset.Now;
 
             await labelRepository.NewLabel(label);
             return label.Id;

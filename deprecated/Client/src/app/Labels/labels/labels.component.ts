@@ -13,7 +13,7 @@ import { NewLabel } from 'src/app/Models/Labels/NewLabel';
 })
 export class LabelsComponent implements OnInit, OnDestroy {
   labels: Label[];
-  unsubscribe = new Subject();
+  destroy = new Subject();
   constructor(private labelService: LabelService) {}
 
   Create() {
@@ -21,16 +21,16 @@ export class LabelsComponent implements OnInit, OnDestroy {
       name : '',
       color: '#FFCDCD'
     };
-    this.labelService.CreateLabel(newLabel).pipe(takeUntil(this.unsubscribe))
+    this.labelService.CreateLabel(newLabel).pipe(takeUntil(this.destroy))
     .subscribe(x =>
-      this.labelService.GetById(x).pipe(takeUntil(this.unsubscribe))
+      this.labelService.GetById(x).pipe(takeUntil(this.destroy))
       .subscribe(g => this.labels.unshift(g), error => console.log(error))
       , error => console.log( error));
   }
   Update(label: Label) {
     this.labelService
       .Update(label)
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(
         x => x,
         error => console.log(error)
@@ -39,7 +39,7 @@ export class LabelsComponent implements OnInit, OnDestroy {
   Delete(id: string) {
     this.labelService
       .Delete(id)
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(
         x => (this.labels = this.labels.filter(g => g.id !== id)),
         error => console.log(error)
@@ -48,14 +48,14 @@ export class LabelsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.labelService
       .GetUserLabels()
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(
         x => (this.labels = x),
         error => console.log(error)
       );
   }
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.unsubscribe();
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

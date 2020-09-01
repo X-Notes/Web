@@ -36,7 +36,6 @@ export class AuthService {
 
   private async configureAuthState(firebaseUser: firebase.User) {
     if (firebaseUser) {
-      console.log(5);
       const token = await firebaseUser.getIdToken(true);
       this.store.dispatch(new SetToken(token));
       const flag = this.store.selectSnapshot(UserStore.getStatus);

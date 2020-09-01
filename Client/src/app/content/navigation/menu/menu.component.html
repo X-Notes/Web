@@ -1,8 +1,8 @@
-<div class="wrap" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.innerNote ? 'mobile-menu' : '']">
-    <div class="icon" *ngFor="let item of innerNote" #trigger (click)="pService.toggleHistoryMethod()">
+<div class="wrap" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (isNoteInner$ | async) ? 'mobile-menu' : '']">
+    <div class="icon" *ngFor="let item of buttonService.items" #trigger (click)="item.operation()">
         <div class="inner">
-            <i class="icon-{{item}}"></i>
-            <p>{{item}}</p>
+            <i class="icon-{{item.icon}}"></i>
+            <p>{{item.icon}}</p>
             <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
         </div>
     </div>

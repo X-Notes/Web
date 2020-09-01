@@ -24,7 +24,9 @@ namespace BI.services.notes
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
         IRequestHandler<MakePublicNoteCommand, Unit>,
-        IRequestHandler<CopyNoteCommand, List<SmallNote>>
+        IRequestHandler<CopyNoteCommand, List<SmallNote>>,
+        IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
+        IRequestHandler<AddLabelOnNoteCommand, Unit>
     {
 
         private readonly UserRepository userRepository;
@@ -80,6 +82,7 @@ namespace BI.services.notes
 
             if (notes.Count == request.Ids.Count)
             {
+                user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
                 await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Deleted);
             }
             else
@@ -191,6 +194,38 @@ namespace BI.services.notes
             {
                 throw new Exception();
             }
+        }
+
+        public async Task<Unit> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
+
+            var selectedNotes = notes.Where(x => request.NoteIds.Contains(x.Id.ToString("N"))).ToList();
+
+            var noteWithLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId == request.LabelId)).ToList();
+
+            noteWithLabels.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.LabelId != request.LabelId).ToList());
+
+            await noteRepository.UpdateRangeNotes(noteWithLabels);
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(AddLabelOnNoteCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
+
+            var selectedNotes = notes.Where(x => request.NoteIds.Contains(x.Id.ToString("N"))).ToList();
+
+            var noteWithoutLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId != request.LabelId) || x.LabelsNotes.Count == 0).ToList();
+
+            noteWithoutLabels.ForEach(x => x.LabelsNotes.Add(new LabelsNotes() { LabelId = request.LabelId, NoteId = x.Id, AddedAt = DateTimeOffset.Now }));;
+
+            await noteRepository.UpdateRangeNotes(noteWithoutLabels);
+
+            return Unit.Value;
         }
     }
 }

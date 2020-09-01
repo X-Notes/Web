@@ -1,28 +1,24 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService,
          showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { Router, NavigationEnd } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {  Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote, ChangeColorNote, SetDeleteNotes,
-  DeleteNotesPermanently, RestoreNotes, ArchiveNotes, MakePublicNotes, MakePrivateNotes, CopyNotes } from '../../notes/state/notes-actions';
-import { RoutePathes } from 'src/app/shared/enums/RoutePathes';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, ChangeColorFolder,
-  SetDeleteFolders, RestoreFolders, DeleteFoldersPermanently, CopyFolders,
-   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { DialogService } from 'src/app/shared/modal_components/dialog.service';
-import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { MatDialogConfig } from '@angular/material/dialog';
+import { UnSelectAllNote, SelectAllNote,
+  DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
+import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
+  MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
-import { UpdateRoutePath, UpdateFolderType, UpdateNoteType } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteStore } from '../../notes/state/notes-state';
+import { FolderStore } from '../../folders/state/folders-state';
+import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import { MenuButtonsService } from '../menu-buttons.service';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Component({
   selector: 'app-header',
@@ -30,11 +26,32 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   styleUrls: ['./header.component.scss'],
   animations: [ showMenuLeftRight ]
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
+  public countSelected: number;
 
-  @Select(AppStore.getRoutePath)
-  public route$: Observable<RoutePathes>;
+  destroy = new Subject<void>();
+
+  // Upper Menu
+
+  @Select(AppStore.getNewButtonActive)
+  public newButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getSettingsButtonActive)
+  public settingsButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getSelectAllButtonActive)
+  public selectAllButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.getMenuActive)
+  public menuActive$: Observable<boolean>;
+  //
+
+  @Select(AppStore.isNoteInner)
+  public isNoteInner$: Observable<boolean>;
+
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -44,20 +61,46 @@ export class HeaderComponent implements OnInit {
 
   theme = Theme;
 
-  selectAllActive = true;
-  settingsActive = true;
-  sectionAdd = true;
-  selected = false;
-
   user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
 
   constructor(public pService: PersonalizationService,
-              private router: Router,
               private store: Store,
-              private dialogService: DialogService) { }
+              public menuButtonService: MenuButtonsService) { }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   ngOnInit(): void {
-    this.checkRout();
+
+    this.store.select(NoteStore.activeMenu)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.configShowMenu(x));
+
+    this.store.select(FolderStore.activeMenu)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.configShowMenu(x));
+
+    this.store.select(AppStore.getRouting)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.routeChange(x));
+
+    this.store.select(NoteStore.selectedCount)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => {
+      if (x > 0) {
+        this.countSelected = x;
+      }
+    });
+
+    this.store.select(FolderStore.selectedCount)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => {
+      if (x > 0) {
+        this.countSelected = x;
+      }
+    });
   }
 
   showUsers() {
@@ -76,14 +119,18 @@ export class HeaderComponent implements OnInit {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
-  cancelSelect() {
-    this.selected = false;
-    this.pService.newButtonActive = true;
-  }
-
-  allSelected() {
-    this.selected = true;
-    this.pService.newButtonActive = false;
+  configShowMenu(flag: boolean) {
+    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
+      this.store.dispatch(new UpdateNewButton(false));
+      return;
+    }
+    if (flag) {
+      this.store.dispatch(new UpdateNewButton(false));
+      this.store.dispatch(new UpdateMenuActive(true));
+    } else {
+     this.store.dispatch(new UpdateNewButton(true));
+     this.store.dispatch(new UpdateMenuActive(false));
+    }
   }
 
   toggleOrientation() {
@@ -91,119 +138,101 @@ export class HeaderComponent implements OnInit {
     setTimeout( () => this.pService.grid.refreshItems().layout(), 0);
   }
 
-  checkRout() {
-    this.routeChange(this.router.url);
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd))
-      .subscribe(event => { this.routeChange((event as NavigationEnd).url); });
-  }
 
-  routeChange(url: string) {
-    switch (url) {
 
-      case '/folders' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
-        this.pService.innerNote = false;
-        this.selected = false;
-        this.sectionAdd = true;
+  async routeChange(type: EntityType) {
+
+    switch (type) {
+      case EntityType.FolderPrivate: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Private));
+        this.menuButtonService.setFoldersPrivate();
         break;
       }
-      case '/folders/shared' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
+      case EntityType.FolderShared: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Shared));
+        this.menuButtonService.setFoldersShared();
         break;
       }
-      case '/folders/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
+      case EntityType.FolderArchive: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Deleted));
+        this.menuButtonService.setFoldersArchive();
         break;
       }
-      case '/folders/archive' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Folder));
+      case EntityType.FolderDeleted: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateFolderType(FolderType.Archive));
+        this.menuButtonService.setFoldersDeleted();
+        break;
+      }
+      case EntityType.FolderInner: {
+        // this.menuButtonService.setInnerFolder();
         break;
       }
 
-
-      case '/notes' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
+      case EntityType.NotePrivate: {
         this.showAllButtons();
-        this.pService.innerNote = false;
-        this.selected = false;
-        this.sectionAdd = true;
+        this.menuButtonService.setNotesPrivate();
         break;
       }
-      case '/notes/shared' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
+      case EntityType.NoteShared: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Shared));
-        this.pService.innerNote = false;
-        this.selected = false;
-        this.sectionAdd = true;
+        this.menuButtonService.setNotesShared();
         break;
       }
-      case '/notes/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
+      case EntityType.NoteArchive: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Deleted));
-        this.pService.innerNote = false;
-        this.selected = false;
-        this.sectionAdd = true;
+        this.menuButtonService.setNotesArchive();
         break;
       }
-      case '/notes/archive' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Note));
+      case EntityType.NoteDeleted: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateNoteType(NoteType.Archive));
-        this.pService.innerNote = false;
-        this.selected = false;
-        this.sectionAdd = true;
+        this.menuButtonService.setNotesDeleted();
         break;
       }
-
-
-      case '/labels' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.selectAllActive = false;
-        this.showAllButtons();
-        this.selected = false;
-        this.pService.innerNote = false;
-        this.sectionAdd = true;
-        this.settingsActive = false;
-        this.selectAllActive = false;
-        break;
-      }
-      case '/labels/deleted' : {
-        this.store.dispatch(new UpdateRoutePath(RoutePathes.Label));
-        this.selected = false;
-        this.pService.innerNote = false;
-        this.sectionAdd = true;
-        this.settingsActive = false;
-        this.selectAllActive = false;
-        this.pService.newButtonActive = false;
-        break;
-      }
-      default : {
-        this.pService.innerNote = true;
-        this.selected = false;
-        this.sectionAdd = false;
-        this.pService.innerNote = true;
-        this.pService.newButtonActive = false;
+      case EntityType.NoteInner: {
+       // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+        switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
+          case NoteType.Private: {
+            this.menuButtonService.setNotesPrivate();
+            break;
+          }
+          case NoteType.Shared: {
+            this.menuButtonService.setNotesShared();
+            break;
+          }
+          case NoteType.Deleted: {
+            this.menuButtonService.setNotesDeleted();
+            break;
+          }
+          case NoteType.Archive: {
+            this.menuButtonService.setNotesArchive();
+            break;
+          }
+        }
         break;
       }
 
+      case EntityType.LabelPrivate: {
+        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        break;
+      }
+      case EntityType.LabelDeleted: {
+        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
+        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        break;
+      }
+      default: {
+        console.log('default');
+      }
     }
   }
 
-  showAllButtons() {
-    this.pService.newButtonActive = true;
-    this.selectAllActive = true;
-    this.settingsActive = true;
+  async showAllButtons() {
+    await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
+    await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+    await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
   }
 
   newButton() {
@@ -213,127 +242,60 @@ export class HeaderComponent implements OnInit {
   // Selection
 
   selectAll() {
-    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
-    switch (routePath) {
-      case RoutePathes.Folder: {
-        const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-        this.store.dispatch(new SelectAllFolder(folderType));
-        break;
-      }
-      case RoutePathes.Note: {
-        const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-        this.store.dispatch(new SelectAllNote(noteType));
-        break;
-      }
+    let routePath = this.store.selectSnapshot(AppStore.isNote);
+    if (routePath) {
+      const noteType = this.store.selectSnapshot(AppStore.getRouting);
+      this.store.dispatch(new SelectAllNote(noteType));
+    }
+    routePath = this.store.selectSnapshot(AppStore.isFolder);
+    if (routePath) {
+      const folderType = this.store.selectSnapshot(AppStore.getRouting);
+      this.store.dispatch(new SelectAllFolder(folderType));
     }
   }
 
   unselectAll() {
-    const routePath = this.store.selectSnapshot(AppStore.getRoutePath);
-    switch (routePath) {
-      case RoutePathes.Folder: {
-        this.store.dispatch(new UnSelectAllFolder());
-        break;
-      }
-      case RoutePathes.Note: {
-        this.store.dispatch(new UnSelectAllNote());
-        break;
-      }
+    let routePath = this.store.selectSnapshot(AppStore.isNote);
+    if (routePath) {
+      this.store.dispatch(new UnSelectAllNote());
+    }
+    routePath = this.store.selectSnapshot(AppStore.isFolder);
+    if (routePath) {
+      this.store.dispatch(new UnSelectAllFolder());
     }
   }
 
   // UPPER MENU FUNCTION NOTES
-  changeColor() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new ChangeColorNote(NoteColorPallete.BlueOne, noteType));
-  }
 
-  setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new SetDeleteNotes(noteType));
-  }
 
-  deleteNotes() {
-    this.store.dispatch(new DeleteNotesPermanently());
-  }
 
-  restoreNotes() {
-    this.store.dispatch(new RestoreNotes());
-  }
-
-  archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new ArchiveNotes(noteType));
-  }
 
   makePublic() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePublicNotes(noteType));
   }
 
   makePrivate() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
+    const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateNotes(noteType));
   }
 
-  copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getNoteType);
-    this.store.dispatch(new CopyNotes(noteType));
-  }
 
   // UPPER MENU FUNCTIONS FOLDERS
 
-  archiveFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new ArchiveFolders(folderType));
-  }
-
-  changeColorFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new ChangeColorFolder(NoteColorPallete.BlueOne, folderType));
-  }
-
-  setDeleteFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new SetDeleteFolders(folderType));
-  }
-
-  restoreFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new RestoreFolders());
-  }
-
-  deleteFolders() {
-    this.store.dispatch(new DeleteFoldersPermanently());
-  }
-
-  copyFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
-    this.store.dispatch(new CopyFolders(folderType));
-  }
 
   makePublicFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePublicFolders(folderType));
   }
 
   makePrivateFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getFolderType);
+    const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateFolders(folderType));
   }
 
   // Modal Windows
-
-  changeColorNote() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
-      width: '450px',
-      minHeight: '380px',
-      data: {
-        title: 'Colors'
-      },
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
-    };
-    this.dialogService.openDialog(ChangeColorComponent, config);
+  settingsClick() {
+    console.log('settings');
   }
 }

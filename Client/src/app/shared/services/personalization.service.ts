@@ -75,12 +75,10 @@ export class PersonalizationService {
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
   grid;
   hideInnerMenu = false;
-  innerNote = false;
   AnimationInnerMenu = true;
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
-  newButtonActive = true;
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;

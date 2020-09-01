@@ -4,10 +4,12 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { LoadFullNote, UpdateFullNote, LoadPrivateNotes } from '../state/notes-actions';
+import { LoadFullNote, UpdateFullNote, LoadPrivateNotes, SelectIdNote,
+  UnSelectIdNote,
+  LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
-import { take, map, mergeMap, debounceTime, filter } from 'rxjs/operators';
+import { take, map, debounceTime, takeUntil } from 'rxjs/operators';
 import { UpdateText } from '../models/parts/updateText';
 import {
   PersonalizationService,
@@ -18,6 +20,13 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { AnimationBuilder, animate, style } from '@angular/animations';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { UpdateColor } from '../state/updateColor';
+import { LoadLabels } from '../../labels/state/labels-actions';
+import { UpdateLabelEvent } from '../state/updateLabels';
+import { Label } from '../../labels/models/label';
 
 @Component({
   selector: 'app-full-note',
@@ -33,6 +42,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
+  destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
   mainWidth = 0;
@@ -72,19 +82,47 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.goTo(this.active);
   }
 
+  transformLabels(labels: Label[]): Label[] {
+    return labels.filter(x => x.isDeleted === false);
+  }
+
+
   async ngOnInit() {
+
     this.pService.onResize();
     this.initWidthSlide();
     this.load();
     this.connectToHub();
 
-    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
+
+    this.store.select(NoteStore.updateColorEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.changeColorHandler(x));
 
     this.nameChanged.pipe(
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
     setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
+
+    this.store.select(NoteStore.updateLabelEvent)
+    .pipe(takeUntil(this.destroy))
+    .subscribe((values: UpdateLabelEvent[]) => {
+      const value = values.find(x => x.id === this.id);
+      if (value !== undefined) {
+        this.note.labels = this.transformLabels(value.labels);
+        this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
+      }
+    });
+  }
+
+
+  changeColorHandler(updateColor: UpdateColor[]) {
+    for (const update of updateColor) {
+      if (this.note.id === update.id) {
+        this.note.color = update.color;
+      }
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -235,9 +273,36 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async load() { // TODO MAKE UNSUBSCRIBE
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
+
     this.store.select(NoteStore.oneFull)
-    .pipe(map(func => func(this.id)))
-    .subscribe(x => {this.note = x; });
+    .pipe(take(1), map(func => func(this.id)))
+    .subscribe(async (x) => {
+      this.note = {...x};
+      this.note.labels = this.transformLabels(this.note.labels);
+      this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, this.note.noteType));
+      this.store.dispatch(new SelectIdNote(this.id, this.note.labels.map(z => z.id)));
+
+      switch (this.note.noteType) {
+        case NoteType.Private: {
+          this.store.dispatch(new LoadPrivateNotes());
+          break;
+        }
+        case NoteType.Archive: {
+          this.store.dispatch(new LoadArchiveNotes());
+          break;
+        }
+        case NoteType.Shared: {
+          this.store.dispatch(new LoadSharedNotes());
+          break;
+        }
+        case NoteType.Deleted: {
+          this.store.dispatch(new LoadDeletedNotes());
+          break;
+        }
+      }
+    });
+
+    this.store.dispatch(new LoadLabels());
   }
 
   connectToHub() {
@@ -256,6 +321,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.store.dispatch(new UnSelectIdNote(this.id));
     this.routeSubscription.unsubscribe();
     this.signal.hubConnection.invoke('LeaveNote', this.id);
   }

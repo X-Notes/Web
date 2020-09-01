@@ -51,6 +51,9 @@
                     transition: 0.2s ease;
                 }
             }
+            .icon-restore::before{
+                color:white;
+            }
         }
     
         &::after {
@@ -76,6 +79,9 @@
         .inner {
             i::before {
                 color: $light-text-color;
+            }
+            .icon-restore::before{
+                color:$light-text-color;
             }
         }
 

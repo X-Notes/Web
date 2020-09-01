@@ -65,31 +65,42 @@ namespace WriteContext.Repositories
 
         public async Task<Note> GetFull(Guid id)
         {
-            return await contextDB.Notes.FirstOrDefaultAsync(x => x.Id == id);
+            return await contextDB.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Note>> GetPrivateNotesByUserId(int userId)
         {
             return await contextDB.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Private).ToListAsync();
         }
 
         public async Task<List<Note>> GetSharedNotesByUserId(int userId)
         {
             return await contextDB.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Shared).ToListAsync();
         }
 
         public async Task<List<Note>> GetArchiveNotesByUserId(int userId)
         {
             return await contextDB.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Archive).ToListAsync();
         }
 
         public async Task<List<Note>> GetDeletedNotesByUserId(int userId)
         {
             return await contextDB.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Deleted).ToListAsync();
+        }
+
+        public async Task<List<Note>> GetNotesWithLabelsByUserId(int userId)
+        {
+            return await contextDB.Notes.Include(x => x.LabelsNotes).ThenInclude(x => x.Label).Where(x => x.UserId == userId).ToListAsync();
         }
 
         // UPPER MENU FUNCTIONS
