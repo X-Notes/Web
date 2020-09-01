@@ -13,6 +13,7 @@ import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-private',
@@ -27,7 +28,8 @@ export class PrivateComponent implements OnInit, OnDestroy {
   folders: Folder[] = [];
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private murriService: MurriService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -57,7 +59,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.privateFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
-                        setTimeout(() => this.initMurri()); });
+                        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
 
     this.store.select(FolderStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -72,18 +74,6 @@ export class PrivateComponent implements OnInit, OnDestroy {
       .subscribe(x => this.addToDom(x));
   }
 
-  initMurri() {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
-      console.log(item._element.id);
-      const order: Order = {
-        orderEntity: OrderEntity.Folder,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      this.store.dispatch(new PositionFolder(order, EntityType.FolderPrivate));
-    });
-  }
 
   delete(ids: string[]) {
     if (ids.length > 0) {
