@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.users;
@@ -38,7 +39,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetPrivateNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetPrivateNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -50,6 +53,7 @@ namespace BI.services.notes
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var note = await noteRepository.GetFull(guid);
+                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 return mapper.Map<FullNote>(note);
             }
             return null;
@@ -70,7 +74,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetSharedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetSharedNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -81,7 +87,9 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetArchiveNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetArchiveNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -92,10 +100,20 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var notes = (await noteRepository.GetDeletedNotesByUserId(user.Id)).OrderBy(x => x.Order);
+                var notes = await noteRepository.GetDeletedNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
+        }
+    }
+
+    public static class LabelHelper {
+
+        public static List<LabelsNotes> GetLabelUnDesc(this List<LabelsNotes> labels)
+        {
+            return labels.OrderBy(x => x.AddedAt).ToList();
         }
     }
 }

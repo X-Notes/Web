@@ -6,7 +6,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Folder } from '../models/folder';
 import { FolderStore } from '../state/folders-state';
 import { Select, Store } from '@ngxs/store';
-import { LoadAllFolders, AddFolder } from '../state/folders-actions';
+import { AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 
@@ -50,7 +50,14 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.store.dispatch(new LoadAllFolders()).toPromise();
+
+    this.store.select(UserStore.getTokenUpdated)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x: boolean) => {
+      if (x) {
+        // TODO Maybe delete
+      }
+    });
 
     this.pService.onResize();
     this.pService.subject

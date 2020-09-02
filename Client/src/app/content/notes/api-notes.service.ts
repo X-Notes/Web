@@ -27,6 +27,23 @@ export class ApiServiceNotes {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/archive');
   }
 
+
+  addLabel(labelId: number, noteIds: string[]) {
+    const obj = {
+      labelId,
+      noteIds
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/label/add`, obj);
+  }
+
+  removeLabel(labelId: number, noteIds: string[]) {
+    const obj = {
+      labelId,
+      noteIds
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/note/label/remove`, obj);
+  }
+
   changeColor(ids: string[], color: string) {
     const obj = {
       ids,

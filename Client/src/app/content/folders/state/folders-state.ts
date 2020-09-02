@@ -5,7 +5,7 @@ import { ApiFoldersService } from '../api-folders.service';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { FullFolder } from '../models/FullFolder';
 import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
-    LoadDeletedFolders, LoadAllFolders, AddFolder, SelectIdFolder,
+    LoadDeletedFolders, LoadAllExceptFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, UpdateSmallFolder, SetDeleteFolders,
     RestoreFolders, DeleteFoldersPermanently, CopyFolders,
@@ -15,6 +15,7 @@ import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { patch, updateItem } from '@ngxs/store/operators';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
 
 
 interface FolderState {
@@ -64,6 +65,16 @@ export class FolderStore {
 
     constructor(private api: ApiFoldersService,
                 private orderService: OrderService) {
+    }
+
+    @Selector()
+    static selectedCount(state: FolderState): number {
+        return state.selectedIds.length;
+    }
+
+    @Selector()
+    static activeMenu(state: FolderState): boolean {
+        return state.selectedIds.length > 0 ? true : false;
     }
 
     // Get folders
@@ -186,9 +197,31 @@ export class FolderStore {
         }
     }
 
-    @Action(LoadAllFolders)
-    async loadAllFolders({ dispatch }: StateContext<FolderState>) {
-        dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+    @Action(LoadAllExceptFolders)
+    async loadAllFolders({ dispatch }: StateContext<FolderState>, {typeFolder}: LoadAllExceptFolders) {
+
+        switch (typeFolder) {
+            case FolderType.Archive: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Private: {
+                dispatch([LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Shared: {
+                dispatch([LoadPrivateFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+            case FolderType.Deleted: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders]);
+                break;
+            }
+            case FolderType.Inner: {
+                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
+                break;
+            }
+        }
     }
 
 
@@ -245,10 +278,12 @@ export class FolderStore {
     @Action(ArchiveFolders)
     async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder }: ArchiveFolders) {
         const selectedIds = getState().selectedIds;
-        await this.api.archiveFolder(selectedIds, typeFolder).toPromise();
 
         switch (typeFolder) {
-            case FolderType.Deleted: {
+            case EntityType.FolderDeleted: {
+
+                await this.api.archiveFolder(selectedIds, FolderType.Deleted).toPromise();
+
                 const foldersDeleted = getState().deletedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().deletedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -261,7 +296,10 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
+
+                await this.api.archiveFolder(selectedIds, FolderType.Private).toPromise();
+
                 const foldersPrivate = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -274,7 +312,10 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
+
+                await this.api.archiveFolder(selectedIds, FolderType.Shared).toPromise();
+
                 const foldersShared = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -298,32 +339,51 @@ export class FolderStore {
         await this.api.changeColor(selectedIds, color).toPromise();
         let folders: Folder[];
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
                 folders = getState().archiveFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Archive)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
                 folders = getState().privateFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Private)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
-            case FolderType.Deleted: {
+            case EntityType.FolderDeleted: {
                 folders = getState().deletedFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Deleted)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
                 folders = getState().sharedFolders.filter(x => selectedIds.some(z => z === x.id))
                     .map(folder => { folder = { ...folder }; return folder; });
+
+                folders.forEach(z => z.color = color);
+                folders.forEach(note => dispatch(new UpdateSmallFolder(note, FolderType.Shared)));
+                const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
+                patchState({ updateColorEvent: updateColor });
+                dispatch([UnSelectAllFolder, ClearColorFolders]);
                 break;
             }
         }
-        folders.forEach(z => z.color = color);
-        folders.forEach(note => dispatch(new UpdateSmallFolder(note, typeFolder)));
-        const updateColor = folders.map(note => this.mapFromNoteToUpdateColor(note));
-        patchState({ updateColorEvent: updateColor });
-        dispatch([UnSelectAllFolder, ClearColorFolders]);
     }
 
     mapFromNoteToUpdateColor(note: Folder) {
@@ -343,11 +403,13 @@ export class FolderStore {
     @Action(SetDeleteFolders)
     async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder }: SetDeleteFolders) {
         const selectedIds = getState().selectedIds;
-        await this.api.setDeleteFolder(selectedIds, typeFolder).toPromise();
 
         let folders;
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
+
+                await this.api.setDeleteFolder(selectedIds, FolderType.Archive).toPromise();
+
                 folders = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedFolders = getState().archiveFolders.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -359,7 +421,10 @@ export class FolderStore {
                 });
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
+
+                await this.api.setDeleteFolder(selectedIds, FolderType.Private).toPromise();
+
                 folders = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().privateFolders.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -371,7 +436,10 @@ export class FolderStore {
                 });
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
+
+                await this.api.setDeleteFolder(selectedIds, FolderType.Shared).toPromise();
+
                 folders = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const deletedNotes = getState().sharedFolders.filter(x => selectedIds.some(z => z === x.id));
                 patchState({
@@ -407,10 +475,12 @@ export class FolderStore {
     @Action(CopyFolders)
     async copyFolders({ getState, dispatch, patchState }: StateContext<FolderState>, { typeFolder }: CopyFolders) {
         const selectedIds = getState().selectedIds;
-        const newFolders = await this.api.copyFolders(selectedIds, typeFolder).toPromise();
 
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
+
+                const newFolders = await this.api.copyFolders(selectedIds, FolderType.Archive).toPromise();
+
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateFolders: [...newFolders, ...getState().privateFolders]
@@ -418,7 +488,10 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder]);
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
+
+                const newFolders = await this.api.copyFolders(selectedIds, FolderType.Shared).toPromise();
+
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateFolders: [...newFolders, ...getState().privateFolders]
@@ -426,7 +499,22 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder]);
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
+
+                const newFolders = await this.api.copyFolders(selectedIds, FolderType.Private).toPromise();
+
+                patchState({
+                    countPrivate: getState().countPrivate + selectedIds.length,
+                    privateFolders: [...newFolders, ...getState().privateFolders],
+                    foldersAddingPrivate: [...newFolders]
+                });
+                dispatch([UnSelectAllFolder, ClearAddedPrivateFolders]);
+                break;
+            }
+            case EntityType.FolderDeleted: {
+
+                const newFolders = await this.api.copyFolders(selectedIds, FolderType.Deleted).toPromise();
+
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
                     privateFolders: [...newFolders, ...getState().privateFolders],
@@ -459,10 +547,12 @@ export class FolderStore {
     @Action(MakePublicFolders)
     async MakePublicFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePublicFolders) {
         const selectedIds = getState().selectedIds;
-        await this.api.makePublicFolders(selectedIds, typeFolder).toPromise();
 
         switch (typeFolder) {
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
+
+                await this.api.makePublicFolders(selectedIds, FolderType.Private).toPromise();
+
                 const folderPrivate = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -475,7 +565,10 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
                 break;
             }
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
+
+                await this.api.makePublicFolders(selectedIds, FolderType.Archive).toPromise();
+
                 const folderArchive = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -494,10 +587,13 @@ export class FolderStore {
     @Action(MakePrivateFolders)
     async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePrivateFolders) {
         const selectedIds = getState().selectedIds;
-        await this.api.makePrivateFolders(selectedIds, typeFolder).toPromise();
+
 
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
+
+                await this.api.makePrivateFolders(selectedIds, FolderType.Archive).toPromise();
+
                 const foldersArchive = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -510,7 +606,10 @@ export class FolderStore {
                 dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
+
+                await this.api.makePrivateFolders(selectedIds, FolderType.Shared).toPromise();
+
                 const foldersShared = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
                 const foldersAdded = getState().sharedFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
                 patchState({
@@ -532,7 +631,7 @@ export class FolderStore {
     async changePosition({patchState, getState}: StateContext<FolderState>, {order, typeFolder}: PositionFolder) {
         await this.orderService.changeOrder(order).toPromise();
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
                 let archiveFolders = getState().archiveFolders;
                 const changedFolder = archiveFolders.find(x => x.id === order.entityId);
                 archiveFolders = archiveFolders.filter(x => x.id !== order.entityId);
@@ -540,7 +639,7 @@ export class FolderStore {
                 patchState({archiveFolders});
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
                 let sharedFolders = getState().sharedFolders;
                 const changedFolder = sharedFolders.find(x => x.id === order.entityId);
                 sharedFolders = sharedFolders.filter(x => x.id !== order.entityId);
@@ -548,7 +647,7 @@ export class FolderStore {
                 patchState({sharedFolders});
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
                 let privateFolders = getState().privateFolders;
                 const changedFolder = privateFolders.find(x => x.id === order.entityId);
                 privateFolders = privateFolders.filter(x => x.id !== order.entityId);
@@ -556,7 +655,7 @@ export class FolderStore {
                 patchState({privateFolders});
                 break;
             }
-            case FolderType.Deleted: {
+            case EntityType.FolderDeleted: {
                 let deletedFolders = getState().deletedFolders;
                 const changedFolder = deletedFolders.find(x => x.id === order.entityId);
                 deletedFolders = deletedFolders.filter(x => x.id !== order.entityId);
@@ -601,19 +700,19 @@ export class FolderStore {
     selectAll({ patchState, getState }: StateContext<FolderState>, { typeFolder }: SelectAllFolder) {
         let ids;
         switch (typeFolder) {
-            case FolderType.Archive: {
+            case EntityType.FolderArchive: {
                 ids = getState().archiveFolders.map(x => x.id);
                 break;
             }
-            case FolderType.Private: {
+            case EntityType.FolderPrivate: {
                 ids = getState().privateFolders.map(x => x.id);
                 break;
             }
-            case FolderType.Deleted: {
+            case EntityType.FolderDeleted: {
                 ids = getState().deletedFolders.map(x => x.id);
                 break;
             }
-            case FolderType.Shared: {
+            case EntityType.FolderShared: {
                 ids = getState().sharedFolders.map(x => x.id);
                 break;
             }

@@ -2,5 +2,6 @@ export enum FolderType {
     Private,
     Shared,
     Deleted,
-    Archive
+    Archive,
+    Inner
 }

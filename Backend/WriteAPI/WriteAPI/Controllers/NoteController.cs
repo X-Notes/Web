@@ -100,6 +100,24 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+
+        [HttpPatch("label/add")]
+        public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPatch("label/remove")]
+        public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+
         // GET Entities
         [HttpGet("private")]
         public async Task<List<SmallNote>> GetPrivateNotes()

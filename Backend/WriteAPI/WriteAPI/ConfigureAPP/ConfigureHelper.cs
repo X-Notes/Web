@@ -119,6 +119,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePublicNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetPrivateNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetSharedNotesQuery, List<SmallNote>>, NoteHandlerQuery>();

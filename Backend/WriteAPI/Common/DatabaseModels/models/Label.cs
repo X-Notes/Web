@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
@@ -13,5 +14,7 @@ namespace Common.DatabaseModels.models
         public int UserId { set; get; }
         public User User { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
+        public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset CreatedAt { set; get; }
     }
 }

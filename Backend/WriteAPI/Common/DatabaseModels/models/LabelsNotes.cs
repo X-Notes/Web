@@ -10,5 +10,6 @@ namespace Common.DatabaseModels.models
         public Label Label { get; set; }
         public Guid NoteId { get; set; }
         public Note Note { get; set; }
+        public DateTimeOffset AddedAt { set; get; }
     }
 }

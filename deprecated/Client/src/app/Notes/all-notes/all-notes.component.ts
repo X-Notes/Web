@@ -36,7 +36,7 @@ import { trigger, state, style, transition, animate, group } from '@angular/anim
 })
 export class AllNotesComponent implements OnInit, OnDestroy {
 
-  unsubscribe = new Subject();
+  destroy = new Subject();
   constructor(private router: Router, private notesService: NotesService) { }
 
   width: any;
@@ -73,7 +73,7 @@ export class AllNotesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.notesService.getAll()
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => { this.notes = x; }, error => console.log(error));
   }
 
@@ -81,8 +81,8 @@ export class AllNotesComponent implements OnInit, OnDestroy {
     this.router.navigate(['/notes/note', id]);
   }
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.unsubscribe();
+    this.destroy.next();
+    this.destroy.complete();
   }
 }
 

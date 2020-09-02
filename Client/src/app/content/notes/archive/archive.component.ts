@@ -3,12 +3,15 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { LoadArchiveNotes, UnSelectAllNote, PositionNote } from '../state/notes-actions';
+import { LoadArchiveNotes, UnSelectAllNote, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
 import { OrderEntity, Order } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
@@ -28,6 +31,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
+    await this.store.dispatch(new UpdateRoute(EntityType.NoteArchive)).toPromise();
+
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
@@ -42,14 +47,16 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadArchiveNotes()).toPromise();
 
-    this.store.select(x => x.Notes.archiveNotes).pipe(take(1))
+    this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
+
+    this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(x => { this.notes = [...x].map(note => { note = {...note}; return note; }); setTimeout(() => this.initMurri()); });
 
-    this.store.select(x => x.Notes.updateColorEvent)
+    this.store.select(NoteStore.updateColorEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.changeColorHandler(x));
 
-    this.store.select(x => x.Notes.removeFromMurriEvent)
+    this.store.select(NoteStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
   }
@@ -63,7 +70,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionNote(order, NoteType.Archive));
+      this.store.dispatch(new PositionNote(order, EntityType.NoteArchive));
       });
   }
 
