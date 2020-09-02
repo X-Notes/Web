@@ -113,8 +113,15 @@ export class UserStore {
     }
 
     @Action(ChangeFontSize)
-    async changeFontSize({ patchState, getState }: StateContext<UserState>, {fontSize}: ChangeFontSize ) {
-        await this.api.changeFontSize(fontSize).toPromise();
-        patchState({ user: {...getState().user, fontSize}});
+    async changeFontSize({ patchState, getState }: StateContext<UserState>) {
+        let user = getState().user;
+        if (user.fontSize === FontSize.Big) {
+            await this.api.changeFontSize(FontSize.Medium).toPromise();
+            user = {...user, fontSize: FontSize.Medium};
+        } else {
+            await this.api.changeFontSize(FontSize.Big).toPromise();
+            user = {...user, fontSize: FontSize.Big};
+        }
+        patchState({ user });
     }
 }
