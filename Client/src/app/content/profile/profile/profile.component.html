@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="managment-buttons generic-section">
-                <button class="generic-button" type="button" name="Log out button" #logOut>
+                <button class="generic-button" type="button" name="Log out button" #logOut (click)="logout()">
                     <div class="content-button">
                         <div class="icon">
                             <i class="icon-plus"></i>
@@ -114,48 +114,15 @@
                     </div>
                     <button class="generic-button" type="button" (click)="showDropdown()">
                         <div class="content-button" #dropdownSelect>
-                            <p>English</p>
+                            <p>{{ language$ | async | translate }}</p>
                             <div class="icon" [ngStyle]="{'transform': dropdownLanguage ? 'rotate(180deg)' : '' }">
                                 <i class="icon-select-label"></i>
                             </div>
                         </div>
                         <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
                         <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage" [@showHistory]>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
-                            </div>
-                            <div class="item">
-                                <p>Russian</p>
+                            <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
+                                <p>{{ item | translate }}</p>
                             </div>
                         </ngx-simplebar>
                         <div #overlay class="overlay" (click)="cancelDropdown()"></div>

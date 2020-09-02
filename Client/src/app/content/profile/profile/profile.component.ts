@@ -8,6 +8,9 @@ import { Language } from 'src/app/shared/enums/Language';
 import { ChangeLanguage, ChangeFontSize, ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { EnumUtil } from 'src/app/shared/services/enum.util';
+import { AuthService } from 'src/app/core/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -26,20 +29,40 @@ export class ProfileComponent implements OnInit {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserLanguage)
+  public language$: Observable<Language>;
+
   @ViewChild('overlay') overlay: ElementRef;
   userName;
   check = true;
   dropdownLanguage = false;
+  languages = EnumUtil.getEnumValues(Language);
   theme = Theme;
   items: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 , 12, 13];
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private rend: Renderer2) { }
+              private rend: Renderer2,
+              private authService: AuthService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
+  }
+
+  setLanguage(item: any): void  {
+    switch (item) {
+      case 'Ukraine':
+        this.store.dispatch(new ChangeLanguage(Language.UA));
+        break;
+      case 'Russian':
+        this.store.dispatch(new ChangeLanguage(Language.RU));
+        break;
+      case 'English':
+        this.store.dispatch(new ChangeLanguage(Language.EN));
+        break;
+    }
   }
 
   toggle() {
@@ -48,6 +71,11 @@ export class ProfileComponent implements OnInit {
 
   cancelSideBar() {
     this.pService.stateSidebar = false;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/about']);
   }
 
   showDropdown() {

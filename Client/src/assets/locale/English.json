@@ -20,5 +20,8 @@
     "invitation": "Invitation",
     "cancel": "Cancel",
     "private": "Private"
-  }
+  },
+  "English": "English",
+  "Russian": "Russian",
+  "Ukraine": "Ukrainian"
 }
