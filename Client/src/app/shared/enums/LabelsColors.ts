@@ -6,7 +6,7 @@ export enum LabelsColor {
     GreenTwo = '#B2FFC3',
     BlueOne = '#B2FFFA',
     BlueTwo = '#B2E5FF',
-    BlueThree = '#B2BFFF',
+    DarkBlue = '#B2BFFF',
     Purple = '#E7B2FF',
     Pink = '#FFB2EE'
 }

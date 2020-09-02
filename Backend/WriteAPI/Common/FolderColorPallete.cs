@@ -6,15 +6,15 @@ namespace Common
 {
     public static class FolderColorPallete
     {
-        public static string Grey { get; } = "#F8F8F8";
-        public static string Red { get; } = "#FFEBEB";
-        public static string Purple { get; } = "#F7EBFF";
-        public static string Yellow { get; } = "#FFFFEB";
-        public static string Green { get; } = "#EBFFEC";
-        public static string Orange { get; } = "#FFF5EB";
-        public static string Pink { get; } = "#FFEBF9";
-        public static string BlueOne { get; } = "#EBFEFF";
-        public static string BlueTwo { get; } = "#EBFFFF";
-        public static string BlueThree { get; } = "#EBF8FF";
+        public static string Yellow { get; } = "#FEFFD0";
+        public static string Red { get; } = "#FFD1D0";
+        public static string Orange { get; } = "#FFE9D0";
+        public static string Green { get; } = "#D2FFD0";
+        public static string BlueOne { get; } = "#D0FCFF";
+        public static string BlueTwo { get; } = "#D0F9FF";
+        public static string DarkBlue { get; } = "#D0DBFF";
+        public static string Purple { get; } = "#EDD0FF";
+        public static string Pink { get; } = "#FFD0F3";
+        public static string Grey { get; } = "#F5F5F5";
     }
 }
