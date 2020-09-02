@@ -37,7 +37,204 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content">
-    <button (click)="changeLanguage()">Change Language</button>
-    <button (click)="changeFontSize()">Change FontSize</button>
+<div class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
+        <div class="sections">
+            <div class="header">
+                <p>Profile</p>
+            </div>
+            <div class="user-info generic-section">
+                <div class="photo" appDrop>
+                    <img [src]="(user$ | async).photoId" alt="User photo">
+                    <input type="file" name="choose photo" id="upl">
+                    <label for="upl" class="change-photo" #profilePhoto>
+                        <div class="icon">
+                            <i class="icon-plus"></i>
+                        </div>
+                        <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
+                    </label>
+                </div>
+                <div class="fields">
+                    <div class="field">
+                        <div class="field-name">
+                            <p>Name</p>
+                        </div>
+                        <input type="text" placeholder="Your name" [ngModel]="userName">
+                    </div>
+                    <div class="field">
+                        <div class="field-name">
+                            <p>Email address</p>
+                        </div>
+                        <input type="text" placeholder="Your name" disabled value="{{(user$ | async).email}}">
+                        <div class="help-info">
+                            <p>Your email address is your identity on Noots and is used to log in</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="managment-buttons generic-section">
+                <button class="generic-button" type="button" name="Log out button" #logOut>
+                    <div class="content-button">
+                        <div class="icon">
+                            <i class="icon-plus"></i>
+                        </div>
+                        <p>Log out</p>
+                    </div>
+                    <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
+                </button>
+                <button class="generic-button" type="button" name="Update button" #updateProfile>
+                    <div class="content-button">
+                        <p>Update</p>
+                    </div>
+                    <div class="ripple-container" matRipple [matRippleTrigger]="updateProfile"></div>
+                </button>
+            </div>
+        </div>
+        <div class="sections">
+            <div class="header">
+                <p>General</p>
+            </div>
+            <div class="billing-forms generic-section">
+                <div class="form">
+                </div>
+                <div class="form">
+                </div>
+                <div class="form">
+                </div>
+            </div>
+        </div>
+        <div class="sections">
+            <div class="header">
+                <p>Account</p>
+            </div>
+            <div class="account-setting generic-section" >
+                <div class="field-language">
+                    <div class="field-name">
+                        <p>Language</p>
+                    </div>
+                    <button class="generic-button" type="button" (click)="showDropdown()">
+                        <div class="content-button" #dropdownSelect>
+                            <p>English</p>
+                            <div class="icon" [ngStyle]="{'transform': dropdownLanguage ? 'rotate(180deg)' : '' }">
+                                <i class="icon-select-label"></i>
+                            </div>
+                        </div>
+                        <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                        <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage" [@showHistory]>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                            <div class="item">
+                                <p>Russian</p>
+                            </div>
+                        </ngx-simplebar>
+                        <div #overlay class="overlay" (click)="cancelDropdown()"></div>
+                    </button>
+                </div>
+                <div class="field-key">
+                    <div class="field-name">
+                        <p>Personal key</p>
+                    </div>
+                    <div class="personal-key">
+                        <input type="password" name="Personal key">
+                        <button class="generic-button" type="button" name="Update button" #changeKey>
+                            <div class="content-button">
+                                <p>Change</p>
+                            </div>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="changeKey"></div>
+                        </button>
+                        <button class="generic-button" type="button" name="Reset button" #resetKey>
+                            <div class="content-button">
+                                <p>Reset</p>
+                            </div>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="resetKey"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sections">
+            <div class="header">
+                <p>Personalization</p>
+            </div>
+            <div class="personalization-setting generic-section" >
+                <div class="fields">
+                    <div class="field">
+                        <div class="general-row">
+                            <div class="field-name">
+                                <p>Theme</p>
+                            </div>
+                            <div class="toggle">
+                                <input type="checkbox" (change)="changeTheme()">
+                                <div class="rectangle" [ngClass]="(theme$ | async) ? '' : 'active-toggle'"></div>
+                                <div class="text-toggle">
+                                    <div class="text">
+                                        <p>Dark</p>
+                                    </div>
+                                    <div class="text">
+                                        <p>Light</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="help-info">
+                            <p>See how the notes will look in the <span>preview</span></p>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="general-row">
+                            <div class="field-name">
+                                <p>Note size</p>
+                            </div>
+                            <div class="toggle">
+                                <input type="checkbox" (change)="changeFontSize()">
+                                <div class="rectangle" [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'"></div>
+                                <div class="text-toggle">
+                                    <div class="text">
+                                        <p>Default</p>
+                                    </div>
+                                    <div class="text">
+                                        <p>Big</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="help-info">
+                            <p>See how the notes will look in the <span>preview</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ngx-simplebar>
 </div>

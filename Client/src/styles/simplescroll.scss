@@ -36,6 +36,12 @@
     }
 }
 
+.dropdown {
+    .simplebar-track.simplebar-vertical{
+        width: 9px;
+    }
+}
+
 .label-container, .background-section, .notes-section {
     .simplebar-wrapper {
         height: auto;
