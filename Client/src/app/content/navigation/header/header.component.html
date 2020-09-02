@@ -1,4 +1,5 @@
 <header [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
@@ -17,43 +18,49 @@
             <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
         </button>
     </div>
-    <div class="management-section" [ngClass]="pService.innerNote ? 'inner-menu' : ''">
-        <div class="interactions" *ngIf="sectionAdd">
+
+    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
+
+        <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button *ngIf="pService.newButtonActive" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
+            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
                 <div class="inner-content" >
                     <p>New {{route$ | async}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button *ngIf="selected" name="Selected" type="button" (click)="cancelSelect()" class="generic filters selected custom-create" [ngClass]="selected ? 'select-all' : ''" #selectedAll>
+            <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()" class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #selectedAll>
                 <div class="inner-content" >
-                    <p>Selected 3</p>
+                    <p>Selected {{countSelected}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
             </button>
-            <button *ngIf="selectAllActive" name="Select" type="button" (click)="allSelected()" class="generic filters custom-create" [ngClass]="selected ? 'select-all' : ''" #select>
+            <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()" class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="settingsActive" (click)="makePrivateFolder()" name="Filter" type="button" class="generic filters filter" #filter>
+            <button *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button" class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
             </button>
         </div>
-        <div class="interactions menu" *ngIf="selected" [@showMenuLeftRight]>
+
+
+        <div class="interactions menu" *ngIf="(menuActive$ | async)" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
-        <div class="interactions" *ngIf="pService.innerNote">
+
+
+        <div class="interactions" *ngIf="(isNoteInner$ | async)">
             <button type="button" name="Back" class="generic filters mobile-buttons" #back>
                 <div class="inner-content">
                     <i class="icon-select-label"></i>
@@ -80,7 +87,9 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
             </button>
+
             <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerMenu"></app-menu>
+            
             <button name="History" type="button" class="generic filters history" #history (click)="pService.toggleHistoryMethod()">
                 <div class="inner-content" >
                     <p>History</p>
@@ -104,7 +113,9 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
             </div>
         </div>
-        <div class="interactions left" [ngClass]="selected ? 'help-func' : ''">
+
+
+        <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
             <div class="search">
                 <input type="search" placeholder="Search..." aria-label="Search search search">
                 <button type="button">
@@ -131,5 +142,7 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
             </div>
         </div>
+
+        
     </div>
 </header>

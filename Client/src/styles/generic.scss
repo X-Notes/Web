@@ -82,6 +82,10 @@
     width: calc(30% - 4vw);
 }
 
+.big-size {
+    width: calc(100% / 3);
+}
+
 .drag-helper {
     position: fixed;
     left: 0;

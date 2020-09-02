@@ -51,6 +51,9 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTimeOffset>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("FolderType")
                         .HasColumnType("integer");
 
@@ -95,6 +98,12 @@ namespace WriteContext.Migrations
                     b.Property<string>("Color")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -122,6 +131,9 @@ namespace WriteContext.Migrations
                     b.Property<int>("LabelId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("NoteId", "LabelId");
 
                     b.HasIndex("LabelId");
@@ -139,6 +151,9 @@ namespace WriteContext.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("NoteType")

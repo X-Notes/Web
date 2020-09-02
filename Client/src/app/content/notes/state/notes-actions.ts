@@ -1,7 +1,9 @@
 import { FullNote } from '../models/fullNote';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { SmallNote } from '../models/smallNote';
 import { Order } from 'src/app/shared/services/order.service';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { Label } from '../../labels/models/label';
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -17,6 +19,11 @@ export class LoadDeletedNotes {
 
 export class LoadArchiveNotes {
     static type = '[Notes] Load archive notes';
+}
+
+export class LoadAllExceptNotes {
+    static type = '[Notes] Load excepted notes';
+    constructor(public typeNote: NoteType) {    }
 }
 
 export class LoadAllNotes {
@@ -49,7 +56,7 @@ export class UpdateSmallNote {
 // Color changing
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
-    constructor(public color: string, public typeNote: NoteType) {    }
+    constructor(public color: string, public typeNote: EntityType) {    }
 }
 
 export class ClearColorNotes {
@@ -60,7 +67,7 @@ export class ClearColorNotes {
 // Set Deleting
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
@@ -81,25 +88,25 @@ export class RestoreNotes {
 // Archive
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class MakePublicNotes {
     static type = '[Notes] MakePublic notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
 export class CopyNotes {
     static type = '[Notes] Copy notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }
 
@@ -107,6 +114,28 @@ export class ClearAddedPrivateNotes {
     static type = '[Notes] ClearAddedPrivate notes';
     constructor() {
     }
+}
+
+// Labels
+
+export class UpdateLabelOnNote {
+    static type = '[Notes] Update label';
+    constructor(public label: Label) {}
+}
+
+export class AddLabelOnNote {
+    static type = '[Notes] Add label';
+    constructor(public label: Label, public typeNote: EntityType) {}
+}
+
+export class RemoveLabelFromNote {
+    static type = '[Notes] Remove label';
+    constructor(public label: Label, public typeNote: EntityType) {}
+}
+
+export class ClearUpdatelabelEvent {
+    static type = '[Notes] Clear label';
+    constructor(public noteId: string) {}
 }
 
 // Muuri remove from dom
@@ -118,14 +147,14 @@ export class RemoveFromDomMurri {
 
 export class PositionNote {
     static type = '[Notes] Position notes';
-    constructor(public order: Order, public typeNote: NoteType) {
+    constructor(public order: Order, public typeNote: EntityType) {
     }
 }
 
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';
-    constructor(public id: string) {    }
+    constructor(public id: string, public labelIds: number[]) {    }
 }
 
 export class UnSelectIdNote {
@@ -141,6 +170,6 @@ export class UnSelectAllNote {
 
 export class SelectAllNote {
     static type = '[Notes] Select all';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: EntityType) {
     }
 }

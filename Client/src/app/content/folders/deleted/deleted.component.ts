@@ -5,11 +5,14 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
-import { LoadDeletedFolders, UnSelectAllFolder, PositionFolder } from '../state/folders-actions';
+import { LoadDeletedFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-deleted',
@@ -18,6 +21,7 @@ import { FolderType } from 'src/app/shared/enums/FolderTypes';
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   folders: Folder[] = [];
@@ -31,7 +35,10 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UnSelectAllFolder());
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+
+    await this.store.dispatch(new UpdateRoute(EntityType.FolderDeleted)).toPromise();
+
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
@@ -44,6 +51,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadDeletedFolders()).toPromise();
+
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Deleted));
 
     this.store.select(FolderStore.deletedFolders).pipe(take(1))
       .subscribe(x => { this.folders = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
@@ -66,7 +75,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionFolder(order, FolderType.Deleted));
+      this.store.dispatch(new PositionFolder(order, EntityType.FolderDeleted));
     });
   }
 

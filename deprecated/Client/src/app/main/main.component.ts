@@ -51,7 +51,7 @@ export class MainComponent implements OnInit, OnDestroy {
   activeInvitesMenu = false;
   activeMenu = false;
 
-  unsubscribe = new Subject();
+  destroy = new Subject();
 
   constructor(
     private router: Router,
@@ -64,7 +64,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.mobileSideBar();
     this.userService
       .Get()
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(
         user => {
           this.user = user;
@@ -81,7 +81,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   New() {
     this.notesService.newNote()
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(
       x => {
         this.router.navigate(['/notes/note', x]);
@@ -145,7 +145,7 @@ export class MainComponent implements OnInit, OnDestroy {
     this.activeInvitesMenu = false;
   }
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.unsubscribe();
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

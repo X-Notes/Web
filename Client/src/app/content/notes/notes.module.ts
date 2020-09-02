@@ -9,7 +9,6 @@ import { PrivatesComponent } from './privates/privates.component';
 import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
-import { ReplacePipe } from './pipes/replace.pipe';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
 
@@ -22,8 +21,7 @@ import { MyHammerConfig } from 'src/app/shared/hammer.config';
     PrivatesComponent,
     SharedComponent,
     DeletedComponent,
-    ArchiveComponent,
-    ReplacePipe],
+    ArchiveComponent],
   imports: [
     CommonModule,
     NoteRouting,

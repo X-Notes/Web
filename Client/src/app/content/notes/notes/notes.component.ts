@@ -7,10 +7,11 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote, LoadAllNotes } from '../state/notes-actions';
+import { AddNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 export enum subMenu {
   All = 'all',
@@ -61,16 +62,14 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
-
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
         await this.store.dispatch(new LoadLabels()).toPromise();
-        await this.store.dispatch(new LoadAllNotes()).toPromise();
       }
-    }
-    );
+    });
+
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newNote());

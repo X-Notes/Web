@@ -14,6 +14,7 @@ import { MenuComponent } from './menu/menu.component';
     RouterModule,
     SharedModule
   ],
-  exports: [SideBarComponent, HeaderComponent]
+  exports: [SideBarComponent, HeaderComponent],
+  providers: []
 })
 export class NavigationModule { }

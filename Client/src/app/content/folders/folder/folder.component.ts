@@ -5,6 +5,8 @@ import { Subject } from 'rxjs';
 import { FolderStore } from '../state/folders-state';
 import { takeUntil, map } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
+import { Router } from '@angular/router';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-folder',
@@ -13,12 +15,15 @@ import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
 })
 export class FolderComponent implements OnInit, OnDestroy {
 
+  selectedFlag = false;
+  fontSize = FontSize;
   destroy = new Subject<void>();
 
   isHighlight = false;
   @Input() folder: Folder;
 
-  constructor(private store: Store) { }
+  constructor(private store: Store,
+              private router: Router) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -30,6 +35,16 @@ export class FolderComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .pipe(map(z => this.tryFind(z)))
     .subscribe(flag => this.isHighlight = flag);
+
+    this.store.select(FolderStore.selectedCount)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => {
+      if (x > 0) {
+        this.selectedFlag = true;
+      } else {
+        this.selectedFlag = false;
+      }
+    });
   }
 
   tryFind(z: string[]): boolean {
@@ -42,6 +57,15 @@ export class FolderComponent implements OnInit, OnDestroy {
       this.store.dispatch(new SelectIdFolder(id));
     } else {
       this.store.dispatch(new UnSelectIdFolder(id));
+    }
+  }
+
+  toFolder() {
+    const flag = this.store.selectSnapshot(FolderStore.selectedCount) > 0 ? true : false;
+    if (flag) {
+      this.highlight(this.folder.id);
+    } else {
+      this.router.navigate([`folders/${this.folder.id}`]);
     }
   }
 

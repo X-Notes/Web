@@ -3,7 +3,6 @@
 :host {
     position: relative;
     display: flex;
-    justify-content: flex-end;
     width: 100%;
     border-radius: 20px;
 }
@@ -12,18 +11,21 @@
     position: absolute;
     z-index: 2;
     width: calc(100% - 25px);
-    height: 100%;
+    height: calc(100% - 25px);
+    top: 5px;
+    left: 25px;
     border-radius: inherit;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    outline: none;
 }
 
 .folder {
+    margin-top: 20px;
     position: relative;
     z-index: 5;
     display: flex;
     height: calc(100% - 0.75rem);
-    width: calc(100% - 0.75rem);
-    margin: 0.75rem 0.75rem 0 0;
+    width: calc(100% - 15px);
     border-radius: inherit;
     transition: 0.2s ease;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
@@ -64,7 +66,7 @@
             font-size: 1.25rem;
             font-weight: 700;
             margin-top: 0.625rem;
-            color: $light-text-color;
+            color: $text-color;
             transition: 0.3s ease;
 
             &:focus {
@@ -79,11 +81,15 @@
         .notes {
             display: flex;
             flex-direction: column;
+            width: 100%;
             margin-bottom: 0.625rem;
+            outline: none;
 
             .note {
                 display: flex;
                 align-items: center;
+                width: 100%;
+                margin-top: 0.5rem;
                 color: $light-text-color;
 
                 .icon-notes {
@@ -100,10 +106,24 @@
                 }
             }
         }
+    }
+}
 
-        .notes > .note {
-            margin-top: 0.5rem;
-            width: 100%;
+.big-size {
+    .folder-inner {
+        input[type="text"] {
+            font-size: 1.5rem;
+        }
+
+        .notes {
+            .note {
+                font-size: 1.125rem;
+                margin-top: 0.625rem;
+
+                .icon-notes {
+                    font-size: 1rem;
+                }
+            }
         }
     }
 }
@@ -132,5 +152,31 @@
                 }
             }
         }
+    }
+
+    .big-size {
+        .highligt {
+            width: 25px;
+        }
+
+        .folder-inner {
+            width: calc(100% - 25px);
+
+            input[type="text"] {
+                font-size: 1.25rem;
+            }
+    
+            .notes {
+                .note {
+                    p {
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+    }
+
+    .big-size + .outer {
+        width: calc(100% - 25px);
     }
 }   

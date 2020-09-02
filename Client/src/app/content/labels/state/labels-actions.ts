@@ -12,12 +12,12 @@ export class AddLabel {
 
 export class SetDeleteLabel {
     static type = '[Labels] SetDelete Label';
-    constructor(public id: number) {}
+    constructor(public label: Label) {}
 }
 
 export class DeleteLabel {
     static type = '[Labels] Delete Label';
-    constructor(public id: number) {}
+    constructor(public label: Label) {}
 }
 
 export class UpdateLabel {
@@ -32,5 +32,5 @@ export class PositionLabel {
 
 export class RestoreLabel {
     static type = '[Labels] Restore Label';
-    constructor(public id: number) {}
+    constructor(public label: Label) {}
 }

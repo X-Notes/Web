@@ -31,6 +31,7 @@ export class LabelsComponent implements OnInit {
     public pService: PersonalizationService) {}
 
   async ngOnInit() {
+
     this.pService.onResize();
   }
 }

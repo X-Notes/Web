@@ -8,6 +8,9 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import {  UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { FontSize } from 'src/app/shared/enums/FontSize';
 
 @Component({
   selector: 'app-all',
@@ -16,6 +19,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 })
 export class AllComponent implements OnInit, OnDestroy  {
 
+  fontSize = FontSize;
   public labels: Label[];
 
   destroy = new Subject<void>();
@@ -25,6 +29,8 @@ export class AllComponent implements OnInit, OnDestroy  {
     private store: Store) { }
 
   async ngOnInit() {
+
+    await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
@@ -76,9 +82,9 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   }
 
-  async setDelete(id: number) {
-    await this.store.dispatch(new SetDeleteLabel(id)).toPromise();
-    this.labels = this.labels.filter(x => x.id !== id);
+  async setDelete(label: Label) {
+    await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
+    this.labels = this.labels.filter(x => x.id !== label.id);
     setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
   }
 

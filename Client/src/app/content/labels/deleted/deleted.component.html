@@ -1,5 +1,8 @@
 <div class="grid">
-    <div class="grid-item"  id="{{item.id}}" *ngFor="let item of labels" [ngClass]="pService.orientationMobile? 'grid-plus' : ''">
-        <app-label [label]="item" [deleted]="true" (restoreLabel)="restoreLabel($event)" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
+    <div class="grid-item" 
+        id="{{item.id}}"
+        *ngFor="let item of labels"
+        [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
+        <app-label [label]="item" [selectedMode]="false" (restoreLabel)="restoreLabel($event)" (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
     </div>
 </div>

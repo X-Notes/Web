@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   background = null;
   loading: boolean;
   user: FullUser;
-  unsubscribe = new Subject();
+  destroy = new Subject();
   newName = '';
   constructor(private router: Router, private userService: UserService) {
 
@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.background = localStorage.getItem('background');
     this.userService.GetFull()
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(user => {
       this.user = user;
       this.loading = false;
@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     formData.append('photo', files[0]);
 
     this.userService.UpdatePhoto(formData)
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => this.user.photoId = x, error => console.log(error));
   }
 
@@ -66,7 +66,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     formData.append('photo', files[0]);
 
     this.userService.NewBackgroundPhoto(formData)
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => {
       this.user.backgroundsId.push(x);
       this.user.currentBackgroundId = x;
@@ -76,7 +76,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   deleteBackground(id: number) {
     this.userService.deleteBackground(id)
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => {
       this.user.backgroundsId = this.user.backgroundsId.filter(z => z.id !== id);
       this.user.currentBackgroundId = this.user.backgroundsId[this.user.backgroundsId.length - 1];
@@ -85,7 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
   changePhoto(id: number) {
     this.userService.changeBackground(id)
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => {
       this.user.currentBackgroundId = this.user.backgroundsId.filter(z => z.id === id)[0];
       this.changeBackGround(this.user.currentBackgroundId.backgroundId);
@@ -94,14 +94,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   updateName() {
     if (this.newName !== this.user.name) {
       this.userService.UpdateName(this.newName)
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(takeUntil(this.destroy))
       .subscribe(x => this.user.name = this.newName, error => console.log(error));
     }
   }
   changeBackgroundToDefault() {
     this.userService
     .changeToDefaultBackground()
-    .pipe(takeUntil(this.unsubscribe))
+    .pipe(takeUntil(this.destroy))
     .subscribe(x => {
       this.user.currentBackgroundId = null;
       this.changeBackGround(null);
@@ -112,7 +112,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.background = background;
   }
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.unsubscribe();
+    this.destroy.next();
+    this.destroy.complete();
   }
 }

@@ -1,5 +1,5 @@
 import { Label } from '../models/label';
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api-labels.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
@@ -7,12 +7,14 @@ import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
+import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
 
 interface LabelState {
     labelsAll: Label[];
     labelsDeleted: Label[];
     CountAll: number;
     CountDeleted: number;
+    loaded: boolean;
 }
 
 @State<LabelState>({
@@ -21,7 +23,8 @@ interface LabelState {
         labelsAll: [],
         labelsDeleted: [],
         CountAll: 0,
-        CountDeleted: 0
+        CountDeleted: 0,
+        loaded: false
     }
 })
 
@@ -30,7 +33,8 @@ export class LabelStore {
 
 
     constructor(private api: ApiServiceLabels,
-                private orderService: OrderService) {
+                private orderService: OrderService,
+                private store: Store) {
     }
 
 
@@ -56,12 +60,13 @@ export class LabelStore {
 
     @Action(LoadLabels)
     loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
-        if (getState().labelsAll.length === 0) {
-        return this.api.getAll().pipe(tap(content => { patchState({
+        if (!getState().loaded) {
+            return this.api.getAll().pipe(tap(content => { patchState({
             labelsAll: content.labelsAll,
             labelsDeleted: content.labelsDeleted,
             CountAll: content.labelsAll.length,
-            CountDeleted: content.labelsDeleted.length
+            CountDeleted: content.labelsDeleted.length,
+            loaded: true
          }); }));
         }
     }
@@ -76,24 +81,26 @@ export class LabelStore {
     }
 
     @Action(SetDeleteLabel)
-    async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: SetDeleteLabel) {
-        await this.api.setDeleted(id).toPromise();
+    async setDeletedLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: SetDeleteLabel) {
+        await this.api.setDeleted(label.id).toPromise();
         let labelsAll = getState().labelsAll;
-        const label = labelsAll.find(x => x.id === id);
-        labelsAll = labelsAll.filter(x => x.id !== id);
+        let Newlabel = labelsAll.find(x => x.id === label.id);
+        Newlabel = {...Newlabel, isDeleted: true};
+        labelsAll = labelsAll.filter(x => x.id !== label.id);
+        this.store.dispatch(new UpdateLabelOnNote(Newlabel));
         patchState({
             labelsAll,
-            labelsDeleted: [{...label}, ...getState().labelsDeleted],
+            labelsDeleted: [Newlabel, ...getState().labelsDeleted],
             CountAll: getState().CountAll - 1,
             CountDeleted: getState().CountDeleted + 1
         });
     }
 
     @Action(DeleteLabel)
-    async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: DeleteLabel) {
-        await this.api.delete(id).toPromise();
+    async DeleteLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: DeleteLabel) {
+        await this.api.delete(label.id).toPromise();
         let labelsDeleted = getState().labelsDeleted;
-        labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+        labelsDeleted = labelsDeleted.filter(x => x.id !== label.id);
         patchState({
             labelsDeleted,
             CountDeleted: getState().CountDeleted - 1
@@ -103,6 +110,7 @@ export class LabelStore {
     @Action(UpdateLabel)
     async updateLabels({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
         await this.api.update(label).toPromise();
+        this.store.dispatch(new UpdateLabelOnNote(label));
         if (label.isDeleted) {
             setState(
                 patch({
@@ -137,11 +145,13 @@ export class LabelStore {
     }
 
     @Action(RestoreLabel)
-    async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { id }: RestoreLabel) {
-        await this.api.restore(id).toPromise();
+    async restoreLabel({setState, getState, patchState}: StateContext<LabelState>, { label }: RestoreLabel) {
+        await this.api.restore(label.id).toPromise();
         let deletedLables = getState().labelsDeleted;
-        const restoreLabel = deletedLables.find(x => x.id === id);
-        deletedLables = deletedLables.filter(x => x.id !== id);
+        let restoreLabel = deletedLables.find(x => x.id === label.id);
+        restoreLabel = {...restoreLabel, isDeleted: false};
+        deletedLables = deletedLables.filter(x => x.id !== label.id);
+        this.store.dispatch(new UpdateLabelOnNote(restoreLabel));
         patchState({
             labelsAll: [restoreLabel, ...getState().labelsAll],
             labelsDeleted: deletedLables,

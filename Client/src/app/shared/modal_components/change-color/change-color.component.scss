@@ -1,3 +1,5 @@
+@import 'variables';
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -12,6 +14,7 @@
 
   i {
     cursor: pointer;
+    transform: rotate(45deg);
   }
 }
 
@@ -54,11 +57,78 @@
       color: #202020;
     }
 
-    .date{
+    .date {
       margin-top: 10px;
       margin-bottom: 5px;
       color: #A1A1A1;
       font-size: 0.875rem;
+    }
+  }
+
+  .folder {
+    position: relative;
+
+    .outer {
+      z-index: 1;
+      height: 130px;
+      width: calc(100% - 15px);
+      top: -15px;
+      left: 15px;
+      position: absolute;
+      border-radius: 20px;
+    }
+
+    .inner {
+      z-index: 2;
+      margin-top: 55px;
+      height: 130px;
+      width: calc(100% - 15px);
+      position: relative;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      padding-left: 1rem;
+      padding-right: 1.5rem;
+
+      &>p {
+        margin-top: 0.625rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #404040;
+      }
+
+      .notes_folder {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0.625rem;
+
+        .note_folder {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          color: $light-text-color;
+
+          .icon-notes {
+            font-size: 0.9375rem;
+
+            &::before {
+              color: $light-text-color;
+            }
+          }
+
+          p {
+            @include text-overflow;
+            white-space: nowrap;
+            margin-left: 0.5rem;
+          }
+        }
+      }
+
+      .notes_folder>.note_folder {
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+
     }
   }
 }
@@ -84,12 +154,12 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     cursor: pointer;
 
-    div{
+    div {
       width: 100%;
       height: 100%;
       border-radius: 5px;
     }
-    
+
     &:hover {
       box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7;
     }
@@ -118,10 +188,12 @@
     justify-content: center;
     align-items: center;
   }
-  .dark_button{
+
+  .dark_button {
     background: #34373E;
   }
-  .white_button{
+
+  .white_button {
     border: 0.8px solid #959595;
     color: #808080;
     font-weight: 500;
