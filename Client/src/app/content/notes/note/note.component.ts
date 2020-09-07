@@ -59,6 +59,10 @@ export class NoteComponent implements OnInit, OnDestroy {
     .subscribe((values: UpdateLabelEvent[]) => {
       const value = values.find(x => x.id === this.note.id);
       if (value !== undefined) {
+        const flagUpdate = value.labels.filter(x => x.isDeleted === false).length;
+        if (flagUpdate === 0 || flagUpdate === 1) {
+          setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+        }
         this.note.labels = value.labels;
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }

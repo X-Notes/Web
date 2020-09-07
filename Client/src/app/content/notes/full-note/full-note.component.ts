@@ -172,7 +172,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         this.note = {...x};
-
+        console.log(5);
 
         if (!this.firstInit) {
           this.firstInit = true;
@@ -218,6 +218,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
     this.store.dispatch(new DeleteCurrentNote());
     this.routeSubscription.unsubscribe();

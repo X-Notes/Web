@@ -6,7 +6,8 @@
 <div (click)="toNote()" class="note-inner" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}"
     [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
     <div class="labels">
-        <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels" [ngStyle]="{backgroundColor: label.color}">
+        <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
+            [ngStyle]="{backgroundColor: label.color}">
             <p>{{label.name}}</p>
         </div>
     </div>
