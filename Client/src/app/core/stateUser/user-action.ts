@@ -34,5 +34,5 @@ export class ChangeLanguage {
 
 export class ChangeFontSize {
     static type = '[User] Change FontSize';
-    constructor(public fontSize: FontSize) {}
+    constructor() {}
 }
