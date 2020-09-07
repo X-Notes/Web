@@ -339,6 +339,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
+                // TODO UPDATE FOR ALL USERS
                 notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
                     .map(note => { note = { ...note }; return note; });
 
@@ -437,7 +438,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
-
+                // TODO UPDATE FOR ALL USERS
                 await this.api.setDeleteNotes(selectedIds, NoteType.Shared).toPromise();
 
                 notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
@@ -526,7 +527,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
-
+                // TODO UPDATE FOR ALL USERS
                 await this.api.archiveNotes(selectedIds, NoteType.Shared).toPromise();
 
                 const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
@@ -613,7 +614,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
-
+                // TODO UPDATE FOR ALL USERS
                 await this.api.makePrivateNotes(selectedIds, NoteType.Shared).toPromise();
 
                 const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
@@ -650,6 +651,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
+                // TODO UPDATE FOR ALL USERS
                 const newNotes = await this.api.copyNotes(selectedIds, NoteType.Shared).toPromise();
                 patchState({
                     countPrivate: getState().countPrivate + selectedIds.length,
@@ -753,7 +755,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
-
+                // TODO UPDATE FOR ALL USERS
                 const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                     .map(note => { note = { ...note }; return note; });
 
@@ -885,7 +887,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
-
+                // TODO UPDATE FOR ALL USERS
                 const notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
                     .map(note => { note = { ...note }; return note; });
 
@@ -1029,6 +1031,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
+                // TODO UPDATE FOR ALL USERS
                 let sharedNotes = getState().sharedNotes;
                 const changedNote = sharedNotes.find(x => x.id === order.entityId);
                 sharedNotes = sharedNotes.filter(x => x.id !== order.entityId);
@@ -1122,6 +1125,7 @@ export class NoteStore {
                 break;
             }
             case EntityType.NoteShared: {
+                // TODO UPDATE FOR ALL USERS
                 ids = getState().sharedNotes.map(x => x.id);
                 labelsIds = getState().archiveNotes.map(x => {
                     const values: LabelsOnSelectedNotes = {
