@@ -1019,40 +1019,55 @@ export class NoteStore {
 
     @Action(PositionNote)
     async changePosition({ patchState, getState }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
-        await this.orderService.changeOrder(order).toPromise();
-
         switch (typeNote) {
             case EntityType.NoteArchive: {
                 let archiveNotes = getState().archiveNotes;
                 const changedNote = archiveNotes.find(x => x.id === order.entityId);
-                archiveNotes = archiveNotes.filter(x => x.id !== order.entityId);
-                archiveNotes.splice(order.position - 1, 0, changedNote);
-                patchState({ archiveNotes });
+                const flag = archiveNotes.indexOf(changedNote);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    archiveNotes = archiveNotes.filter(x => x.id !== order.entityId);
+                    archiveNotes.splice(order.position - 1, 0, changedNote);
+                    patchState({ archiveNotes });
+                }
                 break;
             }
             case EntityType.NoteShared: {
                 // TODO UPDATE FOR ALL USERS
                 let sharedNotes = getState().sharedNotes;
                 const changedNote = sharedNotes.find(x => x.id === order.entityId);
-                sharedNotes = sharedNotes.filter(x => x.id !== order.entityId);
-                sharedNotes.splice(order.position - 1, 0, changedNote);
-                patchState({ sharedNotes });
+                const flag = sharedNotes.indexOf(changedNote);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    sharedNotes = sharedNotes.filter(x => x.id !== order.entityId);
+                    sharedNotes.splice(order.position - 1, 0, changedNote);
+                    patchState({ sharedNotes });
+                }
                 break;
             }
             case EntityType.NotePrivate: {
                 let privateNotes = getState().privateNotes;
                 const changedNote = privateNotes.find(x => x.id === order.entityId);
-                privateNotes = privateNotes.filter(x => x.id !== order.entityId);
-                privateNotes.splice(order.position - 1, 0, changedNote);
-                patchState({ privateNotes });
+                const flag = privateNotes.indexOf(changedNote);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    privateNotes = privateNotes.filter(x => x.id !== order.entityId);
+                    privateNotes.splice(order.position - 1, 0, changedNote);
+                    patchState({ privateNotes });
+                }
                 break;
             }
             case EntityType.NoteDeleted: {
                 let deletedNotes = getState().deletedNotes;
                 const changedNote = deletedNotes.find(x => x.id === order.entityId);
-                deletedNotes = deletedNotes.filter(x => x.id !== order.entityId);
-                deletedNotes.splice(order.position - 1, 0, changedNote);
-                patchState({ deletedNotes });
+                const flag = deletedNotes.indexOf(changedNote);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    deletedNotes = deletedNotes.filter(x => x.id !== order.entityId);
+                    deletedNotes.splice(order.position - 1, 0, changedNote);
+                    patchState({ deletedNotes });
+                }
+
                 break;
             }
             default: {
