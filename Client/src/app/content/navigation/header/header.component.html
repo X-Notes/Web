@@ -22,35 +22,48 @@
     <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
 
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
-            <div class="generic hamburger" (click)="toggleSidebar()" [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
+            <div class="generic hamburger" (click)="toggleSidebar()"
+                [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
                 <span></span>
             </div>
-            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
-                <div class="inner-content" >
+            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button"
+                [ngClass]="{'custom-create-profile':(route$ | async) === 'background'}"
+                class="generic new-note custom-create" (click)="newButton()" #new>
+                <div class="inner-content">
                     <p>New {{route$ | async}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
             </button>
-            <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()" class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #selectedAll>
-                <div class="inner-content" >
+            <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
+                class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
+                #selectedAll>
+                <div class="inner-content">
                     <p>Selected {{countSelected}}</p>
                     <i class="icon-plus"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
             </button>
-            <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()" class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
+            <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()"
+                class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
                 <div class="inner-content">
                     <p>Select all</p>
                     <i class="icon-select"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button" class="generic filters filter" #filter>
+            <button *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button"
+                class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
+            </button>
+            <button *ngIf="(defaultBackground$ | async)" name="Default" type="button" class="generic filters" #default>
+                <div class="inner-content">
+                    <p>Default color</p>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
             </button>
         </div>
 
@@ -71,39 +84,43 @@
                 <p>8</p>
                 <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
             </div>
-            <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerUsers">
+            <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
+                [@.disabled]="pService.AnimationInnerUsers">
                 <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
                     <div class="person" *ngFor="let item of user" title="fucking person">
                         <div class="inner-person">
-                            <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg" alt="contributor">
+                            <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
+                                alt="contributor">
                         </div>
                         <p>12321321321333333333333333333333333333333333333333333333333</p>
                     </div>
                 </ngx-simplebar>
             </div>
             <button name="Filter" type="button" class="generic filters" #video>
-                <div class="inner-content" >
+                <div class="inner-content">
                     <i class="icon-video"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
             </button>
 
-            <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerMenu"></app-menu>
-            
-            <button name="History" type="button" class="generic filters history" #history (click)="pService.toggleHistoryMethod()">
-                <div class="inner-content" >
+            <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
+                [@.disabled]="pService.AnimationInnerMenu"></app-menu>
+
+            <button name="History" type="button" class="generic filters history" #history
+                (click)="pService.toggleHistoryMethod()">
+                <div class="inner-content">
                     <p>History</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
             </button>
             <button name="label" type="button" class="generic filters mobile-buttons" #label>
-                <div class="inner-content" >
+                <div class="inner-content">
                     <i class="icon-label"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
             </button>
             <button name="shared" type="button" class="generic filters mobile-buttons" #shared>
-                <div class="inner-content" >
+                <div class="inner-content">
                     <i class="icon-shared"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
@@ -143,6 +160,6 @@
             </div>
         </div>
 
-        
+
     </div>
 </header>

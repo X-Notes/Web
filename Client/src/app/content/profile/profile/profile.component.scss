@@ -82,7 +82,7 @@
             margin-top: 0.5rem;
             font-size: 0.75rem;
         }
-        
+
         .user-info {
             margin-bottom: 1rem;
 
@@ -122,6 +122,7 @@
                     background: rgba(255, 255, 255, 0.7);
                     opacity: 0;
                     transition: 0.3s ease;
+                    cursor: pointer;
 
                     .icon {
                         position: relative;
@@ -140,17 +141,17 @@
 
             @keyframes glow {
                 0% {
-                  box-shadow: 0 0 0 rgba(100, 100, 100, 0.5);
+                    box-shadow: 0 0 0 rgba(100, 100, 100, 0.5);
                 }
-              
+
                 50% {
                     box-shadow: 0 0 25px rgba(100, 100, 100, 0.5);
                 }
-                
+
                 100% {
                     box-shadow: 0 0 0 rgba(100, 100, 100, 0.5);
                 }
-              }
+            }
 
             .fields {
                 margin-left: 2.5vw;
@@ -325,7 +326,8 @@
                             font-weight: 500;
                         }
 
-                        p,.icon {
+                        p,
+                        .icon {
                             position: relative;
                             z-index: 5;
                         }
@@ -342,7 +344,7 @@
                         padding: 0.25rem 0;
                         background-color: white;
                         border-radius: 5px;
-                        
+
                         .item {
                             display: flex;
                             align-items: center;
@@ -399,7 +401,8 @@
                 }
             }
 
-            .field-language, .field-key {
+            .field-language,
+            .field-key {
                 display: flex;
                 width: calc(100% - 150px - 2.5vw);
 
@@ -453,13 +456,13 @@
                     .field {
                         .general-row {
                             .toggle {
-                                .active-toggle + .text-toggle {
+                                .active-toggle+.text-toggle {
                                     .text:first-child {
                                         color: $text-color;
                                     }
                                 }
 
-                                .dark-text + .text-toggle {
+                                .dark-text+.text-toggle {
                                     .text:last-child {
                                         color: $text-color;
                                     }
@@ -510,7 +513,7 @@
                 button[type="button"] {
                     order: 2;
 
-                    &:last-child{
+                    &:last-child {
                         order: 1;
                         margin-left: 0;
                     }
@@ -518,7 +521,9 @@
             }
 
             .account-setting {
-                .field-language, .field-key {
+
+                .field-language,
+                .field-key {
                     width: 100%;
                 }
             }
@@ -535,7 +540,7 @@
 @media (max-width: 400px) {
     .content-inner {
         .sections {
-            .managment-buttons {                
+            .managment-buttons {
                 button[type="button"] {
                     width: calc(50% - 0.75rem);
 
@@ -544,6 +549,7 @@
                     }
                 }
             }
+
             .account-setting {
                 .field-key {
                     .personal-key {
@@ -602,7 +608,7 @@
                 .field-key {
                     .personal-key {
                         justify-content: space-between;
-                        
+
                         button[type="button"] {
                             margin-left: 0;
                             width: calc(50% - 0.75rem);

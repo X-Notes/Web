@@ -11,4 +11,5 @@ export enum EntityType {
     NoteInner,
     LabelPrivate,
     LabelDeleted,
+    Profile
 }

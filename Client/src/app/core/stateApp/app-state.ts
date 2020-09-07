@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType } from './app-action';
+    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -13,6 +13,7 @@ interface AppState {
     menuActive: boolean;
     settingsButtonActive: boolean;
     innerNoteType: NoteType;
+    defaultBackground: boolean;
 }
 
 @State<AppState>({
@@ -23,7 +24,8 @@ interface AppState {
         selectAllButtonActive: true,
         settingsButtonActive: true,
         menuActive: false,
-        innerNoteType: null
+        innerNoteType: null,
+        defaultBackground: false
     }
 })
 @Injectable()
@@ -88,6 +90,10 @@ export class AppStore {
             case EntityType.LabelDeleted: {
                 return 'label';
             }
+
+            case EntityType.Profile: {
+                return 'background';
+            }
         }
     }
 
@@ -123,6 +129,11 @@ export class AppStore {
         return state.menuActive;
     }
 
+    @Selector()
+    static getdefaultBackground(state: AppState): boolean {
+        return state.defaultBackground;
+    }
+
     @Action(UpdateRoute)
     async updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
         patchState({routing: type});
@@ -147,6 +158,11 @@ export class AppStore {
     @Action(UpdateSelectAllButton)
     updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
         patchState({selectAllButtonActive: flag});
+    }
+
+    @Action(UpdateDefaultBackgroundButton)
+    updateDefaultBackground({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
+        patchState({defaultBackground: flag});
     }
 
     @Action(UpdateMenuActive)
