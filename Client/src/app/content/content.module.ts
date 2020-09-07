@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavigationModule } from './navigation/navigation.module';
 import { ContentComponent } from './content/content.component';
 import { RouterModule } from '@angular/router';
-import { OrderService } from '../shared/services/order.service';
 import { SharedModule } from '../shared/shared.module';
 
 
@@ -16,6 +15,6 @@ import { SharedModule } from '../shared/shared.module';
     NavigationModule,
     SharedModule
   ],
-  providers: [OrderService]
+  providers: []
 })
 export class ContentModule { }

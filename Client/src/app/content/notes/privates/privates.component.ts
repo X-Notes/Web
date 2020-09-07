@@ -13,6 +13,8 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
+import { NotesService } from '../notes.service';
 
 @Component({
   selector: 'app-privates',
@@ -24,17 +26,11 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
 
-  public notes: SmallNote[];
-
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private murriService: MurriService,
+              public noteService: NotesService) { }
 
-
-  ngOnDestroy(): void {
-    this.destroy.next();
-    this.destroy.complete();
-    this.store.dispatch(new UnSelectAllNote());
-  }
 
   async ngOnInit() {
 
@@ -57,59 +53,18 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
-      .subscribe(x => { this.notes = [...x].map(note => { note = { ...note }; return note; }); setTimeout(() => this.initMurri()); });
-
-    this.store.select(NoteStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.changeColorHandler(x));
-
-    this.store.select(NoteStore.removeFromMurriEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.delete(x));
+      .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+                        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate)); });
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.addToDom(x));
+      .subscribe(x => this.noteService.addToDom(x));
   }
 
-  initMurri() {
 
-    this.pService.gridSettings('.grid-item');
-
-    this.pService.grid.on('dragEnd', async (item, event) => {
-      console.log(item._element.id);
-      const order: Order = {
-        orderEntity: OrderEntity.Note,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      this.store.dispatch(new PositionNote(order, EntityType.NotePrivate));
-    });
-  }
-
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      this.notes.find(x => x.id === update.id).color = update.color;
-    }
-  }
-
-  delete(ids: string[]) {
-    if (ids.length > 0) {
-      this.notes = this.notes.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
-      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
-    }
-  }
-
-  addToDom(notes: SmallNote[]) {
-    if (notes.length > 0) {
-      this.notes = [...notes.map(note => { note = { ...note }; return note; }).reverse() , ...this.notes];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < notes.length; i++) {
-          const el = DOMnodes[i];
-          this.pService.grid.add(el, {index : 0, layout: true});
-        }
-      }, 0);
-    }
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+    this.store.dispatch(new UnSelectAllNote());
   }
 }

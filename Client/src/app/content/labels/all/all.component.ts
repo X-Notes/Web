@@ -11,6 +11,7 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import {  UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-all',
@@ -26,7 +27,8 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   constructor(
     public pService: PersonalizationService,
-    private store: Store) { }
+    private store: Store,
+    private murriService: MurriService) { }
 
   async ngOnInit() {
 
@@ -47,25 +49,13 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => { this.labels = [...x];  setTimeout(() => this.initMurri()); });
+    .subscribe(x => { this.labels = [...x];  setTimeout(() => this.murriService.initMurriLabel(false)); });
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newLabel());
   }
 
-  initMurri() {
-      this.pService.gridSettings('.grid-item');
-
-      this.pService.grid.on('dragEnd', async (item, event) => {
-      const order: Order = {
-        orderEntity: OrderEntity.Label,
-        position: item.getGrid().getItems().indexOf(item) + 1,
-        entityId: item._element.id
-      };
-      this.store.dispatch(new PositionLabel(false, parseInt(order.entityId, 10), order));
-      });
-  }
 
   async update(label: Label) {
     this.store.dispatch(new UpdateLabel(label));

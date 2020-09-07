@@ -12,12 +12,17 @@ import { ReplacePipe } from './pipes/replace.pipe';
 import { FormsModule } from '@angular/forms';
 import { LabelComponent } from '../content/labels/label/label.component';
 import { SearchLabelPipe } from './pipes/search-label.pipe';
+import { MurriService } from './services/murri.service';
+import { OrderService } from './services/order.service';
+import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
+import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
 
 @NgModule({
-  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe, LabelComponent, SearchLabelPipe],
+  declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe],
   imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
-    LabelComponent, SearchLabelPipe ],
-  providers: [DialogService]
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe ],
+  providers: [DialogService, MurriService, OrderService]
 })
 export class SharedModule { }

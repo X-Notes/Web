@@ -26,7 +26,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   isHighlight = false;
   @Input() note: SmallNote;
-  labels: Label[] = [];
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router) { }
@@ -37,16 +37,9 @@ export class NoteComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  transformLabels(labels: Label[]): Label[] {
-    const labelsNoDeleted = labels.filter(x => x.isDeleted === false);
-    return labelsNoDeleted.slice(labelsNoDeleted.length - 2, labelsNoDeleted.length);
-  }
-
   ngOnInit(): void {
 
-    this.labels = this.transformLabels(this.note.labels);
-
-    this.store.select(state => state.Notes.selectedIds)
+    this.store.select(NoteStore.selectedIds)
     .pipe(takeUntil(this.destroy))
     .pipe(map(z => this.tryFind(z)))
     .subscribe(flag => this.isHighlight = flag);
@@ -66,8 +59,11 @@ export class NoteComponent implements OnInit, OnDestroy {
     .subscribe((values: UpdateLabelEvent[]) => {
       const value = values.find(x => x.id === this.note.id);
       if (value !== undefined) {
+        const flagUpdate = value.labels.filter(x => x.isDeleted === false).length;
+        if (flagUpdate === 0 || flagUpdate === 1) {
+          setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+        }
         this.note.labels = value.labels;
-        this.labels = this.transformLabels(value.labels);
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });

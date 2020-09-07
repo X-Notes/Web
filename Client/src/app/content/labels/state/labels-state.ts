@@ -128,19 +128,31 @@ export class LabelStore {
 
     @Action(PositionLabel)
     async positionLabel({setState, getState, patchState}: StateContext<LabelState>, { deleted, id, order }: PositionLabel) {
-        await this.orderService.changeOrder(order).toPromise();
         if (deleted) {
             let labelsDeleted = getState().labelsDeleted;
             const slabel = labelsDeleted.find(x => x.id === id);
-            labelsDeleted = labelsDeleted.filter(x => x.id !== id);
-            labelsDeleted.splice(order.position - 1, 0 , slabel);
-            patchState({labelsDeleted});
+
+            const flag = labelsDeleted.indexOf(slabel);
+            if (flag + 1 !== order.position) {
+                await this.orderService.changeOrder(order).toPromise();
+                labelsDeleted = labelsDeleted.filter(x => x.id !== id);
+                labelsDeleted.splice(order.position - 1, 0 , slabel);
+                patchState({labelsDeleted});
+            }
+
+
         } else {
             let labelsAll = getState().labelsAll;
             const slabel = labelsAll.find(x => x.id === id);
-            labelsAll = labelsAll.filter(x => x.id !== id);
-            labelsAll.splice(order.position - 1, 0 , slabel);
-            patchState({labelsAll});
+
+            const flag = labelsAll.indexOf(slabel);
+            if (flag + 1 !== order.position) {
+                await this.orderService.changeOrder(order).toPromise();
+                labelsAll = labelsAll.filter(x => x.id !== id);
+                labelsAll.splice(order.position - 1, 0 , slabel);
+                patchState({labelsAll});
+            }
+
         }
     }
 

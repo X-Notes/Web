@@ -629,38 +629,58 @@ export class FolderStore {
 
     @Action(PositionFolder)
     async changePosition({patchState, getState}: StateContext<FolderState>, {order, typeFolder}: PositionFolder) {
-        await this.orderService.changeOrder(order).toPromise();
         switch (typeFolder) {
             case EntityType.FolderArchive: {
                 let archiveFolders = getState().archiveFolders;
                 const changedFolder = archiveFolders.find(x => x.id === order.entityId);
-                archiveFolders = archiveFolders.filter(x => x.id !== order.entityId);
-                archiveFolders.splice(order.position - 1, 0 , changedFolder);
-                patchState({archiveFolders});
+
+                const flag = archiveFolders.indexOf(changedFolder);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    archiveFolders = archiveFolders.filter(x => x.id !== order.entityId);
+                    archiveFolders.splice(order.position - 1, 0 , changedFolder);
+                    patchState({archiveFolders});
+                }
                 break;
             }
             case EntityType.FolderShared: {
                 let sharedFolders = getState().sharedFolders;
                 const changedFolder = sharedFolders.find(x => x.id === order.entityId);
-                sharedFolders = sharedFolders.filter(x => x.id !== order.entityId);
-                sharedFolders.splice(order.position - 1, 0 , changedFolder);
-                patchState({sharedFolders});
+
+                const flag = sharedFolders.indexOf(changedFolder);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    sharedFolders = sharedFolders.filter(x => x.id !== order.entityId);
+                    sharedFolders.splice(order.position - 1, 0 , changedFolder);
+                    patchState({sharedFolders});
+                }
                 break;
             }
             case EntityType.FolderPrivate: {
                 let privateFolders = getState().privateFolders;
                 const changedFolder = privateFolders.find(x => x.id === order.entityId);
-                privateFolders = privateFolders.filter(x => x.id !== order.entityId);
-                privateFolders.splice(order.position - 1, 0 , changedFolder);
-                patchState({privateFolders});
+
+                const flag = privateFolders.indexOf(changedFolder);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    privateFolders = privateFolders.filter(x => x.id !== order.entityId);
+                    privateFolders.splice(order.position - 1, 0 , changedFolder);
+                    patchState({privateFolders});
+                }
+
                 break;
             }
             case EntityType.FolderDeleted: {
                 let deletedFolders = getState().deletedFolders;
                 const changedFolder = deletedFolders.find(x => x.id === order.entityId);
-                deletedFolders = deletedFolders.filter(x => x.id !== order.entityId);
-                deletedFolders.splice(order.position - 1, 0 , changedFolder);
-                patchState({deletedFolders});
+
+                const flag = deletedFolders.indexOf(changedFolder);
+                if (flag + 1 !== order.position) {
+                    await this.orderService.changeOrder(order).toPromise();
+                    deletedFolders = deletedFolders.filter(x => x.id !== order.entityId);
+                    deletedFolders.splice(order.position - 1, 0 , changedFolder);
+                    patchState({deletedFolders});
+                }
                 break;
             }
         }

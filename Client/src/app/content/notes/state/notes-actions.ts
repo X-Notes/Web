@@ -23,7 +23,7 @@ export class LoadArchiveNotes {
 
 export class LoadAllExceptNotes {
     static type = '[Notes] Load excepted notes';
-    constructor(public typeNote: NoteType) {    }
+    constructor(public typeNote: NoteType) { }
 }
 
 export class LoadAllNotes {
@@ -31,23 +31,14 @@ export class LoadAllNotes {
 }
 
 
-export class LoadFullNote {
-    static type = '[Notes] Load full note';
-    constructor(public id: string) {    }
-}
-
 export class AddNote {
     static type = '[Notes] Add note';
 }
 
-export class UpdateFullNote {
-    static type = '[Notes] Update full note';
-    constructor(public note: FullNote) {    }
-}
 
 export class UpdateSmallNote {
     static type = '[Notes] Update small note';
-    constructor(public note: SmallNote, public typeNote: NoteType) {    }
+    constructor(public note: SmallNote, public typeNote: NoteType) { }
 }
 
 
@@ -56,12 +47,12 @@ export class UpdateSmallNote {
 // Color changing
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
-    constructor(public color: string, public typeNote: EntityType) {    }
+    constructor(public color: string, public typeNote: EntityType) { }
 }
 
 export class ClearColorNotes {
     static type = '[Notes] Clear color note';
-    constructor() {    }
+    constructor() { }
 }
 
 // Set Deleting
@@ -120,22 +111,22 @@ export class ClearAddedPrivateNotes {
 
 export class UpdateLabelOnNote {
     static type = '[Notes] Update label';
-    constructor(public label: Label) {}
+    constructor(public label: Label) { }
 }
 
 export class AddLabelOnNote {
     static type = '[Notes] Add label';
-    constructor(public label: Label, public typeNote: EntityType) {}
+    constructor(public label: Label, public typeNote: EntityType) { }
 }
 
 export class RemoveLabelFromNote {
     static type = '[Notes] Remove label';
-    constructor(public label: Label, public typeNote: EntityType) {}
+    constructor(public label: Label, public typeNote: EntityType) { }
 }
 
 export class ClearUpdatelabelEvent {
     static type = '[Notes] Clear label';
-    constructor(public noteId: string) {}
+    constructor(public noteId: string) { }
 }
 
 // Muuri remove from dom
@@ -154,12 +145,12 @@ export class PositionNote {
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';
-    constructor(public id: string, public labelIds: number[]) {    }
+    constructor(public id: string, public labelIds: number[]) { }
 }
 
 export class UnSelectIdNote {
     static type = '[Notes] Unselect note';
-    constructor(public id: string) {    }
+    constructor(public id: string) { }
 }
 
 export class UnSelectAllNote {
