@@ -23,11 +23,14 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
-    <div class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)" (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth" class="main-content">
+    <div class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)" (panmove)="panMove($event)"
+        (panend)="panEnd($event)">
+        <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth"
+            class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
-                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels" [ngStyle]="{backgroundColor: label.color}">
+                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels"
+                    [ngStyle]="{backgroundColor: label.color}">
                     <p>{{label.name}}</p>
                 </div>
             </div>
@@ -44,7 +47,8 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
             </div>
             <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
-            <ngx-simplebar [options]="pService.optionsScroll" class="small-notes autoscroll-helper" [ngClass]="pService.toggleHistory? 'history-plus' : ''">
+            <ngx-simplebar [options]="pService.optionsScroll" class="small-notes autoscroll-helper"
+                [ngClass]="pService.toggleHistory? 'history-plus' : ''">
                 <div class="grid">
                     <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
                         <div class="small-note">
