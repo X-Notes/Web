@@ -21,7 +21,9 @@ export class NotesService {
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
+      if (this.notes.length > 0) {
       this.notes.find(x => x.id === update.id).color = update.color;
+      }
     }
   }
 

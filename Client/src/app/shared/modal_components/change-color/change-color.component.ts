@@ -84,6 +84,9 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    const flag = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (!flag) {
     this.store.dispatch(new UnSelectAllNote());
+    }
   }
 }
