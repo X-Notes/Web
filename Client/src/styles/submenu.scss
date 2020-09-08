@@ -20,7 +20,7 @@
         z-index: 10;
         display: none;
         opacity: 0;
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0, 0, 0, 0.4);
         visibility: hidden;
         transition: 0.2s ease;
     }
@@ -46,11 +46,11 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            
+
             .active {
                 background-color: $dark-nav-backlight;
             }
-        
+
             .sub-nav-item {
                 outline: none;
                 position: relative;
@@ -60,7 +60,7 @@
                 border-bottom: 1px solid $dark-separator;
                 cursor: pointer;
                 transition: 0.2s ease;
-    
+
                 .item {
                     position: relative;
                     z-index: 5;
@@ -101,7 +101,7 @@
 
                     .item {
                         justify-content: flex-start;
-                        
+
                         p {
                             width: calc(100% - 35px);
                             white-space: nowrap;
@@ -111,27 +111,27 @@
                         }
                     }
                 }
-    
+
                 &:nth-last-child(2) {
                     border: none;
                 }
-        
+
                 &:hover:not(.active) {
                     background-color: $dark-backlight;
                 }
             }
-    
+
             .separator:nth-child(2) {
                 display: none;
             }
         }
-    
+
         .label-section {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: calc(100% - 202px);
-    
+
             .label-cancel {
                 display: flex;
                 justify-content: center;
@@ -148,13 +148,13 @@
                 transition: 0.2s ease;
                 font-size: 0.75rem;
             }
-    
+
             .label-container {
                 display: flex;
                 height: 100%;
                 width: 100%;
                 overflow-y: auto;
-    
+
                 .label {
                     position: relative;
                     display: flex;
@@ -168,7 +168,7 @@
                     &:first-child {
                         margin-top: 0.625rem;
                     }
-        
+
                     .dot {
                         position: absolute;
                         left: 0;
@@ -191,8 +191,8 @@
                         color: #393939;
                         background-color: $red-label;
                         font-size: 0.75rem;
-            
-                        p:first-child{
+
+                        p:first-child {
                             overflow: hidden;
                             white-space: nowrap;
                             text-overflow: ellipsis;
@@ -200,23 +200,23 @@
                         }
                     }
                 }
-        
+
                 .active-label {
                     margin: 0 0.875rem 0.625rem 1.5rem;
                     width: calc(100% - 2.375rem);
-                    padding-left: 0.625rem;    
+                    padding-left: 0.625rem;
                 }
             }
         }
 
         .active-select {
-            
+
             .label-cancel {
                 max-height: 20px;
                 margin-top: 0.625rem;
                 margin-bottom: 0.625rem;
             }
-            
+
             .label-container {
                 height: calc(100% - 40px);
 
@@ -225,15 +225,15 @@
                 }
             }
         }
-    
+
         .background-section {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: calc(100% - 40px);
             overflow-y: auto;
-    
-    
+
+
             .background {
                 position: relative;
                 height: 60px;
@@ -243,7 +243,7 @@
                 border-radius: 5px;
                 overflow: hidden;
                 transition: 0.2s ease;
-    
+
                 .thumbnail {
                     position: absolute;
                     right: 5px;
@@ -258,29 +258,33 @@
                     font-size: 0.5rem;
                     opacity: 0;
                     transition: 0.2s ease;
-    
+
                     &:hover {
                         background-color: $dark-nav-backlight;
                     }
+
+                    i {
+                        transform: rotate(45deg);
+                    }
                 }
-    
+
                 img {
                     height: 100%;
                     width: 100%;
                     object-fit: cover;
                 }
-    
+
                 &:hover {
                     .thumbnail {
                         opacity: 1;
                     }
                 }
             }
-    
+
             .active-background {
                 box-shadow: 0 0 0 1px #2ABCFB;
             }
-    
+
         }
 
         .notes-section {
@@ -290,7 +294,7 @@
             width: 100%;
             transition: 0.2s ease;
 
-            .note{
+            .note {
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
@@ -324,7 +328,7 @@
                 margin: 0.875rem 1.5rem 0 1.5rem;
                 border-radius: 5px;
                 overflow: hidden;
-                
+
                 .invitation-inner {
                     display: flex;
                     align-items: center;
@@ -375,7 +379,7 @@
                     display: flex;
                     width: 100%;
                     height: 100%;
-                    background-color: rgba(0,0,0,0.6);
+                    background-color: rgba(0, 0, 0, 0.6);
                     transition: 0.2s ease;
                     opacity: 0;
                     visibility: hidden;
@@ -390,7 +394,7 @@
                         cursor: pointer;
 
                         &:hover {
-                            background-color: rgba(0,0,0,0.2);
+                            background-color: rgba(0, 0, 0, 0.2);
                         }
                     }
                 }
@@ -403,7 +407,7 @@
                 }
             }
         }
-    
+
         .information {
             display: flex;
             flex-direction: column;
@@ -429,12 +433,12 @@
                 .billing {
                     display: none;
                 }
-                
+
                 .progress-bar-section {
                     display: flex;
                     flex-direction: column;
                     width: 100%;
-    
+
                     .text {
                         font-weight: 300;
                         font-size: 0.625rem;
@@ -442,13 +446,13 @@
                         margin-bottom: 0.3125rem;
                         transition: 0.2s ease;
                     }
-            
+
                     .progress-bar {
                         height: 5px;
                         width: 100%;
                         border-radius: 3px;
                         background-color: #1A1A1A;
-            
+
                         .indicator {
                             height: inherit;
                             border-radius: inherit;
@@ -474,27 +478,27 @@
             .active {
                 background-color: $light-nav-backlight;
             }
-    
+
             .sub-nav-item {
                 border-color: $light-theme-separator;
                 color: $light-text-color;
-    
+
                 &:hover:not(.active) {
                     background-color: #f9f9f9;
                 }
             }
         }
-    
+
         .label-section {
             .label-cancel {
                 background-color: $light-cancel-label;
                 color: $light-text-color;
             }
         }
-        
+
         .information {
             background-color: $light-billing-field;
-    
+
             .text {
                 color: $light-text-color;
             }
@@ -503,7 +507,7 @@
 }
 
 @media (max-width: 1024px) {
-    :host{
+    :host {
         width: 100%;
         height: calc(100% - 80px);
     }
@@ -538,10 +542,10 @@
                     }
                 }
             }
-            
+
             .label-section {
                 height: calc(100% - 262px);
-                
+
                 .label-cancel {
                     margin-right: 1rem;
                     margin-left: 1rem;
@@ -558,20 +562,24 @@
                     .active-label {
                         margin: 0 0.5rem 0.625rem 1rem;
                         width: calc(100% - 1.5rem);
-                        padding-left: 0.625rem;    
+                        padding-left: 0.625rem;
                     }
                 }
             }
 
-            .background-section, .invitations-section, .notes-section {
+            .background-section,
+            .invitations-section,
+            .notes-section {
                 height: calc(100% - 100px);
 
-                .invitation, .background, .note {
+                .invitation,
+                .background,
+                .note {
                     margin-right: 1rem;
                     margin-left: 1rem;
                     width: calc(100% - 2rem);
                 }
-                
+
                 .invitation {
                     .invitation-inner {
                         .photo {
@@ -600,7 +608,7 @@
                         display: flex;
                         margin-right: 0.5rem;
                     }
-    
+
                     .progress-bar-section {
                         width: calc(100% - 34px);
                     }
@@ -622,6 +630,7 @@
         }
     }
 }
+
 @media (max-width: 320px) {
     :host {
         height: calc(100% - 65px);
@@ -639,7 +648,7 @@
 
                 .sub-nav-item:first-child {
                     height: 44px;
-                    
+
                     .item {
                         p {
                             font-weight: 300;
@@ -648,12 +657,13 @@
                     }
                 }
             }
-            
+
             .label-section {
                 height: calc(100% - 256px);
             }
 
-            .background-section, .invitations-section {
+            .background-section,
+            .invitations-section {
                 height: calc(100% - 95px);
             }
 
