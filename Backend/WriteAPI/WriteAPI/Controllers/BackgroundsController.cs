@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.backgrounds;
 using Domain.Commands.backgrounds;
+using Domain.Queries.backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -44,11 +46,18 @@ namespace WriteAPI.Controllers
             await _mediator.Send(new UpdateBackgroundCommand(email, id));
         }
 
-        [HttpPost("background")]
-        public async Task NewBackgroundPhoto(IFormFile photo)
+        [HttpPost("new")]
+        public async Task<BackgroundDTO> NewBackgroundPhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new NewBackgroundCommand(email, photo));
+            return await _mediator.Send(new NewBackgroundCommand(email, photo));
+        }
+
+        [HttpGet]
+        public async Task<List<BackgroundDTO>> GetAll()
+        {
+            var email = this.GetUserEmail();
+            return await _mediator.Send(new GetUserBackgroundsQuery(email));
         }
     }
 }

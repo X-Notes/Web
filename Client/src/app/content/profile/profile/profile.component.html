@@ -6,16 +6,17 @@
                     <div class="photo">
                         <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
                     </div>
-                    <p>Davyd Konopatskyi</p>
+                    <p>CHANGE THIS SHIT BLAT</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
         </div>
         <ngx-simplebar [options]="pService.optionsScroll" class="background-section">
-            <div class="background" *ngFor="let item of items" (click)="toggle()" [ngClass]="check ? 'active-background' : ''">
-                <img alt="background" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
-                <div class="thumbnail">
+            <div class="background" *ngFor="let item of backgrounds$ | async"
+                [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''">
+                <img alt="background" [src]="item.path" (click)="setCurrent(item.id)">
+                <div class="thumbnail" (click)="removeBackground(item.id)">
                     <i class="icon-plus"></i>
                 </div>
             </div>
@@ -107,7 +108,7 @@
             <div class="header">
                 <p>Account</p>
             </div>
-            <div class="account-setting generic-section" >
+            <div class="account-setting generic-section">
                 <div class="field-language">
                     <div class="field-name">
                         <p>Language</p>
@@ -120,7 +121,8 @@
                             </div>
                         </div>
                         <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                        <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage" [@showHistory]>
+                        <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage"
+                            [@showHistory]>
                             <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
                                 <p>{{ item | translate }}</p>
                             </div>
@@ -154,7 +156,7 @@
             <div class="header">
                 <p>Personalization</p>
             </div>
-            <div class="personalization-setting generic-section" >
+            <div class="personalization-setting generic-section">
                 <div class="fields">
                     <div class="field">
                         <div class="general-row">
@@ -185,7 +187,8 @@
                             </div>
                             <div class="toggle">
                                 <input type="checkbox" (change)="changeFontSize()">
-                                <div class="rectangle" [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'"></div>
+                                <div class="rectangle" [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
+                                </div>
                                 <div class="text-toggle">
                                     <div class="text">
                                         <p>Default</p>
@@ -205,3 +208,5 @@
         </div>
     </ngx-simplebar>
 </div>
+
+<input #uploadFile type="file" accept="image/jpeg,image/png" hidden="true" (change)="uploadImage($event)">

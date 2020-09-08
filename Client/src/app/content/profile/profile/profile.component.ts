@@ -1,11 +1,11 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen, showHistory } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Language } from 'src/app/shared/enums/Language';
-import { ChangeLanguage, ChangeFontSize, ChangeTheme } from 'src/app/core/stateUser/user-action';
+import { ChangeLanguage, ChangeFontSize, ChangeTheme,  } from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -13,6 +13,10 @@ import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { takeUntil } from 'rxjs/operators';
+import { Background } from 'src/app/core/models/background';
+import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
+import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +24,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
   styleUrls: ['./profile.component.scss'],
   animations: [ sideBarCloseOpen, showHistory ]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -34,13 +38,18 @@ export class ProfileComponent implements OnInit {
   @Select(UserStore.getUserLanguage)
   public language$: Observable<Language>;
 
+  @Select(BackgroundStore.getUserBackgrounds)
+  public backgrounds$: Observable<Background[]>;
+
+  @ViewChild('uploadFile') uploadPhoto: ElementRef;
+
   @ViewChild('overlay') overlay: ElementRef;
   userName;
-  check = true;
   dropdownLanguage = false;
   languages = EnumUtil.getEnumValues(Language);
   theme = Theme;
-  items: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 , 12, 13];
+
+  destroy = new Subject<void>();
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -49,9 +58,14 @@ export class ProfileComponent implements OnInit {
               private router: Router) { }
 
   async ngOnInit() {
+    this.store.dispatch(new LoadBackgrounds());
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
     this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
+
+    this.pService.subject
+    .pipe(takeUntil(this.destroy))
+    .subscribe(x => this.newBackground());
   }
 
   setLanguage(item: any): void  {
@@ -68,8 +82,12 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  toggle() {
-    this.check = !this.check;
+  setCurrent(id: number) {
+    this.store.dispatch(new SetBackground(id));
+  }
+
+  removeBackground(id: number) {
+    this.store.dispatch(new RemoveBackground(id));
   }
 
   cancelSideBar() {
@@ -105,4 +123,23 @@ export class ProfileComponent implements OnInit {
   changeFontSize() {
     this.store.dispatch(new ChangeFontSize());
   }
+
+  async newBackground() {
+    this.uploadPhoto.nativeElement.click();
+  }
+
+  uploadImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const formDate = new FormData();
+      formDate.append('photo', file);
+      this.store.dispatch(new NewBackground(formDate));
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
 }

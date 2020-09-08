@@ -18,6 +18,7 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { FolderStore } from './content/folders/state/folders-state';
 import { AppStore } from './core/stateApp/app-state';
 import { FullNoteStore } from './content/notes/state/full-note-state';
+import { BackgroundStore } from './core/backgrounds/background-state';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { FullNoteStore } from './content/notes/state/full-note-state';
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     SharedModule,
     ContentModule,
-    NgxsModule.forRoot([LabelStore, NoteStore, UserStore,
+    NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore,
       FolderStore, AppStore, FullNoteStore], { developmentMode: !environment.production }),
     NgxsStoragePluginModule.forRoot({
       key: UserStore

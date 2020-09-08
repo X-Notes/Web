@@ -20,7 +20,9 @@ namespace WriteContext.Repositories
 
         public async Task<User> GetUserByEmailWithPersonalization(string email)
         {
-            return await contextDB.Users.Include(x => x.PersonalitionSettings).FirstOrDefaultAsync(x => x.Email == email);
+            return await contextDB.Users
+                .Include(x => x.CurrentBackground)
+                .Include(x => x.PersonalitionSettings).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithBackgrounds(string email)

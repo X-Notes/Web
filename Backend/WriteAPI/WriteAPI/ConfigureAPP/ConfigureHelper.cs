@@ -1,9 +1,11 @@
 ﻿using BI.helpers;
 using BI.services;
+using BI.services.backgrounds;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
 using BI.services.user;
+using Common.DTO.backgrounds;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -16,6 +18,7 @@ using Domain.Commands.orders;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
+using Domain.Queries.backgrounds;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
@@ -98,7 +101,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewBackgroundCommand, Unit>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewBackgroundCommand, BackgroundDTO>, BackgroundHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
 
             //Labels
             services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();

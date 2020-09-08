@@ -11,11 +11,12 @@ import { UnSelectAllNote, SelectAllNote,
   DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
 import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { ChangeTheme } from 'src/app/core/stateUser/user-action';
+import { ChangeTheme, SetDefaultBackground } from 'src/app/core/stateUser/user-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton, UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
+import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton,
+  UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -287,6 +288,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (routePath) {
       this.store.dispatch(new UnSelectAllFolder());
     }
+  }
+
+  setDefaultColorProfile() {
+    this.store.dispatch(new SetDefaultBackground());
   }
 
   // UPPER MENU FUNCTION NOTES
