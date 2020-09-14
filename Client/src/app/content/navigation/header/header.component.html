@@ -60,8 +60,8 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
             </button>
             <button *ngIf="(defaultBackground$ | async)" (click)="setDefaultColorProfile()" name="Default" type="button"
-                class="generic filters" #default>
-                <div class="inner-content">
+                class="generic default-size filters" #default>
+                <div class="default inner-content">
                     <p>Default color</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
