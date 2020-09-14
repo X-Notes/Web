@@ -47,3 +47,8 @@ export class SetDefaultBackground {
     static type = '[User] setDefault Background';
     constructor() {}
 }
+
+export class UpdateUserName {
+    static type = '[User] update userName';
+    constructor(public newName: string) {}
+}

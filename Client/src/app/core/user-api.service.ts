@@ -57,4 +57,11 @@ export class UserAPIService {
     return this.httpClient.post(environment.writeAPI + '/api/user/language' , obj);
   }
 
+  updateUserName(name: string) {
+    const obj = {
+      name
+    };
+    return this.httpClient.put(environment.writeAPI + '/api/user/username' , obj);
+  }
+
 }

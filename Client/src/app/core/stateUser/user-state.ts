@@ -5,7 +5,7 @@ import { UserAPIService } from '../user-api.service';
 import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage,
     ChangeFontSize,
     SetCurrentBackground,
-    SetDefaultBackground,  } from './user-action';
+    SetDefaultBackground, UpdateUserName  } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Language } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
@@ -142,6 +142,14 @@ export class UserStore {
         await this.backgroundAPI.defaultBackground().toPromise();
         patchState({
             user: {...getState().user, currentBackground: null}
+        });
+    }
+
+    @Action(UpdateUserName)
+    async updateUserName({ patchState, getState }: StateContext<UserState>, {newName}: UpdateUserName) {
+        await this.api.updateUserName(newName).toPromise();
+        patchState({
+            user: {...getState().user, name: newName}
         });
     }
 }

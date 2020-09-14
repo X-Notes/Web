@@ -52,7 +52,7 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(new GetShortUser(currentUserEmail));
         }
 
-        [HttpPut("main")]
+        [HttpPut("username")]
         public async Task UpdateMainInformation([FromBody]UpdateMainUserInfoCommand info)
         {
             var currentUserEmail = this.GetUserEmail();

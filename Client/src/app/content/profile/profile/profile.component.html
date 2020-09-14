@@ -60,7 +60,7 @@
                         <div class="field-name">
                             <p>Name</p>
                         </div>
-                        <input type="text" placeholder="Your name" [ngModel]="userName">
+                        <input type="text" placeholder="Your name" [(ngModel)]="userName">
                     </div>
                     <div class="field">
                         <div class="field-name">
@@ -83,7 +83,7 @@
                     </div>
                     <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
                 </button>
-                <button class="generic-button" type="button" name="Update button" #updateProfile>
+                <button class="generic-button" type="button" name="Update button" #updateProfile (click)="updateName()">
                     <div class="content-button">
                         <p>Update</p>
                     </div>
