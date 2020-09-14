@@ -64,4 +64,8 @@ export class UserAPIService {
     return this.httpClient.put(environment.writeAPI + '/api/user/username' , obj);
   }
 
+  updateUserPhoto(photo: FormData) {
+    return this.httpClient.post<any>(environment.writeAPI + '/api/user/photo', photo);
+  }
+
 }

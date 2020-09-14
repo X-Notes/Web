@@ -27,5 +27,4 @@ export class BackgroundService {
   defaultBackground() {
     return this.httpClient.get(environment.writeAPI + '/api/backgrounds/background/default');
   }
-
 }

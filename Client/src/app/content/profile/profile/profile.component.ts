@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import { Language } from 'src/app/shared/enums/Language';
-import { ChangeLanguage, ChangeFontSize, ChangeTheme, UpdateUserName  } from 'src/app/core/stateUser/user-action';
+import { ChangeLanguage, ChangeFontSize, ChangeTheme, UpdateUserName, UpdateUserPhoto  } from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -131,7 +131,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ChangeFontSize());
   }
 
-  async newBackground() {
+  newBackground() {
     this.uploadPhoto.nativeElement.click();
   }
 
@@ -141,6 +141,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
       const formDate = new FormData();
       formDate.append('photo', file);
       this.store.dispatch(new NewBackground(formDate));
+    }
+  }
+
+  uploadImageUserPhoto(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const formDate = new FormData();
+      formDate.append('photo', file);
+      this.store.dispatch(new UpdateUserPhoto(formDate));
     }
   }
 

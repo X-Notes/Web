@@ -31,6 +31,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using Shared.Queue.Interfaces;
 using Shared.Queue.QueueServices;
@@ -92,7 +93,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, Unit>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, JObject>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();

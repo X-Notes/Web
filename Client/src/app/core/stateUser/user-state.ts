@@ -5,7 +5,7 @@ import { UserAPIService } from '../user-api.service';
 import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage,
     ChangeFontSize,
     SetCurrentBackground,
-    SetDefaultBackground, UpdateUserName  } from './user-action';
+    SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Language } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
@@ -150,6 +150,15 @@ export class UserStore {
         await this.api.updateUserName(newName).toPromise();
         patchState({
             user: {...getState().user, name: newName}
+        });
+    }
+
+    @Action(UpdateUserPhoto)
+    async updateUserPhoto({ patchState, getState }: StateContext<UserState>, {photo}: UpdateUserPhoto) {
+        let newPhoto = await this.api.updateUserPhoto(photo).toPromise();
+        newPhoto = newPhoto.url;
+        patchState({
+            user: {...getState().user, photoId: newPhoto}
         });
     }
 }

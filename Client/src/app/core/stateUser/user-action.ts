@@ -52,3 +52,8 @@ export class UpdateUserName {
     static type = '[User] update userName';
     constructor(public newName: string) {}
 }
+
+export class UpdateUserPhoto {
+    static type = '[User] update userPhoto';
+    constructor(public photo: FormData) {}
+}

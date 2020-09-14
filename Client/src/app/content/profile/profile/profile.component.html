@@ -47,7 +47,7 @@
             <div class="user-info generic-section">
                 <div class="photo" appDrop>
                     <img [src]="(user$ | async).photoId" alt="User photo">
-                    <input type="file" name="choose photo" id="upl">
+                    <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
                     <label for="upl" class="change-photo" #profilePhoto>
                         <div class="icon">
                             <i class="icon-plus"></i>
