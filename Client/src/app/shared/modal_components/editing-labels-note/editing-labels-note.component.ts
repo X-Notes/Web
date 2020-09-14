@@ -9,6 +9,7 @@ import { PersonalizationService } from '../../services/personalization.service';
 import { UpdateLabel, DeleteLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { trigger, transition, animate, style } from '@angular/animations';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -30,7 +31,10 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   searchStr = '';
 
   ngOnDestroy(): void {
+    const flag = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (!flag) {
     this.store.dispatch(new UnSelectAllNote());
+    }
   }
 
   ngOnInit(): void {

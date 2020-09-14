@@ -16,6 +16,7 @@ import { MurriService } from './services/murri.service';
 import { OrderService } from './services/order.service';
 import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
 import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
+import { BackgroundService } from '../content/profile/background.service';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -23,6 +24,6 @@ import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.p
   imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe ],
-  providers: [DialogService, MurriService, OrderService]
+  providers: [DialogService, MurriService, OrderService, BackgroundService]
 })
 export class SharedModule { }

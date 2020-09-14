@@ -6,6 +6,7 @@ using Common.DatabaseModels.models;
 using Domain.Commands.users;
 using MediatR;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,7 +19,7 @@ namespace BI.services.user
     public class UserHandlerСommand :
         IRequestHandler<NewUserCommand, Unit>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
-        IRequestHandler<UpdatePhotoCommand, Unit>,
+        IRequestHandler<UpdatePhotoCommand, JObject>,
         IRequestHandler<UpdateLanguageCommand, Unit>,
         IRequestHandler<UpdateThemeCommand, Unit>,
         IRequestHandler<UpdateFontSizeCommand, Unit>
@@ -53,12 +54,15 @@ namespace BI.services.user
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
+        public async Task<JObject> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             user.PhotoId = await photoHelpers.GetBase64(request.File);
             await userRepository.Update(user);
-            return Unit.Value;
+
+            var resp = new JObject();
+            resp.Add("url", user.PhotoId);
+            return resp;
         }
 
         public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)

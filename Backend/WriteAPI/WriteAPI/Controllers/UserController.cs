@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Services;
 
@@ -52,7 +53,7 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(new GetShortUser(currentUserEmail));
         }
 
-        [HttpPut("main")]
+        [HttpPut("username")]
         public async Task UpdateMainInformation([FromBody]UpdateMainUserInfoCommand info)
         {
             var currentUserEmail = this.GetUserEmail();
@@ -61,10 +62,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("photo")]
-        public async Task ChangeProfilePhoto(IFormFile photo)
+        public async Task<JObject> ChangeProfilePhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new UpdatePhotoCommand(photo, email));
+            return await _mediator.Send(new UpdatePhotoCommand(photo, email));
         }
 
         [HttpPost("language")]

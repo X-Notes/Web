@@ -2,11 +2,16 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { UserAPIService } from '../user-api.service';
-import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage, ChangeFontSize } from './user-action';
+import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage,
+    ChangeFontSize,
+    SetCurrentBackground,
+    SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Language } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { Background } from '../models/background';
+import { BackgroundService } from 'src/app/content/profile/background.service';
 
 interface UserState {
     user: ShortUser;
@@ -21,7 +26,7 @@ interface UserState {
         user: null,
         isLogin: false,
         token: null,
-        tokenUpdated: false
+        tokenUpdated: false,
     }
 })
 
@@ -29,7 +34,8 @@ interface UserState {
 export class UserStore {
 
     constructor(private api: UserAPIService,
-                private translateService: TranslateService) {
+                private translateService: TranslateService,
+                private backgroundAPI: BackgroundService) {
 
     }
 
@@ -47,6 +53,7 @@ export class UserStore {
     static getUserTheme(state: UserState): Theme {
         return state.user.theme;
     }
+
 
     @Selector()
     static getUserFontSize(state: UserState): FontSize {
@@ -74,7 +81,7 @@ export class UserStore {
         if (userdb === null) {
             userdb = await this.api.newUser(user).toPromise();
         }
-        setState({ user: userdb, isLogin: true, token, tokenUpdated: true });
+        setState({ user: userdb, isLogin: true, token, tokenUpdated: true});
     }
 
     @Action(Logout)
@@ -123,5 +130,35 @@ export class UserStore {
             user = {...user, fontSize: FontSize.Big};
         }
         patchState({ user });
+    }
+
+    @Action(SetCurrentBackground)
+    setCurrent({ patchState, getState }: StateContext<UserState>, {background}: SetCurrentBackground) {
+        patchState({ user: {...getState().user, currentBackground: background } });
+    }
+
+    @Action(SetDefaultBackground)
+    async setDefault({ patchState, getState }: StateContext<UserState>) {
+        await this.backgroundAPI.defaultBackground().toPromise();
+        patchState({
+            user: {...getState().user, currentBackground: null}
+        });
+    }
+
+    @Action(UpdateUserName)
+    async updateUserName({ patchState, getState }: StateContext<UserState>, {newName}: UpdateUserName) {
+        await this.api.updateUserName(newName).toPromise();
+        patchState({
+            user: {...getState().user, name: newName}
+        });
+    }
+
+    @Action(UpdateUserPhoto)
+    async updateUserPhoto({ patchState, getState }: StateContext<UserState>, {photo}: UpdateUserPhoto) {
+        let newPhoto = await this.api.updateUserPhoto(photo).toPromise();
+        newPhoto = newPhoto.url;
+        patchState({
+            user: {...getState().user, photoId: newPhoto}
+        });
     }
 }

@@ -23,7 +23,9 @@ export class FolderService {
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
+      if (this.folders.length > 0) {
       this.folders.find(x => x.id === update.id).color = update.color;
+      }
     }
   }
 

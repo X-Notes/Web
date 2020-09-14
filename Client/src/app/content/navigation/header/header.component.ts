@@ -11,11 +11,12 @@ import { UnSelectAllNote, SelectAllNote,
   DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
 import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
   MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { ChangeTheme } from 'src/app/core/stateUser/user-action';
+import { ChangeTheme, SetDefaultBackground } from 'src/app/core/stateUser/user-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton,
+  UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -45,6 +46,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;
+
+  @Select(AppStore.getdefaultBackground)
+  public defaultBackground$: Observable<boolean>;
   //
 
   @Select(AppStore.isNoteInner)
@@ -145,21 +149,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (type) {
       case EntityType.FolderPrivate: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setFoldersPrivate();
         break;
       }
       case EntityType.FolderShared: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setFoldersShared();
         break;
       }
       case EntityType.FolderArchive: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setFoldersArchive();
         break;
       }
       case EntityType.FolderDeleted: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setFoldersDeleted();
         break;
       }
@@ -170,25 +178,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       case EntityType.NotePrivate: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setNotesPrivate();
         break;
       }
       case EntityType.NoteShared: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setNotesShared();
         break;
       }
       case EntityType.NoteArchive: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setNotesArchive();
         break;
       }
       case EntityType.NoteDeleted: {
         this.showAllButtons();
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setNotesDeleted();
         break;
       }
-      case EntityType.NoteInner: {
+      case EntityType.NoteInner:
+      this.store.dispatch(new UpdateDefaultBackgroundButton(false)); {
        // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
           case NoteType.Private: {
@@ -212,17 +225,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
 
       case EntityType.LabelPrivate: {
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
       case EntityType.LabelDeleted: {
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
+
+
+      case EntityType.Profile: {
+        this.store.dispatch(new UpdateDefaultBackgroundButton(true));
+        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        break;
+      }
+
       default: {
         console.log('default');
       }
@@ -263,6 +288,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (routePath) {
       this.store.dispatch(new UnSelectAllFolder());
     }
+  }
+
+  setDefaultColorProfile() {
+    this.store.dispatch(new SetDefaultBackground());
   }
 
   // UPPER MENU FUNCTION NOTES

@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.helpers;
+using Common.DTO.backgrounds;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -12,7 +13,7 @@ namespace Common.DTO.users
         public string Name { set; get; }
         public string Email { set; get; }
         public string PhotoId { set; get; }
-        public string BackgroundId { set; get; }
+        public BackgroundDTO CurrentBackground { set; get; }
         [JsonConverter(typeof(StringEnumConverter))]
         public Language Language { set; get; }
         public Theme Theme { set; get; }
