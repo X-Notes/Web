@@ -123,6 +123,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
+  closeMenu(): void {
+    if(this.pService.checkWidth()) {
+      this.pService.users = false;
+    }
+
+    if(!this.pService.check()) {
+      this.pService.hideInnerMenu = false;
+    }
+  }
+
   configShowMenu(flag: boolean) {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       this.store.dispatch(new UpdateNewButton(false));
