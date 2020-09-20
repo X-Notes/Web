@@ -17,13 +17,17 @@ import { OrderService } from './services/order.service';
 import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
 import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
 import { BackgroundService } from '../content/profile/background.service';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { TooltipComponent } from './tooltip/tooltip.component';
+import { TooltipDirective } from './tooltip/tooltip.directive';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
-    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe],
-  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, TooltipComponent, TooltipDirective],
+  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, OverlayModule],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
-    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe ],
-  providers: [DialogService, MurriService, OrderService, BackgroundService]
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, TooltipDirective ],
+  providers: [DialogService, MurriService, OrderService, BackgroundService],
+  entryComponents: [ TooltipComponent ]
 })
 export class SharedModule { }

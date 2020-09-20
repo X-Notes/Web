@@ -1,5 +1,6 @@
 <div class="wrap" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (isNoteInner$ | async) ? 'mobile-menu' : '']">
-    <div class="icon" *ngFor="let item of buttonService.items" #trigger (click)="item.operation()">
+    <div class="icon" *ngFor="let item of buttonService.items" #trigger (click)="item.operation()"
+    CustomTooltip="{{item.icon}}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
         <div class="inner">
             <i class="icon-{{item.icon}}"></i>
             <p>{{item.icon}}</p>

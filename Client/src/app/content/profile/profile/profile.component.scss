@@ -492,6 +492,14 @@
     .content-inner {
         padding: 0 5vw;
     }
+
+    .sub-nav {
+        .sub-nav-section {
+            .background-section {
+                height: 100%;
+            }
+        }
+    }
 }
 
 @media (max-width: 768px) {

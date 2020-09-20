@@ -35,5 +35,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     console.log('init');
   }
 
-
+  disableTooltpUser(): boolean {
+    if (!this.pService.check()) {
+      return true;
+    }
+  }
 }
