@@ -1,4 +1,4 @@
-<header [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<header [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.users ? 'visible-people' : '']">
 
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>
@@ -74,7 +74,7 @@
         </div>
 
 
-        <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="[pService.hideInnerMenu ? 'visible' : '' , pService.users ? 'visible-people' : '']">
+        <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
             <button CustomTooltip="Go back" position="Bottom" type="button" name="Back" class="generic filters mobile-buttons" #back>
                 <div class="inner-content">
                     <i class="icon-select-label"></i>

@@ -74,6 +74,17 @@
         h4 {
             @include text-overflow
         }
+
+        .not-named {
+            display: none;
+            font-size: 1.25rem;
+            color: #808080;
+            font-weight: 400;
+        }
+
+        h4:empty + .not-named {
+            display: block;
+        }
     }
 
     .description {
@@ -224,8 +235,7 @@
             .label {
                 margin-right: 1rem;
                 padding: 0 0.5rem;
-                max-width: initial;
-                width: calc(100% / 2 - 0.5rem);
+                max-width: calc(100% / 2 - 0.5rem);
             }
         }
 
@@ -250,8 +260,8 @@
     .small {
         .labels {
             .label {
-                max-width: initial;
-                width: 100%;
+                max-width: 100%;
+                width: auto;
                 margin-right: 0;
     
                 &:last-child {

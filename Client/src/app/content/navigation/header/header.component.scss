@@ -799,9 +799,14 @@ header {
 }
 
 @media (min-width: 1024px) and (max-width: 1440px) {
-  header {
+  .visible-people {
+    .profile-section {
+      .profile {
+        z-index: 50;
+      }
+    }
     .inner-menu {
-      .visible-people {
+      .interactions {
         .user-circle, .wrapper-people {
           z-index: 50;
         }
@@ -951,7 +956,7 @@ header {
       }
 
       .visible {
-        button, .menu-inner {
+        button, .menu-inner, .three-dots {
           z-index: 50;
         }
   
