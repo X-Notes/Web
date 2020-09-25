@@ -7,7 +7,8 @@
     [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
     <div class="labels">
         <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
-            [ngStyle]="{backgroundColor: label.color}">
+            [ngStyle]="{backgroundColor: label.color}"
+            CustomTooltip="{{ label.name }}" position="Top" labelColor="{{ label.color }}">
             <p>{{label.name}}</p>
         </div>
     </div>

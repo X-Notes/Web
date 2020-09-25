@@ -12,6 +12,8 @@ export class TooltipComponent implements OnInit {
   
   @Input() public text = '';
   @HostBinding('@tooltip') anim = true;
+  labelClass: boolean;
+  labelColor: string;
 
   constructor() { }
 

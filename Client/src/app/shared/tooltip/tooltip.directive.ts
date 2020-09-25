@@ -12,6 +12,7 @@ export class TooltipDirective implements OnInit {
   @Input('CustomTooltip') text = '';
   @Input('position') pos = '';
   @Input('flagDisable') disable = '';
+  @Input('labelColor') labelColor = '';
   
   private overlayRef: OverlayRef;
 
@@ -85,10 +86,22 @@ export class TooltipDirective implements OnInit {
     if (this.disable === 'true') {
       return;
     }
+    if(this.labelColor != '') {
+      if (this.text.length < 9) {
+        return;
+      }
+    }
     const tooltipRef: ComponentRef<TooltipComponent>
       = this.overlayRef.attach(new ComponentPortal(TooltipComponent));
     this.text = this.text.charAt(0).toUpperCase() + this.text.slice(1);
     tooltipRef.instance.text = this.text;
+    if(this.labelColor != '') {
+      tooltipRef.instance.labelClass = true;
+      tooltipRef.instance.labelColor = this.labelColor;
+    } else {
+      tooltipRef.instance.labelClass = false;
+      tooltipRef.instance.labelColor = null;
+    }
   }
 
   @HostListener('mouseleave')
