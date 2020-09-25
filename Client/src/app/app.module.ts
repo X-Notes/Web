@@ -19,6 +19,7 @@ import { FolderStore } from './content/folders/state/folders-state';
 import { AppStore } from './core/stateApp/app-state';
 import { FullNoteStore } from './content/notes/state/full-note-state';
 import { BackgroundStore } from './core/backgrounds/background-state';
+import { TooltipComponent } from './shared/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -36,9 +37,9 @@ import { BackgroundStore } from './core/backgrounds/background-state';
       FolderStore, AppStore, FullNoteStore], { developmentMode: !environment.production }),
     NgxsStoragePluginModule.forRoot({
       key: UserStore
-    })
+    }),
   ],
   providers: [ContentLoadGuard, ContentActiveteGuard],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

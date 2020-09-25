@@ -1,4 +1,4 @@
-<header [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<header [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.users ? 'visible-people' : '']">
 
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>
@@ -52,7 +52,7 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
             </button>
-            <button *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button"
+            <button CustomTooltip="Setting" position="Bottom" *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button"
                 class="generic filters filter" #filter>
                 <div class="inner-content">
                     <i class="icon-filter"></i>
@@ -74,21 +74,21 @@
         </div>
 
 
-        <div class="interactions" *ngIf="(isNoteInner$ | async)">
-            <button type="button" name="Back" class="generic filters mobile-buttons" #back>
+        <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
+            <button CustomTooltip="Go back" position="Bottom" type="button" name="Back" class="generic filters mobile-buttons" #back>
                 <div class="inner-content">
                     <i class="icon-select-label"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="back"></div>
             </button>
-            <div class="user-circle" (click)="showUsers()" #userCircle>
+            <div CustomTooltip="Number of users" position="Bottom" class="user-circle" (click)="showUsers()" #userCircle>
                 <p>8</p>
                 <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
             </div>
             <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
                 [@.disabled]="pService.AnimationInnerUsers">
                 <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
-                    <div class="person" *ngFor="let item of user" title="fucking person">
+                    <div class="person" *ngFor="let item of user" CustomTooltip="{{item}}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
                         <div class="inner-person">
                             <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
                                 alt="contributor">
@@ -97,7 +97,7 @@
                     </div>
                 </ngx-simplebar>
             </div>
-            <button name="Filter" type="button" class="generic filters" #video>
+            <button CustomTooltip="Video" position="Bottom" name="Filter" type="button" class="generic filters" #video>
                 <div class="inner-content">
                     <i class="icon-video"></i>
                 </div>
@@ -114,48 +114,49 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
             </button>
-            <button name="label" type="button" class="generic filters mobile-buttons" #label>
+            <button CustomTooltip="Label" position="Bottom" name="label" type="button" class="generic filters mobile-buttons" #label>
                 <div class="inner-content">
                     <i class="icon-label"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
             </button>
-            <button name="shared" type="button" class="generic filters mobile-buttons" #shared>
+            <button CustomTooltip="shared" position="Bottom" name="shared" type="button" class="generic filters mobile-buttons" #shared>
                 <div class="inner-content">
                     <i class="icon-shared"></i>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
             </button>
-            <div class="three-dots mobile-buttons" (click)="hideMenu()" #dots>
+            <div CustomTooltip="Menu" position="Bottom" class="three-dots mobile-buttons" (click)="hideMenu()" #dots>
                 <span></span>
                 <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
             </div>
+            <div class="overlay" (click)="closeMenu()"></div>
         </div>
 
 
         <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
             <div class="search">
-                <input type="search" placeholder="Search..." aria-label="Search search search">
-                <button type="button">
+                <input id="searchField" type="search" placeholder="Search..." aria-label="Search search search">
+                <label for="searchField">
                     <div class="icon">
                         <i class="icon-search"></i>
                     </div>
-                </button>
+                </label>
             </div>
-            <div class="auxiliary-icon" (click)="toggleTheme()" #themeApp>
+            <div CustomTooltip="Theme" position="Bottom" class="auxiliary-icon" (click)="toggleTheme()" #themeApp>
                 <i class="icon-theme_light"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
             </div>
-            <div class="auxiliary-icon" #question>
+            <div CustomTooltip="Question" position="Bottom" class="auxiliary-icon" #question>
                 <i class="icon-question"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
             </div>
-            <div class="auxiliary-icon mobile" #notificationHeader>
+            <div CustomTooltip="Notification" position="Bottom" class="auxiliary-icon mobile" #notificationHeader>
                 <i class="icon-notification"></i>
                 <div class="push">1</div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
             </div>
-            <div class="auxiliary-icon mobile" (click)="toggleOrientation()" #orientationNote>
+            <div CustomTooltip="Orientation" position="Bottom" class="auxiliary-icon mobile" (click)="toggleOrientation()" #orientationNote>
                 <i class="icon-view-change"></i>
                 <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
             </div>
