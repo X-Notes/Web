@@ -1,3 +1,4 @@
+import { RefType } from 'src/app/core/models/refType';
 import { Label } from '../../labels/models/label';
 
 
@@ -6,4 +7,5 @@ export interface SmallNote {
     title: string;
     color: string;
     labels: Label[];
+    refType: RefType;
 }

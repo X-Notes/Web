@@ -1,3 +1,4 @@
+import { RefType } from 'src/app/core/models/refType';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Label } from '../../labels/models/label';
 
@@ -7,4 +8,5 @@ export interface FullNote {
     color: string;
     labels: Label[];
     noteType: NoteType;
+    refType: RefType;
 }
