@@ -10,6 +10,7 @@ namespace Common.DatabaseModels.models
         public Guid Id { get; set; }
 
         public NotesType NoteType { set; get; }
+        public RefType RefType { set; get; }
 
         public string Title { set; get; }
         public string Color { set; get; }
