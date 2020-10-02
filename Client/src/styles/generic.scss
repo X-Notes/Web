@@ -27,6 +27,9 @@
     flex-direction: column;
     width: calc(100% - 190px);
     height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: 0.3s ease;
 
     .content-inner {
         display: flex;
