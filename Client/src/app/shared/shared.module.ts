@@ -17,13 +17,16 @@ import { OrderService } from './services/order.service';
 import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
 import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
 import { BackgroundService } from '../content/profile/background.service';
+import { ShareComponent } from './modal_components/share/share.component';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
-    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe],
-  imports: [CommonModule , TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule ],
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, ShareComponent],
+  imports: [CommonModule , MatRippleModule,
+     TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
-    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe ],
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule ],
   providers: [DialogService, MurriService, OrderService, BackgroundService]
 })
 export class SharedModule { }

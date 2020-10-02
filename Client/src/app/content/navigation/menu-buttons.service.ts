@@ -10,16 +10,35 @@ import { ChangeColorComponent } from 'src/app/shared/modal_components/change-col
 import { CopyNotes, SetDeleteNotes, RestoreNotes, ArchiveNotes, DeleteNotesPermanently } from '../notes/state/notes-actions';
 import { CopyFolders, SetDeleteFolders, RestoreFolders, ArchiveFolders, DeleteFoldersPermanently } from '../folders/state/folders-actions';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
+import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
+import { FolderStore } from '../folders/state/folders-state';
+import { merge } from 'rxjs';
+import { NoteStore } from '../notes/state/notes-state';
+
 
 @Injectable({providedIn: 'root'})
 export class MenuButtonsService {
 
   constructor(private store: Store,
               private dialogService: DialogService, ) {
+                merge(
+                  this.store.select(NoteStore.selectedCount),
+                  this.store.select(FolderStore.selectedCount)
+                )
+                .subscribe(x => {
+                  if (x >= 2) {
+                    this.filterItems(this.saveItems.filter(z => z.icon !== 'shared'));
+                  } else {
+                    this.filterItems(this.saveItems);
+                  }
+                });
   }
+
+
+  public saveItems: MenuItem[] = [];
   public items: MenuItem[] = [];
 
-  private notesItemsPrivate: MenuItem[] = [
+  public notesItemsPrivate: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -30,7 +49,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -57,7 +76,7 @@ export class MenuButtonsService {
       operation: this.setdeleteNotes.bind(this)
     }
   ];
-  private notesItemsShared: MenuItem[] = [
+  public notesItemsShared: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -68,7 +87,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -95,7 +114,7 @@ export class MenuButtonsService {
       operation: this.setdeleteNotes.bind(this)
     }
   ];
-  private notesItemsDeleted: MenuItem[] = [
+  public notesItemsDeleted: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -106,7 +125,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -137,7 +156,7 @@ export class MenuButtonsService {
       operation: this.restoreNotes.bind(this)
     }
   ];
-  private notesItemsArchive: MenuItem[] = [
+  public notesItemsArchive: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -148,7 +167,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -172,7 +191,7 @@ export class MenuButtonsService {
     }
   ];
 
-  private foldersItemsPrivate: MenuItem[] = [
+  public foldersItemsPrivate: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -183,7 +202,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -210,7 +229,7 @@ export class MenuButtonsService {
       operation: this.setDeleteFolders.bind(this)
     }
   ];
-  private foldersItemsShared: MenuItem[] = [
+  public foldersItemsShared: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -221,7 +240,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -248,7 +267,7 @@ export class MenuButtonsService {
       operation: this.setDeleteFolders.bind(this)
     }
   ];
-  private foldersItemsDeleted: MenuItem[] = [
+  public foldersItemsDeleted: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -259,7 +278,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -290,7 +309,7 @@ export class MenuButtonsService {
       operation: this.restoreFolders.bind(this)
     }
   ];
-  private foldersItemsArchive: MenuItem[] = [
+  public foldersItemsArchive: MenuItem[] = [
     {
       icon: 'history',
       operation: () => 5
@@ -301,7 +320,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => 5
+      operation: this.shareEntity.bind(this)
     },
     {
       icon: 'copy',
@@ -326,36 +345,14 @@ export class MenuButtonsService {
   ];
 
 
-
-  setNotesPrivate() {
-    this.items = this.notesItemsPrivate;
+  filterItems(newItems: MenuItem[]) {
+    this.items = newItems;
   }
 
-  setNotesShared() {
-    this.items = this.notesItemsShared;
+  setItems(newItems: MenuItem[]) {
+    this.saveItems = newItems;
+    this.items = newItems;
   }
-
-  setNotesDeleted() {
-    this.items = this.notesItemsDeleted;
-  }
-
-  setNotesArchive() {
-    this.items = this.notesItemsArchive;
-  }
-
-  setFoldersPrivate() {
-    this.items = this.foldersItemsPrivate;
-  }
-  setFoldersShared() {
-    this.items = this.foldersItemsShared;
-  }
-  setFoldersArchive() {
-    this.items = this.foldersItemsArchive;
-  }
-  setFoldersDeleted() {
-    this.items = this.foldersItemsDeleted;
-  }
-
 
   // FUNCTIONS
 
@@ -385,6 +382,21 @@ export class MenuButtonsService {
       panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(EditingLabelsNoteComponent, config);
+  }
+
+  // SHARING
+  private shareEntity() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const config: MatDialogConfig =  {
+      width: '600px',
+      height: '640px',
+      data: {
+        title: 'Share'
+      },
+      autoFocus: false,
+      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+    };
+    this.dialogService.openDialog(ShareComponent, config);
   }
 
 
