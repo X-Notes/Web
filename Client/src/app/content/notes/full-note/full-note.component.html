@@ -41,6 +41,7 @@
             </div>
         </ngx-simplebar>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
+            <!-- [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}" -->
             <div class="open" #open>
                 <i class="icon-plus"></i>
                 <p>open note or file</p>

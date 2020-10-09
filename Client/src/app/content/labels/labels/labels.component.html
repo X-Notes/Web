@@ -44,7 +44,7 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content">
+<div class="content" [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <router-outlet></router-outlet>
     </ngx-simplebar>

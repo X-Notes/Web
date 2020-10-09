@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import { Language } from 'src/app/shared/enums/Language';
-import { ChangeLanguage, ChangeFontSize, ChangeTheme, UpdateUserName, UpdateUserPhoto  } from 'src/app/core/stateUser/user-action';
+import { ChangeLanguage, ChangeFontSize, ChangeTheme, UpdateUserName, UpdateUserPhoto, SetDefaultBackground  } from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -88,6 +88,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   removeBackground(id: number) {
     this.store.dispatch(new RemoveBackground(id));
+    this.store.dispatch(new SetDefaultBackground);
   }
 
   cancelSideBar() {

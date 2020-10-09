@@ -30,6 +30,7 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { LoadFullNote, DeleteCurrentNote } from '../state/full-note-actions';
 import { FullNoteStore } from '../state/full-note-state';
+import { ShortUser } from 'src/app/core/models/short-user';
 
 @Component({
   selector: 'app-full-note',
@@ -44,6 +45,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
+  
+  // @Select(UserStore.getUser)
+  // public user$: Observable<ShortUser>;
 
   destroy = new Subject<void>();
 
@@ -113,7 +117,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
-    console.log(5);
     if (!this.pService.check()) {
       this.sliderService.getSize();
     } else {

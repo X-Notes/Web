@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { ShortUser } from 'src/app/core/models/short-user';
 
 export enum subMenu {
   All = 'all',
@@ -56,6 +57,9 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.archiveCount)
   public countArchive: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   constructor(public pService: PersonalizationService,
               private store: Store,

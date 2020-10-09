@@ -5,6 +5,7 @@ import { Store, Select } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user';
 
 
 
@@ -24,6 +25,9 @@ export class LabelsComponent implements OnInit {
 
   @Select(LabelStore.countDeleted)
   countDeleted$: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   theme = Theme;
 
