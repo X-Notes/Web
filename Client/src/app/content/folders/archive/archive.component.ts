@@ -57,7 +57,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
 
     this.store.select(FolderStore.archiveFolders).pipe(take(1))
-      .subscribe(x => { this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+      .subscribe(x => { this.pService.spinner = false;
+                        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
                         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderArchive)); });
 
   }

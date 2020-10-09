@@ -54,7 +54,8 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Shared));
 
     this.store.select(NoteStore.sharedNotes).pipe(take(1))
-    .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+    .subscribe(x => { this.pService.spinner = false;
+                      this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
                       setTimeout(() => this.murriService.initMurriNote(EntityType.NoteShared)); });
 
   }

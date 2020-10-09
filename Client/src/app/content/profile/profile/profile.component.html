@@ -27,7 +27,7 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''" 
-    [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}">
+    [ngStyle] = "{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <div class="main" >
             <div class="sections">
