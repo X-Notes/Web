@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { FullNote } from './models/fullNote';
 import { map } from 'rxjs/operators';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { RequestFullNote } from './models/requestFullNote';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -107,7 +108,7 @@ export class ApiServiceNotes {
   }
 
   get(id: string) {
-    return this.httpClient.get<FullNote>(environment.writeAPI + `/api/note/${id}`);
+    return this.httpClient.get<RequestFullNote>(environment.writeAPI + `/api/note/${id}`);
   }
 
   new() {

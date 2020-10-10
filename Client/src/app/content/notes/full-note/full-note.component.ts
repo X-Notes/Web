@@ -60,6 +60,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   private routeSubscription: Subscription;
   private id: string;
 
+  @Select(FullNoteStore.canView)
+  public canView$: Observable<boolean>;
+
+  @Select(FullNoteStore.canNoView)
+  public canNoView$: Observable<boolean>;
+
   @Select(NoteStore.privateNotes)
   public notes$: Observable<SmallNote[]>;
 
@@ -74,7 +80,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (this.note) {
     this.sliderService.goTo(this.sliderService.active, this.wrap);
+    }
   }
 
   async ngOnInit() {
@@ -98,6 +106,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
 
+
     this.store.select(NoteStore.updateLabelEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe((values: UpdateLabelEvent[]) => {
@@ -113,7 +122,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
-    console.log(5);
+    if (!this.note) {return; }
     if (!this.pService.check()) {
       this.sliderService.getSize();
     } else {
@@ -171,6 +180,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(FullNoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
+
+        if (!x) {
+          return;
+        }
+
         this.note = {...x};
         console.log(5);
 

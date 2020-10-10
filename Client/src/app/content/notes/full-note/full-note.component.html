@@ -23,8 +23,8 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
-    <div class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)" (panmove)="panMove($event)"
-        (panend)="panEnd($event)">
+    <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
+        (panmove)="panMove($event)" (panend)="panEnd($event)">
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth"
             class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
@@ -91,5 +91,8 @@
                 <div class="drag-helper second-helper"></div>
             </ngx-simplebar>
         </div>
+    </div>
+    <div *ngIf="canNoView$ | async" class="wrapper">
+        No can View
     </div>
 </div>
