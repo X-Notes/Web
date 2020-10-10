@@ -133,7 +133,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetDeletedNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
             //FOLDERS

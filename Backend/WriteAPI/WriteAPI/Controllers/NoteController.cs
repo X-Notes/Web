@@ -152,7 +152,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullNote> Get(string id)
+        public async Task<FullNoteAnswer> Get(string id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullNoteQuery(email, id);

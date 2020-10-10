@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Common.DatabaseModels.helpers
 {
-    public enum RefType
+    public enum AccessType
     {
         Viewer,
         Editor,
-        Private
     }
 }

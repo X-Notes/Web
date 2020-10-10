@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20201010163029_addRefType")]
+    partial class addRefType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -280,9 +282,6 @@ namespace WriteContext.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("AccessType")
                         .HasColumnType("integer");
 
                     b.HasKey("NoteId", "UserId");

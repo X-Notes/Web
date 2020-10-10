@@ -79,6 +79,17 @@ namespace WriteContext
                 .HasOne(bc => bc.Note)
                 .WithMany(c => c.FoldersNotes)
                 .HasForeignKey(bc => bc.NoteId);
+
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasKey(bc => new { bc.NoteId, bc.UserId });
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasOne(bc => bc.Note)
+                .WithMany(b => b.UsersOnPrivateNotes)
+                .HasForeignKey(bc => bc.NoteId);
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UserOnPrivateNotes)
+                .HasForeignKey(bc => bc.UserId);
         }
     }
 }
