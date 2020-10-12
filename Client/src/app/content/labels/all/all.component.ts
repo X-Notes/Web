@@ -21,7 +21,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   fontSize = FontSize;
   public labels: Label[];
-
+  loaded = false;
   destroy = new Subject<void>();
 
   constructor(
@@ -47,7 +47,11 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => { this.labels = [...x];  setTimeout(() => this.murriService.initMurriLabel(false)); });
+    .subscribe(async (x) => {
+      this.labels = [...x];
+      this.loaded =  await this.initPromise();
+      setTimeout(() => this.murriService.initMurriLabel(false));
+    });
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -74,6 +78,10 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
     this.labels = this.labels.filter(x => x.id !== label.id);
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
   ngOnDestroy(): void {

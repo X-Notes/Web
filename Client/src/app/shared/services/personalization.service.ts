@@ -68,6 +68,7 @@ export class PersonalizationService {
 
   constructor() {}
 
+  timeForSpinnerLoading = 30;
   subject = new Subject();
 
   stateSidebar = true;

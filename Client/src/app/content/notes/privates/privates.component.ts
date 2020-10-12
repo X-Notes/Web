@@ -67,7 +67,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true)));
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
   ngOnDestroy(): void {

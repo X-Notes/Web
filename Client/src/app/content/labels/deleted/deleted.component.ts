@@ -22,7 +22,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   public labels: Label[];
   destroy = new Subject<void>();
-
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService) { }
@@ -50,7 +50,11 @@ export class DeletedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsDeleted).pipe(take(1))
-    .subscribe(x => { this.labels = x; setTimeout(() => this.murriService.initMurriLabel(true)); });
+    .subscribe(async (x) => {
+      this.labels = x;
+      this.loaded =  await this.initPromise();
+      setTimeout(() => this.murriService.initMurriLabel(true));
+    });
   }
 
 
@@ -67,6 +71,10 @@ export class DeletedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labels = this.labels.filter(x => x.id !== label.id);
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
 }

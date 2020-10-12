@@ -12,7 +12,7 @@ import * as Muuri from 'muuri';
 export class MurriService {
 
   grid;
-  public delayForOpacity = 20;
+  public delayForOpacity = 0;
   public flagForOpacity = false;
 
   constructor(private store: Store) {
