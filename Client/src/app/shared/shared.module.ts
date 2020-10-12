@@ -18,14 +18,19 @@ import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.p
 import { BackgroundService } from '../content/profile/background.service';
 import { ShareComponent } from './modal_components/share/share.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, ShareComponent],
   imports: [CommonModule , MatRippleModule,
-     TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule ],
+     TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
+     InfiniteScrollModule
+     ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
-    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule ],
+    LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
+    InfiniteScrollModule
+   ],
   providers: [DialogService, OrderService, BackgroundService]
 })
 export class SharedModule { }
