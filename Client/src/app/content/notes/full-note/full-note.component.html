@@ -49,7 +49,7 @@
             <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
             <ngx-simplebar [options]="pService.optionsScroll" class="small-notes autoscroll-helper"
                 [ngClass]="pService.toggleHistory? 'history-plus' : ''">
-                <div class="grid">
+                <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
                     <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
                         <div class="small-note">
                             <div class="header">

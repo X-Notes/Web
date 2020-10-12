@@ -33,7 +33,6 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.murriService.flagForOpacity = false;
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)

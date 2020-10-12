@@ -40,7 +40,6 @@ export class PrivateComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.murriService.flagForOpacity = false;
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)

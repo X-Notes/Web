@@ -30,7 +30,6 @@ export class AllComponent implements OnInit, OnDestroy  {
     public murriService: MurriService) { }
 
   async ngOnInit() {
-    this.murriService.flagForOpacity = false;
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)

@@ -31,7 +31,6 @@ export class MurriService {
       };
       this.store.dispatch(new PositionNote(order, type));
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   initMurriFolder(type: EntityType) {
@@ -45,7 +44,6 @@ export class MurriService {
       };
       this.store.dispatch(new PositionFolder(order, type));
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   initMurriLabel(deleted: boolean) {
@@ -58,12 +56,11 @@ export class MurriService {
       };
       this.store.dispatch(new PositionLabel(deleted, parseInt(order.entityId, 10), order));
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   gridSettings(element: string) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-
+    console.log(dragHelper);
     this.grid = new Muuri.default('.grid', {
       items: element,
       dragEnabled: true,
@@ -102,5 +99,6 @@ export class MurriService {
         safeZone: 0.1
       }
     });
+    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 }

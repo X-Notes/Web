@@ -32,7 +32,6 @@ export class SharedComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
-    this.murriService.flagForOpacity = false;
     await this.store.dispatch(new UpdateRoute(EntityType.NoteShared)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)

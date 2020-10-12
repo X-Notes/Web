@@ -39,7 +39,6 @@ export class SharedComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.murriService.flagForOpacity = false;
     await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
 
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));

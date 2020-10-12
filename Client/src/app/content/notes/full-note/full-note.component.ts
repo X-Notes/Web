@@ -39,7 +39,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   animations: [
     sideBarCloseOpen,
     deleteSmallNote,
-    showHistory]
+    showHistory],
+    providers: [MurriService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -77,7 +78,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private rend: Renderer2,
               private noteService: NotesService,
               public sliderService: FullNoteSliderService,
-              private murriService: MurriService) {
+              public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(params => this.id = params.id);
   }
 
