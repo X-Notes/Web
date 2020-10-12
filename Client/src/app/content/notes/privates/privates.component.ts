@@ -26,6 +26,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -41,7 +42,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        setTimeout(async () => this.loadContent(), 1);
+        await this.loadContent();
       }
     }
     );
@@ -54,16 +55,20 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
-      .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => {
-                          this.murriService.initMurriNote(EntityType.NotePrivate);
-                        }); });
+      .subscribe(async (x) => {
+        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+        this.loaded =  await this.initPromise();
+        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate));
+      });
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.noteService.addToDom(x));
   }
 
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true)));
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();

@@ -26,7 +26,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -53,11 +53,16 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
-      .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => {
-                          this.murriService.initMurriNote(EntityType.NoteDeleted);
-                        }); });
+      .subscribe(async (x) => {
+        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+        this.loaded =  await this.initPromise();
+        setTimeout(() => {this.murriService.initMurriNote(EntityType.NoteDeleted); });
+      });
 
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true)));
   }
 
   ngOnDestroy(): void {
