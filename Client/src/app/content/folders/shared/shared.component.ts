@@ -26,6 +26,7 @@ export class SharedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -57,9 +58,15 @@ export class SharedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
 
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
-      .subscribe(x => { this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
+      .subscribe(async (x) => {
+        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+        this.loaded =  await this.initPromise();
+        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
 
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
 }

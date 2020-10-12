@@ -26,7 +26,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -58,8 +58,14 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Deleted));
 
     this.store.select(FolderStore.deletedFolders).pipe(take(1))
-      .subscribe(x => { this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderDeleted)); });
+      .subscribe(async (x) => {
+        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+        this.loaded =  await this.initPromise();
+        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderDeleted)); });
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
 }
