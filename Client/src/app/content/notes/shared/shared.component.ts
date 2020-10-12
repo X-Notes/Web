@@ -16,8 +16,7 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-shared',
   templateUrl: './shared.component.html',
-  styleUrls: ['./shared.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./shared.component.scss']
 })
 export class SharedComponent implements OnInit, OnDestroy {
 
@@ -63,6 +62,7 @@ export class SharedComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

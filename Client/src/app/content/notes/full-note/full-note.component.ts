@@ -39,8 +39,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   animations: [
     sideBarCloseOpen,
     deleteSmallNote,
-    showHistory],
-    providers: [MurriService]
+    showHistory]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -107,7 +106,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
-    setTimeout(() => this.murriService.gridSettings('.grid-item-small'), 0);
+    setTimeout(() => this.murriService.gridSettings('.grid-item-small'), 1000); // CHANGE TODO
 
 
     this.store.select(NoteStore.updateLabelEvent)
@@ -235,6 +234,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

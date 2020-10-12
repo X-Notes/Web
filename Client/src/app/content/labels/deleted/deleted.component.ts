@@ -14,8 +14,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./deleted.component.scss']
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
@@ -28,6 +27,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
               public murriService: MurriService) { }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
   }

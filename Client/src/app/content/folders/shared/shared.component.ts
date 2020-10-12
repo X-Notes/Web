@@ -1,14 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Folder } from '../models/folder';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
-import { LoadSharedFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
-import { Order, OrderEntity } from 'src/app/shared/services/order.service';
-import { UpdateColor } from '../../notes/state/updateColor';
+import { LoadSharedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -19,8 +16,7 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-shared',
   templateUrl: './shared.component.html',
-  styleUrls: ['./shared.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./shared.component.scss']
 })
 export class SharedComponent implements OnInit, OnDestroy {
 
@@ -34,6 +30,7 @@ export class SharedComponent implements OnInit, OnDestroy {
               public folderService: FolderService) { }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllFolder());

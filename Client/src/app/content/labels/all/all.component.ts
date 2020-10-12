@@ -14,8 +14,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
-  styleUrls: ['./all.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./all.component.scss']
 })
 export class AllComponent implements OnInit, OnDestroy  {
 
@@ -85,6 +84,7 @@ export class AllComponent implements OnInit, OnDestroy  {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
   }

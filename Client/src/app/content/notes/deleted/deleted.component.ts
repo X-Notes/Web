@@ -19,8 +19,7 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./deleted.component.scss']
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
@@ -66,6 +65,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

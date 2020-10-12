@@ -19,8 +19,7 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-privates',
   templateUrl: './privates.component.html',
-  styleUrls: ['./privates.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./privates.component.scss']
 })
 export class PrivatesComponent implements OnInit, OnDestroy {
 
@@ -34,8 +33,6 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
 
   async ngOnInit() {
-
-
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
@@ -71,6 +68,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

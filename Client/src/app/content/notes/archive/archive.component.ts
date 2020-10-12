@@ -16,8 +16,7 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss'],
-  providers: [MurriService]
+  styleUrls: ['./archive.component.scss']
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
 
@@ -64,6 +63,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
