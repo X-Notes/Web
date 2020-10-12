@@ -104,7 +104,7 @@ namespace BI.services.notes
                             }
                             break;
                         }
-                    case NotesType.Private:
+                    default:
                         {
                             if (note.UserId == user.Id)
                             {
@@ -124,10 +124,6 @@ namespace BI.services.notes
                                     FullNote = null
                                 };
                             }
-                        }
-                    default:
-                        {
-                            throw new Exception("Error get type");
                         }
                 }
             }
