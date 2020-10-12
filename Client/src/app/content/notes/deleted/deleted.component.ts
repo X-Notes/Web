@@ -19,7 +19,8 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss']
+  styleUrls: ['./deleted.component.scss'],
+  providers: [MurriService]
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 

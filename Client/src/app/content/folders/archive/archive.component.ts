@@ -19,7 +19,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss']
+  styleUrls: ['./archive.component.scss'],
+  providers: [MurriService]
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
 

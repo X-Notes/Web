@@ -19,7 +19,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-private',
   templateUrl: './private.component.html',
-  styleUrls: ['./private.component.scss']
+  styleUrls: ['./private.component.scss'],
+  providers: [MurriService]
 })
 export class PrivateComponent implements OnInit, OnDestroy {
 

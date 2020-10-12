@@ -12,7 +12,6 @@ import { ReplacePipe } from './pipes/replace.pipe';
 import { FormsModule } from '@angular/forms';
 import { LabelComponent } from '../content/labels/label/label.component';
 import { SearchLabelPipe } from './pipes/search-label.pipe';
-import { MurriService } from './services/murri.service';
 import { OrderService } from './services/order.service';
 import { NoDeletedLabelsPipe } from './pipes/no-deleted-labels.pipe';
 import { LastTwoNoDeletedLabelsPipe } from './pipes/last-two-no-deleted-labels.pipe';
@@ -27,6 +26,6 @@ import {MatTabsModule} from '@angular/material/tabs';
      TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule ],
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule ],
-  providers: [DialogService, MurriService, OrderService, BackgroundService]
+  providers: [DialogService, OrderService, BackgroundService]
 })
 export class SharedModule { }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { PersonalizationService } from './personalization.service';
 import { Store } from '@ngxs/store';
 import { Order, OrderEntity } from './order.service';
@@ -14,7 +14,10 @@ export class MurriService {
   public flagForOpacity = false;
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store) {
+                console.log(555);
+               }
+
 
   initMurriNote(type: EntityType) {
     this.pService.gridSettings('.grid-item');

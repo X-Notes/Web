@@ -1,14 +1,12 @@
-import { Component, OnInit, AfterContentInit, Input, OnDestroy, AfterContentChecked, DoCheck } from '@angular/core';
-import { LabelStore } from '../state/labels-state';
-import { Observable, Subject } from 'rxjs';
+import { Component, OnInit, OnDestroy,  } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Label } from '../models/label';
-import { Select, Store } from '@ngxs/store';
-import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, PositionLabel } from '../state/labels-actions';
+import { Store } from '@ngxs/store';
+import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, } from '../state/labels-actions';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -16,7 +14,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
-  styleUrls: ['./all.component.scss']
+  styleUrls: ['./all.component.scss'],
+  providers: [MurriService]
 })
 export class AllComponent implements OnInit, OnDestroy  {
 

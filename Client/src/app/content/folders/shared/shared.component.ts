@@ -19,7 +19,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-shared',
   templateUrl: './shared.component.html',
-  styleUrls: ['./shared.component.scss']
+  styleUrls: ['./shared.component.scss'],
+  providers: [MurriService]
 })
 export class SharedComponent implements OnInit, OnDestroy {
 

@@ -19,7 +19,8 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-privates',
   templateUrl: './privates.component.html',
-  styleUrls: ['./privates.component.scss']
+  styleUrls: ['./privates.component.scss'],
+  providers: [MurriService]
 })
 export class PrivatesComponent implements OnInit, OnDestroy {
 
@@ -41,7 +42,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        await this.loadContent();
+        setTimeout(async () => await this.loadContent(), 5000);
       }
     }
     );
