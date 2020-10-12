@@ -83,6 +83,8 @@
 }
 
 .grid {
+  opacity: 0;
+  transition: 0.1s linear;
   position: relative;
   width: 100%;
 }

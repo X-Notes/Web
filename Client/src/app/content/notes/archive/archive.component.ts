@@ -1,12 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { LoadArchiveNotes, UnSelectAllNote, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
+import { LoadArchiveNotes, UnSelectAllNote, LoadAllExceptNotes } from '../state/notes-actions';
 import { take, takeUntil } from 'rxjs/operators';
-import { OrderEntity, Order } from 'src/app/shared/services/order.service';
-import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -29,10 +26,12 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public noteService: NotesService) { }
 
   async ngOnInit() {
+
+    this.murriService.flagForOpacity = false;
 
     await this.store.dispatch(new UpdateRoute(EntityType.NoteArchive)).toPromise();
 

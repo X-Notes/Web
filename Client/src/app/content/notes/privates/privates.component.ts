@@ -25,14 +25,15 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public noteService: NotesService) { }
 
 
   async ngOnInit() {
+
+    this.murriService.flagForOpacity = false;
 
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
 
@@ -54,7 +55,9 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
       .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate)); });
+                        setTimeout(() => {
+                          this.murriService.initMurriNote(EntityType.NotePrivate);
+                        }); });
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))

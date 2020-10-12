@@ -28,10 +28,12 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public noteService: NotesService) { }
 
   async ngOnInit() {
+
+    this.murriService.flagForOpacity = false;
 
     await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
 
@@ -52,7 +54,9 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
       .subscribe(x => { this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriNote(EntityType.NoteDeleted)); });
+                        setTimeout(() => {
+                          this.murriService.initMurriNote(EntityType.NoteDeleted);
+                        }); });
 
   }
 

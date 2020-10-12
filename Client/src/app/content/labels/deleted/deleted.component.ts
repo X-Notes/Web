@@ -25,7 +25,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService) { }
+              public murriService: MurriService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -33,10 +33,10 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.murriService.flagForOpacity = false;
+    await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
 
-     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
-
-     this.store.select(UserStore.getTokenUpdated)
+    this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

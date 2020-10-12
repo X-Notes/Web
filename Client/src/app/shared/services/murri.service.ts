@@ -10,6 +10,9 @@ import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 @Injectable()
 export class MurriService {
 
+  public delayForOpacity = 20;
+  public flagForOpacity = false;
+
   constructor(public pService: PersonalizationService,
               private store: Store) { }
 
@@ -24,6 +27,7 @@ export class MurriService {
       };
       this.store.dispatch(new PositionNote(order, type));
     });
+    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   initMurriFolder(type: EntityType) {
@@ -37,6 +41,7 @@ export class MurriService {
       };
       this.store.dispatch(new PositionFolder(order, type));
     });
+    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   initMurriLabel(deleted: boolean) {
@@ -49,6 +54,7 @@ export class MurriService {
       };
       this.store.dispatch(new PositionLabel(deleted, parseInt(order.entityId, 10), order));
     });
+    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
 }
