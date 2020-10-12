@@ -66,7 +66,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        await this.store.dispatch(new LoadLabels()).toPromise();
+        this.store.dispatch(new LoadLabels());
       }
     });
 
