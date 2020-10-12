@@ -6,22 +6,23 @@ import { PositionNote } from 'src/app/content/notes/state/notes-actions';
 import { EntityType } from '../enums/EntityTypes';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
+import * as Muuri from 'muuri';
 
 @Injectable()
 export class MurriService {
 
+  grid;
   public delayForOpacity = 20;
   public flagForOpacity = false;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store) {
+  constructor(private store: Store) {
                 console.log(555);
                }
 
 
   initMurriNote(type: EntityType) {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
+    this.gridSettings('.grid-item');
+    this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
         orderEntity: OrderEntity.Note,
@@ -34,8 +35,8 @@ export class MurriService {
   }
 
   initMurriFolder(type: EntityType) {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
+    this.gridSettings('.grid-item');
+    this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
         orderEntity: OrderEntity.Folder,
@@ -48,8 +49,8 @@ export class MurriService {
   }
 
   initMurriLabel(deleted: boolean) {
-    this.pService.gridSettings('.grid-item');
-    this.pService.grid.on('dragEnd', async (item, event) => {
+    this.gridSettings('.grid-item');
+    this.grid.on('dragEnd', async (item, event) => {
       const order: Order = {
         orderEntity: OrderEntity.Label,
         position: item.getGrid().getItems().indexOf(item) + 1,
@@ -60,4 +61,46 @@ export class MurriService {
     setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
+  gridSettings(element: string) {
+    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
+
+    this.grid = new Muuri.default('.grid', {
+      items: element,
+      dragEnabled: true,
+      layout: {
+        fillGaps: false,
+        horizontal: false,
+        alignRight: false,
+        alignBottom: false,
+        rounding: true
+      },
+      dragContainer: dragHelper,
+      dragRelease: {
+        useDragContainer: false
+      },
+      dragCssProps: {
+        touchAction: 'auto'
+      },
+      dragStartPredicate(item, e) {
+        if ( e.deltaTime > 300 && e.distance <= 30) {
+          return true;
+        }
+      },
+      dragPlaceholder: {
+        enabled: true,
+        createElement(item: any) {
+          return item.getElement().cloneNode(true);
+        }
+      },
+      dragAutoScroll: {
+        targets: [
+          { element: window, priority: -1 },
+          { element: document.querySelector('.autoscroll-helper .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
+        ],
+        sortDuringScroll: false,
+        smoothStop: true,
+        safeZone: 0.1
+      }
+    });
+  }
 }

@@ -61,13 +61,13 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   restoreLabel(label: Label) {
     this.labels = this.labels.filter(x => x.id !== label.id);
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   async delete(label: Label) {
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labels = this.labels.filter(x => x.id !== label.id);
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
 }

@@ -5,12 +5,14 @@ import { FullNote } from './models/fullNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { NoteStore } from './state/notes-state';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Injectable()
 export class NotesService {
 
   notes: SmallNote[] = [];
-  constructor(public pService: PersonalizationService, private store: Store) {
+  constructor(public pService: PersonalizationService, private store: Store,
+              private murriService: MurriService) {
 
     this.store.select(NoteStore.updateColorEvent)
     .subscribe(x => this.changeColorHandler(x));
@@ -38,7 +40,7 @@ export class NotesService {
   delete(ids: string[]) {
     if (ids.length > 0) {
       this.notes = this.notes.filter(x => !ids.some(z => z === x.id));
-      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
     }
   }
 
@@ -50,7 +52,7 @@ export class NotesService {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < notes.length; i++) {
           const el = DOMnodes[i];
-          this.pService.grid.add(el, {index : 0, layout: true});
+          this.murriService.grid.add(el, {index : 0, layout: true});
         }
       }, 0);
     }

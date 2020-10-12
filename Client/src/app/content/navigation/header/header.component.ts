@@ -20,12 +20,14 @@ import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton,
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [ showMenuLeftRight ]
+  animations: [ showMenuLeftRight ],
+  providers: [MurriService]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
@@ -69,7 +71,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              public menuButtonService: MenuButtonsService) { }
+              public menuButtonService: MenuButtonsService,
+              public murriService: MurriService, ) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -139,7 +142,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleOrientation() {
     this.pService.orientationMobile = !this.pService.orientationMobile;
-    setTimeout( () => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
   }
 
 

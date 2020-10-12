@@ -4,6 +4,7 @@ import { Folder } from './models/folder';
 import { Store } from '@ngxs/store';
 import { FolderStore } from './state/folders-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Injectable()
 export class FolderService {
@@ -11,7 +12,8 @@ export class FolderService {
   folders: Folder[] = [];
 
   constructor(private store: Store,
-              public pService: PersonalizationService) {
+              public pService: PersonalizationService,
+              private murriService: MurriService) {
 
     this.store.select(FolderStore.updateColorEvent)
       .subscribe(x => this.changeColorHandler(x));
@@ -32,7 +34,7 @@ export class FolderService {
   delete(ids: string[]) {
     if (ids.length > 0) {
       this.folders = this.folders.filter(x => ids.indexOf(x.id) !== -1 ? false : true);
-      setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
     }
   }
 
@@ -43,7 +45,7 @@ export class FolderService {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < folders.length; i++) {
           const el = DOMnodes[i];
-          this.pService.grid.add(el, { index: 0, layout: true });
+          this.murriService.grid.add(el, { index: 0, layout: true });
         }
       }, 0);
     }

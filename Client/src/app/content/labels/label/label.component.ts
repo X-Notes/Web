@@ -12,6 +12,7 @@ import { LabelsOnSelectedNotes } from '../../notes/models/labelsOnSelectedNotes'
 import { AddLabelOnNote, RemoveLabelFromNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-label',
@@ -38,7 +39,8 @@ export class LabelComponent implements OnInit, OnDestroy {
   nameChanged: Subject<string> = new Subject<string>();
 
   constructor(public pService: PersonalizationService,
-              private store: Store) { }
+              private store: Store,
+              private murriService: MurriService) { }
 
 
 
@@ -108,7 +110,7 @@ export class LabelComponent implements OnInit, OnDestroy {
           clearInterval(timer);
           resolve();
         }
-        this.pService.grid.refreshItems().layout();
+        this.murriService.grid.refreshItems().layout();
         count++;
       }, 10);
     });

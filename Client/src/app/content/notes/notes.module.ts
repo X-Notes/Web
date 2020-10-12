@@ -13,6 +13,7 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
 import { NotesService } from './notes.service';
 import { FullNoteSliderService } from './full-note-slider.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 @NgModule({
@@ -32,6 +33,6 @@ import { FullNoteSliderService } from './full-note-slider.service';
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, NotesService, FullNoteSliderService],
+  }, NotesService, FullNoteSliderService, MurriService],
 })
 export class NotesModule { }

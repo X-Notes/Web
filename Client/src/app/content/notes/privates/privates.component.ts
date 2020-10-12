@@ -42,7 +42,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        setTimeout(async () => await this.loadContent(), 5000);
+        setTimeout(async () => this.loadContent(), 5000);
       }
     }
     );

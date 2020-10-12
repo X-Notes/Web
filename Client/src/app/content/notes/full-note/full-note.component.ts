@@ -30,6 +30,7 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { LoadFullNote, DeleteCurrentNote } from '../state/full-note-actions';
 import { FullNoteStore } from '../state/full-note-state';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-full-note',
@@ -75,7 +76,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public pService: PersonalizationService,
               private rend: Renderer2,
               private noteService: NotesService,
-              public sliderService: FullNoteSliderService) {
+              public sliderService: FullNoteSliderService,
+              private murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(params => this.id = params.id);
   }
 
@@ -104,7 +106,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
-    setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
+    setTimeout(() => this.murriService.gridSettings('.grid-item-small'), 0);
 
 
     this.store.select(NoteStore.updateLabelEvent)
@@ -149,14 +151,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       if (counter === 35) {
         clearInterval(interval);
       }
-      this.pService.grid.refreshItems().layout();
+      this.murriService.grid.refreshItems().layout();
       counter++;
     }, 10);
   }
 
   turnUpSmallNote() {
     this.turnUpNote = !this.turnUpNote;
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   // TODO Logic for updating on websockets

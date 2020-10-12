@@ -66,7 +66,7 @@ export class AllComponent implements OnInit, OnDestroy  {
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(x => {
       this.labels.unshift(x[0]);
-      setTimeout(() =>  this.pService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
+      setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
     });
 
   }
@@ -74,7 +74,7 @@ export class AllComponent implements OnInit, OnDestroy  {
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
     this.labels = this.labels.filter(x => x.id !== label.id);
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   ngOnDestroy(): void {

@@ -73,7 +73,7 @@ export class PersonalizationService {
   stateSidebar = true;
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
-  grid;
+
   hideInnerMenu = false;
   AnimationInnerMenu = true;
   AnimationInnerUsers = true;
@@ -137,48 +137,5 @@ export class PersonalizationService {
 
   checkWidth(): boolean {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
-  }
-
-  gridSettings(element: string) {
-    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-
-    this.grid = new Muuri.default('.grid', {
-      items: element,
-      dragEnabled: true,
-      layout: {
-        fillGaps: false,
-        horizontal: false,
-        alignRight: false,
-        alignBottom: false,
-        rounding: true
-      },
-      dragContainer: dragHelper,
-      dragRelease: {
-        useDragContainer: false
-      },
-      dragCssProps: {
-        touchAction: 'auto'
-      },
-      dragStartPredicate(item, e) {
-        if ( e.deltaTime > 300 && e.distance <= 30) {
-          return true;
-        }
-      },
-      dragPlaceholder: {
-        enabled: true,
-        createElement(item: any) {
-          return item.getElement().cloneNode(true);
-        }
-      },
-      dragAutoScroll: {
-        targets: [
-          { element: window, priority: -1 },
-          { element: document.querySelector('.autoscroll-helper .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
-        ],
-        sortDuringScroll: false,
-        smoothStop: true,
-        safeZone: 0.1
-      }
-    });
   }
 }

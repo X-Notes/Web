@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { LabelComponent } from './label/label.component';
 import { AllComponent } from './all/all.component';
 import { DeletedComponent } from './deleted/deleted.component';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 
@@ -15,6 +16,7 @@ import { DeletedComponent } from './deleted/deleted.component';
     CommonModule,
     LabelsRouting,
     SharedModule
-  ]
+  ],
+  providers: [MurriService]
 })
 export class LabelsModule { }
