@@ -10,23 +10,25 @@ import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { LabelsService } from '../labels.service';
 
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
-  styleUrls: ['./all.component.scss']
+  styleUrls: ['./all.component.scss'],
+  providers: [LabelsService]
 })
 export class AllComponent implements OnInit, OnDestroy  {
 
   fontSize = FontSize;
-  public labels: Label[];
   loaded = false;
   destroy = new Subject<void>();
 
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public murriService: MurriService) { }
+    public murriService: MurriService,
+    public labelService: LabelsService) { }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
@@ -47,7 +49,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(async (x) => {
-      this.labels = [...x];
+      this.labelService.firstInit(x);
       this.loaded =  await this.initPromise();
       setTimeout(() => this.murriService.initMurriLabel(false));
     });
@@ -67,7 +69,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(x => {
-      this.labels.unshift(x[0]);
+      this.labelService.labels.unshift(x[0]);
       setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
     });
 
@@ -75,7 +77,7 @@ export class AllComponent implements OnInit, OnDestroy  {
 
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
-    this.labels = this.labels.filter(x => x.id !== label.id);
+    this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 

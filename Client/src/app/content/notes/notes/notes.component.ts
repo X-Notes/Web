@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
@@ -7,11 +7,11 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote, LoadAllExceptNotes } from '../state/notes-actions';
+import { AddNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { PaginationService } from 'src/app/shared/services/pagination.service';
 
 export enum subMenu {
   All = 'all',
@@ -30,6 +30,9 @@ export enum subMenu {
 })
 
 export class NotesComponent implements OnInit, OnDestroy {
+
+  @ViewChild ('scrollMe', { static: true })
+  public myScrollContainer: ElementRef;
 
   destroy = new Subject<void>();
 
@@ -59,7 +62,8 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router) { }
+              private router: Router,
+              private pagService: PaginationService) { }
 
   async ngOnInit() {
     this.store.select(UserStore.getTokenUpdated)
@@ -75,6 +79,16 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newNote());
 
     this.pService.onResize();
+
+    setTimeout(() => {
+      (this.myScrollContainer as any).SimpleBar.getScrollElement().addEventListener('scroll',
+      (e) => {
+        const flag = e.srcElement.scrollHeight - e.srcElement.scrollTop - this.pagService.startPointToGetData <= e.srcElement.clientHeight;
+        if (flag && !this.pagService.set.has(e.srcElement.scrollHeight)) {
+          this.pagService.set.add(e.srcElement.scrollHeight);
+          this.pagService.nextPagination.next();
+        }
+      }); }, 0);
   }
 
   async newNote() {

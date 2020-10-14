@@ -39,7 +39,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   animations: [
     sideBarCloseOpen,
     deleteSmallNote,
-    showHistory]
+    showHistory],
+    providers: [NotesService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 

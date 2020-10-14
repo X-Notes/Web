@@ -16,7 +16,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss']
+  styleUrls: ['./deleted.component.scss'],
+  providers: [FolderService]
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
@@ -56,7 +57,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.deletedFolders).pipe(take(1))
       .subscribe(async (x) => {
-        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+        this.folderService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderDeleted)); });
   }

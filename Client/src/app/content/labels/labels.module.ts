@@ -7,6 +7,7 @@ import { LabelComponent } from './label/label.component';
 import { AllComponent } from './all/all.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { LabelsService } from './labels.service';
 
 
 

@@ -33,6 +33,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, NotesService, FullNoteSliderService, MurriService],
+  }, FullNoteSliderService, MurriService],
 })
 export class NotesModule { }

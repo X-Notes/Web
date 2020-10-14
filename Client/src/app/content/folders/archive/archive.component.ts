@@ -16,7 +16,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss']
+  styleUrls: ['./archive.component.scss'],
+  providers: [FolderService]
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
 
@@ -56,7 +57,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.archiveFolders).pipe(take(1))
       .subscribe(async (x) => {
-        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+        this.folderService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderArchive));
       });

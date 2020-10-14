@@ -16,7 +16,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-shared',
   templateUrl: './shared.component.html',
-  styleUrls: ['./shared.component.scss']
+  styleUrls: ['./shared.component.scss'],
+  providers: [FolderService]
 })
 export class SharedComponent implements OnInit, OnDestroy {
 
@@ -56,7 +57,7 @@ export class SharedComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
       .subscribe(async (x) => {
-        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
+        this.folderService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
 

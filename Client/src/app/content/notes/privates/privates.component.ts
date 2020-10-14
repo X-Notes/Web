@@ -19,7 +19,8 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-privates',
   templateUrl: './privates.component.html',
-  styleUrls: ['./privates.component.scss']
+  styleUrls: ['./privates.component.scss'],
+  providers: [NotesService]
 })
 export class PrivatesComponent implements OnInit, OnDestroy {
 
@@ -53,7 +54,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
       .subscribe(async (x) => {
-        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+        this.noteService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate));
       });

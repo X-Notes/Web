@@ -16,7 +16,8 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-private',
   templateUrl: './private.component.html',
-  styleUrls: ['./private.component.scss']
+  styleUrls: ['./private.component.scss'],
+  providers: [FolderService]
 })
 export class PrivateComponent implements OnInit, OnDestroy {
 
@@ -57,7 +58,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
     this.store.select(FolderStore.privateFolders).pipe(take(1))
       .subscribe(async (x) => {
-        this.folderService.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
+        this.folderService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
 

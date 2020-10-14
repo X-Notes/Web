@@ -16,7 +16,8 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
-  styleUrls: ['./archive.component.scss']
+  styleUrls: ['./archive.component.scss'],
+  providers: [NotesService]
 })
 export class ArchiveComponent implements OnInit, OnDestroy {
 
@@ -42,7 +43,6 @@ export class ArchiveComponent implements OnInit, OnDestroy {
       }
     }
     );
-
   }
 
   async loadContent() {
@@ -52,7 +52,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(async (x) => {
-      this.noteService.notes = [...x].map(note => { note = {...note}; return note; });
+      this.noteService.firstInit(x);
       this.loaded =  await this.initPromise();
       setTimeout(() => this.murriService.initMurriNote(EntityType.NoteArchive)); });
 

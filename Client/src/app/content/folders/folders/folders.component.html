@@ -12,7 +12,8 @@
             </div>
             <div class="separator"></div>
 
-            <div class="sub-nav-item" routerLink="/folders" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub3>
+            <div class="sub-nav-item" routerLink="/folders" [routerLinkActiveOptions]="{exact:true}"
+                routerLinkActive="active" #sub3>
                 <div class="item">
                     <p>{{ 'subMenu.private' | translate }}</p>
                     <p>{{ countPrivate | async}}</p>
@@ -20,7 +21,8 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub3"></div>
             </div>
 
-            <div class="sub-nav-item" routerLink="/folders/shared" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub2>
+            <div class="sub-nav-item" routerLink="/folders/shared" [routerLinkActiveOptions]="{exact:true}"
+                routerLinkActive="active" #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.shared' | translate }}</p>
                     <p>{{countShared | async}}</p>
@@ -29,7 +31,8 @@
             </div>
 
 
-            <div class="sub-nav-item" routerLink="/folders/archive" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub4>
+            <div class="sub-nav-item" routerLink="/folders/archive" [routerLinkActiveOptions]="{exact:true}"
+                routerLinkActive="active" #sub4>
                 <div class="item">
                     <p>{{ 'subMenu.archive' | translate }}</p>
                     <p>{{countArchive | async}}</p>
@@ -37,7 +40,8 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub4"></div>
             </div>
 
-            <div class="sub-nav-item" routerLink="/folders/deleted" [routerLinkActiveOptions]="{exact:true}" routerLinkActive="active" #sub5>
+            <div class="sub-nav-item" routerLink="/folders/deleted" [routerLinkActiveOptions]="{exact:true}"
+                routerLinkActive="active" #sub5>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
                     <p>{{countDeleted | async}}</p>
@@ -65,7 +69,7 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content">
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
+    <ngx-simplebar #scrollMe [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>

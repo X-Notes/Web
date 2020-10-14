@@ -28,6 +28,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
     FoldersRouting,
     SharedModule
   ],
-  providers: [FolderService, MurriService]
+  providers: [MurriService]
 })
 export class FoldersModule { }

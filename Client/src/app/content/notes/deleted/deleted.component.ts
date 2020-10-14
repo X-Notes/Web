@@ -19,7 +19,8 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss']
+  styleUrls: ['./deleted.component.scss'],
+  providers: [NotesService]
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
@@ -53,7 +54,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
       .subscribe(async (x) => {
-        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
+        this.noteService.firstInit(x);
         this.loaded =  await this.initPromise();
         setTimeout(() => {this.murriService.initMurriNote(EntityType.NoteDeleted); });
       });
