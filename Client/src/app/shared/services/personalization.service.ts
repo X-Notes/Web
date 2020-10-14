@@ -68,7 +68,7 @@ export class PersonalizationService {
 
   constructor() {}
 
-  timeForLabelsL = 100;
+  timeForLabelsLoading = 100;
   timeForSpinnerLoading = 30;
   subject = new Subject();
 
