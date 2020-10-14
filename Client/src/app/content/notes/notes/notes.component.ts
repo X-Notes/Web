@@ -35,7 +35,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   public myScrollContainer: ElementRef;
 
   destroy = new Subject<void>();
-
+  loaded = false;
   theme = Theme;
 
   labelsActive: number[] = [];
@@ -71,6 +71,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         this.store.dispatch(new LoadLabels());
+        this.loaded =  await this.initPromise();
       }
     });
 
@@ -89,6 +90,10 @@ export class NotesComponent implements OnInit, OnDestroy {
           this.pagService.nextPagination.next();
         }
       }); }, 0);
+  }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForLabelsLoading));
   }
 
   async newNote() {
