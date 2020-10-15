@@ -32,6 +32,7 @@ export class SharedComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllFolder());

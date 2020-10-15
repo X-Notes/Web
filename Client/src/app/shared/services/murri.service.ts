@@ -101,4 +101,8 @@ export class MurriService {
     });
     setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
+
+  muuriDestroy() {
+    this.grid.destroy(true);
+  }
 }
