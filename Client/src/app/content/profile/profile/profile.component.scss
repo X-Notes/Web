@@ -448,6 +448,10 @@
                     button[type="button"]:first-child {
                         color: $text-color;
                     }
+
+                    .icon-logout::before{
+                        color: #414141;
+                    }
                 }
     
                 .billing-forms {
