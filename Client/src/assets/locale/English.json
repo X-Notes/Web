@@ -11,17 +11,83 @@
   "people": {
     "name": "People"
   },
+  "new": {
+    "note": "New note",
+    "folder": "New folder",
+    "background": "New background",
+    "label": "New label"
+  },
   "subMenu": {
     "all": "All",
+    "private": "Private",
     "shared": "Shared",
-    "locked": "Locked",
     "archive": "Archive",
     "bin": "Bin",
-    "invitation": "Invitation",
-    "cancel": "Cancel",
-    "private": "Private"
+    "cancel": "Cancel"
   },
-  "English": "English",
-  "Russian": "Russian",
-  "Ukraine": "Ukrainian"
+  "languages": {
+    "English": "English",
+    "Russian": "Russian",
+    "Ukraine": "Ukrainian"
+  },
+  "header": {
+    "selected": "Selected",
+    "new": "New note",
+    "select": "Select all",
+    "filter": "Filter",
+    "theme": "Theme",
+    "search": "Search...",
+    "questions": "Question",
+    "notification": "Notification",
+    "orientation": "Mode",
+    "back": "Go back",
+    "video": "Video",
+    "countUsers": "Number of users",
+    "menu": "Menu",
+    "defaultColor": "Default color"
+  },
+  "menu": {
+    "label": "label",
+    "shared": "shared",
+    "copy": "copy",
+    "color": "color",
+    "download": "download",
+    "lock": "locked",
+    "archive": "archive",
+    "delete": "delete",
+    "history": "History"
+  },
+  "profile": {
+    "sectionProfile": "Profile",
+    "sectionGeneral": "General",
+    "sectionAccount": "Account",
+    "sectionPersonalization": "Personalization",
+    "nameUser": "Name",
+    "email": "Email addres",
+    "descriptionEmail": "Your email address is your identity on Noots and is used to log in",
+    "logOut": "Log out",
+    "update": "Update",
+    "language": "Language",
+    "personalKey": " Personal key",
+    "changeKey": "Change",
+    "resetKey": "Reset",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "genericTooltip": "See how the notes will look in the",
+    "genericPreview": "preview",
+    "noteSize": "Note size",
+    "noteDefault": "Default",
+    "noteBig": "Big"
+  },
+  "modal": {
+    "labelModal": {
+      "Labels": "Labels",
+      "search": "Label name..."
+    },
+    "ColorModal": {
+      "Colors": "Colors",
+      "save": "Save"
+    }
+  }
 }

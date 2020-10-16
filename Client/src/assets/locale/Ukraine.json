@@ -11,17 +11,85 @@
   "people": {
     "name": "Люди"
   },
+  "new": {
+    "note": "Нова замітка",
+    "folder": "Нова папка",
+    "background": "Новий фон",
+    "label": "Новий ярлик"
+  },
   "subMenu": {
-    "all": "Все",
+    "all": "Всі",
+    "private": "Приватні",
     "shared": "Спільні",
-    "locked": "Приватні",
     "archive": "Архив",
     "bin": "Кошик",
-    "invitation": "Запрошення",
-    "cancel": "Скасувати",
-    "private": "Приватні"
+    "cancel": "Скасувати"
   },
-  "English": "Англійська",
-  "Russian": "Російська",
-  "Ukraine": "Українська"
+  "languages": {
+    "English": "Англійська",
+    "Russian": "Російська",
+    "Ukraine": "Українська"
+  },
+  "header": {
+    "selected": "Вибрано",
+    "new": "Нова",
+    "select": "Вибрати все",
+    "filter": "Фільтер",
+    "theme": "Тема",
+    "search": "Пошук...",
+    "questions": "Питання",
+    "notification": "Повідомлення",
+    "orientation": "Режим перегляду",
+    "back": "Повернутися",
+    "video": "Відео",
+    "countUsers": "Кілікість користувачів",
+    "label": "Ярлик",
+    "shared": "Спільні",
+    "menu": "Меню",
+    "defaultColor": "Звичайний"
+  },
+  "menu": {
+    "label": "Ярлик",
+    "shared": "Спільні",
+    "copy": "Копіювати",
+    "color": "Колір",
+    "download": "Завантажити",
+    "lock": "Пароль",
+    "archive": "Архів",
+    "delete": "Видалити",
+    "history": "Історія"
+  },
+  "profile": {
+    "sectionProfile": "Профіль",
+    "sectionGeneral": "Загальні",
+    "sectionAccount": "Аккаунт",
+    "sectionPersonalization": "Персоналізація",
+    "nameUser": "Ім'я",
+    "email": "Электронна адреса",
+    "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
+    "logOut": "Вийти",
+    "update": "Оновити",
+    "language": "Мова",
+    "personalKey": "Секретний ключ",
+    "changeKey": "Змінити",
+    "resetKey": "Скинути",
+    "theme": "Тема",
+    "themeLight": "Світла",
+    "themeDark": "Темна",
+    "genericTooltip": "Подивіться, як будуть виглядати замітки в",
+    "genericPreview": "попередньому перегляді",
+    "noteSize": "Розмір замітки",
+    "noteDefault": "Звичайний",
+    "noteBig": "Великий"
+  },
+  "modal": {
+    "labelModal": {
+      "Labels": "Ярлики",
+      "search": "Назва ярлика..."
+    },
+    "ColorModal": {
+      "Colors": "Кольора",
+      "save": "Зберегти"
+    }
+  }
 }

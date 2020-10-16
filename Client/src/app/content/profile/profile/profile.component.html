@@ -32,7 +32,7 @@
         <div class="main" >
             <div class="sections">
                 <div class="header">
-                    <p>Profile</p>
+                    <p>{{ 'profile.sectionProfile' | translate }}</p>
                 </div>
                 <div class="user-info generic-section">
                     <div class="photo" appDrop>
@@ -48,17 +48,17 @@
                     <div class="fields">
                         <div class="field">
                             <div class="field-name">
-                                <p>Name</p>
+                                <p>{{ 'profile.nameUser' | translate }}</p>
                             </div>
                             <input type="text" placeholder="Your name" [(ngModel)]="userName">
                         </div>
                         <div class="field">
                             <div class="field-name">
-                                <p>Email address</p>
+                                <p>{{ 'profile.email' | translate }}</p>
                             </div>
                             <input type="text" placeholder="Your name" disabled value="{{(user$ | async).email}}">
                             <div class="help-info">
-                                <p>Your email address is your identity on Noots and is used to log in</p>
+                                <p>{{ 'profile.descriptionEmail' | translate }}</p>
                             </div>
                         </div>
                     </div>
@@ -69,13 +69,13 @@
                             <div class="icon">
                                 <i class="icon-plus"></i>
                             </div>
-                            <p>Log out</p>
+                            <p>{{ 'profile.logOut' | translate }}</p>
                         </div>
                         <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
                     </button>
                     <button class="generic-button" type="button" name="Update button" #updateProfile (click)="updateName()">
                         <div class="content-button">
-                            <p>Update</p>
+                            <p>{{ 'profile.update' | translate }}</p>
                         </div>
                         <div class="ripple-container" matRipple [matRippleTrigger]="updateProfile"></div>
                     </button>
@@ -83,7 +83,7 @@
             </div>
             <div class="sections">
                 <div class="header">
-                    <p>General</p>
+                    <p>{{ 'profile.sectionGeneral' | translate }}</p>
                 </div>
                 <div class="billing-forms generic-section">
                     <div class="form">
@@ -96,16 +96,16 @@
             </div>
             <div class="sections">
                 <div class="header">
-                    <p>Account</p>
+                    <p>{{ 'profile.sectionAccount' | translate }}</p>
                 </div>
                 <div class="account-setting generic-section">
                     <div class="field-language">
                         <div class="field-name">
-                            <p>Language</p>
+                            <p>{{ 'profile.language' | translate }}</p>
                         </div>
                         <button class="generic-button" type="button" (click)="showDropdown()">
                             <div class="content-button" #dropdownSelect>
-                                <p>{{ language$ | async | translate }}</p>
+                                <p>{{ 'languages.' + (language$ | async) | translate }}</p>
                                 <div class="icon" [ngStyle]="{'transform': dropdownLanguage ? 'rotate(180deg)' : '' }">
                                     <i class="icon-select-label"></i>
                                 </div>
@@ -114,7 +114,7 @@
                             <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage"
                                 [@showHistory]>
                                 <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
-                                    <p>{{ item | translate }}</p>
+                                    <p>{{ 'languages.' + item | translate }}</p>
                                 </div>
                             </ngx-simplebar>
                             <div #overlay class="overlay" (click)="cancelDropdown()"></div>
@@ -122,19 +122,19 @@
                     </div>
                     <div class="field-key">
                         <div class="field-name">
-                            <p>Personal key</p>
+                            <p>{{ 'profile.personalKey' | translate }}</p>
                         </div>
                         <div class="personal-key">
                             <input type="password" name="Personal key">
                             <button class="generic-button" type="button" name="Update button" #changeKey>
                                 <div class="content-button">
-                                    <p>Change</p>
+                                    <p>{{ 'profile.changeKey' | translate }}</p>
                                 </div>
                                 <div class="ripple-container" matRipple [matRippleTrigger]="changeKey"></div>
                             </button>
                             <button class="generic-button" type="button" name="Reset button" #resetKey>
                                 <div class="content-button">
-                                    <p>Reset</p>
+                                    <p>{{ 'profile.resetKey' | translate }}</p>
                                 </div>
                                 <div class="ripple-container" matRipple [matRippleTrigger]="resetKey"></div>
                             </button>
@@ -144,36 +144,36 @@
             </div>
             <div class="sections">
                 <div class="header">
-                    <p>Personalization</p>
+                    <p>{{ 'profile.sectionPersonalization' | translate }}</p>
                 </div>
                 <div class="personalization-setting generic-section">
                     <div class="fields">
                         <div class="field">
                             <div class="general-row">
                                 <div class="field-name">
-                                    <p>Theme</p>
+                                    <p>{{ 'profile.theme' | translate }}</p>
                                 </div>
                                 <div class="toggle">
                                     <input type="checkbox" (change)="changeTheme()">
                                     <div class="rectangle" [ngClass]="(theme$ | async) ? '' : 'active-toggle'"></div>
                                     <div class="text-toggle">
                                         <div class="text">
-                                            <p>Dark</p>
+                                            <p>{{ 'profile.themeDark' | translate }}</p>
                                         </div>
                                         <div class="text">
-                                            <p>Light</p>
+                                            <p>{{ 'profile.themeLight' | translate }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="help-info">
-                                <p>See how the notes will look in the <span>preview</span></p>
+                                <p>{{ 'profile.genericTooltip' | translate }}<span> {{ 'profile.genericPreview' | translate }}</span></p>
                             </div>
                         </div>
                         <div class="field">
                             <div class="general-row">
                                 <div class="field-name">
-                                    <p>Note size</p>
+                                    <p>{{ 'profile.noteSize' | translate }}</p>
                                 </div>
                                 <div class="toggle">
                                     <input type="checkbox" (change)="changeFontSize()">
@@ -181,16 +181,16 @@
                                     </div>
                                     <div class="text-toggle">
                                         <div class="text">
-                                            <p>Default</p>
+                                            <p>{{ 'profile.noteDefault' | translate }}</p>
                                         </div>
                                         <div class="text">
-                                            <p>Big</p>
+                                            <p>{{ 'profile.noteBig' | translate }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="help-info">
-                                <p>See how the notes will look in the <span>preview</span></p>
+                                <p>{{ 'profile.genericTooltip' | translate }}<span> {{ 'profile.genericPreview' | translate }}</span></p>
                             </div>
                         </div>
                     </div>
