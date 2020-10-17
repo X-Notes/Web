@@ -23,6 +23,7 @@
 }
 
 .content {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: calc(100% - 190px);

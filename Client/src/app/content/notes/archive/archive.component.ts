@@ -53,7 +53,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
 
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
-    .subscribe(x => { this.noteService.notes = [...x].map(note => { note = {...note}; return note; });
+    .subscribe(x => { this.pService.spinner = false;
+                      this.noteService.notes = [...x].map(note => { note = {...note}; return note; });
                       setTimeout(() => this.murriService.initMurriNote(EntityType.NoteArchive)); });
 
   }

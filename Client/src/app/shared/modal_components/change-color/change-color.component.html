@@ -1,11 +1,13 @@
 <div class="header">
-    <span>{{data.title}}</span>
+    <span>{{ ('modal.ColorModal.' + data.title) | translate }}</span>
     <i class="icon-plus" mat-dialog-close></i>
 </div>
-<div class="preview_container">
+<div class="preview-container">
     <div *ngIf="(isNote$ | async)" class="note" [ngStyle]="{'backgroundColor': current}">
         <div class="labels">
-            <span>IT</span>
+            <div class="label">
+                <p>Label</p>
+            </div>
         </div>
         <span class="title">Preview</span>
         <span class="description">Document is a written, drawn, presented, or memorialized representation of thought.</span>
@@ -16,16 +18,16 @@
         </div>
         <div class="inner" [ngStyle]="{'backgroundColor': current}">
             <p>Preview</p>
-            <div class="notes_folder">
-                <div class="note_folder">
+            <div class="notes-folder">
+                <div class="note-folder">
                     <i class="icon-notes"></i>
                     <p>Hello Hello Hello Hello</p>
                 </div>
-                <div class="note_folder">
+                <div class="note-folder">
                     <i class="icon-notes"></i>
                     <p>Hello Hello Hello Hello</p>
                 </div>
-                <div class="note_folder">
+                <div class="note-folder">
                     <i class="icon-notes"></i>
                     <p>Hello Hello Hello Hello</p>
                 </div>
@@ -33,15 +35,16 @@
         </div>
     </div>
 </div>
-<div class="color_container">
-    <div class="color_pallete">
-        <div *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeCurrent(item)">
-            <div [ngStyle]="item === current ? {'boxShadow': '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7'} : {}"></div>
+<div class="color-container">
+    <div class="color-pallete">
+        <div *ngFor="let item of pallete" class="color"
+            [ngStyle]="{'backgroundColor': item, 'boxShadow': item === current ? '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7' : ''}"
+            (click)="changeCurrent(item)">
         </div>
     </div>
 </div>
-<div class="button_container">
-    <div class="save_button" (click)="changeColor()" [ngClass]="(theme$ | async) === theme.Light ? 'white_button' : 'dark_button'">
-        <span>Save</span>
+<div class="button-container">
+    <div class="save-button" (click)="changeColor()" [ngClass]="(theme$ | async) === theme.Light ? 'white-button' : 'dark-button'">
+        <span>{{ 'modal.ColorModal.save' | translate }}</span>
     </div>
 </div>

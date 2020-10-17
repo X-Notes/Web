@@ -23,7 +23,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   .icon-archive:before {
     content: "\e900";
     color: #fff;
@@ -69,54 +69,66 @@
     content: "\e90a";
     color: #fff;
   }
-  .icon-notes:before {
+  .icon-logout:before {
     content: "\e90b";
     color: #fff;
   }
-  .icon-notification:before {
+  .icon-newphoto:before {
     content: "\e90c";
-    color: #fff;
+    color: #414141;
   }
-  .icon-people:before {
+  .icon-notes:before {
     content: "\e90d";
     color: #fff;
   }
-  .icon-plus:before {
+  .icon-notification:before {
     content: "\e90e";
+    color: #fff;
+  }
+  .icon-people:before {
+    content: "\e90f";
+    color: #fff;
+  }
+  .icon-plus:before {
+    content: "\e910";
+  }
+  .icon-private:before {
+    content: "\e911";
+    color: #fff;
   }
   .icon-question:before {
-    content: "\e90f";
+    content: "\e912";
     color: #616161;
   }
   .icon-restore:before {
-    content: "\e910";
-    color: #505050;
-  }
-  .icon-search:before {
-    content: "\e911";
-    color: #828282;
-  }
-  .icon-select:before {
-    content: "\e912";
-    color: #515151;
-  }
-  .icon-select-label:before {
     content: "\e913";
     color: #505050;
   }
-  .icon-shared:before {
+  .icon-search:before {
     content: "\e914";
+    color: #828282;
+  }
+  .icon-select:before {
+    content: "\e915";
+    color: #515151;
+  }
+  .icon-select-label:before {
+    content: "\e916";
+    color: #505050;
+  }
+  .icon-shared:before {
+    content: "\e917";
     color: #fff;
   }
   .icon-theme_light:before {
-    content: "\e915";
+    content: "\e918";
     color: #616161;
   }
   .icon-video:before {
-    content: "\e916";
+    content: "\e919";
     color: #fff;
   }
   .icon-view-change:before {
-    content: "\e917";
+    content: "\e91a";
     color: #fff;
   }

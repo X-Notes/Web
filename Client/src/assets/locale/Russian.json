@@ -5,23 +5,91 @@
   "folders": {
     "name": "Папки"
   },
+  "folder": "папка",
   "labels": {
     "name": "Ярлыки"
   },
   "people": {
     "name": "Люди"
   },
+  "background": "фон",
+  "new": {
+    "note": "Новая заметка",
+    "folder": "Новая папка",
+    "background": "Новый фон",
+    "label": "Новый ярлык"
+  },
   "subMenu": {
     "all": "Все",
+    "private": "Приватные",
     "shared": "Общие",
-    "locked": "Приватные",
     "archive": "Архив",
     "bin": "Корзина",
-    "invitation": "Приглашение",
-    "cancel": "Отмена",
-    "private": "Приватные"
+    "cancel": "Отмена"
   },
-  "English": "Английский",
-  "Russian": "Русский",
-  "Ukraine": "Украинский"
+  "languages": {
+    "English": "Английский",
+    "Russian": "Русский",
+    "Ukraine": "Украинский"
+  },
+  "header": {
+    "selected": "Выбрано",
+    "new": "Новая",
+    "select": "Выбрать все",
+    "filter": "Фильтер",
+    "theme": "Тема",
+    "search": "Поиск...",
+    "questions": "Вопросы",
+    "notification": "Уведомления",
+    "orientation": "Режим просмотра",
+    "back": "Назад",
+    "video": "Видео",
+    "countUsers": "Количество пользователей",
+    "menu": "Меню",
+    "defaultColor": "Обычный"
+  },
+  "menu": {
+    "label": "Ярлик",
+    "shared": "Общие",
+    "copy": "Скопировать",
+    "color": "Цвет",
+    "download": "Скачать",
+    "lock": "Пароль",
+    "archive": "Архив",
+    "delete": "Удалить",
+    "history": "История"
+  },
+  "profile": {
+    "sectionProfile": "Профиль",
+    "sectionGeneral": "Общие",
+    "sectionAccount": "Аккаунт",
+    "sectionPersonalization": "Персонализация",
+    "nameUser": "Имя",
+    "email": "Электронный адресс",
+    "descriptionEmail": "Ваш адрес электронной почты является идентефикацией на Noots и используется для входа в систему.",
+    "logOut": "Выйти",
+    "update": "Обновить",
+    "language": "Язык",
+    "personalKey": "Секретный ключ",
+    "changeKey": "Изменить",
+    "resetKey": "Сбросить",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Темная",
+    "genericTooltip": "Посмотрите, как будут выглядеть заметки в",
+    "genericPreview": "предварительном просмотре",
+    "noteSize": "Размер заметки",
+    "noteDefault": "Обычный",
+    "noteBig": "Большой"
+  },
+  "modal": {
+    "labelModal": {
+      "Labels": "Ярлыки",
+      "search": "Название ярлыка..."
+    },
+    "ColorModal": {
+      "Colors": "Цвета",
+      "save": "Сохранить"
+    }
+  }
 }

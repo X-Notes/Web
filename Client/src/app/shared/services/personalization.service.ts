@@ -89,6 +89,7 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+  spinner = true;
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;

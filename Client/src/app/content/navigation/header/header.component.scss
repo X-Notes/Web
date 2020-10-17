@@ -156,11 +156,7 @@ header {
       }
 
       .custom-create {
-        width: 140px;
-      }
-
-      .custom-create-profile {
-        width: 170px;
+        min-width: 150px;
       }
 
       .generic {
@@ -184,12 +180,25 @@ header {
           padding: 0 0.75rem;
           font-size: 1rem;
 
+          p {
+            padding-right: 1rem;
+            white-space: nowrap;
+          }
+
           i {
             font-size: 0.75rem;
 
             &::before {
               transition: 0.2s color ease;
             }
+          }
+        }
+      }
+
+      .default-size, .history {
+        .inner-content {
+          p {
+            padding-right: 0;
           }
         }
       }
@@ -713,6 +722,9 @@ header {
         .search {
           display: none;
         }
+        .auxiliary-icon:nth-child(2) {
+          margin-left: 0;
+        }
       }
     }
   }
@@ -836,6 +848,10 @@ header {
             }
           }
         }
+
+        .custom-create {
+          min-width: auto;
+        }
       }
     }
 
@@ -918,6 +934,10 @@ header {
 
         .filters {
           width: 54px;
+        }
+
+        .custom-create {
+          min-width: auto;
         }
 
         .default-size {

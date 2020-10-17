@@ -72,7 +72,7 @@
                     display: flex;
                     flex-direction: column;
                     width: 100%;
-                    margin-bottom: 0.625rem;
+                    margin-bottom: 0.75rem;
     
                     &:last-child {
                         margin-bottom: 0;
@@ -235,16 +235,18 @@
                         .general-row {
                             display: flex;
                             justify-content: space-between;
-                            width: 270px;
+                            align-items: center;
+                            width: 290px;
     
                             .field-name {
                                 font-weight: 500;
+                                width: 100px;
                             }
     
                             .toggle {
                                 position: relative;
                                 display: flex;
-                                width: 170px;
+                                width: 190px;
                                 height: 32px;
                                 border: 0.8px solid #959595;
                                 border-radius: 5px;
@@ -310,7 +312,7 @@
                 align-items: flex-end;
     
                 .field-language {
-                    margin-bottom: 0.625rem;
+                    margin-bottom: 0.75rem;
     
                     button[type="button"] {
                         width: 150px;
@@ -445,6 +447,10 @@
                 .managment-buttons {
                     button[type="button"]:first-child {
                         color: $text-color;
+                    }
+
+                    .icon-logout::before{
+                        color: #414141;
                     }
                 }
     
@@ -604,6 +610,30 @@
                         .field {
                             .general-row {
                                 width: 100%;
+
+                                .field-name {
+                                    width: 70px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 330px) {
+    .content-inner {
+        .main {
+            .sections {    
+                .personalization-setting {
+                    .fields {
+                        .field {
+                            .general-row {
+                                .field-name {
+                                    width: 65px;
+                                }
                             }
                         }
                     }
@@ -625,6 +655,7 @@
     
                                 .field-name {
                                     margin-bottom: 0.5rem;
+                                    width: 100%;
                                 }
     
                                 .toggle {
