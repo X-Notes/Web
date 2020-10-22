@@ -14,7 +14,7 @@ namespace WriteContext
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
         public DbSet<Note> Notes { set; get; }
-        public DbSet<UserOnNote> UserOnNote { set; get; }
+        public DbSet<UserOnNoteNow> UserOnNote { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
@@ -54,7 +54,7 @@ namespace WriteContext
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
 
-            modelBuilder.Entity<UserOnNote>()
+            modelBuilder.Entity<UserOnNoteNow>()
                 .HasKey(x => new { x.UserId, x.NoteId });
 
             modelBuilder.Entity<LabelsNotes>()

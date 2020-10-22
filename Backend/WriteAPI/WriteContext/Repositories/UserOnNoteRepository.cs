@@ -15,7 +15,7 @@ namespace WriteContext.Repositories
             this.contextDB = contextDB;
         }
 
-        public async Task Add(UserOnNote userOnNote)
+        public async Task Add(UserOnNoteNow userOnNote)
         {
             await contextDB.AddAsync(userOnNote);
             await contextDB.SaveChangesAsync();
@@ -33,7 +33,7 @@ namespace WriteContext.Repositories
             return await contextDB.UserOnNote.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
         }
 
-        public async Task<UserOnNote> GetUserFromNoteByIds(int userId, Guid noteId)
+        public async Task<UserOnNoteNow> GetUserFromNoteByIds(int userId, Guid noteId)
         {
             return await contextDB.UserOnNote.Where(x => x.UserId == userId && x.NoteId == noteId).FirstOrDefaultAsync();
         }
