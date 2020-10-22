@@ -12,6 +12,6 @@ namespace Common.DatabaseModels.models
 
         public Guid NoteId { set; get; }
         public Note Note { set; get; }
-        public AccessType AccessType { set; get; }
+        public RefType AccessType { set; get; }
     }
 }

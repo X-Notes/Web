@@ -21,41 +21,72 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPost("folders/share/edit")]
+        [HttpPost("folders/share")]
         public async Task ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            command.RefType = RefType.Editor;
             await this._mediator.Send(command);
         }
 
-        [HttpPost("folders/share/view")]
-        public async Task ToPublicViewShareFolders(ChangeRefTypeFolders command)
+        [HttpPost("folders/user/permission")]
+        public async Task ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            command.RefType = RefType.Viewer;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPost("folders/user/remove")]
+        public async Task RemoveUserFromFolder(RemoveUserFromPrivateFolders command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPost("folders/user/invites")]
+        public async Task InvitesUsersToFolder(SendInvitesToUsersFolders command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
             await this._mediator.Send(command);
         }
 
 
-        [HttpPost("notes/share/edit")]
+
+        [HttpPost("notes/share")]
         public async Task ToPublicEditShareNotes(ChangeRefTypeNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            command.RefType = RefType.Editor;
             await this._mediator.Send(command);
         }
 
-        [HttpPost("notes/share/view")]
-        public async Task ToPublicViewShareNotes(ChangeRefTypeNotes command)
+
+        [HttpPost("notes/user/permission")]
+        public async Task ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            command.RefType = RefType.Viewer;
             await this._mediator.Send(command);
         }
+
+        [HttpPost("notes/user/remove")]
+        public async Task RemoveUserFromNote(RemoveUserFromPrivateNotes command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
+        [HttpPost("notes/user/invites")]
+        public async Task InvitesUsersToNotes(SendInvitesToUsersNotes command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
     }
 }

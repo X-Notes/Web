@@ -15,7 +15,13 @@ namespace BI.services.sharing
 {
     public class SharingHandlerCommand :
         IRequestHandler<ChangeRefTypeFolders, Unit>,
-        IRequestHandler<ChangeRefTypeNotes, Unit>
+        IRequestHandler<ChangeRefTypeNotes, Unit>,
+        IRequestHandler<PermissionUserOnPrivateFolders, Unit>,
+        IRequestHandler<RemoveUserFromPrivateFolders, Unit>,
+        IRequestHandler<SendInvitesToUsersFolders, Unit>,
+        IRequestHandler<SendInvitesToUsersNotes, Unit>,
+        IRequestHandler<RemoveUserFromPrivateNotes, Unit>,
+        IRequestHandler<PermissionUserOnPrivateNotes, Unit>
     {
         private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
@@ -79,6 +85,36 @@ namespace BI.services.sharing
             }
 
             return Unit.Value;
+        }
+
+        public Task<Unit> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Unit> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

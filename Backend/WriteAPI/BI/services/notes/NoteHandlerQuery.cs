@@ -66,7 +66,7 @@ namespace BI.services.notes
                                         return new FullNoteAnswer()
                                         {
                                             CanView = true,
-                                            AccessType = AccessType.Editor,
+                                            AccessType = RefType.Editor,
                                             FullNote = mapper.Map<FullNote>(note)
                                         };
                                     }
@@ -75,7 +75,7 @@ namespace BI.services.notes
                                         return new FullNoteAnswer()
                                         {
                                             CanView = true,
-                                            AccessType = AccessType.Viewer,
+                                            AccessType = RefType.Viewer,
                                             FullNote = mapper.Map<FullNote>(note)
                                         };
                                     }
@@ -89,7 +89,7 @@ namespace BI.services.notes
                                 return new FullNoteAnswer()
                                 {
                                     CanView = true,
-                                    AccessType = AccessType.Editor,
+                                    AccessType = RefType.Editor,
                                     FullNote = mapper.Map<FullNote>(note)
                                 };
                             }

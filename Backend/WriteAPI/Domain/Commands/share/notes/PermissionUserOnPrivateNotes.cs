@@ -1,17 +1,15 @@
 ﻿using Common.DatabaseModels.helpers;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Common.DatabaseModels.models
+namespace Domain.Commands.share.notes
 {
-    public class UsersOnPrivateFolders
+    public class PermissionUserOnPrivateNotes : BaseCommandEntity, IRequest<Unit>
     {
+        public Guid NoteId { set; get; }
         public int UserId { set; get; }
-        public User User { set; get; }
-
-        public Guid FolderId { set; get; }
-        public Folder Folder { set; get; }
         public RefType AccessType { set; get; }
     }
 }

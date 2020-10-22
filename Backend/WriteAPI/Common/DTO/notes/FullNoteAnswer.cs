@@ -8,7 +8,7 @@ namespace Common.DTO.notes
     public class FullNoteAnswer
     {
         public bool CanView { set; get; }
-        public AccessType? AccessType { set; get; }
+        public RefType? AccessType { set; get; }
         public FullNote FullNote { set; get; }
     }
 }
