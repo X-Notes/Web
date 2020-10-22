@@ -25,9 +25,9 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
               public pService: PersonalizationService,
               private store: Store) { }
 
-  @Select(LabelStore.all)
-  public labels$: Observable<Label[]>;
+  public labels: Label[];
 
+  loaded = false;
   searchStr = '';
 
   ngOnDestroy(): void {
@@ -38,6 +38,10 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.store.select(LabelStore.all).subscribe(async (x) => {
+      this.loaded =  await this.pService.initPromise();
+      this.labels = x;
+    });
   }
 
 

@@ -59,13 +59,10 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
       .subscribe(async (x) => {
         this.folderService.firstInit(x);
-        this.loaded =  await this.initPromise();
+        this.loaded =  await this.pService.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
 
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
-  }
 
 }

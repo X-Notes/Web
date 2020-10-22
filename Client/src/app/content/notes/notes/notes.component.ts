@@ -71,7 +71,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         this.store.dispatch(new LoadLabels());
-        this.loaded =  await this.initPromise();
+        this.loaded =  await this.pService.initPromise();
       }
     });
 
@@ -92,9 +92,6 @@ export class NotesComponent implements OnInit, OnDestroy {
       }); }, 0);
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForLabelsLoading));
-  }
 
   async newNote() {
     await this.store.dispatch(new AddNote()).toPromise();

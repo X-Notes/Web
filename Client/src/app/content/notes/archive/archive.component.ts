@@ -53,14 +53,11 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(async (x) => {
       this.noteService.firstInit(x);
-      this.loaded =  await this.initPromise();
+      this.loaded =  await this.pService.initPromise();
       setTimeout(() => this.murriService.initMurriNote(EntityType.NoteArchive)); });
 
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
-  }
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;

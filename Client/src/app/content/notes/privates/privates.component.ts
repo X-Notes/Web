@@ -55,7 +55,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.select(NoteStore.privateNotes).pipe(take(1))
       .subscribe(async (x) => {
         this.noteService.firstInit(x);
-        this.loaded =  await this.initPromise();
+        this.loaded =  await this.pService.initPromise();
         setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate));
       });
 
@@ -64,9 +64,6 @@ export class PrivatesComponent implements OnInit, OnDestroy {
       .subscribe(x => this.noteService.addToDom(x));
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
-  }
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;

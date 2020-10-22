@@ -55,7 +55,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.select(x => x.Labels.labelsDeleted).pipe(take(1))
     .subscribe(async (x) => {
       this.labelService.firstInit(x);
-      this.loaded =  await this.initPromise();
+      this.loaded =  await this.pService.initPromise();
       setTimeout(() => this.murriService.initMurriLabel(true));
     });
   }
@@ -74,10 +74,6 @@ export class DeletedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
-  }
-
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
   }
 
 }

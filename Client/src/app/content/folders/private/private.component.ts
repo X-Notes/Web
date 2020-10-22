@@ -60,7 +60,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.privateFolders).pipe(take(1))
       .subscribe(async (x) => {
         this.folderService.firstInit(x);
-        this.loaded =  await this.initPromise();
+        this.loaded =  await this.pService.initPromise();
         setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
 
     this.store.select(FolderStore.foldersAddingPrivate)
@@ -68,8 +68,5 @@ export class PrivateComponent implements OnInit, OnDestroy {
       .subscribe(x => this.folderService.addToDom(x));
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.pService.timeForSpinnerLoading));
-  }
 
 }

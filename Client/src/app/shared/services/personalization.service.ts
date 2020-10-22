@@ -140,4 +140,9 @@ export class PersonalizationService {
   checkWidth(): boolean {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
+
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.timeForSpinnerLoading));
+  }
+
 }
