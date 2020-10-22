@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges, Optional } from '@angular/core';
 import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
@@ -40,7 +40,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService) { }
+              @Optional() private murriService: MurriService) { }
 
 
 

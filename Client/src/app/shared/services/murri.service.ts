@@ -103,6 +103,6 @@ export class MurriService {
   }
 
   muuriDestroy() {
-    this.grid.destroy(true);
+    this.grid.destroy();
   }
 }
