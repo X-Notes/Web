@@ -4,9 +4,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import {LoadPrivateNotes, SelectIdNote,
-  UnSelectIdNote,
-  LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent, UnSelectAllNote
+import {LoadPrivateNotes, SelectIdNote, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent, UnSelectAllNote
 } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
@@ -30,7 +28,8 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { LoadFullNote, DeleteCurrentNote } from '../state/full-note-actions';
 import { FullNoteStore } from '../state/full-note-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { MurriService } from 'src/app/shared/services/murri.service';
+
 
 @Component({
   selector: 'app-full-note',
@@ -39,15 +38,14 @@ import { ShortUser } from 'src/app/core/models/short-user';
   animations: [
     sideBarCloseOpen,
     deleteSmallNote,
-    showHistory]
+    showHistory],
+    providers: [NotesService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
-  
-  // @Select(UserStore.getUser)
-  // public user$: Observable<ShortUser>;
+
 
   destroy = new Subject<void>();
 
@@ -64,6 +62,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   private routeSubscription: Subscription;
   private id: string;
 
+  @Select(FullNoteStore.canView)
+  public canView$: Observable<boolean>;
+
+  @Select(FullNoteStore.canNoView)
+  public canNoView$: Observable<boolean>;
+
   @Select(NoteStore.privateNotes)
   public notes$: Observable<SmallNote[]>;
 
@@ -73,12 +77,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public pService: PersonalizationService,
               private rend: Renderer2,
               private noteService: NotesService,
-              public sliderService: FullNoteSliderService) {
+              public sliderService: FullNoteSliderService,
+              public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(params => this.id = params.id);
   }
 
   ngAfterViewInit(): void {
+    if (this.note) {
     this.sliderService.goTo(this.sliderService.active, this.wrap);
+    }
   }
 
   async ngOnInit() {
@@ -100,7 +107,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
-    setTimeout(() => this.pService.gridSettings('.grid-item-small'), 0);
+    setTimeout(() => this.murriService.gridSettings('.grid-item-small'), 1000); // CHANGE TODO
+
 
     this.store.select(NoteStore.updateLabelEvent)
       .pipe(takeUntil(this.destroy))
@@ -117,6 +125,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {
+    if (!this.note) {return; }
     if (!this.pService.check()) {
       this.sliderService.getSize();
     } else {
@@ -143,14 +152,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       if (counter === 35) {
         clearInterval(interval);
       }
-      this.pService.grid.refreshItems().layout();
+      this.murriService.grid.refreshItems().layout();
       counter++;
     }, 10);
   }
 
   turnUpSmallNote() {
     this.turnUpNote = !this.turnUpNote;
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   // TODO Logic for updating on websockets
@@ -174,6 +183,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.select(FullNoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
+
+        if (!x) {
+          return;
+        }
+
         this.note = {...x};
         console.log(5);
 
@@ -221,6 +235,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

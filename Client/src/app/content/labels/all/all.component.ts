@@ -1,37 +1,36 @@
-import { Component, OnInit, AfterContentInit, Input, OnDestroy, AfterContentChecked, DoCheck } from '@angular/core';
-import { LabelStore } from '../state/labels-state';
-import { Observable, Subject } from 'rxjs';
+import { Component, OnInit, OnDestroy,  } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Label } from '../models/label';
-import { Select, Store } from '@ngxs/store';
-import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, PositionLabel } from '../state/labels-actions';
+import { Store } from '@ngxs/store';
+import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, } from '../state/labels-actions';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Order, OrderEntity, OrderService } from 'src/app/shared/services/order.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute, UpdateSettingsButton, UpdateNewButton, UpdateSelectAllButton } from 'src/app/core/stateApp/app-action';
+import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { LabelsService } from '../labels.service';
 
 @Component({
   selector: 'app-all',
   templateUrl: './all.component.html',
-  styleUrls: ['./all.component.scss']
+  styleUrls: ['./all.component.scss'],
+  providers: [LabelsService]
 })
 export class AllComponent implements OnInit, OnDestroy  {
 
   fontSize = FontSize;
-  public labels: Label[];
-
+  loaded = false;
   destroy = new Subject<void>();
 
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    private murriService: MurriService) { }
+    public murriService: MurriService,
+    public labelService: LabelsService) { }
 
   async ngOnInit() {
-
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
@@ -49,9 +48,11 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => { this.pService.spinner = false;
-                      this.labels = [...x]; 
-                      setTimeout(() => this.murriService.initMurriLabel(false)); });
+    .subscribe(async (x) => {
+      this.labelService.firstInit(x);
+      this.loaded =  await this.pService.initPromise();
+      setTimeout(() => this.murriService.initMurriLabel(false));
+    });
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))
@@ -68,19 +69,22 @@ export class AllComponent implements OnInit, OnDestroy  {
 
     this.store.select(x => x.Labels.labelsAll).pipe(take(1))
     .subscribe(x => {
-      this.labels.unshift(x[0]);
-      setTimeout(() =>  this.pService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
+      this.labelService.labels.unshift(x[0]);
+      setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
     });
 
   }
 
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
-    this.labels = this.labels.filter(x => x.id !== label.id);
-    setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+    this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
+
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
   }

@@ -19,21 +19,21 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-privates',
   templateUrl: './privates.component.html',
-  styleUrls: ['./privates.component.scss']
+  styleUrls: ['./privates.component.scss'],
+  providers: [NotesService]
 })
 export class PrivatesComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public noteService: NotesService) { }
 
 
   async ngOnInit() {
-
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
@@ -53,9 +53,11 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
     this.store.select(NoteStore.privateNotes).pipe(take(1))
-      .subscribe(x => { this.pService.spinner = false;
-                        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate)); });
+      .subscribe(async (x) => {
+        this.noteService.firstInit(x);
+        this.loaded =  await this.pService.initPromise();
+        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate));
+      });
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))
@@ -64,6 +66,8 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

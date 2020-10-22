@@ -2,13 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
-import { LoadPrivateFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
+import { LoadPrivateFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
-import { Order, OrderEntity } from 'src/app/shared/services/order.service';
-import { UpdateColor } from '../../notes/state/updateColor';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -19,27 +16,29 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-private',
   templateUrl: './private.component.html',
-  styleUrls: ['./private.component.scss']
+  styleUrls: ['./private.component.scss'],
+  providers: [FolderService]
 })
 export class PrivateComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public folderService: FolderService) { }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllFolder());
   }
 
   async ngOnInit() {
-
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
@@ -59,9 +58,10 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
     this.store.select(FolderStore.privateFolders).pipe(take(1))
-      .subscribe(x => { this.pService.spinner = false;
-                        this.folderService.folders = [...x].map(folder => { folder = { ...folder }; return folder; });
-                        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
+      .subscribe(async (x) => {
+        this.folderService.firstInit(x);
+        this.loaded =  await this.pService.initPromise();
+        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))

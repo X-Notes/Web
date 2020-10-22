@@ -33,7 +33,7 @@ namespace BI.signalR
                 var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, guid);
                 if(existUser == null)
                 {
-                    var connectUser = new UserOnNote()
+                    var connectUser = new UserOnNoteNow()
                     {
                         UserId = user.Id,
                         NoteId = guid

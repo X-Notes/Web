@@ -84,13 +84,6 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [HttpPatch("ref/public")]
-        public async Task MakePublic([FromBody]MakePublicNoteCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
-        }
 
         [HttpPatch("ref/private")]
         public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
@@ -152,7 +145,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullNote> Get(string id)
+        public async Task<FullNoteAnswer> Get(string id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullNoteQuery(email, id);

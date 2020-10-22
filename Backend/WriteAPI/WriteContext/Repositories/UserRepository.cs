@@ -1,5 +1,8 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WriteContext.Repositories
@@ -30,6 +33,11 @@ namespace WriteContext.Repositories
             return await contextDB.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
         }
 
+        public async Task<List<User>> SearchByEmailAndName(string search)
+        {
+            return await contextDB.Users.Where(x => x.Email.Contains(search) || x.Name.Contains(search)).ToListAsync();
+        }
+
         public async Task<User> GetUserWithLabels(string email)
         {
             return await contextDB.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Email == email);
@@ -55,6 +63,26 @@ namespace WriteContext.Repositories
         {
             contextDB.Users.Update(user);
             await contextDB.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUserNote(string email, Guid noteId)
+        {
+            var user  = await contextDB.Users.Include(x => x.Notes).FirstOrDefaultAsync(x => x.Email == email);
+            if(user.Notes.Any(x => x.Id == noteId))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> IsUserFolder(string email, Guid folderId)
+        {
+            var user = await contextDB.Users.Include(x => x.Folders).FirstOrDefaultAsync(x => x.Email == email);
+            if (user.Folders.Any(x => x.Id == folderId))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

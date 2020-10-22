@@ -19,19 +19,21 @@ import { NotesService } from '../notes.service';
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
-  styleUrls: ['./deleted.component.scss']
+  styleUrls: ['./deleted.component.scss'],
+  providers: [NotesService]
 })
 export class DeletedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public noteService: NotesService) { }
 
   async ngOnInit() {
+
 
     await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
 
@@ -51,13 +53,18 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
     this.store.select(NoteStore.deletedNotes).pipe(take(1))
-      .subscribe(x => { this.pService.spinner = false;
-                        this.noteService.notes = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriNote(EntityType.NoteDeleted)); });
+      .subscribe(async (x) => {
+        this.noteService.firstInit(x);
+        this.loaded =  await this.pService.initPromise();
+        setTimeout(() => {this.murriService.initMurriNote(EntityType.NoteDeleted); });
+      });
 
   }
 
+
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());

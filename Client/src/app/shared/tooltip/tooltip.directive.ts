@@ -2,18 +2,22 @@ import { Overlay, OverlayConfig, OverlayPositionBuilder, OverlayRef } from '@ang
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TooltipComponent } from './tooltip.component'
+import { TooltipComponent } from './tooltip.component';
 
 @Directive({
+  // tslint:disable-next-line:directive-selector
   selector: '[CustomTooltip]'
 })
 export class TooltipDirective implements OnInit {
 
   @Input('CustomTooltip') text = '';
+  // tslint:disable-next-line:no-input-rename
   @Input('position') pos = '';
+  // tslint:disable-next-line:no-input-rename
   @Input('flagDisable') disable = '';
+  // tslint:disable-next-line:no-input-rename
   @Input('labelColor') labelColor = '';
-  
+
   private overlayRef: OverlayRef;
 
   constructor(private overlay: Overlay,
@@ -23,13 +27,13 @@ export class TooltipDirective implements OnInit {
   ngOnInit(): void {
     const config = new OverlayConfig({
       positionStrategy: this.positioning(),
-    })
+    });
 
     this.overlayRef = this.overlay.create(config);
   }
 
   positioning() {
-    switch(this.pos) {
+    switch (this.pos) {
       case 'Right': {
         const positionStrategyRight = this.overlayPositionBuilder
           .flexibleConnectedTo(this.elementRef)
@@ -86,7 +90,7 @@ export class TooltipDirective implements OnInit {
     if (this.disable === 'true') {
       return;
     }
-    if(this.labelColor != '') {
+    if (this.labelColor !== '') {
       if (this.text.length < 9) {
         return;
       }
@@ -95,7 +99,7 @@ export class TooltipDirective implements OnInit {
       = this.overlayRef.attach(new ComponentPortal(TooltipComponent));
     this.text = this.text.charAt(0).toUpperCase() + this.text.slice(1);
     tooltipRef.instance.text = this.text;
-    if(this.labelColor != '') {
+    if (this.labelColor !== '') {
       tooltipRef.instance.labelClass = true;
       tooltipRef.instance.labelColor = this.labelColor;
     } else {

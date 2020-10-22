@@ -4,17 +4,22 @@ using BI.services.backgrounds;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
+using BI.services.search;
+using BI.services.sharing;
 using BI.services.user;
 using Common.DTO.backgrounds;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
+using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
+using Domain.Commands.share.folders;
+using Domain.Commands.share.notes;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
@@ -22,6 +27,7 @@ using Domain.Queries.backgrounds;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
+using Domain.Queries.search;
 using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
@@ -123,7 +129,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RestoreNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePublicNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
@@ -133,7 +138,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetDeletedNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNote>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
             //FOLDERS
@@ -145,7 +150,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, Unit>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePublicFolderCommand, Unit>, FolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
@@ -155,6 +159,20 @@ namespace WriteAPI.ConfigureAPP
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
 
+            //SHARE
+            services.AddScoped<IRequestHandler<ChangeRefTypeFolders, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeRefTypeNotes, Unit>, SharingHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<PermissionUserOnPrivateNotes, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveUserFromPrivateNotes, Unit>, SharingHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<PermissionUserOnPrivateFolders, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
+
+            // SEARCH
+            services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -167,6 +185,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddTransient<NoteRepository>();
             services.AddTransient<FolderRepository>();
             services.AddTransient<UserOnNoteRepository>();
+            services.AddTransient<UsersOnPrivateNotesRepository>();
+            services.AddTransient<UsersOnPrivateFoldersRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

@@ -23,8 +23,7 @@ namespace BI.services.folders
         IRequestHandler<SetDeleteFolderCommand, Unit>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
         IRequestHandler<DeleteFoldersCommand, Unit>,
-        IRequestHandler<MakePrivateFolderCommand, Unit>,
-        IRequestHandler<MakePublicFolderCommand, Unit>
+        IRequestHandler<MakePrivateFolderCommand, Unit>
     {
         private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
@@ -166,23 +165,6 @@ namespace BI.services.folders
             if (folders.Count == request.Ids.Count)
             {
                 await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Private);
-            }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(MakePublicFolderCommand request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
-            if (folders.Count == request.Ids.Count)
-            {
-                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Shared);
             }
             else
             {

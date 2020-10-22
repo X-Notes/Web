@@ -68,7 +68,7 @@ export const tooltipAnimation = trigger('tooltip', [
   transition(':leave', [
     animate(150, style({ opacity: 0 })),
   ]),
-])
+]);
 
 @Injectable({
   providedIn: 'root'
@@ -78,18 +78,19 @@ export class PersonalizationService {
 
   constructor() {}
 
+  timeForLabelsLoading = 100;
+  timeForSpinnerLoading = 30;
   subject = new Subject();
 
   stateSidebar = true;
   orientationMobile = false;
   optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
-  grid;
+
   hideInnerMenu = false;
   AnimationInnerMenu = true;
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
-  spinner = true;
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
@@ -150,46 +151,8 @@ export class PersonalizationService {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
 
-  gridSettings(element: string) {
-    const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-
-    this.grid = new Muuri.default('.grid', {
-      items: element,
-      dragEnabled: true,
-      layout: {
-        fillGaps: false,
-        horizontal: false,
-        alignRight: false,
-        alignBottom: false,
-        rounding: true
-      },
-      dragContainer: dragHelper,
-      dragRelease: {
-        useDragContainer: false
-      },
-      dragCssProps: {
-        touchAction: 'auto'
-      },
-      dragStartPredicate(item, e) {
-        if ( e.deltaTime > 300 && e.distance <= 30) {
-          return true;
-        }
-      },
-      dragPlaceholder: {
-        enabled: true,
-        createElement(item: any) {
-          return item.getElement().cloneNode(true);
-        }
-      },
-      dragAutoScroll: {
-        targets: [
-          { element: window, priority: -1 },
-          { element: document.querySelector('.autoscroll-helper .simplebar-content-wrapper') as HTMLElement, priority: 1, axis: 2 },
-        ],
-        sortDuringScroll: false,
-        smoothStop: true,
-        safeZone: 0.1
-      }
-    });
+  initPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.timeForSpinnerLoading));
   }
+
 }

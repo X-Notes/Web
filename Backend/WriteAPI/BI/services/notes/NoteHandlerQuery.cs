@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.helpers;
 using Common.DatabaseModels.models;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -20,7 +21,7 @@ namespace BI.services.notes
         IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>,
         IRequestHandler<GetDeletedNotesQuery, List<SmallNote>>,
 
-        IRequestHandler<GetFullNoteQuery, FullNote>,
+        IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
         IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>
     {
         private readonly IMapper mapper;
@@ -47,16 +48,77 @@ namespace BI.services.notes
             return new List<SmallNote>();
         }
 
-        public async Task<FullNote> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
+        public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var note = await noteRepository.GetFull(guid);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return mapper.Map<FullNote>(note);
+                switch (note.NoteType)
+                {
+                    case NotesType.Shared:
+                        {
+                            switch (note.RefType)
+                            {
+                                case RefType.Editor:
+                                    {
+                                        return new FullNoteAnswer()
+                                        {
+                                            CanView = true,
+                                            AccessType = RefType.Editor,
+                                            FullNote = mapper.Map<FullNote>(note)
+                                        };
+                                    }
+                                case RefType.Viewer:
+                                    {
+                                        return new FullNoteAnswer()
+                                        {
+                                            CanView = true,
+                                            AccessType = RefType.Viewer,
+                                            FullNote = mapper.Map<FullNote>(note)
+                                        };
+                                    }
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            if (note.UserId == user.Id)
+                            {
+                                return new FullNoteAnswer()
+                                {
+                                    CanView = true,
+                                    AccessType = RefType.Editor,
+                                    FullNote = mapper.Map<FullNote>(note)
+                                };
+                            }
+                            else
+                            {
+                                var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
+                                if (noteUser != null)
+                                {
+                                    return new FullNoteAnswer()
+                                    {
+                                        CanView = true,
+                                        AccessType = noteUser.AccessType,
+                                        FullNote = mapper.Map<FullNote>(note)
+                                    };
+                                }
+                                else
+                                {
+                                    return new FullNoteAnswer()
+                                    {
+                                        CanView = false,
+                                        AccessType = null,
+                                        FullNote = null
+                                    };
+                                }
+                            }
+                        }
+                }
             }
-            return null;
+            throw new Exception("Incorrect user data");
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
@@ -109,7 +171,8 @@ namespace BI.services.notes
         }
     }
 
-    public static class LabelHelper {
+    public static class LabelHelper
+    {
 
         public static List<LabelsNotes> GetLabelUnDesc(this List<LabelsNotes> labels)
         {

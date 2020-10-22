@@ -1,14 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Folder } from '../models/folder';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
-import { LoadSharedFolders, UnSelectAllFolder, PositionFolder, LoadAllExceptFolders } from '../state/folders-actions';
-import { Order, OrderEntity } from 'src/app/shared/services/order.service';
-import { UpdateColor } from '../../notes/state/updateColor';
+import { LoadSharedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -19,26 +16,29 @@ import { FolderService } from '../folder.service';
 @Component({
   selector: 'app-shared',
   templateUrl: './shared.component.html',
-  styleUrls: ['./shared.component.scss']
+  styleUrls: ['./shared.component.scss'],
+  providers: [FolderService]
 })
 export class SharedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private murriService: MurriService,
+              public murriService: MurriService,
               public folderService: FolderService) { }
 
   ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new UnSelectAllFolder());
   }
 
   async ngOnInit() {
-
     await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
 
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));
@@ -57,10 +57,12 @@ export class SharedComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
 
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
-      .subscribe(x => { this.pService.spinner = false;
-                        this.folderService.folders = [...x].map(note => { note = { ...note }; return note; });
-                        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
+      .subscribe(async (x) => {
+        this.folderService.firstInit(x);
+        this.loaded =  await this.pService.initPromise();
+        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
 
   }
+
 
 }

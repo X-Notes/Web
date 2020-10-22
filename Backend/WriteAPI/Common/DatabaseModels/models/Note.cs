@@ -10,6 +10,7 @@ namespace Common.DatabaseModels.models
         public Guid Id { get; set; }
 
         public NotesType NoteType { set; get; }
+        public RefType? RefType { set; get; }
 
         public string Title { set; get; }
         public string Color { set; get; }
@@ -21,7 +22,8 @@ namespace Common.DatabaseModels.models
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
 
-        public List<UserOnNote> UserOnNotes { set; get; }
+        public List<UserOnNoteNow> UserOnNotesNow { set; get; }
+        public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import { Select, Store } from '@ngxs/store';
 import { AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
 
 
@@ -20,6 +21,8 @@ import { ShortUser } from 'src/app/core/models/short-user';
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
+  @ViewChild ('scrollMe', { static: true })
+  public myScrollContainer: ElementRef;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -46,7 +49,8 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router) { }
+              private router: Router,
+              private pagService: PaginationService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -55,18 +59,20 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
 
-    this.store.select(UserStore.getTokenUpdated)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        // TODO Maybe delete
-      }
-    });
-
     this.pService.onResize();
     this.pService.subject
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.newFolder());
+
+    setTimeout(() => {
+      (this.myScrollContainer as any).SimpleBar.getScrollElement().addEventListener('scroll',
+      (e) => {
+        const flag = e.srcElement.scrollHeight - e.srcElement.scrollTop - this.pagService.startPointToGetData <= e.srcElement.clientHeight;
+        if (flag && !this.pagService.set.has(e.srcElement.scrollHeight)) {
+          this.pagService.set.add(e.srcElement.scrollHeight);
+          this.pagService.nextPagination.next();
+        }
+      }); }, 0);
   }
 
   async newFolder() {

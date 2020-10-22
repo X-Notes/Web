@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Common.DatabaseModels.models
 {
-    public class UserOnNote
+    public class UserOnNoteNow
     {
         public int UserId { set; get; }
         public User User { set; get; }

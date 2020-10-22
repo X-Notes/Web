@@ -11,14 +11,15 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
             <div class="separator"></div>
-            <div class="sub-nav-item"  routerLink="/labels"[routerLinkActiveOptions]="{exact:true}"  routerLinkActive="active" #sub1>
+            <div class="sub-nav-item" routerLink="/labels" [routerLinkActiveOptions]="{exact:true}"
+                routerLinkActive="active" #sub1>
                 <div class="item">
                     <p>{{ 'subMenu.all' | translate }}</p>
                     <p>{{countAll$ | async}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
             </div>
-            <div class="sub-nav-item"  routerLink="/labels/deleted" routerLinkActive="active" #sub2>
+            <div class="sub-nav-item" routerLink="/labels/deleted" routerLinkActive="active" #sub2>
                 <div class="item">
                     <p>{{ 'subMenu.bin' | translate }}</p>
                     <p>{{countDeleted$ | async}}</p>
@@ -44,9 +45,9 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content" [ngStyle] = "{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
-    <app-spinner *ngIf="pService.spinner"></app-spinner>
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
+<div class="content"
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+    <ngx-simplebar #scrollMe [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <router-outlet></router-outlet>
     </ngx-simplebar>
 </div>

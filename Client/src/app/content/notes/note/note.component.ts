@@ -10,6 +10,7 @@ import { NoteStore } from '../state/notes-state';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { Label } from '../../labels/models/label';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 @Component({
@@ -29,7 +30,8 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router) { }
+              private router: Router,
+              private murriService: MurriService) { }
 
 
   ngOnDestroy(): void {
@@ -61,7 +63,7 @@ export class NoteComponent implements OnInit, OnDestroy {
       if (value !== undefined) {
         const flagUpdate = value.labels.filter(x => x.isDeleted === false).length;
         if (flagUpdate === 0 || flagUpdate === 1) {
-          setTimeout(() => this.pService.grid.refreshItems().layout(), 0);
+          setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
         }
         this.note.labels = value.labels;
         this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));

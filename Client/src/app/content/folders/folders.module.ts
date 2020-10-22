@@ -10,6 +10,7 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
 import { FolderService } from './folder.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 
@@ -27,6 +28,6 @@ import { FolderService } from './folder.service';
     FoldersRouting,
     SharedModule
   ],
-  providers: [FolderService]
+  providers: [MurriService]
 })
 export class FoldersModule { }

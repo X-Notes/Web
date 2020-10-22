@@ -23,7 +23,6 @@ namespace BI.services.notes
         IRequestHandler<RestoreNoteCommand, Unit>,
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
-        IRequestHandler<MakePublicNoteCommand, Unit>,
         IRequestHandler<CopyNoteCommand, List<SmallNote>>,
         IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
         IRequestHandler<AddLabelOnNoteCommand, Unit>
@@ -154,23 +153,6 @@ namespace BI.services.notes
             if (notes.Count == request.Ids.Count)
             {
                 await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Private);
-            }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(MakePublicNoteCommand request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
-            if (notes.Count == request.Ids.Count)
-            {
-                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Shared);
             }
             else
             {

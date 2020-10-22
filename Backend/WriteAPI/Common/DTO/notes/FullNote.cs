@@ -13,5 +13,6 @@ namespace Common.DTO.notes
         public string Color { set; get; }
         public List<LabelDTO> Labels { set; get; }
         public NotesType NoteType { set; get; }
+        public RefType RefType { set; get; }
     }
 }

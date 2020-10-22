@@ -1,0 +1,37 @@
+<div class="header">
+    <span>{{data.title}}</span>
+    <i class="icon-plus" mat-dialog-close></i>
+</div>
+<mat-tab-group class="tabs" mat-align-tabs="center"
+    [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'">
+    <mat-tab isActive="true" label="Access settings">
+        <div class="content-access">
+            <div class="content">
+                <div class="form">
+                    <input type="text">
+
+                    <div class="drop-down">
+                        <div class="drop-content" matRipple (click)="changeActive()">
+                            <p>Viewer</p>
+                            <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
+                                <i class="icon-select-label"></i>
+                            </div>
+                        </div>
+                        <div class="drop-options" [@showHistory] *ngIf="dropdownActive">
+                            <div class="drop-option">
+                                <p>Viewer</p>
+                            </div>
+                            <div class="drop-option">
+                                <p>Editor</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <i class="icon-copy"></i>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="Sharing">Content 2</mat-tab>
+</mat-tab-group>

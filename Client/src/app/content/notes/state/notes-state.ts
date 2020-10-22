@@ -248,7 +248,7 @@ export class NoteStore {
         const id = await this.api.new().toPromise();
         const notes = getState().privateNotes;
         patchState({
-            privateNotes: [{ id, title: '', color: NoteColorPallete.Green, labels: [] }, ...notes],
+            privateNotes: [{ id, title: '', color: NoteColorPallete.Green, labels: [], refType: 0 }, ...notes],
             countPrivate: getState().countPrivate + 1
         });
     }

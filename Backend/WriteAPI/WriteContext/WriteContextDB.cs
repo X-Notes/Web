@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace WriteContext
 {
@@ -14,9 +15,12 @@ namespace WriteContext
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
         public DbSet<Note> Notes { set; get; }
-        public DbSet<UserOnNote> UserOnNote { set; get; }
+        public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
+
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
+        public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
+        public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
             Database.EnsureCreated();
@@ -54,7 +58,7 @@ namespace WriteContext
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
 
-            modelBuilder.Entity<UserOnNote>()
+            modelBuilder.Entity<UserOnNoteNow>()
                 .HasKey(x => new { x.UserId, x.NoteId });
 
             modelBuilder.Entity<LabelsNotes>()
@@ -79,6 +83,28 @@ namespace WriteContext
                 .HasOne(bc => bc.Note)
                 .WithMany(c => c.FoldersNotes)
                 .HasForeignKey(bc => bc.NoteId);
+
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasKey(bc => new { bc.NoteId, bc.UserId });
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasOne(bc => bc.Note)
+                .WithMany(b => b.UsersOnPrivateNotes)
+                .HasForeignKey(bc => bc.NoteId);
+            modelBuilder.Entity<UserOnPrivateNotes>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UserOnPrivateNotes)
+                .HasForeignKey(bc => bc.UserId);
+
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasKey(bc => new { bc.FolderId, bc.UserId });
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasOne(bc => bc.Folder)
+                .WithMany(b => b.UsersOnPrivateFolders)
+                .HasForeignKey(bc => bc.FolderId);
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UsersOnPrivateFolders)
+                .HasForeignKey(bc => bc.UserId);
         }
     }
 }

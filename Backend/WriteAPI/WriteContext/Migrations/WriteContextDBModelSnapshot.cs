@@ -60,6 +60,9 @@ namespace WriteContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("RefType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -162,6 +165,9 @@ namespace WriteContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("RefType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -253,7 +259,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -265,7 +271,43 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("NoteId");
 
-                    b.ToTable("UserOnNote");
+                    b.ToTable("UserOnNoteNow");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AccessType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("NoteId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOnPrivateNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
+                {
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AccessType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("FolderId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersOnPrivateFolders");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
@@ -359,16 +401,46 @@ namespace WriteContext.Migrations
                         .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
-                        .WithMany("UserOnNotes")
+                        .WithMany("UserOnNotesNow")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("UserOnNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                        .WithMany("UsersOnPrivateNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
+                        .WithMany("UserOnPrivateNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Folder", "Folder")
+                        .WithMany("UsersOnPrivateFolders")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.User", "User")
+                        .WithMany("UsersOnPrivateFolders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

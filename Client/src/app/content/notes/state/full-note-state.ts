@@ -3,17 +3,22 @@ import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { LoadFullNote, DeleteCurrentNote } from './full-note-actions';
 import { ApiServiceNotes } from '../api-notes.service';
+import { AccessType } from '../models/accessType';
 
 
 
 interface FullNoteState {
     currentFullNote: FullNote;
+    canView: boolean;
+    accessType: AccessType;
 }
 
 @State<FullNoteState>({
     name: 'FullNote',
     defaults: {
-        currentFullNote: null
+        canView: false,
+        currentFullNote: null,
+        accessType: null
     }
 })
 
@@ -28,10 +33,21 @@ export class FullNoteStore {
         return state.currentFullNote;
     }
 
+
+    @Selector()
+    static canView(state: FullNoteState): boolean {
+        return state.canView;
+    }
+
+    @Selector()
+    static canNoView(state: FullNoteState): boolean {
+        return !state.canView;
+    }
+
     @Action(LoadFullNote)
     async loadFull({ setState, getState, patchState }: StateContext<FullNoteState>, { id }: LoadFullNote) {
-        const note = await this.api.get(id).toPromise();
-        patchState({ currentFullNote: note });
+        const request = await this.api.get(id).toPromise();
+        patchState({ currentFullNote: request.fullNote, canView: request.canView, accessType: request.accessType });
     }
 
     @Action(DeleteCurrentNote)

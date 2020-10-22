@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LoadAllExceptFolders } from '../state/folders-actions';
+import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss']
 })
-export class FullFolderComponent implements OnInit {
+export class FullFolderComponent implements OnInit, OnDestroy {
 
-  constructor(private store: Store) { }
+  constructor(private store: Store,
+              public murriService: MurriService, ) { }
+
+  ngOnDestroy(): void {
+    this.murriService.flagForOpacity = false;
+  }
 
   async ngOnInit() {
 
