@@ -67,7 +67,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
-  user: number[] = [1, 2, 3, 4, 5, 6, 7, 8, ];
+  user: string[] = ['fucking person', 'fucking person','fucking person','fucking person','fucking person'
+  ];
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -124,6 +125,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
+  disableTooltpUser(): boolean {
+    if (this.pService.checkWidth()) {
+      return true;
+    }
+  }
+
+  closeMenu(): void {
+    if(this.pService.checkWidth()) {
+      this.pService.users = false;
+    }
+
+    if(!this.pService.check()) {
+      this.pService.hideInnerMenu = false;
+    }
   }
 
   configShowMenu(flag: boolean) {

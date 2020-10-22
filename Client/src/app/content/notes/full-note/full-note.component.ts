@@ -4,9 +4,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import {LoadPrivateNotes, SelectIdNote,
-  UnSelectIdNote,
-  LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent, UnSelectAllNote
+import {LoadPrivateNotes, SelectIdNote, LoadArchiveNotes, LoadSharedNotes, LoadDeletedNotes, ClearUpdatelabelEvent, UnSelectAllNote
 } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
@@ -32,6 +30,7 @@ import { LoadFullNote, DeleteCurrentNote } from '../state/full-note-actions';
 import { FullNoteStore } from '../state/full-note-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 
+
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
@@ -46,6 +45,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
+
 
   destroy = new Subject<void>();
 

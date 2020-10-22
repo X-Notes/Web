@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { Label } from 'src/app/content/labels/models/label';
 import { PersonalizationService } from '../../services/personalization.service';
 import { UpdateLabel, DeleteLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
-import { trigger, transition, animate, style } from '@angular/animations';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 

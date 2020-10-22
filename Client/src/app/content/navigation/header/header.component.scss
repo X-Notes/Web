@@ -130,6 +130,16 @@ header {
       align-items: center;
       height: 100%;
 
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        z-index: 40;
+        display: none;
+      }
+
       .filters {
         background-color: $dark-button;
         color: white;
@@ -146,11 +156,7 @@ header {
       }
 
       .custom-create {
-        width: 140px;
-      }
-
-      .custom-create-profile {
-        width: 170px;
+        min-width: 150px;
       }
 
       .generic {
@@ -174,12 +180,25 @@ header {
           padding: 0 0.75rem;
           font-size: 1rem;
 
+          p {
+            padding-right: 1rem;
+            white-space: nowrap;
+          }
+
           i {
             font-size: 0.75rem;
 
             &::before {
               transition: 0.2s color ease;
             }
+          }
+        }
+      }
+
+      .default-size, .history {
+        .inner-content {
+          p {
+            padding-right: 0;
           }
         }
       }
@@ -278,7 +297,7 @@ header {
             color: #6d6d6d;
           }
 
-          button[type="button"] {
+          label {
             background-color: $light-search-submit;
 
             .icon {
@@ -289,7 +308,7 @@ header {
           }
         }
 
-        input[type="search"]:not(:placeholder-shown) ~ button[type="button"] {
+        input[type="search"]:not(:placeholder-shown) ~ label {
           cursor: pointer;
         }
 
@@ -308,7 +327,7 @@ header {
           transition: 0.2s ease;
         }
 
-        button[type="button"] {
+        label {
           height: 100%;
           width: 35px;
           border: 0;
@@ -321,6 +340,8 @@ header {
 
           .icon {
             display: flex;
+            width: 100%;
+            height: 100%;
             justify-content: center;
             align-items: center;
             font-size: 1rem;
@@ -624,7 +645,7 @@ header {
             color: #6d6d6d;
           }
 
-          button[type="button"] {
+          label {
             background-color: lighten(
               $color: $light-search-submit,
               $amount: 4%
@@ -642,7 +663,7 @@ header {
           background-color: $light-search;
         }
 
-        button[type="button"] {
+        label {
           background-color: $light-search-submit;
 
           .icon {
@@ -688,6 +709,21 @@ header {
               white
             );
           }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1600px) {
+  header {
+    .management-section {
+      .help-func {
+        .search {
+          display: none;
+        }
+        .auxiliary-icon:nth-child(2) {
+          margin-left: 0;
         }
       }
     }
@@ -774,12 +810,21 @@ header {
   }
 }
 
-@media (max-width: 1600px) {
-  header {
-    .management-section {
-      .help-func {
-        .search {
-          display: none;
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .visible-people {
+    .profile-section {
+      .profile {
+        z-index: 50;
+      }
+    }
+    .inner-menu {
+      .interactions {
+        .user-circle, .wrapper-people {
+          z-index: 50;
+        }
+  
+        .overlay {
+          display: block;
         }
       }
     }
@@ -802,6 +847,10 @@ header {
               font-size: 1rem;
             }
           }
+        }
+
+        .custom-create {
+          min-width: auto;
         }
       }
     }
@@ -887,6 +936,10 @@ header {
           width: 54px;
         }
 
+        .custom-create {
+          min-width: auto;
+        }
+
         .default-size {
           width: 124px;
         }
@@ -919,6 +972,16 @@ header {
 
         .mobile {
           display: flex;
+        }
+      }
+
+      .visible {
+        button, .menu-inner, .three-dots {
+          z-index: 50;
+        }
+  
+        .overlay {
+          display: block;
         }
       }
     }
@@ -1099,7 +1162,7 @@ header {
               padding-left: 0.625rem;
             }
 
-            button[type="button"] {
+            label {
               border-radius: 0 10px 10px 0;
               width: 35px;
 
@@ -1115,7 +1178,7 @@ header {
             padding-left: 0;
           }
 
-          button[type="button"] {
+          label {
             width: 30px;
             border-radius: 5px;
             background-color: $dark-color;
@@ -1142,7 +1205,7 @@ header {
     .management-section {
       .interactions {
         .search {
-          button[type="button"] {
+          label {
             background-color: transparent;
 
             .icon {
@@ -1232,7 +1295,7 @@ header {
               width: calc(100% - 30px);
             }
 
-            button[type="button"] {
+            label {
               width: 30px;
 
               .icon {
@@ -1245,7 +1308,7 @@ header {
             width: calc(100% - 26px);
           }
 
-          button[type="button"] {
+          label {
             width: 26px;
 
             .icon {

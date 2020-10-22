@@ -10,6 +10,7 @@ import { AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
+import { ShortUser } from 'src/app/core/models/short-user';
 
 
 @Component({
@@ -37,6 +38,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   @Select(FolderStore.archiveCount)
   public countArchive: Observable<number>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
 
   destroy = new Subject<void>();

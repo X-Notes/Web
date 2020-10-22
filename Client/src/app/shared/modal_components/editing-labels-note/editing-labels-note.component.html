@@ -1,23 +1,19 @@
 <div class="header">
-    <span>{{data.title}}</span>
+    <span>{{ ('modal.labelModal.' + data.title) | translate }}</span>
     <i class="icon-plus" mat-dialog-close></i>
 </div>
-<div class="content_editing_label">
-    <div class="search">
-        <div class="search-content">
-            <input type="search" placeholder="Label name..." [(ngModel)]="searchStr">
-            <div class="button">
-                <i class="icon-search"></i>
-            </div>
+<div class="search">
+    <div class="search-content">
+        <input type="search" placeholder="{{ 'modal.labelModal.search' | translate }}" [(ngModel)]="searchStr">
+        <div class="button">
+            <i class="icon-search"></i>
         </div>
-        <i class="icon-plus" (click)="newLabel()"></i>
     </div>
-    <div *ngIf="loaded" class="labels">
-        <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-            <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
-                <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true"
-                    (deleteLabel)="delete($event)"></app-label>
-            </div>
-        </ngx-simplebar>
-    </div>
+    <i class="icon-plus" (click)="newLabel()"></i>
 </div>
+<ngx-simplebar *ngIf="loaded" [options]="pService.optionsScroll" class="label-container">
+    <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
+        <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
+        </app-label>
+    </div>
+</ngx-simplebar>

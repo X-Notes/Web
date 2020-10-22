@@ -1,9 +1,10 @@
 <div class="wrap"
     [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (isNoteInner$ | async) ? 'mobile-menu' : '']">
-    <div class="icon" *ngFor="let item of buttonService.items" #trigger (click)="item.operation()">
+    <div class="icon" *ngFor="let item of buttonService.items" #trigger (click)="item.operation()"
+        CustomTooltip="{{ 'menu.' + item.icon | translate }}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
         <div class="inner">
             <i class="icon-{{item.icon}}"></i>
-            <p>{{item.icon}}</p>
+            <p>{{ 'menu.' + item.icon | translate }}</p>
             <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
         </div>
     </div>
