@@ -23,7 +23,7 @@ namespace WriteContext
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
-            // Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

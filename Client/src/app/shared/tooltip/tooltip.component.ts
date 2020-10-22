@@ -9,7 +9,7 @@ import { tooltipAnimation } from 'src/app/shared/services/personalization.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TooltipComponent implements OnInit {
-  
+
   @Input() public text = '';
   @HostBinding('@tooltip') anim = true;
   labelClass: boolean;
