@@ -1,5 +1,7 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WriteContext.Repositories
@@ -55,6 +57,26 @@ namespace WriteContext.Repositories
         {
             contextDB.Users.Update(user);
             await contextDB.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUserNote(string email, Guid noteId)
+        {
+            var user  = await contextDB.Users.Include(x => x.Notes).FirstOrDefaultAsync(x => x.Email == email);
+            if(user.Notes.Any(x => x.Id == noteId))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> IsUserFolder(string email, Guid folderId)
+        {
+            var user = await contextDB.Users.Include(x => x.Folders).FirstOrDefaultAsync(x => x.Email == email);
+            if (user.Folders.Any(x => x.Id == folderId))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace WriteContext
 {
@@ -14,9 +15,12 @@ namespace WriteContext
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
         public DbSet<Note> Notes { set; get; }
-        public DbSet<UserOnNoteNow> UserOnNote { set; get; }
+        public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
+
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
+        public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
+        public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
             // Database.EnsureCreated();

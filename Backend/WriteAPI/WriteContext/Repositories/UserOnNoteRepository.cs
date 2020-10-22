@@ -23,19 +23,19 @@ namespace WriteContext.Repositories
 
         public async Task RemoveFromOnline(int userId)
         {
-            var connectionsds = await contextDB.UserOnNote.Where(x => x.UserId == userId).ToListAsync();
-            contextDB.UserOnNote.RemoveRange(connectionsds);
+            var connectionsds = await contextDB.UserOnNoteNow.Where(x => x.UserId == userId).ToListAsync();
+            contextDB.UserOnNoteNow.RemoveRange(connectionsds);
             await contextDB.SaveChangesAsync();
         }
 
         public async Task<List<User>> GetUsersOnlineUserOnNote(Guid noteId)
         {
-            return await contextDB.UserOnNote.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
+            return await contextDB.UserOnNoteNow.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
         }
 
         public async Task<UserOnNoteNow> GetUserFromNoteByIds(int userId, Guid noteId)
         {
-            return await contextDB.UserOnNote.Where(x => x.UserId == userId && x.NoteId == noteId).FirstOrDefaultAsync();
+            return await contextDB.UserOnNoteNow.Where(x => x.UserId == userId && x.NoteId == noteId).FirstOrDefaultAsync();
         }
     }
 }

@@ -180,6 +180,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddTransient<NoteRepository>();
             services.AddTransient<FolderRepository>();
             services.AddTransient<UserOnNoteRepository>();
+            services.AddTransient<UsersOnPrivateNotesRepository>();
+            services.AddTransient<UsersOnPrivateFoldersRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {
