@@ -79,28 +79,6 @@ namespace BI.services.notes
                                             FullNote = mapper.Map<FullNote>(note)
                                         };
                                     }
-                                case RefType.Private:
-                                    {
-                                        var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                                        if (noteUser != null)
-                                        {
-                                            return new FullNoteAnswer()
-                                            {
-                                                CanView = true,
-                                                AccessType = noteUser.AccessType,
-                                                FullNote = mapper.Map<FullNote>(note)
-                                            };
-                                        }
-                                        else
-                                        {
-                                            return new FullNoteAnswer()
-                                            {
-                                                CanView = false,
-                                                AccessType = null,
-                                                FullNote = null
-                                            };
-                                        }
-                                    }
                             }
                             break;
                         }
@@ -117,12 +95,25 @@ namespace BI.services.notes
                             }
                             else
                             {
-                                return new FullNoteAnswer()
+                                var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
+                                if (noteUser != null)
                                 {
-                                    CanView = false,
-                                    AccessType = null,
-                                    FullNote = null
-                                };
+                                    return new FullNoteAnswer()
+                                    {
+                                        CanView = true,
+                                        AccessType = noteUser.AccessType,
+                                        FullNote = mapper.Map<FullNote>(note)
+                                    };
+                                }
+                                else
+                                {
+                                    return new FullNoteAnswer()
+                                    {
+                                        CanView = false,
+                                        AccessType = null,
+                                        FullNote = null
+                                    };
+                                }
                             }
                         }
                 }

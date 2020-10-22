@@ -9,7 +9,7 @@ namespace Common.DatabaseModels.models
     {
         public Guid Id { get; set; }
         public FoldersType FolderType { set; get; }
-        public RefType RefType { set; get; }
+        public RefType? RefType { set; get; }
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }
@@ -18,5 +18,6 @@ namespace Common.DatabaseModels.models
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
         public List<FoldersNotes> FoldersNotes { set; get; }
+        public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
     }
 }

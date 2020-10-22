@@ -4,6 +4,7 @@ using BI.services.backgrounds;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
+using BI.services.sharing;
 using BI.services.user;
 using Common.DTO.backgrounds;
 using Common.DTO.folders;
@@ -15,6 +16,8 @@ using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
+using Domain.Commands.share.folders;
+using Domain.Commands.share.notes;
 using Domain.Commands.users;
 using Domain.Ids;
 using Domain.Models;
@@ -123,7 +126,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RestoreNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePublicNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
@@ -145,7 +147,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, Unit>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<MakePublicFolderCommand, Unit>, FolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
@@ -154,6 +155,10 @@ namespace WriteAPI.ConfigureAPP
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
+
+            //SHARE
+            services.AddScoped<IRequestHandler<ChangeRefTypeFolders, Unit>, SharingHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeRefTypeNotes, Unit>, SharingHandlerCommand>();
 
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)

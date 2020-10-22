@@ -7,7 +7,6 @@ namespace Common.DatabaseModels.helpers
     public enum RefType
     {
         Viewer,
-        Editor,
-        Private
+        Editor
     }
 }

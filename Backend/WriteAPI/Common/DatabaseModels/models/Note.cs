@@ -22,7 +22,7 @@ namespace Common.DatabaseModels.models
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
 
-        public List<UserOnNote> UserOnNotes { set; get; }
+        public List<UserOnNote> UserOnNotesNow { set; get; }
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }

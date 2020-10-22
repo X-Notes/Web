@@ -28,5 +28,6 @@ namespace Common.DatabaseModels.models
 
         public List<UserOnNote> UserOnNotes { set; get; }
         public List<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
+        public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
     }
 }

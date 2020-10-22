@@ -19,7 +19,7 @@ namespace WriteContext
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
-            Database.EnsureCreated();
+            // Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -89,6 +89,17 @@ namespace WriteContext
             modelBuilder.Entity<UserOnPrivateNotes>()
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UserOnPrivateNotes)
+                .HasForeignKey(bc => bc.UserId);
+
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasKey(bc => new { bc.FolderId, bc.UserId });
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasOne(bc => bc.Folder)
+                .WithMany(b => b.UsersOnPrivateFolders)
+                .HasForeignKey(bc => bc.FolderId);
+            modelBuilder.Entity<UsersOnPrivateFolders>()
+                .HasOne(bc => bc.User)
+                .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.UserId);
         }
     }
