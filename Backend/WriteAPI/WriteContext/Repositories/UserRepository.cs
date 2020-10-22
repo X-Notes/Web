@@ -1,6 +1,7 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,6 +31,11 @@ namespace WriteContext.Repositories
         public async Task<User> GetUserWithBackgrounds(string email)
         {
             return await contextDB.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
+        }
+
+        public async Task<List<User>> SearchByEmailAndName(string search)
+        {
+            return await contextDB.Users.Where(x => x.Email.Contains(search) || x.Name.Contains(search)).ToListAsync();
         }
 
         public async Task<User> GetUserWithLabels(string email)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.DatabaseModels.models;
+using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.users;
 
@@ -16,6 +17,7 @@ namespace BI.Mapping
             CreateMap<NewUser, NewUserCommand>();
 
             CreateMap<User, OnlineUserOnNote>();
+            CreateMap<User, ShortUserForShareModal>();
         }
     }
 }

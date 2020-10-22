@@ -4,12 +4,14 @@ using BI.services.backgrounds;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
+using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using Common.DTO.backgrounds;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
+using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
 using Domain.Commands.folders;
@@ -25,6 +27,7 @@ using Domain.Queries.backgrounds;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
+using Domain.Queries.search;
 using Domain.Queries.users;
 using Domain.Repository;
 using Marten;
@@ -168,6 +171,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, Unit>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
 
+            // SEARCH
+            services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
