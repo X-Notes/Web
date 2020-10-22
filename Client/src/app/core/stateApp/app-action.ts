@@ -27,6 +27,11 @@ export class UpdateSelectAllButton {
     constructor(public flag: boolean) {    }
 }
 
+export class UpdateButtonRemoveAllLabels {
+    static type = '[App] Update RemoveAllLabels';
+    constructor(public flag: boolean) {    }
+}
+
 export class UpdateDefaultBackgroundButton {
     static type = '[App] Update defaultBackground';
     constructor(public flag: boolean) {    }

@@ -59,15 +59,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
-
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
   theme = Theme;
 
-  user: string[] = ['fucking person', 'fucking person','fucking person','fucking person','fucking person'
+  user: string[] = ['fucking person', 'fucking person', 'fucking person', 'fucking person', 'fucking person'
   ];
 
   constructor(public pService: PersonalizationService,
@@ -134,11 +131,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   closeMenu(): void {
-    if(this.pService.checkWidth()) {
+    if (this.pService.checkWidth()) {
       this.pService.users = false;
     }
 
-    if(!this.pService.check()) {
+    if (!this.pService.check()) {
       this.pService.hideInnerMenu = false;
     }
   }

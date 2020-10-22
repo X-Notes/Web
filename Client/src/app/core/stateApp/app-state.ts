@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton } from './app-action';
+    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -12,6 +12,7 @@ interface AppState {
     selectAllButtonActive: boolean;
     menuActive: boolean;
     settingsButtonActive: boolean;
+    buttonRemoveAllLabels: boolean;
     innerNoteType: NoteType;
     defaultBackground: boolean;
 }
@@ -23,6 +24,7 @@ interface AppState {
         newButtonActive: true,
         selectAllButtonActive: true,
         settingsButtonActive: true,
+        buttonRemoveAllLabels: false,
         menuActive: false,
         innerNoteType: null,
         defaultBackground: false
@@ -158,6 +160,11 @@ export class AppStore {
     @Action(UpdateSelectAllButton)
     updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
         patchState({selectAllButtonActive: flag});
+    }
+
+    @Action(UpdateButtonRemoveAllLabels)
+    updateRemoveAllLabelsButton({patchState}: StateContext<AppState>, {flag}: UpdateButtonRemoveAllLabels) {
+        patchState({buttonRemoveAllLabels: flag});
     }
 
     @Action(UpdateDefaultBackgroundButton)
