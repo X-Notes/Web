@@ -115,10 +115,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
 
-  toggleSidebar() {
-    this.pService.stateSidebar = !this.pService.stateSidebar;
-  }
-
   disableTooltpUser(): boolean {
     if (this.pService.checkWidth()) {
       return true;
@@ -263,10 +259,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
     await this.store.dispatch(new UpdateNewButton(true)).toPromise();
     await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
-  }
-
-  newButton() {
-    this.pService.subject.next(true);
   }
 
   // Selection

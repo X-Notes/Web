@@ -7,15 +7,7 @@
 
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <app-hamburg-menu></app-hamburg-menu>
-            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button"
-                [ngClass]="{'custom-create-profile':(route$ | async) === 'background'}"
-                class="generic new-note custom-create" (click)="newButton()" #new>
-                <div class="inner-content">
-                    <p>{{ 'new.' + (route$ | async ) | translate}}</p>
-                    <i class="icon-plus"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
-            </button>
+            <app-new-button></app-new-button>
             <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
                 class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
                 #selectedAll>
