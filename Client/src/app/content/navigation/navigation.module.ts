@@ -6,11 +6,11 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
 import { ProfileSectionComponent } from './header-components/profile-section/profile-section.component';
-import { LeftSectionComponent } from './header-components/left-section/left-section.component';
+import { RightSectionComponent } from './header-components/right-section/right-section.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, LeftSectionComponent],
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent],
   imports: [
     CommonModule,
     RouterModule,
