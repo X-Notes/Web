@@ -9,10 +9,12 @@ import { ProfileSectionComponent } from './header-components/profile-section/pro
 import { RightSectionComponent } from './header-components/right-section/right-section.component';
 import { SearchComponent } from './header-components/search/search.component';
 import { ButtonThemeComponent } from './header-components/button-theme/button-theme.component';
+import { ButtonQuestionComponent } from './header-components/button-question/button-question.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent],
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent,
+    ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent, ButtonQuestionComponent],
   imports: [
     CommonModule,
     RouterModule,
