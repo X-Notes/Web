@@ -10,11 +10,12 @@ import { RightSectionComponent } from './header-components/right-section/right-s
 import { SearchComponent } from './header-components/search/search.component';
 import { ButtonThemeComponent } from './header-components/button-theme/button-theme.component';
 import { ButtonQuestionComponent } from './header-components/button-question/button-question.component';
+import { ButtonNotificationComponent } from './header-components/button-notification/button-notification.component';
 
 
 @NgModule({
   declarations: [SideBarComponent, HeaderComponent, MenuComponent,
-    ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent, ButtonQuestionComponent],
+    ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent],
   imports: [
     CommonModule,
     RouterModule,
