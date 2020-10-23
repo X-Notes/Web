@@ -1,5 +1,4 @@
-<div class="wrapper"
-    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '']">
+<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '']">
     <div CustomTooltip="{{ 'header.theme' | translate }}" position="Bottom" class="auxiliary-icon"
         (click)="toggleTheme()" #themeApp>
         <i class="icon-theme_light"></i>

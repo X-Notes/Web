@@ -126,7 +126,7 @@
         </div>
 
 
-        <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
+        <div class="interactions left">
             <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
             <app-button-theme></app-button-theme>
             <app-button-question></app-button-question>
