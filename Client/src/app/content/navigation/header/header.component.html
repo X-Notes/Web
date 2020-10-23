@@ -127,15 +127,7 @@
 
 
         <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
-            <div class="search">
-                <input id="searchField" type="search" placeholder="{{ 'header.search' | translate }}"
-                    aria-label="Search">
-                <label for="searchField">
-                    <div class="icon">
-                        <i class="icon-search"></i>
-                    </div>
-                </label>
-            </div>
+            <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
             <div CustomTooltip="{{ 'header.theme' | translate }}" position="Bottom" class="auxiliary-icon"
                 (click)="toggleTheme()" #themeApp>
                 <i class="icon-theme_light"></i>

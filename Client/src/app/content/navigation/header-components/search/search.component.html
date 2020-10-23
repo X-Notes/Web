@@ -1,1 +1,10 @@
-<p>search works!</p>
+<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '']">
+    <div class="search">
+        <input id="searchField" type="search" placeholder="{{ 'header.search' | translate }}" aria-label="Search">
+        <label for="searchField">
+            <div class="icon">
+                <i class="icon-search"></i>
+            </div>
+        </label>
+    </div>
+</div>
