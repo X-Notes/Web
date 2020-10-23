@@ -53,7 +53,6 @@
         i::before {
             color: $dark-button;
         }
-
         &:hover {
             background-color: $light-nav-backlight;
 
@@ -87,6 +86,11 @@
 
     .non-profile {
         display: block;
+        .auxiliary-icon {
+            i::before {
+                color: $light-managment-hover;
+            }
+        }
     }
 
     .auxiliary-icon {
