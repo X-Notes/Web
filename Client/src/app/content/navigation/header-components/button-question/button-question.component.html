@@ -1,1 +1,7 @@
-<p>button-question works!</p>
+<div class="wrapper"
+    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '']">
+    <div CustomTooltip="{{ 'header.questions' | translate }}" position="Bottom" class="auxiliary-icon" #question>
+        <i class="icon-question"></i>
+        <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
+    </div>
+</div>
