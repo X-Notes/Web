@@ -5,18 +5,20 @@ import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
-import { ProfileSectionComponent } from './header-components/profile-section/profile-section.component';
-import { RightSectionComponent } from './header-components/right-section/right-section.component';
-import { SearchComponent } from './header-components/search/search.component';
-import { ButtonThemeComponent } from './header-components/button-theme/button-theme.component';
-import { ButtonQuestionComponent } from './header-components/button-question/button-question.component';
-import { ButtonNotificationComponent } from './header-components/button-notification/button-notification.component';
-import { ButtonChangeViewComponent } from './header-components/button-change-view/button-change-view.component';
+import { ProfileSectionComponent } from './header-components/left-section-components/profile-section/profile-section.component';
+import { RightSectionComponent } from './header-components/right-section-componets/right-section/right-section.component';
+import { SearchComponent } from './header-components/right-section-componets/search/search.component';
+import { ButtonThemeComponent } from './header-components/right-section-componets/button-theme/button-theme.component';
+import { ButtonQuestionComponent } from './header-components/right-section-componets/button-question/button-question.component';
+import { ButtonNotificationComponent } from './header-components/right-section-componets/button-notification/button-notification.component';
+import { ButtonChangeViewComponent } from './header-components/right-section-componets/button-change-view/button-change-view.component';
 
 
 @NgModule({
   declarations: [SideBarComponent, HeaderComponent, MenuComponent,
-    ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent],
+    ProfileSectionComponent, RightSectionComponent,
+    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent
+  ],
   imports: [
     CommonModule,
     RouterModule,
