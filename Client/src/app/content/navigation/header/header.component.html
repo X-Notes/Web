@@ -130,12 +130,7 @@
             <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
             <app-button-theme></app-button-theme>
             <app-button-question></app-button-question>
-            <div CustomTooltip="{{ 'header.notification' | translate }}" position="Bottom" class="auxiliary-icon mobile"
-                #notificationHeader>
-                <i class="icon-notification"></i>
-                <div class="push">1</div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
-            </div>
+            <app-button-notification></app-button-notification>
             <app-button-change-view></app-button-change-view>
         </div>
 
