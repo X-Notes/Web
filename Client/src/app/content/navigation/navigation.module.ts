@@ -8,10 +8,11 @@ import { MenuComponent } from './menu/menu.component';
 import { ProfileSectionComponent } from './header-components/profile-section/profile-section.component';
 import { RightSectionComponent } from './header-components/right-section/right-section.component';
 import { SearchComponent } from './header-components/search/search.component';
+import { ButtonThemeComponent } from './header-components/button-theme/button-theme.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent, SearchComponent],
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent, SearchComponent, ButtonThemeComponent],
   imports: [
     CommonModule,
     RouterModule,

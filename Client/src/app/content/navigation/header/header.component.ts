@@ -51,7 +51,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.getdefaultBackground)
   public defaultBackground$: Observable<boolean>;
-  //
 
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
