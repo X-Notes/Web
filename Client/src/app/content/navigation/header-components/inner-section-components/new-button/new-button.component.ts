@@ -17,9 +17,6 @@ export class NewButtonComponent implements OnInit {
   public theme$: Observable<Theme>;
   theme = Theme;
 
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
-
   @Select(AppStore.getName)
   public route$: Observable<string>;
 

@@ -1,6 +1,5 @@
 <div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
-    <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button" class="generic new-note custom-create"
-        (click)="newButton()" #new>
+    <button name="Create note" type="button" class="generic new-note custom-create" (click)="newButton()" #new>
         <div class="inner-content">
             <p>{{ 'new.' + (route$ | async ) | translate}}</p>
             <i class="icon-plus"></i>

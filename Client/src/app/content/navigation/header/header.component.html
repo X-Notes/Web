@@ -7,7 +7,7 @@
 
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <app-hamburg-menu></app-hamburg-menu>
-            <app-new-button></app-new-button>
+            <app-new-button *ngIf="(newButtonActive$ | async)"></app-new-button>
             <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
                 class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
                 #selectedAll>
