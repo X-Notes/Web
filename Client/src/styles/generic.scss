@@ -153,22 +153,6 @@
   right: 0;
 }
 
-.push {
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 15px;
-  height: 15px;
-  font-size: 0.625rem;
-  background-color: #ed6565;
-  color: #ffffff;
-  border-radius: 50%;
-}
-
 .billing {
   display: flex;
   justify-content: center;

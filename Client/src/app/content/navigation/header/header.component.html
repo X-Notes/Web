@@ -130,7 +130,7 @@
             <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
             <app-button-theme></app-button-theme>
             <app-button-question></app-button-question>
-            <app-button-notification></app-button-notification>
+            <app-button-notification [isProfile]="false"></app-button-notification>
             <app-button-change-view></app-button-change-view>
         </div>
 

@@ -1,8 +1,23 @@
 @import "variables";
 
 
-:host{
+.profile {
+    display: block;
+
+    .auxiliary-icon {
+        font-size: 1.25rem;
+        cursor: pointer;
+    }
+}
+
+.non-profile {
     display: none;
+
+    .auxiliary-icon {
+        margin-left: 1.375rem;
+        font-size: 1.375rem;
+        cursor: pointer;
+    }
 }
 
 .auxiliary-icon {
@@ -14,10 +29,6 @@
     height: 30px;
     border-radius: 5px;
     overflow: hidden;
-    margin-left: 1.375rem;
-    font-size: 1.375rem;
-    transition: 0.2s ease;
-    cursor: pointer;
 
     i {
         position: relative;
@@ -40,24 +51,54 @@
 .light {
     .auxiliary-icon {
         i::before {
-            color: $light-managment;
+            color: $dark-button;
         }
+
         &:hover {
             background-color: $light-nav-backlight;
 
             i::before {
-                color: $light-managment-hover;
+                color: $dark-button;
             }
         }
     }
 }
 
+.push {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15px;
+    height: 15px;
+    font-size: 0.625rem;
+    background-color: #ed6565;
+    color: #ffffff;
+    border-radius: 50%;
+}
+
 @media (max-width: 1024px) {
-    :host{
+    .profile {
+        display: none;
+    }
+
+    .non-profile {
         display: block;
     }
+
     .auxiliary-icon {
         margin-left: 1rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .non-profile {
+        .auxiliary-icon {
+            margin-left: 0.7rem;
+        }
     }
 }
 
@@ -65,4 +106,4 @@
     .help-func {
         display: none;
     }
-  }
+}

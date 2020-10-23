@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -11,6 +11,9 @@ import { Theme } from 'src/app/shared/enums/Theme';
   styleUrls: ['./button-notification.component.scss']
 })
 export class ButtonNotificationComponent implements OnInit {
+
+  @Input()
+  isProfile: boolean;
 
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;

@@ -1,5 +1,5 @@
-<div class="wrapper"
-    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '']">
+<div
+    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '', isProfile ? 'profile' : 'non-profile' ]">
     <div CustomTooltip="{{ 'header.notification' | translate }}" position="Bottom" class="auxiliary-icon mobile"
         #notificationHeader>
         <i class="icon-notification"></i>
