@@ -7,10 +7,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
 import { ProfileSectionComponent } from './header-components/profile-section/profile-section.component';
 import { RightSectionComponent } from './header-components/right-section/right-section.component';
+import { SearchComponent } from './header-components/search/search.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent],
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent, SearchComponent],
   imports: [
     CommonModule,
     RouterModule,
