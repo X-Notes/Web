@@ -60,3 +60,12 @@
         margin-left: 1rem;
     }
 }
+
+@media (max-width: 320px) {
+    .auxiliary-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 1.25rem;
+        margin-left: 0.875rem;
+      }
+}
