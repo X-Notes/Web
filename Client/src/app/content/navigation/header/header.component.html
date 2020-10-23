@@ -128,11 +128,7 @@
 
         <div class="interactions left" [ngClass]="(menuActive$ | async) ? 'help-func' : ''">
             <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
-            <div CustomTooltip="{{ 'header.theme' | translate }}" position="Bottom" class="auxiliary-icon"
-                (click)="toggleTheme()" #themeApp>
-                <i class="icon-theme_light"></i>
-                <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
-            </div>
+            <app-button-theme></app-button-theme>
             <div CustomTooltip="{{ 'header.questions' | translate }}" position="Bottom" class="auxiliary-icon"
                 #question>
                 <i class="icon-question"></i>
