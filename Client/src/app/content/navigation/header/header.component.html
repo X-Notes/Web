@@ -136,11 +136,7 @@
                 <div class="push">1</div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
             </div>
-            <div CustomTooltip="{{ 'header.orientation' | translate }}" position="Bottom" class="auxiliary-icon mobile"
-                (click)="toggleOrientation()" #orientationNote>
-                <i class="icon-view-change"></i>
-                <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
-            </div>
+            <app-button-change-view></app-button-change-view>
         </div>
 
 

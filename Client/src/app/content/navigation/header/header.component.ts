@@ -115,9 +115,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
-  toggleTheme() {
-    this.store.dispatch(new ChangeTheme());
-  }
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
