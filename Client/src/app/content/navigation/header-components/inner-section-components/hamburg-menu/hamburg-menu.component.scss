@@ -1,0 +1,100 @@
+@import "variables";
+
+.generic {
+    position: relative;
+    height: 30px;
+    border: 0.8px solid transparent;
+    padding: 0;
+    outline: none;
+    overflow: hidden;
+    user-select: none;
+    margin-right: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.hamburger {
+    position: relative;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+
+    span,
+    span::after,
+    span::before {
+        position: absolute;
+        display: block;
+        width: 22px;
+        height: 2px;
+        background-color: white;
+        border-radius: 2px;
+        transition: 0.2s ease;
+    }
+
+    span {
+        &::after {
+            content: "";
+            top: 8px;
+        }
+
+        &::before {
+            content: "";
+            top: -8px;
+        }
+    }
+}
+
+.active-hamburger {
+    &:first-child {
+        span {
+            transform: rotate(45deg);
+
+            &::before {
+                top: 0;
+                transform: rotate(90deg);
+            }
+
+            &::after {
+                top: 0;
+            }
+        }
+    }
+}
+
+.light {
+    .generic {
+        border-color: $light-button;
+        background-color: white;
+        color: $light-text-color;
+
+        &:hover {
+            background-color: $light-nav-backlight;
+        }
+
+        &:first-child {
+            background-color: white;
+            border-color: transparent;
+
+            span,
+            span::before,
+            span::after {
+                background-color: $dark-color;
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .hamburger {
+        display: flex;
+    }
+}
+
+@media (max-width: 320px) {
+    .generic {
+        height: 26px;
+        width: 26px;
+        margin-right: 0.875rem;
+    }
+}

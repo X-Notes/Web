@@ -68,8 +68,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              public menuButtonService: MenuButtonsService,
-              public murriService: MurriService, ) { }
+              public menuButtonService: MenuButtonsService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -149,13 +148,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
      this.store.dispatch(new UpdateMenuActive(false));
     }
   }
-
-  toggleOrientation() {
-    this.pService.orientationMobile = !this.pService.orientationMobile;
-    setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
-  }
-
-
 
   async routeChange(type: EntityType) {
 

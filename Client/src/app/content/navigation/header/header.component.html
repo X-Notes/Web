@@ -6,10 +6,7 @@
     <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
 
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
-            <div class="generic hamburger" (click)="toggleSidebar()"
-                [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
-                <span></span>
-            </div>
+            <app-hamburg-menu></app-hamburg-menu>
             <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button"
                 [ngClass]="{'custom-create-profile':(route$ | async) === 'background'}"
                 class="generic new-note custom-create" (click)="newButton()" #new>
