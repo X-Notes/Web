@@ -76,9 +76,13 @@
 
             p {
                 margin-top: 0.3125rem;
-                font-size: 0.875rem;
+                font-size: 0.9375rem;
+                font-weight: 500;
                 color: #ffffff;
                 transition: 0.2s ease;
+                background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
          }
 

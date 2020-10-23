@@ -1,7 +1,8 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels } from './app-action';
+    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType,
+    UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
