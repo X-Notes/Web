@@ -143,53 +143,6 @@ header {
         }
       }
 
-      .three-dots {
-        position: relative;
-        display: none;
-        align-items: center;
-        height: 30px;
-        border: 0.8px solid transparent;
-        background-color: $dark-button;
-        padding: 0 0.5rem;
-        user-select: none;
-        border-radius: 5px;
-        overflow: hidden;
-        cursor: pointer;
-
-        span {
-          position: relative;
-          z-index: 5;
-          display: block;
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background-color: white;
-
-          &::after,
-          &::before {
-            content: "";
-            display: block;
-            position: relative;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background-color: white;
-          }
-
-          &::after {
-            bottom: -3px;
-          }
-
-          &::before {
-            bottom: 8px;
-          }
-        }
-      }
-
-      .mobile-buttons {
-        display: none;
-      }
-
       .wrapper-people {
         position: relative;
         display: flex;
@@ -501,13 +454,6 @@ header {
       }
 
       .visible {
-
-        button,
-        .menu-inner,
-        .three-dots {
-          z-index: 50;
-        }
-
         .overlay {
           display: block;
         }
@@ -543,14 +489,6 @@ header {
 
         .user-circle {
           display: none;
-        }
-
-        .three-dots {
-          display: flex;
-        }
-
-        .mobile-buttons {
-          display: flex;
         }
 
         .history {
@@ -611,20 +549,6 @@ header {
   .light {
     .inner-menu {
       .interactions {
-        .three-dots {
-          background-color: white;
-          border-color: $light-button;
-
-          span {
-            background-color: $text-color;
-
-            &::before,
-            &::after {
-              background-color: $text-color;
-            }
-          }
-        }
-
         .wrapper-people {
           .people-editing {
             .person:hover {
@@ -708,25 +632,6 @@ header {
 
         .menu-inner-fixed {
           top: 45px;
-        }
-
-        .three-dots {
-          height: 26px;
-
-          span {
-            height: 4px;
-            width: 4px;
-
-            &::after,
-            &::before {
-              height: 4px;
-              width: 4px;
-            }
-
-            &::before {
-              bottom: 7px;
-            }
-          }
         }
 
         .wrapper-people {

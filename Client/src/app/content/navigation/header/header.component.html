@@ -54,11 +54,7 @@
             </button>
             <app-button-label></app-button-label>
             <app-button-share></app-button-share>
-            <div CustomTooltip="{{ 'header.menu' | translate }}" position="Bottom" class="three-dots mobile-buttons"
-                (click)="hideMenu()" #dots>
-                <span></span>
-                <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
-            </div>
+            <app-button-three-dots></app-button-three-dots>
             <div class="overlay" (click)="closeMenu()"></div>
         </div>
 
