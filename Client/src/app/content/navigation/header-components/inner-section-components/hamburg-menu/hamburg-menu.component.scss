@@ -1,17 +1,6 @@
 @import "variables";
+@import 'header';
 
-.generic {
-    position: relative;
-    height: 30px;
-    border: 0.8px solid transparent;
-    padding: 0;
-    outline: none;
-    overflow: hidden;
-    user-select: none;
-    margin-right: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-}
 
 .hamburger {
     position: relative;
@@ -64,23 +53,12 @@
 
 .light {
     .generic {
-        border-color: $light-button;
         background-color: white;
-        color: $light-text-color;
-
-        &:hover {
-            background-color: $light-nav-backlight;
-        }
-
-        &:first-child {
-            background-color: white;
-            border-color: transparent;
-
-            span,
-            span::before,
-            span::after {
-                background-color: $dark-color;
-            }
+        border-color: transparent;
+        span,
+        span::before,
+        span::after {
+            background-color: $dark-color;
         }
     }
 }
