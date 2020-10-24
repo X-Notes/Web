@@ -23,6 +23,7 @@ import { ButtonVideoComponent } from './header-components/inner-note-section-com
 import { ButtonBackComponent } from './header-components/inner-note-section-components/button-back/button-back.component';
 import { ButtonShareComponent } from './header-components/inner-note-section-components/button-share/button-share.component';
 import { ButtonLabelComponent } from './header-components/inner-note-section-components/button-label/button-label.component';
+import { ButtonThreeDotsComponent } from './header-components/inner-note-section-components/button-three-dots/button-three-dots.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { ButtonLabelComponent } from './header-components/inner-note-section-com
     ButtonVideoComponent,
     ButtonBackComponent,
     ButtonShareComponent,
-    ButtonLabelComponent
+    ButtonLabelComponent,
+    ButtonThreeDotsComponent
   ],
   imports: [
     CommonModule,
