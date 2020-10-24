@@ -263,30 +263,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Selection
 
-  selectAll() {
-    let routePath = this.store.selectSnapshot(AppStore.isNote);
-    if (routePath) {
-      const noteType = this.store.selectSnapshot(AppStore.getRouting);
-      this.store.dispatch(new SelectAllNote(noteType));
-    }
-    routePath = this.store.selectSnapshot(AppStore.isFolder);
-    if (routePath) {
-      const folderType = this.store.selectSnapshot(AppStore.getRouting);
-      this.store.dispatch(new SelectAllFolder(folderType));
-    }
-  }
-
-  unselectAll() {
-    let routePath = this.store.selectSnapshot(AppStore.isNote);
-    if (routePath) {
-      this.store.dispatch(new UnSelectAllNote());
-    }
-    routePath = this.store.selectSnapshot(AppStore.isFolder);
-    if (routePath) {
-      this.store.dispatch(new UnSelectAllFolder());
-    }
-  }
-
   setDefaultColorProfile() {
     this.store.dispatch(new SetDefaultBackground());
   }

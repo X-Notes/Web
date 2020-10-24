@@ -17,6 +17,7 @@ import { NewButtonComponent } from './header-components/inner-section-components
 import { ButtonSelectAllComponent } from './header-components/inner-section-components/button-select-all/button-select-all.component';
 import { ButtonUnselectAllComponent } from './header-components/inner-section-components/button-unselect-all/button-unselect-all.component';
 import { ButtonFilterComponent } from './header-components/inner-section-components/button-filter/button-filter.component';
+// tslint:disable-next-line:max-line-length
 import { ButtonDefaultBackgroundComponent } from './header-components/inner-section-components/button-default-background/button-default-background.component';
 
 
@@ -25,7 +26,8 @@ import { ButtonDefaultBackgroundComponent } from './header-components/inner-sect
     ProfileSectionComponent, RightSectionComponent,
     SearchComponent, ButtonThemeComponent, ButtonQuestionComponent,
     ButtonNotificationComponent, ButtonChangeViewComponent,
-    HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent, ButtonFilterComponent, ButtonDefaultBackgroundComponent
+    HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent,
+    ButtonFilterComponent, ButtonDefaultBackgroundComponent
   ],
   imports: [
     CommonModule,

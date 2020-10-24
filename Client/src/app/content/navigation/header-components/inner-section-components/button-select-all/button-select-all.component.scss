@@ -56,13 +56,6 @@
     }
 }
 
-.selected {
-    .inner-content {
-        i {
-            transform: rotate(45deg);
-        }
-    }
-}
 
 
 .light {
@@ -79,17 +72,6 @@
 
         &:hover {
             background-color: $light-nav-backlight;
-        }
-
-        &:first-child {
-            background-color: white;
-            border-color: transparent;
-
-            span,
-            span::before,
-            span::after {
-                background-color: $dark-color;
-            }
         }
     }
 }

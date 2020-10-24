@@ -10,14 +10,7 @@
             <app-new-button *ngIf="(newButtonActive$ | async)"></app-new-button>
             <app-button-unselect-all *ngIf="(menuActive$ | async)"></app-button-unselect-all>
             <app-button-select-all *ngIf="(selectAllButtonActive$ | async)"></app-button-select-all>
-            <button CustomTooltip="{{ 'header.filter' | translate }}" position="Bottom"
-                *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button"
-                class="generic filters filter" #filter>
-                <div class="inner-content">
-                    <i class="icon-filter"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
-            </button>
+            <app-button-filter *ngIf="(settingsButtonActive$ | async)"></app-button-filter>
             <button *ngIf="(defaultBackground$ | async)" (click)="setDefaultColorProfile()" name="Default" type="button"
                 class="generic default-size filters" #default>
                 <div class="default inner-content">
