@@ -8,15 +8,7 @@
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <app-hamburg-menu></app-hamburg-menu>
             <app-new-button *ngIf="(newButtonActive$ | async)"></app-new-button>
-            <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
-                class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
-                #selectedAll>
-                <div class="inner-content">
-                    <p>{{ 'header.selected' | translate }} {{countSelected}}</p>
-                    <i class="icon-plus"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
-            </button>
+            <app-button-unselect-all *ngIf="(menuActive$ | async)"></app-button-unselect-all>
             <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()"
                 class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
                 <div class="inner-content">
