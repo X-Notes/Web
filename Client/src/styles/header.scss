@@ -16,7 +16,6 @@
     }
 }
 
-
 .generic {
     position: relative;
     height: 30px;
@@ -53,35 +52,23 @@
     }
 }
 
-.filter {
-    width: 30px;
-
-    .inner-content {
-        justify-content: center;
-        padding: 0;
-
-        i {
-            font-size: 1rem;
-        }
-    }
-}
-
 .light {
     .generic {
         border-color: $light-button;
         background-color: white;
         color: $light-text-color;
+
         .inner-content {
             i::before {
                 color: $light-text-color;
             }
         }
+
         &:hover {
             background-color: $light-nav-backlight;
         }
     }
 }
-
 
 @media (max-width: 1024px) {
     .generic {
@@ -98,13 +85,8 @@
             }
         }
     }
-
     .filters {
         width: 54px;
-    }
-
-    .filter {
-        width: 30px;
     }
 }
 
@@ -114,27 +96,13 @@
         height: 26px;
         width: 26px;
         margin-right: 0.875rem;
-
         .inner-content {
             i {
                 font-size: 0.875rem;
             }
         }
-
-        &:last-child {
-            .inner-content {
-                i {
-                    font-size: 0.875rem;
-                }
-            }
-        }
     }
-
     .filters {
         width: 40px;
-    }
-
-    .filter {
-        width: 30px;
     }
 }

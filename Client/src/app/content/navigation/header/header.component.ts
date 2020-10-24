@@ -261,16 +261,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
   }
 
-  // Selection
-
-  setDefaultColorProfile() {
-    this.store.dispatch(new SetDefaultBackground());
-  }
-
-  // UPPER MENU FUNCTION NOTES
-
-
-
 
   makePublic() {
     const noteType = this.store.selectSnapshot(AppStore.getRouting);
@@ -281,10 +271,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const noteType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateNotes(noteType));
   }
-
-
-  // UPPER MENU FUNCTIONS FOLDERS
-
 
   makePublicFolder() {
     const folderType = this.store.selectSnapshot(AppStore.getRouting);
