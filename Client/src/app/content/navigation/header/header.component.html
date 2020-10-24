@@ -21,13 +21,7 @@
 
 
         <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
-            <button CustomTooltip="{{ 'header.back' | translate }}" position="Bottom" type="button" name="Back"
-                class="generic filters mobile-buttons" #back>
-                <div class="inner-content">
-                    <i class="icon-select-label"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="back"></div>
-            </button>
+            <app-button-back></app-button-back>
             <div CustomTooltip="{{ 'header.countUsers' | translate }}" position="Bottom" class="user-circle"
                 (click)="showUsers()" #userCircle>
                 <p>8</p>

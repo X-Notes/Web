@@ -1,1 +1,9 @@
-<p>button-back works!</p>
+<div class="inner-menu" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+    <button CustomTooltip="{{ 'header.back' | translate }}" position="Bottom" type="button" name="Back"
+        class="generic filters" #back>
+        <div class="inner-content">
+            <i class="icon-select-label"></i>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="back"></div>
+    </button>
+</div>
