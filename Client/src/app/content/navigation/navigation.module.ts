@@ -20,15 +20,17 @@ import { ButtonFilterComponent } from './header-components/inner-section-compone
 // tslint:disable-next-line:max-line-length
 import { ButtonDefaultBackgroundComponent } from './header-components/inner-section-components/button-default-background/button-default-background.component';
 import { ButtonVideoComponent } from './header-components/inner-note-section-components/button-video/button-video.component';
+import { ButtonBackComponent } from './header-components/inner-note-section-components/button-back/button-back.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent,
-    ProfileSectionComponent, RightSectionComponent,
-    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent,
-    ButtonNotificationComponent, ButtonChangeViewComponent,
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent,
+    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent,
     HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent,
-    ButtonFilterComponent, ButtonDefaultBackgroundComponent, ButtonVideoComponent
+    ButtonFilterComponent, ButtonDefaultBackgroundComponent,
+    // INNER NOTE
+    ButtonVideoComponent,
+    ButtonBackComponent
   ],
   imports: [
     CommonModule,
