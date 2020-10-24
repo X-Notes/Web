@@ -296,8 +296,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.dispatch(new MakePrivateFolders(folderType));
   }
 
-  // Modal Windows
-  settingsClick() {
-    console.log('settings');
-  }
 }

@@ -11,13 +11,7 @@
             <app-button-unselect-all *ngIf="(menuActive$ | async)"></app-button-unselect-all>
             <app-button-select-all *ngIf="(selectAllButtonActive$ | async)"></app-button-select-all>
             <app-button-filter *ngIf="(settingsButtonActive$ | async)"></app-button-filter>
-            <button *ngIf="(defaultBackground$ | async)" (click)="setDefaultColorProfile()" name="Default" type="button"
-                class="generic default-size filters" #default>
-                <div class="default inner-content">
-                    <p>{{ 'header.defaultColor' | translate }}</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
-            </button>
+            <app-button-default-background *ngIf="(defaultBackground$ | async)"></app-button-default-background>
         </div>
 
 
