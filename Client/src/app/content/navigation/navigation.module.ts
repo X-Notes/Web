@@ -14,12 +14,14 @@ import { ButtonNotificationComponent } from './header-components/right-section-c
 import { ButtonChangeViewComponent } from './header-components/right-section-componets/button-change-view/button-change-view.component';
 import { HamburgMenuComponent } from './header-components/inner-section-components/hamburg-menu/hamburg-menu.component';
 import { NewButtonComponent } from './header-components/inner-section-components/new-button/new-button.component';
+import { ButtonSelectAllComponent } from './header-components/inner-section-components/button-select-all/button-select-all.component';
+import { ButtonUnselectAllComponent } from './header-components/inner-section-components/button-unselect-all/button-unselect-all.component';
 
 
 @NgModule({
   declarations: [SideBarComponent, HeaderComponent, MenuComponent,
     ProfileSectionComponent, RightSectionComponent,
-    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent, HamburgMenuComponent, NewButtonComponent
+    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent, HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent
   ],
   imports: [
     CommonModule,
