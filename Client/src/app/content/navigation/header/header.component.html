@@ -52,20 +52,8 @@
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
             </button>
-            <button CustomTooltip="{{ 'label' | translate }}" position="Bottom" name="label" type="button"
-                class="generic filters mobile-buttons" #label>
-                <div class="inner-content">
-                    <i class="icon-label"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
-            </button>
-            <button CustomTooltip="{{ 'shared' | translate }}" position="Bottom" name="shared" type="button"
-                class="generic filters mobile-buttons" #shared>
-                <div class="inner-content">
-                    <i class="icon-shared"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
-            </button>
+            <app-button-label></app-button-label>
+            <app-button-share></app-button-share>
             <div CustomTooltip="{{ 'header.menu' | translate }}" position="Bottom" class="three-dots mobile-buttons"
                 (click)="hideMenu()" #dots>
                 <span></span>
