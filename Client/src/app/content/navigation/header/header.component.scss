@@ -454,6 +454,10 @@ header {
       }
 
       .visible {
+        button,
+        .menu-inner {
+          z-index: 50;
+        }
         .overlay {
           display: block;
         }
