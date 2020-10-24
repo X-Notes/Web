@@ -1,5 +1,5 @@
 @import "variables";
-
+@import "header";
 
 .profile {
     display: block;
@@ -17,49 +17,6 @@
         margin-left: 1.375rem;
         font-size: 1.375rem;
         cursor: pointer;
-    }
-}
-
-.auxiliary-icon {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    overflow: hidden;
-
-    i {
-        position: relative;
-        z-index: 5;
-
-        &::before {
-            transition: 0.2s ease;
-        }
-    }
-
-    &:hover {
-        background-color: $dark-button;
-
-        i::before {
-            color: white;
-        }
-    }
-}
-
-.light {
-    .auxiliary-icon {
-        i::before {
-            color: $dark-button;
-        }
-        &:hover {
-            background-color: $light-nav-backlight;
-
-            i::before {
-                color: $dark-button;
-            }
-        }
     }
 }
 
@@ -86,6 +43,7 @@
 
     .non-profile {
         display: block;
+
         .auxiliary-icon {
             i::before {
                 color: $light-managment-hover;
@@ -93,9 +51,6 @@
         }
     }
 
-    .auxiliary-icon {
-        margin-left: 1rem;
-    }
 }
 
 @media (max-width: 500px) {
@@ -113,7 +68,7 @@
 }
 
 @media (max-width: 320px) {
-      .non-profile { 
+    .non-profile {
         .auxiliary-icon {
             width: 26px;
             height: 26px;

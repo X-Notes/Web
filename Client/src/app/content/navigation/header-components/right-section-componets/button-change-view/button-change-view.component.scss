@@ -1,71 +1,13 @@
 @import "variables";
-
+@import 'header';
 
 :host{
     display: none;
-}
-
-.auxiliary-icon {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-left: 1.375rem;
-    font-size: 1.375rem;
-    transition: 0.2s ease;
-    cursor: pointer;
-
-    i {
-        position: relative;
-        z-index: 5;
-
-        &::before {
-            transition: 0.2s ease;
-        }
-    }
-
-    &:hover {
-        background-color: $dark-button;
-
-        i::before {
-            color: white;
-        }
-    }
-}
-
-.light {
-    .auxiliary-icon {
-        i::before {
-            color: $light-managment;
-        }
-        &:hover {
-            background-color: $light-nav-backlight;
-
-            i::before {
-                color: $light-managment-hover;
-            }
-        }
-    }
 }
 
 @media (max-width: 1024px) {
     :host{
         display: block;
     }
-    .auxiliary-icon {
-        margin-left: 1rem;
-    }
 }
 
-@media (max-width: 320px) {
-    .auxiliary-icon {
-        width: 26px;
-        height: 26px;
-        font-size: 1.25rem;
-        margin-left: 0.875rem;
-      }
-}
