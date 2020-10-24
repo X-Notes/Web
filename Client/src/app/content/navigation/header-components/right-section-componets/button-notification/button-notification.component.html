@@ -1,9 +1,10 @@
-<div
-    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', (menuActive$ | async) ? 'help-func' : '', isProfile ? 'profile' : 'non-profile' ]">
-    <div CustomTooltip="{{ 'header.notification' | translate }}" position="Bottom" class="auxiliary-icon mobile"
-        #notificationHeader>
-        <i class="icon-notification"></i>
-        <div class="push">1</div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
+<div [ngClass]="[isProfile ? 'profile' : 'non-profile' ]">
+    <div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+        <div CustomTooltip="{{ 'header.notification' | translate }}" position="Bottom" class="auxiliary-icon mobile"
+            #notificationHeader>
+            <i class="icon-notification"></i>
+            <div class="push">1</div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
+        </div>
     </div>
 </div>

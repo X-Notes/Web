@@ -7,7 +7,16 @@
     .auxiliary-icon {
         font-size: 1.25rem;
         cursor: pointer;
+        margin: 0;
     }
+    .light   {
+        .auxiliary-icon {
+            i::before {
+                color: $light-text-color;
+            }
+        }
+    }
+    
 }
 
 .non-profile {
@@ -18,6 +27,14 @@
         font-size: 1.375rem;
         cursor: pointer;
     }
+    .light   {
+        .auxiliary-icon {
+            i::before {
+                color: #404040;
+            }
+        }
+    }
+    
 }
 
 .push {
@@ -46,7 +63,7 @@
 
         .auxiliary-icon {
             i::before {
-                color: $light-managment-hover;
+                color: white;
             }
         }
     }
