@@ -21,6 +21,8 @@ import { ButtonFilterComponent } from './header-components/inner-section-compone
 import { ButtonDefaultBackgroundComponent } from './header-components/inner-section-components/button-default-background/button-default-background.component';
 import { ButtonVideoComponent } from './header-components/inner-note-section-components/button-video/button-video.component';
 import { ButtonBackComponent } from './header-components/inner-note-section-components/button-back/button-back.component';
+import { ButtonShareComponent } from './header-components/inner-note-section-components/button-share/button-share.component';
+import { ButtonLabelComponent } from './header-components/inner-note-section-components/button-label/button-label.component';
 
 
 @NgModule({
@@ -30,7 +32,9 @@ import { ButtonBackComponent } from './header-components/inner-note-section-comp
     ButtonFilterComponent, ButtonDefaultBackgroundComponent,
     // INNER NOTE
     ButtonVideoComponent,
-    ButtonBackComponent
+    ButtonBackComponent,
+    ButtonShareComponent,
+    ButtonLabelComponent
   ],
   imports: [
     CommonModule,
