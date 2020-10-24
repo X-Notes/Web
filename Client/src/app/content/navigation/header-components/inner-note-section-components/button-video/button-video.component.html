@@ -1,0 +1,9 @@
+<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+    <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Video" type="button"
+        class="generic filters" #video>
+        <div class="inner-content">
+            <i class="icon-video"></i>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
+    </button>
+</div>
