@@ -16,12 +16,16 @@ import { HamburgMenuComponent } from './header-components/inner-section-componen
 import { NewButtonComponent } from './header-components/inner-section-components/new-button/new-button.component';
 import { ButtonSelectAllComponent } from './header-components/inner-section-components/button-select-all/button-select-all.component';
 import { ButtonUnselectAllComponent } from './header-components/inner-section-components/button-unselect-all/button-unselect-all.component';
+import { ButtonFilterComponent } from './header-components/inner-section-components/button-filter/button-filter.component';
+import { ButtonDefaultBackgroundComponent } from './header-components/inner-section-components/button-default-background/button-default-background.component';
 
 
 @NgModule({
   declarations: [SideBarComponent, HeaderComponent, MenuComponent,
     ProfileSectionComponent, RightSectionComponent,
-    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent, HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent
+    SearchComponent, ButtonThemeComponent, ButtonQuestionComponent,
+    ButtonNotificationComponent, ButtonChangeViewComponent,
+    HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent, ButtonFilterComponent, ButtonDefaultBackgroundComponent
   ],
   imports: [
     CommonModule,
