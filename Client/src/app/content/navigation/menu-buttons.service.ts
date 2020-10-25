@@ -374,6 +374,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
+      height: '475px',
       data: {
         title: 'Labels'
       },
@@ -386,13 +387,12 @@ export class MenuButtonsService {
   private shareEntity() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      width: '600px',
-      height: '640px',
+      width: '650px',
       data: {
         title: 'Share'
       },
       autoFocus: false,
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: theme === Theme.Light ? ['custom-dialog-class-light','sharing-modal'] : ['custom-dialog-class-dark','sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }

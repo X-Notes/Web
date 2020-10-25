@@ -1,37 +1,246 @@
-<div class="header">
-    <span>{{data.title}}</span>
-    <i class="icon-plus" mat-dialog-close></i>
-</div>
-<mat-tab-group class="tabs" mat-align-tabs="center"
-    [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'">
-    <mat-tab isActive="true" label="Access settings">
-        <div class="content-access">
-            <div class="content">
-                <div class="form">
-                    <input type="text">
-
-                    <div class="drop-down">
-                        <div class="drop-content" matRipple (click)="changeActive()">
-                            <p>Viewer</p>
-                            <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
-                                <i class="icon-select-label"></i>
+<div class="outer" [ngClass]="isCollapse ? '' : 'half-helper'">
+    <div class="few-notes">
+        <div class="header">
+            <span>Selected notes</span>
+            <i class="icon-plus" (click)="collapseToggle()"></i>
+        </div>
+        <ngx-simplebar [options]="pService.optionsScroll" class="notes-sharing">
+            <div class="note" *ngFor="let item of deleteThis"
+                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                <p>Name note</p>
+            </div>
+            <div class="note" *ngFor="let item of deleteThis"
+                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                <p>Name note</p>
+            </div>
+        </ngx-simplebar>
+    </div>
+    <div class="sharing">
+        <div class="header">
+            <span>{{data.title}}</span>
+            <i class="icon-plus" mat-dialog-close></i>
+        </div>
+        <mat-tab-group class="tabs" mat-align-tabs="center"
+            [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'" #tabs>
+            <mat-tab isActive="true" label="Access">
+                <div class="content-access">
+                    <div class="link-access-field">
+                        <input readonly type="text" value="Your fucking link">
+                        <button class="dropdown-button" type="button" (click)="changeActive()">
+                            <div class="content-button" #dropdownSelect>
+                                <p>Private</p>
+                                <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
+                                    <i class="icon-select-label"></i>
+                                </div>
+                            </div>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                            <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
+                                <div class="item" (click)="setLanguage('Private')">
+                                    <p>Private</p>
+                                </div>
+                                <div class="item" (click)="setLanguage('Shared')">
+                                    <p>Shared</p>
+                                </div>
+                            </div>
+                            <div #overlay class="overlay" (click)="cancelDropdown()"></div>
+                        </button>
+                        <div class="copy" #copy>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
+                            <i class="icon-copy"></i>
+                        </div>
+                    </div>
+                    <div class="toggle-field">
+                        <div class="toggle">
+                            <input type="checkbox" (change)="changeAccess()">
+                            <div class="rectangle" [ngClass]="isAccess ? '' : 'active-toggle'">
+                            </div>
+                            <div class="text-toggle">
+                                <div class="text">
+                                    <p>Private</p>
+                                </div>
+                                <div class="text">
+                                    <p>Shared</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="drop-options" [@showHistory] *ngIf="dropdownActive">
-                            <div class="drop-option">
-                                <p>Viewer</p>
+                        <div class="toggle-description">
+                            <p *ngIf="isAccess">Anyone on the internet with this links</p>
+                            <p *ngIf="!isAccess">Your fucking description</p>
+                        </div>
+                    </div>
+                    <div class="line"></div>
+                </div>
+                <ngx-simplebar [options]="pService.optionsScroll" class="user-access">
+                    <div *ngFor="let items of deleteThis" class="user">
+                        <div class="photo">
+                            <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                        </div>
+                        <div class="user-info">
+                            <div class="name">
+                                <p>Your fucking nameYour fucking nameYour fucking nameYour fucking name</p>
                             </div>
-                            <div class="drop-option">
-                                <p>Editor</p>
+                            <div class="email">
+                                <p>Your fucking nameYour fucking nameYour fucking nameYour fucking name</p>
+                            </div>
+                        </div>
+                        <div class="user-access-func">
+                            <button type="button" name="">
+                                <div class="icon">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                            <div class="separator-buttons"></div>
+                            <button type="button" name="">
+                                <div class="icon">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                            <div class="separator-buttons"></div>
+                            <button type="button" name="">
+                                <div class="icon">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </ngx-simplebar>
+            </mat-tab>
+            <mat-tab label="Sharing">
+                <div class="search">
+                    <input type="search" aria-label="Search" placeholder="Search...">
+                    <button type="button">
+                        <div class="icon">
+                            <i class="icon-search"></i>
+                        </div>
+                    </button>
+                </div>
+                <ngx-simplebar [options]="pService.optionsScroll" class="interaction-container">
+                    <div class="mail-notification">
+                        <div class="mail-container" >
+                            <div class="user-mail">
+                                <p>konoplyanka199gmassdil.com</p>
+                                <div class="icon">
+                                    <i class="icon-plus"></i>
+                                </div>
+                            </div>
+                            <div class="user-mail">
+                                <p>konopmassdil.com</p>
+                                <div class="icon">
+                                    <i class="icon-plus"></i>
+                                </div>
+                            </div>
+                            <div class="user-mail">
+                                <p>konoplyanka19ddddd9gmassdil.dddddddddddddddddddddddddddcom</p>
+                                <div class="icon">
+                                    <i class="icon-plus"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox-notification">
+                            <label>
+                                Прислать оповещание
+                                <input type="checkbox">
+                                <span class="checkbox">
+                                    <div class="icon">
+                                        <i class="icon-plus" ></i>
+                                    </div>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="interaction-mail">
+                            <textarea></textarea>
+                            <div class="interaction-buttons">
+                                <button class="dropdown-button" type="button" (click)="changeActive()">
+                                    <div class="content-button" #dropdownSelect>
+                                        <p>Editor</p>
+                                        <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
+                                            <i class="icon-select-label"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                                    <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
+                                        <div class="item" (click)="setLanguage('Editor')">
+                                            <p>Editor</p>
+                                        </div>
+                                        <div class="item" (click)="setLanguage('Viewer')">
+                                            <p>Viewer</p>
+                                        </div>
+                                    </div>
+                                    <div #overlay2 class="overlay" (click)="cancelDropdown()"></div>
+                                </button>
+                                <button class="send-button" type="button" #changeAccess>
+                                    <div class="content-button">
+                                        <p>Editor</p>
+                                    </div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeAccess"></div>
+                                </button>
                             </div>
                         </div>
                     </div>
-
-
-                    <i class="icon-copy"></i>
-                </div>
-            </div>
-        </div>
-    </mat-tab>
-    <mat-tab label="Sharing">Content 2</mat-tab>
-</mat-tab-group>
+                    <div class="user-suggestions">
+                        <div class="user">
+                            <div class="photo">
+                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                            </div>
+                            <div class="email">
+                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
+                            </div>
+                            <div class="user-access-func">
+                                <button type="button" name="Share user note">
+                                    <div class="icon">
+                                        <i class="icon-plus"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="user">
+                            <div class="photo">
+                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                            </div>
+                            <div class="email">
+                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
+                            </div>
+                            <div class="user-access-func">
+                                <button type="button" name="Share user note">
+                                    <div class="icon">
+                                        <i class="icon-plus"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="user">
+                            <div class="photo">
+                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                            </div>
+                            <div class="email">
+                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
+                            </div>
+                            <div class="user-access-func">
+                                <button type="button" name="Share user note">
+                                    <div class="icon">
+                                        <i class="icon-plus"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="user">
+                            <div class="photo">
+                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                            </div>
+                            <div class="email">
+                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
+                            </div>
+                            <div class="user-access-func">
+                                <button type="button" name="Share user note">
+                                    <div class="icon">
+                                        <i class="icon-plus"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </ngx-simplebar>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
