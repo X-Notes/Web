@@ -1,4 +1,4 @@
-<div class="outer" [ngClass]="isCollapse ? '' : 'half-helper'">
+<div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark']">
     <div class="few-notes">
         <div class="header">
             <span>Selected notes</span>
@@ -151,13 +151,13 @@
                             <textarea></textarea>
                             <div class="interaction-buttons">
                                 <button class="dropdown-button" type="button" (click)="changeActive()">
-                                    <div class="content-button" #dropdownSelect>
+                                    <div class="content-button" #AccessSelect>
                                         <p>Editor</p>
                                         <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                             <i class="icon-select-label"></i>
                                         </div>
                                     </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="AccessSelect"></div>
                                     <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
                                         <div class="item" (click)="setLanguage('Editor')">
                                             <p>Editor</p>
@@ -168,11 +168,11 @@
                                     </div>
                                     <div #overlay2 class="overlay" (click)="cancelDropdown()"></div>
                                 </button>
-                                <button class="send-button" type="button" #changeAccess>
+                                <button class="send-button" type="button" #changeAccessRipple>
                                     <div class="content-button">
                                         <p>Editor</p>
                                     </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeAccess"></div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
                                 </button>
                             </div>
                         </div>

@@ -47,7 +47,7 @@
     height: 3px;
     border-radius: 5px;
     width: 50% !important;
-    background-color: #ddffcd !important;
+    transition-property: left, right;
   }
   .mat-tab-body-wrapper {
     height: 100%;
@@ -61,6 +61,10 @@
   .mat-tab-label-active {
     color: #4a85df;
   }
+
+  .mat-ink-bar {
+    background-color: #4a85df !important;
+  }
 }
 
 .dark-tab {
@@ -69,6 +73,10 @@
   }
   .mat-tab-label-active {
     color: #ddffcd;
+  }
+
+  .mat-ink-bar {
+    background-color: #ddffcd !important;
   }
 }
 
@@ -280,7 +288,7 @@
 }
 
 .dropdown-button {
-  border-color: #C5C5C5;
+  border-color: #c5c5c5;
 
   .content-button {
     z-index: 50;

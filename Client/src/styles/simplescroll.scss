@@ -54,6 +54,10 @@
     .simplebar-track.simplebar-vertical{
         width: 9px;
     }
+
+    .simplebar-wrapper {
+        height: auto;
+    }
 }
 
 .user-access {
@@ -63,6 +67,20 @@
 
     .simplebar-wrapper {
         width: auto;
+    }
+}
+
+.interaction-container {
+    .simplebar-wrapper {
+        height: auto;
+    }
+
+    .simplebar-track {
+        z-index: 6;
+    }
+
+    .simplebar-scrollbar::before {
+        background-color: rgba(255,255,255, 0.4);
     }
 }
 
@@ -119,7 +137,7 @@
 }
 
 .light {
-    .content-inner, .label-container, .notes-section, .people-editing {
+    .content-inner, .label-container, .notes-section, .people-editing, .notes-sharing, .user-access, .interaction-container {
         .simplebar-scrollbar::before {
             background-color: rgba(0,0,0, 0.3);
         }

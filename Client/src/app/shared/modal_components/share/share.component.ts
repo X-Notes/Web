@@ -54,7 +54,7 @@ export class ShareComponent implements OnInit {
     }
   }
 
-  changeAccess() {
+  changeAccess(): void {
     this.isAccess = !this.isAccess;
   }
 
