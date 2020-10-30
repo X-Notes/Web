@@ -18,12 +18,10 @@ export class MurriService {
   public flagForOpacity = false;
 
   constructor(private store: Store) {
-    console.log(555);
   }
 
 
   initMurriNote(type: EntityType) {
-    console.log(5);
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;

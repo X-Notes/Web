@@ -60,6 +60,7 @@ export class LabelStore {
 
     @Action(LoadLabels)
     loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
+        console.log(555);
         if (!getState().loaded) {
             return this.api.getAll().pipe(tap(content => { patchState({
             labelsAll: content.labelsAll,

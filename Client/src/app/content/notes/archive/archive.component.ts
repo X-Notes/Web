@@ -52,7 +52,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
       this.noteService.firstInit(x);
       const active =  await this.pService.initPromise();
       await this.store.dispatch(new SpinnerChangeStatus(active)).toPromise()
-      .then(z => { console.log(555) ; this.murriService.initMurriNote(EntityType.NoteArchive); });
+      .then(z => { this.murriService.initMurriNote(EntityType.NoteArchive); });
      });
 
   }
