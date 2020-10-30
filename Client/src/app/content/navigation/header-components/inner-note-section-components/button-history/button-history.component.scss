@@ -1,0 +1,20 @@
+@import "header";
+
+.history {
+    width: auto;
+    margin-right: 0;
+    font-size: 1.125rem;
+    font-weight: 500;
+    .inner-content {
+        p {
+            padding-right: 0;
+        }
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .history {
+        display: none;
+      }
+}

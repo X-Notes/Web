@@ -24,6 +24,7 @@ import { ButtonBackComponent } from './header-components/inner-note-section-comp
 import { ButtonShareComponent } from './header-components/inner-note-section-components/button-share/button-share.component';
 import { ButtonLabelComponent } from './header-components/inner-note-section-components/button-label/button-label.component';
 import { ButtonThreeDotsComponent } from './header-components/inner-note-section-components/button-three-dots/button-three-dots.component';
+import { ButtonHistoryComponent } from './header-components/inner-note-section-components/button-history/button-history.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { ButtonThreeDotsComponent } from './header-components/inner-note-section
     ButtonBackComponent,
     ButtonShareComponent,
     ButtonLabelComponent,
-    ButtonThreeDotsComponent
+    ButtonThreeDotsComponent,
+    ButtonHistoryComponent
   ],
   imports: [
     CommonModule,

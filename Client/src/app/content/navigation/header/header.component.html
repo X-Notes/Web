@@ -45,13 +45,8 @@
             <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
                 [@.disabled]="pService.AnimationInnerMenu"></app-menu>
 
-            <button name="History" type="button" class="generic filters history" #history
-                (click)="pService.toggleHistoryMethod()">
-                <div class="inner-content">
-                    <p>{{ 'menu.history' | translate }}</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
-            </button>
+
+            <app-button-history></app-button-history>
             <app-button-label></app-button-label>
             <app-button-share></app-button-share>
             <app-button-three-dots></app-button-three-dots>

@@ -1,0 +1,9 @@
+<div class="inner-menu" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+    <button name="History" type="button" class="generic filters history" #history
+        (click)="pService.toggleHistoryMethod()">
+        <div class="inner-content">
+            <p>{{ 'menu.history' | translate }}</p>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
+    </button>
+</div>
