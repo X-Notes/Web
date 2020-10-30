@@ -23,19 +23,9 @@
         <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
             <app-button-back></app-button-back>
             <app-user-circle></app-user-circle>
-            <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
-                [@.disabled]="pService.AnimationInnerUsers">
-                <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
-                    <div class="person" *ngFor="let item of user" CustomTooltip="{{item}}" position="Bottom"
-                        flagDisable="{{ disableTooltpUser() }}">
-                        <div class="inner-person">
-                            <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
-                                alt="contributor">
-                        </div>
-                        <p>12321321321333333333333333333333333333333333333333333333333</p>
-                    </div>
-                </ngx-simplebar>
-            </div>
+            <app-online-users *ngIf="pService.users" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerUsers">
+            </app-online-users>
+
             <app-button-video></app-button-video>
 
             <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]

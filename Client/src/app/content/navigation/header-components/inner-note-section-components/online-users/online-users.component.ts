@@ -3,6 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Theme } from 'src/app/shared/enums/Theme';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-online-users',
@@ -11,13 +12,21 @@ import { Theme } from 'src/app/shared/enums/Theme';
 })
 export class OnlineUsersComponent implements OnInit {
 
+  user: string[] = ['fucking person', 'fucking person', 'fucking person', 'fucking person', 'fucking person'];
+
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
   theme = Theme;
 
-  constructor() { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
+  }
+
+  disableTooltpUser(): boolean {
+    if (this.pService.checkWidth()) {
+      return true;
+    }
   }
 
 }
