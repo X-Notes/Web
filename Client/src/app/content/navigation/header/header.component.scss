@@ -21,7 +21,7 @@ header {
     width: calc(100% - 270px);
     padding: 0 3.125vw;
 
-    .left {
+    .right {
       position: absolute;
       right: 0;
       padding-right: 3.125vw;
@@ -52,31 +52,6 @@ header {
     .interactions {
       justify-content: flex-end;
 
-      .user-circle {
-        position: relative;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        border: 0.8px solid transparent;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background-color: $dark-button;
-        transition: 0.2s ease;
-        margin-right: 1rem;
-        overflow: hidden;
-        cursor: pointer;
-
-        p {
-          position: relative;
-          user-select: none;
-          z-index: 5;
-        }
-
-        &:hover {
-          background-color: #3d4049;
-        }
-      }
 
       .wrapper-people {
         position: relative;
@@ -171,7 +146,7 @@ header {
   background-color: white;
 
   .management-section {
-    .left {
+    .right {
       background-color: white;
     }
 
@@ -211,9 +186,7 @@ header {
   header {
     .inner-menu {
       .interactions {
-        .user-circle {
-          display: flex;
-        }
+
 
         .wrapper-people {
           position: absolute;
@@ -260,15 +233,7 @@ header {
   .light {
     .inner-menu {
       .interactions {
-        .user-circle {
-          background-color: white;
-          border-color: $light-button;
-          color: $text-color;
 
-          &:hover {
-            background-color: $light-nav-backlight;
-          }
-        }
 
         .wrapper-people {
           background-color: white;
@@ -293,7 +258,6 @@ header {
     .inner-menu {
       .interactions {
 
-        .user-circle,
         .wrapper-people {
           z-index: 50;
         }
@@ -309,7 +273,7 @@ header {
 @media (max-width: 1320px) {
   header {
     .inner-menu {
-      .left {
+      .right {
         display: none;
       }
 
@@ -367,10 +331,6 @@ header {
           top: 50px;
           right: 4vw;
           margin-right: 0;
-        }
-
-        .user-circle {
-          display: none;
         }
 
         .wrapper-people {

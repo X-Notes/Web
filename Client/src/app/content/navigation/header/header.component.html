@@ -22,11 +22,7 @@
 
         <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
             <app-button-back></app-button-back>
-            <div CustomTooltip="{{ 'header.countUsers' | translate }}" position="Bottom" class="user-circle"
-                (click)="showUsers()" #userCircle>
-                <p>8</p>
-                <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
-            </div>
+            <app-user-circle></app-user-circle>
             <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
                 [@.disabled]="pService.AnimationInnerUsers">
                 <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
@@ -54,7 +50,7 @@
         </div>
 
 
-        <div class="interactions left">
+        <div class="interactions right">
             <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
             <app-button-theme></app-button-theme>
             <app-button-question></app-button-question>

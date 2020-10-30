@@ -25,6 +25,8 @@ import { ButtonShareComponent } from './header-components/inner-note-section-com
 import { ButtonLabelComponent } from './header-components/inner-note-section-components/button-label/button-label.component';
 import { ButtonThreeDotsComponent } from './header-components/inner-note-section-components/button-three-dots/button-three-dots.component';
 import { ButtonHistoryComponent } from './header-components/inner-note-section-components/button-history/button-history.component';
+import { UserCircleComponent } from './header-components/inner-note-section-components/user-circle/user-circle.component';
+import { OnlineUsersComponent } from './header-components/inner-note-section-components/online-users/online-users.component';
 
 
 @NgModule({
@@ -38,7 +40,9 @@ import { ButtonHistoryComponent } from './header-components/inner-note-section-c
     ButtonShareComponent,
     ButtonLabelComponent,
     ButtonThreeDotsComponent,
-    ButtonHistoryComponent
+    ButtonHistoryComponent,
+    UserCircleComponent,
+    OnlineUsersComponent
   ],
   imports: [
     CommonModule,
