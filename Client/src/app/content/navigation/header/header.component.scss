@@ -43,64 +43,6 @@ header {
         z-index: 40;
         display: none;
       }
-
-      .filters {
-        background-color: $dark-button;
-        color: white;
-
-        .inner-content {
-          i::before {
-            color: white;
-          }
-        }
-
-        &:hover {
-          background-color: #3d4049;
-        }
-      }
-
-      .generic {
-        position: relative;
-        height: 30px;
-        border: 0.8px solid transparent;
-        padding: 0;
-        outline: none;
-        overflow: hidden;
-        user-select: none;
-        margin-right: 1rem;
-        cursor: pointer;
-        border-radius: 5px;
-
-        .inner-content {
-          position: relative;
-          z-index: 5;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 0.75rem;
-          font-size: 1rem;
-
-          p {
-            padding-right: 1rem;
-            white-space: nowrap;
-          }
-
-          i {
-            font-size: 0.75rem;
-
-            &::before {
-              transition: 0.2s color ease;
-            }
-          }
-        }
-      }
-      .history {
-        .inner-content {
-          p {
-            padding-right: 0;
-          }
-        }
-      }
     }
   }
 
@@ -109,13 +51,6 @@ header {
 
     .interactions {
       justify-content: flex-end;
-
-      .history {
-        width: auto;
-        margin-right: 0;
-        font-size: 1.125rem;
-        font-weight: 500;
-      }
 
       .user-circle {
         position: relative;
@@ -247,32 +182,6 @@ header {
         color: $light-text-color;
       }
 
-      .generic {
-        border-color: $light-button;
-        background-color: white;
-        color: $light-text-color;
-
-        .inner-content {
-          i::before {
-            color: $light-text-color;
-          }
-        }
-
-        &:hover {
-          background-color: $light-nav-backlight;
-        }
-
-        &:first-child {
-          background-color: white;
-          border-color: transparent;
-
-          span,
-          span::before,
-          span::after {
-            background-color: $dark-color;
-          }
-        }
-      }
     }
   }
 
@@ -432,32 +341,13 @@ header {
         height: auto;
       }
 
-      .interactions {
-        .generic {
-          .inner-content {
-            padding: 0;
-            justify-content: center;
-
-            i {
-              font-size: 1rem;
-            }
-
-            p {
-              display: none;
-            }
-          }
-        }
-
-        .filters {
-          width: 54px;
-        }
-      }
-
       .visible {
+
         button,
         .menu-inner {
           z-index: 50;
         }
+
         .overlay {
           display: block;
         }
@@ -472,18 +362,6 @@ header {
       .interactions {
         width: 100%;
 
-        .history {
-          width: auto;
-
-          .inner-content {
-            padding: 0 0.75rem;
-
-            p {
-              display: block;
-            }
-          }
-        }
-
         .menu-inner-fixed {
           position: absolute;
           top: 50px;
@@ -493,19 +371,6 @@ header {
 
         .user-circle {
           display: none;
-        }
-
-        .history {
-          display: none;
-        }
-
-        .generic {
-          width: 40px;
-
-          .inner-content {
-            height: 100%;
-            width: 100%;
-          }
         }
 
         .wrapper-people {
@@ -570,10 +435,6 @@ header {
   header {
     .inner-menu {
       .interactions {
-        .generic {
-          width: 30px;
-        }
-
         .wrapper-people {
           width: calc(100% - 223px);
         }
@@ -600,40 +461,10 @@ header {
       .menu {
         top: 45px;
       }
-
-      .interactions {
-        .generic {
-          height: 26px;
-          width: 26px;
-          margin-right: 0.875rem;
-
-          .inner-content {
-            i {
-              font-size: 0.875rem;
-            }
-          }
-
-          &:last-child {
-            .inner-content {
-              i {
-                font-size: 0.875rem;
-              }
-            }
-          }
-        }
-
-        .filters {
-          width: 40px;
-        }
-      }
     }
 
     .inner-menu {
       .interactions {
-        .generic {
-          width: 30px;
-        }
-
         .menu-inner-fixed {
           top: 45px;
         }

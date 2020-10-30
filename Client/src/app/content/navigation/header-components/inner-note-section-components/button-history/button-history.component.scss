@@ -14,7 +14,7 @@
 
 
 @media (max-width: 1024px) {
-    .history {
+    :host {
         display: none;
       }
 }
