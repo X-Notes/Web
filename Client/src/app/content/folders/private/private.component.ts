@@ -59,7 +59,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.privateFolders).pipe(take(1))
       .subscribe(async (x) => {
         this.folderService.firstInit(x);
-        const loaded = await this.pService.initPromise();
+        const loaded = await this.pService.disableSpinnerPromise();
         await this.store.dispatch(new SpinnerChangeStatus(loaded)).toPromise()
           .then(z => this.murriService.initMurriFolder(EntityType.FolderPrivate));
       });

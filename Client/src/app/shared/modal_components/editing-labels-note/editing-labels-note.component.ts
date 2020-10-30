@@ -38,7 +38,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select(LabelStore.all).subscribe(async (x) => {
-      this.loaded =  await this.pService.initPromise();
+      this.loaded =  await this.pService.disableSpinnerPromise();
       this.labels = x;
     });
   }
