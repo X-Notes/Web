@@ -107,7 +107,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       debounceTime(50))
       .subscribe(html => this.signal.hubConnection.invoke('UpdateDocumentFromClient', this.initModel(html)));
 
-    setTimeout(() => this.murriService.gridSettings('.grid-item-small'), 1000); // CHANGE TODO
+    setTimeout(() => this.murriService.gridSettings('.grid-item-small',
+    document.querySelector('.grid') as HTMLElement), 1000); // CHANGE TODO
 
 
     this.store.select(NoteStore.updateLabelEvent)

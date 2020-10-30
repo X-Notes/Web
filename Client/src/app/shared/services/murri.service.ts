@@ -11,17 +11,24 @@ import * as Muuri from 'muuri';
 @Injectable()
 export class MurriService {
 
+  gridItemName = '.grid-item';
+
   grid;
   public delayForOpacity = 0;
   public flagForOpacity = false;
 
   constructor(private store: Store) {
-                console.log(555);
-               }
+    console.log(555);
+  }
 
 
   initMurriNote(type: EntityType) {
-    this.gridSettings('.grid-item');
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -34,7 +41,12 @@ export class MurriService {
   }
 
   initMurriFolder(type: EntityType) {
-    this.gridSettings('.grid-item');
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -47,7 +59,12 @@ export class MurriService {
   }
 
   initMurriLabel(deleted: boolean) {
-    this.gridSettings('.grid-item');
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement);
     this.grid.on('dragEnd', async (item, event) => {
       const order: Order = {
         orderEntity: OrderEntity.Label,
@@ -58,10 +75,9 @@ export class MurriService {
     });
   }
 
-  gridSettings(element: string) {
+  gridSettings(element: string, gridElement: HTMLElement) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-    console.log(dragHelper);
-    this.grid = new Muuri.default('.grid', {
+    this.grid = new Muuri.default(gridElement, {
       items: element,
       dragEnabled: true,
       layout: {
@@ -79,7 +95,7 @@ export class MurriService {
         touchAction: 'auto'
       },
       dragStartPredicate(item, e) {
-        if ( e.deltaTime > 300 && e.distance <= 30) {
+        if (e.deltaTime > 300 && e.distance <= 30) {
           return true;
         }
       },
@@ -103,6 +119,8 @@ export class MurriService {
   }
 
   muuriDestroy() {
-    this.grid.destroy();
+    if (this.grid) {
+      this.grid.destroy();
+    }
   }
 }
