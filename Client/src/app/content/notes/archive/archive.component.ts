@@ -6,7 +6,7 @@ import { LoadArchiveNotes, UnSelectAllNote, LoadAllExceptNotes } from '../state/
 import { take, takeUntil } from 'rxjs/operators';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
@@ -23,7 +23,6 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -31,10 +30,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
               public noteService: NotesService) { }
 
   async ngOnInit() {
-
-
     await this.store.dispatch(new UpdateRoute(EntityType.NoteArchive)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
@@ -53,8 +50,10 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.select(NoteStore.archiveNotes).pipe(take(1))
     .subscribe(async (x) => {
       this.noteService.firstInit(x);
-      this.loaded =  await this.pService.initPromise();
-      setTimeout(() => this.murriService.initMurriNote(EntityType.NoteArchive)); });
+      const active =  await this.pService.initPromise();
+      await this.store.dispatch(new SpinnerChangeStatus(active)).toPromise()
+      .then(z => { console.log(555) ; this.murriService.initMurriNote(EntityType.NoteArchive); });
+     });
 
   }
 

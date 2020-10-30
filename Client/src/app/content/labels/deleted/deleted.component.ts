@@ -6,7 +6,7 @@ import { UpdateLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/la
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
-import {UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -22,7 +22,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-  loaded = false;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -50,13 +50,15 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   async loadContent() {
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     this.store.select(x => x.Labels.labelsDeleted).pipe(take(1))
     .subscribe(async (x) => {
       this.labelService.firstInit(x);
-      this.loaded =  await this.pService.initPromise();
-      setTimeout(() => this.murriService.initMurriLabel(true));
+      const loaded =  await this.pService.initPromise();
+      await this.store.dispatch(new SpinnerChangeStatus(loaded)).toPromise()
+      .then(z => this.murriService.initMurriLabel(true));
     });
   }
 

@@ -43,6 +43,7 @@ export class AppStore {
 
     @Selector()
     static spinnerActive(state: AppState): boolean {
+        console.log(state.spinnerActive);
         return state.spinnerActive;
     }
 

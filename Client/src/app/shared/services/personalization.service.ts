@@ -78,7 +78,6 @@ export class PersonalizationService {
 
   constructor() {}
 
-  timeForLabelsLoading = 100;
   timeForSpinnerLoading = 30;
   subject = new Subject();
 
@@ -152,7 +151,7 @@ export class PersonalizationService {
   }
 
   initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.timeForSpinnerLoading));
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
   }
 
 }

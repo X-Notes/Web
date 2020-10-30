@@ -7,7 +7,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
 import { LoadSharedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -40,17 +40,17 @@ export class SharedComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));
 
     this.store.select(UserStore.getTokenUpdated)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        await this.loadContent();
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.loadContent();
+        }
       }
-    }
-    );
+      );
   }
 
   async loadContent() {
@@ -59,8 +59,10 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.select(FolderStore.sharedFolders).pipe(take(1))
       .subscribe(async (x) => {
         this.folderService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderShared)); });
+        const loaded = await this.pService.initPromise();
+        await this.store.dispatch(new SpinnerChangeStatus(loaded)).toPromise()
+          .then(z => this.murriService.initMurriFolder(EntityType.FolderShared));
+      });
 
   }
 

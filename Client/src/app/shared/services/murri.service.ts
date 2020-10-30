@@ -23,6 +23,7 @@ export class MurriService {
 
 
   initMurriNote(type: EntityType) {
+    console.log(5);
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
