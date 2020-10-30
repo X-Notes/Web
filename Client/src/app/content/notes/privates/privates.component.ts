@@ -36,6 +36,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
     await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
+
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
