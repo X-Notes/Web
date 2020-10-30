@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -23,6 +24,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   @ViewChild ('scrollMe', { static: true })
   public myScrollContainer: ElementRef;
+
+  @Select(AppStore.spinnerActive)
+  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

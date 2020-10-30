@@ -13,6 +13,7 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 export enum subMenu {
   All = 'all',
@@ -41,6 +42,9 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
+
+  @Select(AppStore.spinnerActive)
+  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

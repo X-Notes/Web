@@ -82,5 +82,6 @@
     <ngx-simplebar #scrollMe [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <router-outlet></router-outlet>
     </ngx-simplebar>
+    <app-spinner *ngIf="spinnerActive$ | async"></app-spinner>
 </div>
 <div class="drag-helper main-helper"></div>

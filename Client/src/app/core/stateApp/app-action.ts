@@ -41,3 +41,9 @@ export class UpdateMenuActive {
     static type = '[App] Update menu';
     constructor(public flag: boolean) {    }
 }
+
+
+export class SpinnerChangeStatus {
+    static type = '[App] Spinner status';
+    constructor(public flag: boolean) {    }
+}

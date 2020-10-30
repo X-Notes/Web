@@ -2,7 +2,7 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
     UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType,
-    UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels } from './app-action';
+    UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -16,6 +16,7 @@ interface AppState {
     buttonRemoveAllLabels: boolean;
     innerNoteType: NoteType;
     defaultBackground: boolean;
+    spinnerActive: boolean;
 }
 
 @State<AppState>({
@@ -28,7 +29,8 @@ interface AppState {
         buttonRemoveAllLabels: false,
         menuActive: false,
         innerNoteType: null,
-        defaultBackground: false
+        defaultBackground: false,
+        spinnerActive: false
     }
 })
 @Injectable()
@@ -37,6 +39,11 @@ export class AppStore {
     @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
+    }
+
+    @Selector()
+    static spinnerActive(state: AppState): boolean {
+        return state.spinnerActive;
     }
 
     @Selector()
@@ -176,5 +183,10 @@ export class AppStore {
     @Action(UpdateMenuActive)
     updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {
         patchState({menuActive: flag});
+    }
+
+    @Action(SpinnerChangeStatus)
+    spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
+        patchState({spinnerActive: flag});
     }
 }
