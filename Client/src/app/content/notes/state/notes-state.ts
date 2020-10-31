@@ -550,46 +550,6 @@ export class NoteStore {
 
     @Action(MakePublicNotes)
     async makePublicNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: MakePublicNotes) {
-        const selectedIds = getState().selectedIds;
-
-
-        switch (typeNote) {
-            case EntityType.NotePrivate: {
-
-                await this.api.makePublicNotes(selectedIds, NoteType.Private).toPromise();
-
-                const notePrivate = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const notesAdded = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countPrivate: getState().countPrivate - selectedIds.length,
-                    countShared: getState().countShared + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    privateNotes: [...notePrivate],
-                    sharedNotes: [...notesAdded, ...getState().sharedNotes]
-                });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-                break;
-            }
-            case EntityType.NoteArchive: {
-
-                await this.api.makePublicNotes(selectedIds, NoteType.Archive).toPromise();
-
-                const noteArchive = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const notesAdded = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countArchive: getState().countArchive - selectedIds.length,
-                    countShared: getState().countShared + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    archiveNotes: [...noteArchive],
-                    sharedNotes: [...notesAdded, ...getState().sharedNotes]
-                });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }
     }
 
     @Action(MakePrivateNotes)
