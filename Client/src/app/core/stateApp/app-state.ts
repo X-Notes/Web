@@ -1,6 +1,6 @@
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive
+import { UpdateRoute
     , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -8,11 +8,6 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 interface AppState {
     routing: EntityType;
-    newButtonActive: boolean;
-    selectAllButtonActive: boolean;
-    menuActive: boolean;
-    settingsButtonActive: boolean;
-    buttonRemoveAllLabels: boolean;
     innerNoteType: NoteType;
     defaultBackground: boolean;
     spinnerActive: boolean;
@@ -22,11 +17,6 @@ interface AppState {
     name: 'App',
     defaults: {
         routing: null,
-        newButtonActive: false,
-        selectAllButtonActive: false,
-        settingsButtonActive: false,
-        buttonRemoveAllLabels: false,
-        menuActive: false,
         innerNoteType: null,
         defaultBackground: false,
         spinnerActive: false
@@ -34,6 +24,7 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
+
 
     @Selector()
     static isNoteInner(state: AppState): boolean {
@@ -133,10 +124,7 @@ export class AppStore {
         return  this.isNote(state) || this.isFolder(state);
     }
 
-    @Selector()
-    static getMenuActive(state: AppState): boolean {
-        return state.menuActive;
-    }
+
 
     @Selector()
     static getdefaultBackground(state: AppState): boolean {
@@ -153,10 +141,6 @@ export class AppStore {
         patchState({routing: type, innerNoteType: noteType});
     }
 
-    @Action(UpdateMenuActive)
-    updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {
-        patchState({menuActive: flag});
-    }
 
     @Action(SpinnerChangeStatus)
     spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {

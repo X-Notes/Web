@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { SelectAllFolder } from 'src/app/content/folders/state/folders-actions';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { SelectAllNote } from 'src/app/content/notes/state/notes-actions';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Theme } from 'src/app/shared/enums/Theme';
@@ -14,8 +16,11 @@ import { Theme } from 'src/app/shared/enums/Theme';
 })
 export class ButtonSelectAllComponent implements OnInit {
 
-  @Select(AppStore.getMenuActive)
-  public menuActive$: Observable<boolean>;
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

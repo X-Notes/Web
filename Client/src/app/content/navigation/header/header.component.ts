@@ -13,9 +13,6 @@ import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folde
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import {
-  UpdateMenuActive,
-} from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -35,14 +32,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   newButtonActive = false;
   // Upper Menu
 
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
+
   @Select(AppStore.getSettingsButtonActive)
   public settingsButtonActive$: Observable<boolean>;
 
   @Select(AppStore.getSelectAllButtonActive)
   public selectAllButtonActive$: Observable<boolean>;
-
-  @Select(AppStore.getMenuActive)
-  public menuActive$: Observable<boolean>;
 
   @Select(AppStore.getdefaultBackground)
   public defaultBackground$: Observable<boolean>;
@@ -74,14 +74,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(z => {
         this.newButtonActive = z;
       });
-
-    this.store.select(NoteStore.activeMenu)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.configShowMenu(x));
-
-    this.store.select(FolderStore.activeMenu)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.configShowMenu(x));
 
     this.store.select(AppStore.getRouting)
       .pipe(takeUntil(this.destroy))
@@ -129,16 +121,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  configShowMenu(flag: boolean) {
-    if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      return;
-    }
-    if (flag) {
-      this.store.dispatch(new UpdateMenuActive(true));
-    } else {
-      this.store.dispatch(new UpdateMenuActive(false));
-    }
-  }
 
   async routeChange(type: EntityType) {
 

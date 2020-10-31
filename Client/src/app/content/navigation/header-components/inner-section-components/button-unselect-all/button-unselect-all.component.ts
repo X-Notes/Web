@@ -23,8 +23,11 @@ export class ButtonUnselectAllComponent implements OnInit, OnDestroy {
   public theme$: Observable<Theme>;
   theme = Theme;
 
-  @Select(AppStore.getMenuActive)
-  public menuActive$: Observable<boolean>;
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
 
   public countSelected: number;
 

@@ -12,13 +12,6 @@ export class UpdateRouteWithNoteType {
     constructor(public type: EntityType, public noteType: NoteType) {    }
 }
 
-
-export class UpdateMenuActive {
-    static type = '[App] Update menu';
-    constructor(public flag: boolean) {    }
-}
-
-
 export class SpinnerChangeStatus {
     static type = '[App] Spinner status';
     constructor(public flag: boolean) {    }
