@@ -1,33 +1,31 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PersonalizationService,
-         showMenuLeftRight } from 'src/app/shared/services/personalization.service';
+import {
+  PersonalizationService,
+  showMenuLeftRight
+} from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
-import {  Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote,
-  DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
-  MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { ChangeTheme, SetDefaultBackground } from 'src/app/core/stateUser/user-action';
+import { MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
+import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton,
-  UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
+import {
+  UpdateNewButton, UpdateMenuActive, UpdateSettingsButton,
+  UpdateSelectAllButton, UpdateDefaultBackgroundButton
+} from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [ showMenuLeftRight ],
-  providers: [MurriService]
+  animations: [showMenuLeftRight]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
@@ -78,32 +76,32 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.store.select(NoteStore.activeMenu)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.configShowMenu(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.configShowMenu(x));
 
     this.store.select(FolderStore.activeMenu)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.configShowMenu(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.configShowMenu(x));
 
     this.store.select(AppStore.getRouting)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.routeChange(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.routeChange(x));
 
     this.store.select(NoteStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
 
     this.store.select(FolderStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
   }
 
   showUsers() {
@@ -140,8 +138,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateNewButton(false));
       this.store.dispatch(new UpdateMenuActive(true));
     } else {
-     this.store.dispatch(new UpdateNewButton(true));
-     this.store.dispatch(new UpdateMenuActive(false));
+      this.store.dispatch(new UpdateNewButton(true));
+      this.store.dispatch(new UpdateMenuActive(false));
     }
   }
 
@@ -202,28 +200,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.NoteInner:
-      this.store.dispatch(new UpdateDefaultBackgroundButton(false)); {
-       // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
-        switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
-          case NoteType.Private: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-            break;
+        this.store.dispatch(new UpdateDefaultBackgroundButton(false)); {
+          // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+          switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
+            case NoteType.Private: {
+              this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+              break;
+            }
+            case NoteType.Shared: {
+              this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+              break;
+            }
+            case NoteType.Deleted: {
+              this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+              break;
+            }
+            case NoteType.Archive: {
+              this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+              break;
+            }
           }
-          case NoteType.Shared: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-            break;
-          }
-          case NoteType.Deleted: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-            break;
-          }
-          case NoteType.Archive: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-            break;
-          }
+          break;
         }
-        break;
-      }
 
       case EntityType.LabelPrivate: {
         this.store.dispatch(new UpdateDefaultBackgroundButton(false));
