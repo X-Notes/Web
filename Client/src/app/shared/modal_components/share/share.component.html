@@ -1,10 +1,14 @@
-<div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark']">
-    <div class="few-notes">
+<div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', isManyNotes ? 'many-notes' : 'one-note']">
+    <div class="few-notes" *ngIf="isManyNotes">
         <div class="header">
             <span>Selected notes</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <ngx-simplebar [options]="pService.optionsScroll" class="notes-sharing">
+        <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
+            <div class="note" *ngFor="let item of deleteThis"
+                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                <p>Name note</p>
+            </div>
             <div class="note" *ngFor="let item of deleteThis"
                  CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
                 <p>Name note</p>

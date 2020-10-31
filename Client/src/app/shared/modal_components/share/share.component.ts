@@ -1,7 +1,9 @@
 import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { merge, Observable } from 'rxjs';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { ChangeLanguage } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Language } from '../../enums/Language';
@@ -20,6 +22,7 @@ export class ShareComponent implements OnInit {
   dropdownActive = false;
   isCollapse = true;
   isAccess = true;
+  isManyNotes = false;
 
   deleteThis = ["hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello"];
 
@@ -36,10 +39,24 @@ export class ShareComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public pService: PersonalizationService,
-    private rend: Renderer2) { }
+    private rend: Renderer2,
+    private store: Store) { }
 
   ngOnInit(): void {
-
+    merge(
+      this.store.select(NoteStore.selectedCount),
+      this.store.select(FolderStore.selectedCount)
+    )
+    .subscribe(x => {
+      if(x === 0) {
+        return;
+      }
+      else if (x >= 2) {
+        this.isManyNotes = true;
+      } else {
+        this.isManyNotes = false;
+      }
+    });
   }
 
   changeActive() {

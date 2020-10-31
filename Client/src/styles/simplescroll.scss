@@ -57,6 +57,11 @@
 
     .simplebar-wrapper {
         height: auto;
+        
+        .simplebar-content {
+            display: flex;
+            flex-direction: column;
+        }
     }
 }
 
@@ -171,6 +176,31 @@
                     flex-direction: row;
                     height: 100%;
                 }
+            }
+        }
+    }
+
+    .notes-sharing {
+        .simplebar-wrapper {
+            width: auto;
+                      
+            .simplebar-content {
+                display: flex;
+                flex-direction: row;
+                height: 100%;
+            }
+
+            .simplebar-content-wrapper {
+                height: 100% !important;
+            }
+        }
+    }
+
+    .notes-sharing-helper {
+        .simplebar-wrapper {            
+            .simplebar-content {
+                flex-direction: column;
+                height: auto;
             }
         }
     }

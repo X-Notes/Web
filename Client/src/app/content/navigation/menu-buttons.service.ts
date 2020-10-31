@@ -20,19 +20,7 @@ import { NoteStore } from '../notes/state/notes-state';
 export class MenuButtonsService {
 
   constructor(private store: Store,
-              private dialogService: DialogService, ) {
-                merge(
-                  this.store.select(NoteStore.selectedCount),
-                  this.store.select(FolderStore.selectedCount)
-                )
-                .subscribe(x => {
-                  if (x >= 2) {
-                    this.filterItems(this.saveItems.filter(z => z.icon !== 'shared'));
-                  } else {
-                    this.filterItems(this.saveItems);
-                  }
-                });
-  }
+              private dialogService: DialogService, ) {}
 
 
   public saveItems: MenuItem[] = [];
