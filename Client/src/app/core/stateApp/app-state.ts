@@ -23,9 +23,9 @@ interface AppState {
     name: 'App',
     defaults: {
         routing: null,
-        newButtonActive: true,
-        selectAllButtonActive: true,
-        settingsButtonActive: true,
+        newButtonActive: false,
+        selectAllButtonActive: false,
+        settingsButtonActive: false,
         buttonRemoveAllLabels: false,
         menuActive: false,
         innerNoteType: null,
