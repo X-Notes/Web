@@ -79,7 +79,8 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         this.store.dispatch(new LoadLabels());
-        this.loaded =  await this.pService.disableSpinnerPromise();
+        await this.pService.disableSpinnerPromise();
+        this.loaded = true;
       }
     });
     this.pService.subject
