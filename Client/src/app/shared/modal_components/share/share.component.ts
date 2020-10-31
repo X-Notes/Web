@@ -23,6 +23,7 @@ export class ShareComponent implements OnInit {
   isCollapse = true;
   isAccess = true;
   isManyNotes = false;
+  tooltipPos = '';
 
   deleteThis = ["hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello"];
 
@@ -57,6 +58,8 @@ export class ShareComponent implements OnInit {
         this.isManyNotes = false;
       }
     });
+
+    this.tooltipPos = this.changeTooltipPos();
   }
 
   changeActive() {
@@ -104,6 +107,14 @@ export class ShareComponent implements OnInit {
       return false;
     } else {
       return true;
+    }
+  }
+
+  changeTooltipPos():string {
+    if(this.pService.check()) {
+      return "Right";
+    } else {
+      return "Top";
     }
   }
 

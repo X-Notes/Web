@@ -6,15 +6,15 @@
         </div>
         <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
             <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                 CustomTooltip="Hedddddddddddllo" position="{{ tooltipPos }}" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
                 <p>Name note</p>
             </div>
             <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                 CustomTooltip="Hedddddddddddllo" position="{{ tooltipPos }}" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
                 <p>Name note</p>
             </div>
             <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Right" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
+                 CustomTooltip="Hedddddddddddllo" position="{{ tooltipPos }}" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
                 <p>Name note</p>
             </div>
         </ngx-simplebar>
@@ -72,7 +72,6 @@
                             <p *ngIf="!isAccess">Your fucking description</p>
                         </div>
                     </div>
-                    <div class="line"></div>
                 </div>
                 <ngx-simplebar [options]="pService.optionsScroll" class="user-access">
                     <div *ngFor="let items of deleteThis" class="user">
@@ -174,7 +173,7 @@
                                 </button>
                                 <button class="send-button" type="button" #changeAccessRipple>
                                     <div class="content-button">
-                                        <p>Editor</p>
+                                        <p>Send</p>
                                     </div>
                                     <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
                                 </button>
