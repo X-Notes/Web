@@ -1,8 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive
-    , UpdateRouteWithNoteType,
- UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
+    , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -153,12 +152,6 @@ export class AppStore {
     async updateRouteWithNoteType({patchState}: StateContext<AppState>, {type, noteType}: UpdateRouteWithNoteType) {
         patchState({routing: type, innerNoteType: noteType});
     }
-
-    @Action(UpdateButtonRemoveAllLabels)
-    updateRemoveAllLabelsButton({patchState}: StateContext<AppState>, {flag}: UpdateButtonRemoveAllLabels) {
-        patchState({buttonRemoveAllLabels: flag});
-    }
-
 
     @Action(UpdateMenuActive)
     updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {

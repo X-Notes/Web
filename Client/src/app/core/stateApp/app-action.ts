@@ -13,12 +13,6 @@ export class UpdateRouteWithNoteType {
 }
 
 
-export class UpdateButtonRemoveAllLabels {
-    static type = '[App] Update RemoveAllLabels';
-    constructor(public flag: boolean) {    }
-}
-
-
 export class UpdateMenuActive {
     static type = '[App] Update menu';
     constructor(public flag: boolean) {    }

@@ -72,7 +72,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {
-        console.log(z);
         this.newButtonActive = z;
       });
 
