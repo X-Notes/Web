@@ -61,13 +61,6 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
   }
 
-  makePublicNotes(ids: string[], noteType: NoteType) {
-    const obj = {
-      ids,
-      noteType
-    };
-    return this.httpClient.patch(environment.writeAPI + `/api/note/ref/public`, obj);
-  }
 
   makePrivateNotes(ids: string[], noteType: NoteType) {
     const obj = {

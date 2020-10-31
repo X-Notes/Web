@@ -1,39 +1,38 @@
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton } from './app-action';
+import { UpdateRoute
+    , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { stat } from 'fs';
 
 
 interface AppState {
     routing: EntityType;
-    newButtonActive: boolean;
-    selectAllButtonActive: boolean;
-    menuActive: boolean;
-    settingsButtonActive: boolean;
     innerNoteType: NoteType;
-    defaultBackground: boolean;
+    spinnerActive: boolean;
 }
 
 @State<AppState>({
     name: 'App',
     defaults: {
         routing: null,
-        newButtonActive: true,
-        selectAllButtonActive: true,
-        settingsButtonActive: true,
-        menuActive: false,
         innerNoteType: null,
-        defaultBackground: false
+        spinnerActive: false
     }
 })
 @Injectable()
 export class AppStore {
 
+
     @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
+    }
+
+    @Selector()
+    static spinnerActive(state: AppState): boolean {
+        return state.spinnerActive;
     }
 
     @Selector()
@@ -111,27 +110,32 @@ export class AppStore {
 
     @Selector()
     static getNewButtonActive(state: AppState): boolean {
-        return state.newButtonActive;
+        return this.isNote(state) || this.isFolder(state) || state.routing === EntityType.LabelPrivate;
     }
 
     @Selector()
     static getSettingsButtonActive(state: AppState): boolean {
-        return state.settingsButtonActive;
+        return this.isNote(state) || this.isFolder(state);
     }
 
     @Selector()
     static getSelectAllButtonActive(state: AppState): boolean {
-        return state.selectAllButtonActive;
+        return  this.isNote(state) || this.isFolder(state);
     }
 
     @Selector()
-    static getMenuActive(state: AppState): boolean {
-        return state.menuActive;
+    static getDeleteAllLabellsButtonActive(state: AppState): boolean {
+        return  state.routing === EntityType.LabelDeleted;
+    }
+
+    @Selector()
+    static getChangeViewButtonActive(state: AppState): boolean {
+        return  state.routing !== EntityType.Profile;
     }
 
     @Selector()
     static getdefaultBackground(state: AppState): boolean {
-        return state.defaultBackground;
+        return state.routing === EntityType.Profile;
     }
 
     @Action(UpdateRoute)
@@ -144,29 +148,9 @@ export class AppStore {
         patchState({routing: type, innerNoteType: noteType});
     }
 
-    // UPPER MENU BUTTONS
-    @Action(UpdateSettingsButton)
-    updateSettings({patchState}: StateContext<AppState>, {flag}: UpdateSettingsButton) {
-        patchState({settingsButtonActive: flag});
-    }
 
-    @Action(UpdateNewButton)
-    updateNew({patchState}: StateContext<AppState>, {flag}: UpdateNewButton) {
-        patchState({newButtonActive: flag});
-    }
-
-    @Action(UpdateSelectAllButton)
-    updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({selectAllButtonActive: flag});
-    }
-
-    @Action(UpdateDefaultBackgroundButton)
-    updateDefaultBackground({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({defaultBackground: flag});
-    }
-
-    @Action(UpdateMenuActive)
-    updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {
-        patchState({menuActive: flag});
+    @Action(SpinnerChangeStatus)
+    spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
+        patchState({spinnerActive: flag});
     }
 }

@@ -7,7 +7,7 @@ import { LoadPrivateFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -40,28 +40,29 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.select(UserStore.getTokenUpdated)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        await this.loadContent();
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.loadContent();
+        }
       }
-    }
-    );
+      );
 
   }
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateFolders()).toPromise();
-
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
-    this.store.select(FolderStore.privateFolders).pipe(take(1))
-      .subscribe(async (x) => {
-        this.folderService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderPrivate)); });
+    const folders = this.store.selectSnapshot(FolderStore.privateFolders);
+    this.folderService.firstInit(folders);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    this.murriService.initMurriFolderAsync(EntityType.FolderPrivate);
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))

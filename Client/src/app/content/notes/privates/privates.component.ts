@@ -1,20 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { SmallNote } from '../models/smallNote';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote, PositionNote, LoadAllExceptNotes } from '../state/notes-actions';
-import { Order, OrderEntity } from 'src/app/shared/services/order.service';
-import { take, takeUntil } from 'rxjs/operators';
+import { LoadPrivateNotes, UnSelectAllNote, LoadAllExceptNotes } from '../state/notes-actions';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'app-privates',
@@ -27,6 +24,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -35,6 +33,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
 
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
@@ -49,15 +48,15 @@ export class PrivatesComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
-
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
-    this.store.select(NoteStore.privateNotes).pipe(take(1))
-      .subscribe(async (x) => {
-        this.noteService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => this.murriService.initMurriNote(EntityType.NotePrivate));
-      });
+    const notes = this.store.selectSnapshot(NoteStore.privateNotes);
+    this.noteService.firstInit(notes);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    await this.murriService.initMurriNoteAsync(EntityType.NotePrivate);
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))

@@ -1,0 +1,11 @@
+@import "header";
+
+:host {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    :host {
+        display: block;
+    }
+}

@@ -1,6 +1,9 @@
 @import 'submenu';
 @import 'variables';
 
+:host{
+    z-index: 4;
+}
 .full-content {
     flex-direction: row;
 

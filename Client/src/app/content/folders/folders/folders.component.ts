@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -23,6 +24,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   @ViewChild ('scrollMe', { static: true })
   public myScrollContainer: ElementRef;
+
+  @Select(AppStore.spinnerActive)
+  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -46,7 +50,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   theme = Theme;
-
+  public photoError = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router,
@@ -78,5 +82,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
   async newFolder() {
     await this.store.dispatch(new AddFolder()).toPromise();
     this.store.select(FolderStore.privateFolders).pipe(take(1)).subscribe(x => this.router.navigate([`folders/${x[0].id}`]));
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }

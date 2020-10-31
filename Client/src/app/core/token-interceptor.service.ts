@@ -9,31 +9,33 @@ import { UserStore } from './stateUser/user-state';
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
 
-  constructor(private store: Store) {}
+  constructor(private store: Store) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const token =  this.store.selectSnapshot(UserStore.getToken);
-    request = request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const token = this.store.selectSnapshot(UserStore.getToken);
+    if (!request.url.includes('google')) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
 
     return next.handle(request).pipe(
       map((event: HttpEvent<any>) => {
-          if (event instanceof HttpResponse) {
-              console.log('event--->>>', event);
-          }
-          return event;
+        if (event instanceof HttpResponse) {
+          console.log('event--->>>', event);
+        }
+        return event;
       }),
       catchError((error: HttpErrorResponse) => {
         let data = {};
         data = {
-            reason: error && error.error && error.error.reason ? error.error.reason : '',
-            status: error.status
+          reason: error && error.error && error.error.reason ? error.error.reason : '',
+          status: error.status
         };
         return throwError(error);
-    }));
+      }));
   }
 }

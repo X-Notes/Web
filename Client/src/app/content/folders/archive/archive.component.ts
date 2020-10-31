@@ -7,7 +7,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { LoadArchiveFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -40,29 +40,28 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderArchive)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.select(UserStore.getTokenUpdated)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        await this.loadContent();
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.loadContent();
+        }
       }
-    }
-    );
+      );
   }
 
   async loadContent() {
     await this.store.dispatch(new LoadArchiveFolders()).toPromise();
-
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
 
-    this.store.select(FolderStore.archiveFolders).pipe(take(1))
-      .subscribe(async (x) => {
-        this.folderService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderArchive));
-      });
+    const folders = this.store.selectSnapshot(FolderStore.archiveFolders);
+    this.folderService.firstInit(folders);
 
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    this.murriService.initMurriFolderAsync(EntityType.FolderArchive);
   }
 
 

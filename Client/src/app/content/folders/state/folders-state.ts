@@ -546,42 +546,7 @@ export class FolderStore {
 
     @Action(MakePublicFolders)
     async MakePublicFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePublicFolders) {
-        const selectedIds = getState().selectedIds;
 
-        switch (typeFolder) {
-            case EntityType.FolderPrivate: {
-
-                await this.api.makePublicFolders(selectedIds, FolderType.Private).toPromise();
-
-                const folderPrivate = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const foldersAdded = getState().privateFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countPrivate: getState().countPrivate - selectedIds.length,
-                    countShared: getState().countShared + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    privateFolders: [...folderPrivate],
-                    sharedFolders: [...foldersAdded, ...getState().sharedFolders]
-                });
-                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
-                break;
-            }
-            case EntityType.FolderArchive: {
-
-                await this.api.makePublicFolders(selectedIds, FolderType.Archive).toPromise();
-
-                const folderArchive = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const foldersAdded = getState().archiveFolders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countArchive: getState().countArchive - selectedIds.length,
-                    countShared: getState().countShared + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    archiveFolders: [...folderArchive],
-                    sharedFolders: [...foldersAdded, ...getState().sharedFolders]
-                });
-                dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
-                break;
-            }
-        }
     }
 
     @Action(MakePrivateFolders)

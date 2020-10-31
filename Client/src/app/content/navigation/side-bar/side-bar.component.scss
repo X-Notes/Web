@@ -17,15 +17,15 @@
      .active {
          background-color: $dark-backlight;
          .main-icon, p {
-            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%) !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
          }
          &:nth-child(2){
              .main-icon {
                 background: none;
                 -webkit-text-fill-color: initial;
-                -webkit-background-clip: initial;
+                background-clip: initial;
                 i {
                     .path1::before {
                         color: white;
@@ -76,9 +76,12 @@
 
             p {
                 margin-top: 0.3125rem;
-                font-size: 0.875rem;
-                color: #ffffff;
+                font-size: 0.9375rem;
+                font-weight: 500;
                 transition: 0.2s ease;
+                background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
          }
 
@@ -128,6 +131,9 @@
     
             p {
                 color: $light-text-color;
+                background: linear-gradient(112.11deg, #404040 -6.16%, #404040 104.11%);
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
         }
     }

@@ -1,0 +1,8 @@
+<div class="inner-menu"
+    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.hideInnerMenu ? 'visible' : '']">
+    <div CustomTooltip="{{ 'header.menu' | translate }}" position="Bottom" class="three-dots" (click)="hideMenu()"
+        #dots>
+        <span></span>
+        <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
+    </div>
+</div>

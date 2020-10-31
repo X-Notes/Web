@@ -46,7 +46,8 @@
     "video": "Видео",
     "countUsers": "Количество пользователей",
     "menu": "Меню",
-    "defaultColor": "Обычный"
+    "defaultColor": "Обычный",
+    "emptyTrash": "Очистить корзину"
   },
   "menu": {
     "label": "Ярлик",

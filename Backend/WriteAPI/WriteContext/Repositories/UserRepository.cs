@@ -65,6 +65,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
+
         public async Task<bool> IsUserNote(string email, Guid noteId)
         {
             var user  = await contextDB.Users.Include(x => x.Notes).FirstOrDefaultAsync(x => x.Email == email);

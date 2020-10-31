@@ -78,7 +78,6 @@ export class PersonalizationService {
 
   constructor() {}
 
-  timeForLabelsLoading = 100;
   timeForSpinnerLoading = 30;
   subject = new Subject();
 
@@ -91,6 +90,8 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+
+  changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
@@ -151,8 +152,13 @@ export class PersonalizationService {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.timeForSpinnerLoading));
+  disableSpinnerPromise() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
+  }
+
+  changeOrientation() {
+    this.orientationMobile = !this.orientationMobile;
+    this.changeOrientationSubject.next(true);
   }
 
 }

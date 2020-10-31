@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 
@@ -21,6 +22,9 @@ export class LabelsComponent implements OnInit {
   @ViewChild ('scrollMe', { static: true })
   public myScrollContainer: ElementRef;
 
+  @Select(AppStore.spinnerActive)
+  public spinnerActive$: Observable<boolean>;
+
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
@@ -34,7 +38,7 @@ export class LabelsComponent implements OnInit {
   public user$: Observable<ShortUser>;
 
   theme = Theme;
-
+  public photoError = false;
   constructor(
     public pService: PersonalizationService,
     private pagService: PaginationService) {}
@@ -52,5 +56,9 @@ export class LabelsComponent implements OnInit {
           this.pagService.nextPagination.next();
         }
       }); }, 0);
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }

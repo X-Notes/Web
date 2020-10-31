@@ -1,0 +1,10 @@
+<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+    <button name="Select" type="button" (click)="selectAll()" class="generic filters custom-create"
+        [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''" #select>
+        <div class="inner-content">
+            <p>{{ 'header.select' | translate }}</p>
+            <i class="icon-select"></i>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
+    </button>
+</div>

@@ -2,7 +2,8 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api-labels.service';
-import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
+import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel,
+    DeleteLabel, RestoreLabel, DeleteAllFromBin } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
@@ -170,5 +171,11 @@ export class LabelStore {
             CountAll: getState().CountAll + 1,
             CountDeleted: getState().CountDeleted - 1
          });
+    }
+
+    @Action(DeleteAllFromBin)
+    async deleteAllFromBin({setState, getState, patchState}: StateContext<LabelState>) {
+        await this.api.removeAll().toPromise();
+        patchState({labelsDeleted: [], CountDeleted: 0});
     }
 }

@@ -13,6 +13,7 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 export enum subMenu {
   All = 'all',
@@ -38,9 +39,12 @@ export class NotesComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
   loaded = false;
   theme = Theme;
-
+  public photoError = false;
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
+
+  @Select(AppStore.spinnerActive)
+  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -75,7 +79,8 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         this.store.dispatch(new LoadLabels());
-        this.loaded =  await this.pService.initPromise();
+        await this.pService.disableSpinnerPromise();
+        this.loaded = true;
       }
     });
     this.pService.subject
@@ -123,5 +128,9 @@ export class NotesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }

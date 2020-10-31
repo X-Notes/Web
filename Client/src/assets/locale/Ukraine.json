@@ -46,7 +46,8 @@
     "label": "Ярлик",
     "shared": "Спільні",
     "menu": "Меню",
-    "defaultColor": "Звичайний"
+    "defaultColor": "Звичайний",
+    "emptyTrash": "Очистити кошик"
   },
   "menu": {
     "label": "Ярлик",
