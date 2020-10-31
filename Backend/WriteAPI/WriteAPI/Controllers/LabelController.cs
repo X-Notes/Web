@@ -51,7 +51,7 @@ namespace WriteAPI.Controllers
         public async Task DeletePerm(int id)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new DeleteLabelCommand(email, id));
+            await _mediator.Send(new SetDeleteLabelCommand(email, id));
         }
 
         [HttpDelete("{id}")]
@@ -66,6 +66,13 @@ namespace WriteAPI.Controllers
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new RestoreLabelCommand(email, id));
+        }
+
+        [HttpDelete]
+        public async Task RemoveAllFromBin()
+        {
+            var email = this.GetUserEmail();
+            await _mediator.Send(new RemoveAllFromBinCommand(email));
         }
     }
 }

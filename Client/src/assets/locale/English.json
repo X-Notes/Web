@@ -44,7 +44,8 @@
     "video": "Video",
     "countUsers": "Number of users",
     "menu": "Menu",
-    "defaultColor": "Default color"
+    "defaultColor": "Default color",
+    "emptyTrash": "Empty Trash"
   },
   "menu": {
     "label": "label",

@@ -12,7 +12,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 export class OnlineUsersComponent implements OnInit {
 
-  user: string[] = ['fucking person', 'fucking person', 'fucking person', 'fucking person', 'fucking person'];
+  user: string[] = ['good person', 'good person', 'good person', 'good person', 'good person'];
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

@@ -15,10 +15,11 @@ namespace BI.services.labels
 {
     public class LabelHandlerCommand :
         IRequestHandler<NewLabelCommand, int>,
-        IRequestHandler<DeleteLabelCommand, Unit>,
+        IRequestHandler<SetDeleteLabelCommand, Unit>,
         IRequestHandler<UpdateLabelCommand, Unit>,
         IRequestHandler<SetDeletedLabelCommand, Unit>,
-        IRequestHandler<RestoreLabelCommand, Unit>
+        IRequestHandler<RestoreLabelCommand, Unit>,
+        IRequestHandler<RemoveAllFromBinCommand, Unit>
     {
         private readonly LabelRepository labelRepository;
         private readonly UserRepository userRepository;
@@ -31,13 +32,13 @@ namespace BI.services.labels
         }
 
 
-        public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SetDeleteLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithLabels(request.Email);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
-                await labelRepository.DeleteLabel(label, user.Labels);
+                await labelRepository.SetDeleteLabel(label, user.Labels);
             }
             return Unit.Value;
         }
@@ -88,6 +89,17 @@ namespace BI.services.labels
             if (label != null)
             {
                 await labelRepository.RestoreLabel(label, user.Labels);
+            }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RemoveAllFromBinCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if(user != null)
+            {
+                var labels = await labelRepository.GetDeletedByUserID(user.Id);
+                await labelRepository.RemoveAll(labels);
             }
             return Unit.Value;
         }

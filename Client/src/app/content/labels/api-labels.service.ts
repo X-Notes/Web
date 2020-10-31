@@ -32,4 +32,9 @@ export class ApiServiceLabels {
   restore(id: number) {
     return this.httpClient.get(environment.writeAPI + `/api/label/restore/${id}`);
   }
+
+  removeAll() {
+    return this.httpClient.delete(environment.writeAPI + `/api/label`);
+  }
+
 }
