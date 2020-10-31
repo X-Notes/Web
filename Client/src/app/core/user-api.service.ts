@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { User } from './models/user';
@@ -66,6 +66,23 @@ export class UserAPIService {
 
   updateUserPhoto(photo: FormData) {
     return this.httpClient.post<any>(environment.writeAPI + '/api/user/photo', photo);
+  }
+
+  async getImageFromGoogle(imageUrl): Promise<string> {
+    const imageBlob = await this.httpClient.get(imageUrl, { responseType: 'blob' }).toPromise();
+    return this.getBase64FromBlob(imageBlob);
+  }
+
+  private async getBase64FromBlob(blob: Blob) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        const base64 = dataUrl.split(',')[1];
+        resolve('data:image/jpeg;base64,' + base64);
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 
 }

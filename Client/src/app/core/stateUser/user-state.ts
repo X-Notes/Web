@@ -79,6 +79,7 @@ export class UserStore {
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
+            user.photoId = await this.api.getImageFromGoogle(user.photoId);
             userdb = await this.api.newUser(user).toPromise();
         }
         setState({ user: userdb, isLogin: true, token, tokenUpdated: true});
