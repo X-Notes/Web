@@ -15,7 +15,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import {
  UpdateMenuActive, UpdateSettingsButton,
-  UpdateSelectAllButton, UpdateDefaultBackgroundButton
+  UpdateSelectAllButton,
 } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -147,25 +147,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     switch (type) {
       case EntityType.FolderPrivate: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
         break;
       }
       case EntityType.FolderShared: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
         break;
       }
       case EntityType.FolderArchive: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
         break;
       }
       case EntityType.FolderDeleted: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
         break;
       }
@@ -176,30 +172,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       case EntityType.NotePrivate: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;
       }
       case EntityType.NoteShared: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
         break;
       }
       case EntityType.NoteArchive: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
         break;
       }
       case EntityType.NoteDeleted: {
         this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
         break;
       }
-      case EntityType.NoteInner:
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false)); {
+      case EntityType.NoteInner: {
           // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
           switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
             case NoteType.Private: {
@@ -223,13 +214,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
 
       case EntityType.LabelPrivate: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
       case EntityType.LabelDeleted: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
@@ -237,7 +226,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
       case EntityType.Profile: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(true));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;

@@ -2,7 +2,7 @@ import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
     UpdateSettingsButton, UpdateRouteWithNoteType,
-    UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
+ UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -141,7 +141,7 @@ export class AppStore {
 
     @Selector()
     static getdefaultBackground(state: AppState): boolean {
-        return state.defaultBackground;
+        return state.routing === EntityType.Profile;
     }
 
     @Action(UpdateRoute)
@@ -170,10 +170,6 @@ export class AppStore {
         patchState({buttonRemoveAllLabels: flag});
     }
 
-    @Action(UpdateDefaultBackgroundButton)
-    updateDefaultBackground({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({defaultBackground: flag});
-    }
 
     @Action(UpdateMenuActive)
     updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {
