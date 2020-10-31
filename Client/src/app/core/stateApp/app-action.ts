@@ -12,10 +12,6 @@ export class UpdateRouteWithNoteType {
     constructor(public type: EntityType, public noteType: NoteType) {    }
 }
 
-export class UpdateSettingsButton {
-    static type = '[App] Update settings';
-    constructor(public flag: boolean) {    }
-}
 
 export class UpdateSelectAllButton {
     static type = '[App] Update selectAll';

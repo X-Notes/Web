@@ -14,7 +14,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import {
- UpdateMenuActive, UpdateSettingsButton,
+ UpdateMenuActive,
   UpdateSelectAllButton,
 } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
@@ -214,19 +214,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
 
       case EntityType.LabelPrivate: {
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
       case EntityType.LabelDeleted: {
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
 
 
       case EntityType.Profile: {
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
@@ -238,7 +235,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async showAllButtons() {
-    await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
     await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
   }
 

@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateSettingsButton, UpdateRouteWithNoteType,
+import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton
+    , UpdateRouteWithNoteType,
  UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -126,7 +126,7 @@ export class AppStore {
 
     @Selector()
     static getSettingsButtonActive(state: AppState): boolean {
-        return state.settingsButtonActive;
+        return this.isNote(state) || this.isFolder(state);
     }
 
     @Selector()
@@ -154,11 +154,6 @@ export class AppStore {
         patchState({routing: type, innerNoteType: noteType});
     }
 
-    // UPPER MENU BUTTONS
-    @Action(UpdateSettingsButton)
-    updateSettings({patchState}: StateContext<AppState>, {flag}: UpdateSettingsButton) {
-        patchState({settingsButtonActive: flag});
-    }
 
     @Action(UpdateSelectAllButton)
     updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
