@@ -2,7 +2,8 @@
     <div class="profile" routerLink="/profile" #profile>
         <div class="profile-data">
             <div class="photo">
-                <img alt="photo" [src]="(user$ | async).photoId">
+                <img *ngIf="!photoError" alt="photo" [src]="(user$ | async)?.photoId" (error)="changeSource($event)">
+                <i *ngIf="photoError" class="icon-people"></i>
             </div>
             <p>{{(user$ | async).name}}</p>
         </div>

@@ -37,6 +37,9 @@
         max-width: 200px;
 
         .photo {
+          display: flex;
+          justify-content: center;
+          align-items: center;
           width: 28px;
           height: 28px;
           overflow: hidden;

@@ -26,17 +26,19 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''" 
-    [ngStyle] = "{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+<div class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''"
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
-        <div class="main" >
+        <div class="main">
             <div class="sections">
                 <div class="header">
                     <p>{{ 'profile.sectionProfile' | translate }}</p>
                 </div>
                 <div class="user-info generic-section">
                     <div class="photo" appDrop>
-                        <img [src]="(user$ | async).photoId" alt="User photo">
+                        <img *ngIf="!photoError" [src]="(user$ | async).photoId" alt="User photo"
+                            (error)="changeSource($event)">
+                        <i *ngIf="photoError" class="icon-people"></i>
                         <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
                         <label for="upl" class="change-photo" #profilePhoto>
                             <div class="icon">
@@ -73,7 +75,8 @@
                         </div>
                         <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
                     </button>
-                    <button class="generic-button" type="button" name="Update button" #updateProfile (click)="updateName()">
+                    <button class="generic-button" type="button" name="Update button" #updateProfile
+                        (click)="updateName()">
                         <div class="content-button">
                             <p>{{ 'profile.update' | translate }}</p>
                         </div>
@@ -167,7 +170,8 @@
                                 </div>
                             </div>
                             <div class="help-info">
-                                <p>{{ 'profile.genericTooltip' | translate }}<span> {{ 'profile.genericPreview' | translate }}</span></p>
+                                <p>{{ 'profile.genericTooltip' | translate }}<span>
+                                        {{ 'profile.genericPreview' | translate }}</span></p>
                             </div>
                         </div>
                         <div class="field">
@@ -177,7 +181,8 @@
                                 </div>
                                 <div class="toggle">
                                     <input type="checkbox" (change)="changeFontSize()">
-                                    <div class="rectangle" [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
+                                    <div class="rectangle"
+                                        [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
                                     </div>
                                     <div class="text-toggle">
                                         <div class="text">
@@ -190,7 +195,8 @@
                                 </div>
                             </div>
                             <div class="help-info">
-                                <p>{{ 'profile.genericTooltip' | translate }}<span> {{ 'profile.genericPreview' | translate }}</span></p>
+                                <p>{{ 'profile.genericTooltip' | translate }}<span>
+                                        {{ 'profile.genericPreview' | translate }}</span></p>
                             </div>
                         </div>
                     </div>

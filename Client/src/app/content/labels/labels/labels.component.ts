@@ -38,7 +38,7 @@ export class LabelsComponent implements OnInit {
   public user$: Observable<ShortUser>;
 
   theme = Theme;
-
+  public photoError = false;
   constructor(
     public pService: PersonalizationService,
     private pagService: PaginationService) {}
@@ -56,5 +56,9 @@ export class LabelsComponent implements OnInit {
           this.pagService.nextPagination.next();
         }
       }); }, 0);
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }

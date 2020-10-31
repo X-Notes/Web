@@ -39,7 +39,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
   loaded = false;
   theme = Theme;
-
+  public photoError = false;
   labelsActive: number[] = [];
   actives = new Map<number, boolean>();
 
@@ -128,5 +128,9 @@ export class NotesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }

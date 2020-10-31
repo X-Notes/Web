@@ -5,7 +5,8 @@ import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import { Language } from 'src/app/shared/enums/Language';
-import { ChangeLanguage, ChangeFontSize, ChangeTheme, UpdateUserName, UpdateUserPhoto, SetDefaultBackground  } from 'src/app/core/stateUser/user-action';
+import { ChangeLanguage, ChangeFontSize, ChangeTheme,
+  UpdateUserName, UpdateUserPhoto, SetDefaultBackground  } from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -48,7 +49,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   dropdownLanguage = false;
   languages = EnumUtil.getEnumValues(Language);
   theme = Theme;
-
+  public photoError = false;
   destroy = new Subject<void>();
 
   constructor(public pService: PersonalizationService,
@@ -159,4 +160,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
+  changeSource(event) {
+    this.photoError = true;
+  }
 }

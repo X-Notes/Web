@@ -19,9 +19,15 @@ export class ProfileSectionComponent implements OnInit {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  public photo$: Observable<Blob>;
+  public photoError = false;
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
+  changeSource(event) {
+    this.photoError = true;
+  }
 }

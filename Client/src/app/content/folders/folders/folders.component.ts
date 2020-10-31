@@ -50,7 +50,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   theme = Theme;
-
+  public photoError = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               private router: Router,
@@ -82,5 +82,9 @@ export class FoldersComponent implements OnInit, OnDestroy {
   async newFolder() {
     await this.store.dispatch(new AddFolder()).toPromise();
     this.store.select(FolderStore.privateFolders).pipe(take(1)).subscribe(x => this.router.navigate([`folders/${x[0].id}`]));
+  }
+
+  changeSource(event) {
+    this.photoError = true;
   }
 }
