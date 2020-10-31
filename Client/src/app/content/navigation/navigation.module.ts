@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
 import { ProfileSectionComponent } from './header-components/left-section-components/profile-section/profile-section.component';
-import { RightSectionComponent } from './header-components/right-section-componets/right-section/right-section.component';
 import { SearchComponent } from './header-components/right-section-componets/search/search.component';
 import { ButtonThemeComponent } from './header-components/right-section-componets/button-theme/button-theme.component';
 import { ButtonQuestionComponent } from './header-components/right-section-componets/button-question/button-question.component';
@@ -30,7 +29,7 @@ import { OnlineUsersComponent } from './header-components/inner-note-section-com
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent, RightSectionComponent,
+  declarations: [SideBarComponent, HeaderComponent, MenuComponent, ProfileSectionComponent,
     SearchComponent, ButtonThemeComponent, ButtonQuestionComponent, ButtonNotificationComponent, ButtonChangeViewComponent,
     HamburgMenuComponent, NewButtonComponent, ButtonSelectAllComponent, ButtonUnselectAllComponent,
     ButtonFilterComponent, ButtonDefaultBackgroundComponent,
