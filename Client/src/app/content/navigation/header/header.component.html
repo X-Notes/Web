@@ -7,7 +7,7 @@
 
         <div class="interactions" *ngIf="!(isNoteInner$ | async)">
             <app-hamburg-menu></app-hamburg-menu>
-            <app-new-button *ngIf="(newButtonActive$ | async)"></app-new-button>
+            <app-new-button *ngIf="newButtonActive"></app-new-button>
             <app-button-unselect-all *ngIf="(menuActive$ | async)"></app-button-unselect-all>
             <app-button-select-all *ngIf="(selectAllButtonActive$ | async)"></app-button-select-all>
             <app-button-filter *ngIf="(settingsButtonActive$ | async)"></app-button-filter>

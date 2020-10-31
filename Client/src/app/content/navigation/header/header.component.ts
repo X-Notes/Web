@@ -14,7 +14,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import {
-  UpdateNewButton, UpdateMenuActive, UpdateSettingsButton,
+ UpdateMenuActive, UpdateSettingsButton,
   UpdateSelectAllButton, UpdateDefaultBackgroundButton
 } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
@@ -33,10 +33,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
+  newButtonActive = false;
   // Upper Menu
-
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
 
   @Select(AppStore.getSettingsButtonActive)
   public settingsButtonActive$: Observable<boolean>;
@@ -61,9 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
-  user: string[] = ['fucking person', 'fucking person', 'fucking person', 'fucking person', 'fucking person'
-  ];
-
   constructor(public pService: PersonalizationService,
               private store: Store,
               public menuButtonService: MenuButtonsService) { }
@@ -74,6 +69,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.store.select(AppStore.getNewButtonActive)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(z => {
+      console.log(z);
+      this.newButtonActive = z;
+    });
 
     this.store.select(NoteStore.activeMenu)
       .pipe(takeUntil(this.destroy))
@@ -131,14 +133,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   configShowMenu(flag: boolean) {
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
-      this.store.dispatch(new UpdateNewButton(false));
       return;
     }
     if (flag) {
-      this.store.dispatch(new UpdateNewButton(false));
       this.store.dispatch(new UpdateMenuActive(true));
     } else {
-      this.store.dispatch(new UpdateNewButton(true));
       this.store.dispatch(new UpdateMenuActive(false));
     }
   }
@@ -226,14 +225,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case EntityType.LabelPrivate: {
         this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
-        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
       case EntityType.LabelDeleted: {
         this.store.dispatch(new UpdateDefaultBackgroundButton(false));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
-        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
@@ -242,7 +239,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case EntityType.Profile: {
         this.store.dispatch(new UpdateDefaultBackgroundButton(true));
         await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
-        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
@@ -255,7 +251,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   async showAllButtons() {
     await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
-    await this.store.dispatch(new UpdateNewButton(true)).toPromise();
     await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
   }
 

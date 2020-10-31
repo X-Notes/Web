@@ -190,7 +190,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         this.note = {...x};
-        console.log(5);
 
         if (!this.firstInit) {
           this.firstInit = true;

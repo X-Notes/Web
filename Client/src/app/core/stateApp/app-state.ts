@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType,
+    UpdateSettingsButton, UpdateRouteWithNoteType,
     UpdateDefaultBackgroundButton, UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -43,7 +43,6 @@ export class AppStore {
 
     @Selector()
     static spinnerActive(state: AppState): boolean {
-        console.log(state.spinnerActive);
         return state.spinnerActive;
     }
 
@@ -122,7 +121,7 @@ export class AppStore {
 
     @Selector()
     static getNewButtonActive(state: AppState): boolean {
-        return state.newButtonActive;
+        return this.isNote(state) || this.isFolder(state) || state.routing === EntityType.LabelPrivate;
     }
 
     @Selector()
@@ -159,11 +158,6 @@ export class AppStore {
     @Action(UpdateSettingsButton)
     updateSettings({patchState}: StateContext<AppState>, {flag}: UpdateSettingsButton) {
         patchState({settingsButtonActive: flag});
-    }
-
-    @Action(UpdateNewButton)
-    updateNew({patchState}: StateContext<AppState>, {flag}: UpdateNewButton) {
-        patchState({newButtonActive: flag});
     }
 
     @Action(UpdateSelectAllButton)

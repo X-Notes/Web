@@ -21,7 +21,6 @@ export class MurriService  {
               private pService: PersonalizationService) {
 
     pService.changeOrientationSubject.subscribe(z => {
-      console.log(55);
       setTimeout(() => this.grid.refreshItems().layout(), 0);
     });
   }

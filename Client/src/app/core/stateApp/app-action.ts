@@ -17,11 +17,6 @@ export class UpdateSettingsButton {
     constructor(public flag: boolean) {    }
 }
 
-export class UpdateNewButton {
-    static type = '[App] Update new';
-    constructor(public flag: boolean) {    }
-}
-
 export class UpdateSelectAllButton {
     static type = '[App] Update selectAll';
     constructor(public flag: boolean) {    }
