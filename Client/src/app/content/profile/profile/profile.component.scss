@@ -244,55 +244,8 @@
               }
 
               .toggle {
-                position: relative;
-                display: flex;
-                width: 190px;
-                height: 32px;
-                border: 0.8px solid #959595;
-                border-radius: 5px;
-
-                input[type="checkbox"] {
-                  position: relative;
-                  z-index: 3;
-                  width: 100%;
-                  height: 100%;
-                  padding: 0;
-                  margin: 0;
-                  opacity: 0;
-                  cursor: pointer;
-                }
-
                 .rectangle {
-                  position: absolute;
-                  left: 0;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100%;
-                  width: 50%;
                   background: linear-gradient(97.88deg, #0083BB 0%, #00AFE7 100%);
-                  border-radius: 3px;
-                  transition: 0.2s ease;
-                }
-
-                .text-toggle {
-                  position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-
-                  .text {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100%;
-                    width: 50%;
-                    transition: 0.2s ease;
-                  }
-                }
-
-                .active-toggle {
-                  left: 50%;
                 }
               }
             }
@@ -314,10 +267,9 @@
         .field-language {
           margin-bottom: 0.75rem;
 
-          button[type="button"] {
+          .dropdown-button {
             width: 150px;
             background-color: white;
-            border-color: #C5C5C5;
             margin-left: 1.25rem;
             color: $text-color;
             cursor: default;
@@ -325,62 +277,6 @@
             .content-button {
               z-index: 50;
               justify-content: space-between;
-              padding: 0 1rem;
-              cursor: pointer;
-
-              .icon {
-                display: flex;
-                transition: 0.2s ease;
-              }
-
-              p {
-                font-weight: 500;
-              }
-
-              p,
-              .icon {
-                position: relative;
-                z-index: 5;
-              }
-            }
-
-            .dropdown {
-              position: absolute;
-              top: 32px;
-              z-index: 50;
-              display: flex;
-              flex-direction: column;
-              width: 100%;
-              max-height: 144px;
-              padding: 0.25rem 0;
-              background-color: white;
-              border-radius: 5px;
-
-              .item {
-                display: flex;
-                align-items: center;
-                width: calc(100% - 1rem);
-                height: 24px;
-                margin: 0 0.5rem;
-                padding-left: 0.5rem;
-                transition: 0.2s ease;
-                border-radius: 5px;
-                cursor: pointer;
-
-                &:hover {
-                  background-color: #dadada;
-                }
-              }
-            }
-
-            .overlay {
-              position: fixed;
-              top: 0;
-              left: 0;
-              bottom: 0;
-              right: 0;
-              z-index: 40;
-              display: none;
             }
           }
         }
@@ -463,6 +359,8 @@
         .account-setting {
           .field-language {
             .generic-button {
+              border-color: #cacaca;
+              
               .dropdown {
                 box-shadow: 0px 1px 2px grey;
               }

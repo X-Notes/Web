@@ -9,6 +9,7 @@ import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
 
 @Injectable()
+
 export class MurriService {
 
   grid;
@@ -60,7 +61,6 @@ export class MurriService {
 
   gridSettings(element: string) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-    console.log(dragHelper);
     this.grid = new Muuri.default('.grid', {
       items: element,
       dragEnabled: true,
