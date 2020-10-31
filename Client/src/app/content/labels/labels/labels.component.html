@@ -4,9 +4,9 @@
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">
                     <div class="photo">
-                        <img alt="photo" src="https://catmolly.com/wp-content/uploads/2019/01/klichki-dlya-kotov.jpg">
+                        <img alt="photo" [src]="(user$ | async).photoId">
                     </div>
-                    <p>Davyd Konopatskyi</p>
+                    <p>{{(user$ | async).name}}</p>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
             </div>
