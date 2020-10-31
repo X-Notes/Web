@@ -23,7 +23,7 @@ export class SharedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
-
+  loaded = false;
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -49,14 +49,13 @@ export class SharedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Shared));
 
-    this.store.select(NoteStore.sharedNotes).pipe(take(1))
-    .subscribe(async (x) => {
-      this.noteService.firstInit(x);
-      const active =  await this.pService.disableSpinnerPromise();
-      await this.store.dispatch(new SpinnerChangeStatus(active)).toPromise()
-      .then(z => { this.murriService.initMurriNote(EntityType.NoteShared); });
-     });
+    const notes = this.store.selectSnapshot(NoteStore.sharedNotes);
+    this.noteService.firstInit(notes);
 
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    await this.murriService.initMurriNoteAsync(EntityType.NoteShared);
   }
 
 

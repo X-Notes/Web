@@ -23,6 +23,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -53,16 +54,15 @@ export class PrivateComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateFolders()).toPromise();
-
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
-    this.store.select(FolderStore.privateFolders).pipe(take(1))
-      .subscribe(async (x) => {
-        this.folderService.firstInit(x);
-        const loaded = await this.pService.disableSpinnerPromise();
-        await this.store.dispatch(new SpinnerChangeStatus(loaded)).toPromise()
-          .then(z => this.murriService.initMurriFolder(EntityType.FolderPrivate));
-      });
+    const folders = this.store.selectSnapshot(FolderStore.privateFolders);
+    this.folderService.firstInit(folders);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    this.murriService.initMurriFolderAsync(EntityType.FolderPrivate);
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))

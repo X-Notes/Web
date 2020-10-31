@@ -23,6 +23,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -44,17 +45,16 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadArchiveNotes()).toPromise();
-
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
 
-    this.store.select(NoteStore.archiveNotes).pipe(take(1))
-    .subscribe(async (x) => {
-      this.noteService.firstInit(x);
-      const active =  await this.pService.disableSpinnerPromise();
-      await this.store.dispatch(new SpinnerChangeStatus(active)).toPromise()
-      .then(z => { this.murriService.initMurriNote(EntityType.NoteArchive); });
-     });
 
+    const notes = this.store.selectSnapshot(NoteStore.archiveNotes);
+    this.noteService.firstInit(notes);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    await this.murriService.initMurriNoteAsync(EntityType.NoteArchive);
   }
 
 

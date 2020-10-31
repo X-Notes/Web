@@ -21,7 +21,15 @@ export class MurriService {
   }
 
 
-  initMurriNote(type: EntityType) {
+  initMurriNoteAsync(type: EntityType) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriNote(type);
+      resolve(true);
+    }
+    ));
+  }
+
+  private initMurriNote(type: EntityType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -39,7 +47,15 @@ export class MurriService {
     });
   }
 
-  initMurriFolder(type: EntityType) {
+  initMurriFolderAsync(type: EntityType) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriFolder(type);
+      resolve(true);
+    }
+    ));
+  }
+
+  private initMurriFolder(type: EntityType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -57,7 +73,16 @@ export class MurriService {
     });
   }
 
-  initMurriLabel(deleted: boolean) {
+  initMurriLabelAsync(deleted: boolean) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriLabel(deleted);
+      resolve(true);
+    }
+    ));
+  }
+
+
+  private initMurriLabel(deleted: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;

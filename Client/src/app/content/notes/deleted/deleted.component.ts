@@ -26,6 +26,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -50,13 +51,13 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
-    this.store.select(NoteStore.deletedNotes).pipe(take(1))
-      .subscribe(async (x) => {
-        this.noteService.firstInit(x);
-        const active =  await this.pService.disableSpinnerPromise();
-        await this.store.dispatch(new SpinnerChangeStatus(active)).toPromise()
-        .then(z => { this.murriService.initMurriNote(EntityType.NoteDeleted); });
-      });
+    const notes = this.store.selectSnapshot(NoteStore.deletedNotes);
+    this.noteService.firstInit(notes);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    await this.murriService.initMurriNoteAsync(EntityType.NoteDeleted);
 
   }
 

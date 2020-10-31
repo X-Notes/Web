@@ -56,13 +56,14 @@ export class SharedComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
 
-    this.store.select(FolderStore.sharedFolders).pipe(take(1))
-      .subscribe(async (x) => {
-        this.folderService.firstInit(x);
-        const loaded = await this.pService.disableSpinnerPromise();
-        await this.store.dispatch(new SpinnerChangeStatus(loaded)).toPromise()
-          .then(z => this.murriService.initMurriFolder(EntityType.FolderShared));
-      });
+    const folders = this.store.selectSnapshot(FolderStore.sharedFolders);
+    this.folderService.firstInit(folders);
+
+    const active = await this.pService.disableSpinnerPromise();
+    this.store.dispatch(new SpinnerChangeStatus(active));
+    this.loaded = true;
+    this.murriService.initMurriFolderAsync(EntityType.FolderShared);
+
 
   }
 
