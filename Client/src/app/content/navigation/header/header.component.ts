@@ -25,8 +25,6 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-  public countSelected: number;
-
   destroy = new Subject<void>();
 
   newButtonActive = false;
@@ -79,21 +77,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.routeChange(x));
 
-    this.store.select(NoteStore.selectedCount)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => {
-        if (x > 0) {
-          this.countSelected = x;
-        }
-      });
-
-    this.store.select(FolderStore.selectedCount)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => {
-        if (x > 0) {
-          this.countSelected = x;
-        }
-      });
   }
 
   showUsers() {
