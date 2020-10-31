@@ -1,6 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton
+import { UpdateRoute, UpdateMenuActive
     , UpdateRouteWithNoteType,
  UpdateButtonRemoveAllLabels, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -131,7 +131,7 @@ export class AppStore {
 
     @Selector()
     static getSelectAllButtonActive(state: AppState): boolean {
-        return state.selectAllButtonActive;
+        return  this.isNote(state) || this.isFolder(state);
     }
 
     @Selector()
@@ -152,12 +152,6 @@ export class AppStore {
     @Action(UpdateRouteWithNoteType)
     async updateRouteWithNoteType({patchState}: StateContext<AppState>, {type, noteType}: UpdateRouteWithNoteType) {
         patchState({routing: type, innerNoteType: noteType});
-    }
-
-
-    @Action(UpdateSelectAllButton)
-    updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({selectAllButtonActive: flag});
     }
 
     @Action(UpdateButtonRemoveAllLabels)
