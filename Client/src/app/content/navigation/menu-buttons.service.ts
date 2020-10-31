@@ -349,6 +349,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
+      maxHeight: '80vh',
       data: {
         title: 'Colors'
       },
@@ -376,6 +377,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '650px',
+      maxHeight: '80vh',
       data: {
         title: 'Share'
       },

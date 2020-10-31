@@ -88,6 +88,19 @@
     "ColorModal": {
       "Colors": "Colors",
       "save": "Save"
+    },
+    "ShareModal": {
+      "Share": "Share",
+      "access": "Access",
+      "sharing": "Sharing",
+      "private": "Private",
+      "shared": "Shared",
+      "selectedNotes": "Selected notes",
+      "search": "Search...",
+      "alert": "Send alert",
+      "editor": "Editor",
+      "viewer": "Viewer",
+      "send": "Send"
     }
   }
 }

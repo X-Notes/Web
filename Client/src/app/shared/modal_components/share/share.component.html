@@ -1,7 +1,7 @@
 <div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', isManyNotes ? 'many-notes' : 'one-note']">
     <div class="few-notes" *ngIf="isManyNotes">
         <div class="header">
-            <span>Selected notes</span>
+            <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
         <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
@@ -21,18 +21,18 @@
     </div>
     <div class="sharing">
         <div class="header">
-            <span>{{data.title}}</span>
+            <span>{{ ('modal.ShareModal.' + data.title) | translate }}</span>
             <i class="icon-plus" mat-dialog-close></i>
         </div>
         <mat-tab-group class="tabs" mat-align-tabs="center"
             [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'" #tabs>
-            <mat-tab isActive="true" label="Access">
+            <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
                     <div class="link-access-field">
                         <input readonly type="text" value="Your fucking link">
                         <button class="dropdown-button" type="button" (click)="changeActive()">
                             <div class="content-button" #dropdownSelect>
-                                <p>Private</p>
+                                <p>{{ 'modal.ShareModal.private' | translate }}</p>
                                 <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                     <i class="icon-select-label"></i>
                                 </div>
@@ -40,10 +40,10 @@
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
                             <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
                                 <div class="item" (click)="setLanguage('Private')">
-                                    <p>Private</p>
+                                    <p>{{ 'modal.ShareModal.private' | translate }}</p>
                                 </div>
                                 <div class="item" (click)="setLanguage('Shared')">
-                                    <p>Shared</p>
+                                    <p>{{ 'modal.ShareModal.shared' | translate }}</p>
                                 </div>
                             </div>
                             <div #overlay class="overlay" (click)="cancelDropdown()"></div>
@@ -60,10 +60,10 @@
                             </div>
                             <div class="text-toggle">
                                 <div class="text">
-                                    <p>Private</p>
+                                    <p>{{ 'modal.ShareModal.private' | translate }}</p>
                                 </div>
                                 <div class="text">
-                                    <p>Shared</p>
+                                    <p>{{ 'modal.ShareModal.shared' | translate }}</p>
                                 </div>
                             </div>
                         </div>
@@ -108,9 +108,9 @@
                     </div>
                 </ngx-simplebar>
             </mat-tab>
-            <mat-tab label="Sharing">
+            <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
                 <div class="search">
-                    <input type="search" aria-label="Search" placeholder="Search...">
+                    <input type="search" aria-label="Search" placeholder="{{ 'modal.ShareModal.search' | translate }}">
                     <button type="button">
                         <div class="icon">
                             <i class="icon-search"></i>
@@ -141,7 +141,7 @@
                         </div>
                         <div class="checkbox-notification">
                             <label>
-                                Прислать оповещание
+                                {{ 'modal.ShareModal.alert' | translate }}
                                 <input type="checkbox">
                                 <span class="checkbox">
                                     <div class="icon">
@@ -155,7 +155,7 @@
                             <div class="interaction-buttons">
                                 <button class="dropdown-button" type="button" (click)="changeActive()">
                                     <div class="content-button" #AccessSelect>
-                                        <p>Editor</p>
+                                        <p>{{ 'modal.ShareModal.editor' | translate }}</p>
                                         <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                             <i class="icon-select-label"></i>
                                         </div>
@@ -163,17 +163,17 @@
                                     <div class="ripple-container" matRipple [matRippleTrigger]="AccessSelect"></div>
                                     <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
                                         <div class="item" (click)="setLanguage('Editor')">
-                                            <p>Editor</p>
+                                            <p>{{ 'modal.ShareModal.editor' | translate }}</p>
                                         </div>
                                         <div class="item" (click)="setLanguage('Viewer')">
-                                            <p>Viewer</p>
+                                            <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
                                         </div>
                                     </div>
                                     <div #overlay2 class="overlay" (click)="cancelDropdown()"></div>
                                 </button>
                                 <button class="send-button" type="button" #changeAccessRipple>
                                     <div class="content-button">
-                                        <p>Send</p>
+                                        <p>{{ 'modal.ShareModal.send' | translate }}</p>
                                     </div>
                                     <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
                                 </button>
