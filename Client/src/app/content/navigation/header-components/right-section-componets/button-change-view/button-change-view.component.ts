@@ -18,15 +18,13 @@ export class ButtonChangeViewComponent implements OnInit {
   public theme$: Observable<Theme>;
   theme = Theme;
 
-  constructor(public pService: PersonalizationService,
-              public murriService: MurriService, ) { }
+  constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {
   }
 
   toggleOrientation() {
-    this.pService.orientationMobile = !this.pService.orientationMobile;
-    setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
+    this.pService.changeOrientation();
   }
 
 }

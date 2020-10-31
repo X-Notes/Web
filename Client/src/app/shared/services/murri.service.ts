@@ -9,7 +9,7 @@ import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
 
 @Injectable()
-export class MurriService {
+export class MurriService  {
 
   gridItemName = '.grid-item';
 
@@ -17,7 +17,13 @@ export class MurriService {
   public delayForOpacity = 0;
   public flagForOpacity = false;
 
-  constructor(private store: Store) {
+  constructor(private store: Store,
+              private pService: PersonalizationService) {
+
+    pService.changeOrientationSubject.subscribe(z => {
+      console.log(55);
+      setTimeout(() => this.grid.refreshItems().layout(), 0);
+    });
   }
 
 

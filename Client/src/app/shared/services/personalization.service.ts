@@ -91,6 +91,8 @@ export class PersonalizationService {
   users = true;
   toggleHistory = false;
 
+  changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
 
@@ -152,6 +154,11 @@ export class PersonalizationService {
 
   disableSpinnerPromise() {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
+  }
+
+  changeOrientation() {
+    this.orientationMobile = !this.orientationMobile;
+    this.changeOrientationSubject.next(true);
   }
 
 }
