@@ -106,7 +106,7 @@
                         <div class="field-name">
                             <p>{{ 'profile.language' | translate }}</p>
                         </div>
-                        <button class="generic-button" type="button" (click)="showDropdown()">
+                        <button class="generic-button dropdown-button" type="button" (click)="showDropdown()">
                             <div class="content-button" #dropdownSelect>
                                 <p>{{ 'languages.' + (language$ | async) | translate }}</p>
                                 <div class="icon" [ngStyle]="{'transform': dropdownLanguage ? 'rotate(180deg)' : '' }">

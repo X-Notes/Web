@@ -20,19 +20,7 @@ import { NoteStore } from '../notes/state/notes-state';
 export class MenuButtonsService {
 
   constructor(private store: Store,
-              private dialogService: DialogService, ) {
-                merge(
-                  this.store.select(NoteStore.selectedCount),
-                  this.store.select(FolderStore.selectedCount)
-                )
-                .subscribe(x => {
-                  if (x >= 2) {
-                    this.filterItems(this.saveItems.filter(z => z.icon !== 'shared'));
-                  } else {
-                    this.filterItems(this.saveItems);
-                  }
-                });
-  }
+              private dialogService: DialogService, ) {}
 
 
   public saveItems: MenuItem[] = [];
@@ -361,6 +349,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
+      maxHeight: '80vh',
       data: {
         title: 'Colors'
       },
@@ -374,6 +363,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
+      height: '475px',
       data: {
         title: 'Labels'
       },
@@ -386,13 +376,13 @@ export class MenuButtonsService {
   private shareEntity() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      width: '600px',
-      height: '640px',
+      width: '650px',
+      maxHeight: '80vh',
       data: {
         title: 'Share'
       },
       autoFocus: false,
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: theme === Theme.Light ? ['custom-dialog-class-light','sharing-modal'] : ['custom-dialog-class-dark','sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }
