@@ -4,6 +4,7 @@ import { UpdateRoute
     , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { stat } from 'fs';
 
 
 interface AppState {
@@ -120,6 +121,11 @@ export class AppStore {
     @Selector()
     static getSelectAllButtonActive(state: AppState): boolean {
         return  this.isNote(state) || this.isFolder(state);
+    }
+
+    @Selector()
+    static getDeleteAllLabellsButtonActive(state: AppState): boolean {
+        return  state.routing === EntityType.LabelDeleted;
     }
 
     @Selector()

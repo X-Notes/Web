@@ -30,6 +30,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   newButtonActive = false;
   // Upper Menu
 
+  @Select(AppStore.getDeleteAllLabellsButtonActive)
+  public deleteAllLabeslButton$: Observable<boolean>;
+
   @Select(AppStore.getChangeViewButtonActive)
   public changeViewActive$: Observable<boolean>;
 
