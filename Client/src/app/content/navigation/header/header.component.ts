@@ -30,6 +30,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   newButtonActive = false;
   // Upper Menu
 
+  @Select(AppStore.getChangeViewButtonActive)
+  public changeViewActive$: Observable<boolean>;
+
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 

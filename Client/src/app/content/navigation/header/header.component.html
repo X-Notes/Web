@@ -49,7 +49,7 @@
             <app-button-theme></app-button-theme>
             <app-button-question></app-button-question>
             <app-button-notification [isProfile]="false"></app-button-notification>
-            <app-button-change-view></app-button-change-view>
+            <app-button-change-view *ngIf="(changeViewActive$ | async)"></app-button-change-view>
         </div>
 
 

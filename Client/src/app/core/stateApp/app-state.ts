@@ -9,7 +9,6 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 interface AppState {
     routing: EntityType;
     innerNoteType: NoteType;
-    defaultBackground: boolean;
     spinnerActive: boolean;
 }
 
@@ -18,7 +17,6 @@ interface AppState {
     defaults: {
         routing: null,
         innerNoteType: null,
-        defaultBackground: false,
         spinnerActive: false
     }
 })
@@ -124,7 +122,10 @@ export class AppStore {
         return  this.isNote(state) || this.isFolder(state);
     }
 
-
+    @Selector()
+    static getChangeViewButtonActive(state: AppState): boolean {
+        return  state.routing !== EntityType.Profile;
+    }
 
     @Selector()
     static getdefaultBackground(state: AppState): boolean {
