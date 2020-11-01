@@ -56,7 +56,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     const active = await this.pService.disableSpinnerPromise();
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
-    await this.murriService.initMurriNoteAsync(EntityType.NotePrivate);
+    await this.murriService.initMurriNoteAsync(NoteType.Private);
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))

@@ -130,7 +130,7 @@ export class RemoveFromDomMurri {
 
 export class PositionNote {
     static type = '[Notes] Position notes';
-    constructor(public order: Order, public typeNote: EntityType) {
+    constructor(public order: Order, public typeNote: NoteType) {
     }
 }
 
