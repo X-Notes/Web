@@ -154,6 +154,6 @@ export class UnSelectAllNote {
 
 export class SelectAllNote {
     static type = '[Notes] Select all';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType) {
     }
 }

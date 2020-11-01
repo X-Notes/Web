@@ -349,15 +349,17 @@ export class NoteStore {
     // Deleting
     @Action(DeleteNotesPermanently)
     async deleteNotesPermanently({ getState, dispatch, patchState }: StateContext<NoteState>) {
-        /*
         const selectedIds = getState().selectedIds;
         await this.api.deleteNotes(selectedIds).toPromise();
+
+        const notesFrom = getState().notes.find(x => x.typeNotes === NoteType.Deleted);
+        const notesFromNew = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        dispatch(new UpdateNotes(new Notes(NoteType.Deleted, notesFromNew), NoteType.Deleted));
+
         patchState({
-            removeFromMurriEvent: [...selectedIds],
-            countDeleted: getState().countDeleted - selectedIds.length
+            removeFromMurriEvent: [...selectedIds]
         });
         dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-        */
     }
 
 
@@ -878,59 +880,15 @@ export class NoteStore {
 
     @Action(SelectAllNote)
     selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
-        /*
-        let ids;
-        let labelsIds: LabelsOnSelectedNotes[];
-        switch (typeNote) {
-            case EntityType.NoteArchive: {
-                ids = getState().archiveNotes.map(x => x.id);
-                labelsIds = getState().archiveNotes.map(x => {
-                    const values: LabelsOnSelectedNotes = {
-                        id: x.id,
-                        labelsIds: x.labels.map(z => z.id)
-                    };
-                    return values;
-                });
-                break;
-            }
-            case EntityType.NotePrivate: {
-                ids = getState().privateNotes.map(x => x.id);
-                labelsIds = getState().archiveNotes.map(x => {
-                    const values: LabelsOnSelectedNotes = {
-                        id: x.id,
-                        labelsIds: x.labels.map(z => z.id)
-                    };
-                    return values;
-                });
-                break;
-            }
-            case EntityType.NoteDeleted: {
-                ids = getState().deletedNotes.map(x => x.id);
-                labelsIds = getState().archiveNotes.map(x => {
-                    const values: LabelsOnSelectedNotes = {
-                        id: x.id,
-                        labelsIds: x.labels.map(z => z.id)
-                    };
-                    return values;
-                });
-                break;
-            }
-            case EntityType.NoteShared: {
-                // TODO UPDATE FOR ALL USERS
-                ids = getState().sharedNotes.map(x => x.id);
-                labelsIds = getState().archiveNotes.map(x => {
-                    const values: LabelsOnSelectedNotes = {
-                        id: x.id,
-                        labelsIds: x.labels.map(z => z.id)
-                    };
-                    return values;
-                });
-                break;
-            }
-            default: {
-                throw new Error('Incorrect type note');
-            }
-        }
-        patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });*/
+        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const ids = notes.map(z => z.id);
+        const labelsIds = notes.map(x => {
+            const values: LabelsOnSelectedNotes = {
+                id: x.id,
+                labelsIds: x.labels.map(z => z.id)
+            };
+            return values;
+        });
+        patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });
     }
 }
