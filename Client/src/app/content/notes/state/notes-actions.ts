@@ -107,12 +107,12 @@ export class UpdateLabelOnNote {
 
 export class AddLabelOnNote {
     static type = '[Notes] Add label';
-    constructor(public label: Label, public typeNote: EntityType) { }
+    constructor(public label: Label, public typeNote: NoteType) { }
 }
 
 export class RemoveLabelFromNote {
     static type = '[Notes] Remove label';
-    constructor(public label: Label, public typeNote: EntityType) { }
+    constructor(public label: Label, public typeNote: NoteType) { }
 }
 
 export class ClearUpdatelabelEvent {
