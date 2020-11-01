@@ -127,7 +127,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RestoreNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();

@@ -173,25 +173,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  makePublic() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new MakePublicNotes(noteType));
-  }
-
-  makePrivate() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new MakePrivateNotes(noteType));
-  }
-
-  makePublicFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new MakePublicFolders(folderType));
-  }
-
-  makePrivateFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new MakePrivateFolders(folderType));
-  }
-
 }

@@ -103,7 +103,8 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   async newNote() {
     await this.store.dispatch(new AddNote()).toPromise();
-    this.store.select(state => state.Notes.privateNotes).pipe(take(1)).subscribe(x => this.router.navigate([`notes/${x[0].id}`]));
+    const notes = this.store.selectSnapshot(NoteStore.privateNotes);
+    this.router.navigate([`notes/${notes[0].id}`]);
   }
 
   cancelLabel() {

@@ -20,7 +20,6 @@ namespace BI.services.notes
         IRequestHandler<ChangeColorNoteCommand, Unit>,
         IRequestHandler<SetDeleteNoteCommand, Unit>,
         IRequestHandler<DeleteNotesCommand, Unit>,
-        IRequestHandler<RestoreNoteCommand, Unit>,
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
         IRequestHandler<CopyNoteCommand, List<SmallNote>>,
@@ -101,24 +100,6 @@ namespace BI.services.notes
             if (selectdeletenotes.Count == request.Ids.Count)
             {
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
-            }
-            else
-            {
-                throw new Exception();
-            }
-
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(RestoreNoteCommand request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserWithNotes(request.Email);
-            var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
-            var notesForRestore = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
-            if (notesForRestore.Count == request.Ids.Count)
-            {
-                await noteRepository.CastNotes(notesForRestore, user.Notes, NotesType.Deleted, NotesType.Private);
             }
             else
             {

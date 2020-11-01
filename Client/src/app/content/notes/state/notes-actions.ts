@@ -4,6 +4,8 @@ import { Order } from 'src/app/shared/services/order.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Label } from '../../labels/models/label';
+import { Notes } from './Notes';
+
 
 export class LoadPrivateNotes {
     static type = '[Notes] Load private notes';
@@ -36,9 +38,9 @@ export class AddNote {
 }
 
 
-export class UpdateSmallNote {
-    static type = '[Notes] Update small note';
-    constructor(public note: SmallNote, public typeNote: NoteType) { }
+export class UpdateNotes {
+    static type = '[Notes] Update notes';
+    constructor(public notes: Notes, public typeNote: NoteType) { }
 }
 
 
@@ -69,13 +71,6 @@ export class DeleteNotesPermanently {
     }
 }
 
-// Restoring
-export class RestoreNotes {
-    static type = '[Notes] Restore notes';
-    constructor() {
-    }
-}
-
 // Archive
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
@@ -91,7 +86,7 @@ export class MakePublicNotes {
 
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType) {
     }
 }
 
