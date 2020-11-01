@@ -402,7 +402,7 @@ export class MenuButtonsService {
 
   // SET DELETE
   private setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new SetDeleteNotes(noteType));
   }
 
@@ -424,7 +424,7 @@ export class MenuButtonsService {
   // ARCHIVE
 
   archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new ArchiveNotes(noteType));
   }
 

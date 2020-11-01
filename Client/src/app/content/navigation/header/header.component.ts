@@ -1,15 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {
-  PersonalizationService,
-  showMenuLeftRight
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
-import { MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
-import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';

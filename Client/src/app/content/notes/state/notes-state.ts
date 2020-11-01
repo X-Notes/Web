@@ -22,6 +22,7 @@ import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Notes } from './Notes';
+import { Observable } from 'rxjs';
 
 
 interface NoteState {
@@ -221,6 +222,8 @@ export class NoteStore {
 
     @Action(UpdateNotes)
     async updateSmallNote({ setState }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
+        console.log(notes);
+        console.log(typeNote);
         setState(
             patch({
                 notes: updateItem<Notes>(notess => notess.typeNotes === typeNote, notes)
@@ -338,62 +341,9 @@ export class NoteStore {
     // Set deleting
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: SetDeleteNotes) {
-        /*
         const selectedIds = getState().selectedIds;
-
-        let notes;
-        switch (typeNote) {
-            case EntityType.NoteArchive: {
-
-                await this.api.setDeleteNotes(selectedIds, NoteType.Archive).toPromise();
-
-                notes = getState().archiveNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const deletedNotes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id));
-                patchState({
-                    archiveNotes: notes,
-                    deletedNotes: [...deletedNotes, ...getState().deletedNotes],
-                    countArchive: notes.length,
-                    countDeleted: getState().countDeleted + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds]
-                });
-                break;
-            }
-            case EntityType.NotePrivate: {
-
-                await this.api.setDeleteNotes(selectedIds, NoteType.Private).toPromise();
-
-                notes = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const deletedNotes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id));
-                patchState({
-                    privateNotes: notes,
-                    deletedNotes: [...deletedNotes, ...getState().deletedNotes],
-                    countPrivate: notes.length,
-                    countDeleted: getState().countDeleted + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds]
-                });
-                break;
-            }
-            case EntityType.NoteShared: {
-                // TODO UPDATE FOR ALL USERS
-                await this.api.setDeleteNotes(selectedIds, NoteType.Shared).toPromise();
-
-                notes = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const deletedNotes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id));
-                patchState({
-                    sharedNotes: notes,
-                    deletedNotes: [...deletedNotes, ...getState().deletedNotes],
-                    countShared: notes.length,
-                    countDeleted: getState().countDeleted + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds]
-                });
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }
-        dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-        */
+        await this.api.setDeleteNotes(selectedIds, typeNote).toPromise();
+        this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Deleted, selectedIds);
     }
 
     // Deleting
@@ -414,63 +364,10 @@ export class NoteStore {
     // Archive
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: ArchiveNotes) {
-        /*
+
         const selectedIds = getState().selectedIds;
-
-        switch (typeNote) {
-            case EntityType.NoteDeleted: {
-
-                await this.api.archiveNotes(selectedIds, NoteType.Deleted).toPromise();
-
-                const notesDeleted = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const notesAdded = getState().deletedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countDeleted: getState().countDeleted - selectedIds.length,
-                    countArchive: getState().countArchive + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    deletedNotes: [...notesDeleted],
-                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
-                });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-                break;
-            }
-            case EntityType.NotePrivate: {
-
-                await this.api.archiveNotes(selectedIds, NoteType.Private).toPromise();
-
-                const notesPrivate = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const notesAdded = getState().privateNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countPrivate: getState().countPrivate - selectedIds.length,
-                    countArchive: getState().countArchive + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    privateNotes: [...notesPrivate],
-                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
-                });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-                break;
-            }
-            case EntityType.NoteShared: {
-                // TODO UPDATE FOR ALL USERS
-                await this.api.archiveNotes(selectedIds, NoteType.Shared).toPromise();
-
-                const notesShared = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
-                const notesAdded = getState().sharedNotes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
-                patchState({
-                    countShared: getState().countShared - selectedIds.length,
-                    countArchive: getState().countArchive + selectedIds.length,
-                    removeFromMurriEvent: [...selectedIds],
-                    sharedNotes: [...notesShared],
-                    archiveNotes: [...notesAdded, ...getState().archiveNotes]
-                });
-                dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }
-        */
+        await this.api.archiveNotes(selectedIds, NoteType.Deleted).toPromise();
+        this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Archive, selectedIds);
     }
 
     @Action(MakePublicNotes)
@@ -482,22 +379,32 @@ export class NoteStore {
 
         const selectedIds = getState().selectedIds;
         await this.api.makePrivateNotes(selectedIds, typeNote).toPromise();
-        const notesFrom = getState().notes.find(x => x.typeNotes === typeNote);
+        this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Private, selectedIds);
+    }
+
+    tranformFromTo(
+        getState: () => NoteState,
+        patchState: (val: Partial<NoteState>) => NoteState,
+        dispatch: (actions: any) => Observable<void>,
+        typeFrom: NoteType,
+        typeTo: NoteType,
+        selectedIds: string[]) {
+
+        const notesFrom = getState().notes.find(x => x.typeNotes === typeFrom);
         const notesFromNew = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+
         const notesAdded = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
-        dispatch(new UpdateNotes(new Notes(typeNote, notesFromNew), typeNote));
-
-        const privateNotes = getState().notes.find(z => z.typeNotes === NoteType.Private).notes;
-        const newPrivateNotes = [...notesAdded, ...privateNotes];
-        dispatch(new UpdateNotes(new Notes(typeNote, newPrivateNotes), typeNote));
+        const notesTo = getState().notes.find(z => z.typeNotes === typeTo).notes;
+        const newNotesTo = [...notesAdded, ...notesTo];
+        dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
 
         patchState({
             removeFromMurriEvent: [...selectedIds],
         });
         dispatch([UnSelectAllNote, RemoveFromDomMurri]);
     }
-
 
     @Action(CopyNotes)
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: CopyNotes) {

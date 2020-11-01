@@ -1,5 +1,3 @@
-import { FullNote } from '../models/fullNote';
-import { SmallNote } from '../models/smallNote';
 import { Order } from 'src/app/shared/services/order.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -60,7 +58,7 @@ export class ClearColorNotes {
 // Set Deleting
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType) {
     }
 }
 
@@ -74,7 +72,7 @@ export class DeleteNotesPermanently {
 // Archive
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType) {
     }
 }
 
