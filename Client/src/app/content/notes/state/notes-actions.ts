@@ -44,10 +44,9 @@ export class UpdateNotes {
 
 // UPPER MENU FUNCTIONS
 
-// Color changing
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
-    constructor(public color: string, public typeNote: EntityType) { }
+    constructor(public color: string, public typeNote: NoteType) { }
 }
 
 export class ClearColorNotes {
@@ -55,21 +54,31 @@ export class ClearColorNotes {
     constructor() { }
 }
 
-// Set Deleting
+export class CopyNotes {
+    static type = '[Notes] Copy notes';
+    constructor(public typeNote: EntityType) {
+    }
+}
+
+export class ClearAddedPrivateNotes {
+    static type = '[Notes] ClearAddedPrivate notes';
+    constructor() {
+    }
+}
+
+// CHANGE STATE
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
     constructor(public typeNote: NoteType) {
     }
 }
 
-// Deleting
 export class DeleteNotesPermanently {
     static type = '[Notes] Delete notes';
     constructor() {
     }
 }
 
-// Archive
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
     constructor(public typeNote: NoteType) {
@@ -88,17 +97,6 @@ export class MakePrivateNotes {
     }
 }
 
-export class CopyNotes {
-    static type = '[Notes] Copy notes';
-    constructor(public typeNote: EntityType) {
-    }
-}
-
-export class ClearAddedPrivateNotes {
-    static type = '[Notes] ClearAddedPrivate notes';
-    constructor() {
-    }
-}
 
 // Labels
 
@@ -122,7 +120,8 @@ export class ClearUpdatelabelEvent {
     constructor(public noteId: string) { }
 }
 
-// Muuri remove from dom
+
+
 export class RemoveFromDomMurri {
     static type = '[Notes] MurriRemove notes';
     constructor() {
@@ -134,6 +133,8 @@ export class PositionNote {
     constructor(public order: Order, public typeNote: EntityType) {
     }
 }
+
+
 
 // SELECTION
 export class SelectIdNote {

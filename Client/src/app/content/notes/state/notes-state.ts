@@ -222,8 +222,6 @@ export class NoteStore {
 
     @Action(UpdateNotes)
     async updateSmallNote({ setState }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
-        console.log(notes);
-        console.log(typeNote);
         setState(
             patch({
                 notes: updateItem<Notes>(notess => notess.typeNotes === typeNote, notes)
@@ -237,91 +235,27 @@ export class NoteStore {
     // Color change
     @Action(ChangeColorNote)
     async changeColor({ patchState, getState, dispatch }: StateContext<NoteState>, { color, typeNote }: ChangeColorNote) {
-        /*
+
         const selectedIds = getState().selectedIds;
-
         await this.api.changeColor(selectedIds, color).toPromise();
-        let notes: SmallNote[];
-        switch (typeNote) {
-            case EntityType.NoteArchive: {
-                notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id))
-                    .map(note => { note = { ...note }; return note; });
 
-                notes.forEach(z => z.color = color);
-                notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Archive)));
-                const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-                patchState({ updateColorEvent: updateColor });
-                dispatch([UnSelectAllNote, ClearColorNotes]);
-                break;
+
+        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const newNotes = notes.map(note => {
+            note = { ...note };
+            if (selectedIds.some(z => z === note.id)) {
+                note.color = color;
             }
-            case EntityType.NotePrivate: {
-                notes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id))
-                    .map(note => { note = { ...note }; return note; });
+            return note;
+         });
 
-                notes.forEach(z => z.color = color);
-                notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Private)));
-                const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-                patchState({ updateColorEvent: updateColor });
-                dispatch([UnSelectAllNote, ClearColorNotes]);
-                break;
-            }
-            case EntityType.NoteDeleted: {
-                notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id))
-                    .map(note => { note = { ...note }; return note; });
-
-                notes.forEach(z => z.color = color);
-                notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Deleted)));
-                const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-                patchState({ updateColorEvent: updateColor });
-                dispatch([UnSelectAllNote, ClearColorNotes]);
-                break;
-            }
-            case EntityType.NoteShared: {
-                // TODO UPDATE FOR ALL USERS
-                notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
-                    .map(note => { note = { ...note }; return note; });
-
-                notes.forEach(z => z.color = color);
-                notes.forEach(note => dispatch(new UpdateSmallNote(note, NoteType.Shared)));
-                const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-                patchState({ updateColorEvent: updateColor });
-                dispatch([UnSelectAllNote, ClearColorNotes]);
-                break;
-            }
-            case EntityType.NoteInner: {
-
-                let noteType = NoteType.Archive;
-                notes = getState().archiveNotes.filter(x => selectedIds.some(z => z === x.id))
-                    .map(note => { note = { ...note }; return note; });
-
-                if (notes.length === 0) {
-                    notes = getState().privateNotes.filter(x => selectedIds.some(z => z === x.id))
-                        .map(note => { note = { ...note }; return note; });
-                    noteType = NoteType.Private;
-                }
-                if (notes.length === 0) {
-                    notes = getState().deletedNotes.filter(x => selectedIds.some(z => z === x.id))
-                        .map(note => { note = { ...note }; return note; });
-                    noteType = NoteType.Deleted;
-                }
-                if (notes.length === 0) {
-                    notes = getState().sharedNotes.filter(x => selectedIds.some(z => z === x.id))
-                        .map(note => { note = { ...note }; return note; });
-                    noteType = NoteType.Shared;
-                }
-
-
-                notes.forEach(z => z.color = color);
-                notes.forEach(note => dispatch(new UpdateSmallNote(note, noteType)));
-                const updateColor = notes.map(note => this.mapFromNoteToUpdateColor(note));
-                patchState({ updateColorEvent: updateColor });
-                dispatch([ClearColorNotes]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }*/
+        const notesForUpdate = notes.filter(x => selectedIds.some(z => z === x.id)).map(note => {
+            note = { ...note, color };
+            return note;
+         });
+        const updateColor = notesForUpdate.map(note => this.mapFromNoteToUpdateColor(note));
+        patchState({ updateColorEvent: updateColor });
+        dispatch([new UpdateNotes(new Notes(typeNote, newNotes), typeNote), UnSelectAllNote, ClearColorNotes]);
     }
 
     mapFromNoteToUpdateColor(note: SmallNote) {

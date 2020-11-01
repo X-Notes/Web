@@ -51,7 +51,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   async changeColor() { // TODO
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const type = this.store.selectSnapshot(AppStore.getRouting);
+      const type = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);

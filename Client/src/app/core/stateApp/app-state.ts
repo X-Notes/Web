@@ -6,6 +6,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { stat } from 'fs';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { exception } from 'console';
 
 
 interface AppState {
@@ -122,6 +123,9 @@ export class AppStore {
             case EntityType.NoteShared: {
                 return NoteType.Shared;
             }
+            default: {
+                throw new Error('Incorrect type');
+            }
         }
     }
 
@@ -140,6 +144,9 @@ export class AppStore {
             }
             case EntityType.FolderArchive: {
                 return FolderType.Archive;
+            }
+            default: {
+                throw new Error('Incorrect type');
             }
         }
     }
