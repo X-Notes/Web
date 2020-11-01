@@ -391,7 +391,7 @@ export class MenuButtonsService {
 
   // COPY
   private copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new CopyNotes(noteType));
   }
 

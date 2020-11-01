@@ -56,7 +56,7 @@ export class ClearColorNotes {
 
 export class CopyNotes {
     static type = '[Notes] Copy notes';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType) {
     }
 }
 

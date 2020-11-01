@@ -344,53 +344,19 @@ export class NoteStore {
 
     @Action(CopyNotes)
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: CopyNotes) {
-        /*
-        const selectedIds = getState().selectedIds;
 
-        switch (typeNote) {
-            case EntityType.NoteArchive: {
-                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Archive).toPromise();
-                patchState({
-                    countPrivate: getState().countPrivate + selectedIds.length,
-                    privateNotes: [...newNotes, ...getState().privateNotes]
-                });
-                dispatch([UnSelectAllNote]);
-                break;
-            }
-            case EntityType.NoteShared: {
-                // TODO UPDATE FOR ALL USERS
-                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Shared).toPromise();
-                patchState({
-                    countPrivate: getState().countPrivate + selectedIds.length,
-                    privateNotes: [...newNotes, ...getState().privateNotes]
-                });
-                dispatch([UnSelectAllNote]);
-                break;
-            }
-            case EntityType.NotePrivate: {
-                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Private).toPromise();
-                patchState({
-                    countPrivate: getState().countPrivate + selectedIds.length,
-                    privateNotes: [...newNotes, ...getState().privateNotes],
-                    notesAddingPrivate: [...newNotes]
-                });
-                dispatch([UnSelectAllNote, ClearAddedPrivateNotes]);
-                break;
-            }
-            case EntityType.NoteDeleted: {
-                const newNotes = await this.api.copyNotes(selectedIds, NoteType.Deleted).toPromise();
-                patchState({
-                    countPrivate: getState().countPrivate + selectedIds.length,
-                    privateNotes: [...newNotes, ...getState().privateNotes],
-                    notesAddingPrivate: [...newNotes]
-                });
-                dispatch([UnSelectAllNote, ClearAddedPrivateNotes]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }*/
+        const selectedIds = getState().selectedIds;
+        const newNotes = await this.api.copyNotes(selectedIds, typeNote).toPromise();
+        const privateNotes = getState().notes.find(z => z.typeNotes === NoteType.Private).notes;
+        dispatch(new UpdateNotes(new Notes(NoteType.Private, [...newNotes, ...privateNotes]), NoteType.Private));
+        dispatch([UnSelectAllNote]);
+
+        if (typeNote === NoteType.Private) {
+            patchState({
+                notesAddingPrivate: [...newNotes]
+            });
+            dispatch(ClearAddedPrivateNotes);
+        }
     }
 
     @Action(ClearUpdatelabelEvent)
