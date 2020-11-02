@@ -244,12 +244,12 @@ export class NoteStore {
                 note.color = color;
             }
             return note;
-         });
+        });
 
         const notesForUpdate = notes.filter(x => selectedIds.some(z => z === x.id)).map(note => {
             note = { ...note, color };
             return note;
-         });
+        });
         const updateColor = notesForUpdate.map(note => this.mapFromNoteToUpdateColor(note));
         patchState({ updateColorEvent: updateColor });
         dispatch([new UpdateNotes(new Notes(typeNote, newNotes), typeNote), UnSelectAllNote, ClearColorNotes]);
@@ -391,19 +391,19 @@ export class NoteStore {
         const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
-                                    .map(note => { note = { ...note }; return note; });
+            .map(note => { note = { ...note }; return note; });
         const labelsArray = this.addLabelOnNote(notesForUpdate, label, patchState);
         patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
 
         const notesForStore = notes.map(note => {
-                note = { ...note };
-                if (selectedIds.indexOf(note.id) !== -1) {
-                    if (!note.labels.some(z => z.id === label.id)) {
-                        note.labels = [...note.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
-                    }
+            note = { ...note };
+            if (selectedIds.indexOf(note.id) !== -1) {
+                if (!note.labels.some(z => z.id === label.id)) {
+                    note.labels = [...note.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
                 }
-                return note;
-         });
+            }
+            return note;
+        });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
     }
 
@@ -430,7 +430,7 @@ export class NoteStore {
         const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
-                                    .map(note => { note = { ...note }; return note; });
+            .map(note => { note = { ...note }; return note; });
         const labelsArray = this.removeLabelFromNote(notesForUpdate, label, patchState);
         patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
 
@@ -440,7 +440,7 @@ export class NoteStore {
                 note.labels = note.labels.filter(z => z.id !== label.id);
             }
             return note;
-     });
+        });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
     }
 
@@ -452,13 +452,13 @@ export class NoteStore {
         for (const notes of getState().notes) {
             const notesUpdate = notes.notes.map(note => {
                 if (note.labels.some(z => z.id === label.id)) {
-                    note =  this.updateLabel(note, label);
+                    note = this.updateLabel(note, label);
                     labelUpdate = [{ id: note.id, labels: note.labels }, ...labelUpdate];
                 } else {
                     note = { ...note };
                 }
                 return note;
-             });
+            });
             dispatch(new UpdateNotes(new Notes(notes.typeNotes, notesUpdate), notes.typeNotes));
         }
         patchState({ updateLabelsEvent: labelUpdate });
