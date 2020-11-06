@@ -9,6 +9,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CancelAllSelectedLabels } from './state/notes-actions';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -29,6 +30,18 @@ export class NotesService implements OnDestroy {
     this.pagService.nextPagination
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.nextValuesForPagination());
+
+    this.store.select(NoteStore.getSelectedLabelFilter)
+    .subscribe(x => this.UpdateLabelSelected(x));
+
+    this.store.select(NoteStore.getIsCanceled)
+    .subscribe(x => {
+      if (x === true) {
+        this.firstInit(this.allNotes);
+        this.store.dispatch(new CancelAllSelectedLabels(false));
+        setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -70,6 +83,14 @@ export class NotesService implements OnDestroy {
   delete(ids: string[]) {
     if (ids.length > 0) {
       this.notes = this.notes.filter(x => !ids.some(z => z === x.id));
+      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+    }
+  }
+
+  UpdateLabelSelected(ids: number[]) {
+    console.log(ids);
+    if (ids.length !== 0) {
+      this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
       setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
     }
   }

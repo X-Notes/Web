@@ -92,6 +92,7 @@ export class PersonalizationService {
   toggleHistory = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+  actives = new Map<number, boolean>();
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;

@@ -7,13 +7,14 @@ import { Select, Store } from '@ngxs/store';
 import { LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote } from '../state/notes-actions';
+import { AddNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NotesService } from '../notes.service';
 
 export enum subMenu {
   All = 'all',
@@ -41,7 +42,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   theme = Theme;
   public photoError = false;
   labelsActive: number[] = [];
-  actives = new Map<number, boolean>();
 
   @Select(AppStore.spinnerActive)
   public spinnerActive$: Observable<boolean>;
@@ -108,17 +108,21 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   cancelLabel() {
     this.labelsActive = [];
-    this.actives = new Map();
+    this.pService.actives = new Map();
+
+    this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
   cancelAdd(id: number) {
-    const flag = (this.actives.get(id) === undefined) || (this.actives.get(id) === false) ? true : false;
-    this.actives.set(id, flag);
+    const flag = (this.pService.actives.get(id) === undefined) || (this.pService.actives.get(id) === false) ? true : false;
+    this.pService.actives.set(id, flag);
     if (flag) {
       this.labelsActive.push(id);
     } else {
       this.labelsActive = this.labelsActive.filter(x => x !== id);
     }
+
+    this.store.dispatch(new UpdateSelectLabel(id));
   }
 
   cancelSideBar() {
