@@ -56,7 +56,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const type = this.store.selectSnapshot(AppStore.getRouting);
+      const type = this.store.selectSnapshot(AppStore.getTypeFolder);
       await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
     }
     this.dialogRef.close();

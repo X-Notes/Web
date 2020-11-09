@@ -77,11 +77,11 @@ namespace BI.services.notes
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
-                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Deleted);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteType, NotesType.Deleted);
             }
             else
             {
@@ -113,10 +113,10 @@ namespace BI.services.notes
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Archive);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteType, NotesType.Archive);
             }
             else
             {
@@ -130,10 +130,10 @@ namespace BI.services.notes
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                await noteRepository.CastNotes(notes, user.Notes, request.NoteType, NotesType.Private);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteType, NotesType.Private);
             }
             else
             {
@@ -147,10 +147,10 @@ namespace BI.services.notes
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, request.NoteType, NotesType.Private);
+                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, note.NoteType, NotesType.Private);
                 return mapper.Map<List<SmallNote>>(dbnotes);
             }
             else

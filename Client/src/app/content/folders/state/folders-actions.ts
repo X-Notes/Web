@@ -1,7 +1,6 @@
-import { Folder } from '../models/folder';
 import { Order } from 'src/app/shared/services/order.service';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { Folders } from '../models/Folders';
 
 
 export class LoadPrivateFolders {
@@ -33,13 +32,13 @@ export class AddFolder {
 
 export class ArchiveFolders {
     static type = '[Folders] Archive folders';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
 
 export class ChangeColorFolder {
     static type = '[Folders] Change color folder';
-    constructor(public color: string, public typeFolder: EntityType) {    }
+    constructor(public color: string, public typeFolder: FolderType) {    }
 }
 
 export class ClearColorFolders {
@@ -47,23 +46,18 @@ export class ClearColorFolders {
     constructor() {    }
 }
 
-export class UpdateSmallFolder {
-    static type = '[Folders] Update small folder';
-    constructor(public folder: Folder, public typeFolder: FolderType) {    }
+export class UpdateFolders {
+    static type = '[Folders] Update folders';
+    constructor(public folders: Folders, public typeFolder: FolderType) { }
 }
+
 
 export class SetDeleteFolders {
     static type = '[Folders] SetDelete folder';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
 
-
-export class RestoreFolders {
-    static type = '[Folders] Restore folders';
-    constructor() {
-    }
-}
 
 export class DeleteFoldersPermanently {
     static type = '[Folders] Delete folders';
@@ -79,25 +73,25 @@ export class ClearAddedPrivateFolders {
 
 export class CopyFolders {
     static type = '[Folders] Copy folders';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
 
 export class MakePublicFolders {
     static type = '[Folders] MakePublic folders';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
 
 export class MakePrivateFolders {
     static type = '[Folders] MakePrivate folders';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }
 
 export class PositionFolder {
     static type = '[Folders] Position folders';
-    constructor(public order: Order, public typeFolder: EntityType) {
+    constructor(public order: Order, public typeFolder: FolderType) {
     }
 }
 
@@ -128,6 +122,6 @@ export class UnSelectAllFolder {
 
 export class SelectAllFolder {
     static type = '[Folders] Select all';
-    constructor(public typeFolder: EntityType) {
+    constructor(public typeFolder: FolderType) {
     }
 }

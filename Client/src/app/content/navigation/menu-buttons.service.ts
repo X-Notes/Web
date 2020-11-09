@@ -8,7 +8,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { CopyNotes, SetDeleteNotes, ArchiveNotes, DeleteNotesPermanently, MakePrivateNotes } from '../notes/state/notes-actions';
-import { CopyFolders, SetDeleteFolders, RestoreFolders, ArchiveFolders, DeleteFoldersPermanently } from '../folders/state/folders-actions';
+import { CopyFolders, SetDeleteFolders, ArchiveFolders,
+   DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 
@@ -396,7 +397,7 @@ export class MenuButtonsService {
   }
 
   private copyFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new CopyFolders(folderType));
   }
 
@@ -407,7 +408,7 @@ export class MenuButtonsService {
   }
 
   private setDeleteFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new SetDeleteFolders(folderType));
   }
 
@@ -417,8 +418,8 @@ export class MenuButtonsService {
   }
 
   private restoreFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new RestoreFolders());
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    this.store.dispatch(new MakePrivateFolders(folderType));
   }
 
   // ARCHIVE
@@ -429,7 +430,7 @@ export class MenuButtonsService {
   }
 
   archiveFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new ArchiveFolders(folderType));
   }
 

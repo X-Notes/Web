@@ -273,7 +273,7 @@ export class NoteStore {
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: SetDeleteNotes) {
         const selectedIds = getState().selectedIds;
-        await this.api.setDeleteNotes(selectedIds, typeNote).toPromise();
+        await this.api.setDeleteNotes(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Deleted, selectedIds);
     }
 
@@ -297,9 +297,8 @@ export class NoteStore {
     // Archive
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: ArchiveNotes) {
-
         const selectedIds = getState().selectedIds;
-        await this.api.archiveNotes(selectedIds, NoteType.Deleted).toPromise();
+        await this.api.archiveNotes(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Archive, selectedIds);
     }
 
@@ -312,7 +311,7 @@ export class NoteStore {
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: MakePrivateNotes) {
 
         const selectedIds = getState().selectedIds;
-        await this.api.makePrivateNotes(selectedIds, typeNote).toPromise();
+        await this.api.makePrivateNotes(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Private, selectedIds);
     }
 
@@ -344,7 +343,7 @@ export class NoteStore {
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote }: CopyNotes) {
 
         const selectedIds = getState().selectedIds;
-        const newNotes = await this.api.copyNotes(selectedIds, typeNote).toPromise();
+        const newNotes = await this.api.copyNotes(selectedIds).toPromise();
         const privateNotes = getState().notes.find(z => z.typeNotes === NoteType.Private).notes;
         dispatch(new UpdateNotes(new Notes(NoteType.Private, [...newNotes, ...privateNotes]), NoteType.Private));
         dispatch([UnSelectAllNote]);

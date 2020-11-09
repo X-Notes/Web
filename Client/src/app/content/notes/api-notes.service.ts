@@ -57,27 +57,24 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/color`, obj);
   }
 
-  setDeleteNotes(ids: string[], noteType: NoteType) {
+  setDeleteNotes(ids: string[]) {
     const obj = {
-      ids,
-      noteType
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
   }
 
 
-  makePrivateNotes(ids: string[], noteType: NoteType) {
+  makePrivateNotes(ids: string[]) {
     const obj = {
       ids,
-      noteType
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/ref/private`, obj);
   }
 
-  copyNotes(ids: string[], noteType: NoteType) {
+  copyNotes(ids: string[]) {
     const obj = {
       ids,
-      noteType
     };
     return this.httpClient.patch<SmallNote[]>(environment.writeAPI + `/api/note/copy`, obj);
   }
@@ -89,10 +86,9 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete/permanently`, obj);
   }
 
-  archiveNotes(ids: string[], noteType: NoteType) {
+  archiveNotes(ids: string[]) {
     const obj = {
-      ids,
-      noteType
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/archive`, obj);
   }
