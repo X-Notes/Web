@@ -69,8 +69,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @Select(FullNoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 
-  @Select(NoteStore.privateNotes)
-  public notes$: Observable<SmallNote[]>;
+  public notesLink: SmallNote[];
 
   constructor(private signal: SignalRService,
               private route: ActivatedRoute,
@@ -91,13 +90,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-
-    this.store.dispatch(new UnSelectAllNote());
-
     this.pService.onResize();
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
-    this.load();
+
+    const note = await this.LoadMain();
+    this.LoadSecond(note);
+
     this.connectToHub();
 
 
@@ -183,19 +182,43 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
 
-  async load() { // TODO MAKE UNSUBSCRIBE
+  async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-
     const fullNote = this.store.selectSnapshot(FullNoteStore.oneFull);
+    this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, fullNote.noteType));
+    return fullNote;
+  }
 
+  async LoadSecond(fullNote: FullNote) {
+    await this.store.dispatch(new LoadAllNotes()).toPromise();
     if (fullNote) {
-      this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, fullNote.noteType));
-      this.store.dispatch(new SelectIdNote(this.id, fullNote.labels.map(z => z.id)));
+      console.log(555);
+      this.setSideBarNotes(fullNote.noteType);
     }
-
-    this.store.dispatch(new LoadAllNotes());
     this.store.dispatch(new LoadLabels());
   }
+
+  setSideBarNotes(noteType: NoteType) {
+    switch (noteType) {
+      case NoteType.Deleted: {
+        this.notesLink = this.store.selectSnapshot(NoteStore.deletedNotes);
+        break;
+      }
+      case NoteType.Private: {
+        this.notesLink = this.store.selectSnapshot(NoteStore.privateNotes);
+        break;
+      }
+      case NoteType.Shared: {
+        this.notesLink = this.store.selectSnapshot(NoteStore.sharedNotes);
+        break;
+      }
+      case NoteType.Archive: {
+        this.notesLink = this.store.selectSnapshot(NoteStore.archiveNotes);
+        break;
+      }
+    }
+  }
+
 
   connectToHub() {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
@@ -222,7 +245,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
-    this.store.dispatch(new UnSelectAllNote());
     this.store.dispatch(new DeleteCurrentNote());
     this.routeSubscription.unsubscribe();
     this.signal.hubConnection.invoke('LeaveNote', this.id);

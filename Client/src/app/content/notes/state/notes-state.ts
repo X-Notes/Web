@@ -176,8 +176,8 @@ export class NoteStore {
     }
 
     @Action(LoadAllNotes)
-    loadAllNotes({ dispatch }: StateContext<NoteState>) {
-        dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
+    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
+        await dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]).toPromise();
     }
 
     @Action(LoadAllExceptNotes)
