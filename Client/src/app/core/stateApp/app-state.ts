@@ -7,6 +7,7 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { stat } from 'fs';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { exception } from 'console';
+import { AuthService } from '../auth.service';
 
 
 interface AppState {
@@ -26,6 +27,10 @@ interface AppState {
 @Injectable()
 export class AppStore {
 
+
+    constructor(authService: AuthService) {
+
+    }
 
     @Selector()
     static isNoteInner(state: AppState): boolean {

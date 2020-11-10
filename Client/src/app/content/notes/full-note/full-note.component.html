@@ -2,7 +2,7 @@
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
             <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}"
-                [routerLink]="['/notes/', item.id]">
+                [routerLink]="['/notes', item.id]">
                 <p>{{item.title}}</p>
             </div>
         </ngx-simplebar>
