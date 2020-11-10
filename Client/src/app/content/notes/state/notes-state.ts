@@ -176,8 +176,9 @@ export class NoteStore {
         const id = await this.api.new().toPromise();
         const newNote: SmallNote = { id, title: '', color: NoteColorPallete.Green, labels: [], refType: 0 };
 
-        const notes = getState().notes.find(x => x.typeNotes === NoteType.Private);
-        const toUpdate = new Notes(NoteType.Private, [newNote, ...notes.notes]);
+        const notes = this.getNotesByType(getState, NoteType.Private);
+
+        const toUpdate = new Notes(NoteType.Private, [newNote, ...notes]);
         dispatch(new UpdateNotes(toUpdate, NoteType.Private));
     }
 
@@ -203,7 +204,8 @@ export class NoteStore {
         await this.api.changeColor(selectedIds, color).toPromise();
 
 
-        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const notes = this.getNotesByType(getState, typeNote);
+
         const newNotes = notes.map(note => {
             note = { ...note };
             if (selectedIds.some(z => z === note.id)) {
@@ -249,8 +251,8 @@ export class NoteStore {
         const selectedIds = getState().selectedIds;
         await this.api.deleteNotes(selectedIds).toPromise();
 
-        const notesFrom = getState().notes.find(x => x.typeNotes === NoteType.Deleted);
-        const notesFromNew = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const notesFrom = this.getNotesByType(getState, NoteType.Deleted);
+        const notesFromNew = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
         dispatch(new UpdateNotes(new Notes(NoteType.Deleted, notesFromNew), NoteType.Deleted));
 
         patchState({
@@ -281,6 +283,10 @@ export class NoteStore {
         this.tranformFromTo(getState, patchState, dispatch, typeNote, NoteType.Private, selectedIds);
     }
 
+    getNotesByType(getState: () => NoteState, type: NoteType): SmallNote[] {
+        return getState().notes.find(z => z.typeNotes === type).notes;
+    }
+
     tranformFromTo(
         getState: () => NoteState,
         patchState: (val: Partial<NoteState>) => NoteState,
@@ -289,13 +295,14 @@ export class NoteStore {
         typeTo: NoteType,
         selectedIds: string[]) {
 
-        const notesFrom = getState().notes.find(x => x.typeNotes === typeFrom);
-        const notesFromNew = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const notesFrom = this.getNotesByType(getState, typeFrom);
+        const notesFromNew = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
 
-        const notesAdded = notesFrom.notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        const notesAdded = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
         dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
-        const notesTo = getState().notes.find(z => z.typeNotes === typeTo).notes;
+        const notesTo = this.getNotesByType(getState, typeTo);
+
         const newNotesTo = [...notesAdded, ...notesTo];
         dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
 
@@ -310,7 +317,7 @@ export class NoteStore {
 
         const selectedIds = getState().selectedIds;
         const newNotes = await this.api.copyNotes(selectedIds).toPromise();
-        const privateNotes = getState().notes.find(z => z.typeNotes === NoteType.Private).notes;
+        const privateNotes = this.getNotesByType(getState, NoteType.Private);
         dispatch(new UpdateNotes(new Notes(NoteType.Private, [...newNotes, ...privateNotes]), NoteType.Private));
         dispatch([UnSelectAllNote]);
 
@@ -353,7 +360,7 @@ export class NoteStore {
 
         const selectedIds = getState().selectedIds;
         await this.api.addLabel(label.id, selectedIds).toPromise();
-        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const notes = this.getNotesByType(getState, typeNote);
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
             .map(note => { note = { ...note }; return note; });
@@ -392,7 +399,7 @@ export class NoteStore {
     async removeLabel({ getState, dispatch, patchState }: StateContext<NoteState>, { label, typeNote }: RemoveLabelFromNote) {
         const selectedIds = getState().selectedIds;
         await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
-        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const notes = this.getNotesByType(getState, typeNote);
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
             .map(note => { note = { ...note }; return note; });
@@ -456,7 +463,7 @@ export class NoteStore {
     @Action(PositionNote)
     async changePosition({ patchState, getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
 
-        let notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        let notes = this.getNotesByType(getState, typeNote);
         const changedNote = notes.find(x => x.id === order.entityId);
         const flag = notes.indexOf(changedNote);
         if (flag + 1 !== order.position) {
@@ -470,7 +477,7 @@ export class NoteStore {
 
     @Action(UpdateOneNote)
     updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, typeNote }: UpdateOneNote) {
-        let notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        let notes = this.getNotesByType(getState, typeNote);
         notes = notes.map(nt => {
             if (nt.id === note.id) {
                 nt = { ...note };
@@ -627,7 +634,7 @@ export class NoteStore {
 
     @Action(SelectAllNote)
     selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
-        const notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        const notes = this.getNotesByType(getState, typeNote);
         const ids = notes.map(z => z.id);
         const labelsIds = notes.map(x => {
             const values: LabelsOnSelectedNotes = {
