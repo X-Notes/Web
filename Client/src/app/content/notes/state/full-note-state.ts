@@ -1,7 +1,7 @@
 import { FullNote } from '../models/fullNote';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { LoadFullNote, DeleteCurrentNote } from './full-note-actions';
+import { LoadFullNote, DeleteCurrentNote, UpdateTitle } from './full-note-actions';
 import { ApiServiceNotes } from '../api-notes.service';
 import { AccessType } from '../models/accessType';
 
@@ -52,6 +52,17 @@ export class FullNoteStore {
 
     @Action(DeleteCurrentNote)
     deleteCurrentNote({ setState, getState, patchState }: StateContext<FullNoteState>) {
-        patchState({currentFullNote: null});
+        patchState({ currentFullNote: null });
+    }
+
+
+    @Action(UpdateTitle)
+    async updateTitle({ getState, patchState }: StateContext<FullNoteState>, { str }: UpdateTitle) {
+        const note = getState().currentFullNote;
+        patchState(
+            {
+                currentFullNote: { ...note, title: str }
+            });
+        await this.api.updateTitle(str, note.id).toPromise();
     }
 }

@@ -27,15 +27,16 @@
         (panmove)="panMove($event)" (panend)="panEnd($event)">
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth"
             class="main-content">
-            <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
+            <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
             <div class="labels-section">
-                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels"
+                <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"
                     [ngStyle]="{backgroundColor: label.color}">
                     <p>{{label.name}}</p>
                 </div>
             </div>
             <div class="title-section">
-                <div contenteditable="true" class="title" (input)="onInput($event)"></div>
+                <div contenteditable="true" [textContent]="(note$ | async)?.title" class="title"
+                    (input)="onInput($event)"></div>
                 <div class="placeholder">Give title man</div>
                 <div class="left-border"></div>
             </div>

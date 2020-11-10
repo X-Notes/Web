@@ -101,4 +101,13 @@ export class ApiServiceNotes {
     return this.httpClient.get<string>(environment.writeAPI + `/api/note/new`);
   }
 
+  // FULL NOTE
+
+  updateTitle(title: string, id: string) {
+    const obj = {
+      title,
+      id
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/fullnote/title`, obj);
+  }
 }
