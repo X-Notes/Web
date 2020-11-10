@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { LoadFullNote, DeleteCurrentNote, UpdateTitle } from './full-note-actions';
 import { ApiServiceNotes } from '../api-notes.service';
 import { AccessType } from '../models/accessType';
+import { UpdateOneNote } from './notes-actions';
 
 
 
@@ -57,12 +58,14 @@ export class FullNoteStore {
 
 
     @Action(UpdateTitle)
-    async updateTitle({ getState, patchState }: StateContext<FullNoteState>, { str }: UpdateTitle) {
+    async updateTitle({ getState, patchState, dispatch }: StateContext<FullNoteState>, { str }: UpdateTitle) {
         const note = getState().currentFullNote;
+        const newNote  = { ...note, title: str };
         patchState(
             {
-                currentFullNote: { ...note, title: str }
+                currentFullNote: newNote
             });
         await this.api.updateTitle(str, note.id).toPromise();
+        dispatch(new UpdateOneNote(newNote, note.noteType));
     }
 }

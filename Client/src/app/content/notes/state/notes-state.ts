@@ -8,7 +8,7 @@ import {
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateNotes, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
-    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent, UpdateLabelOnNote
+    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent, UpdateLabelOnNote, UpdateOneNote
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -538,5 +538,17 @@ export class NoteStore {
             return values;
         });
         patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });
+    }
+
+    @Action(UpdateOneNote)
+    updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, typeNote}: UpdateOneNote) {
+        let notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        notes = notes.map(nt => {
+            if (nt.id === note.id) {
+                nt = {...note};
+            }
+            return nt;
+        });
+        dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
     }
 }

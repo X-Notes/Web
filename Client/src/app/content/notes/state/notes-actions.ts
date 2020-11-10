@@ -3,6 +3,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Label } from '../../labels/models/label';
 import { Notes } from './Notes';
+import { SmallNote } from '../models/smallNote';
 
 
 export class LoadPrivateNotes {
@@ -156,5 +157,12 @@ export class UnSelectAllNote {
 export class SelectAllNote {
     static type = '[Notes] Select all';
     constructor(public typeNote: NoteType) {
+    }
+}
+
+// UPDATING FROM FULL NOTE
+export class UpdateOneNote {
+    static type = '[Notes] update one one';
+    constructor(public note: SmallNote, public typeNote: NoteType) {
     }
 }
