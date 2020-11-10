@@ -8,7 +8,8 @@ import {
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateNotes, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
-    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes, ClearUpdatelabelEvent, UpdateLabelOnNote, UpdateOneNote
+    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
+    ClearUpdatelabelEvent, UpdateLabelOnNote, UpdateOneNote, LoadFullNote, DeleteCurrentNote, UpdateTitle, ChangeColorFullNote
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -20,10 +21,20 @@ import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
 import { Observable } from 'rxjs';
+import { FullNote } from '../models/fullNote';
+import { AccessType } from '../models/accessType';
 
+
+
+interface FullNoteState {
+    note: FullNote;
+    canView: boolean;
+    accessType: AccessType;
+}
 
 interface NoteState {
     notes: Notes[];
+    fullNoteState: FullNoteState;
     selectedIds: string[];
     labelsIdsFromSelectedIds: LabelsOnSelectedNotes[];
     updateColorEvent: UpdateColor[];
@@ -36,6 +47,7 @@ interface NoteState {
     name: 'Notes',
     defaults: {
         notes: [],
+        fullNoteState: null,
         selectedIds: [],
         labelsIdsFromSelectedIds: [],
         updateColorEvent: [],
@@ -93,7 +105,28 @@ export class NoteStore {
         return state.labelsIdsFromSelectedIds;
     }
 
+    // FULL NOTE
+
+
+    @Selector()
+    static oneFull(state: NoteState): FullNote {
+        return state.fullNoteState?.note;
+    }
+
+
+    @Selector()
+    static canView(state: NoteState): boolean {
+        return state.fullNoteState?.canView;
+    }
+
+    @Selector()
+    static canNoView(state: NoteState): boolean {
+        return !state.fullNoteState?.canView;
+    }
+
+
     // Get notes
+
     @Selector()
     static privateNotes(state: NoteState): SmallNote[] {
         return state.notes.find(x => x.typeNotes === NoteType.Private).notes;
@@ -115,6 +148,7 @@ export class NoteStore {
     }
 
     // Get count notes
+
     @Selector()
     static privateCount(state: NoteState): number {
         return state.notes.find(x => x.typeNotes === NoteType.Private).count;
@@ -135,75 +169,7 @@ export class NoteStore {
         return state.notes.find(x => x.typeNotes === NoteType.Shared).count;
     }
 
-    @Action(LoadPrivateNotes)
-    async loadPrivateNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Private)) {
-            const notesAPI = await this.api.getPrivateNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
 
-    @Action(LoadSharedNotes)
-    async loadSharedNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Shared)) {
-            const notesAPI = await this.api.getSharedNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadArchiveNotes)
-    async loadArchiveNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Archive)) {
-            const notesAPI = await this.api.getArchiveNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadDeletedNotes)
-    async loadDeletedNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Deleted)) {
-            const notesAPI = await this.api.getDeletedNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadAllNotes)
-    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
-        await dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]).toPromise();
-    }
-
-    @Action(LoadAllExceptNotes)
-    async loadExceptedNotes({ dispatch }: StateContext<NoteState>, { typeNote }: LoadAllExceptNotes) {
-        switch (typeNote) {
-            case NoteType.Archive: {
-                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Private: {
-                dispatch([LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Shared: {
-                dispatch([LoadPrivateNotes, LoadArchiveNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Deleted: {
-                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }
-    }
 
     @Action(AddNote)
     async newNote({ getState, patchState, dispatch }: StateContext<NoteState>) {
@@ -501,7 +467,141 @@ export class NoteStore {
         }
     }
 
+
+    @Action(UpdateOneNote)
+    updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, typeNote }: UpdateOneNote) {
+        let notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
+        notes = notes.map(nt => {
+            if (nt.id === note.id) {
+                nt = { ...note };
+            }
+            return nt;
+        });
+        dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
+    }
+
+    // FULL NOTE
+
+    @Action(LoadFullNote)
+    async loadFull({ setState, getState, patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
+        const request = await this.api.get(id).toPromise();
+        patchState({
+            fullNoteState: {
+                canView: request.canView,
+                accessType: request.accessType,
+                note: request.fullNote
+            }
+        });
+    }
+
+    @Action(DeleteCurrentNote)
+    deleteCurrentNote({ setState, getState, patchState }: StateContext<NoteState>) {
+        patchState({ fullNoteState: null });
+    }
+
+
+    @Action(UpdateTitle)
+    async updateTitle({ getState, patchState, dispatch }: StateContext<NoteState>, { str }: UpdateTitle) {
+        const note = getState().fullNoteState.note;
+        const newNote: FullNote = { ...note, title: str };
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+        await this.api.updateTitle(str, note.id).toPromise();
+        dispatch(new UpdateOneNote(newNote, note.noteType));
+    }
+
+    @Action(ChangeColorFullNote)
+    async changeColorFullNote({ getState, patchState, dispatch }: StateContext<NoteState>, { color }: ChangeColorFullNote) {
+
+        await this.api.changeColor([getState().fullNoteState.note.id], color).toPromise();
+
+        const note = getState().fullNoteState.note;
+        const newNote: FullNote = { ...note, color };
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+
+        dispatch(new UpdateOneNote(newNote, note.noteType));
+    }
+
+
+
+
+
+
+
+    // LOADING SMALL
+
+    @Action(LoadPrivateNotes)
+    async loadPrivateNotes({ getState, patchState }: StateContext<NoteState>) {
+        if (!getState().notes.find(z => z.typeNotes === NoteType.Private)) {
+            const notesAPI = await this.api.getPrivateNotes().toPromise();
+            patchState({
+                notes: [...getState().notes, notesAPI]
+            });
+        }
+    }
+
+    @Action(LoadSharedNotes)
+    async loadSharedNotes({ getState, patchState }: StateContext<NoteState>) {
+        if (!getState().notes.find(z => z.typeNotes === NoteType.Shared)) {
+            const notesAPI = await this.api.getSharedNotes().toPromise();
+            patchState({
+                notes: [...getState().notes, notesAPI]
+            });
+        }
+    }
+
+    @Action(LoadArchiveNotes)
+    async loadArchiveNotes({ getState, patchState }: StateContext<NoteState>) {
+        if (!getState().notes.find(z => z.typeNotes === NoteType.Archive)) {
+            const notesAPI = await this.api.getArchiveNotes().toPromise();
+            patchState({
+                notes: [...getState().notes, notesAPI]
+            });
+        }
+    }
+
+    @Action(LoadDeletedNotes)
+    async loadDeletedNotes({ getState, patchState }: StateContext<NoteState>) {
+        if (!getState().notes.find(z => z.typeNotes === NoteType.Deleted)) {
+            const notesAPI = await this.api.getDeletedNotes().toPromise();
+            patchState({
+                notes: [...getState().notes, notesAPI]
+            });
+        }
+    }
+
+    @Action(LoadAllNotes)
+    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
+        await dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]).toPromise();
+    }
+
+    @Action(LoadAllExceptNotes)
+    async loadExceptedNotes({ dispatch }: StateContext<NoteState>, { typeNote }: LoadAllExceptNotes) {
+        switch (typeNote) {
+            case NoteType.Archive: {
+                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Private: {
+                dispatch([LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Shared: {
+                dispatch([LoadPrivateNotes, LoadArchiveNotes, LoadDeletedNotes]);
+                break;
+            }
+            case NoteType.Deleted: {
+                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes]);
+                break;
+            }
+            default: {
+                throw new Error('Inccorect type');
+            }
+        }
+    }
+
     // NOTES SELECTION
+
+
     @Action(SelectIdNote)
     select({ patchState, getState }: StateContext<NoteState>, { id, labelIds }: SelectIdNote) {
         const ids = getState().selectedIds;
@@ -511,7 +611,6 @@ export class NoteStore {
         };
         patchState({ selectedIds: [id, ...ids], labelsIdsFromSelectedIds: [select, ...getState().labelsIdsFromSelectedIds] });
     }
-
 
     @Action(UnSelectIdNote)
     unSelect({ getState, patchState }: StateContext<NoteState>, { id }: UnSelectIdNote) {
@@ -540,15 +639,4 @@ export class NoteStore {
         patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });
     }
 
-    @Action(UpdateOneNote)
-    updateOneSmallNote({ dispatch, getState }: StateContext<NoteState>, { note, typeNote}: UpdateOneNote) {
-        let notes = getState().notes.find(z => z.typeNotes === typeNote).notes;
-        notes = notes.map(nt => {
-            if (nt.id === note.id) {
-                nt = {...note};
-            }
-            return nt;
-        });
-        dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
-    }
 }

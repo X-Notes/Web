@@ -1,13 +1,12 @@
 import {
   Component, OnInit, OnDestroy,
-  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit, OnChanges, SimpleChanges
-} from '@angular/core';
+  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit} from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { SelectIdNote, UnSelectAllNote, LoadAllNotes } from '../state/notes-actions';
+import { DeleteCurrentNote, LoadAllNotes, LoadFullNote, UpdateTitle } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -28,8 +27,6 @@ import { LoadLabels } from '../../labels/state/labels-actions';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { LoadFullNote, DeleteCurrentNote, UpdateTitle } from '../state/full-note-actions';
-import { FullNoteStore } from '../state/full-note-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 
 
@@ -53,7 +50,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('fullWrap') wrap: ElementRef;
 
-  @Select(FullNoteStore.oneFull)
+  @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
   theme = Theme;
@@ -66,10 +63,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   private routeSubscription: Subscription;
   private id: string;
 
-  @Select(FullNoteStore.canView)
+  @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
 
-  @Select(FullNoteStore.canNoView)
+  @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 
   public notesLink: SmallNote[];
@@ -93,7 +90,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   // TODO MAYBE NEED UserStore.getTokenUpdated
 
   ngAfterViewInit(): void {
-    const note = this.store.selectSnapshot(FullNoteStore.oneFull);
+    const note = this.store.selectSnapshot(NoteStore.oneFull);
     if (note) {
       this.sliderService.goTo(this.sliderService.active, this.wrap);
     }
@@ -110,7 +107,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    const fullNote = this.store.selectSnapshot(FullNoteStore.oneFull);
+    const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
     this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, fullNote.noteType));
     return fullNote;
   }

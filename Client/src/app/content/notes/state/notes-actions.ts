@@ -161,8 +161,33 @@ export class SelectAllNote {
 }
 
 // UPDATING FROM FULL NOTE
+
 export class UpdateOneNote {
     static type = '[Notes] update one one';
     constructor(public note: SmallNote, public typeNote: NoteType) {
     }
 }
+
+// FULL NOTE
+
+export class LoadFullNote {
+    static type = '[Notes] Load full note';
+    constructor(public id: string) { }
+}
+
+export class DeleteCurrentNote {
+    static type = '[Notes] delete full note';
+    constructor() { }
+}
+
+
+export class UpdateTitle {
+    static type = '[Notes] update title';
+    constructor(public str: string) { }
+}
+
+export class ChangeColorFullNote {
+    static type = '[Notes] change color fullNote';
+    constructor(public color: string) { }
+}
+
