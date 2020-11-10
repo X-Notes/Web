@@ -33,6 +33,11 @@ export class AppStore {
     }
 
     @Selector()
+    static isFolderInner(state: AppState): boolean {
+        return state.routing === EntityType.FolderInner;
+    }
+
+    @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
     }

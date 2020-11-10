@@ -11,7 +11,7 @@ using WriteContext.Repositories;
 
 namespace BI.services.notes
 {
-    public class FullNoteHandlerCommand:
+    public class FullNoteHandlerCommand :
         IRequestHandler<UpdateTitleCommand, Unit>
     {
         private readonly UserRepository userRepository;
@@ -24,23 +24,52 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(UpdateTitleCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotes(request.Email);
-            var note = user.Notes.FirstOrDefault(x => x.Id.ToString("N") == request.Id);
-
-            if (note != null)
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if (user != null && Guid.TryParse(request.Id, out var guid))
             {
-                note.Title = request.Title;
-                await noteRepository.UpdateNote(note);
-                if(note.NoteType == NotesType.Shared)
+                var note = await this.noteRepository.GetForUpdatingTitle(guid);
+                switch (note.NoteType)
                 {
-                    Console.WriteLine("TODO UPDATE SHARED FOR ALL USER");
+                    case NotesType.Shared:
+                        {
+                            switch (note.RefType)
+                            {
+                                case RefType.Editor:
+                                    {
+                                        throw new Exception("No implimented");
+                                        break;
+                                    }
+                                case RefType.Viewer:
+                                    {
+                                        throw new Exception("No implimented");
+                                    }
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            if (note.UserId == user.Id)
+                            {
+                                note.Title = request.Title;
+                                await noteRepository.UpdateNote(note);
+                            }
+                            else
+                            {
+                                var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
+                                if (noteUser != null)
+                                {
+                                    note.Title = request.Title;
+                                    await noteRepository.UpdateNote(note);
+                                }
+                                else
+                                {
+                                    throw new Exception("No access rights");
+                                }
+                            }
+                            break;
+                        }
                 }
             }
-            else
-            {
-                throw new Exception();
-            }
-
             return Unit.Value;
         }
     }
