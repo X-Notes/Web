@@ -35,8 +35,8 @@
                 </div>
             </div>
             <div class="title-section">
-                <div contenteditable="true" [textContent]="(note$ | async)?.title" class="title"
-                    (input)="onInput($event)"></div>
+                <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
+                    class="title" (input)="onInput($event)"></div>
                 <div class="placeholder">Give title man</div>
                 <div class="left-border"></div>
             </div>

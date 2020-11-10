@@ -212,6 +212,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.nameChanged.next($event.target.innerHTML);
   }
 
+  pasteCommandHandler(e) {
+     e.preventDefault();
+     const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+     document.execCommand('insertHTML', false, text);
+  }
+
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
     this.destroy.next();
