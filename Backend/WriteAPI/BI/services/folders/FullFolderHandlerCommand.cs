@@ -1,5 +1,5 @@
 ﻿using Common.DatabaseModels.helpers;
-using Domain.Commands.noteInner;
+using Domain.Commands.folderInner;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,30 +9,31 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 
-namespace BI.services.notes
+namespace BI.services.folders
 {
-    public class FullNoteHandlerCommand :
-        IRequestHandler<UpdateTitleNoteCommand, Unit>
+    public class FullFolderHandlerCommand :
+        IRequestHandler<UpdateTitleFolderCommand, Unit>
     {
+        private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
-        private readonly NoteRepository noteRepository;
-        public FullNoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository)
+
+        public FullFolderHandlerCommand(FolderRepository folderRepository, UserRepository userRepository)
         {
+            this.folderRepository = folderRepository;
             this.userRepository = userRepository;
-            this.noteRepository = noteRepository;
         }
 
-        public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
-                var note = await this.noteRepository.GetForUpdatingTitle(guid);
-                switch (note.NoteType)
+                var folder = await folderRepository.GetForUpdateTitle(guid);
+                switch(folder.FolderType)
                 {
-                    case NotesType.Shared:
+                    case FoldersType.Shared:
                         {
-                            switch (note.RefType)
+                            switch (folder.RefType)
                             {
                                 case RefType.Editor:
                                     {
@@ -48,18 +49,18 @@ namespace BI.services.notes
                         }
                     default:
                         {
-                            if (note.UserId == user.Id)
+                            if (folder.UserId == user.Id)
                             {
-                                note.Title = request.Title;
-                                await noteRepository.UpdateNote(note);
+                                folder.Title = request.Title;
+                                await folderRepository.UpdateFolder(folder);
                             }
                             else
                             {
-                                var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
+                                var noteUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
                                 if (noteUser != null)
                                 {
-                                    note.Title = request.Title;
-                                    await noteRepository.UpdateNote(note);
+                                    folder.Title = request.Title;
+                                    await folderRepository.UpdateFolder(folder);
                                 }
                                 else
                                 {

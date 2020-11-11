@@ -14,6 +14,7 @@ using Common.DTO.notes;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.folderInner;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.noteInner;
@@ -143,7 +144,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
             // FULL NOTE
-            services.AddScoped<IRequestHandler<UpdateTitleCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
@@ -159,6 +160,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+
+            // FULL-FOLDER
+            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
