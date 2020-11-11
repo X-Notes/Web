@@ -4,7 +4,7 @@ import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/service
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, take, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
-import { LabelStore } from '../../labels/state/labels-state';
+import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { AddNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
@@ -41,7 +41,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   loaded = false;
   theme = Theme;
   public photoError = false;
-  labelsActive: number[] = [];
+  labelsActive = false;
 
   @Select(AppStore.spinnerActive)
   public spinnerActive$: Observable<boolean>;
@@ -49,8 +49,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
-  @Select(LabelStore.all)
-  public labels$: Observable<Label[]>;
+  public labelsFilters: LabelsForFiltersNotes[] = [];
 
 
   @Select(NoteStore.privateCount)
@@ -78,7 +77,8 @@ export class NotesComponent implements OnInit, OnDestroy {
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        this.store.dispatch(new LoadLabels());
+        await this.store.dispatch(new LoadLabels()).toPromise();
+        this.labelsFilters = this.store.selectSnapshot(LabelStore.labelsForNotesFiltering);
         await this.pService.disableSpinnerPromise();
         this.loaded = true;
       }
@@ -108,21 +108,15 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   cancelLabel() {
-    this.labelsActive = [];
-    this.pService.actives = new Map();
-
+    this.labelsActive = false;
+    this.labelsFilters.forEach(z => z.selected = false);
     this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
-  cancelAdd(id: number) {
-    const flag = (this.pService.actives.get(id) === undefined) || (this.pService.actives.get(id) === false) ? true : false;
-    this.pService.actives.set(id, flag);
-    if (flag) {
-      this.labelsActive.push(id);
-    } else {
-      this.labelsActive = this.labelsActive.filter(x => x !== id);
-    }
-
+  filterNotes(id: number) {
+    const label = this.labelsFilters.find(z => z.label.id === id);
+    label.selected = !label.selected;
+    this.labelsActive = this.labelsFilters.filter(z => z.selected === true).length > 0;
     this.store.dispatch(new UpdateSelectLabel(id));
   }
 
