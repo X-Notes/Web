@@ -9,7 +9,6 @@ namespace Domain.Commands.folders
     public class ArchiveFolderCommand : BaseCommandEntity, IRequest<Unit>
     {
         public List<string> Ids { set; get; }
-        public FoldersType FolderType { set; get; }
         public ArchiveFolderCommand(string email) : base(email)
         {
 

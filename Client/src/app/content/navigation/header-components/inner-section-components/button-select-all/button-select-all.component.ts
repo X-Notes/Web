@@ -34,12 +34,12 @@ export class ButtonSelectAllComponent implements OnInit {
   selectAll() {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const noteType = this.store.selectSnapshot(AppStore.getRouting);
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       this.store.dispatch(new SelectAllNote(noteType));
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const folderType = this.store.selectSnapshot(AppStore.getRouting);
+      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
       this.store.dispatch(new SelectAllFolder(folderType));
     }
   }

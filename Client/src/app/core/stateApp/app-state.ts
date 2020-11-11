@@ -5,6 +5,9 @@ import { UpdateRoute
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { stat } from 'fs';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { exception } from 'console';
+import { AuthService } from '../auth.service';
 
 
 interface AppState {
@@ -24,6 +27,15 @@ interface AppState {
 @Injectable()
 export class AppStore {
 
+
+    constructor(authService: AuthService) {
+
+    }
+
+    @Selector()
+    static isFolderInner(state: AppState): boolean {
+        return state.routing === EntityType.FolderInner;
+    }
 
     @Selector()
     static isNoteInner(state: AppState): boolean {
@@ -104,6 +116,49 @@ export class AppStore {
     @Selector()
     static getInnerNoteType(state: AppState): NoteType {
         return state.innerNoteType;
+    }
+
+    @Selector()
+    static getTypeNote(state: AppState): NoteType {
+        switch (state.routing) {
+            case EntityType.NotePrivate: {
+                return NoteType.Private;
+            }
+            case EntityType.NoteArchive: {
+                return NoteType.Archive;
+            }
+            case EntityType.NoteDeleted: {
+                return NoteType.Deleted;
+            }
+            case EntityType.NoteShared: {
+                return NoteType.Shared;
+            }
+            default: {
+                throw new Error('Incorrect type');
+            }
+        }
+    }
+
+    @Selector()
+    static getTypeFolder(state: AppState): FolderType {
+        switch (state.routing) {
+
+            case EntityType.FolderPrivate: {
+                return FolderType.Private;
+            }
+            case EntityType.FolderShared: {
+                return FolderType.Shared;
+            }
+            case EntityType.FolderDeleted: {
+                return FolderType.Deleted;
+            }
+            case EntityType.FolderArchive: {
+                return FolderType.Archive;
+            }
+            default: {
+                throw new Error('Incorrect type');
+            }
+        }
     }
 
     // UPPER MENU SELECTORS

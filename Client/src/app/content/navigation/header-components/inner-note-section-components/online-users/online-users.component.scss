@@ -1,7 +1,7 @@
 @import "variables";
 
 :host{
-    width: calc(100% - 300px);
+    flex-basis: calc(100% - 85%);
 }
 
 .wrapper-people {
@@ -146,12 +146,16 @@
 }
 
 @media (min-width: 1024px) and (max-width: 1440px) {
+
     .wrapper-people {
         z-index: 50;
     }
 }
 
 @media (max-width: 1024px) {
+    :host{
+        flex-basis: 100%;
+    }
     .wrapper-people {
         position: static;
         left: initial;

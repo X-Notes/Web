@@ -7,6 +7,8 @@ import { EntityType } from '../enums/EntityTypes';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
+import { NoteType } from '../enums/NoteTypes';
+import { FolderType } from '../enums/FolderTypes';
 
 @Injectable()
 export class MurriService  {
@@ -26,7 +28,7 @@ export class MurriService  {
   }
 
 
-  initMurriNoteAsync(type: EntityType) {
+  initMurriNoteAsync(type: NoteType) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
       this.initMurriNote(type);
       resolve(true);
@@ -34,7 +36,7 @@ export class MurriService  {
     ));
   }
 
-  private initMurriNote(type: EntityType) {
+  private initMurriNote(type: NoteType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -52,7 +54,7 @@ export class MurriService  {
     });
   }
 
-  initMurriFolderAsync(type: EntityType) {
+  initMurriFolderAsync(type: FolderType) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
       this.initMurriFolder(type);
       resolve(true);
@@ -60,7 +62,7 @@ export class MurriService  {
     ));
   }
 
-  private initMurriFolder(type: EntityType) {
+  private initMurriFolder(type: FolderType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;

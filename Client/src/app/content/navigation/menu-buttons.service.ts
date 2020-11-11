@@ -7,13 +7,11 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { CopyNotes, SetDeleteNotes, RestoreNotes, ArchiveNotes, DeleteNotesPermanently } from '../notes/state/notes-actions';
-import { CopyFolders, SetDeleteFolders, RestoreFolders, ArchiveFolders, DeleteFoldersPermanently } from '../folders/state/folders-actions';
+import { CopyNotes, SetDeleteNotes, ArchiveNotes, DeleteNotesPermanently, MakePrivateNotes } from '../notes/state/notes-actions';
+import { CopyFolders, SetDeleteFolders, ArchiveFolders,
+   DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
-import { FolderStore } from '../folders/state/folders-state';
-import { merge } from 'rxjs';
-import { NoteStore } from '../notes/state/notes-state';
 
 
 @Injectable({providedIn: 'root'})
@@ -141,7 +139,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'restore',
-      operation: this.restoreNotes.bind(this)
+      operation: this.makePrivateNotes.bind(this)
     }
   ];
   public notesItemsArchive: MenuItem[] = [
@@ -151,6 +149,10 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
+      operation: this.changeLabels.bind(this)
+    },
+    {
+      icon: 'private',
       operation: this.changeLabels.bind(this)
     },
     {
@@ -382,7 +384,7 @@ export class MenuButtonsService {
         title: 'Share'
       },
       autoFocus: false,
-      panelClass: theme === Theme.Light ? ['custom-dialog-class-light','sharing-modal'] : ['custom-dialog-class-dark','sharing-modal'],
+      panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }
@@ -390,45 +392,45 @@ export class MenuButtonsService {
 
   // COPY
   private copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new CopyNotes(noteType));
   }
 
   private copyFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new CopyFolders(folderType));
   }
 
   // SET DELETE
   private setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new SetDeleteNotes(noteType));
   }
 
   private setDeleteFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new SetDeleteFolders(folderType));
   }
 
-  // RESTORE
-  private restoreNotes() {
-    this.store.dispatch(new RestoreNotes());
+  private makePrivateNotes() {
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+    this.store.dispatch(new MakePrivateNotes(noteType));
   }
 
   private restoreFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new RestoreFolders());
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    this.store.dispatch(new MakePrivateFolders(folderType));
   }
 
   // ARCHIVE
 
   archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     this.store.dispatch(new ArchiveNotes(noteType));
   }
 
   archiveFolders() {
-    const folderType = this.store.selectSnapshot(AppStore.getRouting);
+    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     this.store.dispatch(new ArchiveFolders(folderType));
   }
 

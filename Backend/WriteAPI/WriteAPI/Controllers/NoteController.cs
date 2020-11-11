@@ -59,14 +59,6 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [HttpPatch("restore")]
-        public async Task RestoreNotes([FromBody]RestoreNoteCommand command)
-        {
-            var email = this.GetUserEmail();
-            command.Email = email;
-            await this._mediator.Send(command);
-        }
-
 
         [HttpPatch("copy")]
         public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)

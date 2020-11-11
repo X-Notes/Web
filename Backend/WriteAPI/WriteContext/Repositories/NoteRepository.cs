@@ -63,6 +63,13 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
+        public async Task<Note> GetForUpdatingTitle(Guid id)
+        {
+            return await contextDB.Notes
+                .Include(x => x.UsersOnPrivateNotes)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<Note> GetFull(Guid id)
         {
             return await contextDB.Notes

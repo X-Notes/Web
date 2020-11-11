@@ -80,7 +80,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   select() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     if (!this.isHighlight) {
       this.store.dispatch(new AddLabelOnNote(this.label, noteType));
     } else {
