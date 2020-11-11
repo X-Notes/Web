@@ -163,6 +163,13 @@ namespace WriteContext.Repositories
         }
 
 
+        public async Task<Folder> GetForUpdateTitle(Guid id)
+        {
+            return await contextDB.Folders
+                .Include(x => x.UsersOnPrivateFolders)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<Folder> GetFull(Guid id)
         {
             return await contextDB.Folders.FirstOrDefaultAsync(x => x.Id == id);

@@ -35,6 +35,7 @@ export class AuthService {
   }
 
   private async configureAuthState(firebaseUser: firebase.User) {
+    console.log('verifsds');
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken(true);
       this.store.dispatch(new SetToken(token));

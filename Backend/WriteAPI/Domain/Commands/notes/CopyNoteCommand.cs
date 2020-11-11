@@ -10,7 +10,6 @@ namespace Domain.Commands.notes
     public class CopyNoteCommand : BaseCommandEntity, IRequest<List<SmallNote>>
     {
         public List<string> Ids { set; get; }
-        public NotesType NoteType { set; get; }
         public CopyNoteCommand(string email) : base(email)
         {
 

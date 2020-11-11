@@ -1,10 +1,11 @@
 <div class="outer" [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"></div>
-<div class="folder" [ngStyle]="{'backgroundColor': folder.color}" >
-    <div class="highligt" (click)="highlight(folder.id)" [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
+<div class="folder" [ngStyle]="{'backgroundColor': folder.color}">
+    <div class="highligt" (click)="highlight(folder.id)"
+        [ngStyle]="{'backgroundColor': isHighlight? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
         <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
     </div>
     <div class="folder-inner">
-        <input type="text" placeholder="Name your folder">
+        <input type="text" placeholder="Name your folder" [ngModel]="folder.title" (ngModelChange)='changed($event)'>
         <div class="notes" (click)="toFolder()" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}">
             <div class="note">
                 <i class="icon-notes"></i>
@@ -21,4 +22,5 @@
         </div>
     </div>
 </div>
-<div class="outer" [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }" [routerLink]="['/folders/', folder.id]"></div>
+<div class="outer" [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"
+    [routerLink]="['/folders/', folder.id]"></div>

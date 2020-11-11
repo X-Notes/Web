@@ -9,7 +9,6 @@ namespace Domain.Commands.folders
     public class SetDeleteFolderCommand : BaseCommandEntity, IRequest<Unit>
     {
         public List<string> Ids { set; get; }
-        public FoldersType FolderType { set; get; }
         public SetDeleteFolderCommand(string email) : base(email)
         {
 
