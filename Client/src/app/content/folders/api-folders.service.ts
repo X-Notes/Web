@@ -90,5 +90,14 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/ref/private`, obj);
   }
 
+  // FULL FOLDER
+
+  updateTitle(title: string, id: string) {
+    const obj = {
+      title,
+      id
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/fullfolder/title`, obj);
+  }
 
 }

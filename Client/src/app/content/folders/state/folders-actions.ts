@@ -1,6 +1,7 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { Folders } from '../models/Folders';
+import { Folder } from '../models/folder';
 
 
 export class LoadPrivateFolders {
@@ -103,6 +104,7 @@ export class RemoveFromDomMurri {
 }
 
 
+
 // SELECTION
 export class SelectIdFolder {
     static type = '[Folders] Select folder';
@@ -123,5 +125,17 @@ export class UnSelectAllFolder {
 export class SelectAllFolder {
     static type = '[Folders] Select all';
     constructor(public typeFolder: FolderType) {
+    }
+}
+
+
+export class UpdateTitle {
+    static type = '[Folders] update title';
+    constructor(public str: string, public id: string, public typeFolder: FolderType) { }
+}
+
+export class UpdateOneFolder {
+    static type = '[Folders] update one one';
+    constructor(public folder: Folder, public typeFolder: FolderType) {
     }
 }

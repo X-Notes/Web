@@ -134,6 +134,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       );
 
     this.nameChanged.pipe(
+      takeUntil(this.destroy),
       debounceTime(50))
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
 

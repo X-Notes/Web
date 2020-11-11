@@ -1,12 +1,13 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { FolderStore } from '../state/folders-state';
-import { takeUntil, map } from 'rxjs/operators';
-import { SelectIdFolder, UnSelectIdFolder } from '../state/folders-actions';
+import { takeUntil, map, debounceTime } from 'rxjs/operators';
+import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { FontSize } from 'src/app/shared/enums/FontSize';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-folder',
@@ -18,6 +19,8 @@ export class FolderComponent implements OnInit, OnDestroy {
   selectedFlag = false;
   fontSize = FontSize;
   destroy = new Subject<void>();
+
+  nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   isHighlight = false;
   @Input() folder: Folder;
@@ -32,19 +35,27 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.select(FolderStore.selectedIds)
-    .pipe(takeUntil(this.destroy))
-    .pipe(map(z => this.tryFind(z)))
-    .subscribe(flag => this.isHighlight = flag);
+      .pipe(takeUntil(this.destroy))
+      .pipe(map(z => this.tryFind(z)))
+      .subscribe(flag => this.isHighlight = flag);
 
     this.store.select(FolderStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.selectedFlag = true;
-      } else {
-        this.selectedFlag = false;
-      }
-    });
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        if (x > 0) {
+          this.selectedFlag = true;
+        } else {
+          this.selectedFlag = false;
+        }
+      });
+
+    this.nameChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(250))
+      .subscribe(title => {
+        const type = this.store.selectSnapshot(AppStore.getTypeFolder);
+        this.store.dispatch(new UpdateTitle(title, this.folder.id, type));
+      });
   }
 
   tryFind(z: string[]): boolean {
@@ -75,9 +86,9 @@ export class FolderComponent implements OnInit, OnDestroy {
     let G = parseInt(color.substring(3, 5), 16);
     let B = parseInt(color.substring(5, 7), 16);
 
-    R = parseInt( (R * (100 + percent) / 100).toString() , 10);
-    G = parseInt( (G * (100 + percent) / 100).toString() , 10);
-    B = parseInt( (B * (100 + percent) / 100).toString() , 10);
+    R = parseInt((R * (100 + percent) / 100).toString(), 10);
+    G = parseInt((G * (100 + percent) / 100).toString(), 10);
+    B = parseInt((B * (100 + percent) / 100).toString(), 10);
 
     R = (R < 255) ? R : 255;
     G = (G < 255) ? G : 255;
@@ -88,6 +99,10 @@ export class FolderComponent implements OnInit, OnDestroy {
     const BB = ((B.toString(16).length === 1) ? '0' + B.toString(16) : B.toString(16));
 
     return '#' + RR + GG + BB;
-}
+  }
+
+  changed(text) {
+    this.nameChanged.next(text);
+  }
 
 }

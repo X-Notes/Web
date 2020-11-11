@@ -8,13 +8,12 @@ import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllExceptFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, SetDeleteFolders, DeleteFoldersPermanently, CopyFolders,
-    ClearAddedPrivateFolders, MakePublicFolders, MakePrivateFolders, PositionFolder, UpdateFolders } from './folders-actions';
-import { tap } from 'rxjs/operators';
+    ClearAddedPrivateFolders, MakePublicFolders,
+     MakePrivateFolders, PositionFolder, UpdateFolders, UpdateTitle, UpdateOneFolder } from './folders-actions';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { Folders } from '../models/Folders';
 import { Observable } from 'rxjs';
 
@@ -399,5 +398,29 @@ export class FolderStore {
         .map(z => z.id);
 
         patchState({ selectedIds: [...ids] });
+    }
+
+    getFoldersByType(getState: () => FolderState, type: FolderType): Folder[] {
+        return getState().folders.find(z => z.typeFolders === type).folders;
+    }
+
+    @Action(UpdateOneFolder)
+    updateOneFolder({ dispatch, getState }: StateContext<FolderState>, { folder, typeFolder }: UpdateOneFolder) {
+        let folders = this.getFoldersByType(getState, typeFolder);
+        folders = folders.map(nt => {
+            if (nt.id === folder.id) {
+                nt = { ...folder };
+            }
+            return nt;
+        });
+        dispatch(new UpdateFolders(new Folders(typeFolder, [...folders]), typeFolder));
+    }
+
+    @Action(UpdateTitle)
+    async updateTitleFolder({ patchState, getState, dispatch }: StateContext<FolderState>, { str, id, typeFolder }: UpdateTitle) {
+        let folder = this.getFoldersByType(getState, typeFolder).find(z => z.id === id);
+        folder = {...folder, title: str};
+        dispatch(new UpdateOneFolder(folder, typeFolder));
+        await this.api.updateTitle(str, id).toPromise();
     }
 }
