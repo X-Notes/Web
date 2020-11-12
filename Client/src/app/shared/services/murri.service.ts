@@ -16,7 +16,6 @@ export class MurriService  {
   gridItemName = '.grid-item';
 
   grid;
-  public delayForOpacity = 0;
   public flagForOpacity = false;
 
   constructor(private store: Store,
@@ -27,11 +26,18 @@ export class MurriService  {
     });
   }
 
-  setOpacityTrueAsync() {
+  setOpacityTrueAsync(delayOpacity: number = 0, flag = true) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
+      this.flagForOpacity = flag;
       resolve(true);
-    }
+    }, delayOpacity
+    ));
+  }
+
+  wait(delay: number = 0) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      resolve(true);
+    }, delay
     ));
   }
 

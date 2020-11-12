@@ -6,9 +6,10 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { NoteStore } from './state/notes-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { CancelAllSelectedLabels } from './state/notes-actions';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -18,25 +19,31 @@ export class NotesService implements OnDestroy {
   destroy = new Subject<void>();
   allNotes: SmallNote[] = [];
   notes: SmallNote[] = [];
+  firstInitFlag = false;
+
   constructor(public pService: PersonalizationService, private store: Store,
-              private murriService: MurriService,
-              private pagService: PaginationService) {
+              private murriService: MurriService) {
 
     this.store.select(NoteStore.updateColorEvent)
+      .pipe(takeUntil(this.destroy))
       .subscribe(x => this.changeColorHandler(x));
 
     this.store.select(NoteStore.removeFromMurriEvent)
+      .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => await this.delete(x));
 
-    this.pagService.nextPagination
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.nextValuesForPagination());
 
     this.store.select(NoteStore.getIsCanceled)
-      .subscribe(x => {
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x) => {
         if (x === true) {
-          // this.notes = this.allNotes.slice(0, 30);
-          // this.store.dispatch(new CancelAllSelectedLabels(false));
+          await this.murriService.setOpacityTrueAsync(0, false);
+          await this.murriService.wait(150);
+          this.murriService.grid.destroy();
+          this.notes = this.allNotes;
+          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+          await this.murriService.setOpacityTrueAsync(0);
+          this.store.dispatch(new CancelAllSelectedLabels(false));
         }
       });
   }
@@ -48,27 +55,18 @@ export class NotesService implements OnDestroy {
     this.labelsIds.unsubscribe();
   }
 
-  nextValuesForPagination() {
-    console.log('Notes');
-    console.log(this.notes.length);
-    console.log(this.pagService.countNextNotes);
-    const nextNotes = this.allNotes.slice(this.notes.length, this.notes.length + this.pagService.countNextNotes);
-    this.addToDomAppend(nextNotes);
-  }
 
 
   firstInit(notes: SmallNote[]) {
-    console.log('first init start');
     this.allNotes = [...notes].map(note => { note = { ...note }; return note; });
     if (!this.isFiltedMode()) {
-    this.notes = this.allNotes.slice(0, 30);
-    this.pagService.newPage();
+    this.notes = this.allNotes;
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
     }
-    console.log('first init end');
     this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter).subscribe(async (x) => await this.UpdateLabelSelected(x));
+    this.firstInitFlag = true;
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {
@@ -96,12 +94,13 @@ export class NotesService implements OnDestroy {
 
   async UpdateLabelSelected(ids: number[]) {
     console.log('ids labels');
-    if (ids.length !== 0) {
-      // await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
-      // this.murriService.grid.destroy();
-      // this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
-      // await this.store.dispatch(new SpinnerChangeStatus(false)).toPromise();
-      // await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+    if (ids.length !== 0 && this.firstInitFlag) {
+      await this.murriService.setOpacityTrueAsync(0, false);
+      await this.murriService.wait(150);
+      this.murriService.grid.destroy();
+      this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
+      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+      await this.murriService.setOpacityTrueAsync(0);
     }
   }
 

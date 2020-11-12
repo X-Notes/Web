@@ -2,19 +2,16 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/c
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, take, } from 'rxjs/operators';
+import { takeUntil, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
-import { Label } from '../../labels/models/label';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { AddNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { NotesService } from '../notes.service';
 
 export enum subMenu {
   All = 'all',
@@ -69,8 +66,7 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router,
-              private pagService: PaginationService) { }
+              private router: Router) { }
 
   async ngOnInit() {
     this.store.select(UserStore.getTokenUpdated)
@@ -88,16 +84,6 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newNote());
 
     this.pService.onResize();
-
-    setTimeout(() => {
-      (this.myScrollContainer as any).SimpleBar.getScrollElement().addEventListener('scroll',
-      (e) => {
-        const flag = e.srcElement.scrollHeight - e.srcElement.scrollTop - this.pagService.startPointToGetData <= e.srcElement.clientHeight;
-        if (flag && !this.pagService.set.has(e.srcElement.scrollHeight)) {
-          this.pagService.set.add(e.srcElement.scrollHeight);
-          this.pagService.nextPagination.next();
-        }
-      }); }, 0);
   }
 
 

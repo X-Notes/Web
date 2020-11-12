@@ -667,11 +667,15 @@ export class NoteStore {
     }
 
     @Action(UpdateSelectLabel)
-    updateSelectLabel({ patchState, getState }: StateContext<NoteState>, { id }: UpdateSelectLabel) {
+    updateSelectLabel({ patchState, getState, dispatch }: StateContext<NoteState>, { id }: UpdateSelectLabel) {
         const labels = getState().selectedLabelsFilter;
         const flag = labels.find(x => x === id);
         if (flag) {
-            patchState({ selectedLabelsFilter: labels.filter(x => x !== id) });
+            const newLabels = labels.filter(x => x !== id);
+            patchState({ selectedLabelsFilter: newLabels});
+            if (newLabels.length === 0) {
+                dispatch(new CancelAllSelectedLabels(true));
+            }
         } else {
             patchState({ selectedLabelsFilter: [...labels, id] });
         }
