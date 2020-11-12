@@ -2,16 +2,14 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/c
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, take, } from 'rxjs/operators';
+import { takeUntil, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
-import { LabelStore } from '../../labels/state/labels-state';
-import { Label } from '../../labels/models/label';
+import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { AddNote } from '../state/notes-actions';
+import { AddNote, CancelAllSelectedLabels, UpdateSelectLabel } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 
@@ -40,8 +38,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   loaded = false;
   theme = Theme;
   public photoError = false;
-  labelsActive: number[] = [];
-  actives = new Map<number, boolean>();
+  labelsActive = false;
 
   @Select(AppStore.spinnerActive)
   public spinnerActive$: Observable<boolean>;
@@ -49,8 +46,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
-  @Select(LabelStore.all)
-  public labels$: Observable<Label[]>;
+  public labelsFilters: LabelsForFiltersNotes[] = [];
 
 
   @Select(NoteStore.privateCount)
@@ -70,15 +66,15 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router,
-              private pagService: PaginationService) { }
+              private router: Router) { }
 
   async ngOnInit() {
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
-        this.store.dispatch(new LoadLabels());
+        await this.store.dispatch(new LoadLabels()).toPromise();
+        this.labelsFilters = this.store.selectSnapshot(LabelStore.labelsForNotesFiltering);
         await this.pService.disableSpinnerPromise();
         this.loaded = true;
       }
@@ -88,16 +84,6 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(x => this.newNote());
 
     this.pService.onResize();
-
-    setTimeout(() => {
-      (this.myScrollContainer as any).SimpleBar.getScrollElement().addEventListener('scroll',
-      (e) => {
-        const flag = e.srcElement.scrollHeight - e.srcElement.scrollTop - this.pagService.startPointToGetData <= e.srcElement.clientHeight;
-        if (flag && !this.pagService.set.has(e.srcElement.scrollHeight)) {
-          this.pagService.set.add(e.srcElement.scrollHeight);
-          this.pagService.nextPagination.next();
-        }
-      }); }, 0);
   }
 
 
@@ -108,18 +94,16 @@ export class NotesComponent implements OnInit, OnDestroy {
   }
 
   cancelLabel() {
-    this.labelsActive = [];
-    this.actives = new Map();
+    this.labelsActive = false;
+    this.labelsFilters.forEach(z => z.selected = false);
+    this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
-  cancelAdd(id: number) {
-    const flag = (this.actives.get(id) === undefined) || (this.actives.get(id) === false) ? true : false;
-    this.actives.set(id, flag);
-    if (flag) {
-      this.labelsActive.push(id);
-    } else {
-      this.labelsActive = this.labelsActive.filter(x => x !== id);
-    }
+  filterNotes(id: number) {
+    const label = this.labelsFilters.find(z => z.label.id === id);
+    label.selected = !label.selected;
+    this.labelsActive = this.labelsFilters.filter(z => z.selected === true).length > 0;
+    this.store.dispatch(new UpdateSelectLabel(id));
   }
 
   cancelSideBar() {

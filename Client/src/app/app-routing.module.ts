@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
-import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { ContentComponent } from './content/content/content.component';
 
 

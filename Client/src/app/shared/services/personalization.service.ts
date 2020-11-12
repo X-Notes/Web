@@ -1,6 +1,4 @@
-import { Injectable, HostListener } from '@angular/core';
-import { Theme } from '../enums/Theme';
-import { Language } from '../enums/Language';
+import { Injectable } from '@angular/core';
 import {
   trigger,
   state,
@@ -8,7 +6,6 @@ import {
   transition,
   animate } from '@angular/animations';
 import {  Subject, Observable } from 'rxjs';
-import * as Muuri from 'muuri';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../enums/FontSize';
@@ -92,6 +89,7 @@ export class PersonalizationService {
   toggleHistory = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;

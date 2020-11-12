@@ -76,7 +76,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private store: Store,
               public pService: PersonalizationService,
               private rend: Renderer2,
-              private noteService: NotesService,
               public sliderService: FullNoteSliderService,
               public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
@@ -140,7 +139,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
       document.querySelector('.grid') as HTMLElement), 1000); // CHANGE TODO
-
+    setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
     this.store.select(NoteStore.updateLabelEvent)
       .pipe(takeUntil(this.destroy))

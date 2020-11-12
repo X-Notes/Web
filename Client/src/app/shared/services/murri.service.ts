@@ -1,9 +1,8 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PersonalizationService } from './personalization.service';
 import { Store } from '@ngxs/store';
 import { Order, OrderEntity } from './order.service';
 import { PositionNote } from 'src/app/content/notes/state/notes-actions';
-import { EntityType } from '../enums/EntityTypes';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
@@ -16,7 +15,6 @@ export class MurriService  {
   gridItemName = '.grid-item';
 
   grid;
-  public delayForOpacity = 0;
   public flagForOpacity = false;
 
   constructor(private store: Store,
@@ -27,6 +25,28 @@ export class MurriService  {
     });
   }
 
+  setOpacityTrueAsync(delayOpacity: number = 0, flag = true) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.flagForOpacity = flag;
+      resolve(true);
+    }, delayOpacity
+    ));
+  }
+
+  wait(delay: number = 0) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      resolve(true);
+    }, delay
+    ));
+  }
+
+  refreshLayoutAsync() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.grid.refreshItems().layout();
+      resolve(true);
+    }
+    ));
+  }
 
   initMurriNoteAsync(type: NoteType) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
@@ -146,12 +166,11 @@ export class MurriService  {
         safeZone: 0.1
       }
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
-  muuriDestroy() {
+  muuriDestroy(flag: boolean = false) {
     if (this.grid) {
-      this.grid.destroy();
+      this.grid.destroy(flag);
     }
   }
 }

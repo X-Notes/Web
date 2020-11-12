@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { LoadArchiveFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -62,6 +62,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     this.murriService.initMurriFolderAsync(FolderType.Archive);
+    await this.murriService.setOpacityTrueAsync();
   }
 
 

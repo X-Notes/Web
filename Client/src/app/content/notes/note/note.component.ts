@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { UpdateLabelEvent } from '../state/updateLabels';
 import { FontSize } from 'src/app/shared/enums/FontSize';
-import { Label } from '../../labels/models/label';
 import { MurriService } from 'src/app/shared/services/murri.service';
 
 

@@ -1,14 +1,11 @@
-import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { merge, Observable } from 'rxjs';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { ChangeLanguage } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Language } from '../../enums/Language';
 import { Theme } from '../../enums/Theme';
-import { EnumUtil } from '../../services/enum.util';
 import { PersonalizationService, showHistory } from '../../services/personalization.service';
 import { DialogData } from '../dialog_data';
 
@@ -24,7 +21,8 @@ export class ShareComponent implements OnInit {
   isAccess = true;
   isManyNotes = false;
 
-  deleteThis = ["hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello","hello"];
+  deleteThis = ['hello', 'hello', 'hello', 'hello',
+  'hello', 'hello', 'hello', 'hello', 'hello', 'hello', 'hello', 'hello', 'hello', 'hello', 'hello'];
 
   @ViewChild('overlay') overlay: ElementRef;
   @ViewChild('overlay2') overlay2: ElementRef;
@@ -48,10 +46,9 @@ export class ShareComponent implements OnInit {
       this.store.select(FolderStore.selectedCount)
     )
     .subscribe(x => {
-      if(x === 0) {
+      if (x === 0) {
         return;
-      }
-      else if (x >= 2) {
+      } else if (x >= 2) {
         this.isManyNotes = true;
       } else {
         this.isManyNotes = false;
@@ -99,7 +96,7 @@ export class ShareComponent implements OnInit {
     }, 150);
   }
 
-  disableTooltipUser():boolean {
+  disableTooltipUser(): boolean {
     if (this.isCollapse) {
       return false;
     } else {

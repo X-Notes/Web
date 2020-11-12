@@ -1,12 +1,10 @@
-import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
+import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { UpdateRoute
     , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { stat } from 'fs';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { exception } from 'console';
 import { AuthService } from '../auth.service';
 
 

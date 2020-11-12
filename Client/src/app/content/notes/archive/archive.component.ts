@@ -55,6 +55,7 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     await this.murriService.initMurriNoteAsync(NoteType.Archive);
+    await this.murriService.setOpacityTrueAsync();
   }
 
 

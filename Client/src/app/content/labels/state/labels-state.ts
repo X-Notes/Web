@@ -5,10 +5,15 @@ import { ApiServiceLabels } from '../api-labels.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel,
     DeleteLabel, RestoreLabel, DeleteAllFromBin } from './labels-actions';
 import { tap } from 'rxjs/operators';
-import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
+import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
+
+export interface LabelsForFiltersNotes {
+    label: Label;
+    selected: boolean;
+}
 
 interface LabelState {
     labelsAll: Label[];
@@ -47,6 +52,14 @@ export class LabelStore {
     @Selector()
     static countDeleted(state: LabelState): number {
         return state.CountDeleted;
+    }
+
+    @Selector()
+    static labelsForNotesFiltering(state: LabelState): LabelsForFiltersNotes[] {
+        return state.labelsAll.map(z => {
+            const entity: LabelsForFiltersNotes = {label: z, selected: false } ;
+            return entity;
+        });
     }
 
     @Selector()

@@ -8,8 +8,10 @@ import {
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateNotes, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, ArchiveNotes,
     RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
-    PositionNote, AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
-    ClearUpdatelabelEvent, UpdateLabelOnNote, UpdateOneNote, LoadFullNote, DeleteCurrentNote, UpdateTitle, ChangeColorFullNote
+    CancelAllSelectedLabels, UpdateSelectLabel,
+    AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
+    ClearUpdatelabelEvent, UpdateLabelOnNote,
+    UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle, ChangeColorFullNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -41,6 +43,8 @@ interface NoteState {
     updateLabelsEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
+    selectedLabelsFilter: number[];
+    isCanceled: boolean;
 }
 
 @State<NoteState>({
@@ -53,7 +57,9 @@ interface NoteState {
         updateColorEvent: [],
         updateLabelsEvent: [],
         removeFromMurriEvent: [],
-        notesAddingPrivate: []
+        notesAddingPrivate: [],
+        selectedLabelsFilter: [],
+        isCanceled: false
     }
 })
 
@@ -169,6 +175,15 @@ export class NoteStore {
         return state.notes.find(x => x.typeNotes === NoteType.Shared).count;
     }
 
+    @Selector()
+    static getSelectedLabelFilter(state: NoteState): number[] {
+        return state.selectedLabelsFilter;
+    }
+
+    @Selector()
+    static getIsCanceled(state: NoteState): boolean {
+        return state.isCanceled;
+    }
 
 
     @Action(AddNote)
@@ -646,4 +661,23 @@ export class NoteStore {
         patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });
     }
 
+    @Action(CancelAllSelectedLabels)
+    cancelAllSelectedLabels({ patchState, getState }: StateContext<NoteState>, { isCanceled }: CancelAllSelectedLabels) {
+        patchState({ selectedLabelsFilter: [], isCanceled });
+    }
+
+    @Action(UpdateSelectLabel)
+    updateSelectLabel({ patchState, getState, dispatch }: StateContext<NoteState>, { id }: UpdateSelectLabel) {
+        const labels = getState().selectedLabelsFilter;
+        const flag = labels.find(x => x === id);
+        if (flag) {
+            const newLabels = labels.filter(x => x !== id);
+            patchState({ selectedLabelsFilter: newLabels});
+            if (newLabels.length === 0) {
+                dispatch(new CancelAllSelectedLabels(true));
+            }
+        } else {
+            patchState({ selectedLabelsFilter: [...labels, id] });
+        }
+    }
 }

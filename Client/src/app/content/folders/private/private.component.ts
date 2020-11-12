@@ -63,6 +63,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     this.murriService.initMurriFolderAsync(FolderType.Private);
+    await this.murriService.setOpacityTrueAsync();
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))

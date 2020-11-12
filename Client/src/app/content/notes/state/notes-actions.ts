@@ -168,6 +168,17 @@ export class UpdateOneNote {
     }
 }
 
+export class CancelAllSelectedLabels {
+    static type = '[Notes] Cancel all selected labels';
+    constructor(public isCanceled: boolean) {
+    }
+}
+
+export class UpdateSelectLabel {
+    static type = '[Notes] Updated selected label';
+    constructor(public id: number) {
+    }
+}
 // FULL NOTE
 
 export class LoadFullNote {

@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, OnDestroy, ViewChild } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UpdateColor } from './state/updateColor';
 import { SmallNote } from './models/smallNote';
 import { FullNote } from './models/fullNote';
@@ -6,55 +6,73 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { NoteStore } from './state/notes-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { PaginationService } from 'src/app/shared/services/pagination.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { CancelAllSelectedLabels } from './state/notes-actions';
 
 @Injectable()
 export class NotesService implements OnDestroy {
 
-  destroy  = new Subject<void>();
+  labelsIds: Subscription;
+
+  destroy = new Subject<void>();
   allNotes: SmallNote[] = [];
   notes: SmallNote[] = [];
+  firstInitFlag = false;
+
   constructor(public pService: PersonalizationService, private store: Store,
-              private murriService: MurriService,
-              private pagService: PaginationService) {
+              private murriService: MurriService) {
 
     this.store.select(NoteStore.updateColorEvent)
-    .subscribe(x => this.changeColorHandler(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.changeColorHandler(x));
 
     this.store.select(NoteStore.removeFromMurriEvent)
-    .subscribe(x => this.delete(x));
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x) => await this.delete(x));
 
-    this.pagService.nextPagination
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.nextValuesForPagination());
+
+    this.store.select(NoteStore.getIsCanceled)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x) => {
+        if (x === true) {
+          await this.murriService.setOpacityTrueAsync(0, false);
+          await this.murriService.wait(150);
+          this.murriService.grid.destroy();
+          this.notes = this.allNotes;
+          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+          await this.murriService.setOpacityTrueAsync(0);
+          this.store.dispatch(new CancelAllSelectedLabels(false));
+        }
+      });
   }
 
   ngOnDestroy(): void {
     console.log('note destroy');
     this.destroy.next();
     this.destroy.complete();
+    this.labelsIds.unsubscribe();
   }
 
-  nextValuesForPagination() {
-    console.log('Notes');
-    console.log(this.notes.length);
-    console.log(this.pagService.countNextNotes);
-    const nextNotes = this.allNotes.slice(this.notes.length, this.notes.length + this.pagService.countNextNotes);
-    this.addToDomAppend(nextNotes);
-  }
+
 
   firstInit(notes: SmallNote[]) {
-    this.allNotes = [...notes].map(note => { note = {...note}; return note; });
-    this.notes = this.allNotes.slice(0, 30);
-    this.pagService.newPage();
+    this.allNotes = [...notes].map(note => { note = { ...note }; return note; });
+    if (!this.isFiltedMode()) {
+    this.notes = this.allNotes;
+    } else {
+      const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
+      this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
+    }
+    this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter).subscribe(async (x) => await this.UpdateLabelSelected(x));
+    this.firstInitFlag = true;
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {
     for (const update of updateColor) {
       if (this.notes.length > 0) {
-      this.notes.find(x => x.id === update.id).color = update.color;
+        this.notes.find(x => x.id === update.id).color = update.color;
       }
     }
   }
@@ -67,22 +85,38 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  delete(ids: string[]) {
+  async delete(ids: string[]) {
     if (ids.length > 0) {
       this.notes = this.notes.filter(x => !ids.some(z => z === x.id));
-      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+      await this.murriService.refreshLayoutAsync();
     }
   }
 
+  async UpdateLabelSelected(ids: number[]) {
+    console.log('ids labels');
+    if (ids.length !== 0 && this.firstInitFlag) {
+      await this.murriService.setOpacityTrueAsync(0, false);
+      await this.murriService.wait(150);
+      this.murriService.grid.destroy();
+      this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
+      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+      await this.murriService.setOpacityTrueAsync(0);
+    }
+  }
+
+  isFiltedMode() {
+    const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
+    return ids.length > 0;
+  }
 
   addToDom(notes: SmallNote[]) {
     if (notes.length > 0) {
-      this.notes = [...notes.map(note => { note = { ...note }; return note; }).reverse() , ...this.notes];
+      this.notes = [...notes.map(note => { note = { ...note }; return note; }).reverse(), ...this.notes];
       setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < notes.length; i++) {
           const el = DOMnodes[i];
-          this.murriService.grid.add(el, {index: 0, layout: true});
+          this.murriService.grid.add(el, { index: 0, layout: true });
         }
       }, 0);
     }
@@ -90,12 +124,12 @@ export class NotesService implements OnDestroy {
 
   addToDomAppend(notes: SmallNote[]) {
     if (notes.length > 0) {
-      this.notes = [...notes.map(note => { note = { ...note }; return note; }) , ...this.notes];
+      this.notes = [...notes.map(note => { note = { ...note }; return note; }), ...this.notes];
       setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
         for (let i = 0; i < notes.length; i++) {
           const el = DOMnodes[i];
-          this.murriService.grid.add(el, {index: -1, layout: true});
+          this.murriService.grid.add(el, { index: -1, layout: true });
         }
       }, 0);
     }

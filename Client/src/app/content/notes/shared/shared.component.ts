@@ -56,6 +56,7 @@ export class SharedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     await this.murriService.initMurriNoteAsync(NoteType.Shared);
+    await this.murriService.setOpacityTrueAsync();
   }
 
 

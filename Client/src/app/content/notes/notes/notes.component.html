@@ -47,17 +47,17 @@
             </div>
             <div class="separator"></div>
         </div>
-        <div *ngIf="loaded" class="label-section" [ngClass]="(labelsActive.length > 0) ? 'active-select' : ''">
+        <div *ngIf="loaded" class="label-section" [ngClass]="labelsActive ? 'active-select' : ''">
             <div class="label-cancel" (click)="cancelLabel()">
                 <p>{{ 'subMenu.cancel' | translate }}</p>
             </div>
             <ngx-simplebar [options]="pService.optionsScroll" class="label-container">
-                <div *ngFor="let item of labels$ | async" class="label" (click)="cancelAdd(item.id)"
-                    [ngClass]="actives.get(item.id)? 'active-label' : ''">
-                    <div class="label-item" [ngStyle]="{'backgroundColor': item.color}">
-                        <p>{{ item.name | replace }}</p>
+                <div *ngFor="let item of labelsFilters" class="label" (click)="filterNotes(item.label.id)"
+                    [ngClass]="item.selected ? 'active-label' : ''">
+                    <div class="label-item" [ngStyle]="{'backgroundColor': item.label.color}">
+                        <p>{{ item.label.name | replace }}</p>
                         <p>12</p>
-                        <div class="dot" [ngStyle]="{'backgroundColor': item.color}"></div>
+                        <div class="dot" [ngStyle]="{'backgroundColor': item.label.color}"></div>
                     </div>
                 </div>
             </ngx-simplebar>

@@ -5,7 +5,6 @@ import { Store } from '@ngxs/store';
 import { FolderStore } from './state/folders-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { PaginationService } from 'src/app/shared/services/pagination.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,18 +17,16 @@ export class FolderService implements OnDestroy {
 
   constructor(private store: Store,
               public pService: PersonalizationService,
-              private murriService: MurriService,
-              private pagService: PaginationService) {
+              private murriService: MurriService) {
 
     this.store.select(FolderStore.updateColorEvent)
+      .pipe(takeUntil(this.destroy))
       .subscribe(x => this.changeColorHandler(x));
 
     this.store.select(FolderStore.removeFromMurriEvent)
+      .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
 
-    this.pagService.nextPagination
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.nextValuesForPagination());
   }
   ngOnDestroy(): void {
     console.log('destroy');
@@ -37,18 +34,11 @@ export class FolderService implements OnDestroy {
     this.destroy.complete();
   }
 
-  nextValuesForPagination() {
-    console.log('FOlders');
-    console.log(this.folders.length);
-    console.log(this.pagService.countNextFolders);
-    const nextFolders = this.allFolders.slice(this.folders.length, this.folders.length + this.pagService.countNextFolders);
-    this.addToDomAppend(nextFolders);
-  }
+
 
   firstInit(folders: Folder[]) {
     this.allFolders = [...folders].map(note => { note = {...note}; return note; });
-    this.folders = this.allFolders.slice(0, 30);
-    this.pagService.newPage();
+    this.folders = this.allFolders;
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {
