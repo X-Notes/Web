@@ -63,6 +63,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     this.murriService.initMurriFolderAsync(FolderType.Deleted);
+    await this.murriService.setOpacityTrueAsync();
   }
 
 

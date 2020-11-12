@@ -27,6 +27,21 @@ export class MurriService  {
     });
   }
 
+  setOpacityTrueAsync() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
+      resolve(true);
+    }
+    ));
+  }
+
+  refreshLayoutAsync() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.grid.refreshItems().layout();
+      resolve(true);
+    }
+    ));
+  }
 
   initMurriNoteAsync(type: NoteType) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
@@ -146,7 +161,6 @@ export class MurriService  {
         safeZone: 0.1
       }
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
   }
 
   muuriDestroy() {

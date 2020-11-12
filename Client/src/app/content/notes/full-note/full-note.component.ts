@@ -76,7 +76,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private store: Store,
               public pService: PersonalizationService,
               private rend: Renderer2,
-              private noteService: NotesService,
               public sliderService: FullNoteSliderService,
               public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(async (params) => {

@@ -57,6 +57,7 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     await this.murriService.initMurriNoteAsync(NoteType.Private);
+    await this.murriService.setOpacityTrueAsync();
 
     this.store.select(NoteStore.notesAddingPrivate)
       .pipe(takeUntil(this.destroy))
