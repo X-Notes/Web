@@ -1,9 +1,8 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PersonalizationService } from './personalization.service';
 import { Store } from '@ngxs/store';
 import { Order, OrderEntity } from './order.service';
 import { PositionNote } from 'src/app/content/notes/state/notes-actions';
-import { EntityType } from '../enums/EntityTypes';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';

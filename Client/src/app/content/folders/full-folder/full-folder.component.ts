@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LoadAllExceptFolders } from '../state/folders-actions';
 import { MurriService } from 'src/app/shared/services/murri.service';

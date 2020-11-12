@@ -4,9 +4,7 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';
-import { NoteStore } from '../../notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { MenuButtonsService } from '../menu-buttons.service';
 
 @Component({

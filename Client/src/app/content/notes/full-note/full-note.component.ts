@@ -139,7 +139,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
       document.querySelector('.grid') as HTMLElement), 1000); // CHANGE TODO
-
+    setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
     this.store.select(NoteStore.updateLabelEvent)
       .pipe(takeUntil(this.destroy))
