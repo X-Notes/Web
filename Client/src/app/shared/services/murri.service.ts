@@ -168,9 +168,9 @@ export class MurriService  {
     });
   }
 
-  muuriDestroy() {
+  muuriDestroy(flag: boolean = false) {
     if (this.grid) {
-      this.grid.destroy();
+      this.grid.destroy(flag);
     }
   }
 }
