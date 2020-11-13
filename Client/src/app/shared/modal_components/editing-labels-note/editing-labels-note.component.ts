@@ -36,12 +36,10 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit(): void {
-    this.store.select(LabelStore.all).subscribe(async (x) => {
-      await this.pService.waitPreloading();
-      this.loaded = true;
-      this.labels = x;
-    });
+  async ngOnInit() {
+    this.labels = this.store.selectSnapshot(LabelStore.all);
+    await this.pService.waitPreloading();
+    this.loaded = true;
   }
 
 
@@ -55,6 +53,8 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
+    const newLabel = this.store.selectSnapshot(LabelStore.all)[0];
+    this.labels = [newLabel, ...this.labels];
   }
 
 
