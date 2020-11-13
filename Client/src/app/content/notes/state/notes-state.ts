@@ -157,23 +157,51 @@ export class NoteStore {
 
     @Selector()
     static privateCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Private).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Private);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static archiveCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Archive).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Archive);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static deletedCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Deleted).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Deleted);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static sharedCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Shared).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Shared);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
+
+    static getNotesByTypeStatic(state: NoteState, type: NoteType) {
+        return state.notes.find(x => x.typeNotes === type);
+    }
+    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: number[]) {
+        return notes.filter(x => x.labels.some(label => selectedLabelsFilter.some(z => z === label.id))).length;
+    }
+
 
     @Selector()
     static getSelectedLabelFilter(state: NoteState): number[] {
@@ -672,7 +700,7 @@ export class NoteStore {
         const flag = labels.find(x => x === id);
         if (flag) {
             const newLabels = labels.filter(x => x !== id);
-            patchState({ selectedLabelsFilter: newLabels});
+            patchState({ selectedLabelsFilter: newLabels });
             if (newLabels.length === 0) {
                 dispatch(new CancelAllSelectedLabels(true));
             }
