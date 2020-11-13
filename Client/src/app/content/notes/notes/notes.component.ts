@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/c
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, } from 'rxjs/operators';
+import { map, takeUntil, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
@@ -74,7 +74,11 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         await this.store.dispatch(new LoadLabels()).toPromise();
-        this.labelsFilters = this.store.selectSnapshot(LabelStore.labelsForNotesFiltering);
+
+        this.labelsFilters = this.store.selectSnapshot(LabelStore.all).map(label => {
+          return {label, selected: false};
+         });
+
         await this.pService.disableSpinnerPromise();
         this.loaded = true;
       }
@@ -113,6 +117,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new CancelAllSelectedLabels(false));
   }
 
   changeSource(event) {

@@ -54,13 +54,6 @@ export class LabelStore {
         return state.CountDeleted;
     }
 
-    @Selector()
-    static labelsForNotesFiltering(state: LabelState): LabelsForFiltersNotes[] {
-        return state.labelsAll.map(z => {
-            const entity: LabelsForFiltersNotes = {label: z, selected: false } ;
-            return entity;
-        });
-    }
 
     @Selector()
     static all(state: LabelState): Label[] {
