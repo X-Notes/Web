@@ -59,7 +59,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
     const folders = this.store.selectSnapshot(FolderStore.deletedFolders);
     this.folderService.firstInit(folders);
 
-    const active = await this.pService.disableSpinnerPromise();
+    const active = await this.pService.waitPreloading();
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     this.murriService.initMurriFolderAsync(FolderType.Deleted);

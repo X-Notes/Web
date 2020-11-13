@@ -150,7 +150,7 @@ export class PersonalizationService {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
 
-  disableSpinnerPromise() {
+  waitPreloading() {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
   }
 

@@ -58,7 +58,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
     const labels = this.store.selectSnapshot(LabelStore.deleted);
     this.labelService.firstInit(labels);
 
-    const active = await this.pService.disableSpinnerPromise();
+    const active = await this.pService.waitPreloading();
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     this.murriService.initMurriLabelAsync(true);

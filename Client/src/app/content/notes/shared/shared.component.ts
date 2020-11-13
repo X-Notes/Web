@@ -52,7 +52,7 @@ export class SharedComponent implements OnInit, OnDestroy {
     const notes = this.store.selectSnapshot(NoteStore.sharedNotes);
     this.noteService.firstInit(notes);
 
-    const active = await this.pService.disableSpinnerPromise();
+    const active = await this.pService.waitPreloading();
     this.store.dispatch(new SpinnerChangeStatus(active));
     this.loaded = true;
     await this.murriService.initMurriNoteAsync(NoteType.Shared);

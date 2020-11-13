@@ -79,7 +79,7 @@ export class NotesComponent implements OnInit, OnDestroy {
           return {label, selected: false};
          });
 
-        await this.pService.disableSpinnerPromise();
+        await this.pService.waitPreloading();
         this.loaded = true;
       }
     });
