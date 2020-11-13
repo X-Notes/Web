@@ -41,7 +41,7 @@ export class NotesService implements OnDestroy {
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
           this.notes = this.allNotes;
-          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), true);
           await this.murriService.setOpacityTrueAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
@@ -99,7 +99,7 @@ export class NotesService implements OnDestroy {
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
-      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), false);
       await this.murriService.setOpacityTrueAsync(0);
     }
   }
