@@ -12,6 +12,7 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { UpdateLabelEvent } from '../state/updateLabels';
 
 export enum subMenu {
   All = 'all',
@@ -75,12 +76,20 @@ export class NotesComponent implements OnInit, OnDestroy {
       if (x) {
         await this.store.dispatch(new LoadLabels()).toPromise();
 
-        this.labelsFilters = this.store.selectSnapshot(LabelStore.all).map(label => {
-          return {label, selected: false};
-         });
+        this.store.select(LabelStore.all)
+        .pipe(takeUntil(this.destroy),
+        map(labels => {
+          return labels.map(label => {
+            return {label, selected: this.labelsFilters.find(z => z.label.id === label.id)?.selected};
+           });
+        }))
+        .subscribe(async (labels) => {
+          this.labelsFilters = labels;
+        });
 
         await this.pService.waitPreloading();
         this.loaded = true;
+
       }
     });
     this.pService.subject

@@ -95,6 +95,7 @@ export class NotesService implements OnDestroy {
   async UpdateLabelSelected(ids: number[]) {
     console.log('ids labels');
     if (ids.length !== 0 && this.firstInitFlag) {
+      console.log('in');
       await this.murriService.setOpacityTrueAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
