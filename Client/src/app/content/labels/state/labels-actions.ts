@@ -25,6 +25,11 @@ export class UpdateLabel {
     constructor(public label: Label) {}
 }
 
+export class UpdateLabelCount {
+    static type = '[Labels] Update Label Count';
+    constructor(public label: Label) {}
+}
+
 export class PositionLabel {
     static type = '[Labels] Position Label';
     constructor(public deleted: boolean, public id: number, public order: Order) {}

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/c
 import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
-import { takeUntil, } from 'rxjs/operators';
+import { map, takeUntil, } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
@@ -12,6 +12,7 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { UpdateLabelEvent } from '../state/updateLabels';
 
 export enum subMenu {
   All = 'all',
@@ -74,9 +75,21 @@ export class NotesComponent implements OnInit, OnDestroy {
     .subscribe(async (x: boolean) => {
       if (x) {
         await this.store.dispatch(new LoadLabels()).toPromise();
-        this.labelsFilters = this.store.selectSnapshot(LabelStore.labelsForNotesFiltering);
-        await this.pService.disableSpinnerPromise();
+
+        this.store.select(LabelStore.all)
+        .pipe(takeUntil(this.destroy),
+        map(labels => {
+          return labels.map(label => {
+            return {label, selected: this.labelsFilters.find(z => z.label.id === label.id)?.selected};
+           });
+        }))
+        .subscribe(async (labels) => {
+          this.labelsFilters = labels.sort((a, b) => (a.label.countNotes > b.label.countNotes) ? -1 : 1);
+        });
+
+        await this.pService.waitPreloading();
         this.loaded = true;
+
       }
     });
     this.pService.subject
@@ -113,6 +126,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.store.dispatch(new CancelAllSelectedLabels(false));
   }
 
   changeSource(event) {

@@ -1,6 +1,9 @@
-<div class="field" [ngStyle]="{backgroundColor: label.color}" [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''">
-    <div class="select" *ngIf="selectedMode" (click)="select()" [ngStyle]="{'backgroundColor': isHighlight ? 'rgba(101, 226, 113, 0.65)' : '' }"></div>
-    <input type="text" [disabled]="label.isDeleted" placeholder="Name your label" [ngModel]="label.name" (ngModelChange)='changed($event)'>
+<div class="field" [ngStyle]="{backgroundColor: label.color}"
+    [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''">
+    <div class="select" *ngIf="selectedMode" (click)="select()"
+        [ngStyle]="{'backgroundColor': isHighlight ? 'rgba(101, 226, 113, 0.65)' : '' }"></div>
+    <input type="text" [disabled]="label.isDeleted" placeholder="Name your label" [ngModel]="label.name"
+        (ngModelChange)='changed($event)'>
     <div class="options">
         <button type="button" *ngIf="!label.isDeleted" (click)="openColors()">
             <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
@@ -23,5 +26,6 @@
     </div>
 </div>
 <ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
-    <li *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeColor(item)"></li>
+    <li *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeColor(item)">
+    </li>
 </ul>

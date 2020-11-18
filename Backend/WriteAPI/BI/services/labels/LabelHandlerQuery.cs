@@ -13,7 +13,8 @@ using System.Linq;
 namespace BI.services.labels
 {
     public class LabelHandlerQuery :
-        IRequestHandler<GetLabelsByEmail, LabelsDTO>
+        IRequestHandler<GetLabelsByEmail, LabelsDTO>,
+        IRequestHandler<GetCountNotesByLabel, int>
     {
         private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
@@ -41,7 +42,17 @@ namespace BI.services.labels
                     LabelsDeleted = mapper.Map<List<LabelDTO>>(labelsDeleted)
                 };
             }
-            return null;
+            throw new Exception("User not found");
+        }
+
+        public async Task<int> Handle(GetCountNotesByLabel request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByEmail(request.Email);
+            if (user != null)
+            {
+                return await this.labelRepository.GetNotesCountByLabelId(request.LabelId);
+            }
+            throw new Exception("User not found");
         }
     }
 }

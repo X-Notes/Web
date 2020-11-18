@@ -3,7 +3,7 @@ import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api-labels.service';
 import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel,
-    DeleteLabel, RestoreLabel, DeleteAllFromBin } from './labels-actions';
+    DeleteLabel, RestoreLabel, DeleteAllFromBin, UpdateLabelCount } from './labels-actions';
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
@@ -54,13 +54,6 @@ export class LabelStore {
         return state.CountDeleted;
     }
 
-    @Selector()
-    static labelsForNotesFiltering(state: LabelState): LabelsForFiltersNotes[] {
-        return state.labelsAll.map(z => {
-            const entity: LabelsForFiltersNotes = {label: z, selected: false } ;
-            return entity;
-        });
-    }
 
     @Selector()
     static all(state: LabelState): Label[] {
@@ -89,7 +82,7 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>) {
         const id = await this.api.new().toPromise();
         patchState({
-            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false}, ...getState().labelsAll],
+            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false, countNotes: 0}, ...getState().labelsAll],
             CountAll: getState().CountAll + 1
         });
     }
@@ -135,6 +128,24 @@ export class LabelStore {
             setState(
                 patch({
                     labelsAll: updateItem<Label>(label2 => label2.id === label.id , label)
+                })
+            );
+        }
+    }
+
+    @Action(UpdateLabelCount)
+    async updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
+        const count = await this.api.getCountNotes(label.id).toPromise();
+        if (label.isDeleted) {
+            setState(
+                patch({
+                    labelsDeleted: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
+                })
+            );
+        } else {
+            setState(
+                patch({
+                    labelsAll: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
                 })
             );
         }

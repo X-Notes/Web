@@ -56,7 +56,7 @@
                     [ngClass]="item.selected ? 'active-label' : ''">
                     <div class="label-item" [ngStyle]="{'backgroundColor': item.label.color}">
                         <p>{{ item.label.name | replace }}</p>
-                        <p>12</p>
+                        <p>{{ item.label.countNotes }}</p>
                         <div class="dot" [ngStyle]="{'backgroundColor': item.label.color}"></div>
                     </div>
                 </div>

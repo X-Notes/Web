@@ -25,6 +25,7 @@ import { Notes } from './Notes';
 import { Observable } from 'rxjs';
 import { FullNote } from '../models/fullNote';
 import { AccessType } from '../models/accessType';
+import { UpdateLabelCount } from '../../labels/state/labels-actions';
 
 
 
@@ -40,7 +41,7 @@ interface NoteState {
     selectedIds: string[];
     labelsIdsFromSelectedIds: LabelsOnSelectedNotes[];
     updateColorEvent: UpdateColor[];
-    updateLabelsEvent: UpdateLabelEvent[];
+    updateLabelsOnNoteEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
     selectedLabelsFilter: number[];
@@ -55,7 +56,7 @@ interface NoteState {
         selectedIds: [],
         labelsIdsFromSelectedIds: [],
         updateColorEvent: [],
-        updateLabelsEvent: [],
+        updateLabelsOnNoteEvent: [],
         removeFromMurriEvent: [],
         notesAddingPrivate: [],
         selectedLabelsFilter: [],
@@ -97,8 +98,8 @@ export class NoteStore {
     }
 
     @Selector()
-    static updateLabelEvent(state: NoteState): UpdateLabelEvent[] {
-        return state.updateLabelsEvent;
+    static updateLabelOnNoteEvent(state: NoteState): UpdateLabelEvent[] {
+        return state.updateLabelsOnNoteEvent;
     }
 
     @Selector()
@@ -157,23 +158,51 @@ export class NoteStore {
 
     @Selector()
     static privateCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Private).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Private);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static archiveCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Archive).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Archive);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static deletedCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Deleted).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Deleted);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
 
     @Selector()
     static sharedCount(state: NoteState): number {
-        return state.notes.find(x => x.typeNotes === NoteType.Shared).count;
+        const notes = this.getNotesByTypeStatic(state, NoteType.Shared);
+        if (state.selectedLabelsFilter.length === 0) {
+            return notes.count;
+        } else {
+            return this.getCountWhenFilteting(notes.notes, state.selectedLabelsFilter);
+        }
     }
+
+    static getNotesByTypeStatic(state: NoteState, type: NoteType) {
+        return state.notes.find(x => x.typeNotes === type);
+    }
+    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: number[]) {
+        return notes.filter(x => x.labels.some(label => selectedLabelsFilter.some(z => z === label.id))).length;
+    }
+
 
     @Selector()
     static getSelectedLabelFilter(state: NoteState): number[] {
@@ -345,9 +374,9 @@ export class NoteStore {
     }
 
     @Action(ClearUpdatelabelEvent)
-    clearUpdateEventLabel({ patchState, getState }: StateContext<NoteState>, { noteId }: ClearUpdatelabelEvent) {
+    clearUpdateEventLabel({ patchState }: StateContext<NoteState>) {
         patchState({
-            updateLabelsEvent: getState().updateLabelsEvent.filter(x => x.id !== noteId)
+            updateLabelsOnNoteEvent: []
         });
     }
 
@@ -358,7 +387,7 @@ export class NoteStore {
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
-                x.labels = [...x.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
+                x.labels = [...x.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 labelUpdate.push({ id: x.id, labels: x.labels });
             }
             labelsArray.push({
@@ -366,7 +395,7 @@ export class NoteStore {
                 id: x.id
             });
         });
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
         return labelsArray;
     }
 
@@ -386,12 +415,14 @@ export class NoteStore {
             note = { ...note };
             if (selectedIds.indexOf(note.id) !== -1) {
                 if (!note.labels.some(z => z.id === label.id)) {
-                    note.labels = [...note.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
+                    note.labels = [...note.labels,
+                        { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 }
             }
             return note;
         });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateLabelCount(label));
     }
 
 
@@ -406,7 +437,7 @@ export class NoteStore {
             });
             labelUpdate.push({ id: x.id, labels: x.labels });
         });
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
         return labelsArray;
     }
 
@@ -414,6 +445,7 @@ export class NoteStore {
     async removeLabel({ getState, dispatch, patchState }: StateContext<NoteState>, { label, typeNote }: RemoveLabelFromNote) {
         const selectedIds = getState().selectedIds;
         await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
+
         const notes = this.getNotesByType(getState, typeNote);
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
@@ -429,6 +461,7 @@ export class NoteStore {
             return note;
         });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateLabelCount(label));
     }
 
 
@@ -448,7 +481,7 @@ export class NoteStore {
             });
             dispatch(new UpdateNotes(new Notes(notes.typeNotes, notesUpdate), notes.typeNotes));
         }
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
     }
 
     updateLabel(note: SmallNote, label: Label): SmallNote {
@@ -476,7 +509,7 @@ export class NoteStore {
     }
 
     @Action(PositionNote)
-    async changePosition({ patchState, getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
+    async changePosition({ getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
 
         let notes = this.getNotesByType(getState, typeNote);
         const changedNote = notes.find(x => x.id === order.entityId);
@@ -672,7 +705,7 @@ export class NoteStore {
         const flag = labels.find(x => x === id);
         if (flag) {
             const newLabels = labels.filter(x => x !== id);
-            patchState({ selectedLabelsFilter: newLabels});
+            patchState({ selectedLabelsFilter: newLabels });
             if (newLabels.length === 0) {
                 dispatch(new CancelAllSelectedLabels(true));
             }

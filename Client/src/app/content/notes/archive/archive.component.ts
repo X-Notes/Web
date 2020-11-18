@@ -51,10 +51,10 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     const notes = this.store.selectSnapshot(NoteStore.archiveNotes);
     this.noteService.firstInit(notes);
 
-    const active = await this.pService.disableSpinnerPromise();
-    this.store.dispatch(new SpinnerChangeStatus(active));
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    await this.murriService.initMurriNoteAsync(NoteType.Archive);
+    await this.murriService.initMurriNoteAsync(NoteType.Archive, !this.noteService.isFiltedMode());
     await this.murriService.setOpacityTrueAsync();
   }
 

@@ -39,6 +39,14 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(new GetLabelsByEmail(email));
         }
 
+        [HttpGet("count/{id}")]
+        public async Task<int> NotesCountByLabel(int id)
+        {
+            var command = new GetCountNotesByLabel { LabelId = id };
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
         [HttpPut]
         public async Task Update(UpdateLabelCommand label)
         {

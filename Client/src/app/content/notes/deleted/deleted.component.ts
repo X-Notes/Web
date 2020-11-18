@@ -54,10 +54,10 @@ export class DeletedComponent implements OnInit, OnDestroy {
     const notes = this.store.selectSnapshot(NoteStore.deletedNotes);
     this.noteService.firstInit(notes);
 
-    const active = await this.pService.disableSpinnerPromise();
-    this.store.dispatch(new SpinnerChangeStatus(active));
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    await this.murriService.initMurriNoteAsync(NoteType.Deleted);
+    await this.murriService.initMurriNoteAsync(NoteType.Deleted, !this.noteService.isFiltedMode());
     await this.murriService.setOpacityTrueAsync();
 
   }
