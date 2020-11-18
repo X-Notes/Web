@@ -55,7 +55,7 @@ export class NoteComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.store.select(NoteStore.updateLabelEvent)
+    this.store.select(NoteStore.updateLabelOnNoteEvent)
     .pipe(takeUntil(this.destroy))
     .subscribe((values: UpdateLabelEvent[]) => {
       const value = values.find(x => x.id === this.note.id);

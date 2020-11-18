@@ -40,7 +40,7 @@ interface NoteState {
     selectedIds: string[];
     labelsIdsFromSelectedIds: LabelsOnSelectedNotes[];
     updateColorEvent: UpdateColor[];
-    updateLabelsEvent: UpdateLabelEvent[];
+    updateLabelsOnNoteEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
     selectedLabelsFilter: number[];
@@ -55,7 +55,7 @@ interface NoteState {
         selectedIds: [],
         labelsIdsFromSelectedIds: [],
         updateColorEvent: [],
-        updateLabelsEvent: [],
+        updateLabelsOnNoteEvent: [],
         removeFromMurriEvent: [],
         notesAddingPrivate: [],
         selectedLabelsFilter: [],
@@ -97,8 +97,8 @@ export class NoteStore {
     }
 
     @Selector()
-    static updateLabelEvent(state: NoteState): UpdateLabelEvent[] {
-        return state.updateLabelsEvent;
+    static updateLabelOnNoteEvent(state: NoteState): UpdateLabelEvent[] {
+        return state.updateLabelsOnNoteEvent;
     }
 
     @Selector()
@@ -375,7 +375,7 @@ export class NoteStore {
     @Action(ClearUpdatelabelEvent)
     clearUpdateEventLabel({ patchState, getState }: StateContext<NoteState>, { noteId }: ClearUpdatelabelEvent) {
         patchState({
-            updateLabelsEvent: getState().updateLabelsEvent.filter(x => x.id !== noteId)
+            updateLabelsOnNoteEvent: getState().updateLabelsOnNoteEvent.filter(x => x.id !== noteId)
         });
     }
 
@@ -394,7 +394,7 @@ export class NoteStore {
                 id: x.id
             });
         });
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
         return labelsArray;
     }
 
@@ -434,7 +434,7 @@ export class NoteStore {
             });
             labelUpdate.push({ id: x.id, labels: x.labels });
         });
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
         return labelsArray;
     }
 
@@ -476,7 +476,7 @@ export class NoteStore {
             });
             dispatch(new UpdateNotes(new Notes(notes.typeNotes, notesUpdate), notes.typeNotes));
         }
-        patchState({ updateLabelsEvent: labelUpdate });
+        patchState({ updateLabelsOnNoteEvent: labelUpdate });
     }
 
     updateLabel(note: SmallNote, label: Label): SmallNote {
@@ -504,7 +504,7 @@ export class NoteStore {
     }
 
     @Action(PositionNote)
-    async changePosition({ patchState, getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
+    async changePosition({ getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
 
         let notes = this.getNotesByType(getState, typeNote);
         const changedNote = notes.find(x => x.id === order.entityId);

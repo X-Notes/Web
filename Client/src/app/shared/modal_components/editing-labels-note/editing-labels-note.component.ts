@@ -1,12 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogData } from '../dialog_data';
-import { Select, Store } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
-import { Observable } from 'rxjs';
 import { Label } from 'src/app/content/labels/models/label';
 import { PersonalizationService } from '../../services/personalization.service';
-import { UpdateLabel, DeleteLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
+import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 
