@@ -373,9 +373,9 @@ export class NoteStore {
     }
 
     @Action(ClearUpdatelabelEvent)
-    clearUpdateEventLabel({ patchState, getState }: StateContext<NoteState>, { noteId }: ClearUpdatelabelEvent) {
+    clearUpdateEventLabel({ patchState }: StateContext<NoteState>) {
         patchState({
-            updateLabelsOnNoteEvent: getState().updateLabelsOnNoteEvent.filter(x => x.id !== noteId)
+            updateLabelsOnNoteEvent: []
         });
     }
 

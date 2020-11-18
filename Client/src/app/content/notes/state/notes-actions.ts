@@ -117,8 +117,8 @@ export class RemoveLabelFromNote {
 }
 
 export class ClearUpdatelabelEvent {
-    static type = '[Notes] Clear label';
-    constructor(public noteId: string) { }
+    static type = '[Notes] Clear labels';
+    constructor() { }
 }
 
 
