@@ -58,6 +58,12 @@ namespace WriteContext.Repositories
             return await this.contextDB.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
         }
 
+        public async Task<int> GetNotesCountByLabelId(int id)
+        {
+            var labels = await this.contextDB.Labels.Include(x => x.LabelsNotes).FirstOrDefaultAsync(x => x.Id == id);
+            return labels.LabelsNotes.Count;
+        }
+
         public async Task UpdateLabel(Label label)
         {
             this.contextDB.Labels.Update(label);

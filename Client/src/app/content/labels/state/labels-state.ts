@@ -134,17 +134,18 @@ export class LabelStore {
     }
 
     @Action(UpdateLabelCount)
-    updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
+    async updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
+        const count = await this.api.getCountNotes(label.id).toPromise();
         if (label.isDeleted) {
             setState(
                 patch({
-                    labelsDeleted: updateItem<Label>(label2 => label2.id === label.id , label)
+                    labelsDeleted: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
                 })
             );
         } else {
             setState(
                 patch({
-                    labelsAll: updateItem<Label>(label2 => label2.id === label.id , label)
+                    labelsAll: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
                 })
             );
         }

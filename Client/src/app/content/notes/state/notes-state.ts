@@ -422,6 +422,7 @@ export class NoteStore {
             return note;
         });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateLabelCount(label));
     }
 
 
@@ -460,6 +461,7 @@ export class NoteStore {
             return note;
         });
         dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateLabelCount(label));
     }
 
 
