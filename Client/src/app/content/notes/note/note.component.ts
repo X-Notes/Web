@@ -8,7 +8,6 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
-import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 @Component({
@@ -28,8 +27,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router,
-              private murriService: MurriService) { }
+              private router: Router) { }
 
 
   ngOnDestroy(): void {

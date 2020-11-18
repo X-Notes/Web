@@ -52,8 +52,8 @@ export class AllComponent implements OnInit, OnDestroy  {
     const labels = this.store.selectSnapshot(LabelStore.all);
     this.labelService.firstInit(labels);
 
-    const active = await this.pService.waitPreloading();
-    this.store.dispatch(new SpinnerChangeStatus(active));
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
     this.murriService.initMurriLabelAsync(true);
     await this.murriService.setOpacityTrueAsync();
