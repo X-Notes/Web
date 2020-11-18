@@ -87,19 +87,19 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("label/add")]
-        public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
+        public async Task<int> AddLabel([FromBody]AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("label/remove")]
-        public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
+        public async Task<int> RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
 

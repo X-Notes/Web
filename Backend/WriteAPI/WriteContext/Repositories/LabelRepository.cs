@@ -55,7 +55,7 @@ namespace WriteContext.Repositories
 
         public async Task<List<Label>> GetAllByUserID(int id)
         {
-            return await this.contextDB.Labels.Where(x => x.UserId == id).ToListAsync();
+            return await this.contextDB.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
         }
 
         public async Task UpdateLabel(Label label)

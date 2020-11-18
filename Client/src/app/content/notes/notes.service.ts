@@ -58,7 +58,7 @@ export class NotesService implements OnDestroy {
           }
         }
         if (values.length > 0) {
-          this.store.dispatch(new ClearUpdatelabelEvent());
+          await this.store.dispatch(new ClearUpdatelabelEvent()).toPromise();
           await this.murriService.refreshLayoutAsync();
         }
       });

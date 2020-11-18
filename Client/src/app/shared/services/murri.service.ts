@@ -42,7 +42,7 @@ export class MurriService  {
 
   refreshLayoutAsync() {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.grid.refreshItems().layout();
+      this.grid?.refreshItems().layout();
       resolve(true);
     }
     ));
@@ -165,6 +165,9 @@ export class MurriService  {
         smoothStop: true,
         safeZone: 0.1
       }
+    });
+    this.grid.layout((items, hasLayoutChanged) => {
+      console.log('layout done!');
     });
   }
 

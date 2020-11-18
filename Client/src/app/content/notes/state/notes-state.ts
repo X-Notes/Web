@@ -25,6 +25,7 @@ import { Notes } from './Notes';
 import { Observable } from 'rxjs';
 import { FullNote } from '../models/fullNote';
 import { AccessType } from '../models/accessType';
+import { UpdateLabelCount } from '../../labels/state/labels-actions';
 
 
 
@@ -386,7 +387,7 @@ export class NoteStore {
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
-                x.labels = [...x.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
+                x.labels = [...x.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 labelUpdate.push({ id: x.id, labels: x.labels });
             }
             labelsArray.push({
@@ -414,7 +415,8 @@ export class NoteStore {
             note = { ...note };
             if (selectedIds.indexOf(note.id) !== -1) {
                 if (!note.labels.some(z => z.id === label.id)) {
-                    note.labels = [...note.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted }];
+                    note.labels = [...note.labels,
+                        { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 }
             }
             return note;
@@ -442,6 +444,7 @@ export class NoteStore {
     async removeLabel({ getState, dispatch, patchState }: StateContext<NoteState>, { label, typeNote }: RemoveLabelFromNote) {
         const selectedIds = getState().selectedIds;
         await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
+
         const notes = this.getNotesByType(getState, typeNote);
 
         const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
