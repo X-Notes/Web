@@ -62,7 +62,7 @@ export class SharedComponent implements OnInit, OnDestroy {
     await this.pService.waitPreloading();
     this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    this.murriService.initMurriFolderAsync(FolderType.Shared);
+    await this.murriService.initMurriFolderAsync(FolderType.Shared);
     await this.murriService.setOpacityTrueAsync();
 
   }

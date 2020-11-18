@@ -25,7 +25,7 @@ export class MurriService  {
     });
   }
 
-  setOpacityTrueAsync(delayOpacity: number = 0, flag = true) {
+  setOpacityTrueAsync(delayOpacity: number = 50, flag = true) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
       this.flagForOpacity = flag;
       resolve(true);

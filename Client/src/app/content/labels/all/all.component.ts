@@ -55,7 +55,7 @@ export class AllComponent implements OnInit, OnDestroy  {
     await this.pService.waitPreloading();
     this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    this.murriService.initMurriLabelAsync(true);
+    await this.murriService.initMurriLabelAsync(true);
     await this.murriService.setOpacityTrueAsync();
 
     this.pService.subject
