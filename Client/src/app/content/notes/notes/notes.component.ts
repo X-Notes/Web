@@ -84,7 +84,7 @@ export class NotesComponent implements OnInit, OnDestroy {
            });
         }))
         .subscribe(async (labels) => {
-          this.labelsFilters = labels;
+          this.labelsFilters = labels.sort((a, b) => (a.label.countNotes > b.label.countNotes) ? -1 : 1);
         });
 
         await this.pService.waitPreloading();
