@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class ReplacePipe implements PipeTransform {
 
   transform(value: string, ...args: any[]): any {
-    return value.length === 0 ? 'unknown label' : value;
+    return value === null ? 'No title' : value.length === 0 ? 'unknown label' : value;
   }
 
 }
