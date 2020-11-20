@@ -1,21 +1,17 @@
-<div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', isManyNotes ? 'many-notes' : 'one-note']">
-    <div class="few-notes" *ngIf="isManyNotes">
+<div class="outer"
+    [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', notes.length > 1 ? 'many-notes' : 'one-note']">
+    <div class="few-notes" *ngIf="notes.length > 1">
         <div class="header">
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
-            <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Top" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
-                <p>Name note</p>
-            </div>
-            <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Top" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
-                <p>Name note</p>
-            </div>
-            <div class="note" *ngFor="let item of deleteThis"
-                 CustomTooltip="Hedddddddddddllo" position="Top" labelColor="#DDFFCD" flagDisable="{{ disableTooltipUser() }}">
-                <p>Name note</p>
+        <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'"
+            class="notes-sharing">
+            <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
+                [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
+                [ngClass]="{'active-note': currentNoteId === item.id}" (click)="changeNote(item)"
+                flagDisable="{{ disableTooltipUser() }}">
+                <p>{{item.title}}</p>
             </div>
         </ngx-simplebar>
     </div>
@@ -29,10 +25,11 @@
             <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
                     <div class="link-access-field">
-                        <input readonly type="text" value="Your fucking link">
-                        <button class="dropdown-button" type="button" (click)="changeActive()">
+                        <input [ngStyle]="{'width': isPrivate ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}" readonly
+                            type="text" value="{{ currentNoteId | sharingNoteLink}}" #linkInput>
+                        <button *ngIf="!isPrivate" class="dropdown-button" type="button" (click)="changeActive()">
                             <div class="content-button" #dropdownSelect>
-                                <p>{{ 'modal.ShareModal.private' | translate }}</p>
+                                <p>Viewer</p>
                                 <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                     <i class="icon-select-label"></i>
                                 </div>
@@ -40,15 +37,15 @@
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
                             <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
                                 <div class="item" (click)="setLanguage('Private')">
-                                    <p>{{ 'modal.ShareModal.private' | translate }}</p>
+                                    <p>Viewer</p>
                                 </div>
                                 <div class="item" (click)="setLanguage('Shared')">
-                                    <p>{{ 'modal.ShareModal.shared' | translate }}</p>
+                                    <p>Editor</p>
                                 </div>
                             </div>
                             <div #overlay class="overlay" (click)="cancelDropdown()"></div>
                         </button>
-                        <div class="copy" #copy>
+                        <div class="copy" #copy (click)="copyInputLink(linkInput)">
                             <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
                             <i class="icon-copy"></i>
                         </div>
@@ -56,7 +53,7 @@
                     <div class="toggle-field">
                         <div class="toggle">
                             <input type="checkbox" (change)="changeAccess()">
-                            <div class="rectangle" [ngClass]="isAccess ? '' : 'active-toggle'">
+                            <div class="rectangle" [ngClass]="isPrivate ? '' : 'active-toggle'">
                             </div>
                             <div class="text-toggle">
                                 <div class="text">
@@ -68,15 +65,16 @@
                             </div>
                         </div>
                         <div class="toggle-description">
-                            <p *ngIf="isAccess">Anyone on the internet with this links</p>
-                            <p *ngIf="!isAccess">Your fucking description</p>
+                            <p *ngIf="isPrivate">Anyone on the internet with this links</p>
+                            <p *ngIf="!isPrivate">Only people added can open with this link</p>
                         </div>
                     </div>
                 </div>
                 <ngx-simplebar [options]="pService.optionsScroll" class="user-access">
-                    <div *ngFor="let items of deleteThis" class="user">
+                    <div *ngFor="let items of [1,2,3]" class="user">
                         <div class="photo">
-                            <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                            <img alt="user image"
+                                src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
                         </div>
                         <div class="user-info">
                             <div class="name">
@@ -110,7 +108,8 @@
             </mat-tab>
             <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
                 <div class="search">
-                    <input type="search" aria-label="Search" placeholder="{{ 'modal.ShareModal.search' | translate }}">
+                    <input type="search" aria-label="Search" placeholder="{{ 'modal.ShareModal.search' | translate }}"
+                        [ngModel]="searchStr" (ngModelChange)="changed($event)">
                     <button type="button">
                         <div class="icon">
                             <i class="icon-search"></i>
@@ -118,23 +117,11 @@
                     </button>
                 </div>
                 <ngx-simplebar [options]="pService.optionsScroll" class="interaction-container">
-                    <div class="mail-notification">
-                        <div class="mail-container" >
-                            <div class="user-mail">
-                                <p>konoplyanka199gmassdil.com</p>
-                                <div class="icon">
-                                    <i class="icon-plus"></i>
-                                </div>
-                            </div>
-                            <div class="user-mail">
-                                <p>konopmassdil.com</p>
-                                <div class="icon">
-                                    <i class="icon-plus"></i>
-                                </div>
-                            </div>
-                            <div class="user-mail">
-                                <p>konoplyanka19ddddd9gmassdil.dddddddddddddddddddddddddddcom</p>
-                                <div class="icon">
+                    <div *ngIf="selectedUsers.length > 0" class="mail-notification">
+                        <div class="mail-container">
+                            <div *ngFor="let user of selectedUsers" class="user-mail">
+                                <p>{{user.email}}</p>
+                                <div class="icon" (click)="removeUserFromInvites(user)">
                                     <i class="icon-plus"></i>
                                 </div>
                             </div>
@@ -145,7 +132,7 @@
                                 <input type="checkbox">
                                 <span class="checkbox">
                                     <div class="icon">
-                                        <i class="icon-plus" ></i>
+                                        <i class="icon-plus"></i>
                                     </div>
                                 </span>
                             </label>
@@ -156,7 +143,8 @@
                                 <button class="dropdown-button" type="button" (click)="changeActive()">
                                     <div class="content-button" #AccessSelect>
                                         <p>{{ 'modal.ShareModal.editor' | translate }}</p>
-                                        <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
+                                        <div class="icon"
+                                            [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                             <i class="icon-select-label"></i>
                                         </div>
                                     </div>
@@ -175,66 +163,23 @@
                                     <div class="content-button">
                                         <p>{{ 'modal.ShareModal.send' | translate }}</p>
                                     </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple"></div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeAccessRipple">
+                                    </div>
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div class="user-suggestions">
-                        <div class="user">
+                        <div *ngFor="let user of searchUsers" class="user">
                             <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
+                                <img alt="user image" [src]="user.photoId">
                             </div>
                             <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
+                                <p>{{user.email}}
+                                </p>
                             </div>
                             <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
+                                <button type="button" name="Share user note" (click)="addUserToInvite(user)">
                                     <div class="icon">
                                         <i class="icon-plus"></i>
                                     </div>

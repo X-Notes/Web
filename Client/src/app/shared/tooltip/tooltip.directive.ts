@@ -1,7 +1,6 @@
 import { Overlay, OverlayConfig, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { TooltipComponent } from './tooltip.component';
 
 @Directive({
@@ -28,7 +27,6 @@ export class TooltipDirective implements OnInit {
     const config = new OverlayConfig({
       positionStrategy: this.positioning(),
     });
-
     this.overlayRef = this.overlay.create(config);
   }
 
@@ -91,7 +89,7 @@ export class TooltipDirective implements OnInit {
       return;
     }
     if (this.labelColor !== '') {
-      if (this.text.length < 9) {
+      if (this.text.length < 1) {
         return;
       }
     }

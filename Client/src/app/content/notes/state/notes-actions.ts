@@ -135,7 +135,13 @@ export class PositionNote {
     }
 }
 
+// SHARING
 
+export class GetInvitedUsersToNote {
+    static type = '[Notes] Get InvitedUsersToNote';
+    constructor(public noteId: string) {
+    }
+}
 
 // SELECTION
 export class SelectIdNote {

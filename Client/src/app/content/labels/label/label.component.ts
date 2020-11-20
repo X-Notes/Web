@@ -47,7 +47,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.nameChanged.next();
-    this.nameChanged.unsubscribe();
+    this.nameChanged.complete();
   }
 
   ngOnInit(): void {
@@ -58,8 +58,10 @@ export class LabelComponent implements OnInit, OnDestroy {
       debounceTime(350),
       distinctUntilChanged())
       .subscribe(name => {
-        this.label = {...this.label, name};
-        this.updateLabel.emit(this.label);
+        if (name) {
+          this.label = {...this.label, name};
+          this.updateLabel.emit(this.label);
+        }
       });
   }
 

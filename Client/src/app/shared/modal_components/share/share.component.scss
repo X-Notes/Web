@@ -81,7 +81,6 @@
         overflow: hidden;
         -webkit-box-orient: vertical;
         font-size: 1rem;
-        background-color: #FFF5EB;
         padding: 0.25rem 0.5rem;
         width: calc(100% - 2.25rem);
         margin: 0.875rem 1.125rem 0 1.125rem;
@@ -89,16 +88,16 @@
         height: 27px;
         border-radius: 50px;
         cursor: pointer;
-
-        &:first-child {
+        &:first-child{
           margin-top: 0;
-          box-shadow: #0887a7 0px 0px 0px 2px;
         }
-        
         p {
           display: none;
           white-space: nowrap;
         }
+      }
+      .active-note{
+        box-shadow: #0887a7 0px 0px 0px 2px;
       }
     }
   }
@@ -167,7 +166,6 @@
 
           input[type="text"] {
             height: 32px;
-            width: calc(100% - 203px);
             padding-left: 0.75rem;
             border-radius: 5px;
             border: 0.8px solid;

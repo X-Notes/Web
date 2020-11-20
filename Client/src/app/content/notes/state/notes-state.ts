@@ -11,7 +11,7 @@ import {
     CancelAllSelectedLabels, UpdateSelectLabel,
     AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
     ClearUpdatelabelEvent, UpdateLabelOnNote,
-    UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle, ChangeColorFullNote,
+    UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle, ChangeColorFullNote, GetInvitedUsersToNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -26,6 +26,7 @@ import { Observable } from 'rxjs';
 import { FullNote } from '../models/fullNote';
 import { AccessType } from '../models/accessType';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
+import { InvitedUsersToNote } from '../models/invitedUsersToNote';
 
 
 
@@ -46,6 +47,7 @@ interface NoteState {
     notesAddingPrivate: SmallNote[];
     selectedLabelsFilter: number[];
     isCanceled: boolean;
+    InvitedUsersToNote: InvitedUsersToNote[];
 }
 
 @State<NoteState>({
@@ -60,7 +62,8 @@ interface NoteState {
         removeFromMurriEvent: [],
         notesAddingPrivate: [],
         selectedLabelsFilter: [],
-        isCanceled: false
+        isCanceled: false,
+        InvitedUsersToNote: []
     }
 })
 
@@ -75,6 +78,11 @@ export class NoteStore {
     @Selector()
     static selectedCount(state: NoteState): number {
         return state.selectedIds.length;
+    }
+
+    @Selector()
+    static getNotes(state: NoteState): Notes[] {
+        return state.notes;
     }
 
     @Selector()
@@ -110,6 +118,13 @@ export class NoteStore {
     @Selector()
     static labelsIds(state: NoteState): LabelsOnSelectedNotes[] {
         return state.labelsIdsFromSelectedIds;
+    }
+
+    // SHARING
+
+    @Selector()
+    static getUsersOnPrivateNote(state: NoteState): InvitedUsersToNote[] {
+        return state.InvitedUsersToNote;
     }
 
     // FULL NOTE
@@ -577,7 +592,15 @@ export class NoteStore {
     }
 
 
+    // SHARING
 
+    @Action(GetInvitedUsersToNote)
+    async getInvitedUsersToNote({ getState, patchState, dispatch }: StateContext<NoteState>, { noteId }: GetInvitedUsersToNote) {
+        const users = await this.api.getUsersOnPrivateNote(noteId).toPromise();
+        patchState({
+            InvitedUsersToNote: users
+        });
+    }
 
 
 

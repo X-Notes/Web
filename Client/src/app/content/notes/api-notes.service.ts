@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
+import { InvitedUsersToNote } from './models/invitedUsersToNote';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -99,6 +100,10 @@ export class ApiServiceNotes {
 
   new() {
     return this.httpClient.get<string>(environment.writeAPI + `/api/note/new`);
+  }
+
+  getUsersOnPrivateNote(id: string) {
+    return this.httpClient.get<InvitedUsersToNote[]>(environment.writeAPI + `/api/share/notes/user/invites/${id}`);
   }
 
   // FULL NOTE
