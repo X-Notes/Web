@@ -73,9 +73,15 @@ $header-small-note-light: #EAEAEA;
 
 //mixin 
 
-@mixin text-overflow {
+@mixin text-overflow-webkit {
     width: 100%;
     white-space: pre-wrap;
+    text-overflow: ellipsis;
+}
+
+@mixin text-overflow {
+    width: 100%;
+    white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }

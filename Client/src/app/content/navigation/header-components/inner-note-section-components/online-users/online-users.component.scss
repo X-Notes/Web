@@ -39,7 +39,6 @@
                 display: none;
                 @include text-overflow;
                 width: calc(100% - 44px);
-                white-space: nowrap;
             }
         }
 
