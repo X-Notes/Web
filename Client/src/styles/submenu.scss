@@ -106,8 +106,10 @@
                         justify-content: flex-start;
 
                         p {
-                            @include text-overflow;
                             width: calc(100% - 35px);
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
                             font-size: 0.9375rem;
                         }
                     }
@@ -194,7 +196,9 @@
                         font-size: 0.75rem;
 
                         p:first-child {
-                            @include text-overflow;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
                             width: calc(100% - 0.75rem);
                         }
                     }
@@ -300,14 +304,13 @@
                 font-size: 1rem;
                 width: calc(100% - 2.25rem);
                 margin: 0.875rem 1.125rem 0 1.125rem;
-                padding: 0.2rem 0.5rem;
+                padding: 0.25rem 0.5rem;
                 border-radius: 5px;
                 color: $text-color;
                 cursor: pointer;
-                overflow: hidden;
 
                 p {
-                    @include text-overflow-webkit;
+                    @include text-overflow;
                 }
             }
         }
@@ -359,7 +362,10 @@
                         font-size: 0.875rem;
 
                         p {
-                            @include text-overflow;
+                            width: 100%;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
 
                             &:last-child {
                                 font-size: 0.75rem;

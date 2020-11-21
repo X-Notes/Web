@@ -1,6 +1,6 @@
 import { Overlay, OverlayConfig, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
+import { ComponentRef, Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TooltipComponent } from './tooltip.component';
 
@@ -8,7 +8,7 @@ import { TooltipComponent } from './tooltip.component';
   // tslint:disable-next-line:directive-selector
   selector: '[CustomTooltip]'
 })
-export class TooltipDirective implements OnDestroy {
+export class TooltipDirective implements OnInit {
 
   @Input('CustomTooltip') text = '';
   // tslint:disable-next-line:no-input-rename
@@ -24,8 +24,12 @@ export class TooltipDirective implements OnDestroy {
               private overlayPositionBuilder: OverlayPositionBuilder,
               private elementRef: ElementRef) { }
 
-  ngOnDestroy(): void {
-    this.overlayRef?.detach();
+  ngOnInit(): void {
+    const config = new OverlayConfig({
+      positionStrategy: this.positioning(),
+    });
+
+    this.overlayRef = this.overlay.create(config);
   }
 
   positioning() {
@@ -85,15 +89,12 @@ export class TooltipDirective implements OnDestroy {
   show() {
     if (this.disable === 'true') {
       return;
-    } else if (this.labelColor !== '' && this.text.length < 9) {
-      return;
     }
-
-    const config = new OverlayConfig({
-      positionStrategy: this.positioning(),
-    });
-    this.overlayRef = this.overlay.create(config);
-
+    if (this.labelColor !== '') {
+      if (this.text.length < 9) {
+        return;
+      }
+    }
     const tooltipRef: ComponentRef<TooltipComponent>
       = this.overlayRef.attach(new ComponentPortal(TooltipComponent));
     this.text = this.text.charAt(0).toUpperCase() + this.text.slice(1);
@@ -109,7 +110,7 @@ export class TooltipDirective implements OnDestroy {
 
   @HostListener('mouseleave')
   hide() {
-    this.overlayRef?.detach();
+    this.overlayRef.detach();
   }
 
 }
