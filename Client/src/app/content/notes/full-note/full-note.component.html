@@ -3,7 +3,7 @@
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
             <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}"
                 [routerLink]="['/notes', item.id]">
-                <p>{{ item.title | replace }}</p>
+                <p>{{item.title}}</p>
             </div>
         </ngx-simplebar>
         <div class="information">
