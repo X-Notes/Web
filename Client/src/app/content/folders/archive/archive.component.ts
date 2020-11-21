@@ -58,10 +58,10 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     const folders = this.store.selectSnapshot(FolderStore.archiveFolders);
     this.folderService.firstInit(folders);
 
-    const active = await this.pService.disableSpinnerPromise();
-    this.store.dispatch(new SpinnerChangeStatus(active));
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    this.murriService.initMurriFolderAsync(FolderType.Archive);
+    await this.murriService.initMurriFolderAsync(FolderType.Archive);
     await this.murriService.setOpacityTrueAsync();
   }
 

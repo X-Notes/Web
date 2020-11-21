@@ -37,4 +37,8 @@ export class ApiServiceLabels {
     return this.httpClient.delete(environment.writeAPI + `/api/label`);
   }
 
+  getCountNotes(labelId: number) {
+    return this.httpClient.get<number>(environment.writeAPI + `/api/label/count/${labelId}`);
+  }
+
 }

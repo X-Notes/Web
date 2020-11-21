@@ -59,10 +59,10 @@ export class SharedComponent implements OnInit, OnDestroy {
     const folders = this.store.selectSnapshot(FolderStore.sharedFolders);
     this.folderService.firstInit(folders);
 
-    const active = await this.pService.disableSpinnerPromise();
-    this.store.dispatch(new SpinnerChangeStatus(active));
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
     this.loaded = true;
-    this.murriService.initMurriFolderAsync(FolderType.Shared);
+    await this.murriService.initMurriFolderAsync(FolderType.Shared);
     await this.murriService.setOpacityTrueAsync();
 
   }

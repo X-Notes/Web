@@ -138,10 +138,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
-      document.querySelector('.grid') as HTMLElement), 1000); // CHANGE TODO
+      document.querySelector('.grid') as HTMLElement, true), 1000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
-    this.store.select(NoteStore.updateLabelEvent)
+    this.store.select(NoteStore.updateLabelOnNoteEvent)
       .pipe(takeUntil(this.destroy))
       .subscribe((values: UpdateLabelEvent[]) => {
         const value = values.find(x => x.id === this.id);

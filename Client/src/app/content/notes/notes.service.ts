@@ -9,7 +9,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { CancelAllSelectedLabels } from './state/notes-actions';
+import { CancelAllSelectedLabels, ClearUpdatelabelEvent } from './state/notes-actions';
+import { UpdateLabelEvent } from './state/updateLabels';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -41,9 +42,24 @@ export class NotesService implements OnDestroy {
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
           this.notes = this.allNotes;
-          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), true);
           await this.murriService.setOpacityTrueAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
+        }
+      });
+
+    this.store.select(NoteStore.updateLabelOnNoteEvent)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (values: UpdateLabelEvent[]) => {
+        for (const valuee of values) {
+          const note = this.notes.find(x => x.id === valuee.id);
+          if (note !== undefined) {
+            note.labels = valuee.labels;
+          }
+        }
+        if (values.length > 0) {
+          await this.store.dispatch(new ClearUpdatelabelEvent()).toPromise();
+          await this.murriService.refreshLayoutAsync();
         }
       });
   }
@@ -95,11 +111,12 @@ export class NotesService implements OnDestroy {
   async UpdateLabelSelected(ids: number[]) {
     console.log('ids labels');
     if (ids.length !== 0 && this.firstInitFlag) {
+      console.log('in');
       await this.murriService.setOpacityTrueAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
-      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote));
+      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), false);
       await this.murriService.setOpacityTrueAsync(0);
     }
   }

@@ -25,7 +25,7 @@ export class MurriService  {
     });
   }
 
-  setOpacityTrueAsync(delayOpacity: number = 0, flag = true) {
+  setOpacityTrueAsync(delayOpacity: number = 50, flag = true) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
       this.flagForOpacity = flag;
       resolve(true);
@@ -42,27 +42,27 @@ export class MurriService  {
 
   refreshLayoutAsync() {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.grid.refreshItems().layout();
+      this.grid?.refreshItems().layout();
       resolve(true);
     }
     ));
   }
 
-  initMurriNoteAsync(type: NoteType) {
+  initMurriNoteAsync(type: NoteType, isDragEnabled: boolean) {
     return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.initMurriNote(type);
+      this.initMurriNote(type, isDragEnabled);
       resolve(true);
     }
     ));
   }
 
-  private initMurriNote(type: NoteType) {
+  private initMurriNote(type: NoteType, isDragEnabled: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
     }
 
-    this.gridSettings(this.gridItemName, gridElement);
+    this.gridSettings(this.gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -88,7 +88,7 @@ export class MurriService  {
       return;
     }
 
-    this.gridSettings(this.gridItemName, gridElement);
+    this.gridSettings(this.gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -115,7 +115,7 @@ export class MurriService  {
       return;
     }
 
-    this.gridSettings(this.gridItemName, gridElement);
+    this.gridSettings(this.gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item, event) => {
       const order: Order = {
         orderEntity: OrderEntity.Label,
@@ -126,11 +126,11 @@ export class MurriService  {
     });
   }
 
-  gridSettings(element: string, gridElement: HTMLElement) {
+  gridSettings(element: string, gridElement: HTMLElement, isDragEnabled: boolean) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
     this.grid = new Muuri.default(gridElement, {
       items: element,
-      dragEnabled: true,
+      dragEnabled: isDragEnabled,
       layout: {
         fillGaps: false,
         horizontal: false,
@@ -165,6 +165,9 @@ export class MurriService  {
         smoothStop: true,
         safeZone: 0.1
       }
+    });
+    this.grid.layout((items, hasLayoutChanged) => {
+      console.log('layout done!');
     });
   }
 
