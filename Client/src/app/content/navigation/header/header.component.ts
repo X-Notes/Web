@@ -31,8 +31,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
-  public countSelected: number;
-
   destroy = new Subject<void>();
 
   // Upper Menu
@@ -40,17 +38,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNewButtonActive)
   public newButtonActive$: Observable<boolean>;
 
-  @Select(AppStore.getSettingsButtonActive)
-  public settingsButtonActive$: Observable<boolean>;
-
-  @Select(AppStore.getSelectAllButtonActive)
-  public selectAllButtonActive$: Observable<boolean>;
-
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;
 
   @Select(AppStore.getdefaultBackground)
   public defaultBackground$: Observable<boolean>;
+
   //
 
   @Select(AppStore.isNoteInner)
@@ -66,9 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public theme$: Observable<Theme>;
 
   theme = Theme;
-
-  user: string[] = ['fucking person', 'fucking person','fucking person','fucking person','fucking person'
-  ];
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -93,54 +83,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.store.select(AppStore.getRouting)
     .pipe(takeUntil(this.destroy))
     .subscribe(x => this.routeChange(x));
-
-    this.store.select(NoteStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
-
-    this.store.select(FolderStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
-  }
-
-  showUsers() {
-    this.pService.users = !this.pService.users;
-  }
-
-  hideMenu() {
-    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
-  }
-
-  toggleTheme() {
-    this.store.dispatch(new ChangeTheme());
   }
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
-  }
-
-  disableTooltpUser(): boolean {
-    if (this.pService.checkWidth()) {
-      return true;
-    }
-  }
-
-  closeMenu(): void {
-    if(this.pService.checkWidth()) {
-      this.pService.users = false;
-    }
-
-    if(!this.pService.check()) {
-      this.pService.hideInnerMenu = false;
-    }
   }
 
   configShowMenu(flag: boolean) {
@@ -156,13 +102,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
      this.store.dispatch(new UpdateMenuActive(false));
     }
   }
-
-  toggleOrientation() {
-    this.pService.orientationMobile = !this.pService.orientationMobile;
-    setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
-  }
-
-
 
   async routeChange(type: EntityType) {
 
@@ -284,36 +223,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.subject.next(true);
   }
 
-  // Selection
-
-  selectAll() {
-    let routePath = this.store.selectSnapshot(AppStore.isNote);
-    if (routePath) {
-      const noteType = this.store.selectSnapshot(AppStore.getRouting);
-      this.store.dispatch(new SelectAllNote(noteType));
-    }
-    routePath = this.store.selectSnapshot(AppStore.isFolder);
-    if (routePath) {
-      const folderType = this.store.selectSnapshot(AppStore.getRouting);
-      this.store.dispatch(new SelectAllFolder(folderType));
-    }
-  }
-
-  unselectAll() {
-    let routePath = this.store.selectSnapshot(AppStore.isNote);
-    if (routePath) {
-      this.store.dispatch(new UnSelectAllNote());
-    }
-    routePath = this.store.selectSnapshot(AppStore.isFolder);
-    if (routePath) {
-      this.store.dispatch(new UnSelectAllFolder());
-    }
-  }
-
-  setDefaultColorProfile() {
-    this.store.dispatch(new SetDefaultBackground());
-  }
-
   // UPPER MENU FUNCTION NOTES
 
 
@@ -341,10 +250,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
   makePrivateFolder() {
     const folderType = this.store.selectSnapshot(AppStore.getRouting);
     this.store.dispatch(new MakePrivateFolders(folderType));
-  }
-
-  // Modal Windows
-  settingsClick() {
-    console.log('settings');
   }
 }

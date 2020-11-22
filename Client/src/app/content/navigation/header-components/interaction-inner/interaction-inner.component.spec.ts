@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InteractionFoldersComponent } from './interaction-folders.component';
+import { InteractionInnerComponent } from './interaction-inner.component';
 
-describe('InteractionFoldersComponent', () => {
-  let component: InteractionFoldersComponent;
-  let fixture: ComponentFixture<InteractionFoldersComponent>;
+describe('InteractionInnerComponent', () => {
+  let component: InteractionInnerComponent;
+  let fixture: ComponentFixture<InteractionInnerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InteractionFoldersComponent ]
+      declarations: [ InteractionInnerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InteractionFoldersComponent);
+    fixture = TestBed.createComponent(InteractionInnerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

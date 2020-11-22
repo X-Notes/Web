@@ -1,0 +1,27 @@
+@import 'header-components';
+
+.interactions {
+    .default-size {
+        .inner-content {
+          p {
+            padding-right: 0;
+          }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .interactions {
+        .default-size {
+            width: 124px;
+        }
+    }
+}
+
+@media (max-width: 320px) {
+    .interactions {
+        .default-size {
+            width: 104px;
+        }
+    }
+}

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InteractionNotesComponent } from './interaction-notes.component';
+import { InteractionItemsComponent } from './interaction-items.component';
 
-describe('InteractionNotesComponent', () => {
-  let component: InteractionNotesComponent;
-  let fixture: ComponentFixture<InteractionNotesComponent>;
+describe('InteractionItemsComponent', () => {
+  let component: InteractionItemsComponent;
+  let fixture: ComponentFixture<InteractionItemsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ InteractionNotesComponent ]
+      declarations: [ InteractionItemsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InteractionNotesComponent);
+    fixture = TestBed.createComponent(InteractionItemsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

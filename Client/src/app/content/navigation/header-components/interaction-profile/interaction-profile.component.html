@@ -1,1 +1,9 @@
-<p>interaction-profile works!</p>
+<div class="interactions" [ngClass]="[(menuActive$ | async) ? 'help-func' : '', (theme$ | async) === theme.Light ? 'light' : '']">
+    <button (click)="setDefaultColorProfile()" name="Default" type="button"
+        class="generic default-size filters" #default>
+        <div class="default inner-content">
+            <p>{{ 'header.defaultColor' | translate }}</p>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
+    </button>
+</div>

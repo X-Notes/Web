@@ -5,15 +5,23 @@ import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuComponent } from './menu/menu.component';
-import { InteractionNotesComponent } from './header-components/interaction-notes/interaction-notes.component';
-import { InteractionFoldersComponent } from './header-components/interaction-folders/interaction-folders.component';
 import { InteractionLabelsComponent } from './header-components/interaction-labels/interaction-labels.component';
 import { InteractionProfileComponent } from './header-components/interaction-profile/interaction-profile.component';
 import { InteractionToolsComponent } from './header-components/interaction-tools/interaction-tools.component';
+import { InteractionItemsComponent } from './header-components/interaction-items/interaction-items.component';
+import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
 
 
 @NgModule({
-  declarations: [SideBarComponent, HeaderComponent, MenuComponent, InteractionNotesComponent, InteractionFoldersComponent, InteractionLabelsComponent, InteractionProfileComponent, InteractionToolsComponent],
+  declarations: [
+    SideBarComponent,
+    HeaderComponent,
+    MenuComponent,
+    InteractionLabelsComponent,
+    InteractionProfileComponent,
+    InteractionToolsComponent,
+    InteractionItemsComponent,
+    InteractionInnerComponent],
   imports: [
     CommonModule,
     RouterModule,
