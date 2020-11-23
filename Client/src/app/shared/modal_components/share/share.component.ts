@@ -241,6 +241,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   removeUserFromInvites(user: SearchUserForShareModal) {
     this.selectedUsers = this.selectedUsers.filter(z => z.id !== user.id);
+    this.searchUsers.unshift(user);
   }
 
   // User Permission on private note
