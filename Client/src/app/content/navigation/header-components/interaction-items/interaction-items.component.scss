@@ -1,18 +1,6 @@
 @import 'header-components';
 
 .interactions {
-    display: flex;
-    align-items: center;
-    height: 100%;
-
-    .selected {
-        .inner-content {
-          i {
-            transform: rotate(45deg);
-          }
-        }
-    }
-    
     .filter {
         width: 30px;
     
@@ -57,10 +45,6 @@
               }
             }
         }
-    
-        .filter {
-            width: 30px;
-        }
     }
 }
 
@@ -77,14 +61,6 @@
                 display: none;
               }
             }
-        }
-    }
-}
-
-@media (max-width: 320px) {
-    .interactions {
-        .filter {
-            width: 30px;
         }
     }
 }

@@ -1,10 +1,7 @@
 @import 'header-components';
 
 .interactions {
-    display: flex;
-    align-items: center;
     justify-content: flex-end;
-    height: 100%;
     width: 100%;
     
     .history {
@@ -371,7 +368,7 @@
             left: initial;
             top: initial;
             height: 100%;
-            width: calc(100% - 263px);
+            width: calc(100% - 207px);
             max-height: initial;
             margin-right: 1rem;
             background-color: initial;
@@ -438,7 +435,7 @@
         }
 
         .wrapper-people {
-            width: calc(100% - 223px);
+            width: calc(100% - 177px);
         }
     }
 }
@@ -474,6 +471,8 @@
         }
 
         .wrapper-people {
+            width: calc(100% - 170px);
+            
             .people-editing {
                 .person {
                     .inner-person {

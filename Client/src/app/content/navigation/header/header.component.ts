@@ -46,7 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public theme$: Observable<Theme>;
 
   theme = Theme;
-  router: EntityType;
+  router: string;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -98,25 +98,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case EntityType.FolderPrivate: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.FolderShared: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.FolderArchive: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.FolderDeleted: {
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.FolderInner: {
@@ -127,25 +127,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case EntityType.NotePrivate: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.NoteShared: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.NoteArchive: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.NoteDeleted: {
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        this.router = 3;
+        this.router = 'items';
         break;
       }
       case EntityType.NoteInner: {
@@ -168,23 +168,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
             break;
           }
         }
-        this.router = 4;
+        this.router = 'note-inner';
         break;
       }
 
       case EntityType.LabelPrivate: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
+        this.router = 'label';
         break;
       }
       case EntityType.LabelDeleted: {
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
+        this.router = 'label';
         break;
       }
 
 
       case EntityType.Profile: {
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
-        this.router = 2;
+        this.router = 'profile';
         break;
       }
 

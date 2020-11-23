@@ -1,15 +1,15 @@
 <div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
-        class="generic filters selected custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
+        class="generic generic-2 generic-unfixed selected" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
         #selectedAll>
         <div class="inner-content">
             <p>{{ 'header.selected' | translate }} {{countSelected}}</p>
-            <i class="icon-plus"></i>
+            <i class="icon-plus" style="transform: rotate(45deg)"></i>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
     </button>
     <button name="Select" type="button" (click)="selectAll()"
-        class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
+        class="generic generic-2 generic-unfixed" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
         <div class="inner-content">
             <p>{{ 'header.select' | translate }}</p>
             <i class="icon-select"></i>
@@ -17,7 +17,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
     </button>
     <button CustomTooltip="{{ 'header.filter' | translate }}" position="Bottom" (click)="settingsClick()" name="Filter" type="button"
-        class="generic filters filter" #filter>
+        class="generic generic-2 filter" #filter>
         <div class="inner-content">
             <i class="icon-filter"></i>
         </div>

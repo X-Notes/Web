@@ -1,10 +1,4 @@
 <div class="interactions" [ngClass]="[pService.hideInnerMenu ? 'visible' : '', (theme$ | async) === theme.Light ? 'light' : '', pService.users ? 'visible-people' : '']">
-    <button CustomTooltip="{{ 'header.back' | translate }}" position="Bottom" type="button" name="Back" class="generic filters mobile-buttons" #back>
-        <div class="inner-content">
-            <i class="icon-select-label"></i>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="back"></div>
-    </button>
     <div CustomTooltip="{{ 'header.countUsers' | translate }}" position="Bottom" class="user-circle" (click)="showUsers()" #userCircle>
         <p>8</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
@@ -21,7 +15,7 @@
             </div>
         </ngx-simplebar>
     </div>
-    <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Filter" type="button" class="generic filters" #video>
+    <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Filter" type="button" class="generic generic-2" #video>
         <div class="inner-content">
             <i class="icon-video"></i>
         </div>
@@ -31,20 +25,20 @@
     <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
         [@.disabled]="pService.AnimationInnerMenu"></app-menu>
 
-    <button name="History" type="button" class="generic filters history" #history
+    <button name="History" type="button" class="generic generic-2 history" #history
         (click)="pService.toggleHistoryMethod()">
         <div class="inner-content">
             <p>{{ 'menu.history' | translate }}</p>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
     </button>
-    <button CustomTooltip="{{ 'label' | translate }}" position="Bottom" name="label" type="button" class="generic filters mobile-buttons" #label>
+    <button CustomTooltip="{{ 'label' | translate }}" position="Bottom" name="label" type="button" class="generic generic-2 mobile-buttons" #label>
         <div class="inner-content">
             <i class="icon-label"></i>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
     </button>
-    <button CustomTooltip="{{ 'shared' | translate }}" position="Bottom" name="shared" type="button" class="generic filters mobile-buttons" #shared>
+    <button CustomTooltip="{{ 'shared' | translate }}" position="Bottom" name="shared" type="button" class="generic generic-2 mobile-buttons" #shared>
         <div class="inner-content">
             <i class="icon-shared"></i>
         </div>

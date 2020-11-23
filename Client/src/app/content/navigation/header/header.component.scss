@@ -118,7 +118,7 @@ header {
     width: calc(100% - 270px);
     padding: 0 3.125vw;
 
-    .left {
+    .right-tools {
       position: absolute;
       right: 0;
       padding-right: 3.125vw;
@@ -127,10 +127,6 @@ header {
     }
 
     .interactions {
-      display: flex;
-      align-items: center;
-      height: 100%;
-
       .hamburger {
         position: relative;
         display: none;
@@ -162,38 +158,19 @@ header {
           }
         }
       }
-
-      .active-hamburger {
-        &:first-child {
-          span {
-            transform: rotate(45deg);
-
-            &::before {
-              top: 0;
-              transform: rotate(90deg);
-            }
-
-            &::after {
-              top: 0;
-            }
-          }
-        }
-      }
     }
   }
 
   .inner-menu {
-    padding: 0;
+    padding: 0 2vw 0 4vw;
 
-    .left {
+    .right-tools {
       width: 30%;
-      padding-right: 2vw;
       justify-content: flex-end;
     }
 
     .inner-helper {
       width: 70%;
-      padding-left: 4vw;
     }
   }
 }
@@ -222,7 +199,7 @@ header {
   }
 
   .management-section {
-    .left {
+    .right-tools {
       background-color: white;
     }
 
@@ -259,12 +236,11 @@ header {
 @media (max-width: 1320px) {
   header {
     .inner-menu {
-      .left {
+      .right-tools {
         display: none;
       }
 
       .inner-helper {
-        padding: 0 4vw;
         width: 100%;
       }
     }
@@ -281,7 +257,7 @@ header {
       padding: 0 4vw;
 
       .inner-helper {
-        padding: 0;
+        width: calc(100% - 46px);
       }
     }
 

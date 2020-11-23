@@ -1,7 +1,7 @@
 <div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <button (click)="setDefaultColorProfile()" name="Default" type="button"
-        class="generic default-size filters" #default>
-        <div class="default inner-content">
+        class="generic generic-2" #default>
+        <div class="inner-content">
             <p>{{ 'header.defaultColor' | translate }}</p>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>

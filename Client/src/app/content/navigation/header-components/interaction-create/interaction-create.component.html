@@ -2,8 +2,7 @@
     <button 
         *ngIf="(newButtonActive$ | async)"
         name="Create note" type="button"
-        [ngClass]="{'custom-create-profile':(route$ | async) === 'background'}"
-        class="generic new-note custom-create"
+        class="generic new-note generic-unfixed"
         (click)="newButton()"
         #new>
 

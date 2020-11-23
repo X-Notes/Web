@@ -1,27 +1,16 @@
 @import 'header-components';
 
 .interactions {
-    .default-size {
+    .generic {
+        width: auto;
+
         .inner-content {
+            padding: 0 0.75rem;
+
           p {
+            display: block;
             padding-right: 0;
           }
-        }
-    }
-}
-
-@media (max-width: 1024px) {
-    .interactions {
-        .default-size {
-            width: 124px;
-        }
-    }
-}
-
-@media (max-width: 320px) {
-    .interactions {
-        .default-size {
-            width: 104px;
         }
     }
 }

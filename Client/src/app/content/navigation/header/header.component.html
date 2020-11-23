@@ -22,8 +22,7 @@
     <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''" [ngSwitch]="router">
 
         <div class="interactions">
-            <div class="generic hamburger" (click)="toggleSidebar()"
-                [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
+            <div class="generic hamburger" (click)="toggleSidebar()">
                 <span></span>
             </div>
         </div>
@@ -33,21 +32,21 @@
 
         <app-interaction-profile
             class="interactions"
-            *ngSwitchCase="2"></app-interaction-profile>
+            *ngSwitchCase="'profile'"></app-interaction-profile>
 
         <app-interaction-items
             class="interactions"
-            *ngSwitchCase="3"></app-interaction-items>
+            *ngSwitchCase="'items'"></app-interaction-items>
 
         <app-interaction-inner
             class="interactions inner-helper"
-            *ngSwitchCase="4"></app-interaction-inner>
+            *ngSwitchCase="'note-inner'"></app-interaction-inner>
 
         <div class="interactions menu" *ngIf="(menuActive$ | async)" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
 
-        <app-interaction-tools class="left"></app-interaction-tools>
+        <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
 
     </div>
 </header>
