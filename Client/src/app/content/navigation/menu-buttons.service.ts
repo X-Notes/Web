@@ -382,7 +382,7 @@ export class MenuButtonsService {
         title: 'Share'
       },
       autoFocus: false,
-      panelClass: theme === Theme.Light ? ['custom-dialog-class-light','sharing-modal'] : ['custom-dialog-class-dark','sharing-modal'],
+      panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }

@@ -19,7 +19,7 @@
         </button>
     </div>
 
-    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
+    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''" [ngSwitch]="router">
 
         <div class="interactions">
             <div class="generic hamburger" (click)="toggleSidebar()"
@@ -28,27 +28,24 @@
             </div>
         </div>
 
-        <div class="interactions" *ngIf="!(isNoteInner$ | async)">
-            <button *ngIf="(newButtonActive$ | async)" name="Create note" type="button"
-                [ngClass]="{'custom-create-profile':(route$ | async) === 'background'}"
-                class="generic new-note custom-create" (click)="newButton()" #new>
-                <div class="inner-content">
-                    <p>{{ 'new.' + (route$ | async ) | translate}}</p>
-                    <i class="icon-plus"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
-            </button>
-        </div>
+        <app-interaction-create
+                class="interactions"></app-interaction-create>
 
-        <app-interaction-profile class="interactions" *ngIf="(defaultBackground$ | async)"></app-interaction-profile>
+        <app-interaction-profile
+            class="interactions"
+            *ngSwitchCase="2"></app-interaction-profile>
 
-        <app-interaction-items class="interactions" *ngIf="!(isNoteInner$ | async)"></app-interaction-items>
+        <app-interaction-items
+            class="interactions"
+            *ngSwitchCase="3"></app-interaction-items>
+
+        <app-interaction-inner
+            class="interactions inner-helper"
+            *ngSwitchCase="4"></app-interaction-inner>
 
         <div class="interactions menu" *ngIf="(menuActive$ | async)" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
-
-        <app-interaction-inner class="interactions inner-helper" *ngIf="(isNoteInner$ | async)"></app-interaction-inner>
 
         <app-interaction-tools class="left"></app-interaction-tools>
 

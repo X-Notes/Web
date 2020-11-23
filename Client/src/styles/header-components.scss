@@ -51,6 +51,10 @@
           background-color: #3d4049;
         }
     }
+
+    .custom-create {
+        min-width: 150px;
+    }
 }
 
 .light {
@@ -69,6 +73,14 @@
           background-color: $light-nav-backlight;
         }
     }
+}
+
+@media (max-width: 1320px) {
+  .interactions {
+    .custom-create {
+        min-width: auto;
+    }
+  }
 }
 
 @media (max-width: 1024px) {
@@ -96,6 +108,10 @@
 
         .filters {
             width: 54px;
+        }
+
+        .custom-create {
+            min-width: auto;
         }
     }
 }

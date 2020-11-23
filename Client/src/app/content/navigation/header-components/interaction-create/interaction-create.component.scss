@@ -1,0 +1,24 @@
+@import 'header-components';
+
+.interactions {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    .new-note {
+        background-color: #ffffff;
+        color: #363636;
+
+        &:hover {
+          background-color: #ececec;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .interactions {
+        .new-note {
+            display: none;
+        }
+    }
+}

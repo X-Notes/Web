@@ -163,15 +163,6 @@ header {
         }
       }
 
-      .new-note {
-        background-color: #ffffff;
-        color: #363636;
-
-        &:hover {
-          background-color: #ececec;
-        }
-      }
-
       .active-hamburger {
         &:first-child {
           span {
@@ -308,10 +299,6 @@ header {
       .interactions {
         .hamburger {
           display: flex;
-        }
-
-        .new-note {
-          display: none;
         }
       }
     }

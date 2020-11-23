@@ -10,6 +10,7 @@ import { InteractionProfileComponent } from './header-components/interaction-pro
 import { InteractionToolsComponent } from './header-components/interaction-tools/interaction-tools.component';
 import { InteractionItemsComponent } from './header-components/interaction-items/interaction-items.component';
 import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
+import { InteractionCreateComponent } from './header-components/interaction-create/interaction-create.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { InteractionInnerComponent } from './header-components/interaction-inner
     InteractionProfileComponent,
     InteractionToolsComponent,
     InteractionItemsComponent,
-    InteractionInnerComponent],
+    InteractionInnerComponent,
+    InteractionCreateComponent],
   imports: [
     CommonModule,
     RouterModule,

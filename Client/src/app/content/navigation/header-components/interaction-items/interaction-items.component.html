@@ -8,7 +8,7 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
     </button>
-    <button *ngIf="(selectAllButtonActive$ | async)" name="Select" type="button" (click)="selectAll()"
+    <button name="Select" type="button" (click)="selectAll()"
         class="generic filters custom-create" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
         <div class="inner-content">
             <p>{{ 'header.select' | translate }}</p>

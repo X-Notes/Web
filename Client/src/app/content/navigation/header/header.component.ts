@@ -15,7 +15,7 @@ import { ChangeTheme, SetDefaultBackground } from 'src/app/core/stateUser/user-a
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { UpdateNewButton,  UpdateMenuActive, UpdateSettingsButton,
+import { UpdateNewButton,  UpdateMenuActive,
   UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -35,9 +35,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Upper Menu
 
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
-
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;
 
@@ -49,9 +46,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.getName)
-  public route$: Observable<string>;
-
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
@@ -59,6 +53,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public theme$: Observable<Theme>;
 
   theme = Theme;
+  router: EntityType;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -82,7 +77,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.store.select(AppStore.getRouting)
     .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.routeChange(x));
+    .subscribe(x => {
+      this.router = x;
+      this.routeChange(x);
+    });
   }
 
   toggleSidebar() {
@@ -107,27 +105,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     switch (type) {
       case EntityType.FolderPrivate: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
+        this.router = 3;
         break;
       }
       case EntityType.FolderShared: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
+        this.router = 3;
         break;
       }
       case EntityType.FolderArchive: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
+        this.router = 3;
         break;
       }
       case EntityType.FolderDeleted: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
+        this.router = 3;
         break;
       }
       case EntityType.FolderInner: {
@@ -136,27 +134,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
 
       case EntityType.NotePrivate: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        this.router = 3;
         break;
       }
       case EntityType.NoteShared: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        this.router = 3;
         break;
       }
       case EntityType.NoteArchive: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(true)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        this.router = 3;
         break;
       }
       case EntityType.NoteDeleted: {
-        this.showAllButtons();
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
+        await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        this.router = 3;
         break;
       }
       case EntityType.NoteInner:
@@ -180,30 +178,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
             break;
           }
         }
+        this.router = 4;
         break;
       }
 
       case EntityType.LabelPrivate: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
-        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
       case EntityType.LabelDeleted: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(false));
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
-        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
         break;
       }
 
 
       case EntityType.Profile: {
-        this.store.dispatch(new UpdateDefaultBackgroundButton(true));
-        await this.store.dispatch(new UpdateSettingsButton(false)).toPromise();
         await this.store.dispatch(new UpdateNewButton(true)).toPromise();
-        await this.store.dispatch(new UpdateSelectAllButton(false)).toPromise();
+        this.router = 2;
         break;
       }
 
@@ -211,16 +202,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         console.log('default');
       }
     }
-  }
-
-  async showAllButtons() {
-    await this.store.dispatch(new UpdateSettingsButton(true)).toPromise();
-    await this.store.dispatch(new UpdateNewButton(true)).toPromise();
-    await this.store.dispatch(new UpdateSelectAllButton(true)).toPromise();
-  }
-
-  newButton() {
-    this.pService.subject.next(true);
   }
 
   // UPPER MENU FUNCTION NOTES
