@@ -1,7 +1,7 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive, UpdateSelectAllButton,
-    UpdateNewButton, UpdateSettingsButton, UpdateRouteWithNoteType, UpdateDefaultBackgroundButton } from './app-action';
+import { UpdateRoute, UpdateMenuActive,
+    UpdateNewButton, UpdateRouteWithNoteType } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -9,11 +9,8 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 interface AppState {
     routing: EntityType;
     newButtonActive: boolean;
-    selectAllButtonActive: boolean;
     menuActive: boolean;
-    settingsButtonActive: boolean;
     innerNoteType: NoteType;
-    defaultBackground: boolean;
 }
 
 @State<AppState>({
@@ -21,11 +18,8 @@ interface AppState {
     defaults: {
         routing: null,
         newButtonActive: true,
-        selectAllButtonActive: true,
-        settingsButtonActive: true,
         menuActive: false,
         innerNoteType: null,
-        defaultBackground: false
     }
 })
 @Injectable()
@@ -52,6 +46,12 @@ export class AppStore {
         state.routing === EntityType.NotePrivate ||
         state.routing === EntityType.NoteArchive ||
         state.routing === EntityType.NoteInner;
+    }
+
+    @Selector()
+    static isDelete(state: AppState): boolean {
+        return state.routing === EntityType.NoteDeleted ||
+        state.routing === EntityType.FolderDeleted;
     }
 
     @Selector()
@@ -115,23 +115,8 @@ export class AppStore {
     }
 
     @Selector()
-    static getSettingsButtonActive(state: AppState): boolean {
-        return state.settingsButtonActive;
-    }
-
-    @Selector()
-    static getSelectAllButtonActive(state: AppState): boolean {
-        return state.selectAllButtonActive;
-    }
-
-    @Selector()
     static getMenuActive(state: AppState): boolean {
         return state.menuActive;
-    }
-
-    @Selector()
-    static getdefaultBackground(state: AppState): boolean {
-        return state.defaultBackground;
     }
 
     @Action(UpdateRoute)
@@ -145,24 +130,9 @@ export class AppStore {
     }
 
     // UPPER MENU BUTTONS
-    @Action(UpdateSettingsButton)
-    updateSettings({patchState}: StateContext<AppState>, {flag}: UpdateSettingsButton) {
-        patchState({settingsButtonActive: flag});
-    }
-
     @Action(UpdateNewButton)
     updateNew({patchState}: StateContext<AppState>, {flag}: UpdateNewButton) {
         patchState({newButtonActive: flag});
-    }
-
-    @Action(UpdateSelectAllButton)
-    updateSelectAll({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({selectAllButtonActive: flag});
-    }
-
-    @Action(UpdateDefaultBackgroundButton)
-    updateDefaultBackground({patchState}: StateContext<AppState>, {flag}: UpdateSelectAllButton) {
-        patchState({defaultBackground: flag});
     }
 
     @Action(UpdateMenuActive)

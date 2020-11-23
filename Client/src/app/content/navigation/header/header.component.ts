@@ -7,16 +7,12 @@ import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Select, Store } from '@ngxs/store';
-import { UnSelectAllNote, SelectAllNote,
-  DeleteNotesPermanently,  ArchiveNotes, MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
-import { SelectAllFolder, UnSelectAllFolder, ArchiveFolders, DeleteFoldersPermanently,
-  MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
-import { ChangeTheme, SetDefaultBackground } from 'src/app/core/stateUser/user-action';
+import { MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
+import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
-import { UpdateNewButton,  UpdateMenuActive,
-  UpdateSelectAllButton, UpdateDefaultBackgroundButton } from 'src/app/core/stateApp/app-action';
+import { UpdateNewButton,  UpdateMenuActive } from 'src/app/core/stateApp/app-action';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -37,9 +33,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;
-
-  @Select(AppStore.getdefaultBackground)
-  public defaultBackground$: Observable<boolean>;
 
   //
 
@@ -77,10 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.store.select(AppStore.getRouting)
     .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      this.router = x;
-      this.routeChange(x);
-    });
+    .subscribe(x => this.routeChange(x));
   }
 
   toggleSidebar() {
@@ -96,8 +86,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateNewButton(false));
       this.store.dispatch(new UpdateMenuActive(true));
     } else {
-     this.store.dispatch(new UpdateNewButton(true));
-     this.store.dispatch(new UpdateMenuActive(false));
+      this.store.selectSnapshot(AppStore.isDelete) ? this.store.dispatch(new UpdateNewButton(false)) :
+      this.store.dispatch(new UpdateNewButton(true));
+      this.store.dispatch(new UpdateMenuActive(false));
     }
   }
 
@@ -157,8 +148,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.router = 3;
         break;
       }
-      case EntityType.NoteInner:
-      this.store.dispatch(new UpdateDefaultBackgroundButton(false)); {
+      case EntityType.NoteInner: {
        // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
         switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
           case NoteType.Private: {

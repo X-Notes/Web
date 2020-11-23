@@ -16,7 +16,7 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
     </button>
-    <button CustomTooltip="{{ 'header.filter' | translate }}" position="Bottom" *ngIf="(settingsButtonActive$ | async)" (click)="settingsClick()" name="Filter" type="button"
+    <button CustomTooltip="{{ 'header.filter' | translate }}" position="Bottom" (click)="settingsClick()" name="Filter" type="button"
         class="generic filters filter" #filter>
         <div class="inner-content">
             <i class="icon-filter"></i>

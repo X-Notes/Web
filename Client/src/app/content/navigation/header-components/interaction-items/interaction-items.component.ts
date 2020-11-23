@@ -24,14 +24,8 @@ export class InteractionItemsComponent implements OnInit {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
-  @Select(AppStore.getSettingsButtonActive)
-  public settingsButtonActive$: Observable<boolean>;
-
   @Select(AppStore.getMenuActive)
   public menuActive$: Observable<boolean>;
-
-  @Select(AppStore.getSelectAllButtonActive)
-  public selectAllButtonActive$: Observable<boolean>;
 
   theme = Theme;
 
