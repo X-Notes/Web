@@ -29,10 +29,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   searchStr = '';
 
   ngOnDestroy(): void {
-    const flag = this.store.selectSnapshot(AppStore.isNoteInner);
-    if (!flag) {
     this.store.dispatch(new UnSelectAllNote());
-    }
   }
 
   async ngOnInit() {

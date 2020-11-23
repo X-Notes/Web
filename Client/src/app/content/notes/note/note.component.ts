@@ -37,7 +37,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.store.select(NoteStore.selectedIds)
+    this.store.select(NoteStore.selectedIds) // TODO REMOVE
     .pipe(takeUntil(this.destroy))
     .pipe(map(z => this.tryFind(z)))
     .subscribe(flag => this.isHighlight = flag);

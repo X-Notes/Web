@@ -5,5 +5,5 @@ export interface InvitedUsersToNote {
     photoId: string;
     name: string;
     email: string;
-    refType: RefType;
+    accessType: RefType;
 }

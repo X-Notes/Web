@@ -318,6 +318,14 @@
               .icon {
                 display: flex;
                 font-size: 0.75rem;
+                i::before{
+                  color: #C4C4C4;
+                }
+              }
+              .black{
+                i::before{
+                  color: #202020 !important;
+                }
               }
             }
           }

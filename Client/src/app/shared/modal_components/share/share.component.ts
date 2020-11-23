@@ -3,13 +3,16 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNote } from 'src/app/content/notes/models/invitedUsersToNote';
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
-import { GetInvitedUsersToNote } from 'src/app/content/notes/state/notes-actions';
+import { GetInvitedUsersToNote, TransformTypeNotes, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { RefType } from 'src/app/core/models/refType';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from '../../enums/EntityTypes';
+import { NoteType } from '../../enums/NoteTypes';
 import { Theme } from '../../enums/Theme';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showHistory } from '../../services/personalization.service';
@@ -25,10 +28,11 @@ import { DialogData } from '../dialog_data';
 export class ShareComponent implements OnInit, OnDestroy {
   dropdownActive = false;
   isCollapse = true;
-  isPrivate: boolean;
+  noteType = NoteType;
+  refType = RefType;
 
   notes: SmallNote[] = [];
-  currentNoteId: string;
+  currentNote: SmallNote;
 
   searchStr: string;
   searchStrChanged: Subject<string> = new Subject<string>();
@@ -47,38 +51,46 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   theme = Theme;
 
+  commandsForChange = new Map<string, any[]>();
+
+  // INVITES
+  messageTextArea: string;
+  isSendNotification: boolean;
+  refTypeForInvite: RefType = RefType.Viewer;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public pService: PersonalizationService,
     private rend: Renderer2,
     private store: Store,
-    private searchService: SearchService) { }
+    private searchService: SearchService,
+    private api: ApiServiceNotes) {
+  }
 
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
+    const commands: any[] = [];
+    this.commandsForChange.forEach((value, key) => value.forEach(z => commands.push(z)));
+    this.store.dispatch(commands);
   }
 
   ngOnInit(): void {
     const routing = this.store.selectSnapshot(AppStore.getRouting);
     switch (routing) {
       case EntityType.NoteArchive: {
-        this.isPrivate = true;
         this.getNotes();
         break;
       }
       case EntityType.NotePrivate: {
-        this.isPrivate = true;
         this.getNotes();
         break;
       }
       case EntityType.NoteDeleted: {
-        this.isPrivate = true;
         this.getNotes();
         break;
       }
       case EntityType.NoteShared: {
-        this.isPrivate = false;
         this.getNotes();
         break;
       }
@@ -93,7 +105,8 @@ export class ShareComponent implements OnInit, OnDestroy {
       distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
-          this.searchUsers = await this.searchService.searchUsers(searchStr).toPromise();
+          const users = await this.searchService.searchUsers(searchStr).toPromise();
+          this.searchUsers = users.filter(user => !this.selectedUsers.some(z => z.id === user.id));
         } else {
           this.searchUsers = [];
         }
@@ -105,7 +118,9 @@ export class ShareComponent implements OnInit, OnDestroy {
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     const notes = this.store.selectSnapshot(NoteStore.getNotes);
     const notesWithType = notes.find(z => z.typeNotes === noteType);
-    this.notes = notesWithType.notes.filter(z => selectionIds.some(x => x === z.id));
+    this.notes = notesWithType.notes.filter(z => selectionIds.some(x => x === z.id)).map(note => {
+      return { ...note };
+    });
     this.changeNote(this.notes[0]);
   }
 
@@ -118,32 +133,79 @@ export class ShareComponent implements OnInit, OnDestroy {
   changeActive() {
     this.dropdownActive = !this.dropdownActive;
     if (this.dropdownActive) {
-      this.rend.setStyle(this.overlay.nativeElement, 'display', 'block');
-      this.rend.setStyle(this.overlay2.nativeElement, 'display', 'block');
+      if (this.overlay) {
+        this.rend.setStyle(this.overlay.nativeElement, 'display', 'block');
+      }
+      if (this.overlay2) {
+        this.rend.setStyle(this.overlay2.nativeElement, 'display', 'block');
+      }
     } else {
-      this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
-      this.rend.setStyle(this.overlay2.nativeElement, 'display', 'none');
+      if (this.overlay) {
+        this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
+      }
+      if (this.overlay2) {
+        this.rend.setStyle(this.overlay2.nativeElement, 'display', 'none');
+      }
 
     }
   }
 
-  changeAccess(): void {
-    this.isPrivate = !this.isPrivate;
+  async changeNoteType() {
+    if (this.currentNote.noteType !== NoteType.Shared) {
+      await this.api.makePublic(RefType.Viewer, this.currentNote.id).toPromise();
+      this.currentNote.noteType = NoteType.Shared;
+      this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Shared;
+      const commands = this.factoryForCommandsShared([this.currentNote.id]);
+      this.commandsForChange.set(this.currentNote.id, commands);
+    } else {
+      await this.api.makePrivateNotes([this.currentNote.id]).toPromise();
+      this.currentNote.noteType = NoteType.Private;
+      this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Private;
+      const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
+      this.commandsForChange.set(this.currentNote.id, commands);
+    }
   }
 
-  setLanguage(item: any): void {
-    switch (item) {
-      case 'Private':
-        console.log('private');
-        break;
-      case 'Shared':
-        console.log('shared');
-        break;
-    }
+
+  factoryForCommandsShared(ids: string[]) {
+    const commands: any[] = [];
+    commands.push(new TransformTypeNotes(NoteType.Archive, NoteType.Shared, ids));
+    commands.push(new TransformTypeNotes(NoteType.Private, NoteType.Shared, ids));
+    commands.push(new TransformTypeNotes(NoteType.Deleted, NoteType.Shared, ids));
+    commands.push(new UpdateOneNote(this.currentNote,  NoteType.Shared));
+    return commands;
+  }
+
+
+  factoryForCommandsPrivate(ids: string[]) {
+    const commands: any[] = [];
+    commands.push(new TransformTypeNotes(NoteType.Archive, NoteType.Private, ids));
+    commands.push(new TransformTypeNotes(NoteType.Shared, NoteType.Private, ids));
+    commands.push(new TransformTypeNotes(NoteType.Deleted, NoteType.Private, ids));
+    commands.push(new UpdateOneNote(this.currentNote, NoteType.Private));
+    return commands;
+  }
+
+  async changeRefType(refType: RefType) {
+    await this.api.makePublic(refType, this.currentNote.id).toPromise();
+    this.currentNote.refType = refType;
+    this.notes.find(note => note.id === this.currentNote.id).refType = refType;
+    this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType));
+  }
+
+  refTypeNotification(refType: RefType): void {
+    this.refTypeForInvite = refType;
+  }
+
+  async sendInvites() {
+    const userIds = this.selectedUsers.map(user => user.id);
+    await this.api.sendInvitesToNote(userIds, this.currentNote.id, this.refTypeForInvite,
+      this.isSendNotification, this.messageTextArea).toPromise();
+    this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
   }
 
   changeNote(note: SmallNote) {
-    this.currentNoteId = note.id;
+    this.currentNote = { ...note };
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 
@@ -179,5 +241,16 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   removeUserFromInvites(user: SearchUserForShareModal) {
     this.selectedUsers = this.selectedUsers.filter(z => z.id !== user.id);
+  }
+
+  // User Permission on private note
+  async removeUserWithPermissions(userId: number) {
+    await this.api.removeUserFromPrivateNote(this.currentNote.id, userId).toPromise();
+    this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
+  }
+
+  async changeUserPermission(refType: RefType, id: number) {
+    await this.api.changeUserPermission(this.currentNote.id, id, refType).toPromise();
+    this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
   }
 }

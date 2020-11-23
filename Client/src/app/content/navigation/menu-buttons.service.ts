@@ -12,6 +12,7 @@ import { CopyFolders, SetDeleteFolders, ArchiveFolders,
    DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
+import { NoteStore } from '../notes/state/notes-state';
 
 
 @Injectable({providedIn: 'root'})
@@ -393,7 +394,8 @@ export class MenuButtonsService {
   // COPY
   private copyNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new CopyNotes(noteType));
+    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    this.store.dispatch(new CopyNotes(noteType, ids));
   }
 
   private copyFolders() {
@@ -404,7 +406,8 @@ export class MenuButtonsService {
   // SET DELETE
   private setdeleteNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new SetDeleteNotes(noteType));
+    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    this.store.dispatch(new SetDeleteNotes(noteType, ids));
   }
 
   private setDeleteFolders() {
@@ -414,7 +417,8 @@ export class MenuButtonsService {
 
   private makePrivateNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new MakePrivateNotes(noteType));
+    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    this.store.dispatch(new MakePrivateNotes(noteType , ids));
   }
 
   private restoreFolders() {
@@ -426,7 +430,8 @@ export class MenuButtonsService {
 
   archiveNotes() {
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new ArchiveNotes(noteType));
+    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    this.store.dispatch(new ArchiveNotes(noteType, ids));
   }
 
   archiveFolders() {
@@ -437,7 +442,8 @@ export class MenuButtonsService {
   // DELETE PERMANENTLY
 
   deleteNotes() {
-    this.store.dispatch(new DeleteNotesPermanently());
+    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+    this.store.dispatch(new DeleteNotesPermanently(ids));
   }
 
   deleteFolders() {
