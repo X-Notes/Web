@@ -308,7 +308,7 @@ export class NoteStore {
         await this.api.deleteNotes(selectedIds).toPromise();
 
         const notesFrom = this.getNotesByType(getState, NoteType.Deleted);
-        const notesFromNew = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const notesFromNew = notesFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
         dispatch(new UpdateNotes(new Notes(NoteType.Deleted, notesFromNew), NoteType.Deleted));
 
         patchState({
@@ -344,9 +344,9 @@ export class NoteStore {
     tranformFromTo({ getState, patchState, dispatch }: StateContext<NoteState>, {typeFrom, typeTo, selectedIds}: TransformTypeNotes) {
 
         const notesFrom = this.getNotesByType(getState, typeFrom);
-        const notesFromNew = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const notesFromNew = notesFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
 
-        let notesAdded = notesFrom.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        let notesAdded = notesFrom.filter(x => this.itemsFromFilterArray(selectedIds, x));
         dispatch(new UpdateNotes(new Notes(typeFrom, notesFromNew), typeFrom));
 
         const notesTo = this.getNotesByType(getState, typeTo);
@@ -362,6 +362,14 @@ export class NoteStore {
             removeFromMurriEvent: [...selectedIds],
         });
         dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+    }
+
+    itemNoFromFilterArray(ids: string[], note: SmallNote) {
+        return ids.indexOf(note.id) !== -1 ? false : true;
+    }
+
+    itemsFromFilterArray(ids: string[], note: SmallNote) {
+        return ids.indexOf(note.id) !== -1 ? true : false;
     }
 
     @Action(CopyNotes)
@@ -410,7 +418,7 @@ export class NoteStore {
         await this.api.addLabel(label.id, selectedIds).toPromise();
         const notes = this.getNotesByType(getState, typeNote);
 
-        const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+        const notesForUpdate = notes.filter(x => this.itemsFromFilterArray(selectedIds, x))
             .map(note => { note = { ...note }; return note; });
         const labelsArray = this.addLabelOnNote(notesForUpdate, label, patchState);
         patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
@@ -452,7 +460,7 @@ export class NoteStore {
 
         const notes = this.getNotesByType(getState, typeNote);
 
-        const notesForUpdate = notes.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false)
+        const notesForUpdate = notes.filter(x => this.itemsFromFilterArray(selectedIds, x))
             .map(note => { note = { ...note }; return note; });
         const labelsArray = this.removeLabelFromNote(notesForUpdate, label, patchState);
         patchState({ labelsIdsFromSelectedIds: [...labelsArray] });

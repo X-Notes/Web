@@ -18,7 +18,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   selector: 'app-label',
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.scss'],
-  animations: [ changeColorLabel ]
+  animations: [changeColorLabel]
 })
 export class LabelComponent implements OnInit, OnDestroy {
 
@@ -59,17 +59,22 @@ export class LabelComponent implements OnInit, OnDestroy {
       distinctUntilChanged())
       .subscribe(name => {
         if (name) {
-          this.label = {...this.label, name};
+          this.label = { ...this.label, name };
           this.updateLabel.emit(this.label);
         }
       });
   }
 
   checkSelect() {
-    this.store.select(NoteStore.labelsIds)
-    .pipe(takeUntil(this.destroy))
-    .pipe(map(z => this.tryFind(z)))
-    .subscribe(flag => this.isHighlight = flag);
+    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInner) {
+
+    } else {
+      this.store.select(NoteStore.labelsIds)
+      .pipe(takeUntil(this.destroy))
+      .pipe(map(z => this.tryFind(z)))
+      .subscribe(flag => this.isHighlight = flag);
+    }
   }
 
   tryFind(z: LabelsOnSelectedNotes[]): boolean {
@@ -83,11 +88,16 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   select() {
     const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    if (!this.isHighlight) {
-      this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
+    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInner) {
+
     } else {
-      this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      if (!this.isHighlight) {
+        this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
+      } else {
+        this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
+      }
     }
   }
 
@@ -122,7 +132,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   async changeColor(value: string) {
-    this.label = {...this.label, color: value};
+    this.label = { ...this.label, color: value };
     this.isUpdate = false;
     await this.timeout(this.isUpdate);
     this.updateLabel.emit(this.label);
