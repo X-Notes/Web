@@ -7,7 +7,6 @@ import { Label } from 'src/app/content/labels/models/label';
 import { PersonalizationService } from '../../services/personalization.service';
 import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({

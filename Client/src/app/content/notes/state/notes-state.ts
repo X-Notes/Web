@@ -12,7 +12,7 @@ import {
     AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
     ClearUpdatelabelEvent, UpdateLabelOnNote,
     UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle,
-    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes,
+    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -566,6 +566,22 @@ export class NoteStore {
         patchState({ fullNoteState: null });
     }
 
+
+    @Action(UpdateLabelFullNote)
+    async updateLabelFullNote({ getState, patchState, dispatch }: StateContext<NoteState>, { label, remove }: UpdateLabelFullNote) {
+        const note = getState().fullNoteState.note;
+        let newNote: FullNote = { ...note, labels: [...note.labels, label] };
+        if (remove) {
+            await this.api.removeLabel(label.id, [note.id]).toPromise();
+            newNote = { ...note, labels: note.labels.filter(z => z.id !== label.id) };
+            patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+        } else {
+            await this.api.addLabel(label.id, [note.id]).toPromise();
+            newNote = { ...note, labels: [...note.labels, label] };
+            patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+        }
+        dispatch(new UpdateOneNote(newNote, note.noteType));
+    }
 
     @Action(UpdateTitle)
     async updateTitle({ getState, patchState, dispatch }: StateContext<NoteState>, { str }: UpdateTitle) {

@@ -9,7 +9,7 @@ import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { NoteStore } from '../../notes/state/notes-state';
 import { LabelsOnSelectedNotes } from '../../notes/models/labelsOnSelectedNotes';
-import { AddLabelOnNote, RemoveLabelFromNote } from '../../notes/state/notes-actions';
+import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -68,7 +68,13 @@ export class LabelComponent implements OnInit, OnDestroy {
   checkSelect() {
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-
+      this.store.select(NoteStore.oneFull)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(note => {
+        if (note) {
+          this.isHighlight = this.tryFind([{id: note.id, labelsIds: note.labels.map(label => label.id)}]);
+        }
+      });
     } else {
       this.store.select(NoteStore.labelsIds)
       .pipe(takeUntil(this.destroy))
@@ -90,7 +96,7 @@ export class LabelComponent implements OnInit, OnDestroy {
     const ids = this.store.selectSnapshot(NoteStore.selectedIds);
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-
+      this.store.dispatch(new UpdateLabelFullNote(this.label, this.isHighlight));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       if (!this.isHighlight) {
