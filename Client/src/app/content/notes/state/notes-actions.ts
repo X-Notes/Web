@@ -203,6 +203,11 @@ export class UpdateTitle {
     constructor(public str: string) { }
 }
 
+export class UpdateLabelFullNote {
+    static type = '[Notes] update label full note';
+    constructor(public label: Label, public remove: boolean) { }
+}
+
 export class ChangeColorFullNote {
     static type = '[Notes] change color fullNote';
     constructor(public color: string) { }
