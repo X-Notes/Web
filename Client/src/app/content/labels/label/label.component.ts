@@ -23,7 +23,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 export class LabelComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
-  isHighlight = false;
 
   fontSize = FontSize;
   pallete = EnumUtil.getEnumValues(LabelsColor);
@@ -48,12 +47,11 @@ export class LabelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.nameChanged.next();
     this.nameChanged.complete();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
-    if (this.selectedMode) {
-      this.checkSelect();
-    }
     this.nameChanged.pipe(
       debounceTime(350),
       distinctUntilChanged())
@@ -65,41 +63,15 @@ export class LabelComponent implements OnInit, OnDestroy {
       });
   }
 
-  checkSelect() {
-    const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
-    if (isInner) {
-      this.store.select(NoteStore.oneFull)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(note => {
-        if (note) {
-          this.isHighlight = this.tryFind([{id: note.id, labelsIds: note.labels.map(label => label.id)}]);
-        }
-      });
-    } else {
-      this.store.select(NoteStore.labelsIds)
-      .pipe(takeUntil(this.destroy))
-      .pipe(map(z => this.tryFind(z)))
-      .subscribe(flag => this.isHighlight = flag);
-    }
-  }
-
-  tryFind(z: LabelsOnSelectedNotes[]): boolean {
-    for (const item of z) {
-      if (item.labelsIds.some(x => x === this.label.id)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   select() {
     const ids = this.store.selectSnapshot(NoteStore.selectedIds);
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-      this.store.dispatch(new UpdateLabelFullNote(this.label, this.isHighlight));
+      const flag = this.label.isSelected;
+      this.store.dispatch(new UpdateLabelFullNote(this.label, flag));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      if (!this.isHighlight) {
+      if (!this.label.isSelected) {
         this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
       } else {
         this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));

@@ -401,7 +401,8 @@ export class NoteStore {
         const labelsArray: LabelsOnSelectedNotes[] = [];
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
-                x.labels = [...x.labels, { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
+                x.labels = [...x.labels,
+                    { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 labelUpdate.push({ id: x.id, labels: x.labels });
             }
             labelsArray.push({
@@ -428,7 +429,8 @@ export class NoteStore {
             if (selectedIds.indexOf(note.id) !== -1) {
                 if (!note.labels.some(z => z.id === label.id)) {
                     note.labels = [...note.labels,
-                        { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
+                        { id: label.id, color: label.color, name: label.name,
+                            isDeleted: label.isDeleted, countNotes: 0}];
                 }
             }
             return note;
@@ -492,6 +494,13 @@ export class NoteStore {
                 return note;
             });
             dispatch(new UpdateNotes(new Notes(notes.typeNotes, notesUpdate), notes.typeNotes));
+
+            // FULL NOTE UPDATE
+            const fullNote = getState().fullNoteState;
+            if (fullNote) {
+                const newNote = this.updateFullNoteLabel(fullNote.note, label);
+                patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+            }
         }
         patchState({ updateLabelsOnNoteEvent: labelUpdate });
     }
@@ -502,6 +511,14 @@ export class NoteStore {
         noteLabels[index] = { ...label };
         const updateNote: SmallNote = { ...note, labels: noteLabels };
         return updateNote;
+    }
+
+    updateFullNoteLabel(note: FullNote, label: Label): FullNote {
+        const noteLabels = [...note.labels];
+        const index = noteLabels.findIndex(x => x.id === label.id);
+        noteLabels[index] = { ...label };
+        const newNote: FullNote = { ...note, labels: noteLabels };
+        return newNote;
     }
 
 

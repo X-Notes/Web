@@ -5,4 +5,5 @@ export interface Label {
     isDeleted: boolean;
     color: string;
     countNotes: number;
+    isSelected?: boolean;
 }
