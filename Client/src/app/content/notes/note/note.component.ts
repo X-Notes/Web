@@ -1,16 +1,13 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
-import { SelectIdNote, UnSelectIdNote, ClearUpdatelabelEvent } from '../state/notes-actions';
+import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
-import { UpdateLabelEvent } from '../state/updateLabels';
 import { FontSize } from 'src/app/shared/enums/FontSize';
-import { Label } from '../../labels/models/label';
-import { MurriService } from 'src/app/shared/services/murri.service';
 
 
 @Component({
@@ -30,8 +27,7 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   constructor(public pService: PersonalizationService,
               private store: Store,
-              private router: Router,
-              private murriService: MurriService) { }
+              private router: Router) { }
 
 
   ngOnDestroy(): void {
@@ -53,20 +49,6 @@ export class NoteComponent implements OnInit, OnDestroy {
         this.selectedFlag = true;
       } else {
         this.selectedFlag = false;
-      }
-    });
-
-    this.store.select(NoteStore.updateLabelEvent)
-    .pipe(takeUntil(this.destroy))
-    .subscribe((values: UpdateLabelEvent[]) => {
-      const value = values.find(x => x.id === this.note.id);
-      if (value !== undefined) {
-        const flagUpdate = value.labels.filter(x => x.isDeleted === false).length;
-        if (flagUpdate === 0 || flagUpdate === 1) {
-          setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
-        }
-        this.note.labels = value.labels;
-        this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
       }
     });
   }

@@ -6,7 +6,7 @@ import { NoteColorPallete } from '../../enums/NoteColors';
 import { PersonalizationService } from '../../services/personalization.service';
 import { Theme } from '../../enums/Theme';
 import { Store, Select } from '@ngxs/store';
-import { ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
+import { ChangeColorFullNote, ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -51,12 +51,17 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   async changeColor() { // TODO
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const type = this.store.selectSnapshot(AppStore.getRouting);
-      await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
+      const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
+      if (isInner) {
+        await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
+      } else {
+        const type = this.store.selectSnapshot(AppStore.getTypeNote);
+        await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
+      }
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const type = this.store.selectSnapshot(AppStore.getRouting);
+      const type = this.store.selectSnapshot(AppStore.getTypeFolder);
       await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
     }
     this.dialogRef.close();
@@ -70,7 +75,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     const flag = this.store.selectSnapshot(AppStore.isNoteInner);
     if (!flag) {
-    this.store.dispatch(new UnSelectAllNote());
+      this.store.dispatch(new UnSelectAllNote());
     }
   }
 }

@@ -1,7 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { PersonalizationService } from './shared/services/personalization.service';
-import { SignalRService } from './core/signal-r.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from './core/stateUser/user-state';
 import { Language } from './shared/enums/Language';

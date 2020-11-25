@@ -10,7 +10,7 @@ header {
   display: flex;
   height: 50px;
   width: 100%;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid $light-separator;
   transition: 0.2s ease;
 
   .profile-section {
@@ -216,7 +216,6 @@ header {
 
 .dark {
   background-color: $dark-color;
-  border-color: $light-separator;
   transition: none;
 
   .profile-section {

@@ -17,7 +17,7 @@ namespace WriteContext.Repositories
             this.contextDB = contextDB;
         }
 
-        public async Task DeleteLabel(Label label, List<Label> labels)
+        public async Task SetDeleteLabel(Label label, List<Label> labels)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
@@ -42,9 +42,26 @@ namespace WriteContext.Repositories
 
         }
 
+        public async Task RemoveAll(List<Label> labels)
+        {
+            contextDB.Labels.RemoveRange(labels);
+            await contextDB.SaveChangesAsync();
+        }
+
+        public async Task<List<Label>> GetDeletedByUserID(int id)
+        {
+            return await this.contextDB.Labels.Where(x => x.UserId == id && x.IsDeleted == true).ToListAsync();
+        }
+
         public async Task<List<Label>> GetAllByUserID(int id)
         {
-            return await this.contextDB.Labels.Where(x => x.UserId == id).ToListAsync();
+            return await this.contextDB.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
+        }
+
+        public async Task<int> GetNotesCountByLabelId(int id)
+        {
+            var labels = await this.contextDB.Labels.Include(x => x.LabelsNotes).FirstOrDefaultAsync(x => x.Id == id);
+            return labels.LabelsNotes.Count;
         }
 
         public async Task UpdateLabel(Label label)

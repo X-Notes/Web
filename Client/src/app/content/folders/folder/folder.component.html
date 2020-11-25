@@ -4,7 +4,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
     </div>
     <div class="folder-inner">
-        <input type="text" placeholder="Name your folder">
+        <input type="text" placeholder="Name your folder" [ngModel]="folder.title" (ngModelChange)='changed($event)'>
         <div class="notes" (click)="toFolder()" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}">
             <div class="note">
                 <i class="icon-notes"></i>

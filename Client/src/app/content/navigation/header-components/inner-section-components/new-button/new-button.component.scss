@@ -1,0 +1,30 @@
+@import "variables";
+@import 'header';
+
+.new-note {
+    background-color: #ffffff;
+    color: #363636;
+
+    &:hover {
+        background-color: #ececec;
+    }
+}
+
+.custom-create {
+    min-width: 150px;
+}
+
+@media (max-width: 1320px) {
+    .custom-create {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 1024px) {
+    .new-note {
+        display: none;
+    }
+    .custom-create {
+        min-width: auto;
+    }
+}

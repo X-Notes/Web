@@ -17,9 +17,7 @@ import { UserStore } from './core/stateUser/user-state';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { FolderStore } from './content/folders/state/folders-state';
 import { AppStore } from './core/stateApp/app-state';
-import { FullNoteStore } from './content/notes/state/full-note-state';
 import { BackgroundStore } from './core/backgrounds/background-state';
-import { TooltipComponent } from './shared/tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +32,7 @@ import { TooltipComponent } from './shared/tooltip/tooltip.component';
     SharedModule,
     ContentModule,
     NgxsModule.forRoot([LabelStore, NoteStore, UserStore, BackgroundStore,
-      FolderStore, AppStore, FullNoteStore], { developmentMode: !environment.production }),
+      FolderStore, AppStore], { developmentMode: !environment.production }),
     NgxsStoragePluginModule.forRoot({
       key: UserStore
     }),

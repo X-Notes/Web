@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges, Optional } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, Optional } from '@angular/core';
 import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
@@ -80,7 +80,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   select() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
+    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     if (!this.isHighlight) {
       this.store.dispatch(new AddLabelOnNote(this.label, noteType));
     } else {
@@ -110,7 +110,9 @@ export class LabelComponent implements OnInit, OnDestroy {
           clearInterval(timer);
           resolve();
         }
-        this.murriService.grid.refreshItems().layout();
+        if (this.murriService) {
+          this.murriService.grid.refreshItems().layout();
+        }
         count++;
       }, 10);
     });

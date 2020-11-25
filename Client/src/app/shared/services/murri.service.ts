@@ -1,28 +1,68 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PersonalizationService } from './personalization.service';
 import { Store } from '@ngxs/store';
 import { Order, OrderEntity } from './order.service';
 import { PositionNote } from 'src/app/content/notes/state/notes-actions';
-import { EntityType } from '../enums/EntityTypes';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
+import { NoteType } from '../enums/NoteTypes';
+import { FolderType } from '../enums/FolderTypes';
 
 @Injectable()
+export class MurriService  {
 
-export class MurriService {
+  gridItemName = '.grid-item';
 
   grid;
-  public delayForOpacity = 0;
   public flagForOpacity = false;
 
-  constructor(private store: Store) {
-                console.log(555);
-               }
+  constructor(private store: Store,
+              private pService: PersonalizationService) {
 
+    pService.changeOrientationSubject.subscribe(z => {
+      setTimeout(() => this.grid.refreshItems().layout(), 0);
+    });
+  }
 
-  initMurriNote(type: EntityType) {
-    this.gridSettings('.grid-item');
+  setOpacityTrueAsync(delayOpacity: number = 50, flag = true) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.flagForOpacity = flag;
+      resolve(true);
+    }, delayOpacity
+    ));
+  }
+
+  wait(delay: number = 0) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      resolve(true);
+    }, delay
+    ));
+  }
+
+  refreshLayoutAsync() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.grid?.refreshItems().layout();
+      resolve(true);
+    }
+    ));
+  }
+
+  initMurriNoteAsync(type: NoteType, isDragEnabled: boolean) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriNote(type, isDragEnabled);
+      resolve(true);
+    }
+    ));
+  }
+
+  private initMurriNote(type: NoteType, isDragEnabled: boolean) {
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -34,8 +74,21 @@ export class MurriService {
     });
   }
 
-  initMurriFolder(type: EntityType) {
-    this.gridSettings('.grid-item');
+  initMurriFolderAsync(type: FolderType) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriFolder(type);
+      resolve(true);
+    }
+    ));
+  }
+
+  private initMurriFolder(type: FolderType) {
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item, event) => {
       console.log(item._element.id);
       const order: Order = {
@@ -47,8 +100,22 @@ export class MurriService {
     });
   }
 
-  initMurriLabel(deleted: boolean) {
-    this.gridSettings('.grid-item');
+  initMurriLabelAsync(deleted: boolean) {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
+      this.initMurriLabel(deleted);
+      resolve(true);
+    }
+    ));
+  }
+
+
+  private initMurriLabel(deleted: boolean) {
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(this.gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item, event) => {
       const order: Order = {
         orderEntity: OrderEntity.Label,
@@ -59,11 +126,11 @@ export class MurriService {
     });
   }
 
-  gridSettings(element: string) {
+  gridSettings(element: string, gridElement: HTMLElement, isDragEnabled: boolean) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
-    this.grid = new Muuri.default('.grid', {
+    this.grid = new Muuri.default(gridElement, {
       items: element,
-      dragEnabled: true,
+      dragEnabled: isDragEnabled,
       layout: {
         fillGaps: false,
         horizontal: false,
@@ -79,7 +146,7 @@ export class MurriService {
         touchAction: 'auto'
       },
       dragStartPredicate(item, e) {
-        if ( e.deltaTime > 300 && e.distance <= 30) {
+        if (e.deltaTime > 300 && e.distance <= 30) {
           return true;
         }
       },
@@ -99,10 +166,14 @@ export class MurriService {
         safeZone: 0.1
       }
     });
-    setTimeout(() => this.flagForOpacity = true, this.delayForOpacity);
+    this.grid.layout((items, hasLayoutChanged) => {
+      console.log('layout done!');
+    });
   }
 
-  muuriDestroy() {
-    this.grid.destroy();
+  muuriDestroy(flag: boolean = false) {
+    if (this.grid) {
+      this.grid.destroy(flag);
+    }
   }
 }

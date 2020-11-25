@@ -1,33 +1,47 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateMenuActive,
-    UpdateNewButton, UpdateRouteWithNoteType } from './app-action';
+import { UpdateRoute, UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { AuthService } from '../auth.service';
 
 
 interface AppState {
     routing: EntityType;
-    newButtonActive: boolean;
-    menuActive: boolean;
     innerNoteType: NoteType;
+    spinnerActive: boolean;
 }
 
 @State<AppState>({
     name: 'App',
     defaults: {
         routing: null,
-        newButtonActive: true,
-        menuActive: false,
         innerNoteType: null,
+        spinnerActive: false
     }
 })
 @Injectable()
 export class AppStore {
 
+
+    constructor(authService: AuthService) {
+
+    }
+
+    @Selector()
+    static isFolderInner(state: AppState): boolean {
+        return state.routing === EntityType.FolderInner;
+    }
+
     @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
+    }
+
+    @Selector()
+    static spinnerActive(state: AppState): boolean {
+        return state.spinnerActive;
     }
 
     @Selector()
@@ -107,16 +121,57 @@ export class AppStore {
         return state.innerNoteType;
     }
 
+    @Selector()
+    static getTypeNote(state: AppState): NoteType {
+        switch (state.routing) {
+            case EntityType.NotePrivate: {
+                return NoteType.Private;
+            }
+            case EntityType.NoteArchive: {
+                return NoteType.Archive;
+            }
+            case EntityType.NoteDeleted: {
+                return NoteType.Deleted;
+            }
+            case EntityType.NoteShared: {
+                return NoteType.Shared;
+            }
+            default: {
+                throw new Error('Incorrect type');
+            }
+        }
+    }
+
+    @Selector()
+    static getTypeFolder(state: AppState): FolderType {
+        switch (state.routing) {
+
+            case EntityType.FolderPrivate: {
+                return FolderType.Private;
+            }
+            case EntityType.FolderShared: {
+                return FolderType.Shared;
+            }
+            case EntityType.FolderDeleted: {
+                return FolderType.Deleted;
+            }
+            case EntityType.FolderArchive: {
+                return FolderType.Archive;
+            }
+            default: {
+                throw new Error('Incorrect type');
+            }
+        }
+    }
+
     // UPPER MENU SELECTORS
 
     @Selector()
     static getNewButtonActive(state: AppState): boolean {
-        return state.newButtonActive;
-    }
-
-    @Selector()
-    static getMenuActive(state: AppState): boolean {
-        return state.menuActive;
+        return !this.isNoteInner(state) &&
+        !this.isFolderInner(state) &&
+        state.routing !== EntityType.LabelDeleted &&
+        state.routing !== null;
     }
 
     @Selector()
@@ -135,13 +190,9 @@ export class AppStore {
     }
 
     // UPPER MENU BUTTONS
-    @Action(UpdateNewButton)
-    updateNew({patchState}: StateContext<AppState>, {flag}: UpdateNewButton) {
-        patchState({newButtonActive: flag});
-    }
 
-    @Action(UpdateMenuActive)
-    updateMenu({patchState}: StateContext<AppState>, {flag}: UpdateMenuActive) {
-        patchState({menuActive: flag});
+    @Action(SpinnerChangeStatus)
+    spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
+        patchState({spinnerActive: flag});
     }
 }

@@ -58,10 +58,10 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Archive);
+                await folderRepository.CastFolders(folders, user.Folders, folder.FolderType, FoldersType.Archive);
             }
             else
             {
@@ -110,10 +110,10 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Deleted);
+                await folderRepository.CastFolders(folders, user.Folders, folder.FolderType, FoldersType.Deleted);
             }
             else
             {
@@ -127,10 +127,10 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
-                var dbnotes = await folderRepository.CopyFolders(folders, user.Folders, request.FolderType, FoldersType.Private);
+                var dbnotes = await folderRepository.CopyFolders(folders, user.Folders, folder.FolderType, FoldersType.Private);
                 return mapper.Map<List<SmallFolder>>(dbnotes);
             }
             else
@@ -161,10 +161,10 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
-
+            var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.CastFolders(folders, user.Folders, request.FolderType, FoldersType.Private);
+                await folderRepository.CastFolders(folders, user.Folders, folder.FolderType, FoldersType.Private);
             }
             else
             {

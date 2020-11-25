@@ -1,0 +1,61 @@
+@import "variables";
+
+:host {
+    display: none;
+}
+
+.user-circle {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    border: 0.8px solid transparent;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: $dark-button;
+    transition: 0.2s ease;
+    margin-right: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+
+    p {
+        position: relative;
+        user-select: none;
+        z-index: 5;
+    }
+
+    &:hover {
+        background-color: #3d4049;
+    }
+}
+
+.light {
+    .user-circle {
+        background-color: white;
+        border-color: $light-button;
+        color: $text-color;
+
+        &:hover {
+            background-color: $light-nav-backlight;
+        }
+    }
+}
+
+@media (max-width: 1440px) {
+    :host {
+        display: block;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+    .user-circle {
+        z-index: 50;
+    }
+}
+
+@media (max-width: 1024px) {
+    :host {
+        display: none;
+    }
+}

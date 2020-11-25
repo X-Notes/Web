@@ -1,5 +1,5 @@
 <header [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
-
+    
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
@@ -28,7 +28,8 @@
         </div>
 
         <app-interaction-create
-                class="interactions"></app-interaction-create>
+                class="interactions"
+                *ngIf="(newButtonActive$ | async) && !((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"></app-interaction-create>
 
         <app-interaction-profile
             class="interactions"
@@ -46,7 +47,7 @@
             class="interactions inner-helper"
             *ngSwitchCase="'note-inner'"></app-interaction-inner>
 
-        <div class="interactions menu" *ngIf="(menuActive$ | async)" [@showMenuLeftRight]>
+        <div class="interactions menu" *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
 

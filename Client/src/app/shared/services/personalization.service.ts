@@ -1,6 +1,4 @@
-import { Injectable, HostListener } from '@angular/core';
-import { Theme } from '../enums/Theme';
-import { Language } from '../enums/Language';
+import { Injectable } from '@angular/core';
 import {
   trigger,
   state,
@@ -8,7 +6,6 @@ import {
   transition,
   animate } from '@angular/animations';
 import {  Subject, Observable } from 'rxjs';
-import * as Muuri from 'muuri';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../enums/FontSize';
@@ -78,7 +75,6 @@ export class PersonalizationService {
 
   constructor() {}
 
-  timeForLabelsLoading = 100;
   timeForSpinnerLoading = 30;
   subject = new Subject();
 
@@ -91,6 +87,9 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+
+  changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
@@ -151,8 +150,13 @@ export class PersonalizationService {
     return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
   }
 
-  initPromise() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(true), this.timeForSpinnerLoading));
+  waitPreloading() {
+    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
+  }
+
+  changeOrientation() {
+    this.orientationMobile = !this.orientationMobile;
+    this.changeOrientationSubject.next(true);
   }
 
 }

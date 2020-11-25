@@ -35,13 +35,15 @@ export class AuthService {
   }
 
   private async configureAuthState(firebaseUser: firebase.User) {
+    console.log('verifsds');
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken(true);
       this.store.dispatch(new SetToken(token));
       const flag = this.store.selectSnapshot(UserStore.getStatus);
       await this.api.verifyToken(token).toPromise();
       if (!flag) {
-        this.store.dispatch(new Login(token, this.getUser(firebaseUser))).subscribe(x => this.router.navigate(['/notes']));
+        const user = this.getUser(firebaseUser);
+        this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
       }
       setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000);
     } else {

@@ -9,7 +9,7 @@ import { Order, OrderEntity } from 'src/app/shared/services/order.service';
 import { UpdateColor } from '../state/updateColor';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';
@@ -27,16 +27,15 @@ export class DeletedComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
               public noteService: NotesService) { }
 
   async ngOnInit() {
-
-
     await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
@@ -52,12 +51,14 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
-    this.store.select(NoteStore.deletedNotes).pipe(take(1))
-      .subscribe(async (x) => {
-        this.noteService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => {this.murriService.initMurriNote(EntityType.NoteDeleted); });
-      });
+    const notes = this.store.selectSnapshot(NoteStore.deletedNotes);
+    this.noteService.firstInit(notes);
+
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.loaded = true;
+    await this.murriService.initMurriNoteAsync(NoteType.Deleted, !this.noteService.isFiltedMode());
+    await this.murriService.setOpacityTrueAsync();
 
   }
 

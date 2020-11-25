@@ -6,11 +6,12 @@ import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, } from '../state/lab
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {  SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
+import { LabelStore } from '../state/labels-state';
 
 @Component({
   selector: 'app-all',
@@ -21,8 +22,8 @@ import { LabelsService } from '../labels.service';
 export class AllComponent implements OnInit, OnDestroy  {
 
   fontSize = FontSize;
-  loaded = false;
   destroy = new Subject<void>();
+  loaded = false;
 
   constructor(
     public pService: PersonalizationService,
@@ -45,14 +46,17 @@ export class AllComponent implements OnInit, OnDestroy  {
   }
 
   async loadContent() {
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     await this.store.dispatch(new LoadLabels()).toPromise();
 
-    this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(async (x) => {
-      this.labelService.firstInit(x);
-      this.loaded =  await this.pService.initPromise();
-      setTimeout(() => this.murriService.initMurriLabel(false));
-    });
+    const labels = this.store.selectSnapshot(LabelStore.all);
+    this.labelService.firstInit(labels);
+
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.loaded = true;
+    await this.murriService.initMurriLabelAsync(true);
+    await this.murriService.setOpacityTrueAsync();
 
     this.pService.subject
     .pipe(takeUntil(this.destroy))

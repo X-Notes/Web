@@ -14,8 +14,10 @@ using Common.DTO.notes;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.folderInner;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
+using Domain.Commands.noteInner;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
 using Domain.Commands.share.folders;
@@ -114,19 +116,21 @@ namespace WriteAPI.ConfigureAPP
 
             //Labels
             services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetCountNotesByLabel, int>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<SetDeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveAllFromBinCommand, Unit>, LabelHandlerCommand>();
+
 
             //Notes
             services.AddScoped<IRequestHandler<NewPrivateNoteCommand, string>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RestoreNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();
@@ -140,6 +144,9 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+
+            // FULL NOTE
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
@@ -155,6 +162,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+
+            // FULL-FOLDER
+            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();

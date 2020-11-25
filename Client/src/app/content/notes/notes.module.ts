@@ -11,7 +11,6 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
-import { NotesService } from './notes.service';
 import { FullNoteSliderService } from './full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 

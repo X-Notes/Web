@@ -2,15 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { UpdateLabel, LoadLabels, DeleteLabel, PositionLabel } from '../state/labels-actions';
-import { take, takeUntil } from 'rxjs/operators';
+import { UpdateLabel, LoadLabels, DeleteLabel, } from '../state/labels-actions';
+import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Subject } from 'rxjs';
-import {UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
+import { LabelStore } from '../state/labels-state';
 
 @Component({
   selector: 'app-deleted',
@@ -23,6 +24,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
@@ -50,13 +52,25 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   async loadContent() {
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     await this.store.dispatch(new LoadLabels()).toPromise();
 
-    this.store.select(x => x.Labels.labelsDeleted).pipe(take(1))
-    .subscribe(async (x) => {
-      this.labelService.firstInit(x);
-      this.loaded =  await this.pService.initPromise();
-      setTimeout(() => this.murriService.initMurriLabel(true));
+    const labels = this.store.selectSnapshot(LabelStore.deleted);
+    this.labelService.firstInit(labels);
+
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.loaded = true;
+    this.murriService.initMurriLabelAsync(true);
+    await this.murriService.setOpacityTrueAsync();
+
+    this.store.select(LabelStore.deleted)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(labs => {
+      if (labs.length === 0) {
+        this.labelService.labels = [];
+        setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+      }
     });
   }
 

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from '../auth.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from '../stateUser/user-state';
 
 @Injectable()
 export class ContentActiveteGuard implements CanActivate {
-  constructor(private authservice: AuthService, private router: Router,
+  constructor(private router: Router,
               private store: Store) {
   }
 

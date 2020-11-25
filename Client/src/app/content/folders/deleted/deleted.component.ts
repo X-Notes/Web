@@ -3,11 +3,11 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { LoadDeletedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -40,7 +40,7 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderDeleted)).toPromise();
-
+    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
     this.store.select(UserStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
@@ -56,11 +56,14 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Deleted));
 
-    this.store.select(FolderStore.deletedFolders).pipe(take(1))
-      .subscribe(async (x) => {
-        this.folderService.firstInit(x);
-        this.loaded =  await this.pService.initPromise();
-        setTimeout(() => this.murriService.initMurriFolder(EntityType.FolderDeleted)); });
+    const folders = this.store.selectSnapshot(FolderStore.deletedFolders);
+    this.folderService.firstInit(folders);
+
+    await this.pService.waitPreloading();
+    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.loaded = true;
+    await this.murriService.initMurriFolderAsync(FolderType.Deleted);
+    await this.murriService.setOpacityTrueAsync();
   }
 
 

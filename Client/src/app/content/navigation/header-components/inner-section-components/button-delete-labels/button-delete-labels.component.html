@@ -1,0 +1,9 @@
+<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
+    <button name="Delete labels" type="button" class="generic delete-all filters" (click)="deleteAllLabels()" #delete>
+        <div class="inner-content">
+            <p>{{'header.emptyTrash' | translate}}</p>
+            <i class="icon-delete"></i>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="delete"></div>
+    </button>
+</div>

@@ -2,12 +2,18 @@ import { Label } from '../models/label';
 import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceLabels } from '../api-labels.service';
-import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel, DeleteLabel, RestoreLabel } from './labels-actions';
+import { LoadLabels, AddLabel, SetDeleteLabel, UpdateLabel, PositionLabel,
+    DeleteLabel, RestoreLabel, DeleteAllFromBin, UpdateLabelCount } from './labels-actions';
 import { tap } from 'rxjs/operators';
-import { patch, append, removeItem, insertItem, updateItem } from '@ngxs/store/operators';
+import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
+
+export interface LabelsForFiltersNotes {
+    label: Label;
+    selected: boolean;
+}
 
 interface LabelState {
     labelsAll: Label[];
@@ -48,6 +54,7 @@ export class LabelStore {
         return state.CountDeleted;
     }
 
+
     @Selector()
     static all(state: LabelState): Label[] {
         return state.labelsAll;
@@ -75,7 +82,7 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>) {
         const id = await this.api.new().toPromise();
         patchState({
-            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false}, ...getState().labelsAll],
+            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false, countNotes: 0}, ...getState().labelsAll],
             CountAll: getState().CountAll + 1
         });
     }
@@ -126,6 +133,24 @@ export class LabelStore {
         }
     }
 
+    @Action(UpdateLabelCount)
+    async updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
+        const count = await this.api.getCountNotes(label.id).toPromise();
+        if (label.isDeleted) {
+            setState(
+                patch({
+                    labelsDeleted: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
+                })
+            );
+        } else {
+            setState(
+                patch({
+                    labelsAll: updateItem<Label>(label2 => label2.id === label.id , {...label, countNotes: count})
+                })
+            );
+        }
+    }
+
     @Action(PositionLabel)
     async positionLabel({setState, getState, patchState}: StateContext<LabelState>, { deleted, id, order }: PositionLabel) {
         if (deleted) {
@@ -170,5 +195,11 @@ export class LabelStore {
             CountAll: getState().CountAll + 1,
             CountDeleted: getState().CountDeleted - 1
          });
+    }
+
+    @Action(DeleteAllFromBin)
+    async deleteAllFromBin({setState, getState, patchState}: StateContext<LabelState>) {
+        await this.api.removeAll().toPromise();
+        patchState({labelsDeleted: [], CountDeleted: 0});
     }
 }
