@@ -10,8 +10,7 @@ header {
   display: flex;
   height: 50px;
   width: 100%;
-  background-color: $dark-color;
-  border-bottom: 1px solid $light-separator;
+  border-bottom: 1px solid;
   transition: 0.2s ease;
 
   .profile-section {
@@ -36,10 +35,6 @@ header {
       overflow: hidden;
       outline: none;
       cursor: pointer;
-
-      &:hover {
-        background-color: $dark-button;
-      }
 
       .profile-data {
         position: relative;
@@ -102,10 +97,6 @@ header {
           transition: 0.2s ease;
         }
       }
-
-      &:hover {
-        background-color: $dark-button;
-      }
     }
   }
 
@@ -121,7 +112,6 @@ header {
       position: absolute;
       right: 0;
       padding-right: 3.125vw;
-      background-color: $dark-color;
       transition: 0.2s ease;
     }
 
@@ -140,9 +130,9 @@ header {
           display: block;
           width: 22px;
           height: 2px;
-          background-color: white;
           border-radius: 2px;
           transition: 0.2s ease;
+          transition-property: background-color;
         }
 
         span {
@@ -212,13 +202,55 @@ header {
       }
 
       .hamburger {
-        background-color: white;
         border-color: transparent;
         span,
         span::before,
         span::after {
           background-color: $dark-color;
         }
+      }
+    }
+  }
+}
+
+
+.dark {
+  background-color: $dark-color;
+  border-color: $light-separator;
+  transition: none;
+
+  .profile-section {
+    .profile:hover {
+      background-color: $dark-button;
+    }
+
+    .notification:hover {
+      background-color: $dark-button;
+    }
+
+  }
+
+  .management-section {
+    .right-tools {
+      background-color: $dark-color;
+      transition: none;
+    }
+
+    .interactions {
+      .hamburger {
+        transition: none;
+
+        span,
+        span::after,
+        span::before {
+          transition: none;
+          background-color: white;
+        }
+      }
+
+      .menu-inner {
+        border-color: transparent;
+        background-color: $dark-button;
       }
     }
   }

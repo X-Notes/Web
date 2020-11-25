@@ -27,15 +27,7 @@
             transition: 0.2s ease;
           }
         }
-
-        &:hover {
-          background-color: $dark-button;
-
-          i::before {
-            color: white;
-          }
-        }
-      }
+    }
 
     .search {
         position: relative;
@@ -46,23 +38,6 @@
         border-radius: 10px;
         transition: 0.2s ease;
 
-        &:focus-within {
-          input[type="search"] {
-            background-color: white;
-            color: #6d6d6d;
-          }
-
-          label {
-            background-color: $light-search-submit;
-
-            .icon {
-              i::before {
-                color: #8c8c8c;
-              }
-            }
-          }
-        }
-
         input[type="search"]:not(:placeholder-shown) ~ label {
           cursor: pointer;
         }
@@ -70,13 +45,13 @@
         input[type="search"] {
           height: 100%;
           width: calc(100% - 35px);
-          background-color: $dark-backlight;
           border: 0;
           border-radius: 10px 0 0 10px;
           padding: 0;
           padding-left: 0.625rem;
           font-size: 0.875rem;
           user-select: none;
+          background: none;
           outline: none;
           color: #a8a8a8;
           transition: 0.2s ease;
@@ -89,7 +64,6 @@
           user-select: none;
           outline: none;
           border-radius: 0 10px 10px 0;
-          background-color: $dark-search-submit;
           cursor: not-allowed;
           transition: 0.2s ease;
 
@@ -103,7 +77,6 @@
 
             i::before {
               transition: 0.2s ease;
-              color: #d8d8d8;
             }
           }
         }
@@ -157,7 +130,7 @@
 
       .auxiliary-icon {
         i::before {
-          color: $light-managment;
+          color: #c5c5c5;
         }
 
         &:hover {
@@ -168,6 +141,49 @@
           }
         }
     }
+}
+
+.dark {
+  .search {
+    &:focus-within {
+      input[type="search"] {
+        background-color: white;
+        color: #6d6d6d;
+      }
+
+      label {
+        background-color: $light-search-submit;
+
+        .icon {
+          i::before {
+            color: #8c8c8c;
+          }
+        }
+      }
+    }
+
+    input[type="search"] {
+      background-color: $dark-backlight;
+    }
+
+    label {
+      background-color: $dark-search-submit;
+
+      .icon::before {
+        color: #d8d8d8;
+      }
+    }
+  }
+
+  .auxiliary-icon {
+    &:hover {
+      background-color: $dark-button;
+
+      i::before {
+        color: white;
+      }
+    }
+  }
 }
 
 @media (max-width: 1600px) {

@@ -1,4 +1,4 @@
-<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
     <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
         class="generic generic-2 generic-unfixed selected" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
         #selectedAll>

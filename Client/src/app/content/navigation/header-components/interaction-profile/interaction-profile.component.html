@@ -1,4 +1,4 @@
-<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
     <button (click)="setDefaultColorProfile()" name="Default" type="button"
         class="generic generic-2" #default>
         <div class="inner-content">

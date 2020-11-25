@@ -22,11 +22,10 @@
         display: none;
         justify-content: center;
         align-items: center;
-        border: 0.8px solid transparent;
+        border: 0.8px solid;
         width: 30px;
         height: 30px;
         border-radius: 50%;
-        background-color: $dark-button;
         transition: 0.2s ease;
         margin-right: 1rem;
         overflow: hidden;
@@ -37,10 +36,6 @@
           user-select: none;
           z-index: 5;
         }
-
-        &:hover {
-          background-color: #3d4049;
-        }
     }
 
     .three-dots {
@@ -48,8 +43,7 @@
         display: none;
         align-items: center;
         height: 30px;
-        border: 0.8px solid transparent;
-        background-color: $dark-button;
+        border: 0.8px solid;
         padding: 0 0.5rem;
         user-select: none;
         border-radius: 5px;
@@ -63,7 +57,6 @@
             width: 5px;
             height: 5px;
             border-radius: 50%;
-            background-color: white;
 
             &::after,
             &::before {
@@ -73,7 +66,6 @@
                 width: 5px;
                 height: 5px;
                 border-radius: 50%;
-                background-color: white;
             }
 
             &::after {
@@ -183,6 +175,30 @@
 
 
 .light {
+    .user-circle {
+        background-color: white;
+        border-color: $light-button;
+        color: $text-color;
+
+        &:hover {
+          background-color: $light-nav-backlight;
+        }
+    }
+
+    .three-dots {
+        background-color: white;
+        border-color: $light-button;
+
+        span {
+              background-color: $text-color;
+
+              &::before,
+              &::after {
+              background-color: $text-color;
+              }
+          }
+    }
+
     .wrapper-people {
         .people-editing {
             &::before {
@@ -207,6 +223,36 @@
         border-color: $light-button;
         background-color: white;
         color: $light-text-color;
+    }
+}
+
+.dark {
+    .menu-inner {
+        border-color: transparent;
+        background-color: $dark-button;
+    }
+
+    .user-circle {
+        border-color: transparent;
+        background-color: $dark-button;
+
+        &:hover {
+            background-color: #3d4049;
+        }
+    }
+
+    .three-dots {
+        border-color: transparent;
+        background-color: $dark-button;
+
+        span {
+            background-color: white;
+
+            &::after,
+            &::before {
+                background-color: white;
+            }
+        }
     }
 }
 
@@ -259,16 +305,6 @@
 
 
     .light {
-        .user-circle {
-            background-color: white;
-            border-color: $light-button;
-            color: $text-color;
-  
-            &:hover {
-              background-color: $light-nav-backlight;
-            }
-        }
-
         .wrapper-people {
             background-color: white;
             border-color: $light-button;
@@ -403,20 +439,6 @@
     }
 
     .light {
-        .three-dots {
-          background-color: white;
-          border-color: $light-button;
-
-          span {
-                background-color: $text-color;
-
-                &::before,
-                &::after {
-                background-color: $text-color;
-                }
-            }
-        }
-
         .wrapper-people {
             .people-editing {
                 .person:hover {
