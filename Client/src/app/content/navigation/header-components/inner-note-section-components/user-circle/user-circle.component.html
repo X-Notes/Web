@@ -1,7 +1,0 @@
-<div class="inner-menu" [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
-    <div CustomTooltip="{{ 'header.countUsers' | translate }}" position="Bottom" class="user-circle"
-        (click)="showUsers()" #userCircle>
-        <p>8</p>
-        <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
-    </div>
-</div>

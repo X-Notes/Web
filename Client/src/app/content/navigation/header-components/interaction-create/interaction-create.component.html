@@ -1,0 +1,15 @@
+<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+    <button 
+        name="Create note" type="button"
+        class="generic new-note generic-unfixed"
+        (click)="newButton()"
+        #new>
+
+        <div class="inner-content">
+            <p>{{ 'new.' + (route$ | async ) | translate}}</p>
+            <i class="icon-plus"></i>
+        </div>
+
+        <div class="ripple-container" matRipple [matRippleTrigger]="new"></div>
+    </button>
+</div>

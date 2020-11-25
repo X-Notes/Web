@@ -1,7 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute
-    , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
+import { UpdateRoute, UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -61,6 +60,12 @@ export class AppStore {
         state.routing === EntityType.NotePrivate ||
         state.routing === EntityType.NoteArchive ||
         state.routing === EntityType.NoteInner;
+    }
+
+    @Selector()
+    static isDelete(state: AppState): boolean {
+        return state.routing === EntityType.NoteDeleted ||
+        state.routing === EntityType.FolderDeleted;
     }
 
     @Selector()
@@ -163,32 +168,15 @@ export class AppStore {
 
     @Selector()
     static getNewButtonActive(state: AppState): boolean {
-        return this.isNote(state) || this.isFolder(state) || state.routing === EntityType.LabelPrivate;
-    }
-
-    @Selector()
-    static getSettingsButtonActive(state: AppState): boolean {
-        return this.isNote(state) || this.isFolder(state);
-    }
-
-    @Selector()
-    static getSelectAllButtonActive(state: AppState): boolean {
-        return  this.isNote(state) || this.isFolder(state);
-    }
-
-    @Selector()
-    static getDeleteAllLabellsButtonActive(state: AppState): boolean {
-        return  state.routing === EntityType.LabelDeleted;
+        return !this.isNoteInner(state) &&
+        !this.isFolderInner(state) &&
+        state.routing !== EntityType.LabelDeleted &&
+        state.routing !== null;
     }
 
     @Selector()
     static getChangeViewButtonActive(state: AppState): boolean {
         return  state.routing !== EntityType.Profile;
-    }
-
-    @Selector()
-    static getdefaultBackground(state: AppState): boolean {
-        return state.routing === EntityType.Profile;
     }
 
     @Action(UpdateRoute)
@@ -201,6 +189,7 @@ export class AppStore {
         patchState({routing: type, innerNoteType: noteType});
     }
 
+    // UPPER MENU BUTTONS
 
     @Action(SpinnerChangeStatus)
     spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
