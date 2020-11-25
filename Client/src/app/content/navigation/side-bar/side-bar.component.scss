@@ -13,33 +13,6 @@
      border-right: 1px solid;
      transition: 0.2s ease;
 
-    .active {
-         .main-icon, p {
-            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%) !important;
-            background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-         }
-         &:nth-child(2){
-             .main-icon {
-                background: none;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                i {
-                    .path1::before {
-                        color: white;
-                    }
-        
-                    .path2::before {
-                        background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                        background-clip: text;
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                    }
-                }
-             }
-        }
-    }
-
      .module {
         position: relative;
         display: flex;
@@ -49,6 +22,16 @@
         outline: none;
         cursor: pointer;
         transition: 0.2s ease;
+
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    background: none;
+                    -webkit-text-fill-color: initial;
+                    background-clip: initial;
+                }
+            }
+        }
 
         .item {
              position: relative;
@@ -62,6 +45,8 @@
 
              .main-icon {
                 font-size: 2rem;
+                transition: 0.2s ease;
+
                 i {
                     &::before {
                         transition: 0.2s ease;
@@ -76,9 +61,6 @@
                 margin-top: 0.3125rem;
                 font-size: 0.875rem;
                 transition: 0.2s ease;
-                background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                background-clip: text;
-                -webkit-text-fill-color: transparent;
             }
         }
     }
@@ -98,34 +80,31 @@
     background-color: $light-color;
     
     .module {
-
         &:hover:not(.active) {
             background-color: $light-nav-backlight;
         }
 
         .item {
-            .main-icon {
-
-                i::before {
-                    color: $light-text-color;
-                }
-    
-                i {
-                    .path1::before {
-                        color: #D6D6D6;
-                    }
-    
-                    .path2::before {
-                        color: $light-text-color;
-                    }
-                }
-            }
-    
-            p {
-                color: $light-text-color;
-                background: linear-gradient(112.11deg, #404040 -6.16%, #404040 104.11%);
+            .main-icon, p {
+                background: linear-gradient(135deg, #404040 0%, #404040 100%);
                 background-clip: text;
+                -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+            }
+        }
+
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    i {
+                        .path1::before {
+                            color: #D6D6D6;
+                        }
+                        .path2::before {
+                            color: $light-text-color;
+                        }
+                    }
+                }
             }
         }
     }
@@ -152,8 +131,11 @@
 
     .module {
         .item {
-            p {
-                color: #ffffff;
+            .main-icon, p {
+                background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
         }
 
@@ -165,6 +147,40 @@
     .billing-field {
         background-color: $dark-backlight;
     }
+}
+
+.light, .dark {
+    .active {
+        .item {
+           .main-icon, p {
+               background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+               background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    i {
+                        .path1::before {
+                            background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
+                            background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+            
+                        .path2::before {
+                            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                            background-clip: text;
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+                    }
+                }
+            }
+        }
+   }
 }
 
 @media (max-width: 1024px) {
