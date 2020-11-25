@@ -56,7 +56,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Deleted));
 
-    const folders = this.store.selectSnapshot(FolderStore.deletedFolders);
+    let folders = this.store.selectSnapshot(FolderStore.deletedFolders);
+    folders = this.folderService.transformFolders(folders);
     this.folderService.firstInit(folders);
 
     await this.pService.waitPreloading();

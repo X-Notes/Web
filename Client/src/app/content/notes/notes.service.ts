@@ -114,7 +114,13 @@ export class NotesService implements OnDestroy {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
     }
-    this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter).subscribe(async (x) => await this.UpdateLabelSelected(x));
+    this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x) => {
+      if (x) {
+        await this.UpdateLabelSelected(x);
+      }
+    });
     this.firstInitFlag = true;
   }
 

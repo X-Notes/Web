@@ -56,7 +56,8 @@ export class SharedComponent implements OnInit, OnDestroy {
   async loadContent() {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
 
-    const folders = this.store.selectSnapshot(FolderStore.sharedFolders);
+    let folders = this.store.selectSnapshot(FolderStore.sharedFolders);
+    folders = this.folderService.transformFolders(folders);
     this.folderService.firstInit(folders);
 
     await this.pService.waitPreloading();

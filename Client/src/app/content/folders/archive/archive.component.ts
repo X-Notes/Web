@@ -55,7 +55,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadArchiveFolders()).toPromise();
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
 
-    const folders = this.store.selectSnapshot(FolderStore.archiveFolders);
+    let folders = this.store.selectSnapshot(FolderStore.archiveFolders);
+    folders = this.folderService.transformFolders(folders);
     this.folderService.firstInit(folders);
 
     await this.pService.waitPreloading();

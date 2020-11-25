@@ -56,7 +56,8 @@ export class PrivateComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadPrivateFolders()).toPromise();
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Private));
 
-    const folders = this.store.selectSnapshot(FolderStore.privateFolders);
+    let folders = this.store.selectSnapshot(FolderStore.privateFolders);
+    folders = this.folderService.transformFolders(folders);
     this.folderService.firstInit(folders);
 
     await this.pService.waitPreloading();
