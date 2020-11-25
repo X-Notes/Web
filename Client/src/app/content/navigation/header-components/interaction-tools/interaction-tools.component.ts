@@ -24,6 +24,9 @@ export class InteractionToolsComponent implements OnInit {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
+  @Select(AppStore.getChangeViewButtonActive)
+  public changeViewActive$: Observable<boolean>;
+
   theme = Theme;
 
   constructor(public pService: PersonalizationService,

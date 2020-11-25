@@ -119,6 +119,11 @@ export class AppStore {
         return state.menuActive;
     }
 
+    @Selector()
+    static getChangeViewButtonActive(state: AppState): boolean {
+        return  state.routing !== EntityType.Profile;
+    }
+
     @Action(UpdateRoute)
     async updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
         patchState({routing: type});

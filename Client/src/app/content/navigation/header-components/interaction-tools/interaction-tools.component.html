@@ -7,20 +7,42 @@
             </div>
         </label>
     </div>
-    <div CustomTooltip="{{ 'header.theme' | translate }}" position="Bottom" class="auxiliary-icon" (click)="toggleTheme()" #themeApp>
+
+    <div CustomTooltip="{{ 'header.theme' | translate }}"
+        position="Bottom"
+        class="auxiliary-icon"
+        (click)="toggleTheme()"
+        *ngIf="pService.check()" #themeApp>
+
         <i class="icon-theme_light"></i>
         <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
     </div>
-    <div CustomTooltip="{{ 'header.questions' | translate }}" position="Bottom" class="auxiliary-icon" #question>
+
+    <div CustomTooltip="{{ 'header.questions' | translate }}"
+        position="Bottom"
+        class="auxiliary-icon"
+        *ngIf="pService.check()" #question>
+
         <i class="icon-question"></i>
         <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
     </div>
-    <div CustomTooltip="{{ 'header.notification' | translate }}" position="Bottom" class="auxiliary-icon mobile" #notificationHeader>
+
+    <div CustomTooltip="{{ 'header.notification' | translate }}"
+        position="Bottom"
+        class="auxiliary-icon"
+        *ngIf="!pService.check()" #notificationHeader>
+
         <i class="icon-notification"></i>
         <div class="push">1</div>
         <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
     </div>
-    <div CustomTooltip="{{ 'header.orientation' | translate }}" position="Bottom" class="auxiliary-icon mobile" (click)="toggleOrientation()" #orientationNote>
+
+    <div CustomTooltip="{{ 'header.orientation' | translate }}"
+        position="Bottom" 
+        class="auxiliary-icon"
+        (click)="toggleOrientation()"
+        *ngIf="(changeViewActive$ | async) && !pService.check()" #orientationNote>
+
         <i class="icon-view-change"></i>
         <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
     </div>

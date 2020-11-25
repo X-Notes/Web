@@ -37,10 +37,6 @@
         }
       }
 
-    .mobile {
-        display: none;
-    }
-
     .search {
         position: relative;
         z-index: 6;
@@ -195,12 +191,11 @@
 @media (max-width: 1024px) {
     .interactions {
         .auxiliary-icon {
-            display: none;
             margin-left: 1rem;
         }
 
-        .mobile {
-            display: flex;
+        .auxiliary-icon:nth-child(2) {
+          margin-left: 1rem;
         }
     }
 
@@ -286,7 +281,7 @@
 @media (max-width: 400px) {
   .help-func {
     .auxiliary-icon {
-      &:nth-child(4) {
+      &:nth-child(2) {
         display: none;
       }
 

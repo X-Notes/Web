@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Select, Store } from '@ngxs/store';
+import { Theme } from 'src/app/shared/enums/Theme';
 
 @Component({
   selector: 'app-interaction-labels',
@@ -7,9 +11,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InteractionLabelsComponent implements OnInit {
 
-  constructor() { }
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
+
+  theme = Theme;
+
+  constructor(private store: Store) { }
 
   ngOnInit(): void {
+  }
+
+  deleteAllLabels() {
   }
 
 }

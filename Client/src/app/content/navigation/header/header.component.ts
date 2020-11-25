@@ -179,7 +179,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       case EntityType.LabelDeleted: {
         await this.store.dispatch(new UpdateNewButton(false)).toPromise();
-        this.router = 'label';
+        this.router = 'label-delete';
         break;
       }
 
