@@ -2,7 +2,7 @@
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
             <div class="note" *ngFor="let item of notes$ | async" [routerLink]="['/notes/', item.id]">
-                <p>Hello Hello Hello Hello Hello Hello Hello Hello </p>
+                <p>{{ item.title | replace }}</p>
             </div>
         </ngx-simplebar>
         <div class="information">

@@ -47,10 +47,10 @@
                 color: $note-label-color;
                 border-radius: 40px;
                 cursor: pointer;
+                background-color: white;
 
                 p {
                     @include text-overflow;
-                    white-space: nowrap;
                 }
 
                 &:last-child {
@@ -120,9 +120,6 @@
             align-items: flex-start;
             width: 30%;
             padding-top: 0.5rem;
-            // background-position: center;
-            // background-repeat: no-repeat;
-            // background-size: cover;
     
             .open {
                 position: relative;

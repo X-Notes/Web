@@ -67,10 +67,8 @@ header {
         }
 
         p {
+          @include text-overflow;
           width: calc(100% - 43px);
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
         }
       }
     }
