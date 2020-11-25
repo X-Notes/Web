@@ -51,7 +51,8 @@ export class DeletedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
 
-    const notes = this.store.selectSnapshot(NoteStore.deletedNotes);
+    let notes = this.store.selectSnapshot(NoteStore.deletedNotes);
+    notes = this.noteService.transformNotes(notes);
     this.noteService.firstInit(notes);
 
     await this.pService.waitPreloading();

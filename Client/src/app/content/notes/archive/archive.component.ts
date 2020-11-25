@@ -48,7 +48,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Archive));
 
 
-    const notes = this.store.selectSnapshot(NoteStore.archiveNotes);
+    let notes = this.store.selectSnapshot(NoteStore.archiveNotes);
+    notes = this.noteService.transformNotes(notes);
     this.noteService.firstInit(notes);
 
     await this.pService.waitPreloading();

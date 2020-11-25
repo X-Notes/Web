@@ -49,7 +49,8 @@ export class SharedComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Shared));
 
-    const notes = this.store.selectSnapshot(NoteStore.sharedNotes);
+    let notes = this.store.selectSnapshot(NoteStore.sharedNotes);
+    notes = this.noteService.transformNotes(notes);
     this.noteService.firstInit(notes);
 
     await this.pService.waitPreloading();

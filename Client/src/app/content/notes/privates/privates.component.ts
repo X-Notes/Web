@@ -50,7 +50,8 @@ export class PrivatesComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
-    const notes = this.store.selectSnapshot(NoteStore.privateNotes);
+    let notes = this.store.selectSnapshot(NoteStore.privateNotes);
+    notes = this.noteService.transformNotes(notes);
     this.noteService.firstInit(notes);
 
     await this.pService.waitPreloading();

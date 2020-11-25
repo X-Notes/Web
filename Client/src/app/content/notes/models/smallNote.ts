@@ -9,4 +9,6 @@ export interface SmallNote {
     labels: Label[];
     refType: RefType;
     noteType: NoteType;
+    isSelected?: boolean;
+    lockRedirect?: boolean;
 }
