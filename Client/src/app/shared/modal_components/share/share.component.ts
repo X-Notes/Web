@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNote } from 'src/app/content/notes/models/invitedUsersToNote';
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
-import { GetInvitedUsersToNote, TransformTypeNotes, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
+import { ChangeTypeFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefType } from 'src/app/core/models/refType';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -165,12 +165,14 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Shared;
       const commands = this.factoryForCommandsShared([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Shared));
     } else {
       await this.api.makePrivateNotes([this.currentNote.id]).toPromise();
       this.currentNote.noteType = NoteType.Private;
       this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Private;
       const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
     }
   }
 

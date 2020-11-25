@@ -20,14 +20,13 @@ import {
 import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { UpdateLabelEvent } from '../state/updateLabels';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 
 
 @Component({
@@ -107,7 +106,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
-    this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, fullNote.noteType));
     return fullNote;
   }
 
@@ -119,18 +117,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
+    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 
     this.store.dispatch(new LoadLabels());
-
-    this.store.select(NoteStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x =>
-        x
-        // this.noteService.changeColorHandlerFullNote(this.note, x) // TODO
-      );
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
@@ -141,15 +133,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       document.querySelector('.grid') as HTMLElement, true), 1000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
-    this.store.select(NoteStore.updateLabelOnNoteEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((values: UpdateLabelEvent[]) => {
-        const value = values.find(x => x.id === this.id);
-        if (value !== undefined) {
-          // this.note.labels = value.labels; // TODO
-          // this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
-        }
-      });
   }
 
 

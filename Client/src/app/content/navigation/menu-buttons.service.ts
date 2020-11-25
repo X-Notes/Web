@@ -7,12 +7,13 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { CopyNotes, SetDeleteNotes, ArchiveNotes, DeleteNotesPermanently, MakePrivateNotes } from '../notes/state/notes-actions';
+import { CopyNotes, SetDeleteNotes, ArchiveNotes, DeleteNotesPermanently, MakePrivateNotes, ChangeTypeFullNote } from '../notes/state/notes-actions';
 import { CopyFolders, SetDeleteFolders, ArchiveFolders,
    DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { NoteStore } from '../notes/state/notes-state';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 
 @Injectable({providedIn: 'root'})
@@ -393,9 +394,16 @@ export class MenuButtonsService {
 
   // COPY
   private copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    this.store.dispatch(new CopyNotes(noteType, ids));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new CopyNotes(note.noteType, ids));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new CopyNotes(noteType, ids));
+    }
   }
 
   private copyFolders() {
@@ -405,9 +413,17 @@ export class MenuButtonsService {
 
   // SET DELETE
   private setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    this.store.dispatch(new SetDeleteNotes(noteType, ids));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new SetDeleteNotes(noteType, ids));
+    }
   }
 
   private setDeleteFolders() {
@@ -416,9 +432,17 @@ export class MenuButtonsService {
   }
 
   private makePrivateNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    this.store.dispatch(new MakePrivateNotes(noteType , ids));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new MakePrivateNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new MakePrivateNotes(noteType , ids));
+    }
   }
 
   private restoreFolders() {
@@ -429,9 +453,17 @@ export class MenuButtonsService {
   // ARCHIVE
 
   archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    this.store.dispatch(new ArchiveNotes(noteType, ids));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new ArchiveNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new ArchiveNotes(noteType, ids));
+    }
   }
 
   archiveFolders() {
@@ -442,8 +474,15 @@ export class MenuButtonsService {
   // DELETE PERMANENTLY
 
   deleteNotes() {
-    const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-    this.store.dispatch(new DeleteNotesPermanently(ids));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new DeleteNotesPermanently(ids));
+    } else {
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new DeleteNotesPermanently(ids));
+    }
   }
 
   deleteFolders() {

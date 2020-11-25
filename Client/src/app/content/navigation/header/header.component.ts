@@ -11,6 +11,7 @@ import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { FullNote } from '../../notes/models/fullNote';
 
 @Component({
   selector: 'app-header',
@@ -79,8 +80,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.store.select(AppStore.getRouting)
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.routeChange(x));
-
+      .subscribe(async (x) => await this.routeChange(x));
+    this.store.select(NoteStore.oneFull)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (note) => await this.routeChangeFullNote(note));
   }
 
   showUsers() {
@@ -108,9 +111,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  async routeChangeFullNote(note: FullNote) {
+    if (!note) {
+      return;
+    }
+    switch (note.noteType) {
+      case NoteType.Private: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        break;
+      }
+      case NoteType.Shared: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        break;
+      }
+      case NoteType.Deleted: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        break;
+      }
+      case NoteType.Archive: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        break;
+      }
+    }
+  }
 
   async routeChange(type: EntityType) {
-
     switch (type) {
       case EntityType.FolderPrivate: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
@@ -142,27 +167,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       case EntityType.NoteDeleted: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        break;
-      }
-      case EntityType.NoteInner: {
-        switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
-          case NoteType.Private: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-            break;
-          }
-          case NoteType.Shared: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-            break;
-          }
-          case NoteType.Deleted: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-            break;
-          }
-          case NoteType.Archive: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-            break;
-          }
-        }
         break;
       }
       default: {

@@ -7,12 +7,12 @@ import {
     LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllExceptNotes, ChangeColorNote, SelectIdNote,
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateNotes, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, ArchiveNotes,
-    RemoveFromDomMurri, MakePublicNotes, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
+    RemoveFromDomMurri, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
     CancelAllSelectedLabels, UpdateSelectLabel,
     AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
     ClearUpdatelabelEvent, UpdateLabelOnNote,
     UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle,
-    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote,
+    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote, ChangeTypeFullNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
@@ -325,10 +325,6 @@ export class NoteStore {
         dispatch(new TransformTypeNotes(typeNote, NoteType.Archive, selectedIds));
     }
 
-    @Action(MakePublicNotes)
-    async makePublicNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote }: MakePublicNotes) {
-        console.log('TODO');
-    }
 
     @Action(MakePrivateNotes)
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: MakePrivateNotes) {
@@ -619,6 +615,13 @@ export class NoteStore {
         patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
 
         dispatch(new UpdateOneNote(newNote, note.noteType));
+    }
+
+    @Action(ChangeTypeFullNote)
+    async changeTypeFullNote({ getState, patchState, dispatch }: StateContext<NoteState>, { type }: ChangeTypeFullNote) {
+        const note = getState().fullNoteState.note;
+        const newNote: FullNote = { ...note, noteType: type };
+        patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
 
 

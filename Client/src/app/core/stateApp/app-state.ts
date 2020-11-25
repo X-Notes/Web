@@ -1,7 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute
-    , UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
+import { UpdateRoute, SpinnerChangeStatus } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -10,7 +9,6 @@ import { AuthService } from '../auth.service';
 
 interface AppState {
     routing: EntityType;
-    innerNoteType: NoteType;
     spinnerActive: boolean;
 }
 
@@ -18,7 +16,6 @@ interface AppState {
     name: 'App',
     defaults: {
         routing: null,
-        innerNoteType: null,
         spinnerActive: false
     }
 })
@@ -111,10 +108,6 @@ export class AppStore {
         return state.routing;
     }
 
-    @Selector()
-    static getInnerNoteType(state: AppState): NoteType {
-        return state.innerNoteType;
-    }
 
     @Selector()
     static getTypeNote(state: AppState): NoteType {
@@ -195,12 +188,6 @@ export class AppStore {
     async updateRoute({patchState}: StateContext<AppState>, {type}: UpdateRoute) {
         patchState({routing: type});
     }
-
-    @Action(UpdateRouteWithNoteType)
-    async updateRouteWithNoteType({patchState}: StateContext<AppState>, {type, noteType}: UpdateRouteWithNoteType) {
-        patchState({routing: type, innerNoteType: noteType});
-    }
-
 
     @Action(SpinnerChangeStatus)
     spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {

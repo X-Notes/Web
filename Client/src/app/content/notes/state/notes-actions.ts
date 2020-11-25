@@ -86,12 +86,6 @@ export class ArchiveNotes {
     }
 }
 
-export class MakePublicNotes {
-    static type = '[Notes] MakePublic notes';
-    constructor(public typeNote: EntityType) {
-    }
-}
-
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
     constructor(public typeNote: NoteType, public selectedIds: string[]) {
@@ -211,6 +205,11 @@ export class UpdateLabelFullNote {
 export class ChangeColorFullNote {
     static type = '[Notes] change color fullNote';
     constructor(public color: string) { }
+}
+
+export class ChangeTypeFullNote {
+    static type = '[Notes] change type fullNote';
+    constructor(public type: NoteType) { }
 }
 
 export class TransformTypeNotes {
