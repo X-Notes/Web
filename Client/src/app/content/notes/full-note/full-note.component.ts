@@ -98,22 +98,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
       this.signal.hubConnection.invoke('LeaveNote', this.id);
     }
-    const note = await this.LoadMain();
-    await this.LoadSecond(note);
+    await this.LoadMain();
+    await this.LoadSecond();
     this.connectToHub();
   }
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
-    return fullNote;
   }
 
-  async LoadSecond(fullNote: FullNote) {
+  async LoadSecond() {
     await this.store.dispatch(new LoadAllNotes()).toPromise();
-    if (fullNote) {
-      this.setSideBarNotes(fullNote.noteType);
-    }
+    this.store.select(NoteStore.oneFull)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (note) => {
+      if (note) {
+        await this.setSideBarNotes(note.noteType);
+      }
+    });
+
   }
 
   async ngOnInit() {
