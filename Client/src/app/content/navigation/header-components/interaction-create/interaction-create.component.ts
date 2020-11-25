@@ -16,9 +16,6 @@ export class InteractionCreateComponent implements OnInit {
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
-
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 

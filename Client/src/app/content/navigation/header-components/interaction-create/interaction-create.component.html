@@ -1,6 +1,5 @@
 <div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
     <button 
-        *ngIf="(newButtonActive$ | async)"
         name="Create note" type="button"
         class="generic new-note generic-unfixed"
         (click)="newButton()"

@@ -1,6 +1,0 @@
-<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
-    <div class="generic hamburger" (click)="toggleSidebar()"
-        [ngClass]="pService.stateSidebar ? 'active-hamburger' : ''">
-        <span></span>
-    </div>
-</div>

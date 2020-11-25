@@ -1,7 +1,0 @@
-<div
-    [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', ((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '']">
-    <div CustomTooltip="{{ 'header.questions' | translate }}" position="Bottom" class="auxiliary-icon" #question>
-        <i class="icon-question"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
-    </div>
-</div>

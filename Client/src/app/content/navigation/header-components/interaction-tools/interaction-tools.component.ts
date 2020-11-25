@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -15,9 +17,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 export class InteractionToolsComponent implements OnInit {
 
-  @Select(AppStore.getMenuActive)
-  public menuActive$: Observable<boolean>;
-
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
@@ -27,18 +26,23 @@ export class InteractionToolsComponent implements OnInit {
   @Select(AppStore.getChangeViewButtonActive)
   public changeViewActive$: Observable<boolean>;
 
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
+
   theme = Theme;
 
   constructor(public pService: PersonalizationService,
-              public murriService: MurriService,
               private store: Store) { }
 
   ngOnInit(): void {
   }
 
   toggleOrientation() {
-    this.pService.orientationMobile = !this.pService.orientationMobile;
-    setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
+    // this.pService.orientationMobile = !this.pService.orientationMobile;
+    // setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   toggleTheme() {

@@ -24,8 +24,11 @@ export class InteractionItemsComponent implements OnInit {
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
-  @Select(AppStore.getMenuActive)
-  public menuActive$: Observable<boolean>;
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
 
   theme = Theme;
 
@@ -59,12 +62,12 @@ export class InteractionItemsComponent implements OnInit {
   selectAll() {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const noteType = this.store.selectSnapshot(AppStore.getRouting);
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       this.store.dispatch(new SelectAllNote(noteType));
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const folderType = this.store.selectSnapshot(AppStore.getRouting);
+      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
       this.store.dispatch(new SelectAllFolder(folderType));
     }
   }

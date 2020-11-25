@@ -1,6 +1,6 @@
 <div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
-    <button *ngIf="(menuActive$ | async)" name="Selected" type="button" (click)="unselectAll()"
-        class="generic generic-2 generic-unfixed selected" [ngClass]="(menuActive$ | async) ? 'select-all' : ''"
+    <button *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))" name="Selected" type="button" (click)="unselectAll()"
+        class="generic generic-2 generic-unfixed selected" [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''"
         #selectedAll>
         <div class="inner-content">
             <p>{{ 'header.selected' | translate }} {{countSelected}}</p>
@@ -9,7 +9,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
     </button>
     <button name="Select" type="button" (click)="selectAll()"
-        class="generic generic-2 generic-unfixed" [ngClass]="(menuActive$ | async) ? 'select-all' : ''" #select>
+        class="generic generic-2 generic-unfixed" [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''" #select>
         <div class="inner-content">
             <p>{{ 'header.select' | translate }}</p>
             <i class="icon-select"></i>
