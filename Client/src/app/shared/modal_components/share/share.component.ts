@@ -95,6 +95,7 @@ export class ShareComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.NoteInner: {
+        this.getFullNote();
         break;
       }
       // TODO add folder
@@ -122,6 +123,13 @@ export class ShareComponent implements OnInit, OnDestroy {
       return { ...note };
     });
     this.changeNote(this.notes[0]);
+  }
+
+  getFullNote() {
+    const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
+    const smallNote = {...fullNote} as SmallNote;
+    this.notes = [smallNote];
+    this.changeNote(smallNote);
   }
 
   copyInputLink(linkInput) {

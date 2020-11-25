@@ -7,6 +7,6 @@ export interface FullNote {
     title: string;
     color: string;
     labels: Label[];
-    noteType: NoteType;
     refType: RefType;
+    noteType: NoteType;
 }

@@ -9,7 +9,7 @@
             class="notes-sharing">
             <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
-                [ngClass]="{'active-note': currentNote.id === item.id}" (click)="changeNote(item)"
+                [ngClass]="{'active-note': currentNote?.id === item.id}" (click)="changeNote(item)"
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title}}</p>
             </div>
@@ -26,13 +26,13 @@
                 <div class="content-access">
                     <div class="link-access-field">
                         <input
-                            [ngStyle]="{'width': currentNote.noteType !== noteType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
-                            readonly type="text" value="{{ currentNote.id | sharingNoteLink}}" #linkInput>
-                        <button *ngIf="currentNote.noteType === noteType.Shared" class="dropdown-button" type="button"
+                            [ngStyle]="{'width': currentNote?.noteType !== noteType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
+                            readonly type="text" value="{{ currentNote?.id | sharingNoteLink}}" #linkInput>
+                        <button *ngIf="currentNote?.noteType === noteType.Shared" class="dropdown-button" type="button"
                             (click)="changeActive()">
                             <div class="content-button" #dropdownSelect>
-                                <p *ngIf="currentNote.refType === refType.Viewer">Viewer</p>
-                                <p *ngIf="currentNote.refType === refType.Editor">Editor</p>
+                                <p *ngIf="currentNote?.refType === refType.Viewer">Viewer</p>
+                                <p *ngIf="currentNote?.refType === refType.Editor">Editor</p>
                                 <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
                                     <i class="icon-select-label"></i>
                                 </div>
@@ -57,7 +57,7 @@
                         <div class="toggle">
                             <input type="checkbox" (change)="changeNoteType()">
                             <div class="rectangle"
-                                [ngClass]="currentNote.noteType !== noteType.Shared ? '' : 'active-toggle'">
+                                [ngClass]="currentNote?.noteType !== noteType.Shared ? '' : 'active-toggle'">
                             </div>
                             <div class="text-toggle">
                                 <div class="text">
@@ -69,9 +69,9 @@
                             </div>
                         </div>
                         <div class="toggle-description">
-                            <p *ngIf="currentNote.noteType !== noteType.Shared">Anyone on the internet with this links
+                            <p *ngIf="currentNote?.noteType !== noteType.Shared">Anyone on the internet with this links
                             </p>
-                            <p *ngIf="currentNote.noteType === noteType.Shared">Only people added can open with this
+                            <p *ngIf="currentNote?.noteType === noteType.Shared">Only people added can open with this
                                 link</p>
                         </div>
                     </div>
