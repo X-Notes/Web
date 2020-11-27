@@ -5,11 +5,6 @@ export class UpdateRoute {
     constructor(public type: EntityType) {    }
 }
 
-export class SpinnerChangeStatus {
-    static type = '[App] Spinner status';
-    constructor(public flag: boolean) {    }
-}
-
 export class SetToken {
     static type = '[App] Set Token';
     constructor(public token: string) {  }

@@ -5,7 +5,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { UpdateLabel, LoadLabels, DeleteLabel, } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import {SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import {UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -52,14 +52,14 @@ export class DeletedComponent implements OnInit, OnDestroy {
   }
 
   async loadContent() {
-    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
+    this.pService.setSpinnerState(true);
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.deleted);
     this.labelService.firstInit(labels);
 
     await this.pService.waitPreloading();
-    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.pService.setSpinnerState(false);
     this.loaded = true;
     this.murriService.initMurriLabelAsync(true);
     await this.murriService.setOpacityTrueAsync();

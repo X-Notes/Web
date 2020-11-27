@@ -21,8 +21,6 @@ export class LabelsComponent implements OnInit {
   @ViewChild ('scrollMe', { static: true })
   public myScrollContainer: ElementRef;
 
-  @Select(AppStore.spinnerActive)
-  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -42,7 +40,6 @@ export class LabelsComponent implements OnInit {
     public pService: PersonalizationService) {}
 
   async ngOnInit() {
-
     this.pService.onResize();
   }
 

@@ -40,8 +40,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   public photoError = false;
   labelsActive = false;
 
-  @Select(AppStore.spinnerActive)
-  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

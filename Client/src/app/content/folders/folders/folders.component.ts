@@ -23,8 +23,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
   @ViewChild ('scrollMe', { static: true })
   public myScrollContainer: ElementRef;
 
-  @Select(AppStore.spinnerActive)
-  public spinnerActive$: Observable<boolean>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
