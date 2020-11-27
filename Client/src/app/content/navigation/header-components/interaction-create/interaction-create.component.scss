@@ -1,7 +1,7 @@
 @import 'header-components';
 
 .interactions {
-    .new-note {
+    .generic {
         background-color: #ffffff;
 
         &:hover {
@@ -12,8 +12,21 @@
 
 @media (max-width: 1024px) {
     .interactions {
-        .new-note {
+        .generic {
             display: none;
+        }
+
+        .generic-create {
+            display: block;
+            width: 54px;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .interactions {
+        .generic-create {
+            width: 40px;
         }
     }
 }

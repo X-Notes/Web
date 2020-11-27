@@ -29,15 +29,18 @@
 
         <app-interaction-profile
             class="interactions"
-            *ngSwitchCase="'profile'"></app-interaction-profile>
+            *ngSwitchCase="'profile'"
+            [themeHeader]="(theme$ | async)"></app-interaction-profile>
 
         <app-interaction-items
             class="interactions"
-            *ngSwitchCase="'items'"></app-interaction-items>
+            *ngSwitchCase="'items'"
+            [themeHeader]="(theme$ | async)"></app-interaction-items>
 
         <app-interaction-create
             class="interactions"
-            *ngSwitchCase="'label'"></app-interaction-create>
+            *ngSwitchCase="'label'"
+            [themeHeader]="(theme$ | async)"></app-interaction-create>
 
         <app-interaction-labels
             class="interactions"

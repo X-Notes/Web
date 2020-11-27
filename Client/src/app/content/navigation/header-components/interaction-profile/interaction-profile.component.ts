@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { SetDefaultBackground } from 'src/app/core/stateUser/user-action';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Theme } from 'src/app/shared/enums/Theme';
 
 @Component({
@@ -12,8 +10,7 @@ import { Theme } from 'src/app/shared/enums/Theme';
 })
 export class InteractionProfileComponent implements OnInit {
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
+  @Input() themeHeader: Theme;
 
   theme = Theme;
 

@@ -41,7 +41,7 @@
         position="Bottom" 
         class="auxiliary-icon"
         (click)="toggleOrientation()"
-        *ngIf="(changeViewActive$ | async) && !pService.check()" #orientationNote>
+        *ngIf="!(isProfile$ | async) && !pService.check()" #orientationNote>
 
         <i class="icon-view-change"></i>
         <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>

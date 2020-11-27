@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -17,12 +17,11 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 })
 export class InteractionItemsComponent implements OnInit {
 
+  @Input() themeHeader: Theme;
+
   public countSelected: number;
 
   destroy = new Subject<void>();
-
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
 
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
@@ -40,6 +39,7 @@ export class InteractionItemsComponent implements OnInit {
     .subscribe(x => {
       if (x > 0) {
         this.countSelected = x;
+        console.log(this.themeHeader);
       }
     });
 

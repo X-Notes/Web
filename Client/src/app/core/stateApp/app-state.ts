@@ -69,6 +69,11 @@ export class AppStore {
     }
 
     @Selector()
+    static isProfile(state: AppState): boolean {
+        return state.routing === EntityType.Profile;
+    }
+
+    @Selector()
     static getName(state: AppState): string {
         switch (state.routing) {
 
@@ -172,11 +177,6 @@ export class AppStore {
         !this.isFolderInner(state) &&
         state.routing !== EntityType.LabelDeleted &&
         state.routing !== null;
-    }
-
-    @Selector()
-    static getChangeViewButtonActive(state: AppState): boolean {
-        return  state.routing !== EntityType.Profile;
     }
 
     @Action(UpdateRoute)

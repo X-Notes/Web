@@ -23,8 +23,8 @@ export class InteractionToolsComponent implements OnInit {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.getChangeViewButtonActive)
-  public changeViewActive$: Observable<boolean>;
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
 
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
