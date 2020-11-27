@@ -55,7 +55,7 @@
                 <div *ngFor="let item of labelsFilters" class="label" (click)="filterNotes(item.label.id)"
                     [ngClass]="item.selected ? 'active-label' : ''">
                     <div class="label-item" [ngStyle]="{'backgroundColor': item.label.color}">
-                        <p>{{ item.label.name | replace }}</p>
+                        <p>{{ item.label.name | replace: 'label'  }}</p>
                         <p>{{ item.label.countNotes }}</p>
                         <div class="dot" [ngStyle]="{'backgroundColor': item.label.color}"></div>
                     </div>
