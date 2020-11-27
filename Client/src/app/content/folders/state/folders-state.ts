@@ -8,7 +8,7 @@ import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     LoadDeletedFolders, LoadAllExceptFolders, AddFolder, SelectIdFolder,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, SetDeleteFolders, DeleteFoldersPermanently, CopyFolders,
-    ClearAddedPrivateFolders, MakePublicFolders,
+    ClearAddedPrivateFolders,
      MakePrivateFolders, PositionFolder, UpdateFolders, UpdateTitle, UpdateOneFolder } from './folders-actions';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -16,10 +16,18 @@ import { UpdateColor } from '../../notes/state/updateColor';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { Folders } from '../models/Folders';
 import { Observable } from 'rxjs';
+import { AccessType } from '../../notes/models/accessType';
 
+
+interface FullFolderState {
+    note: FullFolder;
+    canView: boolean;
+    accessType: AccessType;
+}
 
 interface FolderState {
     folders: Folders[];
+    fullFolderState: FullFolderState;
     selectedIds: string[];
     removeFromMurriEvent: string[];
     updateColorEvent: UpdateColor[];
@@ -31,6 +39,7 @@ interface FolderState {
     name: 'Folders',
     defaults: {
         folders: [],
+        fullFolderState: null,
         selectedIds: [],
         removeFromMurriEvent: [],
         updateColorEvent: [],
@@ -58,44 +67,43 @@ export class FolderStore {
     // Get folders
     @Selector()
     static privateFolders(state: FolderState): Folder[] {
-        return state.folders.find(x => x.typeFolders === FolderType.Private).folders;
+        return this.getFoldersByTypeStatic(state, FolderType.Private).folders;
     }
 
     @Selector()
     static sharedFolders(state: FolderState): Folder[] {
-        return state.folders.find(x => x.typeFolders === FolderType.Shared).folders;
+        return this.getFoldersByTypeStatic(state, FolderType.Shared).folders;
     }
 
     @Selector()
     static deletedFolders(state: FolderState): Folder[] {
-        return state.folders.find(x => x.typeFolders === FolderType.Deleted).folders;
+        return this.getFoldersByTypeStatic(state, FolderType.Deleted).folders;
     }
 
     @Selector()
     static archiveFolders(state: FolderState): Folder[] {
-        return state.folders.find(x => x.typeFolders === FolderType.Archive).folders;
+        return this.getFoldersByTypeStatic(state, FolderType.Archive).folders;
     }
 
 
-    // Get count folders
     @Selector()
     static privateCount(state: FolderState): number {
-        return state.folders.find(x => x.typeFolders === FolderType.Private).count;
+        return this.getFoldersByTypeStatic(state, FolderType.Private).count;
     }
 
     @Selector()
     static archiveCount(state: FolderState): number {
-        return state.folders.find(x => x.typeFolders === FolderType.Archive).count;
+        return this.getFoldersByTypeStatic(state, FolderType.Archive).count;
     }
 
     @Selector()
     static deletedCount(state: FolderState): number {
-        return state.folders.find(x => x.typeFolders === FolderType.Deleted).count;
+        return this.getFoldersByTypeStatic(state, FolderType.Deleted).count;
     }
 
     @Selector()
     static sharedCount(state: FolderState): number {
-        return state.folders.find(x => x.typeFolders === FolderType.Shared).count;
+        return this.getFoldersByTypeStatic(state, FolderType.Shared).count;
     }
 
     // Get selected Ids
@@ -120,6 +128,10 @@ export class FolderStore {
     @Selector()
     static foldersAddingPrivate(state: FolderState): Folder[] {
         return state.foldersAddingPrivate;
+    }
+
+    static getFoldersByTypeStatic(state: FolderState, type: FolderType) {
+        return state.folders.find(x => x.typeFolders === type);
     }
 
     // LOAD CONTENT
@@ -204,27 +216,26 @@ export class FolderStore {
     async newFolder({ getState, dispatch }: StateContext<FolderState>) {
         const id = await this.api.new().toPromise();
         const newFolder: Folder = { id, title: '', color: FolderColorPallete.Green };
-        const folders = getState().folders.find(z => z.typeFolders === FolderType.Private).folders;
+        const folders = this.getFoldersByType(getState, FolderType.Private);
         const toUpdate = new Folders(FolderType.Private, [newFolder, ...folders]);
         dispatch(new UpdateFolders(toUpdate, FolderType.Private));
     }
 
 
     @Action(ArchiveFolders)
-    async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder }: ArchiveFolders) {
-        const selectedIds = getState().selectedIds;
+    async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: ArchiveFolders) {
         await this.api.archiveFolder(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Archive, selectedIds);
     }
 
 
     @Action(ChangeColorFolder)
-    async changeColor({ patchState, getState, dispatch }: StateContext<FolderState>, { color, typeFolder }: ChangeColorFolder) {
+    async changeColor({ patchState, getState, dispatch }: StateContext<FolderState>,
+                      { color, typeFolder, selectedIds }: ChangeColorFolder) {
 
-        const selectedIds = getState().selectedIds;
         await this.api.changeColor(selectedIds, color).toPromise();
 
-        const folders = getState().folders.find(z => z.typeFolders === typeFolder).folders;
+        const folders = this.getFoldersByType(getState, typeFolder);
         const newFolders = folders.map(folder => {
             folder = { ...folder };
             if (selectedIds.some(z => z === folder.id)) {
@@ -259,21 +270,19 @@ export class FolderStore {
 
 
     @Action(SetDeleteFolders)
-    async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder }: SetDeleteFolders) {
-        const selectedIds = getState().selectedIds;
+    async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: SetDeleteFolders) {
         await this.api.setDeleteFolder(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Deleted, selectedIds);
     }
 
 
     @Action(CopyFolders)
-    async copyFolders({ getState, dispatch, patchState }: StateContext<FolderState>, { typeFolder }: CopyFolders) {
+    async copyFolders({ getState, dispatch, patchState }: StateContext<FolderState>, { typeFolder, selectedIds }: CopyFolders) {
 
-        const selectedIds = getState().selectedIds;
         const newFolders = await this.api.copyFolders(selectedIds).toPromise();
 
-        const privateNotes = getState().folders.find(z => z.typeFolders === FolderType.Private).folders;
-        dispatch(new UpdateFolders(new Folders(FolderType.Private, [...newFolders, ...privateNotes]), FolderType.Private));
+        const privateFolders = this.getFoldersByType(getState, FolderType.Private);
+        dispatch(new UpdateFolders(new Folders(FolderType.Private, [...newFolders, ...privateFolders]), FolderType.Private));
         dispatch([UnSelectAllFolder]);
 
         if (typeFolder === FolderType.Private) {
@@ -292,12 +301,11 @@ export class FolderStore {
     }
 
     @Action(DeleteFoldersPermanently)
-    async deleteFoldersPermanently({ getState, dispatch, patchState }: StateContext<FolderState>) {
-        const selectedIds = getState().selectedIds;
+    async deleteFoldersPermanently({ getState, dispatch, patchState }: StateContext<FolderState>, {selectedIds}: DeleteFoldersPermanently) {
         await this.api.deleteFolders(selectedIds).toPromise();
 
-        const foldersFrom = getState().folders.find(x => x.typeFolders === FolderType.Deleted);
-        const foldersFromNew = foldersFrom.folders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const foldersFrom = this.getFoldersByType(getState, FolderType.Deleted);
+        const foldersFromNew = foldersFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
         dispatch(new UpdateFolders(new Folders(FolderType.Deleted, foldersFromNew), FolderType.Deleted));
 
         patchState({
@@ -306,15 +314,9 @@ export class FolderStore {
         dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
     }
 
-    @Action(MakePublicFolders)
-    async MakePublicFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePublicFolders) {
-
-    }
 
     @Action(MakePrivateFolders)
-    async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder}: MakePrivateFolders) {
-
-        const selectedIds = getState().selectedIds;
+    async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder, selectedIds}: MakePrivateFolders) {
         await this.api.makePrivateFolders(selectedIds).toPromise();
         this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Private, selectedIds);
 
@@ -324,7 +326,7 @@ export class FolderStore {
 
     @Action(PositionFolder)
     async changePosition({getState, dispatch}: StateContext<FolderState>, {order, typeFolder}: PositionFolder) {
-        let folders = getState().folders.find(z => z.typeFolders === typeFolder).folders;
+        let folders = this.getFoldersByType(getState, typeFolder);
         const changedFolder = folders.find(x => x.id === order.entityId);
         const flag = folders.indexOf(changedFolder);
         if (flag + 1 !== order.position) {
@@ -344,13 +346,13 @@ export class FolderStore {
         typeTo: FolderType,
         selectedIds: string[]) {
 
-        const foldersFrom = getState().folders.find(x => x.typeFolders === typeFrom);
-        const foldersFromNew = foldersFrom.folders.filter(x => selectedIds.indexOf(x.id) !== -1 ? false : true);
+        const foldersFrom = this.getFoldersByType(getState, typeFrom);
+        const foldersFromNew = foldersFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
 
-        const foldersAdded = foldersFrom.folders.filter(x => selectedIds.indexOf(x.id) !== -1 ? true : false);
+        const foldersAdded = foldersFrom.filter(x => this.itemsFromFilterArray(selectedIds, x));
         dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
 
-        const foldersTo = getState().folders.find(z => z.typeFolders === typeTo).folders;
+        const foldersTo = this.getFoldersByType(getState, typeTo);
         const newFoldersTo = [...foldersAdded, ...foldersTo];
         dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo));
 
@@ -359,7 +361,6 @@ export class FolderStore {
         });
         dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
     }
-
 
     // Murri
 
@@ -373,15 +374,13 @@ export class FolderStore {
     // SELECTIONS
 
     @Action(SelectIdFolder)
-    select({ patchState, getState }: StateContext<FolderState>, { id }: SelectIdFolder) {
-        const ids = getState().selectedIds;
-        patchState({ selectedIds: [id, ...ids] });
+    select({ patchState, getState }: StateContext<FolderState>, { id, selectedIds}: SelectIdFolder) {
+        patchState({ selectedIds: [id, ...selectedIds] });
     }
 
     @Action(UnSelectIdFolder)
-    unSelect({ getState, patchState }: StateContext<FolderState>, { id }: UnSelectIdFolder) {
-        let ids = getState().selectedIds;
-        ids = ids.filter(x => x !== id);
+    unSelect({ getState, patchState }: StateContext<FolderState>, { id, selectedIds }: UnSelectIdFolder) {
+        const ids = selectedIds.filter(x => x !== id);
         patchState({ selectedIds: [...ids] });
     }
 
@@ -393,15 +392,22 @@ export class FolderStore {
     @Action(SelectAllFolder)
     selectAll({ patchState, getState }: StateContext<FolderState>, { typeFolder }: SelectAllFolder) {
 
-        const ids = getState().folders
-        .find(z => z.typeFolders === typeFolder).folders
-        .map(z => z.id);
+        const folders = this.getFoldersByType(getState, typeFolder);
+        const ids = folders.map(z => z.id);
 
         patchState({ selectedIds: [...ids] });
     }
 
     getFoldersByType(getState: () => FolderState, type: FolderType): Folder[] {
         return getState().folders.find(z => z.typeFolders === type).folders;
+    }
+
+    itemNoFromFilterArray(ids: string[], folder: Folder) {
+        return ids.indexOf(folder.id) !== -1 ? false : true;
+    }
+
+    itemsFromFilterArray(ids: string[], folder: Folder) {
+        return ids.indexOf(folder.id) !== -1 ? true : false;
     }
 
     @Action(UpdateOneFolder)
@@ -417,7 +423,7 @@ export class FolderStore {
     }
 
     @Action(UpdateTitle)
-    async updateTitleFolder({ patchState, getState, dispatch }: StateContext<FolderState>, { str, id, typeFolder }: UpdateTitle) {
+    async updateTitleFolder({ getState, dispatch }: StateContext<FolderState>, { str, id, typeFolder }: UpdateTitle) {
         let folder = this.getFoldersByType(getState, typeFolder).find(z => z.id === id);
         folder = {...folder, title: str};
         dispatch(new UpdateOneFolder(folder, typeFolder));

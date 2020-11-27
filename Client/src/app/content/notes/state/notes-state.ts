@@ -23,7 +23,6 @@ import { LabelsOnSelectedNotes } from '../models/labelsOnSelectedNotes';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
-import { Observable } from 'rxjs';
 import { FullNote } from '../models/fullNote';
 import { AccessType } from '../models/accessType';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';

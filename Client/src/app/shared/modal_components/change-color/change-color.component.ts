@@ -12,6 +12,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
 
 @Component({
   selector: 'app-change-color',
@@ -64,7 +65,8 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const type = this.store.selectSnapshot(AppStore.getTypeFolder);
-      await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
+      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+      await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
     }
     this.dialogRef.close();
   }

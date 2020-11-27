@@ -5,8 +5,6 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
-import { MakePrivateNotes } from '../../notes/state/notes-actions';
-import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';

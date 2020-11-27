@@ -19,6 +19,11 @@ import { PersonalizationService, showHistory } from '../../services/personalizat
 import { SearchService } from '../../services/search.service';
 import { DialogData } from '../dialog_data';
 
+export enum SharedType {
+  Note,
+  Folder
+}
+
 @Component({
   selector: 'app-share',
   templateUrl: './share.component.html',
@@ -26,6 +31,9 @@ import { DialogData } from '../dialog_data';
   animations: [showHistory]
 })
 export class ShareComponent implements OnInit, OnDestroy {
+
+  windowType: SharedType;
+
   dropdownActive = false;
   isCollapse = true;
   noteType = NoteType;
@@ -80,25 +88,54 @@ export class ShareComponent implements OnInit, OnDestroy {
     switch (routing) {
       case EntityType.NoteArchive: {
         this.getNotes();
+        this.windowType = SharedType.Note;
         break;
       }
       case EntityType.NotePrivate: {
         this.getNotes();
+        this.windowType = SharedType.Note;
         break;
       }
       case EntityType.NoteDeleted: {
         this.getNotes();
+        this.windowType = SharedType.Note;
         break;
       }
       case EntityType.NoteShared: {
         this.getNotes();
+        this.windowType = SharedType.Note;
         break;
       }
       case EntityType.NoteInner: {
         this.getFullNote();
+        this.windowType = SharedType.Note;
         break;
       }
-      // TODO add folder
+      case EntityType.FolderArchive: {
+        this.getFolders();
+        this.windowType = SharedType.Folder;
+        break;
+      }
+      case EntityType.FolderDeleted: {
+        this.getFolders();
+        this.windowType = SharedType.Folder;
+        break;
+      }
+      case EntityType.FolderPrivate: {
+        this.getFolders();
+        this.windowType = SharedType.Folder;
+        break;
+      }
+      case EntityType.FolderShared: {
+        this.getFolders();
+        this.windowType = SharedType.Folder;
+        break;
+      }
+      case EntityType.FolderInner: {
+        this.getFullFolder();
+        this.windowType = SharedType.Folder;
+        break;
+      }
     }
 
     this.searchStrChanged.pipe(
@@ -112,6 +149,14 @@ export class ShareComponent implements OnInit, OnDestroy {
           this.searchUsers = [];
         }
       });
+  }
+
+  getFolders() {
+    // TODO
+  }
+
+  getFullFolder() {
+    // TODO
   }
 
   getNotes() {

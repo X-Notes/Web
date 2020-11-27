@@ -21,7 +21,6 @@ export class FullFolderComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-
     await this.store.dispatch(new UpdateRoute(EntityType.FolderInner)).toPromise();
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Inner));
   }
