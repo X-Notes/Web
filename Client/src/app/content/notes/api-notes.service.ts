@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
+import { InvitedUsersToNote } from './models/invitedUsersToNote';
+import { RefType } from 'src/app/core/models/refType';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -14,22 +16,34 @@ export class ApiServiceNotes {
 
   getPrivateNotes() {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/private')
-    .pipe(map(z => new Notes(NoteType.Private, z)));
+    .pipe(map(z => {
+      z.forEach(note => note.noteType = NoteType.Private);
+      return new Notes(NoteType.Private, z);
+    }));
   }
 
   getSharedNotes() {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/shared')
-    .pipe(map(z => new Notes(NoteType.Shared, z)));
+    .pipe(map(z => {
+      z.forEach(note => note.noteType = NoteType.Shared);
+      return new Notes(NoteType.Shared, z);
+    }));
   }
 
   getDeletedNotes() {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/deleted')
-    .pipe(map(z => new Notes(NoteType.Deleted, z)));
+    .pipe(map(z => {
+      z.forEach(note => note.noteType = NoteType.Deleted);
+      return new Notes(NoteType.Deleted, z);
+    }));
   }
 
   getArchiveNotes() {
     return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/archive')
-    .pipe(map(z => new Notes(NoteType.Archive, z)));
+    .pipe(map(z => {
+      z.forEach(note => note.noteType = NoteType.Archive);
+      return new Notes(NoteType.Archive, z);
+    }));
   }
 
 
@@ -101,6 +115,45 @@ export class ApiServiceNotes {
     return this.httpClient.get<string>(environment.writeAPI + `/api/note/new`);
   }
 
+  getUsersOnPrivateNote(id: string) {
+    return this.httpClient.get<InvitedUsersToNote[]>(environment.writeAPI + `/api/share/notes/user/invites/${id}`);
+  }
+
+  makePublic(refType: RefType, id: string) {
+    const obj = {
+      refType,
+      id
+    };
+    return this.httpClient.post(environment.writeAPI + `/api/share/notes/share`, obj);
+  }
+
+  sendInvitesToNote(userIds: number[], noteId: string, refType: RefType, sendMessage: boolean, message: string) {
+    const obj = {
+      userIds,
+      noteId,
+      refType,
+      sendMessage,
+      message
+    };
+    return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/invites`, obj);
+  }
+
+  removeUserFromPrivateNote(noteId: string, userId: number) {
+    const obj = {
+      noteId,
+      userId
+    };
+    return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/remove`, obj);
+  }
+
+  changeUserPermission(noteId: string, userId: number, accessType: RefType) {
+    const obj = {
+      noteId,
+      userId,
+      accessType
+    };
+    return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/permission`, obj);
+  }
   // FULL NOTE
 
   updateTitle(title: string, id: string) {

@@ -82,7 +82,8 @@ export class LabelStore {
     async newLabel({ setState, getState, patchState }: StateContext<LabelState>) {
         const id = await this.api.new().toPromise();
         patchState({
-            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false, countNotes: 0}, ...getState().labelsAll],
+            labelsAll: [{name: '', color: LabelsColor.Red , id, isDeleted: false, countNotes: 0},
+            ...getState().labelsAll],
             CountAll: getState().CountAll + 1
         });
     }
@@ -134,7 +135,7 @@ export class LabelStore {
     }
 
     @Action(UpdateLabelCount)
-    async updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabel) {
+    async updateLabelsCount({ setState}: StateContext<LabelState>, { label }: UpdateLabelCount) {
         const count = await this.api.getCountNotes(label.id).toPromise();
         if (label.isDeleted) {
             setState(

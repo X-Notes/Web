@@ -56,7 +56,7 @@ namespace BI.services.notes
                             else
                             {
                                 var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                                if (noteUser != null)
+                                if (noteUser != null && noteUser.AccessType == RefType.Editor)
                                 {
                                     note.Title = request.Title;
                                     await noteRepository.UpdateNote(note);

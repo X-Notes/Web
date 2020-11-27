@@ -75,6 +75,7 @@ export class PersonalizationService {
 
   constructor() {}
 
+  spinnerActive = false;
   timeForSpinnerLoading = 30;
   subject = new Subject();
 
@@ -132,6 +133,10 @@ export class PersonalizationService {
         this.AnimationInnerUsers = true;
       }
     }
+  }
+
+  setSpinnerState(flag: boolean) {
+    this.spinnerActive = flag;
   }
 
   cancelSideBar() {

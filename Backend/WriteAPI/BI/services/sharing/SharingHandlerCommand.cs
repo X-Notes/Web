@@ -119,6 +119,29 @@ namespace BI.services.sharing
             return Unit.Value;
         }
 
+        public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
+        {
+            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
+
+            var access = await this.usersOnPrivateNotesRepository.GetByUserIdandNoteId(request.UserId, request.NoteId);
+            if (access != null)
+            {
+                access.AccessType = request.AccessType;
+                await this.usersOnPrivateNotesRepository.Update(access);
+            }
+            else
+            {
+                var perm = new UsersOnPrivateFolders()
+                {
+                    AccessType = request.AccessType,
+                    FolderId = request.NoteId,
+                    UserId = request.UserId
+                };
+                await this.usersOnPrivateFoldersRepository.Add(perm);
+            }
+            return Unit.Value;
+        }
+
         public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
         {
             await CheckUserPermissionForEditingFolders(request.Email, request.FolderId);
@@ -127,6 +150,22 @@ namespace BI.services.sharing
             if(access != null)
             {
                 await this.usersOnPrivateFoldersRepository.Remove(access);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
+        {
+            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
+
+            var access = await this.usersOnPrivateNotesRepository.GetByUserIdandNoteId(request.UserId, request.NoteId);
+            if (access != null)
+            {
+                await this.usersOnPrivateNotesRepository.Remove(access);
             }
             else
             {
@@ -167,44 +206,7 @@ namespace BI.services.sharing
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
-        {
-            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
 
-            var access = await this.usersOnPrivateNotesRepository.GetById(request.UserId, request.NoteId);
-            if (access != null)
-            {
-                await this.usersOnPrivateNotesRepository.Remove(access);
-            }
-            else
-            {
-                throw new Exception();
-            }
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
-        {
-            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
-
-            var access = await this.usersOnPrivateNotesRepository.GetById(request.UserId, request.NoteId);
-            if (access != null)
-            {
-                access.AccessType = request.AccessType;
-                await this.usersOnPrivateNotesRepository.Update(access);
-            }
-            else
-            {
-                var perm = new UsersOnPrivateFolders()
-                {
-                    AccessType = request.AccessType,
-                    FolderId = request.NoteId,
-                    UserId = request.UserId
-                };
-                await this.usersOnPrivateFoldersRepository.Add(perm);
-            }
-            return Unit.Value;
-        }
 
         private async Task CheckUserPermissionForEditingNotes(string email, Guid noteId)
         {

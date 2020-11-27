@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Domain.Queries.search
 {
-    public class GetUsersForSharingModalQuery: IRequest<List<ShortUserForShareModal>>
+    public class GetUsersForSharingModalQuery: BaseQueryEntity, IRequest<List<ShortUserForShareModal>>
     {
         public string SearchString { set; get; }
     }

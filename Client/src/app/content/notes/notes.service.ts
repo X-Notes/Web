@@ -62,6 +62,34 @@ export class NotesService implements OnDestroy {
           await this.murriService.refreshLayoutAsync();
         }
       });
+
+    this.store.select(NoteStore.selectedIds)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(ids => {
+        if (ids) {
+          for (const note of this.notes) {
+            if (ids.some(x => x === note.id)) {
+              note.isSelected = true;
+            } else {
+              note.isSelected = false;
+            }
+          }
+        }
+      });
+
+    this.store.select(NoteStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        if (x > 0) {
+          for (const note of this.notes) {
+            note.lockRedirect = true;
+          }
+        } else {
+          for (const note of this.notes) {
+            note.lockRedirect = false;
+          }
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -71,7 +99,12 @@ export class NotesService implements OnDestroy {
     this.labelsIds.unsubscribe();
   }
 
-
+  transformNotes(notes: SmallNote[]) {
+    notes = [...notes];
+    return notes.map(note => {
+      return {...note, isSelected: false, lockRedirect: false};
+    });
+  }
 
   firstInit(notes: SmallNote[]) {
     this.allNotes = [...notes].map(note => { note = { ...note }; return note; });
@@ -81,7 +114,13 @@ export class NotesService implements OnDestroy {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
     }
-    this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter).subscribe(async (x) => await this.UpdateLabelSelected(x));
+    this.labelsIds = this.store.select(NoteStore.getSelectedLabelFilter)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (x) => {
+      if (x) {
+        await this.UpdateLabelSelected(x);
+      }
+    });
     this.firstInitFlag = true;
   }
 

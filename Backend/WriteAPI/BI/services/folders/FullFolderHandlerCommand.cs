@@ -56,8 +56,8 @@ namespace BI.services.folders
                             }
                             else
                             {
-                                var noteUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                                if (noteUser != null)
+                                var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
+                                if (folderUser != null && folderUser.AccessType == RefType.Editor)
                                 {
                                     folder.Title = request.Title;
                                     await folderRepository.UpdateFolder(folder);

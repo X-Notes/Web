@@ -22,12 +22,14 @@ import { TooltipDirective } from './tooltip/tooltip.directive';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ShareComponent } from './modal_components/share/share.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { SharingNoteLinkPipe } from './pipes/sharing-note-link.pipe';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, ShareComponent,
     TooltipComponent, TooltipDirective,
-    SpinnerComponent
+    SpinnerComponent,
+    SharingNoteLinkPipe
   ],
   imports: [CommonModule , MatRippleModule,
      TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
@@ -36,7 +38,8 @@ import {MatTabsModule} from '@angular/material/tabs';
   exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
     TooltipDirective,
-    SpinnerComponent
+    SpinnerComponent,
+    SharingNoteLinkPipe
    ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

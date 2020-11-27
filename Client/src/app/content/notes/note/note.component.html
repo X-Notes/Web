@@ -1,9 +1,9 @@
 <div #highlightNote class="highlighting-note" (click)="highlight(note.id)"
-    [ngStyle]="{'backgroundColor': isHighlight ? 'rgba(101, 226, 113, 0.65)' : '' }"
+    [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
     [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''">
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
-<div (click)="toNote()" class="note-inner" [ngStyle]="{'cursor': selectedFlag ? 'pointer' : ''}"
+<div (click)="toNote()" class="note-inner" [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
     [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
     <div class="labels">
         <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
@@ -13,11 +13,13 @@
         </div>
     </div>
     <div class="header">
-        <h4>Give your note a titleGive your note a titleGive your note a titleGive your note a title</h4>
-        <h4 class="not-named">Give your note a titleGive your note a titleGive your note a titleGive your note a title</h4>
+        <h4>{{note.title}}</h4>
+        <h4 class="not-named">Give your note a title</h4>
     </div>
     <div class="description">
-        <p>Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello HelloHelloHelloHelloHelloHelloHelloHelloHelloHello Hello Hello Hello HelloHello Hello Hello Hello HelloHello Hello Hello HelloHelloHello Hello Hello Hello Hello</p>
+        <p>Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello
+            HelloHelloHelloHelloHelloHelloHelloHelloHelloHello Hello Hello Hello HelloHello Hello Hello Hello HelloHello
+            Hello Hello HelloHelloHello Hello Hello Hello Hello</p>
     </div>
     <div class="photos">
         <div class="photo">

@@ -33,9 +33,12 @@ namespace WriteContext.Repositories
             return await contextDB.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<List<User>> SearchByEmailAndName(string search)
+        public async Task<List<User>> SearchByEmailAndName(string search, string email) // TODO BAD TOLOWER MAYBE FIX
         {
-            return await contextDB.Users.Where(x => x.Email.Contains(search) || x.Name.Contains(search)).ToListAsync();
+            return await contextDB.Users
+                .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
+                .Where(x => x.Email != email)
+                .ToListAsync();
         }
 
         public async Task<User> GetUserWithLabels(string email)

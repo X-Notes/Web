@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Commands.folderInner;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FullFolderController : ControllerBase

@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
-import { MakePublicNotes, MakePrivateNotes } from '../../notes/state/notes-actions';
+import { MakePrivateNotes } from '../../notes/state/notes-actions';
 import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
@@ -13,6 +13,7 @@ import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { FullNote } from '../../notes/models/fullNote';
 import { ShortUser } from 'src/app/core/models/short-user';
 
 @Component({
@@ -69,12 +70,48 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
 
     this.store.select(AppStore.getRouting)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x) => await this.routeChange(x));
+    this.store.select(NoteStore.oneFull)
     .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.routeChange(x));
+    .subscribe(async (note) => await this.routeChangeFullNote(note));
+  }
+
+  showUsers() {
+    this.pService.users = !this.pService.users;
+  }
+
+  hideMenu() {
+    this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
+  async routeChangeFullNote(note: FullNote) {
+    if (!note) {
+      return;
+    }
+    switch (note.noteType) {
+      case NoteType.Private: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        break;
+      }
+      case NoteType.Shared: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        break;
+      }
+      case NoteType.Deleted: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        break;
+      }
+      case NoteType.Archive: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        break;
+      }
+    }
+    this.router = 'note-inner';
   }
 
   async routeChange(type: EntityType) {
@@ -121,25 +158,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.NoteInner: {
-       // await this.store.dispatch(new UpdateNewButton(false)).toPromise();
-        switch (this.store.selectSnapshot(AppStore.getInnerNoteType)) {
-          case NoteType.Private: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-            break;
-          }
-          case NoteType.Shared: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-            break;
-          }
-          case NoteType.Deleted: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-            break;
-          }
-          case NoteType.Archive: {
-            this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-            break;
-          }
-        }
         this.router = 'note-inner';
         break;
       }
@@ -163,31 +181,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
         console.log('default');
       }
     }
-  }
-
-  // UPPER MENU FUNCTION NOTES
-
-  makePublic() {
-    const noteType = this.store.selectSnapshot(AppStore.getRouting);
-    this.store.dispatch(new MakePublicNotes(noteType));
-  }
-
-  makePrivate() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new MakePrivateNotes(noteType));
-  }
-
-
-  // UPPER MENU FUNCTIONS FOLDERS
-
-
-  makePublicFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new MakePublicFolders(folderType));
-  }
-
-  makePrivateFolder() {
-    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new MakePrivateFolders(folderType));
   }
 }

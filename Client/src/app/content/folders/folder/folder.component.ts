@@ -16,13 +16,11 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class FolderComponent implements OnInit, OnDestroy {
 
-  selectedFlag = false;
   fontSize = FontSize;
   destroy = new Subject<void>();
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
-  isHighlight = false;
   @Input() folder: Folder;
 
   constructor(private store: Store,
@@ -34,27 +32,15 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select(FolderStore.selectedIds)
-      .pipe(takeUntil(this.destroy))
-      .pipe(map(z => this.tryFind(z)))
-      .subscribe(flag => this.isHighlight = flag);
-
-    this.store.select(FolderStore.selectedCount)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => {
-        if (x > 0) {
-          this.selectedFlag = true;
-        } else {
-          this.selectedFlag = false;
-        }
-      });
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
       debounceTime(250))
       .subscribe(title => {
-        const type = this.store.selectSnapshot(AppStore.getTypeFolder);
-        this.store.dispatch(new UpdateTitle(title, this.folder.id, type));
+        if (title) {
+          const type = this.store.selectSnapshot(AppStore.getTypeFolder);
+          this.store.dispatch(new UpdateTitle(title, this.folder.id, type));
+        }
       });
   }
 
@@ -64,7 +50,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   highlight(id: string) {
-    if (!this.isHighlight) {
+    if (!this.folder.isSelected) {
       this.store.dispatch(new SelectIdFolder(id));
     } else {
       this.store.dispatch(new UnSelectIdFolder(id));

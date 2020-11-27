@@ -2,16 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { takeUntil } from 'rxjs/operators';
 import { LoadArchiveFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
-import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FolderService } from '../folder.service';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-archive',
@@ -40,8 +40,8 @@ export class ArchiveComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderArchive)).toPromise();
-    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
-    this.store.select(UserStore.getTokenUpdated)
+    this.pService.setSpinnerState(true);
+    this.store.select(AppStore.getTokenUpdated)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
@@ -55,11 +55,12 @@ export class ArchiveComponent implements OnInit, OnDestroy {
     await this.store.dispatch(new LoadArchiveFolders()).toPromise();
     this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
 
-    const folders = this.store.selectSnapshot(FolderStore.archiveFolders);
+    let folders = this.store.selectSnapshot(FolderStore.archiveFolders);
+    folders = this.folderService.transformFolders(folders);
     this.folderService.firstInit(folders);
 
     await this.pService.waitPreloading();
-    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.pService.setSpinnerState(false);
     this.loaded = true;
     await this.murriService.initMurriFolderAsync(FolderType.Archive);
     await this.murriService.setOpacityTrueAsync();

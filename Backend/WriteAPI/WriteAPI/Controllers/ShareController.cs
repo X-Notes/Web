@@ -1,9 +1,13 @@
 ﻿using Common.DatabaseModels.helpers;
+using Common.DTO.users;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
+using Domain.Queries.sharing;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WriteAPI.ControllerConfig;
 
@@ -86,6 +90,13 @@ namespace WriteAPI.Controllers
             var email = this.GetUserEmail();
             command.Email = email;
             await this._mediator.Send(command);
+        }
+
+        [HttpGet("notes/user/invites/{noteId}")]
+        public async Task<List<InvitedUsersToNote>> GetInvitedToNoteUsers(Guid noteId)
+        {
+            var command = new GetUsersOnPrivateNote { NoteId = noteId, Email = this.GetUserEmail() };
+            return await this._mediator.Send(command);
         }
 
     }

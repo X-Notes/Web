@@ -1,6 +1,5 @@
 import { User } from '../models/user';
 import { Language } from 'src/app/shared/enums/Language';
-import { FontSize } from 'src/app/shared/enums/FontSize';
 import { Background } from '../models/background';
 
 export class Login {
@@ -13,15 +12,6 @@ export class Logout {
     constructor() {  }
 }
 
-export class SetToken {
-    static type = '[User] Set Token';
-    constructor(public token: string) {  }
-}
-
-export class TokenSetNoUpdate {
-    static type = '[User] Set noUpdateToken';
-    constructor() {  }
-}
 
 export class ChangeTheme {
     static type = '[User] Change theme';

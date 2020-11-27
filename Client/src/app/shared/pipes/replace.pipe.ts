@@ -5,8 +5,21 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ReplacePipe implements PipeTransform {
 
-  transform(value: string, ...args: any[]): any {
-    return value === null ? 'No title' : value.length === 0 ? 'unknown label' : value;
+  transform(value: string, type: string): string {
+    if (type === 'note') {
+      if (value) {
+        return value?.length === 0 ? 'unknown note' : value;
+      } else {
+        return 'unknown note';
+      }
+    }
+    if (type === 'label') {
+      if (value) {
+        return value?.length === 0 ? 'unknown label' : value;
+      } else {
+        return 'unknown label';
+      }
+    }
   }
 
 }

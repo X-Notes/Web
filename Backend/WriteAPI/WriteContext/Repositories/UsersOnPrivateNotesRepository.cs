@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace WriteContext.Repositories
 {
@@ -27,9 +28,16 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<UserOnPrivateNotes> GetById(int userId, Guid noteId)
+        public async Task<UserOnPrivateNotes> GetByUserIdandNoteId(int userId, Guid noteId)
         {
             return await this.contextDB.UserOnPrivateNotes.FirstOrDefaultAsync(x => x.NoteId == noteId && x.UserId == userId);
+        }
+
+        public async Task<List<UserOnPrivateNotes>> GetByNoteIdUserOnPrivateNote(Guid noteId)
+        {
+            return await this.contextDB.UserOnPrivateNotes
+                .Include(x => x.User)
+                .Where(x => x.NoteId == noteId).ToListAsync();
         }
 
         public async Task Update(UserOnPrivateNotes userOnNote)

@@ -1,8 +1,9 @@
 <div class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
-            <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}" [routerLink]="['/notes/', item.id]">
-                <p>{{ item.title | replace }}</p>
+            <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}"
+                [routerLink]="['/notes/', item.id]">
+                <p>{{ item.title | replace: 'note' }}</p>
             </div>
         </ngx-simplebar>
         <div class="information">

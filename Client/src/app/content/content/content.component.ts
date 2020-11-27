@@ -23,14 +23,14 @@ export class ContentComponent implements OnInit, OnDestroy {
   newButtonActive = false;
 
   constructor(public pService: PersonalizationService,
-              private store: Store, ) { }
+              private store: Store) { }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {

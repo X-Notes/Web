@@ -32,6 +32,7 @@ namespace WriteContext.Repositories
             return await this.contextDB.UsersOnPrivateFolders.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
         }
 
+
         public async Task Update(UsersOnPrivateFolders userOnNote)
         {
             contextDB.UsersOnPrivateFolders.Update(userOnNote);

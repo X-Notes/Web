@@ -47,7 +47,7 @@ export class UpdateNotes {
 
 export class ChangeColorNote {
     static type = '[Notes] Change color note';
-    constructor(public color: string, public typeNote: NoteType) { }
+    constructor(public color: string, public typeNote: NoteType, public selectedIds: string[]) { }
 }
 
 export class ClearColorNotes {
@@ -57,7 +57,7 @@ export class ClearColorNotes {
 
 export class CopyNotes {
     static type = '[Notes] Copy notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: NoteType, public selectedIds: string[]) {
     }
 }
 
@@ -70,31 +70,25 @@ export class ClearAddedPrivateNotes {
 // CHANGE STATE
 export class SetDeleteNotes {
     static type = '[Notes] SetDelete notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: NoteType, public selectedIds: string[]) {
     }
 }
 
 export class DeleteNotesPermanently {
     static type = '[Notes] Delete notes';
-    constructor() {
+    constructor(public selectedIds: string[]) {
     }
 }
 
 export class ArchiveNotes {
     static type = '[Notes] Archive notes';
-    constructor(public typeNote: NoteType) {
-    }
-}
-
-export class MakePublicNotes {
-    static type = '[Notes] MakePublic notes';
-    constructor(public typeNote: EntityType) {
+    constructor(public typeNote: NoteType, public selectedIds: string[]) {
     }
 }
 
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
-    constructor(public typeNote: NoteType) {
+    constructor(public typeNote: NoteType, public selectedIds: string[]) {
     }
 }
 
@@ -108,12 +102,12 @@ export class UpdateLabelOnNote {
 
 export class AddLabelOnNote {
     static type = '[Notes] Add label';
-    constructor(public label: Label, public typeNote: NoteType) { }
+    constructor(public label: Label, public typeNote: NoteType, public selectedIds: string[]) { }
 }
 
 export class RemoveLabelFromNote {
     static type = '[Notes] Remove label';
-    constructor(public label: Label, public typeNote: NoteType) { }
+    constructor(public label: Label, public typeNote: NoteType, public selectedIds: string[]) { }
 }
 
 export class ClearUpdatelabelEvent {
@@ -135,7 +129,13 @@ export class PositionNote {
     }
 }
 
+// SHARING
 
+export class GetInvitedUsersToNote {
+    static type = '[Notes] Get InvitedUsersToNote';
+    constructor(public noteId: string) {
+    }
+}
 
 // SELECTION
 export class SelectIdNote {
@@ -197,8 +197,25 @@ export class UpdateTitle {
     constructor(public str: string) { }
 }
 
+export class UpdateLabelFullNote {
+    static type = '[Notes] update label full note';
+    constructor(public label: Label, public remove: boolean) { }
+}
+
 export class ChangeColorFullNote {
     static type = '[Notes] change color fullNote';
     constructor(public color: string) { }
 }
+
+export class ChangeTypeFullNote {
+    static type = '[Notes] change type fullNote';
+    constructor(public type: NoteType) { }
+}
+
+export class TransformTypeNotes {
+    static type = '[Notes] transform type notes';
+    constructor(public typeFrom: NoteType, public typeTo: NoteType, public selectedIds: string[]) { }
+}
+
+
 
