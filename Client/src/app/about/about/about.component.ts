@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-about',
@@ -17,7 +17,7 @@ export class AboutComponent implements OnInit {
   }
 
   login() {
-    const flag = this.store.selectSnapshot(UserStore.getTokenUpdated);
+    const flag = this.store.selectSnapshot(AppStore.getTokenUpdated);
     if (!flag) {
       this.authService.GoogleAuth();
     } else {

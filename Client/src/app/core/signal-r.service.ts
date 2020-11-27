@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
-import { AuthService } from './auth.service';
 import { Store } from '@ngxs/store';
-import { UserStore } from './stateUser/user-state';
 import { environment } from 'src/environments/environment';
+import { AppStore } from './stateApp/app-state';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +17,7 @@ export class SignalRService {
   public hubConnection: signalR.HubConnection;
 
   private startConnection = () => {
-    const token =  this.store.selectSnapshot(UserStore.getToken);
+    const token =  this.store.selectSnapshot(AppStore.getToken);
     this.hubConnection = new signalR.HubConnectionBuilder()
                             // .configureLogging(signalR.LogLevel.None)
                             .withUrl(`${environment.writeAPI}/hub`, { accessTokenFactory: () => token })

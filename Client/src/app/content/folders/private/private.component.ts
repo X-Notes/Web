@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { LoadPrivateFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FolderStore } from '../state/folders-state';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -12,6 +11,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FolderService } from '../folder.service';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-private',
@@ -41,7 +41,7 @@ export class PrivateComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
     await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
-    this.store.select(UserStore.getTokenUpdated)
+    this.store.select(AppStore.getTokenUpdated)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from './auth.service';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { tap, map, catchError } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { UserStore } from './stateUser/user-state';
+import { AppStore } from './stateApp/app-state';
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
@@ -13,7 +12,7 @@ export class TokenInterceptorService implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const token = this.store.selectSnapshot(UserStore.getToken);
+    const token = this.store.selectSnapshot(AppStore.getToken);
     if (!request.url.includes('google')) {
       request = request.clone({
         setHeaders: {

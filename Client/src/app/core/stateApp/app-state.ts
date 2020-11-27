@@ -1,6 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, SpinnerChangeStatus } from './app-action';
+import { UpdateRoute, SpinnerChangeStatus, SetToken, TokenSetNoUpdate } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -10,13 +10,17 @@ import { AuthService } from '../auth.service';
 interface AppState {
     routing: EntityType;
     spinnerActive: boolean;
+    token: string;
+    tokenUpdated: boolean;
 }
 
 @State<AppState>({
     name: 'App',
     defaults: {
         routing: null,
-        spinnerActive: false
+        spinnerActive: false,
+        token: null,
+        tokenUpdated: false,
     }
 })
 @Injectable()
@@ -24,7 +28,17 @@ export class AppStore {
 
 
     constructor(authService: AuthService) {
+    }
 
+
+    @Selector()
+    static getToken(state: AppState): string {
+        return state.token;
+    }
+
+    @Selector()
+    static getTokenUpdated(state: AppState): boolean {
+        return state.tokenUpdated;
     }
 
     @Selector()
@@ -192,5 +206,15 @@ export class AppStore {
     @Action(SpinnerChangeStatus)
     spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
         patchState({spinnerActive: flag});
+    }
+
+    @Action(SetToken)
+    setToken({ patchState }: StateContext<AppState>, { token }: SetToken) {
+        patchState({ token, tokenUpdated: true });
+    }
+
+    @Action(TokenSetNoUpdate)
+    setNoUpdateToken({ patchState }: StateContext<AppState>) {
+        patchState({  token: null , tokenUpdated: false });
     }
 }

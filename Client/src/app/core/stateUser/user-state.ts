@@ -2,7 +2,7 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { UserAPIService } from '../user-api.service';
-import { Login, Logout, SetToken, TokenSetNoUpdate, ChangeTheme, ChangeLanguage,
+import { Login, Logout, ChangeTheme, ChangeLanguage,
     ChangeFontSize,
     SetCurrentBackground,
     SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
@@ -10,23 +10,19 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { Language } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
 import { FontSize } from 'src/app/shared/enums/FontSize';
-import { Background } from '../models/background';
 import { BackgroundService } from 'src/app/content/profile/background.service';
+import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 
 interface UserState {
     user: ShortUser;
     isLogin: boolean;
-    token: string;
-    tokenUpdated: boolean;
 }
 
 @State<UserState>({
     name: 'User',
     defaults: {
         user: null,
-        isLogin: false,
-        token: null,
-        tokenUpdated: false,
+        isLogin: false
     }
 })
 
@@ -40,8 +36,8 @@ export class UserStore {
     }
 
     @Selector()
-    static getTokenUpdated(state: UserState): boolean {
-        return state.tokenUpdated;
+    static getStatus(state: UserState): boolean {
+        return state.isLogin;
     }
 
     @Selector()
@@ -65,15 +61,6 @@ export class UserStore {
         return state.user.language;
     }
 
-    @Selector()
-    static getStatus(state: UserState): boolean {
-        return state.isLogin;
-    }
-
-    @Selector()
-    static getToken(state: UserState): string {
-        return state.token;
-    }
 
     @Action(Login)
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
@@ -82,23 +69,17 @@ export class UserStore {
             user.photoId = await this.api.getImageFromGoogle(user.photoId);
             userdb = await this.api.newUser(user).toPromise();
         }
-        setState({ user: userdb, isLogin: true, token, tokenUpdated: true});
+        dispatch(new SetToken(token));
+        setState({ user: userdb, isLogin: true});
     }
 
     @Action(Logout)
-    logout({ setState }: StateContext<UserState>) {
-        setState({ user: null, isLogin: false, token: null, tokenUpdated: false });
+    logout({ setState, dispatch }: StateContext<UserState>) {
+        dispatch(new TokenSetNoUpdate());
+        setState({ user: null, isLogin: false });
     }
 
-    @Action(SetToken)
-    setToken({ patchState }: StateContext<UserState>, { token }: SetToken) {
-        patchState({ token, tokenUpdated: true });
-    }
 
-    @Action(TokenSetNoUpdate)
-    setNoUpdateToken({ patchState }: StateContext<UserState>) {
-        patchState({ tokenUpdated: false });
-    }
 
     @Action(ChangeTheme)
     async changeTheme({ patchState, getState }: StateContext<UserState>) {

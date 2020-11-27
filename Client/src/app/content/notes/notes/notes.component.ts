@@ -12,7 +12,6 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { UpdateLabelEvent } from '../state/updateLabels';
 
 export enum subMenu {
   All = 'all',
@@ -70,7 +69,7 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
-    this.store.select(UserStore.getTokenUpdated)
+    this.store.select(AppStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
