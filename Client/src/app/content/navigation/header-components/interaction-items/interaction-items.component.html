@@ -1,4 +1,5 @@
 <div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+    <app-interaction-create *ngIf="!((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"></app-interaction-create>
     <button *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))" name="Selected" type="button" (click)="unselectAll()"
         class="generic generic-2 generic-unfixed selected" [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''"
         #selectedAll>
