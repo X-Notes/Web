@@ -27,6 +27,7 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -80,8 +81,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.routeSubscription = route.params.subscribe(async (params) => {
       console.log(params.id);
       this.id = params.id;
-      await this.initNote();
+
+      this.store.select(AppStore.getTokenUpdated)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.initNote();
+          this.store.dispatch(new LoadLabels());
+        }
+      }
+      );
     });
+
   }
 
 
@@ -125,15 +136,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 
-    this.store.dispatch(new LoadLabels());
-
     this.nameChanged.pipe(
       takeUntil(this.destroy),
       debounceTime(50))
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
-      document.querySelector('.grid') as HTMLElement, true), 1000); // CHANGE TODO
+      document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
   }
