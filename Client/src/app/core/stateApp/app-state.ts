@@ -75,6 +75,12 @@ export class AppStore {
     }
 
     @Selector()
+    static isDelete(state: AppState): boolean {
+        return state.routing === EntityType.NoteDeleted ||
+        state.routing === EntityType.FolderDeleted;
+    }
+
+    @Selector()
     static getName(state: AppState): string {
         switch (state.routing) {
 
@@ -170,32 +176,15 @@ export class AppStore {
 
     @Selector()
     static getNewButtonActive(state: AppState): boolean {
-        return this.isNote(state) || this.isFolder(state) || state.routing === EntityType.LabelPrivate;
-    }
-
-    @Selector()
-    static getSettingsButtonActive(state: AppState): boolean {
-        return this.isNote(state) || this.isFolder(state);
-    }
-
-    @Selector()
-    static getSelectAllButtonActive(state: AppState): boolean {
-        return  this.isNote(state) || this.isFolder(state);
-    }
-
-    @Selector()
-    static getDeleteAllLabellsButtonActive(state: AppState): boolean {
-        return  state.routing === EntityType.LabelDeleted;
+        return !this.isNoteInner(state) &&
+        !this.isFolderInner(state) &&
+        state.routing !== EntityType.LabelDeleted &&
+        state.routing !== null;
     }
 
     @Selector()
     static getChangeViewButtonActive(state: AppState): boolean {
         return  state.routing !== EntityType.Profile;
-    }
-
-    @Selector()
-    static getdefaultBackground(state: AppState): boolean {
-        return state.routing === EntityType.Profile;
     }
 
     @Action(UpdateRoute)

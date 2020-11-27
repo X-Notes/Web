@@ -76,10 +76,7 @@
       }
 
       .note {
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
-        -webkit-box-orient: vertical;
+        display: flex;
         font-size: 1rem;
         padding: 0.25rem 0.5rem;
         width: calc(100% - 2.25rem);
@@ -88,12 +85,14 @@
         height: 27px;
         border-radius: 50px;
         cursor: pointer;
-        &:first-child{
+        overflow: hidden;
+
+        &:first-child {
           margin-top: 0;
         }
         p {
           display: none;
-          white-space: nowrap;
+          @include text-overflow;
         }
       }
       .active-note{
@@ -225,9 +224,7 @@
             font-size: 0.875rem;
 
             p {
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              overflow: hidden;
+              @include text-overflow;
             }
           }
         }
@@ -283,7 +280,6 @@
 
               p {
                 @include text-overflow;
-                white-space: nowrap;
               }
             }
 
@@ -427,10 +423,8 @@
               margin-bottom: 0.75rem;
   
               p {
+                @include text-overflow;
                 width: calc(100% - 26px);
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
               }
   
               .icon {
@@ -598,7 +592,6 @@
   
               p {
                 @include text-overflow;
-                white-space: nowrap;
               }
             }
   

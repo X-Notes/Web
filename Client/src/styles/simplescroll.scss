@@ -106,13 +106,14 @@
 .people-editing {
     .simplebar-wrapper {
         width: auto;
+        height: 100%;
 
         .simplebar-content-wrapper {
 
             .simplebar-content {
                 display: flex;
                 align-items: center;
-                height: inherit;
+                height: 100%;
             }
         }
     }

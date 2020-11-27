@@ -10,49 +10,30 @@
      flex-direction: column;
      height: 100%;
      width: 80px;
-     border-right: 1px solid $light-separator;
-     background-color: $dark-color;
+     border-right: 1px solid;
      transition: 0.2s ease;
 
-     .active {
-         background-color: $dark-backlight;
-         .main-icon, p {
-            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%) !important;
-            background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-         }
-         &:nth-child(2){
-             .main-icon {
-                background: none;
-                -webkit-text-fill-color: initial;
-                background-clip: initial;
-                i {
-                    .path1::before {
-                        color: white;
-                    }
-        
-                    .path2::before {
-                        background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                        background-clip: text;
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                    }
-                }
-             }
-        }
-     }
-
      .module {
-         position: relative;
-         display: flex;
-         height: 80px;
-         width: 100%;
-         user-select: none;
-         outline: none;
-         cursor: pointer;
-         //transition: 0.1s ease; TODO
+        position: relative;
+        display: flex;
+        height: 80px;
+        width: 100%;
+        user-select: none;
+        outline: none;
+        cursor: pointer;
+        transition: 0.2s ease;
 
-         .item {
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    background: none;
+                    -webkit-text-fill-color: initial;
+                    background-clip: initial;
+                }
+            }
+        }
+
+        .item {
              position: relative;
              z-index: 5;
              display: flex;
@@ -64,6 +45,8 @@
 
              .main-icon {
                 font-size: 2rem;
+                transition: 0.2s ease;
+
                 i {
                     &::before {
                         transition: 0.2s ease;
@@ -76,19 +59,11 @@
 
             p {
                 margin-top: 0.3125rem;
-                font-size: 0.9375rem;
-                font-weight: 500;
+                font-size: 0.875rem;
                 transition: 0.2s ease;
-                background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                background-clip: text;
-                -webkit-text-fill-color: transparent;
             }
-         }
-
-         &:hover:not(.active) {
-             background-color: $dark-button;
-         }
-     }
+        }
+    }
 
      .billing-field {
         display: flex;
@@ -98,42 +73,38 @@
         width: 100%;
         margin-top: auto;
         transition: 0.2s ease;
-        background-color: $dark-backlight;
     }
 }
 
 .light {
     background-color: $light-color;
-
+    
     .module {
-
         &:hover:not(.active) {
             background-color: $light-nav-backlight;
         }
 
         .item {
-            .main-icon {
-
-                i::before {
-                    color: $light-text-color;
-                }
-    
-                i {
-                    .path1::before {
-                        color: #D6D6D6;
-                    }
-    
-                    .path2::before {
-                        color: $light-text-color;
-                    }
-                }
-            }
-    
-            p {
-                color: $light-text-color;
-                background: linear-gradient(112.11deg, #404040 -6.16%, #404040 104.11%);
+            .main-icon, p {
+                background: linear-gradient(135deg, #404040 0%, #404040 100%);
                 background-clip: text;
+                -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
+            }
+        }
+
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    i {
+                        .path1::before {
+                            color: #D6D6D6;
+                        }
+                        .path2::before {
+                            color: $light-text-color;
+                        }
+                    }
+                }
             }
         }
     }
@@ -149,6 +120,67 @@
             color: #F6F6F6;
         }
     }
+}
+
+.dark {
+    border-color: $light-separator;
+
+    .active {
+        background-color: $dark-backlight;
+    }
+
+    .module {
+        .item {
+            .main-icon, p {
+                background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        &:hover:not(.active) {
+            background-color: $dark-button;
+        }
+    }
+
+    .billing-field {
+        background-color: $dark-backlight;
+    }
+}
+
+.light, .dark {
+    .active {
+        .item {
+           .main-icon, p {
+               background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+               background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        &:nth-child(2) {
+            .item {
+                .main-icon {
+                    i {
+                        .path1::before {
+                            background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
+                            background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+            
+                        .path2::before {
+                            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
+                            background-clip: text;
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+                    }
+                }
+            }
+        }
+   }
 }
 
 @media (max-width: 1024px) {

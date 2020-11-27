@@ -1,58 +1,57 @@
-<header [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '', pService.users ? 'visible-people' : '']">
+<header [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+    
+    <div class="profile-section">
+        <div class="profile" routerLink="/profile" #profile>
+            <div class="profile-data">
+                <div class="photo">
+                    <img alt="photo" [src]="(user$ | async).photoId">
+                </div>
+                <p>{{(user$ | async).name}}</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
+        </div>
+        <button name="Notification" type="button" class="notification" #notification>
+            <div class="notification-data">
+                <i class="icon-notification"></i>
+                <div class="push">10</div>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
+        </button>
+    </div>
 
+    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''" [ngSwitch]="router">
 
-    <app-profile-section></app-profile-section>
-
-    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''">
-
-        <div class="interactions" *ngIf="!(isNoteInner$ | async) && !(isFolderInner$ | async)">
-            <app-hamburg-menu></app-hamburg-menu>
-            <app-new-button *ngIf="newButtonActive && !(menuActiveNotes$ | async) && !(menuActiveFolders$ | async)">
-            </app-new-button>
-            <app-button-unselect-all *ngIf="(menuActiveNotes$ | async) || (menuActiveFolders$ | async)">
-            </app-button-unselect-all>
-            <app-button-select-all *ngIf="(selectAllButtonActive$ | async)"></app-button-select-all>
-            <app-button-filter *ngIf="(settingsButtonActive$ | async)"></app-button-filter>
-            <app-button-default-background *ngIf="(defaultBackground$ | async)"></app-button-default-background>
-            <app-button-delete-labels *ngIf="(deleteAllLabeslButton$ | async)"></app-button-delete-labels>
+        <div class="interactions">
+            <div class="generic hamburger" (click)="toggleSidebar()">
+                <span></span>
+            </div>
         </div>
 
+        <app-interaction-create
+                class="interactions"
+                *ngIf="(newButtonActive$ | async) && !((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"></app-interaction-create>
 
-        <div class="interactions menu"
-            *ngIf="!(isNoteInner$ | async) && ((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
-            [@showMenuLeftRight]>
+        <app-interaction-profile
+            class="interactions"
+            *ngSwitchCase="'profile'"></app-interaction-profile>
+
+        <app-interaction-items
+            class="interactions"
+            *ngSwitchCase="'items'"></app-interaction-items>
+
+        <app-interaction-labels
+            class="interactions"
+            *ngSwitchCase="'label-delete'"></app-interaction-labels>
+
+        <app-interaction-inner
+            class="interactions inner-helper"
+            *ngSwitchCase="'note-inner'"></app-interaction-inner>
+
+        <div class="interactions menu" *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))" [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
 
-
-        <div class="interactions" *ngIf="(isNoteInner$ | async)" [ngClass]="pService.hideInnerMenu ? 'visible' : ''">
-            <app-button-back></app-button-back>
-            <app-user-circle></app-user-circle>
-            <app-online-users *ngIf="pService.users" [@showMenuLeftRight] [@.disabled]="pService.AnimationInnerUsers">
-            </app-online-users>
-
-            <app-button-video></app-button-video>
-
-            <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
-                [@.disabled]="pService.AnimationInnerMenu"></app-menu>
-
-
-            <app-button-history></app-button-history>
-            <app-button-label></app-button-label>
-            <app-button-share></app-button-share>
-            <app-button-three-dots></app-button-three-dots>
-            <div class="overlay" (click)="closeMenu()"></div>
-        </div>
-
-
-        <div class="interactions right">
-            <app-search *ngIf="!(isNoteInner$ | async)"></app-search>
-            <app-button-theme></app-button-theme>
-            <app-button-question></app-button-question>
-            <app-button-notification [isProfile]="false"></app-button-notification>
-            <app-button-change-view *ngIf="(changeViewActive$ | async)"></app-button-change-view>
-        </div>
-
+        <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
 
     </div>
 </header>

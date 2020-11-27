@@ -1,13 +1,13 @@
 import { Overlay, OverlayConfig, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { ComponentRef, Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
 import { TooltipComponent } from './tooltip.component';
 
 @Directive({
   // tslint:disable-next-line:directive-selector
   selector: '[CustomTooltip]'
 })
-export class TooltipDirective implements OnInit {
+export class TooltipDirective implements OnDestroy  {
 
   @Input('CustomTooltip') text = '';
   // tslint:disable-next-line:no-input-rename
@@ -23,11 +23,8 @@ export class TooltipDirective implements OnInit {
               private overlayPositionBuilder: OverlayPositionBuilder,
               private elementRef: ElementRef) { }
 
-  ngOnInit(): void {
-    const config = new OverlayConfig({
-      positionStrategy: this.positioning(),
-    });
-    this.overlayRef = this.overlay.create(config);
+  ngOnDestroy(): void {
+    this.overlayRef?.detach();
   }
 
   positioning() {
@@ -93,6 +90,13 @@ export class TooltipDirective implements OnInit {
         return;
       }
     }
+
+    const config = new OverlayConfig({
+      positionStrategy: this.positioning(),
+    });
+    this.overlayRef = this.overlay.create(config);
+
+
     const tooltipRef: ComponentRef<TooltipComponent>
       = this.overlayRef.attach(new ComponentPortal(TooltipComponent));
     this.text = this.text.charAt(0).toUpperCase() + this.text.slice(1);
@@ -108,7 +112,7 @@ export class TooltipDirective implements OnInit {
 
   @HostListener('mouseleave')
   hide() {
-    this.overlayRef.detach();
+    this.overlayRef?.detach();
   }
 
 }

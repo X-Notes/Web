@@ -1,0 +1,19 @@
+@import 'header-components';
+
+.interactions {
+    .new-note {
+        background-color: #ffffff;
+
+        &:hover {
+          background-color: #ececec;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .interactions {
+        .new-note {
+            display: none;
+        }
+    }
+}

@@ -5,6 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
+import { MakePrivateNotes } from '../../notes/state/notes-actions';
+import { MakePublicFolders, MakePrivateFolders } from '../../folders/state/folders-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
@@ -12,6 +14,7 @@ import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FullNote } from '../../notes/models/fullNote';
+import { ShortUser } from 'src/app/core/models/short-user';
 
 @Component({
   selector: 'app-header',
@@ -26,40 +29,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
   newButtonActive = false;
   // Upper Menu
 
-  @Select(AppStore.getDeleteAllLabellsButtonActive)
-  public deleteAllLabeslButton$: Observable<boolean>;
-
-  @Select(AppStore.getChangeViewButtonActive)
-  public changeViewActive$: Observable<boolean>;
-
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
-  @Select(AppStore.getSettingsButtonActive)
-  public settingsButtonActive$: Observable<boolean>;
+  @Select(AppStore.getNewButtonActive)
+  public newButtonActive$: Observable<boolean>;
 
-  @Select(AppStore.getSelectAllButtonActive)
-  public selectAllButtonActive$: Observable<boolean>;
-
-  @Select(AppStore.getdefaultBackground)
-  public defaultBackground$: Observable<boolean>;
-
-  @Select(AppStore.isFolderInner)
-  public isFolderInner$: Observable<boolean>;
+  //
 
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.getName)
-  public route$: Observable<string>;
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 
   theme = Theme;
+  router: string;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -94,21 +85,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
-
-  disableTooltpUser(): boolean {
-    if (this.pService.checkWidth()) {
-      return true;
-    }
-  }
-
-  closeMenu(): void {
-    if (this.pService.checkWidth()) {
-      this.pService.users = false;
-    }
-
-    if (!this.pService.check()) {
-      this.pService.hideInnerMenu = false;
-    }
+  toggleSidebar() {
+    this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
   async routeChangeFullNote(note: FullNote) {
@@ -133,46 +111,75 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
     }
+    this.router = 'note-inner';
   }
 
   async routeChange(type: EntityType) {
+
     switch (type) {
       case EntityType.FolderPrivate: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
+        this.router = 'items';
         break;
       }
       case EntityType.FolderShared: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
+        this.router = 'items';
         break;
       }
       case EntityType.FolderArchive: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
+        this.router = 'items';
         break;
       }
       case EntityType.FolderDeleted: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
+        this.router = 'items';
         break;
       }
       case EntityType.NotePrivate: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        this.router = 'items';
         break;
       }
       case EntityType.NoteShared: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        this.router = 'items';
         break;
       }
       case EntityType.NoteArchive: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        this.router = 'items';
         break;
       }
       case EntityType.NoteDeleted: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        this.router = 'items';
         break;
       }
+      case EntityType.NoteInner: {
+        this.router = 'note-inner';
+        break;
+      }
+
+      case EntityType.LabelPrivate: {
+        this.router = 'label';
+        break;
+      }
+      case EntityType.LabelDeleted: {
+        this.router = 'label-delete';
+        break;
+      }
+
+
+      case EntityType.Profile: {
+        this.router = 'profile';
+        break;
+      }
+
       default: {
         console.log('default');
       }
     }
   }
-
 }

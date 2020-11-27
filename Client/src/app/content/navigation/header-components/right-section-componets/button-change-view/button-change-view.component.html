@@ -1,7 +1,0 @@
-<div [ngClass]="[(theme$ | async) === theme.Light ? 'light' : '']">
-    <div CustomTooltip="{{ 'header.orientation' | translate }}" position="Bottom" class="auxiliary-icon mobile"
-        (click)="toggleOrientation()" #orientationNote>
-        <i class="icon-view-change"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
-    </div>
-</div>
