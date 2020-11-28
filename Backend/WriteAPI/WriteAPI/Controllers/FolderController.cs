@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -76,6 +77,7 @@ namespace WriteAPI.Controllers
         // Commands 
 
         [HttpPatch("archive")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ArchiveFolder([FromBody]ArchiveFolderCommand command)
         {
             var email = this.GetUserEmail();
@@ -84,6 +86,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("color")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]ChangeColorFolderCommand command)
         {
             var email = this.GetUserEmail();
@@ -93,6 +96,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("restore")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RestoreNotes([FromBody]RestoreFolderCommand command)
         {
             var email = this.GetUserEmail();
@@ -101,6 +105,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("delete")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task SetDeleteNotes([FromBody]SetDeleteFolderCommand command)
         {
             var email = this.GetUserEmail();
@@ -109,6 +114,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("copy")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<SmallFolder>> CopyNote([FromBody]CopyFolderCommand command)
         {
             var email = this.GetUserEmail();
@@ -117,6 +123,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("delete/permanently")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task DeleteNotes([FromBody]DeleteFoldersCommand command)
         {
             var email = this.GetUserEmail();
@@ -126,6 +133,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("ref/private")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task MakePrivate([FromBody]MakePrivateFolderCommand command)
         {
             var email = this.GetUserEmail();
