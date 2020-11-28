@@ -2,12 +2,14 @@
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Domain.Commands.users
 {
     public class UpdateLanguageCommand : BaseCommandEntity, IRequest<Unit>
     {
+        [Required]
         public Language Language { set; get; }
 
         public UpdateLanguageCommand(Language Language, string Email)

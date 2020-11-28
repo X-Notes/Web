@@ -36,8 +36,9 @@ namespace WriteAPI.Controllers
         }
 
         // Commands
-        [ServiceFilter(typeof(ValidationFilter))]
+        
         [HttpPatch("color")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -45,8 +46,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("delete")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -54,8 +56,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("delete/permanently")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
         {
             var email = this.GetUserEmail();
@@ -63,8 +66,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("copy")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -72,8 +76,9 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("archive")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -81,8 +86,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("ref/private")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -90,8 +96,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("label/add")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -99,8 +106,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [ServiceFilter(typeof(ValidationFilter))]
+
         [HttpPatch("label/remove")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();

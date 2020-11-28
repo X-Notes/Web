@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -24,6 +25,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("title")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]UpdateTitleFolderCommand command)
         {
             var email = this.GetUserEmail();

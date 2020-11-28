@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -24,6 +25,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("share/modal")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<ShortUserForShareModal>> GetByUsersForShareModal(GetUsersForSharingModalQuery command)
         {
             command.Email = this.GetUserEmail();
