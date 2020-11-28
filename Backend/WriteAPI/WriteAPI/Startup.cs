@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
+using WriteAPI.Filters;
 
 namespace WriteAPI
 {
@@ -47,7 +48,7 @@ namespace WriteAPI
                 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
 
-
+            services.AddScoped<ValidationFilter>();
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddSignalR();

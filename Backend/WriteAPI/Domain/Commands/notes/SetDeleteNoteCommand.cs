@@ -2,12 +2,14 @@
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Domain.Commands.notes
 {
     public class SetDeleteNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
+        [Required]
         public List<string> Ids { set; get; }
         public SetDeleteNoteCommand(string email, List<string> ids) : base(email)
         {

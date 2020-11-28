@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -35,6 +36,7 @@ namespace WriteAPI.Controllers
         }
 
         // Commands
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("color")]
         public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
         {
@@ -43,6 +45,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("delete")]
         public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
         {
@@ -51,6 +54,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("delete/permanently")]
         public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
         {
@@ -59,7 +63,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("copy")]
         public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)
         {
@@ -68,6 +72,7 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("archive")]
         public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
         {
@@ -76,7 +81,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("ref/private")]
         public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
         {
@@ -85,7 +90,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("label/add")]
         public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
         {
@@ -94,6 +99,7 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [ServiceFilter(typeof(ValidationFilter))]
         [HttpPatch("label/remove")]
         public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
         {
