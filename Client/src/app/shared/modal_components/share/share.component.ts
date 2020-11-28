@@ -158,11 +158,25 @@ export class ShareComponent implements OnInit, OnDestroy {
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
           const users = await this.searchService.searchUsers(searchStr).toPromise();
-          this.searchUsers = users.filter(user => !this.selectedUsers.some(z => z.id === user.id));
+          this.searchUsers = this.userFilters(users);
         } else {
           this.searchUsers = [];
         }
       });
+  }
+
+  userFilters(users: SearchUserForShareModal[]) {
+    users = users.filter(user => !this.selectedUsers.some(z => z.id === user.id));
+    switch (this.currentWindowType) {
+      case SharedType.Note: {
+        const noteUsers =  this.store.selectSnapshot(NoteStore.getUsersOnPrivateNote);
+        return users.filter(user => !noteUsers.some(z => z.id === user.id));
+      }
+      case SharedType.Folder: {
+        const fodlerUsers =  this.store.selectSnapshot(FolderStore.getUsersOnPrivateFolder);
+        return users.filter(user => !fodlerUsers.some(z => z.id === user.id));
+      }
+    }
   }
 
   getFolders() {
