@@ -163,7 +163,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
-
+            services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
 
@@ -171,7 +171,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
 
             //SHARE
-            services.AddScoped<IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToNote>>, SharingHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUsersOnPrivateFolder, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
 
             services.AddScoped<IRequestHandler<ChangeRefTypeFolders, Unit>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeRefTypeNotes, Unit>, SharingHandlerCommand>();

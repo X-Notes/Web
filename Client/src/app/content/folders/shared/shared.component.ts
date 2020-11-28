@@ -41,8 +41,6 @@ export class SharedComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));
-
     this.store.select(AppStore.getTokenUpdated)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
@@ -55,6 +53,7 @@ export class SharedComponent implements OnInit, OnDestroy {
 
   async loadContent() {
     await this.store.dispatch(new LoadSharedFolders()).toPromise();
+    this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));
 
     let folders = this.store.selectSnapshot(FolderStore.sharedFolders);
     folders = this.folderService.transformFolders(folders);

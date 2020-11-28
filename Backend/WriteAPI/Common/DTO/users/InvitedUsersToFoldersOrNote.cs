@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Common.DTO.users
 {
-    public class InvitedUsersToNote
+    public class InvitedUsersToFoldersOrNote
     {
         public int Id { set; get; }
         public string PhotoId { set; get; }

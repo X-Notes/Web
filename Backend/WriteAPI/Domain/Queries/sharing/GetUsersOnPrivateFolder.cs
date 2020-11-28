@@ -6,8 +6,8 @@ using System.Text;
 
 namespace Domain.Queries.sharing
 {
-    public class GetUsersOnPrivateNote : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
+    public class GetUsersOnPrivateFolder : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
     {
-        public Guid NoteId { set; get; }
+        public Guid FolderId { set; get; }
     }
 }

@@ -54,6 +54,12 @@ namespace BI.services.notes
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var note = await noteRepository.GetFull(guid);
+
+                if(note == null)
+                {
+                    throw new Exception("Note with this id does not exist");
+                }
+
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 switch (note.NoteType)
                 {

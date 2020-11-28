@@ -18,7 +18,13 @@ namespace BI.Mapping
 
             CreateMap<User, OnlineUserOnNote>();
             CreateMap<User, ShortUserForShareModal>();
-            CreateMap<UserOnPrivateNotes, InvitedUsersToNote>()
+            CreateMap<UsersOnPrivateFolders, InvitedUsersToFoldersOrNote>()
+                .ForMember(p => p.Id, dest => dest.MapFrom(d => d.UserId))
+                .ForMember(p => p.Name, dest => dest.MapFrom(d => d.User.Name))
+                .ForMember(p => p.PhotoId, dest => dest.MapFrom(d => d.User.PhotoId))
+                .ForMember(p => p.Email, dest => dest.MapFrom(d => d.User.Email))
+                .ForMember(p => p.AccessType, dest => dest.MapFrom(d => d.AccessType));
+            CreateMap<UserOnPrivateNotes, InvitedUsersToFoldersOrNote>()
                 .ForMember(p => p.Id, dest => dest.MapFrom(d => d.UserId))
                 .ForMember(p => p.Name, dest => dest.MapFrom(d => d.User.Name))
                 .ForMember(p => p.PhotoId, dest => dest.MapFrom(d => d.User.PhotoId))

@@ -66,7 +66,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullFolder> Get(string id)
+        public async Task<FullFolderAnswer> Get(string id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullFolderQuery(email, id);

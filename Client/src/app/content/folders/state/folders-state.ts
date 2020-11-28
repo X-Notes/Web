@@ -9,7 +9,9 @@ import { LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders,
     UnSelectIdFolder, UnSelectAllFolder, SelectAllFolder, ArchiveFolders, RemoveFromDomMurri,
     ChangeColorFolder, ClearColorFolders, SetDeleteFolders, DeleteFoldersPermanently, CopyFolders,
     ClearAddedPrivateFolders,
-     MakePrivateFolders, PositionFolder, UpdateFolders, UpdateTitle, UpdateOneFolder } from './folders-actions';
+     MakePrivateFolders, PositionFolder, UpdateFolders,
+     UpdateTitle, UpdateOneFolder, LoadFullFolder,
+     TransformTypeFolders, ChangeTypeFullFolder, GetInvitedUsersToFolder } from './folders-actions';
 import { FolderColorPallete } from 'src/app/shared/enums/FolderColors';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateColor } from '../../notes/state/updateColor';
@@ -17,10 +19,12 @@ import { patch, updateItem } from '@ngxs/store/operators';
 import { Folders } from '../models/Folders';
 import { Observable } from 'rxjs';
 import { AccessType } from '../../notes/models/accessType';
+import { RefType } from 'src/app/core/models/refType';
+import { InvitedUsersToNoteOrFolder } from '../../notes/models/invitedUsersToNote';
 
 
 interface FullFolderState {
-    note: FullFolder;
+    folder: FullFolder;
     canView: boolean;
     accessType: AccessType;
 }
@@ -32,6 +36,7 @@ interface FolderState {
     removeFromMurriEvent: string[];
     updateColorEvent: UpdateColor[];
     foldersAddingPrivate: Folder[];
+    InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
 
 
@@ -43,7 +48,8 @@ interface FolderState {
         selectedIds: [],
         removeFromMurriEvent: [],
         updateColorEvent: [],
-        foldersAddingPrivate: []
+        foldersAddingPrivate: [],
+        InvitedUsersToNote: []
     }
 })
 
@@ -52,6 +58,16 @@ export class FolderStore {
 
     constructor(private api: ApiFoldersService,
                 private orderService: OrderService) {
+    }
+
+    @Selector()
+    static getUsersOnPrivateFolder(state: FolderState): InvitedUsersToNoteOrFolder[] {
+        return state.InvitedUsersToNote;
+    }
+
+    @Selector()
+    static full(state: FolderState) {
+        return state.fullFolderState.folder;
     }
 
     @Selector()
@@ -104,6 +120,11 @@ export class FolderStore {
     @Selector()
     static sharedCount(state: FolderState): number {
         return this.getFoldersByTypeStatic(state, FolderType.Shared).count;
+    }
+
+    @Selector()
+    static getFolders(state: FolderState): Folders[] {
+        return state.folders;
     }
 
     // Get selected Ids
@@ -195,10 +216,6 @@ export class FolderStore {
                 dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders]);
                 break;
             }
-            case FolderType.Inner: {
-                dispatch([LoadPrivateFolders, LoadSharedFolders, LoadArchiveFolders, LoadDeletedFolders]);
-                break;
-            }
         }
     }
 
@@ -215,9 +232,9 @@ export class FolderStore {
     @Action(AddFolder)
     async newFolder({ getState, dispatch }: StateContext<FolderState>) {
         const id = await this.api.new().toPromise();
-        const newFolder: Folder = { id, title: '', color: FolderColorPallete.Green };
+        const newF: Folder = { id, title: '', color: FolderColorPallete.Green, refType: RefType.Viewer, folderType: FolderType.Private };
         const folders = this.getFoldersByType(getState, FolderType.Private);
-        const toUpdate = new Folders(FolderType.Private, [newFolder, ...folders]);
+        const toUpdate = new Folders(FolderType.Private, [newF, ...folders]);
         dispatch(new UpdateFolders(toUpdate, FolderType.Private));
     }
 
@@ -225,7 +242,7 @@ export class FolderStore {
     @Action(ArchiveFolders)
     async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: ArchiveFolders) {
         await this.api.archiveFolder(selectedIds).toPromise();
-        this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Archive, selectedIds);
+        dispatch(new TransformTypeFolders(typeFolder, FolderType.Archive, selectedIds));
     }
 
 
@@ -272,7 +289,7 @@ export class FolderStore {
     @Action(SetDeleteFolders)
     async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: SetDeleteFolders) {
         await this.api.setDeleteFolder(selectedIds).toPromise();
-        this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Deleted, selectedIds);
+        dispatch(new TransformTypeFolders(typeFolder, FolderType.Deleted, selectedIds));
     }
 
 
@@ -318,8 +335,7 @@ export class FolderStore {
     @Action(MakePrivateFolders)
     async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder, selectedIds}: MakePrivateFolders) {
         await this.api.makePrivateFolders(selectedIds).toPromise();
-        this.tranformFromTo(getState, patchState, dispatch, typeFolder, FolderType.Private, selectedIds);
-
+        dispatch(new TransformTypeFolders(typeFolder, FolderType.Private, selectedIds));
     }
 
 
@@ -338,19 +354,18 @@ export class FolderStore {
     }
 
 
-    tranformFromTo(
-        getState: () => FolderState,
-        patchState: (val: Partial<FolderState>) => FolderState,
-        dispatch: (actions: any) => Observable<void>,
-        typeFrom: FolderType,
-        typeTo: FolderType,
-        selectedIds: string[]) {
-
+    @Action(TransformTypeFolders)
+    tranformFromTo({getState, dispatch, patchState}: StateContext<FolderState>, {typeFrom, typeTo, selectedIds}: TransformTypeFolders) {
         const foldersFrom = this.getFoldersByType(getState, typeFrom);
         const foldersFromNew = foldersFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
 
-        const foldersAdded = foldersFrom.filter(x => this.itemsFromFilterArray(selectedIds, x));
+        let foldersAdded = foldersFrom.filter(x => this.itemsFromFilterArray(selectedIds, x));
         dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
+
+        foldersAdded = [...foldersAdded.map(folder => {
+            return {...folder};
+        })];
+        foldersAdded.forEach(folder => folder.folderType = typeTo);
 
         const foldersTo = this.getFoldersByType(getState, typeTo);
         const newFoldersTo = [...foldersAdded, ...foldersTo];
@@ -428,5 +443,34 @@ export class FolderStore {
         folder = {...folder, title: str};
         dispatch(new UpdateOneFolder(folder, typeFolder));
         await this.api.updateTitle(str, id).toPromise();
+    }
+
+    @Action(LoadFullFolder)
+    async loadFull({ setState, getState, patchState }: StateContext<FolderState>, { id }: LoadFullFolder) {
+        const request = await this.api.get(id).toPromise();
+        patchState({
+            fullFolderState: {
+                canView: request.canView,
+                accessType: request.accessType,
+                folder: request.fullFolder
+            }
+        });
+    }
+
+    @Action(ChangeTypeFullFolder)
+    async changeTypeFullFolder({ getState, patchState, dispatch }: StateContext<FolderState>, { type }: ChangeTypeFullFolder) {
+        const folder = getState().fullFolderState?.folder;
+        if (folder) {
+            const newFolder: FullFolder = { ...folder, folderType: type };
+            patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
+        }
+    }
+
+    @Action(GetInvitedUsersToFolder)
+    async getInvitedUsersToNote({ getState, patchState, dispatch }: StateContext<FolderState>, { folderId }: GetInvitedUsersToFolder) {
+        const users = await this.api.getUsersOnPrivateFolder(folderId).toPromise();
+        patchState({
+            InvitedUsersToNote: users
+        });
     }
 }

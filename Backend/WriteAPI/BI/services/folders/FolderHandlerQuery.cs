@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.helpers;
 using Common.DTO.folders;
 using Domain.Queries.folders;
 using MediatR;
@@ -17,8 +18,7 @@ namespace BI.services.folders
         IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>,
         IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>,
         IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>,
-
-        IRequestHandler<GetFullFolderQuery, FullFolder>
+        IRequestHandler<GetFullFolderQuery, FullFolderAnswer>
     {
 
         private readonly IMapper mapper;
@@ -76,15 +76,83 @@ namespace BI.services.folders
             return new List<SmallFolder>();
         }
 
-        public async Task<FullFolder> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
+        public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null && Guid.TryParse(request.Id, out var guid))
             {
                 var folder = await folderRepository.GetFull(guid);
-                return mapper.Map<FullFolder>(folder);
+
+                if (folder == null)
+                {
+                    throw new Exception("Folder with this id does not exist");
+                }
+
+                switch (folder.FolderType)
+                {
+                    case FoldersType.Shared:
+                        {
+                            switch (folder.RefType)
+                            {
+                                case RefType.Editor:
+                                    {
+                                        return new FullFolderAnswer()
+                                        {
+                                            CanView = true,
+                                            AccessType = RefType.Editor,
+                                            FullFolder = mapper.Map<FullFolder>(folder)
+                                        };
+                                    }
+                                case RefType.Viewer:
+                                    {
+                                        return new FullFolderAnswer()
+                                        {
+                                            CanView = true,
+                                            AccessType = RefType.Viewer,
+                                            FullFolder = mapper.Map<FullFolder>(folder)
+                                        };
+                                    }
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            if (folder.UserId == user.Id)
+                            {
+                                return new FullFolderAnswer()
+                                {
+                                    CanView = true,
+                                    AccessType = RefType.Editor,
+                                    FullFolder = mapper.Map<FullFolder>(folder)
+                                };
+                            }
+                            else
+                            {
+                                var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
+                                if (folderUser != null)
+                                {
+                                    return new FullFolderAnswer()
+                                    {
+                                        CanView = true,
+                                        AccessType = folderUser.AccessType,
+                                        FullFolder = mapper.Map<FullFolder>(folder)
+                                    };
+                                }
+                                else
+                                {
+                                    return new FullFolderAnswer()
+                                    {
+                                        CanView = false,
+                                        AccessType = null,
+                                        FullFolder = null
+                                    };
+                                }
+                            }
+                        }
+                }
+                throw new Exception("Error. Incorrect folder type");
             }
-            return null;
+            throw new Exception("Incorrect user data");
         }
     }
 }

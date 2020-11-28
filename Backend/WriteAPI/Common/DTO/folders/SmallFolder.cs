@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Common.DatabaseModels.helpers;
 
 namespace Common.DTO.folders
 {
@@ -9,5 +7,6 @@ namespace Common.DTO.folders
         public string Id { get; set; }
         public string Title { set; get; }
         public string Color { set; get; }
+        public RefType RefType { set; get; }
     }
 }

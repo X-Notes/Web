@@ -134,3 +134,25 @@ export class UpdateOneFolder {
     constructor(public folder: Folder, public typeFolder: FolderType) {
     }
 }
+
+
+export class LoadFullFolder {
+    static type = '[Folders] Load full folder';
+    constructor(public id: string) { }
+}
+
+export class TransformTypeFolders {
+    static type = '[Folders] transform type folders';
+    constructor(public typeFrom: FolderType, public typeTo: FolderType, public selectedIds: string[]) { }
+}
+
+export class ChangeTypeFullFolder {
+    static type = '[Folders] change type fullFolder';
+    constructor(public type: FolderType) { }
+}
+
+export class GetInvitedUsersToFolder {
+    static type = '[Folders] Get InvitedUsersToFolder';
+    constructor(public folderId: string) {
+    }
+}

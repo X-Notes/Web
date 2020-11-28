@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,6 +44,13 @@ namespace WriteContext.Repositories
         {
             contextDB.UsersOnPrivateFolders.Remove(userOnNote);
             await contextDB.SaveChangesAsync();
+        }
+
+        public async Task<List<UsersOnPrivateFolders>> GetByFolderIdUserOnPrivateFolder(Guid folderId)
+        {
+            return await this.contextDB.UsersOnPrivateFolders
+                .Include(x => x.User)
+                .Where(x => x.FolderId == folderId).ToListAsync();
         }
     }
 }
