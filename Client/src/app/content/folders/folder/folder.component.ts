@@ -50,10 +50,11 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   highlight(id: string) {
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     if (!this.folder.isSelected) {
-      this.store.dispatch(new SelectIdFolder(id));
+      this.store.dispatch(new SelectIdFolder(id, ids));
     } else {
-      this.store.dispatch(new UnSelectIdFolder(id));
+      this.store.dispatch(new UnSelectIdFolder(id, ids));
     }
   }
 

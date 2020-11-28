@@ -1,15 +1,18 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Domain.Commands.folders
 {
     public class ChangeColorFolderCommand : BaseCommandEntity, IRequest<Unit>
     {
+        [Required]
         public string Color { set; get; }
-        public List<string> Ids { set; get; }
-        public ChangeColorFolderCommand(List<string> ids, string email, string color)
+        [Required]
+        public List<Guid> Ids { set; get; }
+        public ChangeColorFolderCommand(List<Guid> ids, string email, string color)
             : base(email)
         {
             this.Ids = ids;

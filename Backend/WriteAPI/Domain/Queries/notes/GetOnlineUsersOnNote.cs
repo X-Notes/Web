@@ -8,8 +8,8 @@ namespace Domain.Queries.notes
 {
     public class GetOnlineUsersOnNote: IRequest<List<OnlineUserOnNote>>
     {
-        public string Id { set; get; }
-        public GetOnlineUsersOnNote(string id)
+        public Guid Id { set; get; }
+        public GetOnlineUsersOnNote(Guid id)
         {
             this.Id = id;
         }

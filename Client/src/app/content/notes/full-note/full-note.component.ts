@@ -79,7 +79,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public sliderService: FullNoteSliderService,
               public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
-      console.log(params.id);
       this.id = params.id;
 
       this.store.select(AppStore.getTokenUpdated)
@@ -95,8 +94,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-
-  // TODO MAYBE NEED UserStore.getTokenUpdated
 
   ngAfterViewInit(): void {
     const note = this.store.selectSnapshot(NoteStore.oneFull);

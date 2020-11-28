@@ -23,11 +23,10 @@ import { LabelsOnSelectedNotes } from '../models/labelsOnSelectedNotes';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
-import { Observable } from 'rxjs';
 import { FullNote } from '../models/fullNote';
 import { AccessType } from '../models/accessType';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
-import { InvitedUsersToNote } from '../models/invitedUsersToNote';
+import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
 
 
 
@@ -48,7 +47,7 @@ interface NoteState {
     notesAddingPrivate: SmallNote[];
     selectedLabelsFilter: number[];
     isCanceled: boolean;
-    InvitedUsersToNote: InvitedUsersToNote[];
+    InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
 
 @State<NoteState>({
@@ -124,7 +123,7 @@ export class NoteStore {
     // SHARING
 
     @Selector()
-    static getUsersOnPrivateNote(state: NoteState): InvitedUsersToNote[] {
+    static getUsersOnPrivateNote(state: NoteState): InvitedUsersToNoteOrFolder[] {
         return state.InvitedUsersToNote;
     }
 
@@ -619,9 +618,11 @@ export class NoteStore {
 
     @Action(ChangeTypeFullNote)
     async changeTypeFullNote({ getState, patchState, dispatch }: StateContext<NoteState>, { type }: ChangeTypeFullNote) {
-        const note = getState().fullNoteState.note;
+        const note = getState().fullNoteState?.note;
+        if (note) {
         const newNote: FullNote = { ...note, noteType: type };
         patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+        }
     }
 
 

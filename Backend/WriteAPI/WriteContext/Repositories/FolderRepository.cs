@@ -172,7 +172,10 @@ namespace WriteContext.Repositories
 
         public async Task<Folder> GetFull(Guid id)
         {
-            return await contextDB.Folders.FirstOrDefaultAsync(x => x.Id == id);
+            return await contextDB.Folders
+                .Include(folder => folder.FoldersNotes)
+                .Include(folder => folder.UsersOnPrivateFolders)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Folder>> GetPrivateFoldersByUserId(int userId)

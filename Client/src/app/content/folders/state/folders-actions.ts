@@ -33,13 +33,13 @@ export class AddFolder {
 
 export class ArchiveFolders {
     static type = '[Folders] Archive folders';
-    constructor(public typeFolder: FolderType) {
+    constructor(public typeFolder: FolderType, public selectedIds: string[]) {
     }
 }
 
 export class ChangeColorFolder {
     static type = '[Folders] Change color folder';
-    constructor(public color: string, public typeFolder: FolderType) {    }
+    constructor(public color: string, public typeFolder: FolderType, public selectedIds: string[]) {    }
 }
 
 export class ClearColorFolders {
@@ -55,14 +55,14 @@ export class UpdateFolders {
 
 export class SetDeleteFolders {
     static type = '[Folders] SetDelete folder';
-    constructor(public typeFolder: FolderType) {
+    constructor(public typeFolder: FolderType, public selectedIds: string[]) {
     }
 }
 
 
 export class DeleteFoldersPermanently {
     static type = '[Folders] Delete folders';
-    constructor() {
+    constructor(public selectedIds: string[]) {
     }
 }
 
@@ -74,19 +74,14 @@ export class ClearAddedPrivateFolders {
 
 export class CopyFolders {
     static type = '[Folders] Copy folders';
-    constructor(public typeFolder: FolderType) {
+    constructor(public typeFolder: FolderType, public selectedIds: string[]) {
     }
 }
 
-export class MakePublicFolders {
-    static type = '[Folders] MakePublic folders';
-    constructor(public typeFolder: FolderType) {
-    }
-}
 
 export class MakePrivateFolders {
     static type = '[Folders] MakePrivate folders';
-    constructor(public typeFolder: FolderType) {
+    constructor(public typeFolder: FolderType, public selectedIds: string[]) {
     }
 }
 
@@ -108,12 +103,12 @@ export class RemoveFromDomMurri {
 // SELECTION
 export class SelectIdFolder {
     static type = '[Folders] Select folder';
-    constructor(public id: string) {    }
+    constructor(public id: string, public selectedIds: string[]) {    }
 }
 
 export class UnSelectIdFolder {
     static type = '[Folders] Unselect folder';
-    constructor(public id: string) {    }
+    constructor(public id: string, public selectedIds: string[]) {    }
 }
 
 export class UnSelectAllFolder {
@@ -137,5 +132,27 @@ export class UpdateTitle {
 export class UpdateOneFolder {
     static type = '[Folders] update one one';
     constructor(public folder: Folder, public typeFolder: FolderType) {
+    }
+}
+
+
+export class LoadFullFolder {
+    static type = '[Folders] Load full folder';
+    constructor(public id: string) { }
+}
+
+export class TransformTypeFolders {
+    static type = '[Folders] transform type folders';
+    constructor(public typeFrom: FolderType, public typeTo: FolderType, public selectedIds: string[]) { }
+}
+
+export class ChangeTypeFullFolder {
+    static type = '[Folders] change type fullFolder';
+    constructor(public type: FolderType) { }
+}
+
+export class GetInvitedUsersToFolder {
+    static type = '[Folders] Get InvitedUsersToFolder';
+    constructor(public folderId: string) {
     }
 }

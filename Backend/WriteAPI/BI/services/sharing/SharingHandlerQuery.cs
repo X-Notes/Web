@@ -12,7 +12,8 @@ using WriteContext.Repositories;
 namespace BI.services.sharing
 {
     public class SharingHandlerQuery:
-        IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToNote>>
+        IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToFoldersOrNote>>,
+        IRequestHandler<GetUsersOnPrivateFolder, List<InvitedUsersToFoldersOrNote>>
     {
         private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
@@ -36,10 +37,16 @@ namespace BI.services.sharing
             this.mapper = mapper;
         }
 
-        public async Task<List<InvitedUsersToNote>> Handle(GetUsersOnPrivateNote request, CancellationToken cancellationToken)
+        public async Task<List<InvitedUsersToFoldersOrNote>> Handle(GetUsersOnPrivateNote request, CancellationToken cancellationToken)
         {
             var users = await this.usersOnPrivateNotesRepository.GetByNoteIdUserOnPrivateNote(request.NoteId);
-            return this.mapper.Map<List<InvitedUsersToNote>>(users);
+            return this.mapper.Map<List<InvitedUsersToFoldersOrNote>>(users);
+        }
+
+        public async Task<List<InvitedUsersToFoldersOrNote>> Handle(GetUsersOnPrivateFolder request, CancellationToken cancellationToken)
+        {
+            var users = await this.usersOnPrivateFoldersRepository.GetByFolderIdUserOnPrivateFolder(request.FolderId);
+            return this.mapper.Map<List<InvitedUsersToFoldersOrNote>>(users);
         }
     }
 }

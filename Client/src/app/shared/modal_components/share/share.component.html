@@ -1,15 +1,24 @@
 <div class="outer"
-    [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', notes.length > 1 ? 'many-notes' : 'one-note']">
-    <div class="few-notes" *ngIf="notes.length > 1">
+    [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']">
+    <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
         <div class="header">
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <ngx-simplebar [options]="pService.optionsScroll" [ngClass]="isCollapse ? '' : 'notes-sharing-helper'"
-            class="notes-sharing">
+        <ngx-simplebar *ngIf="currentWindowType === windowType.Note" [options]="pService.optionsScroll"
+            [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
             <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
                 [ngClass]="{'active-note': currentNote?.id === item.id}" (click)="changeNote(item)"
+                flagDisable="{{ disableTooltipUser() }}">
+                <p>{{item.title}}</p>
+            </div>
+        </ngx-simplebar>
+        <ngx-simplebar *ngIf="currentWindowType === windowType.Folder" [options]="pService.optionsScroll"
+            [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
+            <div class="note" *ngFor="let item of folders" CustomTooltip="{{item.title}}" position="Top"
+                [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
+                [ngClass]="{'active-note': currentFolder?.id === item.id}" (click)="changeFolder(item)"
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title}}</p>
             </div>
@@ -25,11 +34,38 @@
             <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
                     <div class="link-access-field">
-                        <input
+                        <input *ngIf="currentWindowType === windowType.Note"
                             [ngStyle]="{'width': currentNote?.noteType !== noteType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
-                            readonly type="text" value="{{ currentNote?.id | sharingNoteLink}}" #linkInput>
-                        <button *ngIf="currentNote?.noteType === noteType.Shared" class="dropdown-button" type="button"
-                            (click)="changeActive()">
+                            readonly type="text" value="{{ currentNote?.id | sharingLink: currentWindowType}}"
+                            id="linkInputNote">
+                        <input *ngIf="currentWindowType === windowType.Folder"
+                            [ngStyle]="{'width': currentFolder?.folderType !== folderType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
+                            readonly type="text" value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
+                            id="linkInputFolder">
+                        <button
+                            *ngIf="currentFolder?.folderType === folderType.Shared && currentWindowType === windowType.Folder"
+                            class="dropdown-button" type="button" (click)="changeActive()">
+                            <div class="content-button" #dropdownSelect>
+                                <p *ngIf="currentFolder?.refType === refType.Viewer">Viewer</p>
+                                <p *ngIf="currentFolder?.refType === refType.Editor">Editor</p>
+                                <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
+                                    <i class="icon-select-label"></i>
+                                </div>
+                            </div>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                            <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
+                                <div class="item" (click)="changeRefTypeFolder(refType.Viewer)">
+                                    <p>Viewer</p>
+                                </div>
+                                <div class="item" (click)="changeRefTypeFolder(refType.Editor)">
+                                    <p>Editor</p>
+                                </div>
+                            </div>
+                            <div #overlay class="overlay" (click)="cancelDropdown()"></div>
+                        </button>
+                        <button
+                            *ngIf="currentNote?.noteType === noteType.Shared && currentWindowType === windowType.Note"
+                            class="dropdown-button" type="button" (click)="changeActive()">
                             <div class="content-button" #dropdownSelect>
                                 <p *ngIf="currentNote?.refType === refType.Viewer">Viewer</p>
                                 <p *ngIf="currentNote?.refType === refType.Editor">Editor</p>
@@ -39,21 +75,21 @@
                             </div>
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
                             <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
-                                <div class="item" (click)="changeRefType(refType.Viewer)">
+                                <div class="item" (click)="changeRefTypeNote(refType.Viewer)">
                                     <p>Viewer</p>
                                 </div>
-                                <div class="item" (click)="changeRefType(refType.Editor)">
+                                <div class="item" (click)="changeRefTypeNote(refType.Editor)">
                                     <p>Editor</p>
                                 </div>
                             </div>
                             <div #overlay class="overlay" (click)="cancelDropdown()"></div>
                         </button>
-                        <div class="copy" #copy (click)="copyInputLink(linkInput)">
+                        <div class="copy" #copy (click)="copyInputLink()">
                             <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
                             <i class="icon-copy"></i>
                         </div>
                     </div>
-                    <div class="toggle-field">
+                    <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
                         <div class="toggle">
                             <input type="checkbox" (change)="changeNoteType()">
                             <div class="rectangle"
@@ -75,9 +111,69 @@
                                 link</p>
                         </div>
                     </div>
+                    <div *ngIf="currentWindowType === windowType.Folder" class="toggle-field">
+                        <div class="toggle">
+                            <input type="checkbox" (change)="changeFolderType()">
+                            <div class="rectangle"
+                                [ngClass]="currentFolder?.folderType !== folderType.Shared ? '' : 'active-toggle'">
+                            </div>
+                            <div class="text-toggle">
+                                <div class="text">
+                                    <p>{{ 'modal.ShareModal.private' | translate }}</p>
+                                </div>
+                                <div class="text">
+                                    <p>{{ 'modal.ShareModal.shared' | translate }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toggle-description">
+                            <p *ngIf="currentFolder?.folderType !== folderType.Shared">Anyone on the internet with this
+                                links
+                            </p>
+                            <p *ngIf="currentFolder?.folderType === folderType.Shared">Only people added can open with
+                                this
+                                link</p>
+                        </div>
+                    </div>
                 </div>
-                <ngx-simplebar [options]="pService.optionsScroll" class="user-access">
+                <ngx-simplebar *ngIf="currentWindowType === windowType.Note" [options]="pService.optionsScroll"
+                    class="user-access">
                     <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
+                        <div class="photo">
+                            <img alt="user image" [src]="user.photoId">
+                        </div>
+                        <div class="user-info">
+                            <div class="name">
+                                <p>{{user.name}}</p>
+                            </div>
+                            <div class="email">
+                                <p>{{user.email}}</p>
+                            </div>
+                        </div>
+                        <div class="user-access-func">
+                            <button type="button" name="" (click)="changeUserPermission(refType.Viewer, user.id)">
+                                <div class="icon" [ngClass]="(user.accessType === refType.Viewer) ? 'black' : ''">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                            <div class="separator-buttons"></div>
+                            <button type="button" name="" (click)="changeUserPermission(refType.Editor, user.id)">
+                                <div class="icon" [ngClass]="(user.accessType === refType.Editor) ? 'black' : ''">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                            <div class="separator-buttons"></div>
+                            <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
+                                <div class="icon black">
+                                    <i class="icon-cancel"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </ngx-simplebar>
+                <ngx-simplebar *ngIf="currentWindowType === windowType.Folder" [options]="pService.optionsScroll"
+                    class="user-access">
+                    <div *ngFor="let user of usersOnPrivateFolder$ | async" class="user">
                         <div class="photo">
                             <img alt="user image" [src]="user.photoId">
                         </div>

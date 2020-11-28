@@ -1,13 +1,22 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { SharedType } from '../modal_components/share/share.component';
 
 @Pipe({
-  name: 'sharingNoteLink'
+  name: 'sharingLink'
 })
-export class SharingNoteLinkPipe implements PipeTransform {
+export class SharingLinkPipe implements PipeTransform {
 
-  transform(value: string): string {
-    const mainUrl = window.location.href.split('/');
-    return  mainUrl[0] + '//' + mainUrl[2] + '/notes/' + value;
+  transform(value: string, type: SharedType): string {
+    switch (type) {
+      case SharedType.Note: {
+        const mainUrl = window.location.href.split('/');
+        return  mainUrl[0] + '//' + mainUrl[2] + '/notes/' + value;
+      }
+      case SharedType.Folder: {
+        const mainUrl = window.location.href.split('/');
+        return  mainUrl[0] + '//' + mainUrl[2] + '/folders/' + value;
+      }
+    }
   }
 
 }
