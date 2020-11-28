@@ -11,7 +11,7 @@ namespace Domain.Commands.folders
     public class CopyFolderCommand : BaseCommandEntity, IRequest<List<SmallFolder>>
     {
         [Required]
-        public List<string> Ids { set; get; }
+        public List<Guid> Ids { set; get; }
         public CopyFolderCommand(string email): base(email)
         {
 

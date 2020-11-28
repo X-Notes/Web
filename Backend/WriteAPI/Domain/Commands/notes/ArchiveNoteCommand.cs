@@ -10,7 +10,7 @@ namespace Domain.Commands.notes
     public class ArchiveNoteCommand : BaseCommandEntity, IRequest<Unit> 
     {
         [Required]
-        public List<string> Ids { set; get; }
+        public List<Guid> Ids { set; get; }
         public ArchiveNoteCommand(string email) : base(email)
         {
 

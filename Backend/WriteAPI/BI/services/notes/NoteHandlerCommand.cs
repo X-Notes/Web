@@ -58,7 +58,7 @@ namespace BI.services.notes
         public async Task<Unit> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (notes.Any())
             {
@@ -76,7 +76,7 @@ namespace BI.services.notes
         public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
@@ -96,7 +96,7 @@ namespace BI.services.notes
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var deletednotes = user.Notes.Where(x => x.NoteType == NotesType.Deleted).ToList();
-            var selectdeletenotes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (selectdeletenotes.Count == request.Ids.Count)
             {
@@ -113,7 +113,7 @@ namespace BI.services.notes
         public async Task<Unit> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
@@ -131,7 +131,7 @@ namespace BI.services.notes
         public async Task<Unit> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
@@ -149,7 +149,7 @@ namespace BI.services.notes
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
@@ -167,7 +167,7 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
 
-            var selectedNotes = notes.Where(x => request.NoteIds.Contains(x.Id.ToString("N"))).ToList();
+            var selectedNotes = notes.Where(x => request.NoteIds.Any(z => z == x.Id)).ToList();
 
             var noteWithLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId == request.LabelId)).ToList();
 
@@ -183,7 +183,7 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
 
-            var selectedNotes = notes.Where(x => request.NoteIds.Contains(x.Id.ToString("N"))).ToList();
+            var selectedNotes = notes.Where(x => request.NoteIds.Any(z => z == x.Id)).ToList();
 
             var noteWithoutLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId != request.LabelId) || x.LabelsNotes.Count == 0).ToList();
 

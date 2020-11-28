@@ -51,9 +51,9 @@ namespace BI.services.notes
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null && Guid.TryParse(request.Id, out var guid))
+            if (user != null)
             {
-                var note = await noteRepository.GetFull(guid);
+                var note = await noteRepository.GetFull(request.Id);
 
                 if(note == null)
                 {
@@ -129,12 +129,8 @@ namespace BI.services.notes
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
         {
-            if (Guid.TryParse(request.Id, out var guid))
-            {
-                var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(guid);
-                return mapper.Map<List<OnlineUserOnNote>>(users);
-            }
-            return null;
+            var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
+            return mapper.Map<List<OnlineUserOnNote>>(users);
         }
 
         public async Task<List<SmallNote>> Handle(GetSharedNotesQuery request, CancellationToken cancellationToken)

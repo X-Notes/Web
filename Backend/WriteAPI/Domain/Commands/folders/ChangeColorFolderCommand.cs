@@ -11,8 +11,8 @@ namespace Domain.Commands.folders
         [Required]
         public string Color { set; get; }
         [Required]
-        public List<string> Ids { set; get; }
-        public ChangeColorFolderCommand(List<string> ids, string email, string color)
+        public List<Guid> Ids { set; get; }
+        public ChangeColorFolderCommand(List<Guid> ids, string email, string color)
             : base(email)
         {
             this.Ids = ids;

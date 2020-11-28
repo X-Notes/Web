@@ -79,9 +79,9 @@ namespace BI.services.folders
         public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null && Guid.TryParse(request.Id, out var guid))
+            if (user != null)
             {
-                var folder = await folderRepository.GetFull(guid);
+                var folder = await folderRepository.GetFull(request.Id);
 
                 if (folder == null)
                 {

@@ -25,9 +25,9 @@ namespace BI.services.notes
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null && Guid.TryParse(request.Id, out var guid))
+            if (user != null)
             {
-                var note = await this.noteRepository.GetForUpdatingTitle(guid);
+                var note = await this.noteRepository.GetForUpdatingTitle(request.Id);
                 switch (note.NoteType)
                 {
                     case NotesType.Shared:

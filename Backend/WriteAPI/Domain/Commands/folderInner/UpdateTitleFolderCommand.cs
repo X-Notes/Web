@@ -11,6 +11,6 @@ namespace Domain.Commands.folderInner
         [Required]
         public string Title { set; get; }
         [Required]
-        public string Id { set; get; }
+        public Guid Id { set; get; }
     }
 }

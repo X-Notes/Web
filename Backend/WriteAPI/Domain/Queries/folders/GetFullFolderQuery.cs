@@ -8,8 +8,8 @@ namespace Domain.Queries.folders
 {
     public class GetFullFolderQuery : BaseQueryEntity, IRequest<FullFolderAnswer>
     {
-        public string Id { set; get; }
-        public GetFullFolderQuery(string email, string id)
+        public Guid Id { set; get; }
+        public GetFullFolderQuery(string email, Guid id)
             : base(email)
         {
             this.Id = id;

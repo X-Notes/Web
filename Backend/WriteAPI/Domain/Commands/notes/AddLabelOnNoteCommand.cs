@@ -11,6 +11,6 @@ namespace Domain.Commands.notes
         [Required]
         public int LabelId { set; get; }
         [Required]
-        public List<string> NoteIds { set; get; }
+        public List<Guid> NoteIds { set; get; }
     }
 }
