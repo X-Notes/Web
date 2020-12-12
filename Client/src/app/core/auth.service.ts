@@ -25,10 +25,10 @@ export class AuthService {
   }
 
   GoogleAuth() {
-    return this.AuthLogin(new firebase.auth.GoogleAuthProvider());
+    return this.AuthLogin(new firebase.default.auth.GoogleAuthProvider());
   }
 
-  private async configureAuthState(firebaseUser: firebase.User) {
+  private async configureAuthState(firebaseUser: firebase.default.User) {
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken(true);
       await this.api.verifyToken(token).toPromise();
@@ -44,13 +44,13 @@ export class AuthService {
     }
   }
 
-  private async updateToken(firebaseUser: firebase.User) {
+  private async updateToken(firebaseUser: firebase.default.User) {
     const token = await firebaseUser.getIdToken(true);
     await this.api.verifyToken(token).toPromise();
     this.store.dispatch(new SetToken(token));
   }
 
-  private getUser(user: firebase.User) {
+  private getUser(user: firebase.default.User) {
     const temp: User = {
       name: user.displayName,
       photoId: user.photoURL,
@@ -59,7 +59,7 @@ export class AuthService {
     return temp;
   }
 
-  private AuthLogin(provider: firebase.auth.GoogleAuthProvider) {
+  private AuthLogin(provider: firebase.default.auth.GoogleAuthProvider) {
     return this.afAuth.signInWithRedirect(provider)
       .then(result => { })
       .catch(error => {

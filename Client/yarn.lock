@@ -132,10 +132,12 @@
   dependencies:
     tslib "^2.0.0"
 
-"@angular/cdk@^9.2.4":
-  version "9.2.4"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-9.2.4.tgz#8413958bd275e4c34be3b96f56444671dd30ba93"
-  integrity sha512-iw2+qHMXHYVC6K/fttHeNHIieSKiTEodVutZoOEcBu9rmRTGbLB26V/CRsfIRmA1RBk+uFYWc6UQZnMC3RdnJQ==
+"@angular/cdk@^10.2.7":
+  version "10.2.7"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-10.2.7.tgz#0ff82eb91b2653ea26909c57a460d4593b44f186"
+  integrity sha512-ZQjDfTRTn7JuAKsf3jiIdU2XBaxxGBi/ZWYv5Pb3HCl6B4PISsIE5VWRhkoUogoAB0MiFHpjnWeIqknJEm11YQ==
+  dependencies:
+    tslib "^2.0.0"
   optionalDependencies:
     parse5 "^5.0.0"
 
@@ -245,10 +247,12 @@
     glob "7.1.2"
     yargs "^16.1.1"
 
-"@angular/material@^9.2.4":
-  version "9.2.4"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-9.2.4.tgz#2666ef606fbb88d60f8e2f18c5e4f94a3dd572d8"
-  integrity sha512-LkoTXE6B0slvMhvfZDdPWaz4yaYLkaAp5VSPunI9pxGsPxzqEV9e210wC1/sjG/76Nk8Ep7/2z9XKac8Q9bMwA==
+"@angular/material@^10.2.7":
+  version "10.2.7"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-10.2.7.tgz#b84aeeca997dc64fbcc7969540e22434315bab68"
+  integrity sha512-uk6JkRrKHaM9VFMzX7pWC83YNLVgXPB3D8U1yjSOafCdWwrRZgUHGr8MPlSILCr3o2nxgg5SsKdWcWwHuXXUZA==
+  dependencies:
+    tslib "^2.0.0"
 
 "@angular/platform-browser-dynamic@~11.0.4":
   version "11.0.4"
@@ -6366,13 +6370,6 @@ mute-stream@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
-
-muuri-angular@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/muuri-angular/-/muuri-angular-0.0.4.tgz#cdb6d5db601f4d34d5a7c80f9b8dacce840684c7"
-  integrity sha512-eR1uWhBI9pt/n/wAmfT2pLBMx+JmEsRyklKx9LMrGwY0eUynCL4FJyE/ftqXAiw7KNvC1hwjucDshEPhygKOzg==
-  dependencies:
-    tslib "^2.0.0"
 
 muuri@^0.9.1:
   version "0.9.3"
