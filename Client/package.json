@@ -38,7 +38,7 @@
     "muuri": "^0.9.1",
     "muuri-angular": "0.0.4",
     "rxjs": "~6.5.4",
-    "simplebar-angular": "^2.2.1",
+    "simplebar-angular": "^2.3.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },
