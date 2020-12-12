@@ -11,7 +11,6 @@ import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AuthService } from 'src/app/core/auth.service';
-import { Router } from '@angular/router';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { takeUntil } from 'rxjs/operators';

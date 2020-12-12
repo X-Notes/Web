@@ -71,8 +71,7 @@ interface NoteState {
 export class NoteStore {
 
     constructor(private api: ApiServiceNotes,
-                private orderService: OrderService,
-                private store: Store) {
+                private orderService: OrderService) {
     }
 
     @Selector()
