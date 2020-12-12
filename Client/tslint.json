@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "no-unused-variable": true,
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {

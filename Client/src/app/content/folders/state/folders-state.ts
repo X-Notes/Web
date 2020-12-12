@@ -17,7 +17,6 @@ import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { Folders } from '../models/Folders';
-import { Observable } from 'rxjs';
 import { AccessType } from '../../notes/models/accessType';
 import { RefType } from 'src/app/core/models/refType';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invitedUsersToNote';

@@ -1,5 +1,4 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Label } from '../../labels/models/label';
 import { Notes } from './Notes';

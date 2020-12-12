@@ -55,8 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(public pService: PersonalizationService,
               private store: Store,
               private rend: Renderer2,
-              private authService: AuthService,
-              private router: Router) { }
+              private authService: AuthService) { }
 
   async ngOnInit() {
     this.store.dispatch(new LoadBackgrounds());

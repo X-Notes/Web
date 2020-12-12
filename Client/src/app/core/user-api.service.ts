@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { map } from 'rxjs/operators';
 import { User } from './models/user';
 import { ShortUser } from './models/short-user';
 import { Theme } from '../shared/enums/Theme';

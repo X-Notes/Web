@@ -2,13 +2,12 @@ import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, Optional } f
 import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Label } from '../models/label';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { RestoreLabel } from '../state/labels-actions';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { NoteStore } from '../../notes/state/notes-state';
-import { LabelsOnSelectedNotes } from '../../notes/models/labelsOnSelectedNotes';
 import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';

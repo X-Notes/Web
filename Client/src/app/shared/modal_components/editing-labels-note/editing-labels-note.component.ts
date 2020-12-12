@@ -9,7 +9,7 @@ import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/st
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { LabelsOnSelectedNotes } from 'src/app/content/notes/models/labelsOnSelectedNotes';
 

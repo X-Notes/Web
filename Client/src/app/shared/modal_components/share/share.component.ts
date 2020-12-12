@@ -5,7 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
 import { Folder } from 'src/app/content/folders/models/folder';
-import { ChangeTypeFullFolder, GetInvitedUsersToFolder, TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
+import { ChangeTypeFullFolder, GetInvitedUsersToFolder,
+  TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';

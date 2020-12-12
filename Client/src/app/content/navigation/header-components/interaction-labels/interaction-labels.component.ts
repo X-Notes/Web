@@ -16,7 +16,7 @@ export class InteractionLabelsComponent implements OnInit {
 
   theme = Theme;
 
-  constructor(private store: Store) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
