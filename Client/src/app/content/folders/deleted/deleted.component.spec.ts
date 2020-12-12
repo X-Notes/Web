@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DeletedComponent } from './deleted.component';
 
@@ -6,7 +6,7 @@ describe('DeletedComponent', () => {
   let component: DeletedComponent;
   let fixture: ComponentFixture<DeletedComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DeletedComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ChangeColorComponent } from './change-color.component';
 
@@ -6,7 +6,7 @@ describe('ChangeColorFolderComponent', () => {
   let component: ChangeColorComponent;
   let fixture: ComponentFixture<ChangeColorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ChangeColorComponent ]
     })
