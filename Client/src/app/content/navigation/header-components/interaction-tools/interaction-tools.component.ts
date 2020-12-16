@@ -7,7 +7,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({

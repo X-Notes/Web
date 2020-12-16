@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import {MatRippleModule} from '@angular/material/core';
-import { SimplebarAngularModule } from 'simplebar-angular';
-import {MatDialogModule} from '@angular/material/dialog';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -21,26 +20,29 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ShareComponent } from './modal_components/share/share.component';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
+import { ScrollControlDirective } from './directives/scroll-control.directive';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, ShareComponent,
     TooltipComponent, TooltipDirective,
     SpinnerComponent,
-    SharingLinkPipe
+    SharingLinkPipe,
+    ScrollControlDirective
   ],
-  imports: [CommonModule , MatRippleModule,
-     TranslateModule, SimplebarAngularModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-     OverlayModule
-     ],
-  exports: [TranslateModule, MatRippleModule, SimplebarAngularModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
+  imports: [CommonModule, MatRippleModule,
+    TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
+    OverlayModule
+  ],
+  exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
     TooltipDirective,
     SpinnerComponent,
-    SharingLinkPipe
-   ],
+    SharingLinkPipe,
+    ScrollControlDirective
+  ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]
 })

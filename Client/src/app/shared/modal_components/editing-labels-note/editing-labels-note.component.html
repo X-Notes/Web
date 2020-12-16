@@ -11,9 +11,9 @@
     </div>
     <i class="icon-plus" (click)="newLabel()"></i>
 </div>
-<ngx-simplebar *ngIf="loaded" [options]="pService.optionsScroll" class="label-container">
+<div appScrollControl *ngIf="loaded" class="label-container">
     <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
         <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
         </app-label>
     </div>
-</ngx-simplebar>
+</div>

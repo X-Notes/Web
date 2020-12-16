@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogData } from '../dialog_data';
 import { EnumUtil } from '../../services/enum.util';
 import { NoteColorPallete } from '../../enums/NoteColors';
-import { PersonalizationService } from '../../services/personalization.service';
 import { Theme } from '../../enums/Theme';
 import { Store, Select } from '@ngxs/store';
 import { ChangeColorFullNote, ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';

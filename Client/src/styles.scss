@@ -1,47 +1,92 @@
 /* You can add global styles to this file, and also import other style files */
 /* You can add global styles to this file, and also import other style files */
 
-@import 'fonts';
-@import 'generic';
-@import 'simplescroll';
+@import "fonts";
+@import "generic";
 
-*, ::after, ::before{
-    box-sizing: border-box
+*,
+::after,
+::before {
+  box-sizing: border-box;
 }
 
-ul, ol{
-    list-style: none
-}
-    
-blockquote, body, dd, dl, dt, fieldset, figure, h1, h2, h3, h4, h5, h6, hr, html, iframe, legend, li, ol, p, pre, textarea, ul{
-    margin: 0;
-    padding: 0;
+ul,
+ol {
+  list-style: none;
 }
 
-img, video{
-    height: auto;
-    max-width: 100%;
+blockquote,
+body,
+dd,
+dl,
+dt,
+fieldset,
+figure,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+html,
+iframe,
+legend,
+li,
+ol,
+p,
+pre,
+textarea,
+ul {
+  margin: 0;
+  padding: 0;
 }
 
-body,html{
-    font-family: 'Roboto', sans-serif;
-    color: white;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    height: 100%;
+img,
+video {
+  height: auto;
+  max-width: 100%;
 }
 
-button, input {
-    font-family: 'Roboto', sans-serif;
+body,
+html {
+  font-family: "Roboto", sans-serif;
+  color: white;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
 }
 
- 
+button,
+input {
+  font-family: "Roboto", sans-serif;
+}
+
 ::-webkit-scrollbar {
-    width: 7px;
-    height: 10px;
+  width: 7px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #c9c9c9;
+  background-color: rgba(128, 128, 128, 0.5);
+  border-radius: 7px;
+  min-height: 90px;
 }
+
+/*
+::-webkit-scrollbar-corner {
+
+}
+::-webkit-resizer {
+ 
+}
+::-webkit-scrollbar-button {
+
+}
+::-webkit-scrollbar-track {
+
+}
+::-webkit-scrollbar-track-piece {
+  
+}
+*/

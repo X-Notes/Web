@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { Folder } from '../models/folder';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { FolderStore } from '../state/folders-state';
-import { takeUntil, map, debounceTime } from 'rxjs/operators';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { FontSize } from 'src/app/shared/enums/FontSize';

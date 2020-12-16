@@ -6,7 +6,6 @@ import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 
@@ -17,9 +16,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   animations: [ sideBarCloseOpen ],
 })
 export class LabelsComponent implements OnInit {
-
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
 
 
   @Select(UserStore.getUserTheme)

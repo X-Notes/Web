@@ -3,8 +3,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
 import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
-import { Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
 import { FontSize } from 'src/app/shared/enums/FontSize';

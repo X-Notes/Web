@@ -31,9 +31,6 @@ export enum subMenu {
 
 export class NotesComponent implements OnInit, OnDestroy {
 
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
   destroy = new Subject<void>();
   loaded = false;
   theme = Theme;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Select, Store } from '@ngxs/store';
+import { Select } from '@ngxs/store';
 import { Theme } from 'src/app/shared/enums/Theme';
 
 @Component({
@@ -16,7 +16,7 @@ export class InteractionLabelsComponent implements OnInit {
 
   theme = Theme;
 
-  constructor(private store: Store) { }
+  constructor() { }
 
   ngOnInit(): void {
   }

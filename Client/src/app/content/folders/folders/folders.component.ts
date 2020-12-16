@@ -9,7 +9,6 @@ import { AddFolder } from '../state/folders-actions';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -19,10 +18,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   animations: [ sideBarCloseOpen ]
 })
 export class FoldersComponent implements OnInit, OnDestroy {
-
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

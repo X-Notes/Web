@@ -5,7 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
 import { Folder } from 'src/app/content/folders/models/folder';
-import { ChangeTypeFullFolder, GetInvitedUsersToFolder, TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
+import { ChangeTypeFullFolder, GetInvitedUsersToFolder,
+  TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';
@@ -157,7 +158,12 @@ export class ShareComponent implements OnInit, OnDestroy {
       distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
-          const users = await this.searchService.searchUsers(searchStr).toPromise();
+          let users = await this.searchService.searchUsers(searchStr).toPromise();
+          let i = 0; // TODO DELETE
+          while (i < 6){
+            users = [...users, ...users];
+            i++;
+          }
           this.searchUsers = this.userFilters(users);
         } else {
           this.searchUsers = [];

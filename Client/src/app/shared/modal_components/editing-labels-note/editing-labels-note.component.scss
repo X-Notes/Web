@@ -1,93 +1,94 @@
-@import 'variables';
+@import "variables";
 
 :host {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.625rem 1.25rem 0 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 1.25rem 0 1.25rem;
 
-    span {
-        font-weight: 500;
-        font-size: 0.875rem;
-    }
+  span {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
 
-    i {
-        cursor: pointer;
-        transform: rotate(45deg);
-    }
+  i {
+    cursor: pointer;
+    transform: rotate(45deg);
+  }
 }
 
 .search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: 0 2.25rem;
+
+  .search-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1.25rem;
-    padding: 0 2.25rem;
+    width: calc(100% - 34px);
 
-    .search-content {
-        display: flex;
-        width: calc(100% - 34px);
-
-        input[type="search"] {
-            height: 36px;
-            width: calc(100% - 36px);
-            background-color: $light-billing-field;
-            border: 0;
-            border-radius: 10px 0 0 10px;
-            padding: 0;
-            padding-left: 15px;
-            padding-right: 5px;
-            font-size: 1.125rem;
-            user-select: none;
-            outline: none;
-            color: #5C5C5C;
-            transition: 0.2s ease;
-        }
-
-        .button {
-            background: #E3E3E3;
-            border-radius: 0px 10px 10px 0px;
-            width: 42px;
-            height: 36px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1rem;
-
-            i::before {
-                transition: 0.2s ease;
-                color: #969696;
-            }
-        }
+    input[type="search"] {
+      height: 36px;
+      width: calc(100% - 36px);
+      background-color: $light-billing-field;
+      border: 0;
+      border-radius: 10px 0 0 10px;
+      padding: 0;
+      padding-left: 15px;
+      padding-right: 5px;
+      font-size: 1.125rem;
+      user-select: none;
+      outline: none;
+      color: #5c5c5c;
+      transition: 0.2s ease;
     }
 
-    &>i {
-        cursor: pointer;
+    .button {
+      background: #e3e3e3;
+      border-radius: 0px 10px 10px 0px;
+      width: 42px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
 
-        &::before {
-            font-size: 1.25rem;
-        }
+      i::before {
+        transition: 0.2s ease;
+        color: #969696;
+      }
     }
+  }
+
+  & > i {
+    cursor: pointer;
+
+    &::before {
+      font-size: 1.25rem;
+    }
+  }
 }
 
 .label-container {
+  display: flex;
+  flex-direction: column;
+  height: 352px;
+  width: 100%;
+  padding: 0 2.25rem;
+  margin: 1.25rem 0;
+  overflow-y: scroll;
+  .label {
     display: flex;
-    height: 352px;
+    flex-direction: column;
     width: 100%;
-    padding: 0 2.25rem;
-    margin: 1.25rem 0;
 
-    .label {
-        display: flex;
-        flex-direction: column;           
-        width: 100%;
-
-        &:not(:first-child) {
-            margin-top: 20px;
-        }
+    &:not(:first-child) {
+      margin-top: 20px;
     }
+  }
 }
