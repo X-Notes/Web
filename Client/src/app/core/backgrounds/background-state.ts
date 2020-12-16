@@ -41,12 +41,7 @@ export class BackgroundStore {
 
     @Action(LoadBackgrounds)
     async loadBackgrounds({ patchState, getState }: StateContext<BackgroundState>) {
-        let backs = await this.backgroundAPI.getBackgrounds().toPromise();
-        let i = 0; // TODO DELETE
-        while (i < 3) {
-            backs = [...backs, ...backs];
-            i++;
-        }
+        const backs = await this.backgroundAPI.getBackgrounds().toPromise();
         patchState({ backgrounds: [...backs] });
     }
 

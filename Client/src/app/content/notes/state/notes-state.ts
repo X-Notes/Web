@@ -629,12 +629,7 @@ export class NoteStore {
 
     @Action(GetInvitedUsersToNote)
     async getInvitedUsersToNote({ getState, patchState, dispatch }: StateContext<NoteState>, { noteId }: GetInvitedUsersToNote) {
-        let users = await this.api.getUsersOnPrivateNote(noteId).toPromise();
-        let i = 0; // TODO DELETE
-        while (i < 6){
-          users = [...users, ...users];
-          i++;
-        }
+        const users = await this.api.getUsersOnPrivateNote(noteId).toPromise();
         patchState({
             InvitedUsersToNote: users
         });
