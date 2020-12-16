@@ -1,4 +1,4 @@
-<nav [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+<nav appTheme>
     <div class="module" routerLink="/notes" routerLinkActive="active" #triggerFirst>
         <div class="item">
             <div class="main-icon">

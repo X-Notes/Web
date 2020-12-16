@@ -20,6 +20,7 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ShareComponent } from './modal_components/share/share.component';
+import { ThemeDirective } from './theme.directive';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
@@ -29,6 +30,7 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, ShareComponent,
     TooltipComponent, TooltipDirective,
     SpinnerComponent,
+    ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective
   ],
@@ -40,6 +42,7 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
     TooltipDirective,
     SpinnerComponent,
+    ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective
   ],

@@ -141,8 +141,8 @@
       .content-access {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        padding: 0 2.5rem;
+        width: calc(100% - 5rem);
+        margin: 0 2.5rem;
 
         &::after {
           content: "";
@@ -233,7 +233,7 @@
         height: 390px;
         margin: 1.25rem 0;
         padding: 0 2.5rem;
-        overflow-x: hidden;
+        overflow: hidden auto;
 
         .user {
           display: flex;
@@ -327,10 +327,9 @@
 
       .search {
         display: flex;
-        width: 100%;
+        width: calc(100% - 5rem);
         height: 32px;
-        padding: 0 2.5rem;
-        margin: 1.25rem 0 0.625rem 0;
+        margin: 1.25rem 2.5rem 0.625rem 2.5rem;
 
         input[type="search"] {
           height: 100%;
@@ -375,24 +374,16 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        width: 100%;
         height: calc(100% - 82px);
-        margin-bottom: 1.25rem;
-
-        &::before {
-          content: "";
-          position: absolute;
-          z-index: 5;
-          width: 100%;
-          height: 10px;
-          top: 0;
-        }
+        width: 100%;
+        padding: 0 2.5rem;
+        overflow: hidden auto;
 
         .mail-notification {
           display: flex;
           flex-direction: column;
-          width: calc(100% - 5rem);
-          margin: 0.625rem 2.5rem 0 2.5rem;
+          width: 100%;
+          margin-top: 0.625rem;
           border-radius: 5px;
           background-color: #f2f2f2;
 
@@ -549,9 +540,7 @@
           flex-direction: column;
           width: 100%;
           margin-top: 1.25rem;
-          padding: 0 2.5rem;
-          overflow-y: auto;
-
+  
           .user {
             display: flex;
             align-items: center;
@@ -691,10 +680,6 @@
       }
 
       .interaction-container {
-        &::before {
-          background: linear-gradient(0, hsla(0, 0%, 100%, 0), white);
-        }
-
         .mail-notification {
           .mail-container {
             .user-mail {
@@ -778,10 +763,6 @@
       }
 
       .interaction-container {
-        &::before {
-          background: linear-gradient(0, hsla(0, 0%, 100%, 0), $dark-color);
-        }
-
         .mail-notification {
           .mail-container {
             .user-mail {
@@ -865,6 +846,9 @@
       .tabs {
         .user-access {
           height: calc(100% - 165px);
+          width: calc(100% - 3.75rem);
+          padding: 0 0.625rem;
+          margin: 1.25rem 1.875rem;
 
           .user {
             height: 45px;
@@ -875,6 +859,12 @@
               }
             }
           }
+        }
+
+        .interaction-container {
+          width: calc(100% - 3.75rem);
+          padding: 0 0.625rem;
+          margin: 0 1.875rem 1.25rem 1.875rem;
         }
       }
     }
@@ -1079,6 +1069,8 @@
 
 @media (max-width: 600px) {
   .outer {
+    height: 600px;
+
     .sharing {
       .tabs {
         padding-top: 1rem;
@@ -1119,12 +1111,12 @@
         }
 
         .user-access {
-          margin: 1rem 0;
           height: calc(100% - 226px);
+          margin: 1rem 1.875rem;
         }
 
         .search {
-          margin: 1rem 0 0.5rem 0;
+          margin: 1rem 2.5rem 0.5rem 2.5rem;
 
           input[type="search"] {
             font-size: 1rem;
@@ -1139,7 +1131,7 @@
           }
 
           .mail-notification {
-            margin: 0.5rem 2.5rem 0 2.5rem;
+            margin-top: 0.5rem;
 
             .mail-container {
               .user-mail {
@@ -1292,21 +1284,23 @@
   .outer {
     .sharing {
       .tabs {
-        .content-access,
-        .user-access,
         .search {
-          padding: 0 1.75rem;
+          margin: 1rem 1.75rem 0.5rem 1.75rem;
+        }
+
+        .user-access {
+          margin: 1rem 1.125rem;
+          width: calc(100% - 2.25rem);
+        }
+
+        .content-access {
+          width: calc(100% - 3.5rem);
+          margin: 0 1.75rem;
         }
 
         .interaction-container {
-          .mail-notification {
-            margin: 0.5rem 1.75rem 0 1.75rem;
-            width: calc(100% - 3.5rem);
-          }
-
-          .user-suggestions {
-            padding: 0 1.75rem;
-          }
+          margin: 0 1.125rem 1rem 1.125rem;
+          width: calc(100% - 2.25rem);
         }
       }
     }

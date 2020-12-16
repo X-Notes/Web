@@ -17,11 +17,6 @@ export class MenuComponent implements OnInit, OnDestroy {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
-  theme = Theme;
-
   constructor(public pService: PersonalizationService,
               public buttonService: MenuButtonsService) { }
 

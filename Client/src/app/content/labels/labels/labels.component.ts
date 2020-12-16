@@ -18,9 +18,6 @@ import { ShortUser } from 'src/app/core/models/short-user';
 export class LabelsComponent implements OnInit {
 
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   @Select(LabelStore.countAll)
   countAll$: Observable<number>;
 
@@ -30,7 +27,6 @@ export class LabelsComponent implements OnInit {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  theme = Theme;
   public photoError = false;
   constructor(
     public pService: PersonalizationService) {}

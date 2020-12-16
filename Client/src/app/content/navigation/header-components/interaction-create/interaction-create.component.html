@@ -1,7 +1,8 @@
-<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+<div class="interactions" [ngClass]="themeHeader === theme.Light ? 'light' : 'dark'">
     <button 
         name="Create note" type="button"
-        class="generic new-note generic-unfixed"
+        class="generic generic-unfixed"
+        [ngClass]="(isProfile$ | async) ? 'generic-create': ''"
         (click)="newButton()"
         #new>
 

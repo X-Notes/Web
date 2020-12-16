@@ -11,11 +11,6 @@ import { Theme } from 'src/app/shared/enums/Theme';
 })
 export class InteractionLabelsComponent implements OnInit {
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
-  theme = Theme;
-
   constructor() { }
 
   ngOnInit(): void {

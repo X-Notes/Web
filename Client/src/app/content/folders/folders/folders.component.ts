@@ -19,9 +19,6 @@ import { ShortUser } from 'src/app/core/models/short-user';
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   @Select(FolderStore.privateCount)
   public countPrivate: Observable<number>;
 
@@ -40,7 +37,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  theme = Theme;
   public photoError = false;
   constructor(public pService: PersonalizationService,
               private store: Store,

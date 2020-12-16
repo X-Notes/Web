@@ -1,19 +1,21 @@
-<div class="header">
-    <span>{{ ('modal.labelModal.' + data.title) | translate }}</span>
-    <i class="icon-plus" mat-dialog-close></i>
-</div>
-<div class="search">
-    <div class="search-content">
-        <input type="search" placeholder="{{ 'modal.labelModal.search' | translate }}" [(ngModel)]="searchStr">
-        <div class="button">
-            <i class="icon-search"></i>
-        </div>
+<div appTheme class="outer">
+    <div class="header">
+        <span>{{ ('modal.labelModal.' + data.title) | translate }}</span>
+        <i class="icon-plus" mat-dialog-close></i>
     </div>
-    <i class="icon-plus" (click)="newLabel()"></i>
-</div>
-<div appScrollControl *ngIf="loaded" class="label-container">
-    <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
-        <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
-        </app-label>
+    <div class="search">
+        <div class="search-content">
+            <input type="search" placeholder="{{ 'modal.labelModal.search' | translate }}" [(ngModel)]="searchStr">
+            <div class="button">
+                <i class="icon-search"></i>
+            </div>
+        </div>
+        <i class="icon-plus" (click)="newLabel()"></i>
+    </div>
+    <div appScrollControl *ngIf="loaded" class="label-container">
+        <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
+            <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
+            </app-label>
+        </div>
     </div>
 </div>

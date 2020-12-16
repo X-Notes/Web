@@ -1,9 +1,10 @@
 @import "submenu";
 @import "variables";
 
-:host {
-  z-index: 4;
+:host{
+    z-index: 5;
 }
+
 .full-content {
   flex-direction: row;
 

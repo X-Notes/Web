@@ -16,11 +16,6 @@ export class InteractionInnerComponent implements OnInit {
   user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'
   ];
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
-  theme = Theme;
-
   constructor(public pService: PersonalizationService) { }
 
   ngOnInit(): void {

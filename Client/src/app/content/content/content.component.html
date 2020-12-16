@@ -1,13 +1,12 @@
 <app-header class="header"></app-header>
-<main [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''" (window:resize)="pService.onResize()">
+<main appTheme (window:resize)="pService.onResize()">
     <app-side-bar class="sidebar"></app-side-bar>
     <router-outlet></router-outlet>
     <button type="button" name="Add button" class="add-mobile" #addMobile (click)="pService.subject.next(true)"
-        *ngIf="newButtonActive">
+        *ngIf="newButtonActive && !newProfile">
         <div class="icon">
             <i class="icon-plus"></i>
         </div>
-
         <div class="ripple-container" matRipple [matRippleTrigger]="addMobile"></div>
     </button>
 </main>

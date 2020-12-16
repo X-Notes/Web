@@ -3,7 +3,7 @@
 
 :host {
   position: relative;
-  z-index: 5;
+  z-index: 6;
 }
 
 header {
@@ -216,7 +216,6 @@ header {
 
 .dark {
   background-color: $dark-color;
-  transition: none;
 
   .profile-section {
     .profile:hover {

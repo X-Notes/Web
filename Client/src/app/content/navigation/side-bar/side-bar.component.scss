@@ -124,6 +124,7 @@
 
 .dark {
     border-color: $light-separator;
+    background-color: $dark-color;
 
     .active {
         background-color: $dark-backlight;

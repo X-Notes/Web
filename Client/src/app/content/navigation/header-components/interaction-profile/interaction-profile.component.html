@@ -1,4 +1,5 @@
-<div class="interactions" [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+<div class="interactions" [ngClass]="themeHeader === theme.Light ? 'light' : 'dark'">
+    <app-interaction-create [themeHeader]="themeHeader"></app-interaction-create>
     <button (click)="setDefaultColorProfile()" name="Default" type="button"
         class="generic generic-2" #default>
         <div class="inner-content">

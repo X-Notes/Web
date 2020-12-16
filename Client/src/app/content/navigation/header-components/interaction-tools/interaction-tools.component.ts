@@ -16,22 +16,17 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 export class InteractionToolsComponent implements OnInit {
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  @Select(AppStore.getChangeViewButtonActive)
-  public changeViewActive$: Observable<boolean>;
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
 
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
-
-  theme = Theme;
 
   constructor(public pService: PersonalizationService,
               private store: Store) { }

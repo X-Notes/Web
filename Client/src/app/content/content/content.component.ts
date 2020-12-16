@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/enums/Theme';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Observable, Subject } from 'rxjs';
-import { Select, Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 
@@ -16,11 +14,8 @@ export class ContentComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-  theme = Theme;
-
   newButtonActive = false;
+  newProfile = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store) { }
@@ -36,8 +31,11 @@ export class ContentComponent implements OnInit, OnDestroy {
       .subscribe(z => {
         setTimeout(() => this.newButtonActive = z);
       });
+
+    this.store.select(AppStore.isProfile)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(z => {
+        setTimeout(() => this.newProfile = z);
+      });
   }
-
-
-
 }
