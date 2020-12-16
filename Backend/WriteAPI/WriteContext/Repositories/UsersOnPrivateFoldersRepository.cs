@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +33,7 @@ namespace WriteContext.Repositories
             return await this.contextDB.UsersOnPrivateFolders.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
         }
 
+
         public async Task Update(UsersOnPrivateFolders userOnNote)
         {
             contextDB.UsersOnPrivateFolders.Update(userOnNote);
@@ -42,6 +44,13 @@ namespace WriteContext.Repositories
         {
             contextDB.UsersOnPrivateFolders.Remove(userOnNote);
             await contextDB.SaveChangesAsync();
+        }
+
+        public async Task<List<UsersOnPrivateFolders>> GetByFolderIdUserOnPrivateFolder(Guid folderId)
+        {
+            return await this.contextDB.UsersOnPrivateFolders
+                .Include(x => x.User)
+                .Where(x => x.FolderId == folderId).ToListAsync();
         }
     }
 }

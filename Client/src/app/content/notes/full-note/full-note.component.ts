@@ -19,14 +19,14 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
-import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { UpdateLabelEvent } from '../state/updateLabels';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 @Component({
@@ -74,14 +74,21 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public sliderService: FullNoteSliderService,
               public murriService: MurriService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
-      console.log(params.id);
       this.id = params.id;
-      await this.initNote();
+
+      this.store.select(AppStore.getTokenUpdated)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.initNote();
+          this.store.dispatch(new LoadLabels());
+        }
+      }
+      );
     });
+
   }
 
-
-  // TODO MAYBE NEED UserStore.getTokenUpdated
 
   ngAfterViewInit(): void {
     const note = this.store.selectSnapshot(NoteStore.oneFull);
@@ -94,38 +101,32 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
       this.signal.hubConnection.invoke('LeaveNote', this.id);
     }
-    const note = await this.LoadMain();
-    await this.LoadSecond(note);
+    await this.LoadMain();
+    await this.LoadSecond();
     this.connectToHub();
   }
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
-    this.store.dispatch(new UpdateRouteWithNoteType(EntityType.NoteInner, fullNote.noteType));
-    return fullNote;
   }
 
-  async LoadSecond(fullNote: FullNote) {
+  async LoadSecond() {
     await this.store.dispatch(new LoadAllNotes()).toPromise();
-    if (fullNote) {
-      this.setSideBarNotes(fullNote.noteType);
-    }
+    this.store.select(NoteStore.oneFull)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (note) => {
+      if (note) {
+        await this.setSideBarNotes(note.noteType);
+      }
+    });
+
   }
 
   async ngOnInit() {
+    this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
-
-    this.store.dispatch(new LoadLabels());
-
-    this.store.select(NoteStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x =>
-        x
-        // this.noteService.changeColorHandlerFullNote(this.note, x) // TODO
-      );
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
@@ -133,18 +134,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
-      document.querySelector('.grid') as HTMLElement, true), 1000); // CHANGE TODO
+      document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
 
-    this.store.select(NoteStore.updateLabelOnNoteEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((values: UpdateLabelEvent[]) => {
-        const value = values.find(x => x.id === this.id);
-        if (value !== undefined) {
-          // this.note.labels = value.labels; // TODO
-          // this.store.dispatch(new ClearUpdatelabelEvent(this.note.id));
-        }
-      });
   }
 
 

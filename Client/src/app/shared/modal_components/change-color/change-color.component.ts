@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogData } from '../dialog_data';
 import { EnumUtil } from '../../services/enum.util';
 import { NoteColorPallete } from '../../enums/NoteColors';
-import { PersonalizationService } from '../../services/personalization.service';
 import { Theme } from '../../enums/Theme';
 import { Store, Select } from '@ngxs/store';
 import { ChangeColorFullNote, ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
@@ -11,6 +10,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
 
 @Component({
   selector: 'app-change-color',
@@ -55,14 +56,16 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
       if (isInner) {
         await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
       } else {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
         const type = this.store.selectSnapshot(AppStore.getTypeNote);
-        await this.store.dispatch(new ChangeColorNote(this.current, type)).toPromise();
+        await this.store.dispatch(new ChangeColorNote(this.current, type, ids)).toPromise();
       }
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const type = this.store.selectSnapshot(AppStore.getTypeFolder);
-      await this.store.dispatch(new ChangeColorFolder(this.current, type)).toPromise();
+      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+      await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
     }
     this.dialogRef.close();
   }
@@ -73,9 +76,6 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    const flag = this.store.selectSnapshot(AppStore.isNoteInner);
-    if (!flag) {
-      this.store.dispatch(new UnSelectAllNote());
-    }
+    this.store.dispatch(new UnSelectAllNote());
   }
 }

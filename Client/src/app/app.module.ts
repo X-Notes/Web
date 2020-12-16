@@ -7,7 +7,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
-import { ContentLoadGuard } from './core/guards/content-load.guard';
 import { ContentActiveteGuard } from './core/guards/content-activete.guard';
 import { NgxsModule } from '@ngxs/store';
 import { LabelStore } from './content/labels/state/labels-state';
@@ -37,7 +36,7 @@ import { BackgroundStore } from './core/backgrounds/background-state';
       key: UserStore
     }),
   ],
-  providers: [ContentLoadGuard, ContentActiveteGuard],
+  providers: [ContentActiveteGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

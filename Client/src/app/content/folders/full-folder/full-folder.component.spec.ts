@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FullFolderComponent } from './full-folder.component';
 
@@ -6,7 +6,7 @@ describe('FullFolderComponent', () => {
   let component: FullFolderComponent;
   let fixture: ComponentFixture<FullFolderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FullFolderComponent ]
     })

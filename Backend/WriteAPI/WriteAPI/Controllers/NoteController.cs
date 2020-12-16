@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -35,7 +36,9 @@ namespace WriteAPI.Controllers
         }
 
         // Commands
+        
         [HttpPatch("color")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -43,7 +46,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+
         [HttpPatch("delete")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -51,7 +56,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+
         [HttpPatch("delete/permanently")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
         {
             var email = this.GetUserEmail();
@@ -61,6 +68,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("copy")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -68,7 +76,9 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+
         [HttpPatch("archive")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -78,6 +88,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("ref/private")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -87,6 +98,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("label/add")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -94,7 +106,9 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+
         [HttpPatch("label/remove")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -137,7 +151,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<FullNoteAnswer> Get(string id)
+        public async Task<FullNoteAnswer> Get(Guid id)
         {
             var email = this.GetUserEmail();
             var query = new GetFullNoteQuery(email, id);
@@ -145,7 +159,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(string id)
+        public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
         {
             var query = new GetOnlineUsersOnNote(id);
             return await _mediator.Send(query);

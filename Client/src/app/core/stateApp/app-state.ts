@@ -1,6 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, UpdateRouteWithNoteType, SpinnerChangeStatus } from './app-action';
+import { UpdateRoute, SetToken, TokenSetNoUpdate } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
@@ -9,16 +9,16 @@ import { AuthService } from '../auth.service';
 
 interface AppState {
     routing: EntityType;
-    innerNoteType: NoteType;
-    spinnerActive: boolean;
+    token: string;
+    tokenUpdated: boolean;
 }
 
 @State<AppState>({
     name: 'App',
     defaults: {
         routing: null,
-        innerNoteType: null,
-        spinnerActive: false
+        token: null,
+        tokenUpdated: false,
     }
 })
 @Injectable()
@@ -26,7 +26,17 @@ export class AppStore {
 
 
     constructor(authService: AuthService) {
+    }
 
+
+    @Selector()
+    static getToken(state: AppState): string {
+        return state.token;
+    }
+
+    @Selector()
+    static getTokenUpdated(state: AppState): boolean {
+        return state.tokenUpdated;
     }
 
     @Selector()
@@ -37,11 +47,6 @@ export class AppStore {
     @Selector()
     static isNoteInner(state: AppState): boolean {
         return state.routing === EntityType.NoteInner;
-    }
-
-    @Selector()
-    static spinnerActive(state: AppState): boolean {
-        return state.spinnerActive;
     }
 
     @Selector()
@@ -121,10 +126,6 @@ export class AppStore {
         return state.routing;
     }
 
-    @Selector()
-    static getInnerNoteType(state: AppState): NoteType {
-        return state.innerNoteType;
-    }
 
     @Selector()
     static getTypeNote(state: AppState): NoteType {
@@ -184,15 +185,13 @@ export class AppStore {
         patchState({routing: type});
     }
 
-    @Action(UpdateRouteWithNoteType)
-    async updateRouteWithNoteType({patchState}: StateContext<AppState>, {type, noteType}: UpdateRouteWithNoteType) {
-        patchState({routing: type, innerNoteType: noteType});
+    @Action(SetToken)
+    setToken({ patchState }: StateContext<AppState>, { token }: SetToken) {
+        patchState({ token, tokenUpdated: true });
     }
 
-    // UPPER MENU BUTTONS
-
-    @Action(SpinnerChangeStatus)
-    spinnerChangeStatus({patchState}: StateContext<AppState>, {flag}: SpinnerChangeStatus) {
-        patchState({spinnerActive: flag});
+    @Action(TokenSetNoUpdate)
+    setNoUpdateToken({ patchState }: StateContext<AppState>) {
+        patchState({  token: null , tokenUpdated: false });
     }
 }

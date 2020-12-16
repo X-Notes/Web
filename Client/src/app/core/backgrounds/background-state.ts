@@ -31,7 +31,7 @@ export class BackgroundStore {
     }
 
     @Action(NewBackground)
-    async newBackground({ patchState, getState, dispatch }: StateContext<BackgroundState>, {photo}: NewBackground) {
+    async newBackground({ patchState, getState, dispatch }: StateContext<BackgroundState>, { photo }: NewBackground) {
         const background = await this.backgroundAPI.newBackground(photo).toPromise();
         patchState({
             backgrounds: [background, ...getState().backgrounds]
@@ -41,20 +41,25 @@ export class BackgroundStore {
 
     @Action(LoadBackgrounds)
     async loadBackgrounds({ patchState, getState }: StateContext<BackgroundState>) {
-        const backs = await this.backgroundAPI.getBackgrounds().toPromise();
-        patchState({backgrounds:  [...backs] });
+        let backs = await this.backgroundAPI.getBackgrounds().toPromise();
+        let i = 0; // TODO DELETE
+        while (i < 3) {
+            backs = [...backs, ...backs];
+            i++;
+        }
+        patchState({ backgrounds: [...backs] });
     }
 
 
     @Action(SetBackground)
-    async setBackground({ patchState, getState, dispatch }: StateContext<BackgroundState>, {id}: SetBackground) {
+    async setBackground({ patchState, getState, dispatch }: StateContext<BackgroundState>, { id }: SetBackground) {
         await this.backgroundAPI.setBackground(id).toPromise();
         const background = getState().backgrounds.find(x => x.id === id);
         dispatch(new SetCurrentBackground(background));
     }
 
     @Action(RemoveBackground)
-    async removeBackground({ patchState, getState }: StateContext<BackgroundState>, {id}: RemoveBackground) {
+    async removeBackground({ patchState, getState }: StateContext<BackgroundState>, { id }: RemoveBackground) {
         await this.backgroundAPI.removeBackground(id).toPromise();
         patchState({
             backgrounds: getState().backgrounds.filter(x => x.id !== id)

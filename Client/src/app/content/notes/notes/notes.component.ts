@@ -22,17 +22,12 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 
 export class NotesComponent implements OnInit, OnDestroy {
 
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
   destroy = new Subject<void>();
   loaded = false;
   theme = Theme;
   public photoError = false;
   labelsActive = false;
 
-  @Select(AppStore.spinnerActive)
-  public spinnerActive$: Observable<boolean>;
 
   public labelsFilters: LabelsForFiltersNotes[] = [];
 
@@ -56,7 +51,7 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
-    this.store.select(UserStore.getTokenUpdated)
+    this.store.select(AppStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

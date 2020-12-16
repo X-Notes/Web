@@ -57,7 +57,7 @@ namespace BI.services.folders
         public async Task<Unit> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
@@ -74,7 +74,7 @@ namespace BI.services.folders
         public async Task<Unit> Handle(ChangeColorFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (folders.Any())
             {
@@ -93,11 +93,11 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var deletedFolders = user.Folders.Where(x => x.FolderType == FoldersType.Deleted).ToList();
-            var foldersForRestore = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
-            if (foldersForRestore.Count == request.Ids.Count)
+            if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.CastFolders(foldersForRestore, user.Folders, FoldersType.Deleted, FoldersType.Private);
+                await folderRepository.CastFolders(folders, user.Folders, FoldersType.Deleted, FoldersType.Private);
             }
             else
             {
@@ -109,7 +109,7 @@ namespace BI.services.folders
         public async Task<Unit> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
@@ -126,7 +126,7 @@ namespace BI.services.folders
         public async Task<List<SmallFolder>> Handle(CopyFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
@@ -143,11 +143,11 @@ namespace BI.services.folders
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var deletedFolders = user.Folders.Where(x => x.FolderType == FoldersType.Deleted).ToList();
-            var selectdeleteFolders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
-            if (selectdeleteFolders.Count == request.Ids.Count)
+            if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.DeleteRangeDeleted(selectdeleteFolders, deletedFolders);
+                await folderRepository.DeleteRangeDeleted(folders, deletedFolders);
             }
             else
             {
@@ -160,7 +160,7 @@ namespace BI.services.folders
         public async Task<Unit> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
-            var folders = user.Folders.Where(x => request.Ids.Contains(x.Id.ToString("N"))).ToList();
+            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {

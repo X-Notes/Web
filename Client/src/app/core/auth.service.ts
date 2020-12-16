@@ -1,16 +1,14 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserAPIService } from './user-api.service';
 import { User } from './models/user';
 import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
-import { Login, Logout, TokenSetNoUpdate } from './stateUser/user-action';
+import { Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
-import { SetToken } from './stateUser/user-action';
+import { SetToken } from './stateApp/app-action';
 
 
 @Injectable()
@@ -21,43 +19,38 @@ export class AuthService {
     private router: Router,
     private store: Store,
     private api: UserAPIService) {
-
-      this.store.dispatch(new TokenSetNoUpdate());
-
       this.afAuth.authState.subscribe(async (firebaseUser) => {
-      this.configureAuthState(firebaseUser);
+      await this.configureAuthState(firebaseUser);
     });
-
   }
 
   GoogleAuth() {
-    return this.AuthLogin(new firebase.auth.GoogleAuthProvider());
+    return this.AuthLogin(new firebase.default.auth.GoogleAuthProvider());
   }
 
-  private async configureAuthState(firebaseUser: firebase.User) {
-    console.log('verifsds');
+  private async configureAuthState(firebaseUser: firebase.default.User) {
     if (firebaseUser) {
       const token = await firebaseUser.getIdToken(true);
+      await this.api.verifyToken(token).toPromise();
       this.store.dispatch(new SetToken(token));
       const flag = this.store.selectSnapshot(UserStore.getStatus);
-      await this.api.verifyToken(token).toPromise();
       if (!flag) {
         const user = this.getUser(firebaseUser);
         this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
       }
       setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000);
     } else {
-      this.logout();
+      await this.logout();
     }
   }
 
-  private async updateToken(firebaseUser: firebase.User) {
+  private async updateToken(firebaseUser: firebase.default.User) {
     const token = await firebaseUser.getIdToken(true);
     await this.api.verifyToken(token).toPromise();
     this.store.dispatch(new SetToken(token));
   }
 
-  private getUser(user: firebase.User) {
+  private getUser(user: firebase.default.User) {
     const temp: User = {
       name: user.displayName,
       photoId: user.photoURL,
@@ -66,7 +59,7 @@ export class AuthService {
     return temp;
   }
 
-  private AuthLogin(provider: firebase.auth.GoogleAuthProvider) {
+  private AuthLogin(provider: firebase.default.auth.GoogleAuthProvider) {
     return this.afAuth.signInWithRedirect(provider)
       .then(result => { })
       .catch(error => {
@@ -74,9 +67,9 @@ export class AuthService {
       });
   }
 
-  logout() {
-    this.store.dispatch(new Logout());
-    this.afAuth.signOut();
-    this.router.navigate(['/about']);
+  async logout() {
+    await this.store.dispatch(new Logout()).toPromise();
+    await this.afAuth.signOut();
+    await this.router.navigate(['/about']);
   }
 }

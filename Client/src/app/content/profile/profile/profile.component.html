@@ -1,6 +1,6 @@
 <div appTheme class="sub-nav">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <ngx-simplebar [options]="pService.optionsScroll" class="background-section">
+        <div appScrollControl class="background-section">
             <div class="background" *ngFor="let item of backgrounds$ | async"
                 [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''">
                 <img alt="background" [src]="item.path" (click)="setCurrent(item.id)">
@@ -8,7 +8,7 @@
                     <i class="icon-plus"></i>
                 </div>
             </div>
-        </ngx-simplebar>
+        </div>
         <div class="information">
             <div class="separator"></div>
             <div class="progress-section">
@@ -28,7 +28,7 @@
 </div>
 <div appTheme class="content"
     [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
-    <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
+    <div appScrollControl class="content-inner autoscroll-helper">
         <div class="main">
             <div class="sections">
                 <div class="header">
@@ -114,12 +114,12 @@
                                 </div>
                             </div>
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                            <ngx-simplebar [options]="pService.optionsScroll" class="dropdown" *ngIf="dropdownLanguage"
+                            <div class="dropdown" *ngIf="dropdownLanguage"
                                 [@showHistory]>
                                 <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
                                     <p>{{ 'languages.' + item | translate }}</p>
                                 </div>
-                            </ngx-simplebar>
+                            </div>
                             <div #overlay class="overlay" (click)="cancelDropdown()"></div>
                         </button>
                     </div>
@@ -203,7 +203,7 @@
                 </div>
             </div>
         </div>
-    </ngx-simplebar>
+    </div>
 </div>
 
 <input #uploadFile type="file" accept="image/jpeg,image/png" hidden="true" (change)="uploadImage($event)">

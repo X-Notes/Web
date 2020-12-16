@@ -7,7 +7,7 @@ import { Label } from 'src/app/content/labels/models/label';
 export class SearchLabelPipe implements PipeTransform {
 
   transform(values: Label[], searchStr: string): Label[] {
-    return values.filter(x => x.name.includes(searchStr));
+    return values.filter(x => x.name?.includes(searchStr) || x.name === null);
   }
 
 }

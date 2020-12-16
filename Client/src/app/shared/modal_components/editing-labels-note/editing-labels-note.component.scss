@@ -83,10 +83,12 @@
     
     .label-container {
         display: flex;
+        flex-direction: column;
         height: calc(100% - 123px);
         width: 100%;
         padding: 0 2.25rem;
         margin: 1.25rem 0;
+        overflow: hidden auto;
     
         .label {
             display: flex;

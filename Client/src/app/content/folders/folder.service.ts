@@ -27,14 +27,46 @@ export class FolderService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.delete(x));
 
+    this.store.select(FolderStore.selectedIds)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(ids => {
+        if (ids) {
+          for (const folder of this.folders) {
+            if (ids.some(x => x === folder.id)) {
+              folder.isSelected = true;
+            } else {
+              folder.isSelected = false;
+            }
+          }
+        }
+      });
+
+    this.store.select(FolderStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        if (x > 0) {
+          for (const folder of this.folders) {
+            folder.lockRedirect = true;
+          }
+        } else {
+          for (const folder of this.folders) {
+            folder.lockRedirect = false;
+          }
+        }
+      });
+
   }
   ngOnDestroy(): void {
-    console.log('destroy');
     this.destroy.next();
     this.destroy.complete();
   }
 
-
+  transformFolders(folders: Folder[]) {
+    folders = [...folders];
+    return folders.map(note => {
+      return {...note, isSelected: false, lockRedirect: false};
+    });
+  }
 
   firstInit(folders: Folder[]) {
     this.allFolders = [...folders].map(note => { note = {...note}; return note; });

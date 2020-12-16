@@ -7,13 +7,15 @@ import { Theme } from 'src/app/shared/enums/Theme';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
-import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
-import {
-  ArchiveFolders, CopyFolders,
-  DeleteFoldersPermanently, MakePrivateFolders, SetDeleteFolders
-} from '../folders/state/folders-actions';
-import { ArchiveNotes, CopyNotes, DeleteNotesPermanently, MakePrivateNotes, SetDeleteNotes } from '../notes/state/notes-actions';
 import { MenuItem } from './menu_item';
+import { CopyNotes, SetDeleteNotes, ArchiveNotes,
+  DeleteNotesPermanently, MakePrivateNotes, ChangeTypeFullNote } from '../notes/state/notes-actions';
+import { CopyFolders, SetDeleteFolders, ArchiveFolders,
+   DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
+import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
+import { NoteStore } from '../notes/state/notes-state';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { FolderStore } from '../folders/state/folders-state';
 
 
 @Injectable({providedIn: 'root'})
@@ -33,19 +35,19 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: this.changeLabels.bind(this)
+      operation: () => this.changeLabels()
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyNotes.bind(this)
+      operation: () => this.copyNotes()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -57,11 +59,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveNotes.bind(this)
+      operation: () => this.archiveNotes()
     },
     {
       icon: 'delete',
-      operation: this.setdeleteNotes.bind(this)
+      operation: () => this.setdeleteNotes()
     }
   ];
   public notesItemsShared: MenuItem[] = [
@@ -71,19 +73,19 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: this.changeLabels.bind(this)
+      operation: () => this.changeLabels()
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyNotes.bind(this)
+      operation: () => this.copyNotes()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -95,11 +97,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveNotes.bind(this)
+      operation: () => this.archiveNotes()
     },
     {
       icon: 'delete',
-      operation: this.setdeleteNotes.bind(this)
+      operation: () => this.setdeleteNotes()
     }
   ];
   public notesItemsDeleted: MenuItem[] = [
@@ -109,19 +111,19 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: this.changeLabels.bind(this)
+      operation: () => this.changeLabels()
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyNotes.bind(this)
+      operation: () => this.copyNotes()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -133,15 +135,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveNotes.bind(this)
+      operation: () => this.archiveNotes()
     },
     {
       icon: 'delete',
-      operation: this.deleteNotes.bind(this)
+      operation: () => this.deleteNotes()
     },
     {
       icon: 'restore',
-      operation: this.makePrivateNotes.bind(this)
+      operation: () => this.makePrivateNotes()
     }
   ];
   public notesItemsArchive: MenuItem[] = [
@@ -151,23 +153,23 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: this.changeLabels.bind(this)
+      operation: () => this.changeLabels()
     },
     {
       icon: 'private',
-      operation: this.changeLabels.bind(this)
+      operation: () => this.makePrivateNotes()
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyNotes.bind(this)
+      operation: () => this.copyNotes()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -179,7 +181,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'delete',
-      operation: this.setdeleteNotes.bind(this)
+      operation: () => this.setdeleteNotes()
     }
   ];
 
@@ -194,15 +196,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyFolders.bind(this)
+      operation: () => this.copyFolders()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -214,11 +216,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveFolders.bind(this)
+      operation: () => this.archiveFolders()
     },
     {
       icon: 'delete',
-      operation: this.setDeleteFolders.bind(this)
+      operation: () => this.setDeleteFolders()
     }
   ];
   public foldersItemsShared: MenuItem[] = [
@@ -232,15 +234,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyFolders.bind(this)
+      operation: () => this.copyFolders()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -252,11 +254,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveFolders.bind(this)
+      operation: () => this.archiveFolders()
     },
     {
       icon: 'delete',
-      operation: this.setDeleteFolders.bind(this)
+      operation: () => this.setDeleteFolders()
     }
   ];
   public foldersItemsDeleted: MenuItem[] = [
@@ -270,15 +272,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyFolders.bind(this)
+      operation: () => this.copyFolders()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -290,15 +292,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'archive',
-      operation: this.archiveFolders.bind(this)
+      operation: () => this.archiveFolders()
     },
     {
       icon: 'delete',
-      operation: this.deleteFolders.bind(this)
+      operation: () => this.deleteFolders()
     },
     {
       icon: 'restore',
-      operation: this.restoreFolders.bind(this)
+      operation: () => this.restoreFolders()
     }
   ];
   public foldersItemsArchive: MenuItem[] = [
@@ -312,15 +314,15 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: this.shareEntity.bind(this)
+      operation: () => this.shareEntity()
     },
     {
       icon: 'copy',
-      operation: this.copyFolders.bind(this)
+      operation: () => this.copyFolders()
     },
     {
       icon: 'color',
-      operation: this.changeColor.bind(this)
+      operation: () => this.changeColor()
     },
     {
       icon: 'download',
@@ -332,7 +334,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'delete',
-      operation: this.setDeleteFolders.bind(this)
+      operation: () => this.setDeleteFolders()
     }
   ];
 
@@ -394,56 +396,104 @@ export class MenuButtonsService {
 
   // COPY
   private copyNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new CopyNotes(noteType));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new CopyNotes(note.noteType, ids));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new CopyNotes(noteType, ids));
+    }
   }
 
   private copyFolders() {
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new CopyFolders(folderType));
+    this.store.dispatch(new CopyFolders(folderType, ids));
   }
 
   // SET DELETE
   private setdeleteNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new SetDeleteNotes(noteType));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new SetDeleteNotes(noteType, ids));
+    }
   }
 
   private setDeleteFolders() {
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new SetDeleteFolders(folderType));
+    this.store.dispatch(new SetDeleteFolders(folderType, ids));
   }
 
   private makePrivateNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new MakePrivateNotes(noteType));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new MakePrivateNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new MakePrivateNotes(noteType , ids));
+    }
   }
 
   private restoreFolders() {
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new MakePrivateFolders(folderType));
+    this.store.dispatch(new MakePrivateFolders(folderType, ids));
   }
 
   // ARCHIVE
 
   archiveNotes() {
-    const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.store.dispatch(new ArchiveNotes(noteType));
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new ArchiveNotes(note.noteType, ids));
+      this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+    } else {
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new ArchiveNotes(noteType, ids));
+    }
   }
 
   archiveFolders() {
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new ArchiveFolders(folderType));
+    this.store.dispatch(new ArchiveFolders(folderType, ids));
   }
 
   // DELETE PERMANENTLY
 
   deleteNotes() {
-    this.store.dispatch(new DeleteNotesPermanently());
+    const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    if (isInnerNote) {
+      const note = this.store.selectSnapshot(NoteStore.oneFull);
+      const ids  = [note.id];
+      this.store.dispatch(new DeleteNotesPermanently(ids));
+    } else {
+      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new DeleteNotesPermanently(ids));
+    }
   }
 
   deleteFolders() {
-    this.store.dispatch(new DeleteFoldersPermanently());
+    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+    this.store.dispatch(new DeleteFoldersPermanently(ids));
   }
 
 }

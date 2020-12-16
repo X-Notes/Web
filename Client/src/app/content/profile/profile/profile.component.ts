@@ -5,25 +5,27 @@ import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
 import { Language } from 'src/app/shared/enums/Language';
-import { ChangeLanguage, ChangeFontSize, ChangeTheme,
-  UpdateUserName, UpdateUserPhoto, SetDefaultBackground  } from 'src/app/core/stateUser/user-action';
+import {
+  ChangeLanguage, ChangeFontSize, ChangeTheme,
+  UpdateUserName, UpdateUserPhoto, SetDefaultBackground
+} from 'src/app/core/stateUser/user-action';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AuthService } from 'src/app/core/auth.service';
-import { Router } from '@angular/router';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { takeUntil } from 'rxjs/operators';
 import { Background } from 'src/app/core/models/background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
-  animations: [ sideBarCloseOpen, showHistory ]
+  animations: [sideBarCloseOpen, showHistory]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
@@ -53,23 +55,30 @@ export class ProfileComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   constructor(public pService: PersonalizationService,
-              private store: Store,
-              private rend: Renderer2,
-              private authService: AuthService,
-              private router: Router) { }
+    private store: Store,
+    private rend: Renderer2,
+    private authService: AuthService) { }
 
   async ngOnInit() {
-    this.store.dispatch(new LoadBackgrounds());
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
     this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
+    this.store.select(AppStore.getTokenUpdated)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          this.store.dispatch(new LoadBackgrounds());
+        }
+      }
+      );
+
     this.pService.subject
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => this.newBackground());
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.newBackground());
   }
 
-  setLanguage(item: any): void  {
+  setLanguage(item: any): void {
     switch (item) {
       case 'Ukraine':
         this.store.dispatch(new ChangeLanguage(Language.UA));

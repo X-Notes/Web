@@ -6,7 +6,6 @@ import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 
 
 
@@ -18,11 +17,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class LabelsComponent implements OnInit {
 
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
-  @Select(AppStore.spinnerActive)
-  public spinnerActive$: Observable<boolean>;
 
   @Select(LabelStore.countAll)
   countAll$: Observable<number>;
@@ -38,7 +32,6 @@ export class LabelsComponent implements OnInit {
     public pService: PersonalizationService) {}
 
   async ngOnInit() {
-
     this.pService.onResize();
   }
 

@@ -1,7 +1,6 @@
 import { Overlay, OverlayConfig, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ComponentRef, Directive, ElementRef, HostListener, Input, OnDestroy } from '@angular/core';
 import { TooltipComponent } from './tooltip.component';
 
 @Directive({
@@ -85,8 +84,9 @@ export class TooltipDirective implements OnDestroy  {
   show() {
     if (this.disable === 'true') {
       return;
-    } else if (this.labelColor !== '') {
-      if (this.text.length < 9) {
+    }
+    if (this.labelColor !== '') {
+      if (this.text.length < 1) {
         return;
       }
     }

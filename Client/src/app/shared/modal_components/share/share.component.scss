@@ -1,4 +1,4 @@
-@import 'variables';
+@import "variables";
 
 :host {
   display: flex;
@@ -19,13 +19,13 @@
     width: 100%;
     padding: 0.625rem 1.25rem 0 1.25rem;
     overflow: hidden;
-  
+
     span {
       font-weight: 500;
       font-size: 0.875rem;
       white-space: nowrap;
     }
-  
+
     i {
       cursor: pointer;
       transform: rotate(45deg);
@@ -57,7 +57,7 @@
       padding-top: 0.625rem;
       margin-bottom: 0.625rem;
       height: calc(100% - 37px);
-
+      overflow-y: scroll;
       &::after,
       &::before {
         content: "";
@@ -78,25 +78,21 @@
       .note {
         display: flex;
         font-size: 1rem;
-        background-color: #FFF5EB;
         padding: 0.25rem 0.5rem;
         width: calc(100% - 2.25rem);
         margin: 0.875rem 1.125rem 0 1.125rem;
         color: $text-color;
         height: 27px;
+        min-width: 27px;
         border-radius: 50px;
         cursor: pointer;
-        overflow: hidden;
 
         &:first-child {
           margin-top: 0;
-          box-shadow: #0887a7 0px 0px 0px 2px;
         }
-        
-        p {
-          display: none;
-          @include text-overflow;
-        }
+      }
+      .active-note {
+        box-shadow: #0887a7 0px 0px 0px 2px;
       }
     }
   }
@@ -165,7 +161,6 @@
 
           input[type="text"] {
             height: 32px;
-            width: calc(100% - 203px);
             padding-left: 0.75rem;
             border-radius: 5px;
             border: 0.8px solid;
@@ -238,7 +233,7 @@
         height: 390px;
         margin: 1.25rem 0;
         padding: 0 2.5rem;
-        overflow-x: hidden;
+        overflow: hidden auto;
 
         .user {
           display: flex;
@@ -248,7 +243,7 @@
           border-radius: 10px;
           margin-bottom: 1rem;
           padding-left: 0.875rem;
-          background-color: #DDFFCD;
+          background-color: #ddffcd;
 
           &:last-child {
             margin-bottom: 0;
@@ -274,7 +269,8 @@
             width: calc(100% - 171px);
             margin-left: 0.875rem;
 
-            .name, .email {
+            .name,
+            .email {
               display: flex;
               width: 100%;
               color: $text-color;
@@ -315,6 +311,14 @@
               .icon {
                 display: flex;
                 font-size: 0.75rem;
+                i::before {
+                  color: #c4c4c4;
+                }
+              }
+              .black {
+                i::before {
+                  color: #202020 !important;
+                }
               }
             }
           }
@@ -353,7 +357,7 @@
           outline: none;
           border-radius: 0 5px 5px 0;
           cursor: not-allowed;
-          background-color: #EBEBEB;
+          background-color: #ebebeb;
 
           .icon {
             display: flex;
@@ -373,6 +377,7 @@
         height: calc(100% - 82px);
         width: 100%;
         padding: 0 2.5rem;
+        overflow: hidden auto;
 
         .mail-notification {
           display: flex;
@@ -381,20 +386,20 @@
           margin-top: 0.625rem;
           border-radius: 5px;
           background-color: #f2f2f2;
-          
+
           .mail-container {
             display: flex;
             flex-wrap: wrap;
             width: 100%;
             padding: 0.625rem 1rem;
-  
+
             &::after {
               content: "";
               width: 100%;
               height: 2px;
               border-radius: 5px;
             }
-  
+
             .user-mail {
               display: flex;
               padding: 0.375rem 0.75rem;
@@ -404,28 +409,28 @@
               max-width: 100%;
               margin-right: 1rem;
               margin-bottom: 0.75rem;
-  
+
               p {
                 @include text-overflow;
                 width: calc(100% - 26px);
               }
-  
+
               .icon {
                 display: flex;
                 margin-left: 0.625rem;
-  
+
                 i {
                   transform: rotate(45deg);
                 }
               }
             }
           }
-  
+
           .checkbox-notification {
             display: flex;
             width: 100%;
             padding: 0.625rem 1rem;
-  
+
             label {
               position: relative;
               display: flex;
@@ -433,11 +438,11 @@
               color: $text-color;
               padding-left: 2rem;
               user-select: none;
-  
+
               input[type="checkbox"] {
                 display: none;
               }
-  
+
               .checkbox {
                 position: absolute;
                 left: 0;
@@ -447,10 +452,10 @@
                 height: 16px;
                 width: 16px;
                 border-radius: 2px;
-                background-color: #E8E8E8;
+                background-color: #e8e8e8;
                 transition: 0.2s ease;
                 cursor: pointer;
-  
+
                 .icon {
                   display: flex;
                   font-size: 0.5rem;
@@ -459,22 +464,22 @@
                   transition: 0.2s ease;
                 }
               }
-  
+
               input:checked ~ .checkbox {
-                background-color: #4A85DF;
-  
+                background-color: #4a85df;
+
                 .icon {
                   opacity: 1;
                 }
               }
             }
           }
-  
+
           .interaction-mail {
             display: flex;
             width: 100%;
             padding: 0.625rem 1rem;
-  
+
             textarea {
               width: calc(100% - 142px);
               min-height: 60px;
@@ -486,14 +491,14 @@
               font-size: 1rem;
               padding: 0.5rem 1rem;
             }
-  
+
             .interaction-buttons {
               display: flex;
               flex-direction: column;
               width: 130px;
-  
-              .dropdown-button {  
-                background-color: #E8E8E8;
+
+              .dropdown-button {
+                background-color: #e8e8e8;
 
                 .content-button {
                   .icon {
@@ -501,7 +506,7 @@
                   }
                 }
               }
-  
+
               .send-button {
                 position: relative;
                 height: 32px;
@@ -512,9 +517,9 @@
                 user-select: none;
                 cursor: pointer;
                 border-radius: 5px;
-                background: linear-gradient(97.88deg, #0083BB 0%, #00AFE7 100%);
+                background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
                 margin-top: 0.5rem;
-  
+
                 .content-button {
                   position: relative;
                   z-index: 5;
@@ -529,7 +534,7 @@
             }
           }
         }
-  
+
         .user-suggestions {
           display: flex;
           flex-direction: column;
@@ -545,42 +550,41 @@
             margin-bottom: 0.9rem;
             padding: 0 0.875rem;
             background-color: #f2f2f2;
-  
-  
+
             &:last-child {
               margin-bottom: 0;
             }
-  
+
             .photo {
               display: flex;
               height: 30px;
               width: 30px;
               overflow: hidden;
               border-radius: 50%;
-  
+
               img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
               }
             }
-  
+
             .email {
               display: flex;
               width: calc(100% - 74px);
               margin-left: 0.875rem;
               color: $text-color;
-  
+
               p {
                 @include text-overflow;
               }
             }
-  
+
             .user-access-func {
               display: flex;
               align-items: center;
               height: 100%;
-  
+
               button[type="button"] {
                 display: flex;
                 align-items: center;
@@ -591,11 +595,11 @@
                 outline: none;
                 user-select: none;
                 cursor: pointer;
-  
+
                 &:last-child {
                   padding-right: 0;
                 }
-  
+
                 .icon {
                   display: flex;
                   font-size: 1rem;
@@ -628,25 +632,17 @@
 
     .notes-sharing {
       &::before {
-        background: linear-gradient(
-          0,
-          hsla(0, 0%, 100%, 0),
-          white
-        );
+        background: linear-gradient(0, hsla(0, 0%, 100%, 0), white);
       }
 
       &::after {
-        background: linear-gradient(
-          180deg,
-          hsla(0, 0%, 100%, 0),
-          white
-        );
+        background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), white);
       }
     }
   }
 
   .sharing {
-    background-color:  white;
+    background-color: white;
 
     .tabs {
       .dropdown-button {
@@ -712,29 +708,21 @@
 
 .dark {
   .few-notes {
-    background-color:  $dark-color;
+    background-color: $dark-color;
 
     .notes-sharing {
       &::before {
-        background: linear-gradient(
-          0,
-          hsla(0, 0%, 100%, 0),
-          $dark-color
-        );
+        background: linear-gradient(0, hsla(0, 0%, 100%, 0), $dark-color);
       }
 
       &::after {
-        background: linear-gradient(
-          180deg,
-          hsla(0, 0%, 100%, 0),
-          $dark-color
-        );
+        background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), $dark-color);
       }
     }
   }
 
   .sharing {
-    background-color:  $dark-color;
+    background-color: $dark-color;
 
     .tabs {
       .dropdown-button {
@@ -778,13 +766,13 @@
         .mail-notification {
           .mail-container {
             .user-mail {
-              background-color: #E8E8E8;
+              background-color: #e8e8e8;
             }
           }
 
           .interaction-mail {
             textarea {
-              background-color: #E8E8E8;
+              background-color: #e8e8e8;
             }
           }
         }
@@ -822,7 +810,7 @@
         .toggle-field {
           flex-direction: column;
           flex-wrap: wrap;
-  
+
           .toggle {
             width: 100%;
           }
@@ -901,10 +889,11 @@
         flex-direction: row;
         width: calc(100% - 3.75rem);
         margin-bottom: 0;
-        padding: 0.625rem  0 1.25rem 1.25rem;
+        padding: 0.625rem 0 1.25rem 1.25rem;
         margin: 0 2.5rem 0 1.25rem;
 
-        &::before, &::after {
+        &::before,
+        &::after {
           width: 10px;
           height: 100%;
         }
@@ -963,9 +952,10 @@
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.625rem  2.5rem 0 2.5rem;
+        padding: 0.625rem 2.5rem 0 2.5rem;
 
-        &::before, &::after {
+        &::before,
+        &::after {
           width: 100%;
           height: 10px;
         }
@@ -977,7 +967,7 @@
         &::after {
           bottom: 0;
         }
-        
+
         .note {
           width: 100%;
           margin: 0.875rem 0 0 0;
@@ -985,7 +975,7 @@
       }
     }
   }
-  
+
   .light {
     .few-notes {
       .notes-sharing {
@@ -1014,11 +1004,19 @@
     .few-notes {
       .notes-sharing {
         &::before {
-          background: linear-gradient(270deg, rgba(255, 255, 255, 0), $dark-color);
+          background: linear-gradient(
+            270deg,
+            rgba(255, 255, 255, 0),
+            $dark-color
+          );
         }
 
         &::after {
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0), $dark-color);
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0),
+            $dark-color
+          );
         }
       }
 
@@ -1028,7 +1026,11 @@
         }
 
         &::after {
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0), $dark-color);
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0),
+            $dark-color
+          );
         }
       }
     }
@@ -1047,7 +1049,7 @@
             .toggle {
               width: 100%;
             }
-  
+
             .toggle-description {
               justify-content: center;
               width: 100%;
@@ -1065,7 +1067,7 @@
   }
 }
 
-@media (max-width: 600px)  {
+@media (max-width: 600px) {
   .outer {
     height: 600px;
 
@@ -1222,15 +1224,16 @@
                 flex-wrap: wrap;
                 margin-top: 0;
 
-                .dropdown-button,.send-button {
+                .dropdown-button,
+                .send-button {
                   width: 100%;
                 }
-  
+
                 .dropdown-button {
                   margin-top: 0.5rem;
                   margin-right: 0;
                 }
-  
+
                 .send-button {
                   margin-top: 0.5rem;
                   margin-left: 0;
@@ -1319,7 +1322,7 @@
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.625rem  1.75rem 0 1.75rem;
+        padding: 0.625rem 1.75rem 0 1.75rem;
 
         .note {
           width: 100%;

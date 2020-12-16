@@ -26,9 +26,9 @@ namespace BI.services.folders
         public async Task<Unit> Handle(UpdateTitleFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null && Guid.TryParse(request.Id, out var guid))
+            if (user != null)
             {
-                var folder = await folderRepository.GetForUpdateTitle(guid);
+                var folder = await folderRepository.GetForUpdateTitle(request.Id);
                 switch(folder.FolderType)
                 {
                     case FoldersType.Shared:
@@ -56,8 +56,8 @@ namespace BI.services.folders
                             }
                             else
                             {
-                                var noteUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                                if (noteUser != null)
+                                var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
+                                if (folderUser != null && folderUser.AccessType == RefType.Editor)
                                 {
                                     folder.Title = request.Title;
                                     await folderRepository.UpdateFolder(folder);

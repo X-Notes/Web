@@ -42,15 +42,12 @@
             *ngSwitchCase="'label'"
             [themeHeader]="(theme$ | async)"></app-interaction-create>
 
-        <app-interaction-labels
-            class="interactions"
-            *ngSwitchCase="'label-delete'"></app-interaction-labels>
+        <app-interaction-labels class="interactions" *ngSwitchCase="'label-delete'"></app-interaction-labels>
 
-        <app-interaction-inner
-            class="interactions inner-helper"
-            *ngSwitchCase="'note-inner'"></app-interaction-inner>
+        <app-interaction-inner class="interactions inner-helper" *ngSwitchCase="'note-inner'"></app-interaction-inner>
 
-        <div class="interactions menu" *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))" [@showMenuLeftRight]>
+        <div class="interactions menu" *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+            [@showMenuLeftRight]>
             <app-menu class="menu-inner"></app-menu>
         </div>
 

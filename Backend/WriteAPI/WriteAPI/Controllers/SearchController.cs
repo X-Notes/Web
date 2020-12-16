@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using Common.DTO.search;
 using Domain.Queries.search;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WriteAPI.ControllerConfig;
+using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SearchController : ControllerBase
@@ -21,8 +25,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("share/modal")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<ShortUserForShareModal>> GetByUsersForShareModal(GetUsersForSharingModalQuery command)
         {
+            command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
     }

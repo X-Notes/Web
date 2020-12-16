@@ -8,8 +8,8 @@ namespace Domain.Queries.notes
 {
     public class GetFullNoteQuery: BaseQueryEntity, IRequest<FullNoteAnswer>
     {
-        public string Id { set; get; }
-        public GetFullNoteQuery(string email, string id)
+        public Guid Id { set; get; }
+        public GetFullNoteQuery(string email, Guid id)
             :base(email)
         {
             this.Id = id;

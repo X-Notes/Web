@@ -5,13 +5,13 @@ import { Store } from '@ngxs/store';
 import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel, } from '../state/labels-actions';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { take, takeUntil } from 'rxjs/operators';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import {  SpinnerChangeStatus, UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-all',
@@ -34,7 +34,7 @@ export class AllComponent implements OnInit, OnDestroy  {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
-    this.store.select(UserStore.getTokenUpdated)
+    this.store.select(AppStore.getTokenUpdated)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -46,14 +46,14 @@ export class AllComponent implements OnInit, OnDestroy  {
   }
 
   async loadContent() {
-    await this.store.dispatch(new SpinnerChangeStatus(true)).toPromise();
+    this.pService.setSpinnerState(true);
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.all);
     this.labelService.firstInit(labels);
 
     await this.pService.waitPreloading();
-    this.store.dispatch(new SpinnerChangeStatus(false));
+    this.pService.setSpinnerState(false);
     this.loaded = true;
     await this.murriService.initMurriLabelAsync(true);
     await this.murriService.setOpacityTrueAsync();

@@ -9,11 +9,11 @@ import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/servic
   selector: 'app-interaction-inner',
   templateUrl: './interaction-inner.component.html',
   styleUrls: ['./interaction-inner.component.scss'],
-  animations: [ showMenuLeftRight ],
+  animations: [showMenuLeftRight],
 })
 export class InteractionInnerComponent implements OnInit {
 
-  user: string[] = ['fucking person', 'fucking person', 'fucking person', 'fucking person', 'fucking person'
+  user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'
   ];
 
   constructor(public pService: PersonalizationService) { }
