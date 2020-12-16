@@ -19,7 +19,6 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { SmallNote } from '../models/smallNote';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { UpdateRouteWithNoteType } from 'src/app/core/stateApp/app-action';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -41,10 +40,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   providers: [NotesService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
-
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
 
   destroy = new Subject<void>();
 

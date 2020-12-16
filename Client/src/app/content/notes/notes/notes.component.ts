@@ -12,16 +12,6 @@ import { NoteStore } from '../state/notes-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { UpdateLabelEvent } from '../state/updateLabels';
-
-export enum subMenu {
-  All = 'all',
-  Shared = 'shared',
-  Locked = 'locked',
-  Archive = 'archive',
-  Bin = 'bin'
-}
-
 
 @Component({
   selector: 'app-notes',
@@ -44,11 +34,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(AppStore.spinnerActive)
   public spinnerActive$: Observable<boolean>;
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   public labelsFilters: LabelsForFiltersNotes[] = [];
-
 
   @Select(NoteStore.privateCount)
   public countPrivate: Observable<number>;

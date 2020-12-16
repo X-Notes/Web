@@ -26,9 +26,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
   @Select(AppStore.spinnerActive)
   public spinnerActive$: Observable<boolean>;
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   @Select(FolderStore.privateCount)
   public countPrivate: Observable<number>;
 
@@ -47,7 +44,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  theme = Theme;
   public photoError = false;
   constructor(public pService: PersonalizationService,
               private store: Store,

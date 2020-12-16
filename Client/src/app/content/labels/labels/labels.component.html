@@ -1,4 +1,4 @@
-<div appTheme class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div appTheme class="sub-nav">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <div class="sub-nav-item-section">
             <div class="sub-nav-item" routerLink="/profile" #profile>

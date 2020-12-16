@@ -1,4 +1,4 @@
-<div appTheme class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div appTheme class="sub-nav">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
             <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}" [routerLink]="['/notes/', item.id]">
@@ -22,7 +22,7 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div appTheme class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div appTheme class="content full-content">
     <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
         <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth"

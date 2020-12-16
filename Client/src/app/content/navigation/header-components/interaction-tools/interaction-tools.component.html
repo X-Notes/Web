@@ -1,4 +1,4 @@
-<div appTheme class="interactions" [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (theme$ | async) === theme.Light ? 'light' : 'dark', (isNoteInner$ | async) ? 'inner-menu' : '']">
+<div appTheme class="interactions" [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']">
     <div class="search">
         <input id="searchField" type="search" placeholder="{{ 'header.search' | translate }}" aria-label="Search">
         <label for="searchField">
