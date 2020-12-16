@@ -1,13 +1,16 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogData } from '../dialog_data';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
 import { Label } from 'src/app/content/labels/models/label';
 import { PersonalizationService } from '../../services/personalization.service';
 import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Observable } from 'rxjs';
+import { Theme } from '../../enums/Theme';
 
 
 @Component({
@@ -24,6 +27,11 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
               private store: Store) { }
 
   public labels: Label[];
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
+
+  theme = Theme;
 
   loaded = false;
   searchStr = '';

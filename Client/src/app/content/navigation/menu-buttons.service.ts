@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
-import { MenuItem } from './menu_item';
+import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { MatDialogConfig } from '@angular/material/dialog';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { DialogService } from 'src/app/shared/modal_components/dialog.service';
+import { Theme } from 'src/app/shared/enums/Theme';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { CopyNotes, SetDeleteNotes, ArchiveNotes, DeleteNotesPermanently, MakePrivateNotes } from '../notes/state/notes-actions';
-import { CopyFolders, SetDeleteFolders, ArchiveFolders,
-   DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
+import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
+import {
+  ArchiveFolders, CopyFolders,
+  DeleteFoldersPermanently, MakePrivateFolders, SetDeleteFolders
+} from '../folders/state/folders-actions';
+import { ArchiveNotes, CopyNotes, DeleteNotesPermanently, MakePrivateNotes, SetDeleteNotes } from '../notes/state/notes-actions';
+import { MenuItem } from './menu_item';
 
 
 @Injectable({providedIn: 'root'})
@@ -351,7 +353,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
-      maxHeight: '80vh',
+      maxHeight: '100%',
       data: {
         title: 'Colors'
       },
@@ -365,7 +367,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '450px',
-      height: '475px',
+      maxHeight: '100%',
       data: {
         title: 'Labels'
       },
@@ -379,7 +381,7 @@ export class MenuButtonsService {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       width: '650px',
-      maxHeight: '80vh',
+      maxHeight: '100%',
       data: {
         title: 'Share'
       },

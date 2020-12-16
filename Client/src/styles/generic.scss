@@ -6,6 +6,7 @@
     max-width: 90vw;
     padding: 0;
     border-radius: 15px;
+    overflow: hidden;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
     background-color: $dark-color;
     color: white;
@@ -15,10 +16,17 @@
 .custom-dialog-class-light {
   max-width: 90vw !important;
   mat-dialog-container {
+    max-width: 90vw;
     padding: 0;
     border-radius: 15px;
+    overflow: hidden;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
     color: #808080;
+  }
+}
+.cdk-overlay-container {
+  .cdk-global-overlay-wrapper {
+    overflow: auto;
   }
 }
 

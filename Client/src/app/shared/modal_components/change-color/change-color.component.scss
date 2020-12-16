@@ -19,7 +19,8 @@
 }
 
 .preview-container {
-  padding: 1.25rem 2.25rem 0 2.25rem;
+  margin: 1.25rem 2.25rem 0 2.25rem;
+  width: calc(100% - 4.5rem);
 
   .note {
     display: flex;
@@ -145,7 +146,8 @@
 }
 
 .color-container {
-  padding: 1.25rem 2.25rem 0 2.25rem;
+  margin: 1.25rem 2.25rem 0 2.25rem;
+  width: calc(100% - 4.5rem);
 
   .color-pallete {
     display: flex;
@@ -176,7 +178,8 @@
 }
 
 .button-container {
-  padding: 1.5rem 2.25rem 1.25rem 2.25rem;
+  margin: 1.5rem 2.25rem 1.25rem 2.25rem;
+  width: calc(100% - 4.5rem);
   display: flex;
   justify-content: flex-end;
 
