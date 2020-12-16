@@ -15,5 +15,11 @@ export class DialogService {
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
+
+    if (window.innerWidth > 600) {
+      dialogRef.disableClose = false;
+    } else {
+      dialogRef.disableClose = true;
+    }
   }
 }

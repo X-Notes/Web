@@ -27,6 +27,7 @@
 .cdk-overlay-container {
   .cdk-global-overlay-wrapper {
     overflow: auto;
+    pointer-events: auto;
   }
 }
 
