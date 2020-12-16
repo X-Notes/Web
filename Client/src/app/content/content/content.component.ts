@@ -21,6 +21,7 @@ export class ContentComponent implements OnInit, OnDestroy {
   theme = Theme;
 
   newButtonActive = false;
+  newProfile = false;
 
   constructor(public pService: PersonalizationService,
               private store: Store, ) { }
@@ -35,6 +36,12 @@ export class ContentComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {
         setTimeout(() => this.newButtonActive = z);
+      });
+
+    this.store.select(AppStore.isProfile)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(z => {
+        setTimeout(() => this.newProfile = z);
       });
   }
 
