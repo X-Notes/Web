@@ -1,4 +1,4 @@
-<div class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
+<div appTheme class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
         <ngx-simplebar [options]="pService.optionsScroll" class="background-section">
             <div class="background" *ngFor="let item of backgrounds$ | async"
@@ -26,7 +26,7 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
-<div class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''"
+<div appTheme class="content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''"
     [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
     <ngx-simplebar [options]="pService.optionsScroll" class="content-inner autoscroll-helper">
         <div class="main">
@@ -158,7 +158,7 @@
                                 </div>
                                 <div class="toggle">
                                     <input type="checkbox" (change)="changeTheme()">
-                                    <div class="rectangle" [ngClass]="(theme$ | async) ? '' : 'active-toggle'"></div>
+                                    <div appTheme class="rectangle" [ngClass]="(theme$ | async) ? '' : 'active-toggle'"></div>
                                     <div class="text-toggle">
                                         <div class="text">
                                             <p>{{ 'profile.themeDark' | translate }}</p>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/enums/Theme';
 import { Observable, Subject } from 'rxjs';
@@ -61,7 +61,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {

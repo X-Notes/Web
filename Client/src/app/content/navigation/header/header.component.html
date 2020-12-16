@@ -1,4 +1,4 @@
-<header [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
+<header appTheme [ngClass]="(theme$ | async) === theme.Light ? 'light' : 'dark'">
     
     <div class="profile-section">
         <div class="profile" routerLink="/profile" #profile>

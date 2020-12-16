@@ -1,4 +1,4 @@
-<div class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', isManyNotes ? 'many-notes' : 'one-note']">
+<div appTheme class="outer" [ngClass]="[isCollapse ? '' : 'half-helper', (theme$ | async) === theme.Light ? 'light' : 'dark', isManyNotes ? 'many-notes' : 'one-note']">
     <div class="few-notes" *ngIf="isManyNotes">
         <div class="header">
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
@@ -24,7 +24,7 @@
             <span>{{ ('modal.ShareModal.' + data.title) | translate }}</span>
             <i class="icon-plus" mat-dialog-close></i>
         </div>
-        <mat-tab-group class="tabs" mat-align-tabs="center"
+        <mat-tab-group appTheme class="tabs" mat-align-tabs="center"
             [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'" #tabs>
             <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
