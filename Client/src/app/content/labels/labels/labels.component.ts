@@ -17,9 +17,6 @@ import { ShortUser } from 'src/app/core/models/short-user';
 })
 export class LabelsComponent implements OnInit {
 
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;

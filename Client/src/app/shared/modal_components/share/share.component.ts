@@ -158,7 +158,12 @@ export class ShareComponent implements OnInit, OnDestroy {
       distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
-          const users = await this.searchService.searchUsers(searchStr).toPromise();
+          let users = await this.searchService.searchUsers(searchStr).toPromise();
+          let i = 0; // TODO DELETE
+          while (i < 6){
+            users = [...users, ...users];
+            i++;
+          }
           this.searchUsers = this.userFilters(users);
         } else {
           this.searchUsers = [];

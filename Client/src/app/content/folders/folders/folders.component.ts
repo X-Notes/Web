@@ -19,10 +19,6 @@ import { ShortUser } from 'src/app/core/models/short-user';
 })
 export class FoldersComponent implements OnInit, OnDestroy {
 
-  @ViewChild ('scrollMe', { static: true })
-  public myScrollContainer: ElementRef;
-
-
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
 

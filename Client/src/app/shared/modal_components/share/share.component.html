@@ -5,7 +5,7 @@
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <ngx-simplebar *ngIf="currentWindowType === windowType.Note" [options]="pService.optionsScroll"
+        <div appScrollControl *ngIf="currentWindowType === windowType.Note"
             [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
             <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
@@ -13,8 +13,8 @@
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title}}</p>
             </div>
-        </ngx-simplebar>
-        <ngx-simplebar *ngIf="currentWindowType === windowType.Folder" [options]="pService.optionsScroll"
+        </div>
+        <div appScrollControl *ngIf="currentWindowType === windowType.Folder"
             [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
             <div class="note" *ngFor="let item of folders" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
@@ -22,7 +22,7 @@
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title}}</p>
             </div>
-        </ngx-simplebar>
+        </div>
     </div>
     <div class="sharing">
         <div class="header">
@@ -136,7 +136,7 @@
                         </div>
                     </div>
                 </div>
-                <ngx-simplebar *ngIf="currentWindowType === windowType.Note" [options]="pService.optionsScroll"
+                <div appScrollControl *ngIf="currentWindowType === windowType.Note"
                     class="user-access">
                     <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
                         <div class="photo">
@@ -170,8 +170,8 @@
                             </button>
                         </div>
                     </div>
-                </ngx-simplebar>
-                <ngx-simplebar *ngIf="currentWindowType === windowType.Folder" [options]="pService.optionsScroll"
+                </div>
+                <div appScrollControl *ngIf="currentWindowType === windowType.Folder"
                     class="user-access">
                     <div *ngFor="let user of usersOnPrivateFolder$ | async" class="user">
                         <div class="photo">
@@ -205,7 +205,7 @@
                             </button>
                         </div>
                     </div>
-                </ngx-simplebar>
+                </div>
             </mat-tab>
             <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
                 <div class="search">
@@ -217,7 +217,7 @@
                         </div>
                     </button>
                 </div>
-                <ngx-simplebar [options]="pService.optionsScroll" class="interaction-container">
+                <div appScrollControl class="interaction-container">
                     <div *ngIf="selectedUsers.length > 0" class="mail-notification">
                         <div class="mail-container">
                             <div *ngFor="let user of selectedUsers" class="user-mail">
@@ -274,7 +274,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="user-suggestions">
+                    <div appScrollControl class="user-suggestions">
                         <div *ngFor="let user of searchUsers" class="user">
                             <div class="photo">
                                 <img alt="user image" [src]="user.photoId">
@@ -292,7 +292,7 @@
                             </div>
                         </div>
                     </div>
-                </ngx-simplebar>
+                </div>
             </mat-tab>
         </mat-tab-group>
     </div>

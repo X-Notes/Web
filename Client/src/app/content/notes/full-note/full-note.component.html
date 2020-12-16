@@ -1,11 +1,11 @@
 <div class="sub-nav" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <ngx-simplebar [options]="pService.optionsScroll" class="notes-section">
+        <div appScrollControl class="notes-section">
             <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}"
                 [routerLink]="['/notes/', item.id]">
                 <p>{{ item.title | replace: 'note' }}</p>
             </div>
-        </ngx-simplebar>
+        </div>
         <div class="information">
             <div class="separator"></div>
             <div class="progress-section">
@@ -26,7 +26,7 @@
 <div class="content full-content" [ngClass]="(theme$ | async) === theme.Light ? 'light' : ''">
     <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <ngx-simplebar [options]="pService.optionsScroll" [style.width.px]="sliderService.mainWidth"
+        <div [style.width.px]="sliderService.mainWidth"
             class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
             <div class="labels-section">
@@ -41,7 +41,7 @@
                 <div class="placeholder">Give title man</div>
                 <div class="left-border"></div>
             </div>
-        </ngx-simplebar>
+        </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
             <!-- [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}" -->
             <div class="open" #open>
@@ -50,7 +50,7 @@
                 <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
             </div>
             <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
-            <ngx-simplebar [options]="pService.optionsScroll" class="small-notes autoscroll-helper"
+            <div appScrollControl class="small-notes autoscroll-helper"
                 [ngClass]="pService.toggleHistory? 'history-plus' : ''">
                 <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
                     <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
@@ -92,7 +92,7 @@
                     </div>
                 </div>
                 <div class="drag-helper second-helper"></div>
-            </ngx-simplebar>
+            </div>
         </div>
     </div>
     <div *ngIf="canNoView$ | async" class="wrapper">

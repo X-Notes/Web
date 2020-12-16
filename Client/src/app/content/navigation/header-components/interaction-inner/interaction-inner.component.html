@@ -3,9 +3,9 @@
         <p>8</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
     </div>
-    <div class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
+    <div appScrollControl class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
         [@.disabled]="pService.AnimationInnerUsers">
-        <ngx-simplebar [options]="pService.optionsScroll" class="people-editing">
+        <div class="people-editing">
             <div class="person" *ngFor="let item of user" CustomTooltip="{{item}}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
                 <div class="inner-person">
                     <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
@@ -13,7 +13,7 @@
                 </div>
                 <p>12321321321333333333333333333333333333333333333333333333333</p>
             </div>
-        </ngx-simplebar>
+        </div>
     </div>
     <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Filter" type="button" class="generic generic-2" #video>
         <div class="inner-content">

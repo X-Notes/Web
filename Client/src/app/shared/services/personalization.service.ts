@@ -81,7 +81,6 @@ export class PersonalizationService {
 
   stateSidebar = true;
   orientationMobile = false;
-  optionsScroll = { autoHide: true, scrollbarMinSize: 100 };
 
   hideInnerMenu = false;
   AnimationInnerMenu = true;
