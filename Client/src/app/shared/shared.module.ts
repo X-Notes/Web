@@ -44,7 +44,8 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     SpinnerComponent,
     ThemeDirective,
     SharingLinkPipe,
-    ScrollControlDirective
+    ScrollControlDirective,
+    OverlayModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

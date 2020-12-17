@@ -106,22 +106,31 @@
                         <div class="field-name">
                             <p>{{ 'profile.language' | translate }}</p>
                         </div>
-                        <button class="generic-button dropdown-button" type="button" (click)="showDropdown()">
+                        <button class="generic-button dropdown-button"
+                                type="button"
+                                cdkOverlayOrigin
+                                #trigger="cdkOverlayOrigin"
+                                (click)="isOpen = !isOpen" >
                             <div class="content-button" #dropdownSelect>
                                 <p>{{ 'languages.' + (language$ | async) | translate }}</p>
-                                <div class="icon" [ngStyle]="{'transform': dropdownLanguage ? 'rotate(180deg)' : '' }">
+                                <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
                                     <i class="icon-select-label"></i>
                                 </div>
                             </div>
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                            <div class="dropdown" *ngIf="dropdownLanguage"
-                                [@showHistory]>
+                        </button>
+                        <ng-template (cdkConnectedOverlay)="overlayRef" [cdkConnectedOverlayOrigin]="trigger"
+                                    [cdkConnectedOverlayOpen]="isOpen"
+                                    [cdkConnectedOverlayHasBackdrop]="true"
+                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                    [cdkConnectedOverlayPositions]="positions"
+                                    (backdropClick)="closeDropdown()">
+                            <div class="dropdown" [@showDropdown]>
                                 <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
                                     <p>{{ 'languages.' + item | translate }}</p>
                                 </div>
                             </div>
-                            <div #overlay class="overlay" (click)="cancelDropdown()"></div>
-                        </button>
+                        </ng-template>
                     </div>
                     <div class="field-key">
                         <div class="field-name">

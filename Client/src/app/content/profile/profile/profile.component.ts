@@ -1,6 +1,6 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { PersonalizationService, sideBarCloseOpen, showHistory } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
@@ -20,12 +20,13 @@ import { Background } from 'src/app/core/models/background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
-  animations: [sideBarCloseOpen, showHistory]
+  animations: [sideBarCloseOpen, showDropdown]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
@@ -45,19 +46,28 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public backgrounds$: Observable<Background[]>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
+  @ViewChild(CdkConnectedOverlay) cdkConnectedOverlay: CdkConnectedOverlay;
 
-  @ViewChild('overlay') overlay: ElementRef;
   userName;
-  dropdownLanguage = false;
   languages = EnumUtil.getEnumValues(Language);
   theme = Theme;
   public photoError = false;
   destroy = new Subject<void>();
+  isOpen = false;
+
+  public positions = [
+      new ConnectionPositionPair({
+          originX: 'end',
+          originY: 'bottom'},
+          {overlayX: 'end',
+          overlayY: 'top'},
+          0,
+          1)
+  ];
 
   constructor(public pService: PersonalizationService,
-    private store: Store,
-    private rend: Renderer2,
-    private authService: AuthService) { }
+              private store: Store,
+              private authService: AuthService) { }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
@@ -90,6 +100,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ChangeLanguage(Language.EN));
         break;
     }
+    this.isOpen = false;
+    setTimeout( () => {
+      this.cdkConnectedOverlay.overlayRef.updatePosition();
+    }, 100);
+  }
+
+  closeDropdown() {
+    this.isOpen = false;
   }
 
   setCurrent(id: number) {
@@ -109,25 +127,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.authService.logout();
   }
 
-  showDropdown() {
-    this.dropdownLanguage = !this.dropdownLanguage;
-    if (this.dropdownLanguage) {
-      this.rend.setStyle(this.overlay.nativeElement, 'display', 'block');
-    } else {
-      this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
-    }
-  }
-
   updateName() {
     const oldName = this.store.selectSnapshot(UserStore.getUser).name;
     if (oldName !== this.userName) {
       this.store.dispatch(new UpdateUserName(this.userName));
     }
-  }
-
-  cancelDropdown() {
-    this.dropdownLanguage = true;
-    this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
   }
 
   changeLanguage(event) {

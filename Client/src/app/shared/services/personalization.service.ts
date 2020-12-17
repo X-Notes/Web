@@ -57,6 +57,13 @@ export const showHistory = trigger('showHistory', [
   ])
 ]);
 
+export const showDropdown = trigger('showDropdown', [
+  transition(':enter', [
+    style({ maxHeight: 0, opacity: 0 }),
+    animate('0.3s ease', style({ maxHeight: '*', opacity: 1, overflow: 'hidden'})),
+  ])
+]);
+
 export const tooltipAnimation = trigger('tooltip', [
   transition(':enter', [
     style({ opacity: 0 }),
