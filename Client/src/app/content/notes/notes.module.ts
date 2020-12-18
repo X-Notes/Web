@@ -16,7 +16,6 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { FullNoteContentService } from './full-note-content.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { HtmlComponent } from './full-note-components/html/html.component';
-import {QuillModule} from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -32,8 +31,7 @@ import {QuillModule} from 'ngx-quill';
   imports: [
     CommonModule,
     NoteRouting,
-    SharedModule,
-    QuillModule.forRoot()
+    SharedModule
   ],
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
