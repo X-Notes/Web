@@ -1,6 +1,7 @@
 import {
   Component, OnInit, OnDestroy,
-  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit} from '@angular/core';
+  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit
+} from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
@@ -10,7 +11,6 @@ import { DeleteCurrentNote, LoadAllNotes, LoadFullNote, UpdateTitle } from '../s
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { UpdateText } from '../models/parts/updateText';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -27,6 +27,8 @@ import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FullNoteContentService } from '../full-note-content.service';
+import { ContentModel, ContentType } from '../models/ContentMode';
 
 
 @Component({
@@ -41,6 +43,8 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  contentType = ContentType;
+  contents: ContentModel[] = [];
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
@@ -72,19 +76,20 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public pService: PersonalizationService,
               private rend: Renderer2,
               public sliderService: FullNoteSliderService,
-              public murriService: MurriService) {
+              public murriService: MurriService,
+              public contentService: FullNoteContentService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
       this.store.select(AppStore.getTokenUpdated)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (x: boolean) => {
-        if (x) {
-          await this.initNote();
-          this.store.dispatch(new LoadLabels());
+        .pipe(takeUntil(this.destroy))
+        .subscribe(async (x: boolean) => {
+          if (x) {
+            await this.initNote();
+            this.store.dispatch(new LoadLabels());
+          }
         }
-      }
-      );
+        );
     });
 
   }
@@ -113,16 +118,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   async LoadSecond() {
     await this.store.dispatch(new LoadAllNotes()).toPromise();
     this.store.select(NoteStore.oneFull)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (note) => {
-      if (note) {
-        await this.setSideBarNotes(note.noteType);
-      }
-    });
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (note) => {
+        if (note) {
+          await this.setSideBarNotes(note.noteType);
+        }
+      });
 
   }
 
   async ngOnInit() {
+    this.contents = this.contentService.getContent();
     this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
     this.sliderService.rend = this.rend;
@@ -179,13 +185,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
-  // TODO Logic for updating on websockets
-  initModel(html): UpdateText {
-    return {
-      rawHtml: html,
-      noteId: this.id
-    };
-  }
 
   updateDoc(str: string) {
     // TODO

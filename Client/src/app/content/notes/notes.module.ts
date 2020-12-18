@@ -13,7 +13,10 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
 import { FullNoteSliderService } from './full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
-
+import { FullNoteContentService } from './full-note-content.service';
+import { PhotosComponent } from './full-note-components/photos/photos.component';
+import { HtmlComponent } from './full-note-components/html/html.component';
+import {QuillModule} from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -23,15 +26,18 @@ import { MurriService } from 'src/app/shared/services/murri.service';
     PrivatesComponent,
     SharedComponent,
     DeletedComponent,
-    ArchiveComponent],
+    ArchiveComponent,
+    PhotosComponent,
+    HtmlComponent],
   imports: [
     CommonModule,
     NoteRouting,
-    SharedModule
+    SharedModule,
+    QuillModule.forRoot()
   ],
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, FullNoteSliderService, MurriService],
+  }, FullNoteSliderService, MurriService, FullNoteContentService],
 })
 export class NotesModule { }

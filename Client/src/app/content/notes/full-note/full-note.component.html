@@ -26,8 +26,7 @@
 <div appTheme class="content full-content">
     <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <div [style.width.px]="sliderService.mainWidth"
-            class="main-content">
+        <div [style.width.px]="sliderService.mainWidth" class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
             <div class="labels-section">
                 <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"
@@ -38,12 +37,20 @@
             <div class="title-section">
                 <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
                     class="title" (input)="onInput($event)"></div>
-                <div class="placeholder">Give title man</div>
+                <div class="placeholder">Title</div>
                 <div class="left-border"></div>
+            </div>
+            <div class="content-section">
+                <div *ngFor="let item of contents">
+                    <div [ngSwitch]="item.type">
+                        <app-html *ngSwitchCase="contentType.HTML" [content]="item"></app-html>
+                        <app-photos *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
+                        <div *ngSwitchDefault>Default</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
-            <!-- [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}" -->
             <div class="open" #open>
                 <i class="icon-plus"></i>
                 <p>open note or file</p>
