@@ -1,4 +1,5 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -21,7 +22,7 @@ import { FolderType } from '../../enums/FolderTypes';
 import { NoteType } from '../../enums/NoteTypes';
 import { Theme } from '../../enums/Theme';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
-import { PersonalizationService, showHistory } from '../../services/personalization.service';
+import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { DialogData } from '../dialog_data';
 
@@ -34,14 +35,16 @@ export enum SharedType {
   selector: 'app-share',
   templateUrl: './share.component.html',
   styleUrls: ['./share.component.scss'],
-  animations: [showHistory]
+  animations: [showDropdown]
 })
-export class ShareComponent implements OnInit, OnDestroy {
+export class ShareComponent implements OnInit, OnDestroy, AfterViewInit {
 
   windowType = SharedType;
   currentWindowType: SharedType;
 
-  dropdownActive = false;
+  isOpenDropdown = false;
+  isOpenDropdown2 = false;
+  isOpenDropdown3 = false;
   isCollapse = true;
   noteType = NoteType;
   folderType = FolderType;
@@ -58,8 +61,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   searchUsers: SearchUserForShareModal[] = [];
   selectedUsers: SearchUserForShareModal[] = [];
 
-  @ViewChild('overlay') overlay: ElementRef;
-  @ViewChild('overlay2') overlay2: ElementRef;
   @ViewChild('tabs', { static: false }) tabs;
 
   @Select(NoteStore.getUsersOnPrivateNote)
@@ -75,6 +76,16 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   commandsForChange = new Map<string, any[]>();
 
+  public positions = [
+    new ConnectionPositionPair({
+        originX: 'end',
+        originY: 'bottom'},
+        {overlayX: 'end',
+        overlayY: 'top'},
+        0,
+        1)
+  ];
+
   // INVITES
   messageTextArea: string;
   isSendNotification: boolean;
@@ -88,6 +99,9 @@ export class ShareComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService) {
+  }
+
+  ngAfterViewInit(): void {
   }
 
   ngOnDestroy(): void {
@@ -180,6 +194,12 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
   }
 
+  closeDropdown() {
+    this.isOpenDropdown = false;
+    this.isOpenDropdown2 = false;
+    this.isOpenDropdown3 = false;
+  }
+
   getFolders() {
     const selectionIds = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
@@ -232,25 +252,6 @@ export class ShareComponent implements OnInit, OnDestroy {
         document.execCommand('copy');
         input.setSelectionRange(0, 0);
         break;
-      }
-    }
-  }
-
-  changeActive() {
-    this.dropdownActive = !this.dropdownActive;
-    if (this.dropdownActive) {
-      if (this.overlay) {
-        this.rend.setStyle(this.overlay.nativeElement, 'display', 'block');
-      }
-      if (this.overlay2) {
-        this.rend.setStyle(this.overlay2.nativeElement, 'display', 'block');
-      }
-    } else {
-      if (this.overlay) {
-        this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
-      }
-      if (this.overlay2) {
-        this.rend.setStyle(this.overlay2.nativeElement, 'display', 'none');
       }
     }
   }
@@ -335,6 +336,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentNote.refType = refType;
     this.notes.find(note => note.id === this.currentNote.id).refType = refType;
     this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType));
+    this.isOpenDropdown2 = false;
   }
 
   async changeRefTypeFolder(refType: RefType) {
@@ -342,10 +344,12 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.currentFolder.refType = refType;
     this.folders.find(folder => folder.id === this.currentFolder.id).refType = refType;
     this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType));
+    this.isOpenDropdown = false;
   }
 
   refTypeNotification(refType: RefType): void {
     this.refTypeForInvite = refType;
+    this.isOpenDropdown3 = false;
   }
 
   async sendInvites() {
@@ -375,12 +379,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   changeFolder(folder: Folder) {
     this.currentFolder = { ...folder };
     this.store.dispatch(new GetInvitedUsersToFolder(folder.id));
-  }
-
-  cancelDropdown() {
-    this.dropdownActive = true;
-    this.rend.setStyle(this.overlay.nativeElement, 'display', 'none');
-    this.rend.setStyle(this.overlay2.nativeElement, 'display', 'none');
   }
 
   collapseToggle() {

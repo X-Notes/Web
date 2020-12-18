@@ -61,6 +61,9 @@ export const showDropdown = trigger('showDropdown', [
   transition(':enter', [
     style({ maxHeight: 0, opacity: 0 }),
     animate('0.3s ease', style({ maxHeight: '*', opacity: 1, overflow: 'hidden'})),
+  ]),
+  transition(':leave', [
+    animate('0.3s ease', style({ maxHeight: 0, opacity: 0, overflow: 'hidden' }))
   ])
 ]);
 

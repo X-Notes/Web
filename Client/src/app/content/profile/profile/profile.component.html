@@ -108,8 +108,8 @@
                         </div>
                         <button class="generic-button dropdown-button"
                                 type="button"
-                                cdkOverlayOrigin
-                                #trigger="cdkOverlayOrigin"
+                                cdk-overlay-origin
+                                #origin="cdkOverlayOrigin"
                                 (click)="isOpen = !isOpen" >
                             <div class="content-button" #dropdownSelect>
                                 <p>{{ 'languages.' + (language$ | async) | translate }}</p>
@@ -119,7 +119,7 @@
                             </div>
                             <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
                         </button>
-                        <ng-template (cdkConnectedOverlay)="overlayRef" [cdkConnectedOverlayOrigin]="trigger"
+                        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
                                     [cdkConnectedOverlayOpen]="isOpen"
                                     [cdkConnectedOverlayHasBackdrop]="true"
                                     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"

@@ -2,8 +2,8 @@ import { Directive, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/co
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UserStore } from '../core/stateUser/user-state';
-import { Theme } from './enums/Theme';
+import { UserStore } from '../../core/stateUser/user-state';
+import { Theme } from '../enums/Theme';
 
 @Directive({
   selector: '[appTheme]'
