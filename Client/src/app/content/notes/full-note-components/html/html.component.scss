@@ -1,0 +1,44 @@
+:host{
+    font-size: 1.125rem;
+}
+
+.container{
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+    min-height: 30px;
+    position: relative;
+    width: 100%;
+   // background-color: rgb(0 0 0 / 20%);
+    .default{
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        outline: none;
+        width: 100%;
+    }
+    .default:empty + .no-content{
+       visibility: visible;
+    }
+    .no-content{
+        visibility: hidden;
+        width: 100%;
+        top: calc(50% - 10px);
+        height: 20px;
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        color: #6a707c;
+        font-weight: 300;
+        .buttons{
+            z-index: 3;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            i {
+                cursor: pointer;
+                margin-left: 10px;
+            }
+        }
+    }
+}

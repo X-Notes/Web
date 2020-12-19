@@ -46,9 +46,9 @@
                         <app-html *ngSwitchCase="contentType.HTML" [content]="item"></app-html>
                         <app-photos *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
                         <div *ngSwitchDefault>Default</div>
-                    </div>
+                    </div>               
                 </div>
-                <app-default-component></app-default-component>
+                <app-html></app-html>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
