@@ -167,7 +167,7 @@
                                 </div>
                                 <div class="toggle">
                                     <input type="checkbox" (change)="changeTheme()">
-                                    <div appTheme class="rectangle" [ngClass]="(theme$ | async) ? '' : 'active-toggle'"></div>
+                                    <div class="rectangle"></div>
                                     <div class="text-toggle">
                                         <div class="text">
                                             <p>{{ 'profile.themeDark' | translate }}</p>

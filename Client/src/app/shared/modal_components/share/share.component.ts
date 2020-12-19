@@ -1,5 +1,5 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { AfterViewInit, Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -16,11 +16,9 @@ import { ChangeTypeFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateOn
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefType } from 'src/app/core/models/refType';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from '../../enums/EntityTypes';
 import { FolderType } from '../../enums/FolderTypes';
 import { NoteType } from '../../enums/NoteTypes';
-import { Theme } from '../../enums/Theme';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
@@ -37,7 +35,7 @@ export enum SharedType {
   styleUrls: ['./share.component.scss'],
   animations: [showDropdown]
 })
-export class ShareComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ShareComponent implements OnInit, OnDestroy {
 
   windowType = SharedType;
   currentWindowType: SharedType;
@@ -69,11 +67,6 @@ export class ShareComponent implements OnInit, OnDestroy, AfterViewInit {
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
-  theme = Theme;
-
   commandsForChange = new Map<string, any[]>();
 
   public positions = [
@@ -94,14 +87,10 @@ export class ShareComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public pService: PersonalizationService,
-    private rend: Renderer2,
     private store: Store,
     private searchService: SearchService,
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService) {
-  }
-
-  ngAfterViewInit(): void {
   }
 
   ngOnDestroy(): void {

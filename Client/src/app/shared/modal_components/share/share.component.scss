@@ -651,15 +651,14 @@
   .item {
     display: flex;
     align-items: center;
-    width: calc(100% - 1rem);
+    width: 100%;
     height: 24px;
     min-height: 24px;
-    margin: 0 0.5rem;
-    padding-left: 0.5rem;
+    padding: 0 1rem;
     transition: 0.2s ease;
     border-radius: 5px;
     color: #202020;
-    font-size: 0.85rem;
+    font-size: 0.825rem;
     cursor: pointer;
 
     &:hover {

@@ -351,7 +351,7 @@
     transition: 0.2s ease;
     border-radius: 5px;
     color: #202020;
-    font-size: 0.85rem;
+    font-size: 0.825rem;
     cursor: pointer;
 
     &:hover {
@@ -408,6 +408,22 @@
 
         .personalization-setting {
           .fields {
+
+            .field:first-child {
+              .general-row {
+                .toggle {
+                  .rectangle {
+                    left: 50%;
+                  }
+
+                  .text-toggle {
+                    .text:first-child {
+                      color: $text-color;
+                    }
+                  }
+                }
+              }
+            }
             .field {
               .general-row {
                 .toggle {

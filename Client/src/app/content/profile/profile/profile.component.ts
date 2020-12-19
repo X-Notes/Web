@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -30,9 +29,6 @@ import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from 
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
 
@@ -50,7 +46,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   userName;
   languages = EnumUtil.getEnumValues(Language);
-  theme = Theme;
   public photoError = false;
   destroy = new Subject<void>();
   isOpen = false;

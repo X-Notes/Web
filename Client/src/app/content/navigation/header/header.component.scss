@@ -231,17 +231,14 @@ header {
   .management-section {
     .right-tools {
       background-color: $dark-color;
-      transition: none;
     }
 
     .interactions {
       .hamburger {
-        transition: none;
 
         span,
         span::after,
         span::before {
-          transition: none;
           background-color: white;
         }
       }

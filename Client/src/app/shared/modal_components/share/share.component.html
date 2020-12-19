@@ -29,8 +29,7 @@
             <span>{{ ('modal.ShareModal.' + data.title) | translate }}</span>
             <i class="icon-plus" mat-dialog-close></i>
         </div>
-        <mat-tab-group class="tabs" mat-align-tabs="center"
-            [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'" #tabs>
+        <mat-tab-group class="tabs" mat-align-tabs="center" #tabs>
             <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
                     <div class="link-access-field">
