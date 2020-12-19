@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy,
-  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit
+  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit, QueryList, ViewChildren
 } from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
@@ -29,6 +29,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
 import { ContentModel, ContentType } from '../models/ContentMode';
+import { HtmlComponent } from '../full-note-components/html/html.component';
 
 
 @Component({
@@ -48,6 +49,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
+
+  @ViewChildren('htmlComp') htmlElements: QueryList<HtmlComponent>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -145,7 +148,20 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
+  placeHolderClick($event)
+  {
+    $event.preventDefault();
+    this.htmlElements.last.setFocus();
+  }
 
+  mouseEnter($event)
+  {
+    this.htmlElements.last.mouseEnter($event);
+  }
+  mouseOut($event)
+  {
+    this.htmlElements.last.mouseOut($event);
+  }
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {

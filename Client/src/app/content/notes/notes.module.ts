@@ -16,6 +16,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { FullNoteContentService } from './full-note-content.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { HtmlComponent } from './full-note-components/html/html.component';
+import { NavigationFullNoteService } from './navigation-full-note.service';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,6 @@ import { HtmlComponent } from './full-note-components/html/html.component';
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, FullNoteSliderService, MurriService, FullNoteContentService],
+  }, FullNoteSliderService, MurriService, FullNoteContentService, NavigationFullNoteService],
 })
 export class NotesModule { }

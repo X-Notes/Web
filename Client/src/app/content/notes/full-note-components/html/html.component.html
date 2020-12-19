@@ -1,6 +1,6 @@
-<div class="container">
-    <div contenteditable="true" class="default" [innerHTML]="content?.data.html"></div>
-    <div class="no-content">
+<div class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
+    <div #contentHtml contenteditable="true" class="default html-content" [innerHTML]="content?.data?.html" (blur)="onBlur($event)"></div>
+    <div *ngIf="visible" class="no-content">
         <p>Type / for browse options</p>
         <div class="buttons">
             <i class="icon-plus"></i>

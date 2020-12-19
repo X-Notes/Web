@@ -37,7 +37,9 @@ export class FullNoteContentService {
       'https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg',
       );
 
-    array.push(content1, content2, content3);
+    const contentDefault = new ContentModel<Html>();
+    contentDefault.type = ContentType.HTML;
+    array.push(content1, content2, content3, contentDefault);
     return array;
   }
 }

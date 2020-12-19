@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ContentModel, Html } from '../../models/ContentMode';
 
 @Component({
@@ -7,6 +7,10 @@ import { ContentModel, Html } from '../../models/ContentMode';
   styleUrls: ['./html.component.scss']
 })
 export class HtmlComponent implements OnInit {
+
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
+  visible = false;
 
   @Input()
   content: ContentModel<Html>;
@@ -17,5 +21,24 @@ export class HtmlComponent implements OnInit {
 
   }
 
+  mouseEnter($event)
+  {
+    this.visible = true;
+  }
+  mouseOut($event)
+  {
+    this.visible = document.activeElement === this.contentHtml.nativeElement;
+  }
+
+  onBlur($event)
+  {
+    this.visible = false;
+  }
+
+  setFocus($event?)
+  {
+    this.contentHtml.nativeElement.focus();
+    this.visible = true;
+  }
 
 }

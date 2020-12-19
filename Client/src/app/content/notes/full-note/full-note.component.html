@@ -43,12 +43,12 @@
             <div class="content-section">
                 <div *ngFor="let item of contents">
                     <div [ngSwitch]="item.type">
-                        <app-html *ngSwitchCase="contentType.HTML" [content]="item"></app-html>
+                        <app-html #htmlComp *ngSwitchCase="contentType.HTML" [content]="item"></app-html>
                         <app-photos *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>
-                <app-html></app-html>
+                <div class="empty" (mousedown)="placeHolderClick($event)" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)"></div>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
