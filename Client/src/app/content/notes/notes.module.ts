@@ -16,6 +16,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { FullNoteContentService } from './full-note-content.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { HtmlComponent } from './full-note-components/html/html.component';
+import { DefaultComponentComponent } from './full-note-components/default-component/default-component.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { HtmlComponent } from './full-note-components/html/html.component';
     DeletedComponent,
     ArchiveComponent,
     PhotosComponent,
-    HtmlComponent],
+    HtmlComponent,
+    DefaultComponentComponent],
   imports: [
     CommonModule,
     NoteRouting,
