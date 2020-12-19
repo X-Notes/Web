@@ -4,7 +4,7 @@
 
 .container{
     display: flex;
-    margin-top: 5px;
+    padding-top: 5px;
     position: relative;
     width: 100%;
     .default{
@@ -14,14 +14,10 @@
         outline: none;
         width: 100%;
     }
-    .default:empty + .no-content{
-       visibility: visible;
-    }
     .no-content{
         p{
             margin-left: 2px;
         }
-        visibility: hidden;
         width: 100%;
         position: absolute;
         display: flex;

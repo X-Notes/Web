@@ -21,13 +21,45 @@ export class HtmlComponent implements OnInit {
 
   }
 
+
+  buttonHandler($event)
+  {
+    $event.preventDefault();
+  }
+
+  preventClick($event)
+  {
+    $event.preventDefault();
+  }
+
+  async onInput(event) {
+    this.visible = this.isContentEmpty();
+    this.textClearing();
+  }
+
+
+  textClearing()
+  {
+   if (this.isContentEmpty())
+   {
+     this.contentHtml.nativeElement.innerHTML = '';
+   }
+  }
+
+  // PLACEHOLDER VISIBLE
+  isContentEmpty()
+  {
+    return this.contentHtml.nativeElement.textContent.length === 0;
+  }
+
   mouseEnter($event)
   {
-    this.visible = true;
+    this.visible = true && this.isContentEmpty();
   }
+
   mouseOut($event)
   {
-    this.visible = document.activeElement === this.contentHtml.nativeElement;
+    this.visible = (document.activeElement === this.contentHtml.nativeElement) && this.isContentEmpty();
   }
 
   onBlur($event)
@@ -38,7 +70,7 @@ export class HtmlComponent implements OnInit {
   setFocus($event?)
   {
     this.contentHtml.nativeElement.focus();
-    this.visible = true;
+    this.visible = true && this.isContentEmpty();
   }
 
 }

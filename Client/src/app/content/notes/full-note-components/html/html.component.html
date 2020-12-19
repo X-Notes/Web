@@ -1,18 +1,18 @@
 <div class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
-    <div #contentHtml contenteditable="true" class="default html-content" [innerHTML]="content?.data?.html" (blur)="onBlur($event)"></div>
+    <div #contentHtml (input)="onInput($event)" contenteditable="true" class="default html-content" [innerHTML]="content?.data?.html" (blur)="onBlur($event)"></div>
     <div *ngIf="visible" class="no-content">
         <p>Type / for browse options</p>
-        <div class="buttons">
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
-            <i class="icon-plus"></i>
+        <div class="buttons" (mousedown)="preventClick($event)" >
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
         </div>
     </div>
 </div>
