@@ -10,15 +10,17 @@ export class FullNoteContentService {
     const array: ContentModel[] = [];
 
     const content1 = new ContentModel<Html>();
+    content1.contentId = (Math.random() * (100000 - 1) + 1).toString();
     content1.type = ContentType.HTML;
     content1.data = {
       html: `<p>
-    TypeScript реализует объектно-ориентированный подход, в нем есть полноценная поддержка классов. Класс представляет шаблон
-для создания объектов и инкапсулирует функциональность, которую должен иметь объект. Класс определяет состояние и поведение, которыми обладает объект.
+    TypeScript реализует <b>объектно-ориентированный <i>подход, в нем <h1>есть полноценная поддержка</h1> классов. Класс</i> представляет шаблон
+для создания объектов и инкапсулирует функциональность, которую должен иметь объект.</b> Класс определяет состояние и поведение, которыми обладает объект.
      </p>`
     };
 
     const content2 = new ContentModel<Html>();
+    content2.contentId = (Math.random() * (100000 - 1) + 1).toString();
     content2.type = ContentType.HTML;
     content2.data = {
       html: `<p>
@@ -28,6 +30,7 @@ export class FullNoteContentService {
     };
 
     const content3 = new ContentModel<Photos>();
+    content3.contentId = (Math.random() * (100000 - 1) + 1).toString();
     content3.type = ContentType.PHOTO;
     content3.data = {
       photos: []
@@ -38,8 +41,16 @@ export class FullNoteContentService {
       );
 
     const contentDefault = new ContentModel<Html>();
+    contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.type = ContentType.HTML;
     array.push(content1, content2, content3, contentDefault);
     return array;
+  }
+
+  addElement()
+  {
+    const contentDefault = new ContentModel<Html>();
+    contentDefault.type = ContentType.HTML;
+    return contentDefault;
   }
 }

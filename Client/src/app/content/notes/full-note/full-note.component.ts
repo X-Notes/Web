@@ -30,6 +30,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
 import { ContentModel, ContentType } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
+import { LineBreakType } from '../html-models';
 
 
 @Component({
@@ -158,10 +159,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   {
     this.htmlElements.last.mouseEnter($event);
   }
+
   mouseOut($event)
   {
     this.htmlElements.last.mouseOut($event);
   }
+
+  enterHandler(value: {id: string,  typeBreak: LineBreakType.PREV_NO_CONTENT, html?: string}) // TODO CHANGE LOGIC
+  {
+    const newElement = this.contentService.addElement();
+
+    const elementCurrent = this.contents.find(x => x.contentId === value.id);
+    const index = this.contents.indexOf(elementCurrent);
+    this.contents.splice(index, 0 , newElement);
+
+    const numb = Math.random() * (100000 - 1) + 1;
+    setTimeout(() => newElement.contentId = numb.toString(), 100);
+    setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 100);
+  }
+
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {

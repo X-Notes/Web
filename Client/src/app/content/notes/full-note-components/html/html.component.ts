@@ -1,4 +1,7 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { type } from 'os';
+import { ContentEditableService } from '../../content-editable.service';
+import { LineBreakType } from '../../html-models';
 import { ContentModel, Html } from '../../models/ContentMode';
 
 @Component({
@@ -12,10 +15,13 @@ export class HtmlComponent implements OnInit {
 
   visible = false;
 
+  @Output()
+  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: string}>();
+
   @Input()
   content: ContentModel<Html>;
 
-  constructor() { }
+  constructor(private contEditService: ContentEditableService) { }
 
   ngOnInit(): void {
 
@@ -35,6 +41,14 @@ export class HtmlComponent implements OnInit {
   async onInput(event) {
     this.visible = this.isContentEmpty();
     this.textClearing();
+  }
+
+  async enter($event)
+  {
+    $event.preventDefault();
+    const check = this.contEditService.getCaretTopPoint(this.contentHtml);
+    console.log(check);
+    this.enterEvent.emit({ id : this.content.contentId, typeBreak : LineBreakType.PREV_NO_CONTENT});
   }
 
 
