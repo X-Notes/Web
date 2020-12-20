@@ -165,17 +165,35 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.htmlElements.last.mouseOut($event);
   }
 
-  enterHandler(value: {id: string,  typeBreak: LineBreakType.PREV_NO_CONTENT, html?: string}) // TODO CHANGE LOGIC
+  enterHandler(value: {id: string, typeBreak: LineBreakType, html?: DocumentFragment}) // TODO CHANGE LOGIC
   {
     const newElement = this.contentService.addElement();
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     const index = this.contents.indexOf(elementCurrent);
-    this.contents.splice(index, 0 , newElement);
+
+    switch (value.typeBreak){
+      case LineBreakType.PREV_NO_CONTENT: {
+        this.contents.splice(index, 0 , newElement);
+        break;
+      }
+      case LineBreakType.NEXT_WITH_CONTENT: {
+        console.log(newElement);
+        const div = document.createElement('div');
+        div.appendChild(value.html);
+        newElement.data.html = div.innerHTML;
+        this.contents.splice(index + 1, 0 , newElement);
+        break;
+      }
+      case LineBreakType.NEXT_NO_CONTENT: {
+        this.contents.splice(index + 1, 0 , newElement);
+        break;
+      }
+    }
 
     const numb = Math.random() * (100000 - 1) + 1;
     setTimeout(() => newElement.contentId = numb.toString(), 100);
-    setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 100);
+    setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 0);
   }
 
 

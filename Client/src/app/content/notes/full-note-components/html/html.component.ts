@@ -16,7 +16,7 @@ export class HtmlComponent implements OnInit {
   visible = false;
 
   @Output()
-  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: string}>();
+  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment}>();
 
   @Input()
   content: ContentModel<Html>;
@@ -46,9 +46,8 @@ export class HtmlComponent implements OnInit {
   async enter($event)
   {
     $event.preventDefault();
-    const check = this.contEditService.getCaretTopPoint(this.contentHtml);
-    console.log(check);
-    this.enterEvent.emit({ id : this.content.contentId, typeBreak : LineBreakType.PREV_NO_CONTENT});
+    const model = this.contEditService.enterService(this.contentHtml);
+    this.enterEvent.emit({ id : this.content.contentId, typeBreak : model.typeBreakLine, html: model.nextContent});
   }
 
 
