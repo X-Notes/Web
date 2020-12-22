@@ -199,6 +199,19 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => newElement.contentId = numb.toString(), 100);
   }
 
+  deleteHTMLHandler(id: string)
+  {
+    const item = this.contents.find(z => z.contentId === id);
+    let indexOf = this.contents.indexOf(item);
+
+    if (indexOf !== 0)
+    {
+        this.contents = this.contents.filter(z => z.contentId !== id);
+        indexOf--;
+        setTimeout(() =>  { this.htmlElements.toArray()[indexOf].setFocusToEnd(); }, 0);
+    }
+  }
+
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {

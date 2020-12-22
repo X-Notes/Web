@@ -43,7 +43,14 @@
             <div class="content-section">
                 <div *ngFor="let item of contents">
                     <div [ngSwitch]="item.type">
-                        <app-html #htmlComp *ngSwitchCase="contentType.HTML"  (enterEvent)="enterHandler($event)" [content]="item"></app-html>
+
+                        <app-html #htmlComp *ngSwitchCase="contentType.HTML"  
+                        (enterEvent)="enterHandler($event)" 
+                        [content]="item"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        >
+                        </app-html>
+
                         <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               

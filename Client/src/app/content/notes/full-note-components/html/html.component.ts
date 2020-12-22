@@ -18,6 +18,9 @@ export class HtmlComponent implements OnInit {
   @Output()
   enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment}>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
   @Input()
   content: ContentModel<Html>;
 
@@ -50,6 +53,18 @@ export class HtmlComponent implements OnInit {
     this.enterEvent.emit({ id : this.content.contentId, typeBreak : model.typeBreakLine, html: model.nextContent});
   }
 
+  async back($event: KeyboardEvent) {
+    if (this.isContentEmpty())
+    {
+      this.deleteThis.emit(this.content.contentId);
+    }
+    if (this.isContentOneSymbol())
+    {
+      this.visible = true;
+      this.contentHtml.nativeElement.innerHTML = '';
+    }
+  }
+
 
   textClearing()
   {
@@ -63,6 +78,10 @@ export class HtmlComponent implements OnInit {
   isContentEmpty()
   {
     return this.contentHtml.nativeElement.textContent.length === 0;
+  }
+  isContentOneSymbol()
+  {
+    return this.contentHtml.nativeElement.textContent === ' ';
   }
 
   mouseEnter($event)
@@ -83,6 +102,12 @@ export class HtmlComponent implements OnInit {
   setFocus($event?)
   {
     this.contentHtml.nativeElement.focus();
+    this.visible = true && this.isContentEmpty();
+  }
+
+  setFocusToEnd()
+  {
+    this.contEditService.setCursor(this.contentHtml, false);
     this.visible = true && this.isContentEmpty();
   }
 

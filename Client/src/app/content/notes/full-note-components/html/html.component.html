@@ -2,7 +2,8 @@
     <div #contentHtml contenteditable="true" class="default html-content" [innerHTML]="content?.data?.html"
         (keydown.enter)="enter($event)"
         (input)="onInput($event)" 
-        (blur)="onBlur($event)">
+        (blur)="onBlur($event)"
+        (keyup.backspace)="back($event)">
     </div>
     <div *ngIf="visible" class="no-content">
         <p>Type / for browse options</p>
