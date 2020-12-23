@@ -1,8 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Select } from '@ngxs/store';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 
 @Component({

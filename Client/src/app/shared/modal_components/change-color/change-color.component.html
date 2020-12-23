@@ -43,8 +43,9 @@
         </div>
     </div>
 </div>
-<div class="button-container">
-    <div appTheme class="save-button" (click)="changeColor()" [ngClass]="(theme$ | async) === theme.Light ? 'white-button' : 'dark-button'">
+<div appTheme class="button-container">
+    <div class="save-button" (click)="changeColor()" #saveButton>
         <span>{{ 'modal.ColorModal.save' | translate }}</span>
+        <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
     </div>
 </div>

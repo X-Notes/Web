@@ -85,18 +85,37 @@
     width: calc(100% - 660px);
     margin-right: auto;
     transition: 0.2s ease;
-    overflow-x: scroll;
-    overflow-y: hidden;
 
-    &::-webkit-scrollbar {
-      width: 7px;
-      height: 5px;
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 5;
+      width: 12px;
+      height: 100%;
+    }
+
+    &::before {
+      left: 0;
+      background: linear-gradient(270deg, hsla(0, 0%, 100%, 0), $dark-color);
+    }
+
+    &::after {
+      right: 0;
+      background: linear-gradient(90deg, hsla(0, 0%, 100%, 0), $dark-color);
     }
 
     .people-editing {
       display: flex;
       width: 100%;
       padding-top: 5px;
+      overflow: auto hidden;
+
+      &::-webkit-scrollbar {
+        width: 7px;
+        height: 5px;
+      }
 
       .person {
         display: flex;
@@ -123,26 +142,6 @@
           @include text-overflow;
           width: calc(100% - 44px);
         }
-      }
-
-      &::after,
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        z-index: 5;
-        width: 12px;
-        height: 100%;
-      }
-
-      &::before {
-        left: 0;
-        background: linear-gradient(270deg, hsla(0, 0%, 100%, 0), $dark-color);
-      }
-
-      &::after {
-        right: 0;
-        background: linear-gradient(90deg, hsla(0, 0%, 100%, 0), $dark-color);
       }
     }
   }
@@ -197,14 +196,12 @@
   }
 
   .wrapper-people {
-    .people-editing {
-      &::before {
-        background-image: linear-gradient(270deg, hsla(0, 0%, 100%, 0), white);
-      }
+    &::before {
+      background-image: linear-gradient(270deg, hsla(0, 0%, 100%, 0), white);
+    }
 
-      &::after {
-        background-image: linear-gradient(90deg, hsla(0, 0%, 100%, 0), white);
-      }
+    &::after {
+      background-image: linear-gradient(90deg, hsla(0, 0%, 100%, 0), white);
     }
   }
 
@@ -252,10 +249,8 @@
     }
 
     .wrapper-people {
-      overflow-y: scroll;
-      overflow-x: hidden;
-
       position: absolute;
+      z-index: 6;
       left: 4vw;
       top: 50px;
       height: auto;
@@ -266,8 +261,14 @@
       border: 0.8px solid transparent;
       border-radius: 5px;
 
+      &::after,
+      &::before {
+        content: none;
+      }
+
       .people-editing {
         flex-direction: column;
+        overflow: hidden auto;
         .person {
           width: 100%;
           padding: 1rem;
@@ -285,11 +286,6 @@
           &:hover {
             background-color: $dark-button;
           }
-        }
-
-        &::after,
-        &::before {
-          content: none;
         }
       }
     }
@@ -359,8 +355,9 @@
       }
     }
 
-    .menu-inner-fixed {
+    .menu-inner {
       position: absolute;
+      z-index: 6;
       top: 50px;
       right: 4vw;
       margin-right: 0;
@@ -393,6 +390,7 @@
 
     .wrapper-people {
       position: static;
+      z-index: initial;
       left: initial;
       top: initial;
       height: 100%;
@@ -402,11 +400,11 @@
       background-color: initial;
       border: 0;
       border-radius: initial;
-      overflow-y: hidden;
-      overflow-x: scroll;
 
       .people-editing {
         flex-direction: row;
+        overflow: auto hidden;
+
         .person {
           width: auto;
           padding: 0 0.375rem;
@@ -463,7 +461,7 @@
       width: 30px;
     }
 
-    .menu-inner-fixed {
+    .menu-inner {
       top: 45px;
     }
 

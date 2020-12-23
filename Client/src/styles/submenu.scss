@@ -240,6 +240,7 @@
         cursor: pointer;
         border-radius: 5px;
         transition: 0.2s ease;
+        overflow: hidden;
 
         .thumbnail {
           position: absolute;

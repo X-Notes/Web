@@ -29,61 +29,81 @@
             <span>{{ ('modal.ShareModal.' + data.title) | translate }}</span>
             <i class="icon-plus" mat-dialog-close></i>
         </div>
-        <mat-tab-group class="tabs" mat-align-tabs="center"
-            [ngClass]="(theme$ | async) === theme.Light ? 'light-tab' : 'dark-tab'" #tabs>
+        <mat-tab-group class="tabs" mat-align-tabs="center" #tabs>
             <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
                 <div class="content-access">
                     <div class="link-access-field">
                         <input *ngIf="currentWindowType === windowType.Note"
-                            [ngStyle]="{'width': currentNote?.noteType !== noteType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
+                            [ngClass]="currentNote?.noteType !== noteType.Shared ? 'link-width-not-shared' : 'link-width-shared'"
                             readonly type="text" value="{{ currentNote?.id | sharingLink: currentWindowType}}"
                             id="linkInputNote">
                         <input *ngIf="currentWindowType === windowType.Folder"
-                            [ngStyle]="{'width': currentFolder?.folderType !== folderType.Shared ? 'calc(100% - 40px)' : 'calc(100% - 203px)'}"
+                            [ngClass]="currentNote?.noteType !== noteType.Shared ? 'link-width-not-shared' : 'link-width-shared'"
                             readonly type="text" value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
                             id="linkInputFolder">
-                        <button
-                            *ngIf="currentFolder?.folderType === folderType.Shared && currentWindowType === windowType.Folder"
-                            class="dropdown-button" type="button" (click)="changeActive()">
-                            <div class="content-button" #dropdownSelect>
-                                <p *ngIf="currentFolder?.refType === refType.Viewer">Viewer</p>
-                                <p *ngIf="currentFolder?.refType === refType.Editor">Editor</p>
-                                <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
-                                    <i class="icon-select-label"></i>
+                        <div class="dropdown-wrapper" *ngIf="currentFolder?.folderType === folderType.Shared && currentWindowType === windowType.Folder">
+                            <button
+                                class="dropdown-button" type="button"
+                                cdkOverlayOrigin
+                                #dropdown1
+                                #origin="cdkOverlayOrigin"
+                                (click)="isOpenDropdown = !isOpenDropdown">
+                                <div class="content-button" #dropdownSelect>
+                                    <p *ngIf="currentFolder?.refType === refType.Viewer">Viewer</p>
+                                    <p *ngIf="currentFolder?.refType === refType.Editor">Editor</p>
+                                    <div class="icon" [ngStyle]="{'transform': isOpenDropdown ? 'rotate(180deg)' : '' }">
+                                        <i class="icon-select-label"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                            <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
-                                <div class="item" (click)="changeRefTypeFolder(refType.Viewer)">
-                                    <p>Viewer</p>
+                                <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                            </button>
+                            <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+                                        [cdkConnectedOverlayOpen]="isOpenDropdown"
+                                        [cdkConnectedOverlayHasBackdrop]="true"
+                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                        [cdkConnectedOverlayPositions]="positions"
+                                        (backdropClick)="closeDropdown()">
+                                <div class="dropdown dropdown-width" [@showDropdown] [style.width.px]="dropdown1.offsetWidth">
+                                    <div class="item" (click)="changeRefTypeFolder(refType.Viewer)">
+                                        <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
+                                    </div>
+                                    <div class="item" (click)="changeRefTypeFolder(refType.Editor)">
+                                        <p>{{ 'modal.ShareModal.editor' | translate }}</p>
+                                    </div>
                                 </div>
-                                <div class="item" (click)="changeRefTypeFolder(refType.Editor)">
-                                    <p>Editor</p>
+                            </ng-template>
+                        </div>
+                        <div class="dropdown-wrapper" *ngIf="currentNote?.noteType === noteType.Shared && currentWindowType === windowType.Note">
+                            <button class="dropdown-button" type="button"
+                                cdkOverlayOrigin
+                                #origin2="cdkOverlayOrigin"
+                                #dropdown2
+                                (click)="isOpenDropdown2 = !isOpenDropdown2">
+                                <div class="content-button" #dropdownSelect>
+                                    <p *ngIf="currentNote?.refType === refType.Viewer">Viewer</p>
+                                    <p *ngIf="currentNote?.refType === refType.Editor">Editor</p>
+                                    <div class="icon" [ngStyle]="{'transform': isOpenDropdown2 ? 'rotate(180deg)' : '' }">
+                                        <i class="icon-select-label"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div #overlay class="overlay" (click)="cancelDropdown()"></div>
-                        </button>
-                        <button
-                            *ngIf="currentNote?.noteType === noteType.Shared && currentWindowType === windowType.Note"
-                            class="dropdown-button" type="button" (click)="changeActive()">
-                            <div class="content-button" #dropdownSelect>
-                                <p *ngIf="currentNote?.refType === refType.Viewer">Viewer</p>
-                                <p *ngIf="currentNote?.refType === refType.Editor">Editor</p>
-                                <div class="icon" [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
-                                    <i class="icon-select-label"></i>
+                                <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                            </button>
+                            <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin2"
+                                        [cdkConnectedOverlayOpen]="isOpenDropdown2"
+                                        [cdkConnectedOverlayHasBackdrop]="true"
+                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                        [cdkConnectedOverlayPositions]="positions"
+                                        (backdropClick)="closeDropdown()">
+                                <div class="dropdown dropdown-width" [@showDropdown] [style.width.px]="dropdown2.offsetWidth">
+                                    <div class="item" (click)="changeRefTypeNote(refType.Viewer)">
+                                        <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
+                                    </div>
+                                    <div class="item" (click)="changeRefTypeNote(refType.Editor)">
+                                        <p>{{ 'modal.ShareModal.editor' | translate }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                            <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
-                                <div class="item" (click)="changeRefTypeNote(refType.Viewer)">
-                                    <p>Viewer</p>
-                                </div>
-                                <div class="item" (click)="changeRefTypeNote(refType.Editor)">
-                                    <p>Editor</p>
-                                </div>
-                            </div>
-                            <div #overlay class="overlay" (click)="cancelDropdown()"></div>
-                        </button>
+                            </ng-template>
+                        </div>
                         <div class="copy" #copy (click)="copyInputLink()">
                             <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
                             <i class="icon-copy"></i>
@@ -218,7 +238,7 @@
                     </button>
                 </div>
                 <div appScrollControl class="interaction-container">
-                    <div *ngIf="selectedUsers.length > 0" class="mail-notification">
+                    <div class="mail-notification">
                         <div class="mail-container">
                             <div *ngFor="let user of selectedUsers" class="user-mail">
                                 <p>{{user.email}}</p>
@@ -242,28 +262,40 @@
                         <div class="interaction-mail">
                             <textarea [(ngModel)]="messageTextArea"></textarea>
                             <div class="interaction-buttons">
-                                <button class="dropdown-button" type="button" (click)="changeActive()">
-                                    <div class="content-button" #AccessSelect>
-                                        <p *ngIf="refTypeForInvite === refType.Viewer">
-                                            {{ 'modal.ShareModal.viewer' | translate }}</p>
-                                        <p *ngIf="refTypeForInvite === refType.Editor">
-                                            {{ 'modal.ShareModal.editor' | translate }}</p>
-                                        <div class="icon"
-                                            [ngStyle]="{'transform': dropdownActive ? 'rotate(180deg)' : '' }">
-                                            <i class="icon-select-label"></i>
+                                <div class="dropdown-wrapper">
+                                    <button class="dropdown-button" type="button"
+                                            cdkOverlayOrigin
+                                            #origin3="cdkOverlayOrigin"
+                                            #dropdown3
+                                            (click)="isOpenDropdown3 = !isOpenDropdown3">
+                                        <div class="content-button" #AccessSelect>
+                                            <p *ngIf="refTypeForInvite === refType.Viewer">
+                                                {{ 'modal.ShareModal.viewer' | translate }}</p>
+                                            <p *ngIf="refTypeForInvite === refType.Editor">
+                                                {{ 'modal.ShareModal.editor' | translate }}</p>
+                                            <div class="icon"
+                                                [ngStyle]="{'transform': isOpenDropdown3 ? 'rotate(180deg)' : '' }">
+                                                <i class="icon-select-label"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="AccessSelect"></div>
-                                    <div class="dropdown" *ngIf="dropdownActive" [@showHistory]>
-                                        <div class="item" (click)="refTypeNotification(refType.Viewer)">
-                                            <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
+                                        <div class="ripple-container" matRipple [matRippleTrigger]="AccessSelect"></div>
+                                    </button>
+                                    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin3"
+                                        [cdkConnectedOverlayOpen]="isOpenDropdown3"
+                                        [cdkConnectedOverlayHasBackdrop]="true"
+                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                        [cdkConnectedOverlayPositions]="positions"
+                                        (backdropClick)="closeDropdown()">
+                                        <div class="dropdown dropdown-width2" [@showDropdown] [style.width.px]="dropdown3.offsetWidth">
+                                            <div class="item" (click)="refTypeNotification(refType.Viewer)">
+                                                <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
+                                            </div>
+                                            <div class="item" (click)="refTypeNotification(refType.Editor)">
+                                                <p>{{ 'modal.ShareModal.editor' | translate }}</p>
+                                            </div>
                                         </div>
-                                        <div class="item" (click)="refTypeNotification(refType.Editor)">
-                                            <p>{{ 'modal.ShareModal.editor' | translate }}</p>
-                                        </div>
-                                    </div>
-                                    <div #overlay2 class="overlay" (click)="cancelDropdown()"></div>
-                                </button>
+                                    </ng-template>
+                                </div>
                                 <button class="send-button" type="button" #changeAccessRipple (click)="sendInvites()">
                                     <div class="content-button">
                                         <p>{{ 'modal.ShareModal.send' | translate }}</p>
@@ -285,186 +317,6 @@
                             </div>
                             <div class="user-access-func">
                                 <button type="button" name="Share user note" (click)="addUserToInvite(user)">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="user">
-                            <div class="photo">
-                                <img alt="user image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-                            </div>
-                            <div class="email">
-                                <p>dadadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@adadasdj;@sds;d;d.,clald</p>
-                            </div>
-                            <div class="user-access-func">
-                                <button type="button" name="Share user note">
                                     <div class="icon">
                                         <i class="icon-plus"></i>
                                     </div>
