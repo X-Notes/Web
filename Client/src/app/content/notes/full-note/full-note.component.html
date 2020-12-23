@@ -26,7 +26,7 @@
 <div appTheme class="content full-content">
     <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <div [style.width.px]="sliderService.mainWidth" class="main-content">
+        <div appSelection [style.width.px]="sliderService.mainWidth" class="main-content">
             <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
             <div class="labels-section">
                 <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"

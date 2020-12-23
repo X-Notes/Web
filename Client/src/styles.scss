@@ -73,6 +73,11 @@ input {
   min-height: 90px;
 }
 
+.full-note-selection{
+  display: block;
+  position: absolute;
+  background-color: rgba(255, 183, 100, 0.5);
+}
 /*
 ::-webkit-scrollbar-corner {
 

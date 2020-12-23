@@ -31,6 +31,9 @@ import { FullNoteContentService } from '../full-note-content.service';
 import { ContentModel, ContentType } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
+import { SelectionService } from '../selection.service';
+import { NavigationFullNoteService } from '../navigation-full-note.service';
+import { ContentEditableService } from '../content-editable.service';
 
 
 @Component({
@@ -41,7 +44,8 @@ import { LineBreakType } from '../html-models';
     sideBarCloseOpen,
     deleteSmallNote,
     showHistory],
-  providers: [NotesService]
+  providers: [NotesService, SelectionService, FullNoteContentService,
+    NavigationFullNoteService, ContentEditableService, FullNoteSliderService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -81,7 +85,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private rend: Renderer2,
               public sliderService: FullNoteSliderService,
               public murriService: MurriService,
-              public contentService: FullNoteContentService) {
+              public contentService: FullNoteContentService,
+              private selectionService: SelectionService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
