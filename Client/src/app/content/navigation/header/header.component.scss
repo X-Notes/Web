@@ -1,11 +1,6 @@
 @import "variables";
 @import 'header-components';
 
-:host {
-  position: relative;
-  z-index: 6;
-}
-
 header {
   display: flex;
   height: 50px;
