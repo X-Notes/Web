@@ -15,14 +15,15 @@ export class SelectionDirective {
   mainContent: Element;
   ismousedown = false;
   isFullNote = false;
+  lastScrollNumber: number;
+  prevScrollValue = 0;
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
 
     setTimeout(() => this.init(), 1000);
   }
 
-  init()
-  {
+  init() {
     this.div = this.renderer.createElement('div');
     this.div.classList.add('full-note-selection');
 
@@ -39,7 +40,7 @@ export class SelectionDirective {
   @HostListener('mousedown', ['$event'])
   onClick(event) {
     this.isFullNote = true;
- }
+  }
 
   mouseDown(evt) {
 
@@ -63,20 +64,19 @@ export class SelectionDirective {
       this.finX = evt.pageX;
       this.finY = evt.pageY;
       const newValueX = (this.finX - this.x);
-      const newValueY = (this.finY - this.y);
+      const newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.prevScrollValue);
 
       this.div.style.width = newValueX + 'px';
       this.div.style.height = newValueY + 'px';
     }
   }
 
-  scrollEvent(e)
-  {
-    if (this.ismousedown && this.isFullNote) {
-
+  scrollEvent(e) {
+    if (!this.ismousedown)
+    {
+      this.prevScrollValue = this.mainContent.scrollTop;
     }
-    const newValueY = (this.finY - this.y + this.mainContent.scrollTop);
-    this.div.style.height = newValueY  + 'px';
-    console.log(this.mainContent.scrollTop);
+    const newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.prevScrollValue);
+    this.div.style.height = newValueY + 'px';
   }
 }
