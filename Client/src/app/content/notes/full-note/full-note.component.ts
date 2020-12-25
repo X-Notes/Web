@@ -217,6 +217,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  selectionHandler($event){
+    console.log($event);
+  }
+
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {

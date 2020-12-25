@@ -1,22 +1,31 @@
-import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Output, Renderer2 } from '@angular/core';
+
+export interface SelectionEvent {
+
+}
 
 @Directive({
   selector: '[appSelection]'
 })
 export class SelectionDirective {
 
+  @Output()
+  selectionEvent = new EventEmitter<number>();
+
   menuHeight = 49;
   sidebarWidth = 270;
+
   x;
   y;
   finX;
   finY;
-  div: any;
-  mainContent: Element;
   ismousedown = false;
   isFullNote = false;
-  lastScrollNumber: number;
-  prevScrollValue = 0;
+  startTop: number;
+
+  div: any;
+  mainContent: Element;
+
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
 
@@ -46,7 +55,8 @@ export class SelectionDirective {
 
     this.x = evt.pageX;
     this.y = evt.pageY;
-    this.div.style.top = (this.y - this.menuHeight + this.mainContent.scrollTop) + 'px';
+    this.startTop = this.mainContent.scrollTop;
+    this.div.style.top = (this.y - this.menuHeight + this.startTop) + 'px';
     this.div.style.left = (this.x - this.sidebarWidth) + 'px';
 
     this.ismousedown = true;
@@ -55,6 +65,8 @@ export class SelectionDirective {
   mouseUp(evt) {
     this.isFullNote = false;
     this.ismousedown = false;
+    this.startTop = 0;
+
     this.div.style.width = 0 + 'px';
     this.div.style.height = 0 + 'px';
   }
@@ -64,19 +76,36 @@ export class SelectionDirective {
       this.finX = evt.pageX;
       this.finY = evt.pageY;
       const newValueX = (this.finX - this.x);
-      const newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.prevScrollValue);
+
+      let newValueY = 0;
+      if (this.startTop !== this.mainContent.scrollTop) {
+        newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.startTop);
+      } else {
+        newValueY = (this.finY - this.y);
+      }
 
       this.div.style.width = newValueX + 'px';
       this.div.style.height = newValueY + 'px';
+
+      console.log('x', this.div.style.top);
+      console.log('y', this.div.style.left);
+      console.log('width', this.div.style.width);
+      console.log('height', this.div.style.height);
+      this.selectionEvent.emit(5);
     }
   }
 
   scrollEvent(e) {
-    if (!this.ismousedown)
-    {
-      this.prevScrollValue = this.mainContent.scrollTop;
+    if (this.ismousedown && this.isFullNote) {
+
+      let newValueY = 0;
+      if (this.startTop !== this.mainContent.scrollTop) {
+        newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.startTop);
+      } else {
+        newValueY = (this.finY - this.y);
+      }
+
+      this.div.style.height = newValueY + 'px';
     }
-    const newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.prevScrollValue);
-    this.div.style.height = newValueY + 'px';
   }
 }
