@@ -213,26 +213,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  selectionHandler(selection: DOMRect) {
-
-    console.log('--------------');
-    for (const item of this.refElements) {
-      const html = item.nativeElement as HTMLElement;
-      const size = html.getBoundingClientRect();
-      if (this.isRectToRect(size, selection)) {
-        (html.firstChild as HTMLElement).style.backgroundColor = '#2a2d32';
-      } else {
-        (html.firstChild as HTMLElement).style.backgroundColor = null;
-      }
-    }
+  selectionHandler(secondRect: DOMRect) {
+    this.selectionService.selectionHandler(secondRect, this.refElements);
   }
 
-  isRectToRect(rect: DOMRect, selection: DOMRect) {
-    return (rect.x < selection.x + selection.width) &&
-      (selection.x < (rect.x + rect.width)) &&
-      (rect.y < selection.y + selection.height) &&
-      (selection.y < (rect.y + rect.height));
-  }
 
 
   @HostListener('window:resize', ['$event'])
