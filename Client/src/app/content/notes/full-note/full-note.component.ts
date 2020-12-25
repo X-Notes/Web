@@ -56,6 +56,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('fullWrap') wrap: ElementRef;
 
   @ViewChildren('htmlComp') htmlElements: QueryList<HtmlComponent>;
+  @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -154,33 +155,30 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
-  placeHolderClick($event)
-  {
+  placeHolderClick($event) {
     $event.preventDefault();
     this.htmlElements.last.setFocus();
   }
 
-  mouseEnter($event)
-  {
+  mouseEnter($event) {
     this.htmlElements.last.mouseEnter($event);
   }
 
-  mouseOut($event)
-  {
+  mouseOut($event) {
     this.htmlElements.last.mouseOut($event);
   }
 
-  enterHandler(value: {id: string, typeBreak: LineBreakType, html?: DocumentFragment}) // TODO CHANGE LOGIC
+  enterHandler(value: { id: string, typeBreak: LineBreakType, html?: DocumentFragment }) // TODO CHANGE LOGIC
   {
     const newElement = this.contentService.addElement();
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     let index = this.contents.indexOf(elementCurrent);
 
-    switch (value.typeBreak){
+    switch (value.typeBreak) {
       case LineBreakType.PREV_NO_CONTENT: {
-        this.contents.splice(index, 0 , newElement);
-        setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        this.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_WITH_CONTENT: {
@@ -188,14 +186,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         div.appendChild(value.html);
         newElement.data.html = div.innerHTML;
         index++;
-        this.contents.splice(index, 0 , newElement);
-        setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        this.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_NO_CONTENT: {
         index++;
-        this.contents.splice(index, 0 , newElement);
-        setTimeout(() =>  { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        this.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
         break;
       }
     }
@@ -204,21 +202,36 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => newElement.contentId = numb.toString(), 100);
   }
 
-  deleteHTMLHandler(id: string)
-  {
+  deleteHTMLHandler(id: string) {
     const item = this.contents.find(z => z.contentId === id);
     let indexOf = this.contents.indexOf(item);
 
-    if (indexOf !== 0)
-    {
-        this.contents = this.contents.filter(z => z.contentId !== id);
-        indexOf--;
-        setTimeout(() =>  { this.htmlElements.toArray()[indexOf].setFocusToEnd(); }, 0);
+    if (indexOf !== 0) {
+      this.contents = this.contents.filter(z => z.contentId !== id);
+      indexOf--;
+      setTimeout(() => { this.htmlElements.toArray()[indexOf].setFocusToEnd(); }, 0);
     }
   }
 
-  selectionHandler($event){
-    console.log($event);
+  selectionHandler(selection: DOMRect) {
+
+    console.log('--------------');
+    for (const item of this.refElements) {
+      const html = item.nativeElement as HTMLElement;
+      const size = html.getBoundingClientRect();
+      if (this.isRectToRect(size, selection)) {
+        (html.firstChild as HTMLElement).style.backgroundColor = '#2a2d32';
+      } else {
+        (html.firstChild as HTMLElement).style.backgroundColor = null;
+      }
+    }
+  }
+
+  isRectToRect(rect: DOMRect, selection: DOMRect) {
+    return (rect.x < selection.x + selection.width) &&
+      (selection.x < (rect.x + rect.width)) &&
+      (rect.y < selection.y + selection.height) &&
+      (selection.y < (rect.y + rect.height));
   }
 
 

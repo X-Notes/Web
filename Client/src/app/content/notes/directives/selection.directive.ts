@@ -1,8 +1,5 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Output, Renderer2 } from '@angular/core';
 
-export interface SelectionEvent {
-
-}
 
 @Directive({
   selector: '[appSelection]'
@@ -10,7 +7,7 @@ export interface SelectionEvent {
 export class SelectionDirective {
 
   @Output()
-  selectionEvent = new EventEmitter<number>();
+  selectionEvent = new EventEmitter<DOMRect>();
 
   menuHeight = 49;
   sidebarWidth = 270;
@@ -23,7 +20,7 @@ export class SelectionDirective {
   isFullNote = false;
   startTop: number;
 
-  div: any;
+  div: HTMLElement;
   mainContent: Element;
 
 
@@ -87,11 +84,7 @@ export class SelectionDirective {
       this.div.style.width = newValueX + 'px';
       this.div.style.height = newValueY + 'px';
 
-      console.log('x', this.div.style.top);
-      console.log('y', this.div.style.left);
-      console.log('width', this.div.style.width);
-      console.log('height', this.div.style.height);
-      this.selectionEvent.emit(5);
+      this.selectionEvent.emit(this.div.getBoundingClientRect());
     }
   }
 
