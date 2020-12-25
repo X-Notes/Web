@@ -214,6 +214,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   selectionHandler(secondRect: DOMRect) {
+    console.log(secondRect);
     this.selectionService.selectionHandler(secondRect, this.refElements);
   }
 

@@ -6,8 +6,10 @@ export class SelectionService {
   constructor() { }
 
   selectionHandler(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
-    for (const item of refElements) {
-      const html = item.nativeElement as HTMLElement;
+    const refElementsArray = refElements.toArray();
+    const length = refElementsArray.length - 1;
+    for (let i = 0 ; i < length; i++) {
+      const html = refElementsArray[i].nativeElement as HTMLElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
         (html.firstChild as HTMLElement).style.backgroundColor = '#2a2d32';

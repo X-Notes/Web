@@ -49,6 +49,12 @@ export class SelectionDirective {
   }
 
   mouseDown(evt) {
+    const rectSize = this.div.getBoundingClientRect();
+    if (rectSize.width === 0 || rectSize.height === 0){
+      rectSize.x = 0;
+      rectSize.y = 0;
+      this.selectionEvent.emit(rectSize);
+    }
 
     this.x = evt.pageX;
     this.y = evt.pageY;
