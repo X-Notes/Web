@@ -43,7 +43,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   isOpenDropdown = false;
   isOpenDropdown2 = false;
   isOpenDropdown3 = false;
-  isCollapse = true;
   noteType = NoteType;
   folderType = FolderType;
   refType = RefType;
@@ -102,6 +101,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.pService.onResize();
     const routing = this.store.selectSnapshot(AppStore.getRouting);
     switch (routing) {
       case EntityType.NoteArchive: {
@@ -371,14 +371,14 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   collapseToggle() {
-    this.isCollapse = !this.isCollapse;
+    this.pService.isCollapseShared = !this.pService.isCollapseShared;
     setTimeout(() => {
       this.tabs.realignInkBar();
     }, 150);
   }
 
   disableTooltipUser(): boolean {
-    if (this.isCollapse) {
+    if (this.pService.isCollapseShared) {
       return false;
     } else {
       return true;

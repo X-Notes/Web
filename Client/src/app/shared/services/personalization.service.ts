@@ -100,6 +100,7 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+  isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
@@ -131,6 +132,16 @@ export class PersonalizationService {
     } else {
       if (this.AnimationInnerMenu) {
         this.AnimationInnerMenu = false;
+      }
+    }
+
+    if (this.check()) {
+      if (!this.isCollapseShared) {
+        this.isCollapseShared = true;
+      }
+    } else {
+      if (this.isCollapseShared) {
+        this.isCollapseShared =  false;
       }
     }
 

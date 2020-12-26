@@ -382,7 +382,7 @@ export class MenuButtonsService {
   private shareEntity() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      width: '650px',
+      maxWidth: '100%',
       maxHeight: '100%',
       data: {
         title: 'Share'

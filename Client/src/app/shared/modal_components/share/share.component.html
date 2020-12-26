@@ -1,26 +1,24 @@
 <div appTheme class="outer"
-    [ngClass]="[isCollapse ? '' : 'half-helper', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']">
-    <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
+    [ngClass]="[pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']">
+    <div class="few-notes" [ngClass]="pService.isCollapseShared ? '' : 'few-notes-helper'" *ngIf="notes.length > 1 || folders.length > 1">
         <div class="header">
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <div appScrollControl *ngIf="currentWindowType === windowType.Note"
-            [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
+        <div appScrollControl *ngIf="currentWindowType === windowType.Note" class="notes-sharing">
             <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
                 [ngClass]="{'active-note': currentNote?.id === item.id}" (click)="changeNote(item)"
                 flagDisable="{{ disableTooltipUser() }}">
-                <p>{{item.title}}</p>
+                <p>{{item.title | replace : 'note' }}</p>
             </div>
         </div>
-        <div appScrollControl *ngIf="currentWindowType === windowType.Folder"
-            [ngClass]="isCollapse ? '' : 'notes-sharing-helper'" class="notes-sharing">
+        <div appScrollControl *ngIf="currentWindowType === windowType.Folder" class="notes-sharing">
             <div class="note" *ngFor="let item of folders" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
                 [ngClass]="{'active-note': currentFolder?.id === item.id}" (click)="changeFolder(item)"
                 flagDisable="{{ disableTooltipUser() }}">
-                <p>{{item.title}}</p>
+                <p>{{item.title | replace : 'folder'}}</p>
             </div>
         </div>
     </div>
@@ -63,7 +61,7 @@
                                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                         [cdkConnectedOverlayPositions]="positions"
                                         (backdropClick)="closeDropdown()">
-                                <div class="dropdown dropdown-width" [@showDropdown] [style.width.px]="dropdown1.offsetWidth">
+                                <div class="dropdown" [@showDropdown] [style.width.px]="dropdown1.offsetWidth">
                                     <div class="item" (click)="changeRefTypeFolder(refType.Viewer)">
                                         <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
                                     </div>
@@ -94,7 +92,7 @@
                                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                         [cdkConnectedOverlayPositions]="positions"
                                         (backdropClick)="closeDropdown()">
-                                <div class="dropdown dropdown-width" [@showDropdown] [style.width.px]="dropdown2.offsetWidth">
+                                <div class="dropdown" [@showDropdown] [style.width.px]="dropdown2.offsetWidth">
                                     <div class="item" (click)="changeRefTypeNote(refType.Viewer)">
                                         <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
                                     </div>
@@ -286,7 +284,7 @@
                                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                                         [cdkConnectedOverlayPositions]="positions"
                                         (backdropClick)="closeDropdown()">
-                                        <div class="dropdown dropdown-width2" [@showDropdown] [style.width.px]="dropdown3.offsetWidth">
+                                        <div class="dropdown" [@showDropdown] [style.width.px]="dropdown3.offsetWidth">
                                             <div class="item" (click)="refTypeNotification(refType.Viewer)">
                                                 <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
                                             </div>
