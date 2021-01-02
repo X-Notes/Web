@@ -45,7 +45,7 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
     sideBarCloseOpen,
     deleteSmallNote,
     showHistory],
-  providers: [NotesService, SelectionService, FullNoteContentService,
+  providers: [NotesService, FullNoteContentService,
     ContentEditableService, FullNoteSliderService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {

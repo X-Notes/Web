@@ -3,6 +3,8 @@ import { ElementRef, Injectable, QueryList } from '@angular/core';
 @Injectable()
 export class SelectionService {
 
+  ismousedown = false;
+
   isSelectionInside;
 
   constructor() { }

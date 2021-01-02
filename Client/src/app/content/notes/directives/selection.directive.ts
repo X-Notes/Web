@@ -1,4 +1,5 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Output, Renderer2 } from '@angular/core';
+import { SelectionService } from '../selection.service';
 
 
 @Directive({
@@ -19,7 +20,6 @@ export class SelectionDirective {
   y;
   finX;
   finY;
-  ismousedown = false;
   isFullNote = false;
   startTop: number;
 
@@ -27,7 +27,9 @@ export class SelectionDirective {
   mainContent: Element;
 
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+  constructor(private elementRef: ElementRef,
+              private renderer: Renderer2,
+              private selectionService: SelectionService) {
 
     setTimeout(() => this.init(), 1000);
   }
@@ -65,13 +67,13 @@ export class SelectionDirective {
     this.div.style.top = (this.y - this.menuHeight + this.startTop) + 'px';
     this.div.style.left = (this.x - this.sidebarWidth) + 'px';
 
-    this.ismousedown = true;
+    this.selectionService.ismousedown = true;
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 
   mouseUp(evt) {
     this.isFullNote = false;
-    this.ismousedown = false;
+    this.selectionService.ismousedown = false;
     this.startTop = 0;
 
     this.div.style.width = 0 + 'px';
@@ -79,7 +81,7 @@ export class SelectionDirective {
   }
 
   mouseMove(evt) {
-    if (this.ismousedown && this.isFullNote) {
+    if (this.selectionService.ismousedown && this.isFullNote) {
       this.finX = evt.pageX;
       this.finY = evt.pageY;
       const newValueX = (this.finX - this.x);
@@ -99,7 +101,7 @@ export class SelectionDirective {
   }
 
   scrollEvent(e) {
-    if (this.ismousedown && this.isFullNote) {
+    if (this.selectionService.ismousedown && this.isFullNote) {
 
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {

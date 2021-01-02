@@ -5,6 +5,7 @@ import { ContentEditableService } from '../../content-editable.service';
 import { SelectionDirective } from '../../directives/selection.directive';
 import { LineBreakType } from '../../html-models';
 import { ContentModel, Html } from '../../models/ContentMode';
+import { SelectionService } from '../../selection.service';
 
 @Component({
   selector: 'app-html',
@@ -26,11 +27,9 @@ export class HtmlComponent implements OnInit {
   @Input()
   content: ContentModel<Html>;
 
-  @Input()
-  selectionDirective: SelectionDirective;
-
   constructor(private contEditService: ContentEditableService,
-              private apiBrowserService: ApiBrowserTextService) { }
+              private apiBrowserService: ApiBrowserTextService,
+              private selectionService: SelectionService) { }
 
   ngOnInit(): void {
 
@@ -100,7 +99,7 @@ export class HtmlComponent implements OnInit {
 
   mouseEnter($event)
   {
-    this.visible = true && this.isContentEmpty() && !this.selectionDirective.ismousedown;
+    this.visible = true && this.isContentEmpty() && !this.selectionService.ismousedown;
   }
 
   mouseOut($event)

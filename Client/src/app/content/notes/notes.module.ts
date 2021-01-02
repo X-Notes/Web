@@ -15,6 +15,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { HtmlComponent } from './full-note-components/html/html.component';
 import { SelectionDirective } from './directives/selection.directive';
+import { SelectionService } from './selection.service';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,6 @@ import { SelectionDirective } from './directives/selection.directive';
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, MurriService],
+  }, MurriService, SelectionService],
 })
 export class NotesModule { }
