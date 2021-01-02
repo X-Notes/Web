@@ -3,7 +3,9 @@
         (keydown.enter)="enter($event)"
         (input)="onInput($event)" 
         (blur)="onBlur($event)"
-        (keyup.backspace)="back($event)">
+        (keyup.backspace)="back($event)"
+        (selectstart)="onSelect($event)"
+        >
     </div>
     <div *ngIf="visible" class="no-content">
         <p>Type / for browse options</p>

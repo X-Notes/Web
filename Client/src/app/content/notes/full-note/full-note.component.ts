@@ -34,6 +34,7 @@ import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
 import { NavigationFullNoteService } from '../navigation-full-note.service';
 import { ContentEditableService } from '../content-editable.service';
+import { SelectionDirective } from '../directives/selection.directive';
 
 
 @Component({
@@ -57,6 +58,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('htmlComp') htmlElements: QueryList<HtmlComponent>;
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -106,6 +109,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit(): void {
+
     const note = this.store.selectSnapshot(NoteStore.oneFull);
     if (note) {
       this.sliderService.goTo(this.sliderService.active, this.wrap);
@@ -214,7 +218,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   selectionHandler(secondRect: DOMRect) {
-    console.log(secondRect);
     this.selectionService.selectionHandler(secondRect, this.refElements);
   }
 

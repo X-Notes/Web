@@ -46,6 +46,11 @@ export class HtmlComponent implements OnInit {
     this.textClearing();
   }
 
+  onSelect($event){
+
+  }
+
+
   async enter($event)
   {
     $event.preventDefault();
