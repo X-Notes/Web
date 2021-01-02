@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { type } from 'os';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
+import { SelectionDirective } from '../../directives/selection.directive';
 import { LineBreakType } from '../../html-models';
 import { ContentModel, Html } from '../../models/ContentMode';
 
@@ -24,6 +25,9 @@ export class HtmlComponent implements OnInit {
 
   @Input()
   content: ContentModel<Html>;
+
+  @Input()
+  selectionDirective: SelectionDirective;
 
   constructor(private contEditService: ContentEditableService,
               private apiBrowserService: ApiBrowserTextService) { }
@@ -96,7 +100,7 @@ export class HtmlComponent implements OnInit {
 
   mouseEnter($event)
   {
-    this.visible = true && this.isContentEmpty();
+    this.visible = true && this.isContentEmpty() && !this.selectionDirective.ismousedown;
   }
 
   mouseOut($event)
