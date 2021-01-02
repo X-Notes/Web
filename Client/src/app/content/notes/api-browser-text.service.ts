@@ -15,8 +15,16 @@ export class ApiBrowserTextService {
   }
 
   copyInputLink(input: HTMLInputElement) {
-    input.select();
-    document.execCommand('copy');
-    input.setSelectionRange(0, 0);
+    const text = input.value;
+    this.copyTest(text);
+  }
+
+  copyTest(text)
+  {
+    navigator.clipboard.writeText(text).then(() => {
+      /* clipboard successfully set */
+    }, () => {
+      /* clipboard write failed */
+    });
   }
 }

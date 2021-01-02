@@ -124,6 +124,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.LoadMain();
     await this.LoadSecond();
     this.connectToHub();
+    this.setCustomCopy();
   }
 
   async LoadMain() {
@@ -325,6 +326,24 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pasteCommandHandler(e) {
     this.apiBrowserFunctions.pasteCommandHandler(e);
+  }
+
+  setCustomCopy()
+  {
+    const body = document.getElementsByTagName('body')[0];
+    body.addEventListener('copy', (e) => this.customCopy(e));
+  }
+
+  customCopy(e)
+  {
+    let items = this.refElements.toArray().map(item => (item.nativeElement as HTMLElement).firstChild as HTMLElement);
+    items = items.filter(item => item.attributes.getNamedItem('selectedByUser') !== null);
+    const texts = items.map(item => item.textContent);
+    if (texts.length > 0)
+    {
+      const resultText = texts.reduce((pv, cv) => pv + '\n' + cv);
+      this.apiBrowserFunctions.copyTest(resultText);
+    }
   }
 
   ngOnDestroy(): void {

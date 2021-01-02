@@ -42,6 +42,7 @@ export class SelectionService {
     for (const elem of refElements)
     {
       elem.style.backgroundColor = '#2a2d32';
+      elem.setAttribute('selectedByUser', 'true');
     }
   }
 
@@ -50,6 +51,7 @@ export class SelectionService {
     for (const elem of refElements)
     {
       elem.style.backgroundColor = null;
+      elem.removeAttribute('selectedByUser');
     }
   }
 
