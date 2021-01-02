@@ -9,6 +9,9 @@ export class SelectionDirective {
   @Output()
   selectionEvent = new EventEmitter<DOMRect>();
 
+  @Output()
+  selectionStartEvent = new EventEmitter<DOMRect>();
+
   menuHeight = 49;
   sidebarWidth = 270;
 
@@ -63,6 +66,7 @@ export class SelectionDirective {
     this.div.style.left = (this.x - this.sidebarWidth) + 'px';
 
     this.ismousedown = true;
+    this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 
   mouseUp(evt) {

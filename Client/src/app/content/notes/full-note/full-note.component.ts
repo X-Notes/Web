@@ -221,6 +221,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectionService.selectionHandler(secondRect, this.refElements);
   }
 
+  selectionStartHandler($event: DOMRect) {
+    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.refElements);
+    if (isSelectionInZone)
+    {
+      this.selectionService.isSelectionInside = true;
+      this.selectionDirective.div.style.opacity = '0';
+    }else{
+      this.selectionService.isSelectionInside = false;
+      this.selectionDirective.div.style.opacity = '1';
+    }
+  }
+
 
 
   @HostListener('window:resize', ['$event'])
