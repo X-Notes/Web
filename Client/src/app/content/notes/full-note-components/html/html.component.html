@@ -5,6 +5,7 @@
         (blur)="onBlur($event)"
         (keyup.backspace)="back($event)"
         (selectstart)="onSelect($event)"
+        (paste)="pasteCommandHandler($event)"
         >
     </div>
     <div *ngIf="visible" class="no-content">

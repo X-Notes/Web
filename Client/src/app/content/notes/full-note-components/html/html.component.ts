@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { type } from 'os';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
 import { LineBreakType } from '../../html-models';
 import { ContentModel, Html } from '../../models/ContentMode';
@@ -24,7 +25,8 @@ export class HtmlComponent implements OnInit {
   @Input()
   content: ContentModel<Html>;
 
-  constructor(private contEditService: ContentEditableService) { }
+  constructor(private contEditService: ContentEditableService,
+              private apiBrowserService: ApiBrowserTextService) { }
 
   ngOnInit(): void {
 
@@ -50,6 +52,9 @@ export class HtmlComponent implements OnInit {
 
   }
 
+  pasteCommandHandler(e) {
+    this.apiBrowserService.pasteCommandHandler(e);
+  }
 
   async enter($event)
   {

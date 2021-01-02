@@ -9,7 +9,8 @@ export class ApiBrowserTextService {
 
   pasteCommandHandler(e) {
     e.preventDefault();
-    const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    let text = (e.originalEvent || e).clipboardData.getData('text/plain');
+    text = text.replace(/&nbsp;/g, '');
     document.execCommand('insertHTML', false, text);
   }
 
