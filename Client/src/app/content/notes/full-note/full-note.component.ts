@@ -32,7 +32,6 @@ import { ContentModel, ContentType } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
-import { NavigationFullNoteService } from '../navigation-full-note.service';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
 import { ApiBrowserTextService } from '../api-browser-text.service';
@@ -47,7 +46,7 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
     deleteSmallNote,
     showHistory],
   providers: [NotesService, SelectionService, FullNoteContentService,
-    NavigationFullNoteService, ContentEditableService, FullNoteSliderService]
+    ContentEditableService, FullNoteSliderService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
@@ -163,7 +162,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   placeHolderClick($event) {
     $event.preventDefault();
-    this.htmlElements.last.setFocus();
+    setTimeout(() => this.htmlElements.last.setFocus());
   }
 
   mouseEnter($event) {

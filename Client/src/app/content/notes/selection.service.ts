@@ -35,6 +35,8 @@ export class SelectionService {
       {
         refElements[0].style.backgroundColor = null;
         return;
+      }else{
+        window.getSelection().empty();
       }
     }
     for (const elem of refElements)
