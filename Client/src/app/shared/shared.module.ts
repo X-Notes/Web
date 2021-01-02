@@ -24,6 +24,7 @@ import { ThemeDirective } from './directives/theme.directive';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -36,7 +37,7 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule
+    OverlayModule, NgScrollbarModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -45,7 +46,8 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    OverlayModule
+    OverlayModule,
+    NgScrollbarModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

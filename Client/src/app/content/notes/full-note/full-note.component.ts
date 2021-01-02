@@ -50,8 +50,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   theme = Theme;
 
-  notes: number[] = [1, 2, 3, 4, 5, 6];
-  turnUpNote = false;
+  notes: number[] = [0, 1, 2, 3, 4, 5];
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
@@ -160,11 +159,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.panEnd(e, this.wrap);
   }
 
-
-
   deleteSmallNote(item: any) {
     let counter = 0;
-    this.notes = this.notes.filter(x => x !== item);
+    this.notes = this.notes.filter(x => x !== this.notes[item]);
     const interval = setInterval(() => {
       if (counter === 35) {
         clearInterval(interval);
@@ -172,11 +169,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.murriService.grid.refreshItems().layout();
       counter++;
     }, 10);
-  }
-
-  turnUpSmallNote() {
-    this.turnUpNote = !this.turnUpNote;
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   // TODO Logic for updating on websockets

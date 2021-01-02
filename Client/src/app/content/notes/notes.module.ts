@@ -13,6 +13,7 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
 import { FullNoteSliderService } from './full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { SmallNoteComponent } from './small-note/small-note.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
     PrivatesComponent,
     SharedComponent,
     DeletedComponent,
-    ArchiveComponent],
+    ArchiveComponent,
+    SmallNoteComponent],
   imports: [
     CommonModule,
     NoteRouting,
