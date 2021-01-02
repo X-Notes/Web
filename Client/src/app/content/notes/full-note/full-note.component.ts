@@ -35,6 +35,7 @@ import { SelectionService } from '../selection.service';
 import { NavigationFullNoteService } from '../navigation-full-note.service';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
+import { ApiBrowserTextService } from '../api-browser-text.service';
 
 
 @Component({
@@ -90,7 +91,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public sliderService: FullNoteSliderService,
               public murriService: MurriService,
               public contentService: FullNoteContentService,
-              private selectionService: SelectionService) {
+              private selectionService: SelectionService,
+              private apiBrowserFunctions: ApiBrowserTextService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
@@ -323,9 +325,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   pasteCommandHandler(e) {
-    e.preventDefault();
-    const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-    document.execCommand('insertHTML', false, text);
+    this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
   ngOnDestroy(): void {
