@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { ContentModel, ContentType } from '../models/ContentMode';
+import { ContentModel, ContentType, Html } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -91,7 +91,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public murriService: MurriService,
               public contentService: FullNoteContentService,
               private selectionService: SelectionService,
-              private apiBrowserFunctions: ApiBrowserTextService) {
+              private apiBrowserFunctions: ApiBrowserTextService,
+              private contEditService: ContentEditableService, ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
@@ -216,6 +217,22 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contents = this.contents.filter(z => z.contentId !== id);
       indexOf--;
       setTimeout(() => { this.htmlElements.toArray()[indexOf].setFocusToEnd(); }, 0);
+    }
+  }
+
+  concatThisWithPrev(id: string){
+    const item = this.contents.find(z => z.contentId === id) as ContentModel<Html>;
+    const indexOf = this.contents.indexOf(item);
+    if (indexOf > 0)
+    {
+      const prevItemHtml = this.htmlElements.toArray()[indexOf - 1];
+      this.contents = this.contents.filter(z => z.contentId !== id);
+      // const range = window.getSelection().getRangeAt(0).cloneRange();
+      (prevItemHtml.contentHtml.nativeElement as HTMLElement).textContent += item.data.html;
+      // const selection = window.getSelection();
+      // selection.removeAllRanges();
+      // selection.addRange(range);
+      prevItemHtml.setFocusToEnd();
     }
   }
 

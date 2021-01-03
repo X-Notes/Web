@@ -43,10 +43,30 @@ export class ContentEditableService {
     return {typeBreakLine, nextContent};
   }
 
-  setCursor(e: ElementRef, isStart: boolean)
+  isStart(e: ElementRef)
+  {
+    const el = e.nativeElement as Node;
+    const sel = window.getSelection();
+    if (sel.rangeCount) {
+
+      const selRange = sel.getRangeAt(0);
+      const range = selRange.cloneRange();
+      range.selectNodeContents(el);
+      range.setEnd(selRange.startContainer, selRange.startOffset);
+      const atStart = (range.toString().replace(/^\s+|\s+$/g, '') === '');
+      if (atStart)
+      {
+        return true;
+      }
+      return false;
+    }
+  }
+
+
+  setCursor(e: HTMLElement, isStart: boolean)
   {
     const range = document.createRange(); // Create a range (a range is a like the selection but invisible)
-    range.selectNodeContents(e.nativeElement); // Select the entire contents of the element with the range
+    range.selectNodeContents(e); // Select the entire contents of the element with the range
     range.collapse(isStart); // collapse the range to the end point. false means collapse to end rather than the start
     const selection = window.getSelection(); // get the selection object (allows you to change selection)
     selection.removeAllRanges(); // remove any selections already made

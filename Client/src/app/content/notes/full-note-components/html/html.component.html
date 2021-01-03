@@ -3,7 +3,8 @@
         (keydown.enter)="enter($event)"
         (input)="onInput($event)" 
         (blur)="onBlur($event)"
-        (keyup.backspace)="back($event)"
+        (keydown.backspace)="backDown($event)"
+        (keyup.backspace)="backUp($event)"
         (selectstart)="onSelect($event)"
         (paste)="pasteCommandHandler($event)"
         >

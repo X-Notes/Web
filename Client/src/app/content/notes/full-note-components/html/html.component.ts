@@ -1,8 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { type } from 'os';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
-import { SelectionDirective } from '../../directives/selection.directive';
 import { LineBreakType } from '../../html-models';
 import { ContentModel, Html } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
@@ -19,10 +17,13 @@ export class HtmlComponent implements OnInit {
   visible = false;
 
   @Output()
-  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment}>();
+  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment }>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
   content: ContentModel<Html>;
@@ -36,13 +37,11 @@ export class HtmlComponent implements OnInit {
   }
 
 
-  buttonHandler($event)
-  {
+  buttonHandler($event) {
     $event.preventDefault();
   }
 
-  preventClick($event)
-  {
+  preventClick($event) {
     $event.preventDefault();
   }
 
@@ -51,7 +50,7 @@ export class HtmlComponent implements OnInit {
     this.textClearing();
   }
 
-  onSelect($event){
+  onSelect($event) {
 
   }
 
@@ -59,68 +58,67 @@ export class HtmlComponent implements OnInit {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  async enter($event)
-  {
+  async enter($event) {
     $event.preventDefault();
     const model = this.contEditService.enterService(this.contentHtml);
-    this.enterEvent.emit({ id : this.content.contentId, typeBreak : model.typeBreakLine, html: model.nextContent});
+    this.enterEvent.emit({ id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent });
   }
 
-  async back($event: KeyboardEvent) {
-    if (this.isContentEmpty())
-    {
+  async backDown($event: KeyboardEvent) {
+
+    if (this.contEditService.isStart(this.contentHtml) && !this.isContentEmpty()) {
+      $event.preventDefault();
+      this.concatThisWithPrev.emit(this.content.contentId);
+    }
+
+    if (this.isContentEmpty()) {
       this.deleteThis.emit(this.content.contentId);
     }
-    if (this.isContentOneSymbol())
-    {
+
+  }
+
+
+  async backUp($event: KeyboardEvent) {
+    if (this.isContentOneSymbol()) {
       this.visible = true;
       this.contentHtml.nativeElement.innerHTML = '';
     }
   }
 
 
-  textClearing()
-  {
-   if (this.isContentEmpty())
-   {
-     this.contentHtml.nativeElement.innerHTML = '';
-   }
+  textClearing() {
+    if (this.isContentEmpty()) {
+      this.contentHtml.nativeElement.innerHTML = '';
+    }
   }
 
   // PLACEHOLDER VISIBLE
-  isContentEmpty()
-  {
+  isContentEmpty() {
     return this.contentHtml.nativeElement.textContent.length === 0;
   }
-  isContentOneSymbol()
-  {
+  isContentOneSymbol() {
     return this.contentHtml.nativeElement.textContent === ' ';
   }
 
-  mouseEnter($event)
-  {
+  mouseEnter($event) {
     this.visible = true && this.isContentEmpty() && !this.selectionService.ismousedown;
   }
 
-  mouseOut($event)
-  {
+  mouseOut($event) {
     this.visible = (document.activeElement === this.contentHtml.nativeElement) && this.isContentEmpty();
   }
 
-  onBlur($event)
-  {
+  onBlur($event) {
     this.visible = false;
   }
 
-  setFocus($event?)
-  {
+  setFocus($event?) {
     this.contentHtml.nativeElement.focus();
     this.visible = true && this.isContentEmpty();
   }
 
-  setFocusToEnd()
-  {
-    this.contEditService.setCursor(this.contentHtml, false);
+  setFocusToEnd() {
+    this.contEditService.setCursor(this.contentHtml.nativeElement, false);
     this.visible = true && this.isContentEmpty();
   }
 
