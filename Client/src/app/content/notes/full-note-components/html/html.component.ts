@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
 import { LineBreakType } from '../../html-models';
@@ -10,7 +10,7 @@ import { SelectionService } from '../../selection.service';
   templateUrl: './html.component.html',
   styleUrls: ['./html.component.scss']
 })
-export class HtmlComponent implements OnInit {
+export class HtmlComponent implements OnInit, AfterViewInit {
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -32,8 +32,12 @@ export class HtmlComponent implements OnInit {
               private apiBrowserService: ApiBrowserTextService,
               private selectionService: SelectionService) { }
 
-  ngOnInit(): void {
 
+  ngAfterViewInit(): void {
+    this.contentHtml.nativeElement.innerHTML = this.content.data.html;
+  }
+
+  ngOnInit(): void {
   }
 
 
@@ -46,8 +50,15 @@ export class HtmlComponent implements OnInit {
   }
 
   async onInput(event) {
+    this.content.data.html = this.contentHtml.nativeElement.innerHTML;
     this.visible = this.isContentEmpty();
     this.textClearing();
+  }
+
+  updateHTML(html: string)
+  {
+    this.content.data.html = html;
+    this.contentHtml.nativeElement.innerHTML = html;
   }
 
   onSelect($event) {
@@ -61,6 +72,7 @@ export class HtmlComponent implements OnInit {
   async enter($event) {
     $event.preventDefault();
     const model = this.contEditService.enterService(this.contentHtml);
+    this.content.data.html = this.contentHtml.nativeElement.innerHTML;
     this.enterEvent.emit({ id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent });
   }
 

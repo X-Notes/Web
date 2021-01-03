@@ -39,6 +39,9 @@ export class FullNoteContentService {
     const contentDefault = new ContentModel<Html>();
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.type = ContentType.HTML;
+    contentDefault.data = {
+      html: ``
+    };
     array.push(content1, content2, content3, contentDefault);
     return array;
   }

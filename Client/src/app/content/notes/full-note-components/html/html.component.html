@@ -1,5 +1,5 @@
 <div class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
-    <div #contentHtml contenteditable="true" class="default html-content" [innerHTML]="content?.data?.html"
+    <div #contentHtml contenteditable="true" class="default html-content"
         (keydown.enter)="enter($event)"
         (input)="onInput($event)" 
         (blur)="onBlur($event)"
