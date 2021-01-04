@@ -55,7 +55,7 @@ export class SelectionDirective {
 
   mouseDown(evt) {
     const rectSize = this.div.getBoundingClientRect();
-    if (rectSize.width === 0 || rectSize.height === 0){
+    if (rectSize.width === 0 || rectSize.height === 0) {
       rectSize.x = 0;
       rectSize.y = 0;
       this.selectionEvent.emit(rectSize);
@@ -93,15 +93,29 @@ export class SelectionDirective {
         newValueY = (this.finY - this.y);
       }
 
-      this.div.style.width = newValueX + 'px';
-      this.div.style.height = newValueY + 'px';
+      if (newValueY < 0 && newValueX > 0) {
+        this.div.style.top = (evt.pageY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+      } else if (newValueY > 0 && newValueX < 0) {
+        this.div.style.left = (evt.pageX - this.sidebarWidth) + 'px';
+      } else if (newValueY < 0 && newValueX < 0) {
+        this.div.style.top = (evt.pageY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+        this.div.style.left = (evt.pageX - this.sidebarWidth) + 'px';
+      }
+      this.div.style.width = Math.abs(newValueX) + 'px';
+      this.div.style.height = Math.abs(newValueY) + 'px';
 
       this.selectionEvent.emit(this.div.getBoundingClientRect());
     }
   }
 
+  get subtractionScrollTopAndScrollStart()
+  {
+    return Math.abs(this.mainContent.scrollTop - this.startTop);
+  }
+
   scrollEvent(e) {
     if (this.selectionService.ismousedown && this.isFullNote) {
+
 
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {
@@ -110,7 +124,12 @@ export class SelectionDirective {
         newValueY = (this.finY - this.y);
       }
 
-      this.div.style.height = newValueY + 'px';
+      if (newValueY > 0) {
+        this.div.style.height = newValueY + 'px';
+      } else {
+        this.div.style.top = (this.finY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+        this.div.style.height = Math.abs(newValueY) + 'px';
+      }
     }
   }
 }
