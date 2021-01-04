@@ -24,9 +24,10 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div appTheme class="content full-content">
-    <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
+    <div *ngIf="(canView$ | async) && loaded" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <div appSelection 
+        <div 
+        appSelection 
         (selectionEvent)="selectionHandler($event)" 
         (selectionStartEvent)="selectionStartHandler($event)"
         [style.width.px]="sliderService.mainWidth" 
@@ -116,7 +117,8 @@
             </div>
         </div>
     </div>
-    <div *ngIf="canNoView$ | async" class="wrapper">
+    <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
         No can View
     </div>
+    <app-spinner *ngIf="!loaded"></app-spinner>
 </div>

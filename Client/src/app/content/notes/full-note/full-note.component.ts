@@ -50,6 +50,7 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  loaded = false;
   contentType = ContentType;
   contents: ContentModel[] = [];
   destroy = new Subject<void>();
@@ -130,6 +131,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
+    this.loaded = true;
   }
 
   async LoadSecond() {
