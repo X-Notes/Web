@@ -78,7 +78,8 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   async backDown($event: KeyboardEvent) {
 
-    if (this.contEditService.isStart(this.contentHtml) && !this.isContentEmpty()) {
+    const selection = window.getSelection().toString();
+    if (this.contEditService.isStart(this.contentHtml) && !this.isContentEmpty() && selection === '') {
       $event.preventDefault();
       this.concatThisWithPrev.emit(this.content.contentId);
     }
