@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select } from '@ngxs/store';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Observable } from 'rxjs';
+import { FullNote } from 'src/app/content/notes/models/fullNote';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 
 @Component({
@@ -15,6 +15,9 @@ export class InteractionInnerComponent implements OnInit {
 
   user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'
   ];
+
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
 
   constructor(public pService: PersonalizationService) { }
 

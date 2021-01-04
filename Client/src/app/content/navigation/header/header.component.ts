@@ -36,7 +36,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNewButtonActive)
   public newButtonActive$: Observable<boolean>;
 
-  //
 
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
