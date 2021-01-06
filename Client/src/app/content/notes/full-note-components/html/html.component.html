@@ -5,8 +5,9 @@
         (blur)="onBlur($event)"
         (keydown.backspace)="backDown($event)"
         (keyup.backspace)="backUp($event)"
-        (selectstart)="onSelect($event)"
+        (selectstart)="onSelectStart($event)"
         (paste)="pasteCommandHandler($event)"
+        (mouseup)="mouseUp($event)"
         >
     </div>
     <div *ngIf="visible" class="no-content">
@@ -24,4 +25,5 @@
             <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
         </div>
     </div>
+    <app-text-edit-menu *ngIf="isTextSelected"></app-text-edit-menu>
 </div>

@@ -16,6 +16,7 @@ import { PhotosComponent } from './full-note-components/photos/photos.component'
 import { HtmlComponent } from './full-note-components/html/html.component';
 import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
+import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SelectionService } from './selection.service';
     ArchiveComponent,
     PhotosComponent,
     HtmlComponent,
-    SelectionDirective],
+    SelectionDirective,
+    TextEditMenuComponent],
   imports: [
     CommonModule,
     NoteRouting,

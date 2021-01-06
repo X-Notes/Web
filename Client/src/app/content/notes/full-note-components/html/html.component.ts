@@ -14,6 +14,8 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
+  isTextSelected = false;
+
   visible = false;
 
   @Output()
@@ -61,9 +63,9 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     this.contentHtml.nativeElement.innerHTML = html;
   }
 
-  onSelect($event) {
-
+  onSelectStart($event) {
   }
+
 
   pasteCommandHandler(e) {
     this.apiBrowserService.pasteCommandHandler(e);
@@ -135,4 +137,8 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     this.visible = true && this.isContentEmpty();
   }
 
+  mouseUp($event)
+  {
+    console.log($event);
+  }
 }
