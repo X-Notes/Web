@@ -35,6 +35,7 @@ import { SelectionService } from '../selection.service';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
 import { ApiBrowserTextService } from '../api-browser-text.service';
+import { MenuSelectionService } from '../menu-selection.service';
 
 
 @Component({
@@ -93,7 +94,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public contentService: FullNoteContentService,
               private selectionService: SelectionService,
               private apiBrowserFunctions: ApiBrowserTextService,
-              private contEditService: ContentEditableService, ) {
+              public menuSelectionService: MenuSelectionService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 

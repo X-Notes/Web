@@ -4,6 +4,9 @@ import { ApiBrowserTextService } from './api-browser-text.service';
 @Injectable()
 export class SelectionService {
 
+  menuHeight = 49;
+  sidebarWidth = 270;
+
   ismousedown = false;
 
   isSelectionInside;

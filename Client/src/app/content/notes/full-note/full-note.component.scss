@@ -128,7 +128,6 @@
           height: 400px;
         }
       }
-    
     }
 
     .secondary-content {
@@ -365,4 +364,9 @@
       }
     }
   }
+}
+
+app-text-edit-menu {
+  z-index: 20;
+  position: absolute;
 }

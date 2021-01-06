@@ -13,8 +13,6 @@ export class SelectionDirective {
   @Output()
   selectionStartEvent = new EventEmitter<DOMRect>();
 
-  menuHeight = 49;
-  sidebarWidth = 270;
 
   x;
   y;
@@ -64,8 +62,8 @@ export class SelectionDirective {
     this.x = evt.pageX;
     this.y = evt.pageY;
     this.startTop = this.mainContent.scrollTop;
-    this.div.style.top = (this.y - this.menuHeight + this.startTop) + 'px';
-    this.div.style.left = (this.x - this.sidebarWidth) + 'px';
+    this.div.style.top = (this.y - this.selectionService.menuHeight + this.startTop) + 'px';
+    this.div.style.left = (this.x - this.selectionService.sidebarWidth) + 'px';
 
     this.selectionService.ismousedown = true;
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
@@ -94,12 +92,14 @@ export class SelectionDirective {
       }
 
       if (newValueY < 0 && newValueX > 0) {
-        this.div.style.top = (evt.pageY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+        this.div.style.top = (evt.pageY - this.selectionService.menuHeight +
+          this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
       } else if (newValueY > 0 && newValueX < 0) {
-        this.div.style.left = (evt.pageX - this.sidebarWidth) + 'px';
+        this.div.style.left = (evt.pageX - this.selectionService.sidebarWidth) + 'px';
       } else if (newValueY < 0 && newValueX < 0) {
-        this.div.style.top = (evt.pageY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
-        this.div.style.left = (evt.pageX - this.sidebarWidth) + 'px';
+        this.div.style.top = (evt.pageY - this.selectionService.menuHeight
+          + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+        this.div.style.left = (evt.pageX - this.selectionService.sidebarWidth) + 'px';
       }
       this.div.style.width = Math.abs(newValueX) + 'px';
       this.div.style.height = Math.abs(newValueY) + 'px';
@@ -127,7 +127,8 @@ export class SelectionDirective {
       if (newValueY > 0) {
         this.div.style.height = newValueY + 'px';
       } else {
-        this.div.style.top = (this.finY - this.menuHeight + this.startTop - this.subtractionScrollTopAndScrollStart) + 'px';
+        this.div.style.top = (this.finY - this.selectionService.menuHeight + this.startTop -
+          this.subtractionScrollTopAndScrollStart) + 'px';
         this.div.style.height = Math.abs(newValueY) + 'px';
       }
     }

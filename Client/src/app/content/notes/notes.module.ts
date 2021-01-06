@@ -17,6 +17,7 @@ import { HtmlComponent } from './full-note-components/html/html.component';
 import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
 import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
+import { MenuSelectionService } from './menu-selection.service';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,6 @@ import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component
   providers: [{
     provide: HAMMER_GESTURE_CONFIG,
     useClass: MyHammerConfig
-  }, MurriService, SelectionService],
+  }, MurriService, SelectionService, MenuSelectionService],
 })
 export class NotesModule { }

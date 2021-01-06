@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
 import { LineBreakType } from '../../html-models';
+import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, Html } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
 
@@ -13,8 +14,6 @@ import { SelectionService } from '../../selection.service';
 export class HtmlComponent implements OnInit, AfterViewInit {
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  isTextSelected = false;
 
   visible = false;
 
@@ -32,7 +31,8 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   constructor(private contEditService: ContentEditableService,
               private apiBrowserService: ApiBrowserTextService,
-              private selectionService: SelectionService) { }
+              private selectionService: SelectionService,
+              public menuSelectionService: MenuSelectionService) { }
 
 
   ngAfterViewInit(): void {
@@ -137,8 +137,17 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     this.visible = true && this.isContentEmpty();
   }
 
-  mouseUp($event)
+  mouseUp($event: MouseEvent)
   {
-    console.log($event);
+    const selection = this.apiBrowserService.getSelection();
+    if (selection.toString() !== '' )
+    {
+      const coords = selection.getRangeAt(0).getBoundingClientRect();
+      this.menuSelectionService.menuActive = true;
+      this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
+      this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 40;
+    }else{
+      this.menuSelectionService.menuActive = false;
+    }
   }
 }

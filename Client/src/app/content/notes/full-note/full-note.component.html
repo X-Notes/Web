@@ -121,4 +121,9 @@
         No can View
     </div>
     <app-spinner *ngIf="!loaded"></app-spinner>
+    <app-text-edit-menu 
+    [style.top.px]="menuSelectionService.top"
+    [style.left.px]="menuSelectionService.left"
+    [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'">
+    </app-text-edit-menu>
 </div>
