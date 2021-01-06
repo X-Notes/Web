@@ -1,4 +1,5 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { ApiBrowserTextService } from './api-browser-text.service';
 
 @Injectable()
 export class SelectionService {
@@ -7,7 +8,7 @@ export class SelectionService {
 
   isSelectionInside;
 
-  constructor() { }
+  constructor(private apiBrowserService: ApiBrowserTextService) { }
 
   selectionHandler(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
     const refElementsArray = refElements.toArray();
@@ -38,7 +39,7 @@ export class SelectionService {
         refElements[0].style.backgroundColor = null;
         return;
       }else{
-        window.getSelection().empty();
+        this.apiBrowserService.getSelection().empty();
       }
     }
     for (const elem of refElements)

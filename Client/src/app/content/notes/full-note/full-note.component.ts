@@ -239,7 +239,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       setTimeout(() => {
         const range = new Range();
         range.setStart(prevItemHtml.contentHtml.nativeElement.firstChild, lengthText);
-        const selection = window.getSelection();
+        const selection = this.apiBrowserFunctions.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
       });

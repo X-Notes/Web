@@ -27,4 +27,10 @@ export class ApiBrowserTextService {
       /* clipboard write failed */
     });
   }
+
+  getSelection(): Selection
+  {
+    return window.getSelection();
+  }
+
 }
