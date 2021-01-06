@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { ContentModel, ContentType, Html } from '../models/ContentMode';
+import { ContentModel, ContentType, Html, Photos } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -216,10 +216,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const item = this.contents.find(z => z.contentId === id);
     let indexOf = this.contents.indexOf(item);
 
-    if (indexOf !== 0 &&  indexOf !== this.contents.length - 1) {
+    if (indexOf !== 0 && (indexOf !== this.contents.length - 1 || this.isLastIsEmpty(indexOf - 1))) {
       this.contents = this.contents.filter(z => z.contentId !== id);
       indexOf--;
-      setTimeout(() => { this.htmlElements.toArray()[indexOf].setFocusToEnd(); }, 0);
+      setTimeout(() => {
+        if (this.contents[indexOf].type === ContentType.HTML)
+        {
+          this.htmlElements.toArray()[indexOf].setFocusToEnd();
+        }
+        }, 0);
+    }
+  }
+
+  isLastIsEmpty(index: number)
+  {
+    const content = this.contents[index];
+    if (content.type === ContentType.HTML)
+    {
+      const contentHTML = content as ContentModel<Html>;
+      return contentHTML.data.html === '';
     }
   }
 
