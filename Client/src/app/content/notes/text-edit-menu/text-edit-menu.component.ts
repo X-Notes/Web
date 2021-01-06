@@ -12,4 +12,9 @@ export class TextEditMenuComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  preventUnSelection(e)
+  {
+    e.stopPropagation();
+    return false;
+  }
 }

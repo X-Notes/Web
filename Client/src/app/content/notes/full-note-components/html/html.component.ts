@@ -125,6 +125,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   onBlur($event) {
     this.visible = false;
+    this.menuSelectionService.menuActive = false;
   }
 
   setFocus($event?) {
@@ -145,7 +146,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
       const coords = selection.getRangeAt(0).getBoundingClientRect();
       this.menuSelectionService.menuActive = true;
       this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
-      this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 40;
+      this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
     }else{
       this.menuSelectionService.menuActive = false;
     }
