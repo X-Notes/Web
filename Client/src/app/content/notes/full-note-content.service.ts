@@ -33,6 +33,13 @@ export class FullNoteContentService {
     fs = 'H333333333333333333';
     array.push(this.getHTMLElement(fs, HtmlType.H3));
 
+
+    fs = 'DOT LIST ITEM1';
+    array.push(this.getHTMLElement(fs, HtmlType.DOTLIST));
+
+    fs = 'DOT LIST ITEM2';
+    array.push(this.getHTMLElement(fs, HtmlType.DOTLIST));
+
     // DEFAULT
     array.push(this.getHTMLElement());
 
@@ -43,6 +50,7 @@ export class FullNoteContentService {
   getHTMLElement(str = '', type = HtmlType.Text)
   {
     const contentDefault = new ContentModel<Html>();
+    contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.type = ContentType.HTML;
     contentDefault.data = {
       html: str,
@@ -64,6 +72,11 @@ export class FullNoteContentService {
       'https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg',
     );
     return content3;
+  }
+
+  getDotListElement()
+  {
+
   }
 
 }

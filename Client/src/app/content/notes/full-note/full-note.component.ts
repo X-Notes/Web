@@ -239,6 +239,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   concatThisWithPrev(id: string) {
+    console.log(id);
     const item = this.contents.find(z => z.contentId === id) as ContentModel<Html>;
     const indexOf = this.contents.indexOf(item);
     if (indexOf > 0 && indexOf !== this.contents.length - 1)

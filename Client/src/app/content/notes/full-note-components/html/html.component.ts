@@ -111,10 +111,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
 
   async backUp($event: KeyboardEvent) {
-    if (this.isContentOneSymbol()) {
-      this.visible = true;
-      this.getFirstChild.innerHTML = '';
-    }
+
   }
 
 
