@@ -18,7 +18,6 @@ import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
 import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
 import { MenuSelectionService } from './menu-selection.service';
-import { HtmlContentEventsDirective } from './directives/html-content-events.directive';
 
 @NgModule({
   declarations: [
@@ -33,7 +32,7 @@ import { HtmlContentEventsDirective } from './directives/html-content-events.dir
     HtmlComponent,
     SelectionDirective,
     TextEditMenuComponent,
-    HtmlContentEventsDirective],
+  ],
   imports: [
     CommonModule,
     NoteRouting,

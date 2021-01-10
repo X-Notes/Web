@@ -7,10 +7,10 @@ export class ContentEditableService {
 
   constructor(private apiBrowserService: ApiBrowserTextService) { }
 
-  enterService(e: ElementRef) {
+  enterService(e) {
     let typeBreakLine: LineBreakType;
     let nextContent: DocumentFragment;
-    const el = e.nativeElement as Node;
+    const el = e as Node;
     const sel = this.apiBrowserService.getSelection();
     if (sel.rangeCount) {
 
@@ -44,15 +44,14 @@ export class ContentEditableService {
     return {typeBreakLine, nextContent};
   }
 
-  isStart(e: ElementRef)
+  isStart(element)
   {
-    const el = e.nativeElement as Node;
     const sel = this.apiBrowserService.getSelection();
     if (sel.rangeCount) {
 
       const selRange = sel.getRangeAt(0);
       const range = selRange.cloneRange();
-      range.selectNodeContents(el);
+      range.selectNodeContents(element);
       range.setEnd(selRange.startContainer, selRange.startOffset);
       const atStart = (range.toString().replace(/^\s+|\s+$/g, '') === '');
       if (atStart)

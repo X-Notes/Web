@@ -1,15 +1,14 @@
-<div class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
-    <div #contentHtml contenteditable="true" class="default html-content"
-        (keydown.enter)="enter($event)"
-        (input)="onInput($event)" 
-        (blur)="onBlur($event)"
-        (keydown.backspace)="backDown($event)"
-        (keyup.backspace)="backUp($event)"
-        (selectstart)="onSelectStart($event)"
-        (paste)="pasteCommandHandler($event)"
-        (mouseup)="mouseUp($event)"
-        >
-    </div>
+<div #contentHtml class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
+    <ng-container [ngSwitch]="content.data.type">
+        <p class="text" *ngSwitchCase="contentType.Text" contenteditable="true" [textContent]="startStr"></p>
+        <h1 *ngSwitchCase="contentType.H1" contenteditable="true">h1{{content.data.html}}</h1>
+        <h2 *ngSwitchCase="contentType.H2" contenteditable="true">h2{{content.data.html}}</h2>
+        <h3 *ngSwitchCase="contentType.H3" contenteditable="true">h3{{content.data.html}}</h3>
+        <div *ngSwitchCase="contentType.DOTLIST" contenteditable="true">DotList{{content.data.html}}</div>
+        <div *ngSwitchCase="contentType.NUMBERLIST" contenteditable="true">NumberList{{content.data.html}}</div>
+        <div *ngSwitchCase="contentType.CHECKLIST" contenteditable="true">CheckList{{content.data.html}}</div>
+        <p *ngSwitchDefault>Default</p>
+     </ng-container>
     <div *ngIf="visible" class="no-content">
         <p>Type / for browse options</p>
         <div class="buttons" (mousedown)="preventClick($event)">

@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
 import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, Html } from '../../models/ContentMode';
+import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
+  startStr = '';
   visible = false;
 
   @Output()
@@ -29,17 +30,30 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   @Input()
   content: ContentModel<Html>;
 
+  contentType = HtmlType;
+
   constructor(private contEditService: ContentEditableService,
               private apiBrowserService: ApiBrowserTextService,
               private selectionService: SelectionService,
-              public menuSelectionService: MenuSelectionService) { }
+              public menuSelectionService: MenuSelectionService,
+              private renderer: Renderer2)
+              {
+              }
 
 
   ngAfterViewInit(): void {
-    this.contentHtml.nativeElement.innerHTML = this.content.data.html;
+    this.renderer.listen(this.getFirstChild, 'input',  (e) => { this.onInput(e); });
+    this.renderer.listen(this.getFirstChild, 'blur',  (e) => { this.onBlur(e); });
+    this.renderer.listen(this.getFirstChild, 'paste',  (e) => { this.pasteCommandHandler(e); });
+    this.renderer.listen(this.getFirstChild, 'mouseup',  (e) => { this.mouseUp(e); });
+    this.renderer.listen(this.getFirstChild, 'selectstart',  (e) => { this.onSelectStart(e); });
+    this.renderer.listen(this.getFirstChild, 'keydown.enter',  (e) => { this.enter(e); });
+    this.renderer.listen(this.getFirstChild, 'keydown.backspace',  (e) => { this.backDown(e); });
+    this.renderer.listen(this.getFirstChild, 'keyup.backspace',  (e) => { this.backUp(e); });
   }
 
   ngOnInit(): void {
+    this.startStr = this.content.data.html;
   }
 
 
@@ -51,8 +65,15 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     $event.preventDefault();
   }
 
-  async onInput(event) {
-    this.content.data.html = this.contentHtml.nativeElement.innerHTML;
+  get getFirstChild()
+  {
+    return this.contentHtml.nativeElement.firstChild;
+  }
+
+  async onInput(event): Promise<void>
+  {
+    const content = this.getFirstChild;
+    this.content.data.html = content.innerText;
     this.visible = this.isContentEmpty();
     this.textClearing();
   }
@@ -60,10 +81,11 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   updateHTML(html: string)
   {
     this.content.data.html = html;
-    this.contentHtml.nativeElement.innerHTML = html;
+    this.getFirstChild.innerHTML = html;
   }
 
   onSelectStart($event) {
+    console.log('selection start');
   }
 
 
@@ -73,15 +95,15 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   async enter($event) {
     $event.preventDefault();
-    const model = this.contEditService.enterService(this.contentHtml);
-    this.content.data.html = this.contentHtml.nativeElement.innerHTML;
+    const model = this.contEditService.enterService(this.getFirstChild);
+    this.content.data.html = this.getFirstChild.innerHTML;
     this.enterEvent.emit({ id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent });
   }
 
   async backDown($event: KeyboardEvent) {
 
     const selection = this.apiBrowserService.getSelection().toString();
-    if (this.contEditService.isStart(this.contentHtml) && !this.isContentEmpty() && selection === '') {
+    if (this.contEditService.isStart(this.getFirstChild) && !this.isContentEmpty() && selection === '') {
       $event.preventDefault();
       this.concatThisWithPrev.emit(this.content.contentId);
     }
@@ -96,23 +118,23 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   async backUp($event: KeyboardEvent) {
     if (this.isContentOneSymbol()) {
       this.visible = true;
-      this.contentHtml.nativeElement.innerHTML = '';
+      this.getFirstChild.innerHTML = '';
     }
   }
 
 
   textClearing() {
     if (this.isContentEmpty()) {
-      this.contentHtml.nativeElement.innerHTML = '';
+      this.getFirstChild.innerHTML = '';
     }
   }
 
   // PLACEHOLDER VISIBLE
   isContentEmpty() {
-    return this.contentHtml.nativeElement.textContent.length === 0;
+    return this.getFirstChild.textContent.length === 0;
   }
   isContentOneSymbol() {
-    return this.contentHtml.nativeElement.textContent === ' ';
+    return this.getFirstChild.textContent === ' ';
   }
 
   mouseEnter($event) {
@@ -120,7 +142,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   mouseOut($event) {
-    this.visible = (document.activeElement === this.contentHtml.nativeElement) && this.isContentEmpty();
+    this.visible = (document.activeElement === this.getFirstChild) && this.isContentEmpty();
   }
 
   onBlur($event) {
@@ -129,12 +151,12 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   setFocus($event?) {
-    this.contentHtml.nativeElement.focus();
+    this.getFirstChild.focus();
     this.visible = true && this.isContentEmpty();
   }
 
   setFocusToEnd() {
-    this.contEditService.setCursor(this.contentHtml.nativeElement, false);
+    this.contEditService.setCursor(this.getFirstChild, false);
     this.visible = true && this.isContentEmpty();
   }
 
