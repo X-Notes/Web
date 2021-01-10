@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContentModel, ContentType, Html, Photos } from './models/ContentMode';
+import { ContentModel, ContentType, Html, HtmlType, Photos } from './models/ContentMode';
 
 @Injectable()
 export class FullNoteContentService {
@@ -14,7 +14,8 @@ export class FullNoteContentService {
     content1.type = ContentType.HTML;
     content1.data = {
       html: `TypeScript реализует объектно-ориентированный подход, в нем есть полноценная поддержка классов. Класс представляет шаблон
-      для создания объектов и инкапсулирует функциональность, которую должен иметь объект. Класс определяет состояние и поведение, которыми обладает объект.`
+      для создания объектов и инкапсулирует функциональность, которую должен иметь объект. Класс определяет состояние и поведение, которыми обладает объект.`,
+      type: HtmlType.Text
     };
 
     const content2 = new ContentModel<Html>();
@@ -23,7 +24,8 @@ export class FullNoteContentService {
     content2.data = {
       html: `Свойство CSS line-height устанавливает величину пространства между строка
       ми, например в тексте. В блочных элементах оно указывает минимальную высоту блоков с
-      трок внутри элемента. В незамещаемых внутристрочных элементах —указывает высоту, которая используется для вычисления высоты блоков строк.`
+      трок внутри элемента. В незамещаемых внутристрочных элементах —указывает высоту, которая используется для вычисления высоты блоков строк.`,
+      type: HtmlType.Text
     };
 
     const content3 = new ContentModel<Photos>();
@@ -41,7 +43,8 @@ export class FullNoteContentService {
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.type = ContentType.HTML;
     contentDefault.data = {
-      html: ``
+      html: ``,
+      type: HtmlType.Text
     };
     array.push(content1, content2, content3, contentDefault);
     return array;
@@ -52,7 +55,8 @@ export class FullNoteContentService {
     const contentDefault = new ContentModel<Html>();
     contentDefault.type = ContentType.HTML;
     contentDefault.data = {
-      html: ''
+      html: '',
+      type: HtmlType.Text
     };
     return contentDefault;
   }
