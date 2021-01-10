@@ -55,8 +55,7 @@
                         [content]="item"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"
-                        >
-                        </app-html>
+                        ></app-html>
 
                         <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
                         <div *ngSwitchDefault>Default</div>

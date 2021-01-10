@@ -180,7 +180,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   enterHandler(value: { id: string, typeBreak: LineBreakType, html?: DocumentFragment }) // TODO CHANGE LOGIC
   {
-    const newElement = this.contentService.addElement();
+    const newElement = this.contentService.getHTMLElement();
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     let index = this.contents.indexOf(elementCurrent);

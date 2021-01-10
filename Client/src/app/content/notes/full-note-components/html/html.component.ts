@@ -36,20 +36,19 @@ export class HtmlComponent implements OnInit, AfterViewInit {
               private apiBrowserService: ApiBrowserTextService,
               private selectionService: SelectionService,
               public menuSelectionService: MenuSelectionService,
-              private renderer: Renderer2)
-              {
-              }
+              private renderer: Renderer2) {
+  }
 
 
   ngAfterViewInit(): void {
-    this.renderer.listen(this.getFirstChild, 'input',  (e) => { this.onInput(e); });
-    this.renderer.listen(this.getFirstChild, 'blur',  (e) => { this.onBlur(e); });
-    this.renderer.listen(this.getFirstChild, 'paste',  (e) => { this.pasteCommandHandler(e); });
-    this.renderer.listen(this.getFirstChild, 'mouseup',  (e) => { this.mouseUp(e); });
-    this.renderer.listen(this.getFirstChild, 'selectstart',  (e) => { this.onSelectStart(e); });
-    this.renderer.listen(this.getFirstChild, 'keydown.enter',  (e) => { this.enter(e); });
-    this.renderer.listen(this.getFirstChild, 'keydown.backspace',  (e) => { this.backDown(e); });
-    this.renderer.listen(this.getFirstChild, 'keyup.backspace',  (e) => { this.backUp(e); });
+    this.renderer.listen(this.getFirstChild, 'input', (e) => { this.onInput(e); });
+    this.renderer.listen(this.getFirstChild, 'blur', (e) => { this.onBlur(e); });
+    this.renderer.listen(this.getFirstChild, 'paste', (e) => { this.pasteCommandHandler(e); });
+    this.renderer.listen(this.getFirstChild, 'mouseup', (e) => { this.mouseUp(e); });
+    this.renderer.listen(this.getFirstChild, 'selectstart', (e) => { this.onSelectStart(e); });
+    this.renderer.listen(this.getFirstChild, 'keydown.enter', (e) => { this.enter(e); });
+    this.renderer.listen(this.getFirstChild, 'keydown.backspace', (e) => { this.backDown(e); });
+    this.renderer.listen(this.getFirstChild, 'keyup.backspace', (e) => { this.backUp(e); });
   }
 
   ngOnInit(): void {
@@ -65,22 +64,18 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     $event.preventDefault();
   }
 
-  get getFirstChild()
-  {
-    return this.contentHtml.nativeElement.firstChild;
+  get getFirstChild() {
+    return this.contentHtml.nativeElement.children[0];
   }
 
-  async onInput(event): Promise<void>
-  {
-    const content = this.getFirstChild;
-    this.content.data.html = content.innerText;
+  async onInput(event): Promise<void> {
+    this.content.data.html = this.getFirstChild.innerText;
     this.visible = this.isContentEmpty();
     this.textClearing();
   }
 
-  updateHTML(html: string)
-  {
-    this.content.data.html = html;
+  updateHTML(html: string) {
+    this.content.data.html = html; // TODO MAYBER NO NEED
     this.getFirstChild.innerHTML = html;
   }
 
@@ -160,16 +155,14 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     this.visible = true && this.isContentEmpty();
   }
 
-  mouseUp($event: MouseEvent)
-  {
+  mouseUp($event: MouseEvent) {
     const selection = this.apiBrowserService.getSelection();
-    if (selection.toString() !== '' )
-    {
+    if (selection.toString() !== '') {
       const coords = selection.getRangeAt(0).getBoundingClientRect();
       this.menuSelectionService.menuActive = true;
       this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
       this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
-    }else{
+    } else {
       this.menuSelectionService.menuActive = false;
     }
   }
