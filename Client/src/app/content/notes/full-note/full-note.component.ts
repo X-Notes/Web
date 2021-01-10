@@ -214,21 +214,23 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteHTMLHandler(id: string) {
     const item = this.contents.find(z => z.contentId === id);
-    let indexOf = this.contents.indexOf(item);
+    const indexOf = this.contents.indexOf(item);
 
-    if (indexOf !== 0 && (indexOf !== this.contents.length - 1 || this.isLastIsEmpty(indexOf - 1))) {
+    if (indexOf !== 0 && (indexOf !== this.contents.length - 1 || this.isElementEmpty(indexOf - 1))) {
       this.contents = this.contents.filter(z => z.contentId !== id);
-      indexOf--;
-      setTimeout(() => {
-        if (this.contents[indexOf].type === ContentType.HTML)
-        {
-          this.htmlElements.toArray()[indexOf].setFocusToEnd();
-        }
-        }, 0);
+      const index = indexOf - 1;
+      if (this.contents[index].type === ContentType.HTML)
+      {
+        this.htmlElements.toArray()[index].setFocusToEnd();
+      }
+    }
+    if (indexOf === this.contents.length - 1){
+      const index = indexOf - 1;
+      this.htmlElements.toArray()[index].setFocusToEnd();
     }
   }
 
-  isLastIsEmpty(index: number)
+  isElementEmpty(index: number)
   {
     const content = this.contents[index];
     if (content.type === ContentType.HTML)
@@ -236,6 +238,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       const contentHTML = content as ContentModel<Html>;
       return contentHTML.data.html === '';
     }
+    return false;
   }
 
   concatThisWithPrev(id: string) {

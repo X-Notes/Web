@@ -118,6 +118,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     }
 
     if (this.isContentEmpty) {
+      $event.preventDefault();
       this.deleteThis.emit(this.content.contentId);
     }
 
@@ -133,10 +134,6 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   // PLACEHOLDER VISIBLE
   get isContentEmpty() {
     return this.commandsService.isContentEmpty(this.contentHtml);
-  }
-
-  isContentOneSymbol() {
-    return this.getTextChild.textContent === ' ';
   }
 
   get getTextChild() {
