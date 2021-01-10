@@ -239,7 +239,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   concatThisWithPrev(id: string) {
-    console.log(id);
     const item = this.contents.find(z => z.contentId === id) as ContentModel<Html>;
     const indexOf = this.contents.indexOf(item);
     if (indexOf > 0 && indexOf !== this.contents.length - 1)
@@ -255,7 +254,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
       setTimeout(() => {
         const range = new Range();
-        range.setStart(prevItemHtml.contentHtml.nativeElement.firstChild, lengthText);
+        range.setStart(prevItemHtml.getTextChild.firstChild, lengthText);
         const selection = this.apiBrowserFunctions.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);

@@ -5,6 +5,9 @@ import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
+import { HtmlCommandsAbstract } from '../html-business-logic/command-interface';
+import { TextService } from '../html-business-logic/default-text.service';
+import { DotListService } from '../html-business-logic/dotList.service';
 
 @Component({
   selector: 'app-html',
@@ -12,6 +15,8 @@ import { SelectionService } from '../../selection.service';
   styleUrls: ['./html.component.scss']
 })
 export class HtmlComponent implements OnInit, AfterViewInit {
+
+  commandsService: HtmlCommandsAbstract;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -41,14 +46,24 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    this.renderer.listen(this.getFirstChild, 'input', (e) => { this.onInput(e); });
-    this.renderer.listen(this.getFirstChild, 'blur', (e) => { this.onBlur(e); });
-    this.renderer.listen(this.getFirstChild, 'paste', (e) => { this.pasteCommandHandler(e); });
-    this.renderer.listen(this.getFirstChild, 'mouseup', (e) => { this.mouseUp(e); });
-    this.renderer.listen(this.getFirstChild, 'selectstart', (e) => { this.onSelectStart(e); });
-    this.renderer.listen(this.getFirstChild, 'keydown.enter', (e) => { this.enter(e); });
-    this.renderer.listen(this.getFirstChild, 'keydown.backspace', (e) => { this.backDown(e); });
-    this.renderer.listen(this.getFirstChild, 'keyup.backspace', (e) => { this.backUp(e); });
+    const htmlType = this.content.data.type;
+    if (htmlType ===  HtmlType.Text || htmlType === HtmlType.H1 || htmlType === HtmlType.H2 || htmlType === HtmlType.H3)
+    {
+      this.commandsService = new TextService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
+    }
+    else if (htmlType === HtmlType.DOTLIST)
+    {
+      this.commandsService = new DotListService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
+    }
+
+    this.renderer.listen(this.getTextChild, 'input', (e) => { this.onInput(e); });
+    this.renderer.listen(this.getTextChild, 'blur', (e) => { this.onBlur(e); });
+    this.renderer.listen(this.getTextChild, 'paste', (e) => { this.pasteCommandHandler(e); });
+    this.renderer.listen(this.getTextChild, 'mouseup', (e) => { this.mouseUp(e); });
+    this.renderer.listen(this.getTextChild, 'selectstart', (e) => { this.onSelectStart(e); });
+    this.renderer.listen(this.getTextChild, 'keydown.enter', (e) => { this.enter(e); });
+    this.renderer.listen(this.getTextChild, 'keydown.backspace', (e) => { this.backDown(e); });
+    this.renderer.listen(this.getTextChild, 'keyup.backspace', (e) => { this.backUp(e); });
   }
 
   ngOnInit(): void {
@@ -64,19 +79,18 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     $event.preventDefault();
   }
 
-  get getFirstChild() {
-    return this.contentHtml.nativeElement.children[0];
-  }
 
   async onInput(event): Promise<void> {
-    this.content.data.html = this.getFirstChild.innerText;
-    this.visible = this.isContentEmpty();
-    this.textClearing();
+    this.content.data.html = this.getTextChild.innerText;
+    this.visible = this.isContentEmpty;
+    if (this.isContentEmpty) {
+      this.getTextChild.innerHTML = '';
+    }
   }
 
   updateHTML(html: string) {
     this.content.data.html = html; // TODO MAYBER NO NEED
-    this.getFirstChild.innerHTML = html;
+    this.getTextChild.innerHTML = html;
   }
 
   onSelectStart($event) {
@@ -90,20 +104,20 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   async enter($event) {
     $event.preventDefault();
-    const model = this.contEditService.enterService(this.getFirstChild);
-    this.content.data.html = this.getFirstChild.innerHTML;
+    const model = this.contEditService.enterService(this.getTextChild);
+    this.content.data.html = this.getTextChild.innerHTML;
     this.enterEvent.emit({ id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent });
   }
 
   async backDown($event: KeyboardEvent) {
 
     const selection = this.apiBrowserService.getSelection().toString();
-    if (this.contEditService.isStart(this.getFirstChild) && !this.isContentEmpty() && selection === '') {
+    if (this.contEditService.isStart(this.getTextChild) && !this.isContentEmpty && selection === '') {
       $event.preventDefault();
       this.concatThisWithPrev.emit(this.content.contentId);
     }
 
-    if (this.isContentEmpty()) {
+    if (this.isContentEmpty) {
       this.deleteThis.emit(this.content.contentId);
     }
 
@@ -115,26 +129,26 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
 
-  textClearing() {
-    if (this.isContentEmpty()) {
-      this.getFirstChild.innerHTML = '';
-    }
-  }
 
   // PLACEHOLDER VISIBLE
-  isContentEmpty() {
-    return this.getFirstChild.textContent.length === 0;
+  get isContentEmpty() {
+    return this.commandsService.isContentEmpty(this.contentHtml);
   }
+
   isContentOneSymbol() {
-    return this.getFirstChild.textContent === ' ';
+    return this.getTextChild.textContent === ' ';
+  }
+
+  get getTextChild() {
+    return this.commandsService.getContentChild(this.contentHtml);
   }
 
   mouseEnter($event) {
-    this.visible = true && this.isContentEmpty() && !this.selectionService.ismousedown;
+    this.visible = true && this.isContentEmpty && !this.selectionService.ismousedown;
   }
 
   mouseOut($event) {
-    this.visible = (document.activeElement === this.getFirstChild) && this.isContentEmpty();
+    this.visible = (document.activeElement === this.getTextChild) && this.isContentEmpty;
   }
 
   onBlur($event) {
@@ -143,13 +157,14 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   setFocus($event?) {
-    this.getFirstChild.focus();
-    this.visible = true && this.isContentEmpty();
+    console.log('focus');
+    this.getTextChild.focus();
+    this.visible = true && this.isContentEmpty;
   }
 
   setFocusToEnd() {
-    this.contEditService.setCursor(this.getFirstChild, false);
-    this.visible = true && this.isContentEmpty();
+    this.contEditService.setCursor(this.getTextChild, false);
+    this.visible = true && this.isContentEmpty;
   }
 
   mouseUp($event: MouseEvent) {

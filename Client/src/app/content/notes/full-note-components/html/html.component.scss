@@ -14,14 +14,15 @@
     position: relative;
     width: 100%;
 
-    .text{
-        line-height: 25px;
-        position: relative;
-        z-index: 2;
-        min-height: 22px;
+    .block-generic{
         height: 100%;
         outline: 1px solid transparent;
         width: 100%;
+        z-index: 2;
+        position: relative;
+    }
+    .text{
+        line-height: 25px;
     }
     .h1{
         font-size: 2rem;
@@ -37,6 +38,26 @@
         font-size: 1.3rem;
         font-weight: 600;
         line-height: 1.5rem;
+    }
+    .dot-list{
+        width: 100%;
+        display: flex;
+        .dot-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            .dot{
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: white;
+            }
+        }
+        .text-dot{
+            width: calc(100% - 30px);
+            line-height: 25px;
+        }
     }
 
     .no-content{
