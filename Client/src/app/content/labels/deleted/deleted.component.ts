@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, AfterViewInit, ElementRef, QueryList } from '@angular/core';
 import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -19,16 +19,23 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   styleUrls: ['./deleted.component.scss'],
   providers: [LabelsService]
 })
-export class DeletedComponent implements OnInit, OnDestroy {
+export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
+  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
 
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
               public labelService: LabelsService) { }
+
+
+  ngAfterViewInit(): void {
+    this.labelService.murriInitialise(this.refElements, true);
+  }
+
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
@@ -61,8 +68,6 @@ export class DeletedComponent implements OnInit, OnDestroy {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-    this.murriService.initMurriLabelAsync(true);
-    await this.murriService.setOpacityTrueAsync();
 
     this.store.select(LabelStore.deleted)
     .pipe(takeUntil(this.destroy))
