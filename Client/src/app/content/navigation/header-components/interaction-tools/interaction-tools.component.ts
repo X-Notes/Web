@@ -35,8 +35,7 @@ export class InteractionToolsComponent implements OnInit {
   }
 
   toggleOrientation() {
-    // this.pService.orientationMobile = !this.pService.orientationMobile;
-    // setTimeout( () => this.murriService.grid.refreshItems().layout(), 0);
+    this.pService.changeOrientation();
   }
 
   toggleTheme() {

@@ -74,14 +74,6 @@ export class MurriService  {
     });
   }
 
-  initMurriFolderAsync(type: FolderType) {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.initMurriFolder(type);
-      resolve(true);
-    }
-    ));
-  }
-
   initMurriFolder(type: FolderType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -99,15 +91,6 @@ export class MurriService  {
       this.store.dispatch(new PositionFolder(order, type));
     });
   }
-
-  initMurriLabelAsync(deleted: boolean) {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.initMurriLabel(deleted);
-      resolve(true);
-    }
-    ));
-  }
-
 
   initMurriLabel(deleted: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
