@@ -82,7 +82,7 @@ export class MurriService  {
     ));
   }
 
-  private initMurriFolder(type: FolderType) {
+  initMurriFolder(type: FolderType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -109,7 +109,7 @@ export class MurriService  {
   }
 
 
-  private initMurriLabel(deleted: boolean) {
+  initMurriLabel(deleted: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
