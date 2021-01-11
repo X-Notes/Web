@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
@@ -19,16 +19,23 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   styleUrls: ['./shared.component.scss'],
   providers: [NotesService]
 })
-export class SharedComponent implements OnInit, OnDestroy {
+export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
+  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
               public noteService: NotesService
   ) { }
+
+
+  ngAfterViewInit(): void {
+    this.noteService.murriInitialise(this.refElements, NoteType.Shared);
+  }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NoteShared)).toPromise();
@@ -56,8 +63,6 @@ export class SharedComponent implements OnInit, OnDestroy {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-    await this.murriService.initMurriNoteAsync(NoteType.Shared, !this.noteService.isFiltedMode());
-    await this.murriService.setOpacityTrueAsync();
   }
 
 

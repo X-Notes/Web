@@ -56,7 +56,7 @@ export class MurriService  {
     ));
   }
 
-  private initMurriNote(type: NoteType, isDragEnabled: boolean) {
+  initMurriNote(type: NoteType, isDragEnabled: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
