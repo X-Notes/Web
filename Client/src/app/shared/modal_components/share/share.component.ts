@@ -63,6 +63,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   @Select(NoteStore.getUsersOnPrivateNote)
   public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
 
+  usersOnPrivateNote = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 

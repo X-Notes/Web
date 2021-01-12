@@ -12,10 +12,15 @@
         </div>
         <i class="icon-plus" (click)="newLabel()"></i>
     </div>
-    <div appScrollControl *ngIf="loaded" class="label-container">
-        <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
-            <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
-            </app-label>
+    <ng-scrollbar class="label-container"
+        *ngIf="loaded"
+        [visibility]="'hover'"
+        [appearance]="'compact'">
+        <div class="content-inner">
+            <div *ngFor="let item of labels | searchLabel: searchStr" class="label">
+                <app-label [label]="item" (updateLabel)="update($event)" [selectedMode]="true" (deleteLabel)="delete($event)">
+                </app-label>
+            </div>
         </div>
-    </div>
+    </ng-scrollbar>
 </div>

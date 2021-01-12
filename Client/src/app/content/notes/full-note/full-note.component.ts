@@ -42,6 +42,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   destroy = new Subject<void>();
+  loaded = false;
 
   @ViewChild('fullWrap') wrap: ElementRef;
 
@@ -135,7 +136,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
       document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
-
+    this.loaded = true;
   }
 
 

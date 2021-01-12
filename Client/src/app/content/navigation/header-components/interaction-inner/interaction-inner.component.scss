@@ -84,7 +84,7 @@
     height: 100%;
     width: calc(100% - 660px);
     margin-right: auto;
-    transition: 0.2s ease;
+    transition: background-color 0.2s ease;
 
     &::after,
     &::before {
@@ -109,13 +109,6 @@
     .people-editing {
       display: flex;
       width: 100%;
-      padding-top: 5px;
-      overflow: auto hidden;
-
-      &::-webkit-scrollbar {
-        width: 7px;
-        height: 5px;
-      }
 
       .person {
         display: flex;
@@ -248,6 +241,10 @@
       display: flex;
     }
 
+    ng-scrollbar {
+      max-height: 410px;
+    }
+
     .wrapper-people {
       position: absolute;
       z-index: 6;
@@ -268,7 +265,7 @@
 
       .people-editing {
         flex-direction: column;
-        overflow: hidden auto;
+
         .person {
           width: 100%;
           padding: 1rem;
@@ -389,7 +386,7 @@
     }
 
     .wrapper-people {
-      position: static;
+      position: relative;
       z-index: initial;
       left: initial;
       top: initial;
@@ -403,7 +400,6 @@
 
       .people-editing {
         flex-direction: row;
-        overflow: auto hidden;
 
         .person {
           width: auto;

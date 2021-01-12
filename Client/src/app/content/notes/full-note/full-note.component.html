@@ -55,7 +55,9 @@
                 [visibility]="'hover'"
                 [appearance]="'compact'">
                 <div class="content-inner-small">
-                    <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+                    <div class="grid"
+                        *ngIf="loaded"
+                        [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
                         <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
                             <app-small-note
                             [note]="item"

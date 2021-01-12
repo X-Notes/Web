@@ -76,6 +76,10 @@
       background-color: #4a85df !important;
     }
   }
+
+  ng-scrollbar {
+    --scrollbar-thumb-color: rgba(0,0,0, 0.3);
+  }
 }
 
 .dark {
@@ -90,6 +94,10 @@
     .mat-ink-bar {
       background-color: #ddffcd !important;
     }
+  }
+
+  ng-scrollbar {
+    --scrollbar-thumb-color: rgba(255, 255, 255, 0.3);
   }
 }
 

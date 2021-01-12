@@ -185,92 +185,98 @@
         width: 100%;
         height: 390px;
         margin: 1.25rem 0;
-        padding: 0 2.5rem;
-        overflow: hidden auto;
 
-        .user {
+        .content-inner {
           display: flex;
-          align-items: center;
+          flex-direction: column;
           width: 100%;
-          height: 50px;
-          border-radius: 10px;
-          margin-bottom: 1rem;
-          padding-left: 0.875rem;
-          background-color: #ddffcd;
+          height: 100%;
+          padding: 0 2.5rem;
 
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .photo {
-            display: flex;
-            height: 35px;
-            width: 35px;
-            overflow: hidden;
-            border-radius: 50%;
-
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          }
-
-          .user-info {
-            display: flex;
-            flex-direction: column;
-            width: calc(100% - 171px);
-            margin-left: 0.875rem;
-
-            .name,
-            .email {
-              display: flex;
-              width: 100%;
-              color: $text-color;
-
-              p {
-                @include text-overflow;
-              }
-            }
-
-            .name {
-              font-size: 1.125rem;
-              font-weight: 500;
-              margin-bottom: 0.1875rem;
-            }
-
-            .email {
-              font-size: 0.875rem;
-              font-weight: 300;
-            }
-          }
-
-          .user-access-func {
+          .user {
             display: flex;
             align-items: center;
-            height: 100%;
-
-            button[type="button"] {
+            width: 100%;
+            height: 50px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding-left: 0.875rem;
+            background-color: #ddffcd;
+  
+            &:last-child {
+              margin-bottom: 0;
+            }
+  
+            .photo {
+              display: flex;
+              height: 35px;
+              width: 35px;
+              overflow: hidden;
+              border-radius: 50%;
+  
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+  
+            .user-info {
+              display: flex;
+              flex-direction: column;
+              width: calc(100% - 171px);
+              margin-left: 0.875rem;
+  
+              .name,
+              .email {
+                display: flex;
+                width: 100%;
+                color: $text-color;
+  
+                p {
+                  @include text-overflow;
+                }
+              }
+  
+              .name {
+                font-size: 1.125rem;
+                font-weight: 500;
+                margin-bottom: 0.1875rem;
+              }
+  
+              .email {
+                font-size: 0.875rem;
+                font-weight: 300;
+              }
+            }
+  
+            .user-access-func {
               display: flex;
               align-items: center;
               height: 100%;
-              padding: 0 0.875rem;
-              background-color: transparent;
-              border: 0;
-              outline: none;
-              user-select: none;
-              cursor: pointer;
-
-              .icon {
+  
+              button[type="button"] {
                 display: flex;
-                font-size: 0.75rem;
-                i::before {
-                  color: #c4c4c4;
+                align-items: center;
+                height: 100%;
+                padding: 0 0.875rem;
+                background-color: transparent;
+                border: 0;
+                outline: none;
+                user-select: none;
+                cursor: pointer;
+  
+                .icon {
+                  display: flex;
+                  font-size: 0.75rem;
+                  i::before {
+                    color: #c4c4c4;
+                  }
                 }
-              }
-              .black {
-                i::before {
-                  color: #202020 !important;
+                .black {
+                  i::before {
+                    color: #202020 !important;
+                  }
                 }
               }
             }
@@ -329,16 +335,14 @@
         flex-direction: column;
         height: calc(100% - 82px);
         width: 100%;
-        padding: 0 2.5rem;
-        overflow: hidden auto;
 
         .mail-notification {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          margin-top: 0.625rem;
+          width: calc(100% - 5rem);
           border-radius: 5px;
           background-color: #f2f2f2;
+          margin: 0.625rem 2.5rem 0 2.5rem;
 
           .mail-container {
             display: flex;
@@ -493,8 +497,8 @@
         .user-suggestions {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          margin-top: 1.25rem;
+          width: calc(100% - 5rem);
+          margin: 1.25rem 2.5rem 0 2.5rem;
   
           .user {
             display: flex;
@@ -616,32 +620,13 @@
       }
     }
 
-    &::after,
-    &::before {
-      content: "";
-      position: absolute;
-      z-index: 5;
-      width: 100%;
-      height: 10px;
-    }
-
-    &::before {
-      top: 33px;
-    }
-
-    &::after {
-      bottom: 8px;
-    }
-
     .notes-sharing {
       position: relative;
       display: flex;
       flex-direction: column;
       width: 100%;
-      padding: 0.625rem 0;
       margin: 0.375rem 0 0.5rem 0;
       height: calc(100% - 41px);
-      overflow-y: scroll;
 
       .note {
         display: flex;
@@ -734,14 +719,6 @@
 .light {
   .few-notes {
     background-color: white;
-
-    &::before {
-      background: linear-gradient(0, hsla(0, 0%, 100%, 0), white);
-    }
-
-    &::after {
-      background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), white);
-    }
   }
 
   .sharing {
@@ -817,14 +794,6 @@
 .dark {
   .few-notes {
     background-color: $dark-color;
-
-    &::before {
-      background: linear-gradient(0, hsla(0, 0%, 100%, 0), $dark-color);
-    }
-
-    &::after {
-      background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), $dark-color);
-    }
   }
 
   .sharing {
@@ -905,15 +874,18 @@
         .user-access {
           height: calc(100% - 165px);
           width: calc(100% - 3.75rem);
-          padding: 0 0.625rem;
           margin: 1.25rem 1.875rem;
 
-          .user {
-            height: 45px;
+          .content-inner {
+            padding: 0 0.625rem;
 
-            .user-info {
-              .name {
-                margin-bottom: 0;
+            .user {
+              height: 45px;
+  
+              .user-info {
+                .name {
+                  margin-bottom: 0;
+                }
               }
             }
           }
@@ -921,8 +893,13 @@
 
         .interaction-container {
           width: calc(100% - 3.75rem);
-          padding: 0 0.625rem;
           margin: 0 1.875rem 1.25rem 1.875rem;
+
+          .mail-notification, .user-suggestions {
+            margin-left: 0.625rem;
+            margin-right: 0.625rem;
+            width: calc(100% - 1.25rem);
+          }
         }
       }
     }
@@ -933,10 +910,6 @@
       height: calc(100% - 94px);
       margin-bottom: 0.625rem;
       order: 1;
-    }
-
-    ::-webkit-scrollbar {
-      height: 7px;
     }
 
     .few-notes {
@@ -955,28 +928,12 @@
         }
       }
 
-      &::before,
-      &::after {
-        width: 10px;
-        height: 100%;
-      }
-
-      &::before {
-        left: 0;
-      }
-
-      &::after {
-        right: 0;
-      }
-
       .notes-sharing {
         align-content: baseline;
         flex-direction: row;
         height: calc(100% - 27px);
-        width: calc(100% - 3.75rem);
-        padding: 0.625rem 0 1.25rem 1.25rem;
-        margin: 0 2.5rem 0 1.25rem;
-        overflow: auto;
+        width: calc(100% - 2.5rem);
+        margin: 0 1.25rem 0 1.25rem;
 
         .note {
           height: auto;
@@ -1002,87 +959,16 @@
       height: 100%;
       width: 100%;
 
-      &::before,
-      &::after {
-        width: 100%;
-        height: 10px;
-      }
-
-      &::before {
-        top: 0;
-      }
-
-      &::after {
-        bottom: 0;
-      }
-
       .notes-sharing {
         flex-direction: column;
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.75rem 2.5rem 0 2.375rem;
 
         .note {
           width: 100%;
           margin: 0.875rem 0 0 0;
         }
-      }
-    }
-  }
-
-  .light {
-    .few-notes {
-      &::before {
-        background: linear-gradient(270deg, rgba(255, 255, 255, 0), white);
-      }
-
-      &::after {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0), white);
-      }
-    }
-
-    .few-notes-helper {
-      &::before {
-        background: linear-gradient(0, rgba(255, 255, 255, 0), white);
-      }
-
-      &::after {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0), white);
-      }
-    }
-  }
-
-  .dark {
-    .few-notes {
-      &::before {
-        background: linear-gradient(
-          270deg,
-          rgba(255, 255, 255, 0),
-          $dark-color
-        );
-      }
-
-      &::after {
-        background: linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0),
-          $dark-color
-        );
-      }
-    }
-
-    .few-notes-helper {
-      &::before {
-        background: linear-gradient(0, rgba(255, 255, 255, 0), $dark-color);
-      }
-
-      &::after {
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0),
-          $dark-color
-        );
       }
     }
   }
@@ -1181,10 +1067,6 @@
         .interaction-container {
           margin-bottom: 1rem;
 
-          &::before {
-            height: 8px;
-          }
-
           .mail-notification {
             margin-top: 0.5rem;
 
@@ -1255,19 +1137,21 @@
     .sharing {
       .tabs {
         .user-access {
-          .user {
-            flex-wrap: wrap;
-            height: auto;
-            padding: 0.5rem 0.875rem;
-
-            .user-info {
-              width: calc(100% - 49px);
-            }
-
-            .user-access-func {
-              width: 100%;
-              padding-top: 0.5rem;
-              justify-content: space-around;
+          .content-inner {
+            .user {
+              flex-wrap: wrap;
+              height: auto;
+              padding: 0.5rem 0.875rem;
+  
+              .user-info {
+                width: calc(100% - 49px);
+              }
+  
+              .user-access-func {
+                width: 100%;
+                padding-top: 0.5rem;
+                justify-content: space-around;
+              }
             }
           }
         }
@@ -1378,7 +1262,6 @@
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.625rem 1.75rem 0 1.75rem;
 
         .note {
           width: 100%;

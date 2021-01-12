@@ -1,26 +1,39 @@
 <div appTheme class="outer"
     [ngClass]="[pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']">
-    <div class="few-notes" [ngClass]="pService.isCollapseShared ? '' : 'few-notes-helper'" *ngIf="notes.length > 1 || folders.length > 1">
+    <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
         <div class="header">
             <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
             <i class="icon-plus" (click)="collapseToggle()"></i>
         </div>
-        <div appScrollControl *ngIf="currentWindowType === windowType.Note" class="notes-sharing">
+        <ng-scrollbar *ngIf="currentWindowType === windowType.Note"
+            class="notes-sharing"
+            [visibility]="'hover'"
+            [track]="'all'"
+            [appearance]="'compact'">
+            
             <div class="note" *ngFor="let item of notes" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
                 [ngClass]="{'active-note': currentNote?.id === item.id}" (click)="changeNote(item)"
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title | replace : 'note' }}</p>
             </div>
-        </div>
-        <div appScrollControl *ngIf="currentWindowType === windowType.Folder" class="notes-sharing">
+
+        </ng-scrollbar>
+
+        <ng-scrollbar *ngIf="currentWindowType === windowType.Folder"
+            class="notes-sharing"
+            [visibility]="'hover'"
+            [track]="'all'"
+            [appearance]="'compact'">
+            
             <div class="note" *ngFor="let item of folders" CustomTooltip="{{item.title}}" position="Top"
                 [ngStyle]="{'backgroundColor' : item.color}" labelColor="{{item.color}}"
                 [ngClass]="{'active-note': currentFolder?.id === item.id}" (click)="changeFolder(item)"
                 flagDisable="{{ disableTooltipUser() }}">
                 <p>{{item.title | replace : 'folder'}}</p>
             </div>
-        </div>
+
+        </ng-scrollbar>
     </div>
     <div class="sharing">
         <div class="header">
@@ -154,43 +167,51 @@
                         </div>
                     </div>
                 </div>
-                <div appScrollControl *ngIf="currentWindowType === windowType.Note"
-                    class="user-access">
-                    <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
-                        <div class="photo">
-                            <img alt="user image" [src]="user.photoId">
-                        </div>
-                        <div class="user-info">
-                            <div class="name">
-                                <p>{{user.name}}</p>
+                <ng-scrollbar *ngIf="currentWindowType === windowType.Note"
+                    class="user-access"
+                    [visibility]="'hover'"
+                    [appearance]="'compact'">
+                    <div class="content-inner">
+                        <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
+                            <div class="photo">
+                                <img alt="user image" [src]="user.photoId">
                             </div>
-                            <div class="email">
-                                <p>{{user.email}}</p>
+                            <div class="user-info">
+                                <div class="name">
+                                    <p>{{user.name}}</p>
+                                </div>
+                                <div class="email">
+                                    <p>{{user.email}}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="user-access-func">
-                            <button type="button" name="" (click)="changeUserPermission(refType.Viewer, user.id)">
-                                <div class="icon" [ngClass]="(user.accessType === refType.Viewer) ? 'black' : ''">
-                                    <i class="icon-cancel"></i>
-                                </div>
-                            </button>
-                            <div class="separator-buttons"></div>
-                            <button type="button" name="" (click)="changeUserPermission(refType.Editor, user.id)">
-                                <div class="icon" [ngClass]="(user.accessType === refType.Editor) ? 'black' : ''">
-                                    <i class="icon-cancel"></i>
-                                </div>
-                            </button>
-                            <div class="separator-buttons"></div>
-                            <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
-                                <div class="icon black">
-                                    <i class="icon-cancel"></i>
-                                </div>
-                            </button>
+                            <div class="user-access-func">
+                                <button type="button" name="" (click)="changeUserPermission(refType.Viewer, user.id)">
+                                    <div class="icon" [ngClass]="(user.accessType === refType.Viewer) ? 'black' : ''">
+                                        <i class="icon-cancel"></i>
+                                    </div>
+                                </button>
+                                <div class="separator-buttons"></div>
+                                <button type="button" name="" (click)="changeUserPermission(refType.Editor, user.id)">
+                                    <div class="icon" [ngClass]="(user.accessType === refType.Editor) ? 'black' : ''">
+                                        <i class="icon-cancel"></i>
+                                    </div>
+                                </button>
+                                <div class="separator-buttons"></div>
+                                <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
+                                    <div class="icon black">
+                                        <i class="icon-cancel"></i>
+                                    </div>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div appScrollControl *ngIf="currentWindowType === windowType.Folder"
-                    class="user-access">
+                </ng-scrollbar>
+
+                <ng-scrollbar *ngIf="currentWindowType === windowType.Folder"
+                    class="user-access"
+                    [visibility]="'hover'"
+                    [appearance]="'compact'">
+
                     <div *ngFor="let user of usersOnPrivateFolder$ | async" class="user">
                         <div class="photo">
                             <img alt="user image" [src]="user.photoId">
@@ -223,7 +244,8 @@
                             </button>
                         </div>
                     </div>
-                </div>
+
+                </ng-scrollbar>
             </mat-tab>
             <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
                 <div class="search">
@@ -235,7 +257,10 @@
                         </div>
                     </button>
                 </div>
-                <div appScrollControl class="interaction-container">
+                <ng-scrollbar class="interaction-container"
+                    [visibility]="'hover'"
+                    [appearance]="'compact'">
+
                     <div class="mail-notification">
                         <div class="mail-container">
                             <div *ngFor="let user of selectedUsers" class="user-mail">
@@ -304,8 +329,8 @@
                             </div>
                         </div>
                     </div>
-                    <div appScrollControl class="user-suggestions">
-                        <div *ngFor="let user of searchUsers" class="user">
+                    <div class="user-suggestions">
+                        <div *ngFor="let user of usersOnPrivateNote" class="user">
                             <div class="photo">
                                 <img alt="user image" [src]="user.photoId">
                             </div>
@@ -322,7 +347,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
+
+                </ng-scrollbar>
             </mat-tab>
         </mat-tab-group>
     </div>

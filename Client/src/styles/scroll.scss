@@ -5,3 +5,36 @@
 .scroll-helper {
     width: 100%;
 }
+
+.notes-sharing {
+    .ng-scroll-content {
+        display: flex;
+        flex-direction: column;
+        padding: 0.625rem 0;
+    }
+}
+
+@media (max-width: 1024px) {
+    .notes-sharing {
+        .ng-scroll-content {
+            flex-direction: row;
+            padding: 0.625rem 0 1.25rem 1.25rem;
+        }
+    }
+
+    .half-helper {
+        .ng-scroll-content {
+            flex-direction: column;
+            padding: 0.75rem 2.5rem 0 2.375rem;
+        }
+    }
+}
+
+
+@media (max-width: 330px) {
+    .half-helper {
+        .ng-scroll-content {
+            padding: 0.625rem 1.75rem 0 1.75rem;
+        }
+    }
+}

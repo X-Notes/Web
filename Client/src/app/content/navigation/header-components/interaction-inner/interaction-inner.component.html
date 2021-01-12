@@ -3,9 +3,15 @@
         <p>8</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
     </div>
-    <div appScrollControl class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
-        [@.disabled]="pService.AnimationInnerUsers">
-        <div class="people-editing">
+    <ng-scrollbar class="wrapper-people"
+        [style.height.px]="heightPeople.offsetHeight + 2"
+        *ngIf="pService.users"
+        [@showMenuLeftRight]
+        [@.disabled]="pService.AnimationInnerUsers"
+        [visibility]="'hover'"
+        [track]="'all'"
+        [appearance]="'compact'">
+        <div class="people-editing" #heightPeople>
             <div class="person" *ngFor="let item of user" CustomTooltip="{{item}}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
                 <div class="inner-person">
                     <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
@@ -14,7 +20,8 @@
                 <p>12321321321333333333333333333333333333333333333333333333333</p>
             </div>
         </div>
-    </div>
+    </ng-scrollbar>
+
     <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Filter" type="button" class="generic generic-2" #video>
         <div class="inner-content">
             <i class="icon-video"></i>

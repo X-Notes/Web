@@ -86,17 +86,23 @@
         flex-direction: column;
         height: calc(100% - 123px);
         width: 100%;
-        padding: 0 2.25rem;
         margin: 1.25rem 0;
-        overflow: hidden auto;
-    
-        .label {
+        
+        .content-inner {
             display: flex;
-            flex-direction: column;           
+            flex-direction: column;
             width: 100%;
-    
-            &:not(:first-child) {
-                margin-top: 20px;
+            height: 100%;
+            padding: 0 2.25rem;
+
+            .label {
+                display: flex;
+                flex-direction: column;           
+                width: 100%;
+        
+                &:not(:first-child) {
+                    margin-top: 20px;
+                }
             }
         }
     }
@@ -113,9 +119,11 @@
         }
         
         .label-container {
-            width: calc(100% - 3.75rem);
-            padding: 0 0.625rem;
-            margin: 1.25rem 1.875rem;
+            .content-inner {
+                width: calc(100% - 3.75rem);
+                padding: 0 0.625rem;
+                margin: 1.25rem 1.875rem;
+            }
         }
     }
 }
