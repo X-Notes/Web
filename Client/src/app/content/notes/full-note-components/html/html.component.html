@@ -14,7 +14,7 @@
         <div class="block-generic" *ngSwitchCase="contentType.CHECKLIST" contenteditable="true">{{content.data.html}}</div>
         <p *ngSwitchDefault>Default</p>
      </ng-container>
-    <div *ngIf="visible" class="no-content" [ngClass]="{'dotList': content.data.type === contentType.DOTLIST, 'second': true}">
+    <div *ngIf="visible && isContentEmpty" class="no-content" [ngClass]="{'dotList': content.data.type === contentType.DOTLIST, 'second': true}">
         <p>{{commandsService.defaultEmptyString}}</p>
         <div class="buttons" (mousedown)="preventClick($event)">
             <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>

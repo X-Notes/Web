@@ -80,7 +80,6 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   async onInput(event): Promise<void> {
     this.content.data.html = this.getTextChild.innerText;
-    this.visible = this.isContentEmpty;
     if (this.isContentEmpty) {
       this.getTextChild.innerHTML = '';
     }
@@ -149,11 +148,11 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   mouseEnter($event) {
-    this.visible = true && this.isContentEmpty && !this.selectionService.ismousedown;
+    this.visible = true && !this.selectionService.ismousedown;
   }
 
   mouseOut($event) {
-    this.visible = (document.activeElement === this.getTextChild) && this.isContentEmpty;
+    this.visible = (document.activeElement === this.getTextChild);
   }
 
   onBlur($event) {
@@ -164,12 +163,12 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   setFocus($event?) {
     console.log('focus');
     this.getTextChild.focus();
-    this.visible = true && this.isContentEmpty;
+    this.visible = true;
   }
 
   setFocusToEnd() {
     this.contEditService.setCursor(this.getTextChild, false);
-    this.visible = true && this.isContentEmpty;
+    this.visible = true;
   }
 
   mouseUp($event: MouseEvent) {
