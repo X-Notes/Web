@@ -18,6 +18,11 @@ import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
 import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
 import { MenuSelectionService } from './menu-selection.service';
+import { HtmlTextPartComponent } from './full-note-components/html-components/html-text-part/html-text-part.component';
+import { HtmlNumberListComponent } from './full-note-components/html-components/html-number-list/html-number-list.component';
+import { HtmlDotListComponent } from './full-note-components/html-components/html-dot-list/html-dot-list.component';
+import { HtmlHeadingsComponent } from './full-note-components/html-components/html-headings/html-headings.component';
+import { HtmlCheckListComponent } from './full-note-components/html-components/html-check-list/html-check-list.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +37,11 @@ import { MenuSelectionService } from './menu-selection.service';
     HtmlComponent,
     SelectionDirective,
     TextEditMenuComponent,
+    HtmlTextPartComponent,
+    HtmlNumberListComponent,
+    HtmlDotListComponent,
+    HtmlHeadingsComponent,
+    HtmlCheckListComponent,
   ],
   imports: [
     CommonModule,

@@ -40,6 +40,24 @@ export class FullNoteContentService {
     fs = 'DOT LIST ITEM2';
     array.push(this.getHTMLElement(fs, HtmlType.DOTLIST));
 
+    fs = 'NUMBER LIST 1';
+    array.push(this.getHTMLElement(fs, HtmlType.NUMBERLIST));
+
+    fs = 'NUMBER LIST 2';
+    array.push(this.getHTMLElement(fs, HtmlType.NUMBERLIST));
+
+    fs = 'NUMBER LIST 3';
+    array.push(this.getHTMLElement(fs, HtmlType.NUMBERLIST));
+
+    fs = 'CHECk LIST 1';
+    array.push(this.getHTMLElement(fs, HtmlType.CHECKLIST));
+
+    fs = 'CHECk LIST 2';
+    array.push(this.getHTMLElement(fs, HtmlType.CHECKLIST));
+
+    fs = 'CHECk LIST 3';
+    array.push(this.getHTMLElement(fs, HtmlType.CHECKLIST));
+
     // DEFAULT
     array.push(this.getHTMLElement());
 
