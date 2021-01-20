@@ -29,7 +29,7 @@ export class SelectionDirective {
               private renderer: Renderer2,
               private selectionService: SelectionService) {
 
-    setTimeout(() => this.init(), 1000);
+    setTimeout(() => this.init(), 1000); // TODO CHANGE
   }
 
   init() {

@@ -74,9 +74,5 @@ export class FullNoteContentService {
     return content3;
   }
 
-  getDotListElement()
-  {
-
-  }
 
 }

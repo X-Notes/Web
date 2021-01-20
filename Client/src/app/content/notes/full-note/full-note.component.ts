@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { ContentModel, ContentType, Html, Photos } from '../models/ContentMode';
+import { ContentModel, ContentType, Html, HtmlType, Photos } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -178,9 +178,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.htmlElements.last.mouseOut($event);
   }
 
-  enterHandler(value: { id: string, typeBreak: LineBreakType, html?: DocumentFragment }) // TODO CHANGE LOGIC
+  enterHandler(value: { id: string, typeBreak: LineBreakType, html?: DocumentFragment, itemType: HtmlType }) // TODO CHANGE LOGIC
   {
-    const newElement = this.contentService.getHTMLElement();
+    const newElement = this.contentService.getHTMLElement('', value.itemType);
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     let index = this.contents.indexOf(elementCurrent);

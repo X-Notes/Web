@@ -24,7 +24,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   visible = false;
 
   @Output()
-  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment }>();
+  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment, itemType: HtmlType }>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -47,12 +47,10 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     const htmlType = this.content.data.type;
-    if (htmlType ===  HtmlType.Text || htmlType === HtmlType.H1 || htmlType === HtmlType.H2 || htmlType === HtmlType.H3)
-    {
+    if (htmlType === HtmlType.Text || htmlType === HtmlType.H1 || htmlType === HtmlType.H2 || htmlType === HtmlType.H3) {
       this.commandsService = new TextService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
     }
-    else if (htmlType === HtmlType.DOTLIST)
-    {
+    else if (htmlType === HtmlType.DOTLIST) {
       this.commandsService = new DotListService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
     }
 
@@ -106,7 +104,17 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     $event.preventDefault();
     const model = this.contEditService.enterService(this.getTextChild);
     this.content.data.html = this.getTextChild.innerHTML;
-    this.enterEvent.emit({ id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent });
+
+    let nextTypeContent: HtmlType;
+    if (this.content.data.type === HtmlType.H1 ||
+      this.content.data.type === HtmlType.H2 ||
+      this.content.data.type === HtmlType.H3) {
+      nextTypeContent = HtmlType.Text;
+    } else {
+      nextTypeContent = this.content.data.type;
+    }
+    this.enterEvent.emit(
+      { id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent, itemType: nextTypeContent });
   }
 
   async backDown($event: KeyboardEvent) {
