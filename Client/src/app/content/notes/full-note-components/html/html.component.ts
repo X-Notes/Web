@@ -4,10 +4,12 @@ import { ContentEditableService } from '../../content-editable.service';
 import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
+import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 import { HtmlCommandsAbstract } from '../html-business-logic/command-interface';
 import { TextService } from '../html-business-logic/default-text.service';
 import { DotListService } from '../html-business-logic/dotList.service';
+import { HeadingService } from '../html-business-logic/heading.service';
 
 @Component({
   selector: 'app-html',
@@ -16,7 +18,9 @@ import { DotListService } from '../html-business-logic/dotList.service';
 })
 export class HtmlComponent implements OnInit, AfterViewInit {
 
-  commandsService: HtmlCommandsAbstract;
+  textService: HtmlCommandsAbstract;
+  headingService: HtmlCommandsAbstract;
+  dotListService: HtmlCommandsAbstract;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -24,7 +28,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   visible = false;
 
   @Output()
-  enterEvent = new EventEmitter<{ id: string, typeBreak: LineBreakType, html?: DocumentFragment, itemType: HtmlType }>();
+  enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -46,14 +50,28 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    const htmlType = this.content.data.type;
-    if (htmlType === HtmlType.Text || htmlType === HtmlType.H1 || htmlType === HtmlType.H2 || htmlType === HtmlType.H3) {
-      this.commandsService = new TextService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
-    }
-    else if (htmlType === HtmlType.DOTLIST) {
-      this.commandsService = new DotListService(this.apiBrowserService, this.selectionService, this.menuSelectionService);
-    }
 
+    this.setServices();
+    this.setHandlers();
+  }
+
+  ngOnInit(): void {
+    this.startStr = this.content.data.html;
+  }
+
+  setServices()
+  {
+
+    this.textService = new TextService(this.apiBrowserService,
+      this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
+    this.dotListService = new DotListService(this.apiBrowserService,
+        this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
+    this.headingService = new HeadingService(this.apiBrowserService,
+          this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
+  }
+
+  setHandlers()
+  {
     this.renderer.listen(this.getTextChild, 'input', (e) => { this.onInput(e); });
     this.renderer.listen(this.getTextChild, 'blur', (e) => { this.onBlur(e); });
     this.renderer.listen(this.getTextChild, 'paste', (e) => { this.pasteCommandHandler(e); });
@@ -64,8 +82,26 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     this.renderer.listen(this.getTextChild, 'keyup.backspace', (e) => { this.backUp(e); });
   }
 
-  ngOnInit(): void {
-    this.startStr = this.content.data.html;
+  get getService(): HtmlCommandsAbstract
+  {
+    switch (this.content.data.type)
+    {
+      case HtmlType.DOTLIST: {
+        return this.dotListService;
+      }
+      case HtmlType.Text: {
+        return this.textService;
+      }
+      case HtmlType.H1: {
+        return this.headingService;
+      }
+      case HtmlType.H2: {
+        return this.headingService;
+      }
+      case HtmlType.H3: {
+        return this.headingService;
+      }
+    }
   }
 
 
@@ -83,6 +119,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     if (this.isContentEmpty) {
       this.getTextChild.innerHTML = '';
     }
+    this.visible = this.isContentEmpty;
   }
 
   updateHTML(html: string) {
@@ -104,16 +141,21 @@ export class HtmlComponent implements OnInit, AfterViewInit {
     const model = this.contEditService.enterService(this.getTextChild);
     this.content.data.html = this.getTextChild.innerHTML;
 
-    let nextTypeContent: HtmlType;
-    if (this.content.data.type === HtmlType.H1 ||
-      this.content.data.type === HtmlType.H2 ||
-      this.content.data.type === HtmlType.H3) {
-      nextTypeContent = HtmlType.Text;
-    } else {
-      nextTypeContent = this.content.data.type;
+    const eventModel: EnterEvent = {
+        id: this.content.contentId,
+        typeBreak: model.typeBreakLine,
+        html: model.nextContent, itemType: HtmlType.Text
+    };
+    if (this.isContentEmpty && this.content.data.type === HtmlType.DOTLIST)
+    {
+      this.content.data.type = HtmlType.Text;
+      setTimeout(() => {
+        this.setHandlers();
+        this.setFocus();
+      });
+    }else{
+      this.getService.enter(this.enterEvent, eventModel);
     }
-    this.enterEvent.emit(
-      { id: this.content.contentId, typeBreak: model.typeBreakLine, html: model.nextContent, itemType: nextTypeContent });
   }
 
   async backDown($event: KeyboardEvent) {
@@ -140,19 +182,19 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   // PLACEHOLDER VISIBLE
   get isContentEmpty() {
-    return this.commandsService.isContentEmpty(this.contentHtml);
+    return this.getService.isContentEmpty();
   }
 
   get getTextChild() {
-    return this.commandsService.getContentChild(this.contentHtml);
+    return this.getService.getContentChild(this.contentHtml);
   }
 
   mouseEnter($event) {
-    this.visible = true && !this.selectionService.ismousedown;
+    this.visible = true && this.isContentEmpty && !this.selectionService.ismousedown;
   }
 
   mouseOut($event) {
-    this.visible = (document.activeElement === this.getTextChild);
+    this.visible = (document.activeElement === this.getTextChild) && this.isContentEmpty;
   }
 
   onBlur($event) {
@@ -161,14 +203,13 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   setFocus($event?) {
-    console.log('focus');
     this.getTextChild.focus();
-    this.visible = true;
+    this.visible = true && this.isContentEmpty;
   }
 
   setFocusToEnd() {
     this.contEditService.setCursor(this.getTextChild, false);
-    this.visible = true;
+    this.visible = true && this.isContentEmpty;
   }
 
   mouseUp($event: MouseEvent) {

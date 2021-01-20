@@ -1,6 +1,8 @@
-import { ElementRef } from '@angular/core';
+import { ElementRef, EventEmitter } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../../menu-selection.service';
+import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
+import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 
 export abstract class HtmlCommandsAbstract {
@@ -8,9 +10,11 @@ export abstract class HtmlCommandsAbstract {
     abstract defaultEmptyString: string;
 
     constructor(
-        private apiBrowserService: ApiBrowserTextService,
-        private selectionService: SelectionService,
-        public menuSelectionService: MenuSelectionService, ) {
+        public apiBrowserService: ApiBrowserTextService,
+        public selectionService: SelectionService,
+        public menuSelectionService: MenuSelectionService,
+        public contentHtml: ElementRef,
+        public content: ContentModel<Html>) {
     }
 
     abstract abstractonBlur(e);
@@ -22,22 +26,13 @@ export abstract class HtmlCommandsAbstract {
     }
 
     mouseUp($event: MouseEvent) {
-        const selection = this.apiBrowserService.getSelection();
-        if (selection.toString() !== '') {
-            const coords = selection.getRangeAt(0).getBoundingClientRect();
-            this.menuSelectionService.menuActive = true;
-            this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
-            this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
-        } else {
-            this.menuSelectionService.menuActive = false;
-        }
     }
 
-    abstract enter(e);
+    abstract enter(emitter: EventEmitter<EnterEvent>, eventModel: EnterEvent);
     abstract backDown(e);
     abstract backUp(e);
 
-    isContentEmpty(contentHtml: ElementRef) {
-        return this.getContentChild(contentHtml).textContent.length === 0;
+    isContentEmpty() {
+        return this.getContentChild(this.contentHtml).textContent.length === 0;
     }
 }

@@ -36,6 +36,7 @@ import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
+import { EnterEvent } from '../models/enterEvent';
 
 
 @Component({
@@ -178,7 +179,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.htmlElements.last.mouseOut($event);
   }
 
-  enterHandler(value: { id: string, typeBreak: LineBreakType, html?: DocumentFragment, itemType: HtmlType }) // TODO CHANGE LOGIC
+  enterHandler(value: EnterEvent) // TODO CHANGE LOGIC
   {
     const newElement = this.contentService.getHTMLElement('', value.itemType);
 

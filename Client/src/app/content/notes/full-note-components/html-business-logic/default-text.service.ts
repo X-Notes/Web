@@ -1,9 +1,24 @@
-import { ElementRef } from '@angular/core';
+import { ElementRef, EventEmitter } from '@angular/core';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { MenuSelectionService } from '../../menu-selection.service';
+import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
+import { EnterEvent } from '../../models/enterEvent';
+import { SelectionService } from '../../selection.service';
 import { HtmlCommandsAbstract } from './command-interface';
 
 export class TextService extends HtmlCommandsAbstract {
 
-    defaultEmptyString = 'Type / for browse options';
+    defaultEmptyString = 'Text';
+
+    constructor(
+        apiBrowserService: ApiBrowserTextService,
+        selectionService: SelectionService,
+        menuSelectionService: MenuSelectionService,
+        contentHtml: ElementRef,
+        content: ContentModel<Html>
+    ) {
+        super(apiBrowserService, selectionService, menuSelectionService, contentHtml, content);
+    }
 
     abstractonBlur(e: any) {
         throw new Error('Method not implemented.');
@@ -13,8 +28,8 @@ export class TextService extends HtmlCommandsAbstract {
         return contentHtml.nativeElement.children[0];
     }
 
-    enter(e: any) {
-        throw new Error('Method not implemented.');
+    enter(emitter: EventEmitter<EnterEvent>, eventModel: EnterEvent) {
+        emitter.emit(eventModel);
     }
 
     backDown(e: any) {

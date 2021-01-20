@@ -1,23 +1,21 @@
 import { ElementRef, EventEmitter } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, ContentType, Html, HtmlType } from '../../models/ContentMode';
+import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 import { HtmlCommandsAbstract } from './command-interface';
-import { TextService } from './default-text.service';
 
-export class DotListService extends HtmlCommandsAbstract {
+export class HeadingService extends HtmlCommandsAbstract {
 
-    defaultEmptyString = 'List';
+    defaultEmptyString = 'Heading';
 
     constructor(
-         apiBrowserService: ApiBrowserTextService,
-         selectionService: SelectionService,
-         menuSelectionService: MenuSelectionService,
-         contentHtml: ElementRef,
-         content: ContentModel<Html>,
+        apiBrowserService: ApiBrowserTextService,
+        selectionService: SelectionService,
+        menuSelectionService: MenuSelectionService,
+        contentHtml: ElementRef,
+        content: ContentModel<Html>
     ) {
         super(apiBrowserService, selectionService, menuSelectionService, contentHtml, content);
     }
@@ -27,11 +25,11 @@ export class DotListService extends HtmlCommandsAbstract {
     }
 
     getContentChild(contentHtml: ElementRef): any {
-        return contentHtml.nativeElement.children[0].children[1];
+        return contentHtml.nativeElement.children[0];
     }
 
     enter(emitter: EventEmitter<EnterEvent>, eventModel: EnterEvent) {
-        eventModel.itemType = HtmlType.DOTLIST;
+        eventModel.itemType = HtmlType.Text;
         emitter.emit(eventModel);
     }
 
