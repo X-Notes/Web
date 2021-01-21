@@ -1,5 +1,6 @@
 import { ElementRef, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, HtmlText } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
@@ -15,25 +16,37 @@ export abstract class HtmlService {
         public apiBrowserService: ApiBrowserTextService,
         public selectionService: SelectionService,
         public menuSelectionService: MenuSelectionService,
-        private renderer: Renderer2) {
+        private renderer: Renderer2,
+        public contEditService: ContentEditableService) {
     }
 
     onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef)
     {
         content.data.content = contentHtml.nativeElement.innerText;
-        if (this.isContentEmpty) {
-          contentHtml.nativeElement.innerHTML = '';
-        }
+    }
+
+    pasteCommandHandler(e){
+      this.apiBrowserService.pasteCommandHandler(e);
     }
 
     abstract onBlur(e);
-    abstract pasteCommandHandler(e);
-    abstract mouseUp(e);
     abstract onSelectStart(e);
     abstract enter(e);
     abstract backDown(e);
     abstract backUp(e);
     abstract getTextChild(contentHtml: ElementRef);
+
+    mouseUp($event: MouseEvent) {
+      const selection = this.apiBrowserService.getSelection();
+      if (selection.toString() !== '') {
+        const coords = selection.getRangeAt(0).getBoundingClientRect();
+        this.menuSelectionService.menuActive = true;
+        this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
+        this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
+      } else {
+        this.menuSelectionService.menuActive = false;
+      }
+    }
 
     isContentEmpty(contentHtml: ElementRef)
     {

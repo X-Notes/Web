@@ -9,24 +9,31 @@ export class CheckListService extends HtmlService {
     onInput(e: any) {
         throw new Error('Method not implemented.');
     }
+
     onBlur(e: any) {
-        throw new Error('Method not implemented.');
+        // BLUR HANDLER
     }
+
     pasteCommandHandler(e: any) {
         throw new Error('Method not implemented.');
     }
+
     mouseUp(e: any) {
-        throw new Error('Method not implemented.');
+        super.mouseUp(e);
     }
+
     onSelectStart(e: any) {
-        throw new Error('Method not implemented.');
+        // SELECTIION
     }
+
     enter(e: any) {
         throw new Error('Method not implemented.');
     }
+
     backDown(e: any) {
         throw new Error('Method not implemented.');
     }
+
     backUp(e: any) {
         throw new Error('Method not implemented.');
     }

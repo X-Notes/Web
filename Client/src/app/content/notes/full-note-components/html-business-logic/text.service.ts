@@ -5,24 +5,27 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class TextService extends HtmlService {
 
+    visible = false;
+
     onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
         super.onInput(content, contentHtml);
+        this.visible = this.isContentEmpty(contentHtml);
     }
 
     onBlur(e: any) {
-        throw new Error('Method not implemented.');
+        // BLUR HANDLER
     }
 
     pasteCommandHandler(e: any) {
-        throw new Error('Method not implemented.');
+        super.pasteCommandHandler(e);
     }
 
     mouseUp(e: any) {
-        throw new Error('Method not implemented.');
+        super.mouseUp(e);
     }
 
     onSelectStart(e: any) {
-        throw new Error('Method not implemented.');
+        // SELECTIION
     }
 
     enter(e: any) {
@@ -37,8 +40,31 @@ export class TextService extends HtmlService {
         throw new Error('Method not implemented.');
     }
 
-    getTextChild(contentHtml: ElementRef)
+    getTextChild(contentHtml: ElementRef) {
+        return contentHtml.nativeElement;
+    }
+
+    mouseEnter($event, contentHtml: ElementRef) {
+        this.visible = true && this.isContentEmpty(contentHtml) && !this.selectionService.ismousedown;
+    }
+
+    mouseOut($event, contentHtml: ElementRef) {
+        this.visible = (document.activeElement === this.getTextChild(contentHtml)) && this.isContentEmpty(contentHtml);
+    }
+
+    setFocus($event, contentHtml: ElementRef) {
+        this.getTextChild(contentHtml).focus();
+        this.visible = true && this.isContentEmpty(contentHtml);
+    }
+
+    setFocusToEnd(contentHtml: ElementRef) {
+        this.contEditService.setCursor(this.getTextChild(contentHtml), false);
+        this.visible = true && this.isContentEmpty(contentHtml);
+    }
+
+    focusOut()
     {
-      return contentHtml.nativeElement.children[0];
+        this.visible = false;
+        this.menuSelectionService.menuActive = false;
     }
 }

@@ -31,4 +31,33 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
     this.textService.contentStr = this.content.data.content;
   }
 
+  buttonHandler($event) {
+    $event.preventDefault();
+  }
+
+  preventClick($event) {
+    $event.preventDefault();
+  }
+
+  mouseEnter($event) {
+    this.textService.mouseEnter($event, this.contentHtml);
+  }
+
+  mouseOut($event) {
+    this.textService.mouseOut($event, this.contentHtml);
+  }
+
+  setFocus($event?) {
+    this.textService.setFocus($event, this.contentHtml);
+  }
+
+  setFocusToEnd() {
+    this.textService.setFocusToEnd(this.contentHtml);
+  }
+
+  focusOut($event)
+  {
+    this.textService.focusOut();
+  }
+
 }

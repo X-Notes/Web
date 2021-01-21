@@ -10,7 +10,7 @@ export class DotListService extends HtmlService {
     }
 
     onBlur(e: any) {
-        throw new Error('Method not implemented.');
+        // BLUR HANDLER
     }
 
     pasteCommandHandler(e: any) {
@@ -18,11 +18,11 @@ export class DotListService extends HtmlService {
     }
 
     mouseUp(e: any) {
-        throw new Error('Method not implemented.');
+        super.mouseUp(e);
     }
 
     onSelectStart(e: any) {
-        throw new Error('Method not implemented.');
+        // SELECTIION
     }
 
     enter(e: any) {

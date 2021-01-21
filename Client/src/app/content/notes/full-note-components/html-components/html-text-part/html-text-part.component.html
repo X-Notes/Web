@@ -1,3 +1,23 @@
-<div class="main-container">
+<div class="main-container" 
+    (mouseover)="mouseEnter($event)" 
+    (mouseout)="mouseOut($event)" 
+    (click)="setFocus($event)"
+    (focusout)="focusOut($event)"
+    >
     <p #contentHtml class="block-generic default-text-size" contenteditable="true" [textContent]="textService.contentStr"></p>
+    <div *ngIf="textService.visible" class="no-content">
+        <p>Text</p>
+        <div class="buttons" (mousedown)="preventClick($event)">
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+            <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>
+        </div>
+    </div>
 </div>
