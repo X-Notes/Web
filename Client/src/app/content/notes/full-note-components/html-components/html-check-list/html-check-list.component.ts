@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ContentModel, HtmlText } from '../../../models/ContentMode';
 
 @Component({
   selector: 'app-html-check-list',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./html-check-list.component.scss']
 })
 export class HtmlCheckListComponent implements OnInit {
+
+  @Input()
+  content: ContentModel<HtmlText>;
 
   constructor() { }
 

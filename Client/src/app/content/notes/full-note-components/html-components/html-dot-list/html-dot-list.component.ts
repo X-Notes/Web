@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ContentModel, HtmlText } from '../../../models/ContentMode';
 
 @Component({
   selector: 'app-html-dot-list',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./html-dot-list.component.scss']
 })
 export class HtmlDotListComponent implements OnInit {
+
+  @Input()
+  content: ContentModel<HtmlText>;
 
   constructor() { }
 

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ContentModel, Heading } from '../../../models/ContentMode';
 
 @Component({
   selector: 'app-html-headings',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./html-headings.component.scss']
 })
 export class HtmlHeadingsComponent implements OnInit {
+
+  @Input()
+  content: ContentModel<Heading>;
 
   constructor() { }
 

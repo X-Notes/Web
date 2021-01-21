@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { ContentModel, ContentType, Html, HtmlType, Photos } from '../models/ContentMode';
+import { ContentModel, ContentType, HtmlText } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -181,7 +181,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   enterHandler(value: EnterEvent) // TODO CHANGE LOGIC
   {
-    const newElement = this.contentService.getHTMLElement('', value.itemType);
+    const newElement = this.contentService.getTextElement('', value.itemType);
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     let index = this.contents.indexOf(elementCurrent);
@@ -195,7 +195,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       case LineBreakType.NEXT_WITH_CONTENT: {
         const div = document.createElement('div');
         div.appendChild(value.html);
-        newElement.data.html = div.innerHTML;
+        newElement.data.content = div.innerHTML;
         index++;
         this.contents.splice(index, 0, newElement);
         setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
@@ -220,7 +220,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (indexOf !== 0 && (indexOf !== this.contents.length - 1 || this.isElementEmpty(indexOf - 1))) {
       this.contents = this.contents.filter(z => z.contentId !== id);
       const index = indexOf - 1;
-      if (this.contents[index].type === ContentType.HTML)
+      if (this.contents[index].type === ContentType.TEXT)
       {
         this.htmlElements.toArray()[index].setFocusToEnd();
       }
@@ -234,26 +234,26 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   isElementEmpty(index: number)
   {
     const content = this.contents[index];
-    if (content.type === ContentType.HTML)
+    if (content.type === ContentType.TEXT)
     {
-      const contentHTML = content as ContentModel<Html>;
-      return contentHTML.data.html === '';
+      const contentHTML = content as ContentModel<HtmlText>;
+      return contentHTML.data.content === '';
     }
     return false;
   }
 
   concatThisWithPrev(id: string) {
-    const item = this.contents.find(z => z.contentId === id) as ContentModel<Html>;
+    const item = this.contents.find(z => z.contentId === id) as ContentModel<HtmlText>;
     const indexOf = this.contents.indexOf(item);
     if (indexOf > 0 && indexOf !== this.contents.length - 1)
     {
-      const prevItem = this.contents[indexOf - 1] as ContentModel<Html>;
+      const prevItem = this.contents[indexOf - 1] as ContentModel<HtmlText>;
       const prevItemHtml = this.htmlElements.toArray()[indexOf - 1];
 
       this.contents = this.contents.filter(z => z.contentId !== id);
 
-      const lengthText = prevItem.data.html.length;
-      const resultHTML = prevItem.data.html += item.data.html;
+      const lengthText = prevItem.data.content.length;
+      const resultHTML = prevItem.data.content += item.data.content;
       prevItemHtml.updateHTML(resultHTML);
 
       setTimeout(() => {

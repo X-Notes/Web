@@ -1,7 +1,7 @@
-import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
+import { ElementRef, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
+import { ContentModel, HtmlText } from '../../models/ContentMode';
 import { SelectionService } from '../../selection.service';
 
 @Injectable()
@@ -18,9 +18,9 @@ export abstract class HtmlService {
         private renderer: Renderer2) {
     }
 
-    onInput(content: ContentModel<Html>, contentHtml: ElementRef)
+    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef)
     {
-        content.data.html = contentHtml.nativeElement.innerText;
+        content.data.content = contentHtml.nativeElement.innerText;
         if (this.isContentEmpty) {
           contentHtml.nativeElement.innerHTML = '';
         }
@@ -40,7 +40,7 @@ export abstract class HtmlService {
       return this.getTextChild(contentHtml).textContent.length === 0;
     }
 
-    setHandlers(content: ContentModel<Html>, contentHtml: ElementRef)
+    setHandlers(content: ContentModel<HtmlText>, contentHtml: ElementRef)
     {
         const input = this.renderer.listen(contentHtml.nativeElement, 'input', (e) => { this.onInput(content, contentHtml); });
         const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });

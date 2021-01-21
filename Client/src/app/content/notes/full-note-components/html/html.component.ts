@@ -2,10 +2,9 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, 
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
+import { ContentModel, HtmlText } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
-import { HtmlService } from '../html-business-logic/html.service';
 
 @Component({
   selector: 'app-html',
@@ -30,9 +29,9 @@ export class HtmlComponent implements OnInit {
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<Html>;
+  content: ContentModel<HtmlText>;
 
-  contentType = HtmlType;
+  contentType = null;
 
   constructor(private contEditService: ContentEditableService,
               private apiBrowserService: ApiBrowserTextService,
@@ -43,7 +42,7 @@ export class HtmlComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.startStr = this.content.data.html;
+    this.startStr = this.content.data.content;
   }
 
   buttonHandler($event) {
@@ -56,7 +55,7 @@ export class HtmlComponent implements OnInit {
 
 
   async onInput(event): Promise<void> {
-    this.content.data.html = this.getTextChild.innerText;
+    this.content.data.content = this.getTextChild.innerText;
     if (this.isContentEmpty) {
       this.getTextChild.innerHTML = '';
     }
@@ -64,7 +63,7 @@ export class HtmlComponent implements OnInit {
   }
 
   updateHTML(html: string) {
-    this.content.data.html = html; // TODO MAYBER NO NEED
+    this.content.data.content = html; // TODO MAYBER NO NEED
     this.getTextChild.innerHTML = html;
   }
 

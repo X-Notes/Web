@@ -1,5 +1,5 @@
 <div #contentHtml class="container" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)" (click)="setFocus($event)">
-    <ng-container [ngSwitch]="content.data.type">
+    <ng-container [ngSwitch]="5">
         <app-html-text-part *ngSwitchCase="contentType.Text" [content]="content" ></app-html-text-part>
         <div class="block-generic h1" *ngSwitchCase="contentType.H1" contenteditable="true" [textContent]="startStr"></div>
         <div class="block-generic h2" *ngSwitchCase="contentType.H2" contenteditable="true" [textContent]="startStr"></div>
@@ -10,11 +10,9 @@
             </div>
             <p class="block-generic text-dot" contenteditable="true" [textContent]="startStr"></p>
         </div>
-        <div class="block-generic" *ngSwitchCase="contentType.NUMBERLIST" contenteditable="true">{{content.data.html}}</div>
-        <div class="block-generic" *ngSwitchCase="contentType.CHECKLIST" contenteditable="true">{{content.data.html}}</div>
         <p *ngSwitchDefault>Default</p>
      </ng-container>
-    <div *ngIf="visible" class="no-content" [ngClass]="{'dotList': content.data.type === contentType.DOTLIST, 'second': true}">
+    <div *ngIf="visible" class="no-content">
         <p>EMPTY</p>
         <div class="buttons" (mousedown)="preventClick($event)">
             <i (mousedown)="buttonHandler($event)" class="icon-plus"></i>

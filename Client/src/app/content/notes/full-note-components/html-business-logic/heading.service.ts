@@ -1,9 +1,4 @@
-import { ElementRef, EventEmitter } from '@angular/core';
-import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
-import { EnterEvent } from '../../models/enterEvent';
-import { SelectionService } from '../../selection.service';
+import { ElementRef, } from '@angular/core';
 import { HtmlService } from './html.service';
 
 export class HeadingService extends HtmlService {

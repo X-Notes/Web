@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ContentModel, HtmlText } from '../../../models/ContentMode';
 
 @Component({
   selector: 'app-html-number-list',
@@ -6,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./html-number-list.component.scss']
 })
 export class HtmlNumberListComponent implements OnInit {
+
+  @Input()
+  content: ContentModel<HtmlText>;
+
 
   constructor() { }
 

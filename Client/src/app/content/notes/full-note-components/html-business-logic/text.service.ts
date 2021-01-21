@@ -1,11 +1,11 @@
 import { ElementRef, Injectable } from '@angular/core';
-import { ContentModel, Html } from '../../models/ContentMode';
+import { ContentModel, HtmlText } from '../../models/ContentMode';
 import { HtmlService } from './html.service';
 
 @Injectable()
 export class TextService extends HtmlService {
 
-    onInput(content: ContentModel<Html>, contentHtml: ElementRef) {
+    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
         super.onInput(content, contentHtml);
     }
 

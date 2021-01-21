@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ContentModel, Html } from '../../../models/ContentMode';
+import { ContentModel, HtmlText } from '../../../models/ContentMode';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
   listeners = [];
 
   @Input()
-  content: ContentModel<Html>;
+  content: ContentModel<HtmlText>;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -30,7 +30,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.textService.contentStr = this.content.data.html;
+    this.textService.contentStr = this.content.data.content;
   }
 
 }

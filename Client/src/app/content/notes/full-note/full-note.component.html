@@ -49,14 +49,11 @@
             <div class="content-section">
                 <div *ngFor="let item of contents">
                     <div [ngSwitch]="item.type">
-
-                        <app-html #htmlComp *ngSwitchCase="contentType.HTML"  
-                        (enterEvent)="enterHandler($event)" 
-                        [content]="item"
-                        (deleteThis)="deleteHTMLHandler($event)"
-                        (concatThisWithPrev)="concatThisWithPrev($event)"
-                        ></app-html>
-
+                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.TEXT" [content]="item"></app-html-text-part>
+                        <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" [content]="item"></app-html-number-list>
+                        <app-html-dot-list #htmlComp *ngSwitchCase="contentType.DOTLIST" [content]="item"></app-html-dot-list>
+                        <app-html-check-list #htmlComp *ngSwitchCase="contentType.CHECKLIST" [content]="item"></app-html-check-list>
+                        <app-html-headings #htmlComp *ngSwitchCase="contentType.HEADING" [content]="item"></app-html-headings>
                         <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               
