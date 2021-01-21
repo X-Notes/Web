@@ -3,7 +3,7 @@ import { ContentModel, Html } from '../../models/ContentMode';
 import { HtmlService } from './html.service';
 
 @Injectable()
-export class DotListService extends HtmlService {
+export class TextService extends HtmlService {
 
     onInput(content: ContentModel<Html>, contentHtml: ElementRef) {
         super.onInput(content, contentHtml);
@@ -39,7 +39,6 @@ export class DotListService extends HtmlService {
 
     getTextChild(contentHtml: ElementRef)
     {
-      return contentHtml.nativeElement.children[0].children[1];
+      return contentHtml.nativeElement.children[0];
     }
-
 }

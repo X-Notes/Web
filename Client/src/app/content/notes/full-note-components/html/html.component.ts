@@ -1,26 +1,19 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ContentEditableService } from '../../content-editable.service';
-import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
-import { HtmlCommandsAbstract } from '../html-business-logic/command-interface';
-import { TextService } from '../html-business-logic/default-text.service';
-import { DotListService } from '../html-business-logic/dotList.service';
-import { HeadingService } from '../html-business-logic/heading.service';
+import { HtmlService } from '../html-business-logic/html.service';
 
 @Component({
   selector: 'app-html',
   templateUrl: './html.component.html',
   styleUrls: ['./html.component.scss']
 })
-export class HtmlComponent implements OnInit, AfterViewInit {
+export class HtmlComponent implements OnInit {
 
-  textService: HtmlCommandsAbstract;
-  headingService: HtmlCommandsAbstract;
-  dotListService: HtmlCommandsAbstract;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -49,61 +42,9 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
 
-  ngAfterViewInit(): void {
-
-    this.setServices();
-    this.setHandlers();
-  }
-
   ngOnInit(): void {
     this.startStr = this.content.data.html;
   }
-
-  setServices()
-  {
-
-    this.textService = new TextService(this.apiBrowserService,
-      this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
-    this.dotListService = new DotListService(this.apiBrowserService,
-        this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
-    this.headingService = new HeadingService(this.apiBrowserService,
-          this.selectionService, this.menuSelectionService, this.contentHtml, this.content);
-  }
-
-  setHandlers()
-  {
-    this.renderer.listen(this.getTextChild, 'input', (e) => { this.onInput(e); });
-    this.renderer.listen(this.getTextChild, 'blur', (e) => { this.onBlur(e); });
-    this.renderer.listen(this.getTextChild, 'paste', (e) => { this.pasteCommandHandler(e); });
-    this.renderer.listen(this.getTextChild, 'mouseup', (e) => { this.mouseUp(e); });
-    this.renderer.listen(this.getTextChild, 'selectstart', (e) => { this.onSelectStart(e); });
-    this.renderer.listen(this.getTextChild, 'keydown.enter', (e) => { this.enter(e); });
-    this.renderer.listen(this.getTextChild, 'keydown.backspace', (e) => { this.backDown(e); });
-    this.renderer.listen(this.getTextChild, 'keyup.backspace', (e) => { this.backUp(e); });
-  }
-
-  get getService(): HtmlCommandsAbstract
-  {
-    switch (this.content.data.type)
-    {
-      case HtmlType.DOTLIST: {
-        return this.dotListService;
-      }
-      case HtmlType.Text: {
-        return this.textService;
-      }
-      case HtmlType.H1: {
-        return this.headingService;
-      }
-      case HtmlType.H2: {
-        return this.headingService;
-      }
-      case HtmlType.H3: {
-        return this.headingService;
-      }
-    }
-  }
-
 
   buttonHandler($event) {
     $event.preventDefault();
@@ -137,6 +78,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
   }
 
   async enter($event) {
+    /*
     $event.preventDefault();
     const model = this.contEditService.enterService(this.getTextChild);
     this.content.data.html = this.getTextChild.innerHTML;
@@ -155,7 +97,7 @@ export class HtmlComponent implements OnInit, AfterViewInit {
       });
     }else{
       this.getService.enter(this.enterEvent, eventModel);
-    }
+    }*/
   }
 
   async backDown($event: KeyboardEvent) {
@@ -182,11 +124,11 @@ export class HtmlComponent implements OnInit, AfterViewInit {
 
   // PLACEHOLDER VISIBLE
   get isContentEmpty() {
-    return this.getService.isContentEmpty();
+    return null;
   }
 
   get getTextChild() {
-    return this.getService.getContentChild(this.contentHtml);
+    return null;
   }
 
   mouseEnter($event) {

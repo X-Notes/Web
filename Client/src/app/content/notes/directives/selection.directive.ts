@@ -41,7 +41,7 @@ export class SelectionDirective {
 
     this.mainContent.addEventListener('scroll', (e) => this.scrollEvent(e));
 
-    document.addEventListener('mousedown', (e) => this.mouseDown(e));
+    document.addEventListener('mousedown', (e) => this.mouseDown(e)); // TODO make unsubscribe
     document.addEventListener('mouseup', (e) => this.mouseUp(e));
     document.addEventListener('mousemove', (e) => this.mouseMove(e));
   }

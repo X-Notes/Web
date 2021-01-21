@@ -4,41 +4,38 @@ import { MenuSelectionService } from '../../menu-selection.service';
 import { ContentModel, Html, HtmlType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
-import { HtmlCommandsAbstract } from './command-interface';
+import { HtmlService } from './html.service';
 
-export class HeadingService extends HtmlCommandsAbstract {
+export class HeadingService extends HtmlService {
 
-    defaultEmptyString = 'Heading';
-
-    constructor(
-        apiBrowserService: ApiBrowserTextService,
-        selectionService: SelectionService,
-        menuSelectionService: MenuSelectionService,
-        contentHtml: ElementRef,
-        content: ContentModel<Html>
-    ) {
-        super(apiBrowserService, selectionService, menuSelectionService, contentHtml, content);
-    }
-
-    abstractonBlur(e: any) {
+    onInput(e: any) {
         throw new Error('Method not implemented.');
     }
-
-    getContentChild(contentHtml: ElementRef): any {
-        return contentHtml.nativeElement.children[0];
+    onBlur(e: any) {
+        throw new Error('Method not implemented.');
     }
-
-    enter(emitter: EventEmitter<EnterEvent>, eventModel: EnterEvent) {
-        eventModel.itemType = HtmlType.Text;
-        emitter.emit(eventModel);
+    pasteCommandHandler(e: any) {
+        throw new Error('Method not implemented.');
     }
-
+    mouseUp(e: any) {
+        throw new Error('Method not implemented.');
+    }
+    onSelectStart(e: any) {
+        throw new Error('Method not implemented.');
+    }
+    enter(e: any) {
+        throw new Error('Method not implemented.');
+    }
     backDown(e: any) {
         throw new Error('Method not implemented.');
     }
-
     backUp(e: any) {
         throw new Error('Method not implemented.');
+    }
+
+    getTextChild(contentHtml: ElementRef)
+    {
+      return contentHtml.nativeElement.children[0];
     }
 
 }
