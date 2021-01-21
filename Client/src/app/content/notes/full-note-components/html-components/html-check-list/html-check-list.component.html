@@ -1,1 +1,8 @@
-<p>html-check-list works!</p>
+<div class="main-container">
+    <div class="check-list">
+        <div class="checkbox-container">
+            <input type="checkbox" checked>
+        </div>
+        <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="checkListService.contentStr"></p>
+    </div>
+</div>

@@ -1,1 +1,8 @@
-<p>html-dot-list works!</p>
+<div class="main-container">
+    <div class="dot-list">
+        <div class="dot-container">
+            <div class="dot"></div>
+        </div>
+        <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="dotListService.contentStr"></p>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading } from './models/ContentMode';
+import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading, DotList, NumberList, CheckedList } from './models/ContentMode';
 
 @Injectable()
 export class FullNoteContentService {
@@ -35,28 +35,28 @@ export class FullNoteContentService {
 
 
     fs = 'DOT LIST ITEM1';
-    array.push(this.getTextElement(fs, ContentType.DOTLIST));
+    array.push(this.getDotList(fs));
 
     fs = 'DOT LIST ITEM2';
-    array.push(this.getTextElement(fs, ContentType.DOTLIST));
+    array.push(this.getDotList(fs));
 
     fs = 'NUMBER LIST 1';
-    array.push(this.getTextElement(fs, ContentType.NUMBERLIST));
+    array.push(this.getNumberList(fs));
 
     fs = 'NUMBER LIST 2';
-    array.push(this.getTextElement(fs, ContentType.NUMBERLIST));
+    array.push(this.getNumberList(fs));
 
     fs = 'NUMBER LIST 3';
-    array.push(this.getTextElement(fs, ContentType.NUMBERLIST));
+    array.push(this.getNumberList(fs));
 
     fs = 'CHECk LIST 1';
-    array.push(this.getTextElement(fs, ContentType.CHECKLIST));
+    array.push(this.getCheckList(fs));
 
     fs = 'CHECk LIST 2';
-    array.push(this.getTextElement(fs, ContentType.CHECKLIST));
+    array.push(this.getCheckList(fs));
 
     fs = 'CHECk LIST 3';
-    array.push(this.getTextElement(fs, ContentType.CHECKLIST));
+    array.push(this.getCheckList(fs));
 
     // DEFAULT
     array.push(this.getTextElement());
@@ -65,13 +65,47 @@ export class FullNoteContentService {
     return array;
   }
 
-  getTextElement(str = '', type = ContentType.TEXT)
+  getTextElement(str = '')
   {
     const contentDefault = new ContentModel<HtmlText>();
-    contentDefault.type = type;
+    contentDefault.type = ContentType.TEXT;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.data = {
       content: str
+    };
+    return contentDefault;
+  }
+
+  getDotList(str = '')
+  {
+    const contentDefault = new ContentModel<DotList>();
+    contentDefault.type = ContentType.DOTLIST;
+    contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
+    contentDefault.data = {
+      content: str
+    };
+    return contentDefault;
+  }
+
+  getNumberList(str = '')
+  {
+    const contentDefault = new ContentModel<NumberList>();
+    contentDefault.type = ContentType.NUMBERLIST;
+    contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
+    contentDefault.data = {
+      content: str
+    };
+    return contentDefault;
+  }
+
+  getCheckList(str = '')
+  {
+    const contentDefault = new ContentModel<CheckedList>();
+    contentDefault.type = ContentType.CHECKLIST;
+    contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
+    contentDefault.data = {
+      checked: false,
+      content: str,
     };
     return contentDefault;
   }

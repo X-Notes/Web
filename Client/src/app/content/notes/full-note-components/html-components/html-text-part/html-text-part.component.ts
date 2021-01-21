@@ -10,8 +10,6 @@ import { TextService } from '../../html-business-logic/text.service';
 })
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  listeners = [];
-
   @Input()
   content: ContentModel<HtmlText>;
 

@@ -1,0 +1,26 @@
+
+.main-container{
+    border-radius: 5px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: relative;
+    width: 100%;
+}
+
+.block-generic{
+    height: 100%;
+    outline: 1px solid transparent;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+}
+
+.default-text-size{
+    font-size: 1.125rem;
+    line-height: 25px;
+}

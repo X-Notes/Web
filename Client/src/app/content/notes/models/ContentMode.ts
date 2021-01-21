@@ -11,6 +11,18 @@ export class HtmlText extends Base{
     content: string;
 }
 
+export class DotList extends Base{
+    content: string;
+}
+
+export class NumberList extends Base{
+    content: string;
+}
+
+export class CheckedList extends Base{
+    checked: boolean;
+    content: string;
+}
 
 export class Heading extends Base{
     content: string;

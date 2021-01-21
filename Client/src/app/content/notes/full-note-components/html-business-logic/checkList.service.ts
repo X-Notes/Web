@@ -1,8 +1,10 @@
-import { ElementRef, Injectable, } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { HtmlService } from './html.service';
 
+
+
 @Injectable()
-export class HeadingService extends HtmlService {
+export class CheckListService extends HtmlService {
 
     onInput(e: any) {
         throw new Error('Method not implemented.');
