@@ -1,12 +1,12 @@
 import { ElementRef, Injectable } from '@angular/core';
-import { ContentModel, HtmlText } from '../../models/ContentMode';
+import { ContentModel, DotList, HtmlText } from '../../models/ContentMode';
 import { HtmlService } from './html.service';
 
 @Injectable()
 export class DotListService extends HtmlService {
 
-    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
-        super.onInput(content, contentHtml);
+    onInput(content: ContentModel<DotList>, contentHtml: ElementRef) {
+        content.data.content = contentHtml.nativeElement.innerText;
     }
 
     onBlur(e: any) {

@@ -1,11 +1,12 @@
 import { ElementRef, Injectable, } from '@angular/core';
+import { ContentModel, Heading } from '../../models/ContentMode';
 import { HtmlService } from './html.service';
 
 @Injectable()
 export class HeadingService extends HtmlService {
 
-    onInput(e: any) {
-        throw new Error('Method not implemented.');
+    onInput(content: ContentModel<Heading>, contentHtml: ElementRef) {
+        content.data.content = contentHtml.nativeElement.innerText;
     }
 
     onBlur(e: any) {

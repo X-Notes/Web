@@ -8,7 +8,7 @@ export class TextService extends HtmlService {
     visible = false;
 
     onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
-        super.onInput(content, contentHtml);
+        content.data.content = contentHtml.nativeElement.innerText;
         this.visible = this.isContentEmpty(contentHtml);
     }
 

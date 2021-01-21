@@ -20,10 +20,7 @@ export abstract class HtmlService {
         public contEditService: ContentEditableService) {
     }
 
-    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef)
-    {
-        content.data.content = contentHtml.nativeElement.innerText;
-    }
+    abstract onInput(content: ContentModel, contentHtml: ElementRef);
 
     pasteCommandHandler(e){
       this.apiBrowserService.pasteCommandHandler(e);

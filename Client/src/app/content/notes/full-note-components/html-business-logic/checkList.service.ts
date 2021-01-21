@@ -1,4 +1,5 @@
 import { ElementRef, Injectable } from '@angular/core';
+import { CheckedList, ContentModel } from '../../models/ContentMode';
 import { HtmlService } from './html.service';
 
 
@@ -6,8 +7,8 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class CheckListService extends HtmlService {
 
-    onInput(e: any) {
-        throw new Error('Method not implemented.');
+    onInput(content: ContentModel<CheckedList>, contentHtml: ElementRef) {
+        content.data.content = contentHtml.nativeElement.innerText;
     }
 
     onBlur(e: any) {
