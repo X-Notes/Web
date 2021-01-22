@@ -8,6 +8,13 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class CheckListService extends HtmlService {
 
+    setFocus($event: any, contentHtml: ElementRef<any>) {
+        this.getNativeElement(contentHtml).focus();
+    }
+    setFocusToEnd(contentHtml: ElementRef<any>) {
+        this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
+    }
+
     onInput(content: ContentModel<CheckedList>, contentHtml: ElementRef) {
         content.data.content = contentHtml.nativeElement.innerText;
     }

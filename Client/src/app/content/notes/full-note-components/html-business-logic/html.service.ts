@@ -43,6 +43,8 @@ export abstract class HtmlService {
     abstract enter(e, content: ContentModel<BaseText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>);
     abstract backDown(e);
     abstract backUp(e);
+    abstract setFocus($event, contentHtml: ElementRef);
+    abstract setFocusToEnd(contentHtml: ElementRef);
 
     mouseUp($event: MouseEvent) {
       const selection = this.apiBrowserService.getSelection();
