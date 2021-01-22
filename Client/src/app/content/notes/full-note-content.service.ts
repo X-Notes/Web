@@ -1,10 +1,20 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading, DotList, NumberList, CheckedList, BaseText } from './models/ContentMode';
 
 @Injectable()
-export class FullNoteContentService {
+export class FullNoteContentService implements OnDestroy {
 
-  constructor() { }
+  destroy = new Subject<void>();
+
+  constructor(private httpClient: HttpClient) { }
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   getContent(): ContentModel[] { // TODO REMOVE
     const array: ContentModel[] = [];
@@ -65,8 +75,7 @@ export class FullNoteContentService {
     return array;
   }
 
-  getTextElement(str = '')
-  {
+  getTextElement(str = '') {
     const contentDefault = new ContentModel<HtmlText>();
     contentDefault.type = ContentType.TEXT;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
@@ -76,8 +85,7 @@ export class FullNoteContentService {
     return contentDefault;
   }
 
-  getDotList(str = '')
-  {
+  getDotList(str = '') {
     const contentDefault = new ContentModel<DotList>();
     contentDefault.type = ContentType.DOTLIST;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
@@ -87,8 +95,7 @@ export class FullNoteContentService {
     return contentDefault;
   }
 
-  getNumberList(str = '')
-  {
+  getNumberList(str = '') {
     const contentDefault = new ContentModel<NumberList>();
     contentDefault.type = ContentType.NUMBERLIST;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
@@ -98,8 +105,7 @@ export class FullNoteContentService {
     return contentDefault;
   }
 
-  getCheckList(str = '')
-  {
+  getCheckList(str = '') {
     const contentDefault = new ContentModel<CheckedList>();
     contentDefault.type = ContentType.CHECKLIST;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
@@ -110,8 +116,7 @@ export class FullNoteContentService {
     return contentDefault;
   }
 
-  getHeadingElement(str = '', headingType = HeadingType.H1)
-  {
+  getHeadingElement(str = '', headingType = HeadingType.H1) {
     const contentDefault = new ContentModel<Heading>();
     contentDefault.type = ContentType.HEADING;
     contentDefault.contentId = (Math.random() * (100000 - 1) + 1).toString();
@@ -122,25 +127,32 @@ export class FullNoteContentService {
     return contentDefault;
   }
 
-  getPhotoELEMENT()
-  {
+  getPhotoELEMENT() {
+    const max = 10;
+    const min = 1;
+    const number2 = Math.floor(Math.random() * (max - min + 1) + min);
+
+
     const content3 = new ContentModel<Photos>();
     content3.contentId = (Math.random() * (100000 - 1) + 1).toString();
     content3.type = ContentType.PHOTO;
     content3.data = {
       photos: []
     };
-    content3.data.photos.push(
-      'https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg',
-      'https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg',
-    );
+
+    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=2`)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(z => {
+      for (const item of z as any)
+      {
+        content3.data.photos.push(item.download_url);
+      }
+    });
     return content3;
   }
 
-  getContentByType(type: ContentType)
-  {
-    switch (type)
-    {
+  getContentByType(type: ContentType) {
+    switch (type) {
       case ContentType.TEXT: {
         return this.getTextElement();
       }
@@ -162,10 +174,8 @@ export class FullNoteContentService {
     }
   }
 
-  getTextContentByType(type: ContentType): ContentModel<BaseText>
-  {
-    switch (type)
-    {
+  getTextContentByType(type: ContentType): ContentModel<BaseText> {
+    switch (type) {
       case ContentType.TEXT: {
         return this.getTextElement();
       }
