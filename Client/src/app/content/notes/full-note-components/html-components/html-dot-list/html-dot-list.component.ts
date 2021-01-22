@@ -62,7 +62,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   {
     return this.contentHtml.nativeElement;
   }
-  
+
   mouseEnter($event) {
   }
 
