@@ -53,7 +53,8 @@
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
-                        (concatThisWithPrev)="concatThisWithPrev($event)"                    
+                        (concatThisWithPrev)="concatThisWithPrev($event)"
+                        (transformTo)="transformToType($event)"                    
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
                         [prevContent]="contents[i - 1]"

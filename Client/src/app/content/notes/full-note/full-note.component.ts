@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, ContentModel, ContentType, HtmlText } from '../models/ContentMode';
+import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList, Photos } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -276,12 +276,61 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   transformToType(value: TransformContent)
   {
-    const item = this.contents.find(z => z.contentId === value.id);
-    const indexOf = this.contents.indexOf(item);
-    item.type = value.type;
-    setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+    let indexOf;
+    switch (value.type)
+    {
+      case ContentType.TEXT: {
+        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<HtmlText>;
+        indexOf = this.contents.indexOf(item);
+        item.type = value.type;
+        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.HEADING: {
+        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<Heading>;
+        indexOf = this.contents.indexOf(item);
+        item.type = value.type;
+        item.data.headingType = value.heading;
+        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.DOTLIST: {
+        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<DotList>;
+        indexOf = this.contents.indexOf(item);
+        item.type = value.type;
+        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.NUMBERLIST: {
+        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<NumberList>;
+        indexOf = this.contents.indexOf(item);
+        item.type = value.type;
+        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.CHECKLIST: {
+        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<CheckedList>;
+        indexOf = this.contents.indexOf(item);
+        item.type = value.type;
+        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.PHOTO: {
+        console.log('TODO'); // TODO
+        break;
+      }
+    }
+    this.checkAddLastTextContent(indexOf);
   }
 
+
+  checkAddLastTextContent(index: number)
+  {
+    if (index === this.contents.length - 1)
+    {
+      this.contents.push(this.contentService.getTextElement());
+    }
+  }
 
   @HostListener('window:resize', ['$event'])
   sizeChange() {

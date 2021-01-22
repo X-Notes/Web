@@ -79,8 +79,6 @@ export class ContentEditableService {
     const selection = this.apiBrowserService.getSelection(); // get the selection object (allows you to change selection)
     selection.removeAllRanges(); // remove any selections already made
     selection.addRange(range); // make the range you have just created the visible selection
-    console.log(range);
-    console.log(selection);
   }
 
 }

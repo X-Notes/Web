@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { ContentModel, HtmlText } from '../../../models/ContentMode';
+import { ContentModel, ContentType, HeadingType, HtmlText } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({
@@ -13,10 +14,16 @@ import { TextService } from '../../html-business-logic/text.service';
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  transformTo = new EventEmitter<TransformContent>();
+
+  @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Input()
   content: ContentModel<HtmlText>;
+
+  contentType = ContentType;
+  headingType = HeadingType;
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -42,8 +49,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textService.contentStr = this.content.data.content;
   }
 
-  buttonHandler($event) {
+  transformContent($event, type: ContentType, heading?: HeadingType) {
     $event.preventDefault();
+    this.transformTo.emit({type, heading, id: this.content.contentId});
   }
 
   preventClick($event) {
