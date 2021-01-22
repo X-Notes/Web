@@ -103,7 +103,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   getNative()
   {
-    return this.contentHtml.nativeElement;
+    return this.contentHtml?.nativeElement;
   }
 
 }

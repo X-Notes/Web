@@ -58,13 +58,18 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   getNative()
   {
-    return this.contentHtml.nativeElement;
+    return this.contentHtml?.nativeElement;
   }
 
   mouseEnter($event) {
   }
 
   mouseOut($event) {
+  }
+
+  get isActive()
+  {
+    return this.content.data.content.length === 0 && document.activeElement === this.getNative();
   }
 
 }
