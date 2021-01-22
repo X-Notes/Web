@@ -16,6 +16,7 @@ export class DotList extends BaseText{
 }
 
 export class NumberList extends BaseText{
+    number?: number;
 }
 
 export class CheckedList extends BaseText{

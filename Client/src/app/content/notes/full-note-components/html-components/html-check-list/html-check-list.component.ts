@@ -18,6 +18,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+
   @Input()
   content: ContentModel<CheckedList>;
 
@@ -46,5 +47,6 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   setFocusToEnd() {
     this.checkListService.setFocusToEnd(this.contentHtml);
   }
+
 
 }

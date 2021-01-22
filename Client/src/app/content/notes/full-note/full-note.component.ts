@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy,
-  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit, QueryList, ViewChildren
+  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit, QueryList, ViewChildren, ChangeDetectorRef
 } from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
@@ -28,7 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { ContentModel, ContentType, HtmlText } from '../models/ContentMode';
+import { BaseText, ContentModel, ContentType, HtmlText } from '../models/ContentMode';
 import { HtmlComponent } from '../full-note-components/html/html.component';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
@@ -96,6 +96,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private selectionService: SelectionService,
               private apiBrowserFunctions: ApiBrowserTextService,
               public menuSelectionService: MenuSelectionService) {
+
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
