@@ -31,7 +31,16 @@ export class TextEditMenuComponent implements OnInit {
     const item = this.menuSelectionService.currentItem;
 
     if (item.type === type) {
-      item.type = ContentType.TEXT;
+      if (item.type === ContentType.HEADING) {
+        const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
+        if (itemH.data.headingType === heading) {
+          itemH.type = ContentType.TEXT;
+        } else {
+          itemH.data.headingType = heading;
+        }
+      } else {
+        item.type = ContentType.TEXT;
+      }
     }
     else if (type === ContentType.HEADING) {
       const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
