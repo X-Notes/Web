@@ -86,4 +86,9 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
 
   mouseOut($event) {
   }
+
+  get isActive()
+  {
+    return this.content.data.content.length === 0 && document.activeElement === this.getNative();
+  }
 }

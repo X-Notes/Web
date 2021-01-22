@@ -3,6 +3,7 @@
         <div class="number-container">
             <div class="number">{{content.data.number}}.</div>
         </div>
-        <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="numberService.contentStr"></p>
+        <p class="block-generic default-text-size text" #contentHtml contenteditable="true" [textContent]="numberService.contentStr"></p>
+        <p class="no-content" *ngIf="isActive">Item</p>
     </div>
 </div>

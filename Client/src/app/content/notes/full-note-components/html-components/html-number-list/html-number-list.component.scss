@@ -3,6 +3,7 @@
 .number-list{
     width: 100%;
     display: flex;
+    position: relative;
     .number-container{
         display: flex;
         justify-content: center;
@@ -11,4 +12,18 @@
             line-height: 25px;
         }
     }
+    .text{
+        position: relative;
+    }
+}
+
+.no-content{
+    margin-left: 33px;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    color: #6B6B6B;               
+    font-weight: 300;
+    line-height: 25px;
 }
