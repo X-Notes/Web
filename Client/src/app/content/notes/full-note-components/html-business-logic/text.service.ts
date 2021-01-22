@@ -7,10 +7,16 @@ import { HtmlService } from './html.service';
 export class TextService extends HtmlService {
 
     visible = false;
+    isLast: boolean;
 
-    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
+    onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>) {
         content.data.content = this.getNativeElement(contentHtml).innerText;
         this.visible = this.isContentEmpty(contentHtml);
+
+        if (this.isLast){
+            addToEndNewText.emit();
+            this.isLast = false;
+        }
     }
 
     onBlur(e: any) {

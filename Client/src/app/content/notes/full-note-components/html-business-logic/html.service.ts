@@ -21,7 +21,7 @@ export abstract class HtmlService {
         public contEditService: ContentEditableService) {
     }
 
-    abstract onInput(content: ContentModel, contentHtml: ElementRef);
+    abstract onInput(content: ContentModel, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>);
 
     pasteCommandHandler(e){
       this.apiBrowserService.pasteCommandHandler(e);
@@ -45,7 +45,7 @@ export abstract class HtmlService {
     abstract setFocusToEnd(contentHtml: ElementRef);
 
     backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
-             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string> )
+             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>)
       {
       const selection = this.apiBrowserService.getSelection().toString();
       if (this.contEditService.isStart(this.getNativeElement(contentHtml)) && !this.isContentEmpty(contentHtml) && selection === '') {
@@ -82,9 +82,10 @@ export abstract class HtmlService {
     }
 
     setHandlers(content: ContentModel<HtmlText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
-                concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>)
+                concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>, addToEndNewText?: EventEmitter<any>)
     {
-        const input = this.renderer.listen(contentHtml.nativeElement, 'input', (e) => { this.onInput(content, contentHtml); });
+        const input = this.renderer.listen(contentHtml.nativeElement, 'input',
+         (e) => { this.onInput(content, contentHtml, addToEndNewText); });
         const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
         const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
         const mouseUp = this.renderer.listen(contentHtml.nativeElement, 'mouseup', (e) => { this.mouseUp(e); });

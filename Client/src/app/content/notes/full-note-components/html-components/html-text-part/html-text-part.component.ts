@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges,
+  OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ContentModel, ContentType, HeadingType, HtmlText } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -11,7 +12,10 @@ import { TextService } from '../../html-business-logic/text.service';
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService]
 })
-export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
+
+  @Output()
+  addToEndNewText = new EventEmitter();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -21,6 +25,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @Input()
   content: ContentModel<HtmlText>;
+
+  @Input()
+  isLast: boolean;
 
   contentType = ContentType;
   headingType = HeadingType;
@@ -35,9 +42,18 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   constructor(public textService: TextService) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.isLast)
+    {
+      this.isLast = changes.isLast.currentValue;
+      this.textService.isLast = this.isLast;
+    }
+  }
+
 
   ngAfterViewInit(): void {
-    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.textService.setHandlers(this.content, this.contentHtml,
+      this.enterEvent, this.concatThisWithPrev, this.deleteThis, this.addToEndNewText);
   }
 
 
@@ -47,6 +63,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   ngOnInit(): void {
     this.textService.contentStr = this.content.data.content;
+    this.textService.isLast = this.isLast;
   }
 
   transformContent($event, type: ContentType, heading?: HeadingType) {

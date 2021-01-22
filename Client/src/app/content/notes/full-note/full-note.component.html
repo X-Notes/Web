@@ -54,7 +54,9 @@
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"
-                        (transformTo)="transformToType($event)"                    
+                        (transformTo)="transformToType($event)" 
+                        [isLast]="i === contents.length - 1"
+                        (addToEndNewText)="addNewElementToEnd()"                  
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
                         [prevContent]="contents[i - 1]"
@@ -89,7 +91,7 @@
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>
-                <div class="empty" (mousedown)="placeHolderClick($event)" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)"></div>
+                <div class="empty" (mousedown)="placeHolderClick($event)" (mousemove)="mouseEnter($event)" (mouseout)="mouseOut($event)"></div>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">

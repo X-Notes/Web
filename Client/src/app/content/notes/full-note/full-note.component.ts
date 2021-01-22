@@ -28,8 +28,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList, Photos } from '../models/ContentMode';
-import { HtmlComponent } from '../full-note-components/html/html.component';
+import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { SelectionService } from '../selection.service';
 import { ContentEditableService } from '../content-editable.service';
@@ -38,7 +37,6 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { EnterEvent } from '../models/enterEvent';
 import { ParentInteraction } from '../models/parent-interaction.interface';
-import { HtmlTextPartComponent } from '../full-note-components/html-components/html-text-part/html-text-part.component';
 import { TransformContent } from '../models/transform-content';
 
 
@@ -176,6 +174,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   mouseEnter($event) {
+    const native = this.textElements.last.getNative();
+    if (native.textContent.length !== 0)
+    {
+      this.addNewElementToEnd();
+    }
     this.textElements.last.mouseEnter($event);
   }
 
@@ -328,8 +331,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   {
     if (index === this.contents.length - 1)
     {
-      this.contents.push(this.contentService.getTextElement());
+      this.addNewElementToEnd();
     }
+  }
+
+  addNewElementToEnd()
+  {
+    this.contents.push(this.contentService.getTextElement());
   }
 
   @HostListener('window:resize', ['$event'])
