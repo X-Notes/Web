@@ -3,6 +3,9 @@
         <div class="checkbox-container">
             <input type="checkbox" checked>
         </div>
-        <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="checkListService.contentStr"></p>
+        <div class="text-container">
+            <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="checkListService.contentStr"></p>
+            <p class="no-content-list" *ngIf="isActive">Item</p>
+        </div>
     </div>
 </div>
