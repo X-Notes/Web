@@ -27,8 +27,8 @@ export class TextService extends HtmlService {
         super.pasteCommandHandler(e);
     }
 
-    mouseUp(e: any) {
-        super.mouseUp(e);
+    mouseUp(e: any, content: ContentModel<BaseText>) {
+        super.mouseUp(e, content);
     }
 
     onSelectStart(e: any) {
@@ -72,6 +72,5 @@ export class TextService extends HtmlService {
 
     focusOut() {
         this.visible = false;
-        this.menuSelectionService.menuActive = false;
     }
 }

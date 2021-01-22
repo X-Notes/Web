@@ -56,7 +56,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   setNumber() {
-    if (this.prevContent.type === ContentType.NUMBERLIST) {
+    if (this.prevContent && this.prevContent.type === ContentType.NUMBERLIST) {
       this.content.data.number = (this.prevContent as ContentModel<NumberList>).data.number + 1;
     } else {
       this.content.data.number = 1;

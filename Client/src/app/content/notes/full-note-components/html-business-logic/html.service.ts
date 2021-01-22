@@ -59,15 +59,17 @@ export abstract class HtmlService {
       }
     }
 
-    mouseUp($event: MouseEvent) {
+    mouseUp($event: MouseEvent, content: ContentModel<BaseText>) {
       const selection = this.apiBrowserService.getSelection();
       if (selection.toString() !== '') {
         const coords = selection.getRangeAt(0).getBoundingClientRect();
         this.menuSelectionService.menuActive = true;
+        this.menuSelectionService.currentItem = content;
         this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
         this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
       } else {
         this.menuSelectionService.menuActive = false;
+        this.menuSelectionService.currentItem = null;
       }
     }
 
@@ -88,7 +90,7 @@ export abstract class HtmlService {
          (e) => { this.onInput(content, contentHtml, addToEndNewText); });
         const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
         const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
-        const mouseUp = this.renderer.listen(contentHtml.nativeElement, 'mouseup', (e) => { this.mouseUp(e); });
+        const mouseUp = this.renderer.listen(contentHtml.nativeElement, 'mouseup', (e) => { this.mouseUp(e, content); });
         const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });
         const keydownEnter = this.renderer.listen(contentHtml.nativeElement, 'keydown.enter',
         (e) => { this.enter(e, content, contentHtml, enterEvent); });

@@ -60,7 +60,7 @@
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
                         [prevContent]="contents[i - 1]"
-                        [prevType]="contents[i - 1].type"
+                        [prevType]="contents[i - 1]?.type"
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"
