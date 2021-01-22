@@ -13,6 +13,9 @@ import { DotListService } from '../../html-business-logic/dotList.service';
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  transformToTextEvent = new EventEmitter<string>();
+
+  @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Input()
@@ -33,6 +36,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   ngOnInit(): void {
     this.dotListService.contentStr = this.content.data.content;
+    this.dotListService.transformToTextEvent = this.transformToTextEvent;
   }
 
   setFocus($event?) {

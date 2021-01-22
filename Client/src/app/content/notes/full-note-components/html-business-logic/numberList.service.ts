@@ -6,6 +6,8 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class NumberListService extends HtmlService {
 
+    transformToTextEvent = new EventEmitter<string>();
+
     setFocus($event: any, contentHtml: ElementRef<any>) {
         this.getNativeElement(contentHtml).focus();
     }
@@ -36,10 +38,14 @@ export class NumberListService extends HtmlService {
 
     enter($event: any, content: ContentModel<NumberList>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
-        const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.data.content = this.getNativeElement(contentHtml).innerText;
-        const event = super.eventEventFactory(content.contentId, breakModel, ContentType.NUMBERLIST);
-        enterEvent.emit(event);
+        if (this.isContentEmpty(contentHtml)) {
+            this.transformToTextEvent.emit(content.contentId);
+        }else{
+            const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
+            content.data.content = this.getNativeElement(contentHtml).innerText;
+            const event = super.eventEventFactory(content.contentId, breakModel, ContentType.NUMBERLIST);
+            enterEvent.emit(event);
+        }
     }
 
     backDown(e: any) {

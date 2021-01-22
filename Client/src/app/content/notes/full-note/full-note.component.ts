@@ -179,7 +179,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.htmlElements.last.mouseOut($event);
   }
 
-  enterHandler(value: EnterEvent) // TODO CHANGE LOGIC
+  enterHandler(value: EnterEvent) // TODO SETTIMEOUT
   {
     const newElement = this.contentService.getTextContentByType(value.nextItemType);
 
@@ -211,7 +211,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => newElement.contentId = numb.toString(), 100);
   }
 
-  deleteHTMLHandler(id: string) {
+  deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
+  {
     const item = this.contents.find(z => z.contentId === id);
     const indexOf = this.contents.indexOf(item);
 
@@ -280,6 +281,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  transformToText(id: string)
+  {
+    const item = this.contents.find(z => z.contentId === id);
+    const indexOf = this.contents.indexOf(item);
+    item.type = ContentType.TEXT;
+    setTimeout(() => { this.htmlElements.toArray()[indexOf].setFocus(); }, 0);
+  }
 
 
   @HostListener('window:resize', ['$event'])

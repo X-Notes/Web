@@ -13,6 +13,9 @@ import { CheckListService } from '../../html-business-logic/checkList.service';
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  transformToTextEvent = new EventEmitter<string>();
+
+  @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Input()
@@ -33,6 +36,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   ngOnInit(): void {
     this.checkListService.contentStr = this.content.data.content;
+    this.checkListService.transformToTextEvent = this.transformToTextEvent;
   }
 
   setFocus($event?) {

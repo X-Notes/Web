@@ -13,6 +13,9 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  transformToTextEvent = new EventEmitter<string>();
+
+  @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Input()
@@ -32,6 +35,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngOnInit(): void {
     this.numberService.contentStr = this.content.data.content;
+    this.numberService.transformToTextEvent = this.transformToTextEvent;
   }
 
   setFocus($event?) {
