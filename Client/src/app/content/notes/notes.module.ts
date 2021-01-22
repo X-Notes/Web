@@ -13,7 +13,6 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { MyHammerConfig } from 'src/app/shared/hammer.config';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
-import { HtmlComponent } from './full-note-components/html/html.component';
 import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
 import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
@@ -34,7 +33,6 @@ import { HtmlCheckListComponent } from './full-note-components/html-components/h
     DeletedComponent,
     ArchiveComponent,
     PhotosComponent,
-    HtmlComponent,
     SelectionDirective,
     TextEditMenuComponent,
     HtmlTextPartComponent,
