@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { ContentModel, HtmlText } from '../../../models/ContentMode';
+import { EnterEvent } from '../../../models/enterEvent';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({
@@ -10,6 +11,9 @@ import { TextService } from '../../html-business-logic/text.service';
 })
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  @Output()
+  enterEvent = new EventEmitter<EnterEvent>();
+
   @Input()
   content: ContentModel<HtmlText>;
 
@@ -19,7 +23,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   ngAfterViewInit(): void {
-    this.textService.setHandlers(this.content, this.contentHtml);
+    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent);
   }
 
 

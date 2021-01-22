@@ -1,5 +1,6 @@
-import { ElementRef, Injectable } from '@angular/core';
-import { CheckedList, ContentModel } from '../../models/ContentMode';
+import { ElementRef, EventEmitter, Injectable } from '@angular/core';
+import { CheckedList, ContentModel, ContentType, HtmlText } from '../../models/ContentMode';
+import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 
 
@@ -27,8 +28,12 @@ export class CheckListService extends HtmlService {
         // SELECTIION
     }
 
-    enter(e: any) {
-        throw new Error('Method not implemented.');
+    enter($event: any, content: ContentModel<CheckedList>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
+        $event.preventDefault();
+        const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
+        content.data.content = contentHtml.nativeElement.innerText;
+        const event = super.eventEventFactory(content.contentId, breakModel, ContentType.CHECKLIST);
+        enterEvent.emit(event);
     }
 
     backDown(e: any) {
@@ -37,11 +42,6 @@ export class CheckListService extends HtmlService {
 
     backUp(e: any) {
         throw new Error('Method not implemented.');
-    }
-
-    getTextChild(contentHtml: ElementRef)
-    {
-      return contentHtml.nativeElement.children[0];
     }
 
 }

@@ -2,14 +2,21 @@ import { ElementRef, Injectable } from '@angular/core';
 import { ApiBrowserTextService } from './api-browser-text.service';
 import { LineBreakType } from './html-models';
 
+export interface BreakEnterModel{
+  typeBreakLine: LineBreakType;
+  nextContent?: DocumentFragment;
+  nextText?: string;
+}
+
 @Injectable()
 export class ContentEditableService {
 
   constructor(private apiBrowserService: ApiBrowserTextService) { }
 
-  enterService(e) {
+  enterService(e): BreakEnterModel {
     let typeBreakLine: LineBreakType;
     let nextContent: DocumentFragment;
+    let nextText: string;
     const el = e as Node;
     const sel = this.apiBrowserService.getSelection();
     if (sel.rangeCount) {
@@ -39,9 +46,10 @@ export class ContentEditableService {
         range.selectNodeContents(el);
         range.setStart(selRange.endContainer, selRange.startOffset);
         nextContent = range.extractContents();
+        nextText = nextContent.textContent;
       }
     }
-    return {typeBreakLine, nextContent};
+    return {typeBreakLine, nextText, nextContent};
   }
 
   isStart(element)

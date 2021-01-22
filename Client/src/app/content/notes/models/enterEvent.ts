@@ -1,9 +1,8 @@
-import { LineBreakType } from '../html-models';
+import { BreakEnterModel } from '../content-editable.service';
 import { ContentType } from './ContentMode';
 
 export interface EnterEvent {
     id: string;
-    typeBreak: LineBreakType;
-    html?: DocumentFragment;
-    itemType: ContentType;
+    breakModel: BreakEnterModel;
+    nextItemType: ContentType;
 }

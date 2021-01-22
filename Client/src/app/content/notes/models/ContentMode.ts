@@ -1,35 +1,32 @@
-export class ContentModel<T = Base>{
+export class ContentModel<T = BaseText | Photos>{
     type: ContentType;
     contentId: string;
     data: T;
 }
 
-export class Base {
-}
-
-export class HtmlText extends Base{
+export class BaseText {
     content: string;
 }
 
-export class DotList extends Base{
-    content: string;
+
+export class HtmlText extends BaseText{
 }
 
-export class NumberList extends Base{
-    content: string;
+export class DotList extends BaseText{
 }
 
-export class CheckedList extends Base{
+export class NumberList extends BaseText{
+}
+
+export class CheckedList extends BaseText{
     checked: boolean;
-    content: string;
 }
 
-export class Heading extends Base{
-    content: string;
+export class Heading extends BaseText{
     headingType: HeadingType;
 }
 
-export class Photos extends Base{
+export class Photos{
     photos: string[];
 }
 

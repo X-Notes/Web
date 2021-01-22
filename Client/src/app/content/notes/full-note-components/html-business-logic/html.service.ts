@@ -1,8 +1,10 @@
-import { ElementRef, Injectable, Renderer2 } from '@angular/core';
+import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { ContentEditableService } from '../../content-editable.service';
+import { BreakEnterModel, ContentEditableService } from '../../content-editable.service';
+import { LineBreakType } from '../../html-models';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { ContentModel, HtmlText } from '../../models/ContentMode';
+import { BaseText, ContentModel, ContentType, HtmlText } from '../../models/ContentMode';
+import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 
 @Injectable()
@@ -26,12 +28,21 @@ export abstract class HtmlService {
       this.apiBrowserService.pasteCommandHandler(e);
     }
 
+    eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType): EnterEvent
+    {
+      const eventModel: EnterEvent = {
+        id,
+        breakModel,
+        nextItemType
+      };
+      return eventModel;
+    }
+
     abstract onBlur(e);
     abstract onSelectStart(e);
-    abstract enter(e);
+    abstract enter(e, content: ContentModel<BaseText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>);
     abstract backDown(e);
     abstract backUp(e);
-    abstract getTextChild(contentHtml: ElementRef);
 
     mouseUp($event: MouseEvent) {
       const selection = this.apiBrowserService.getSelection();
@@ -47,17 +58,23 @@ export abstract class HtmlService {
 
     isContentEmpty(contentHtml: ElementRef)
     {
-      return this.getTextChild(contentHtml).textContent.length === 0;
+      return this.getNativeElement(contentHtml).textContent.length === 0;
     }
 
-    setHandlers(content: ContentModel<HtmlText>, contentHtml: ElementRef)
+    getNativeElement(contentHtml: ElementRef)
+    {
+        return contentHtml.nativeElement;
+    }
+
+    setHandlers(content: ContentModel<HtmlText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>)
     {
         const input = this.renderer.listen(contentHtml.nativeElement, 'input', (e) => { this.onInput(content, contentHtml); });
         const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
         const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
         const mouseUp = this.renderer.listen(contentHtml.nativeElement, 'mouseup', (e) => { this.mouseUp(e); });
         const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });
-        const keydownEnter = this.renderer.listen(contentHtml.nativeElement, 'keydown.enter', (e) => { this.enter(e); });
+        const keydownEnter = this.renderer.listen(contentHtml.nativeElement, 'keydown.enter',
+        (e) => { this.enter(e, content, contentHtml, enterEvent); });
         const keydownBackspace = this.renderer.listen(contentHtml.nativeElement, 'keydown.backspace', (e) => { this.backDown(e); });
         const keyupBackspace = this.renderer.listen(contentHtml.nativeElement, 'keyup.backspace', (e) => { this.backUp(e); });
         this.listeners.push(input, blur, paste, mouseUp, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
@@ -70,4 +87,5 @@ export abstract class HtmlService {
           func();
         }
     }
+
 }

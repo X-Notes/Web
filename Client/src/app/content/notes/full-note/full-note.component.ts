@@ -181,21 +181,19 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   enterHandler(value: EnterEvent) // TODO CHANGE LOGIC
   {
-    const newElement = this.contentService.getTextElement('');
+    const newElement = this.contentService.getTextContentByType(value.nextItemType);
 
     const elementCurrent = this.contents.find(x => x.contentId === value.id);
     let index = this.contents.indexOf(elementCurrent);
 
-    switch (value.typeBreak) {
+    switch (value.breakModel.typeBreakLine) {
       case LineBreakType.PREV_NO_CONTENT: {
         this.contents.splice(index, 0, newElement);
         setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_WITH_CONTENT: {
-        const div = document.createElement('div');
-        div.appendChild(value.html);
-        newElement.data.content = div.innerHTML;
+        newElement.data.content = value.breakModel.nextText;
         index++;
         this.contents.splice(index, 0, newElement);
         setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);

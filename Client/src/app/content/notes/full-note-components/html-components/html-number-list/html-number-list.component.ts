@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ContentModel, HtmlText, NumberList } from '../../../models/ContentMode';
+import { EnterEvent } from '../../../models/enterEvent';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
 @Component({
@@ -10,6 +11,9 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 })
 export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  @Output()
+  enterEvent = new EventEmitter<EnterEvent>();
+
   @Input()
   content: ContentModel<NumberList>;
 
@@ -18,7 +22,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   constructor(public numberService: NumberListService) { }
 
   ngAfterViewInit(): void {
-    this.numberService.setHandlers(this.content, this.contentHtml);
+    this.numberService.setHandlers(this.content, this.contentHtml, this.enterEvent);
   }
 
   ngOnDestroy(): void {

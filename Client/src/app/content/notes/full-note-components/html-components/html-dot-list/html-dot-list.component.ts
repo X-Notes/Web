@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ContentModel, DotList, HtmlText } from '../../../models/ContentMode';
+import { EnterEvent } from '../../../models/enterEvent';
 import { DotListService } from '../../html-business-logic/dotList.service';
 
 @Component({
@@ -10,6 +11,9 @@ import { DotListService } from '../../html-business-logic/dotList.service';
 })
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  @Output()
+  enterEvent = new EventEmitter<EnterEvent>();
+
   @Input()
   content: ContentModel<DotList>;
 
@@ -18,7 +22,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(public dotListService: DotListService) { }
 
   ngAfterViewInit(): void {
-    this.dotListService.setHandlers(this.content, this.contentHtml);
+    this.dotListService.setHandlers(this.content, this.contentHtml, this.enterEvent);
   }
 
 

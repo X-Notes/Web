@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { CheckedList, ContentModel, HtmlText } from '../../../models/ContentMode';
+import { EnterEvent } from '../../../models/enterEvent';
 import { CheckListService } from '../../html-business-logic/checkList.service';
 
 @Component({
@@ -10,6 +11,9 @@ import { CheckListService } from '../../html-business-logic/checkList.service';
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit {
 
+  @Output()
+  enterEvent = new EventEmitter<EnterEvent>();
+
   @Input()
   content: ContentModel<CheckedList>;
 
@@ -18,7 +22,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit 
   constructor(public checkListService: CheckListService) { }
 
   ngAfterViewInit(): void {
-    this.checkListService.setHandlers(this.content, this.contentHtml);
+    this.checkListService.setHandlers(this.content, this.contentHtml, this.enterEvent);
   }
 
   ngOnDestroy(): void {

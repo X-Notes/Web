@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading, DotList, NumberList, CheckedList } from './models/ContentMode';
+import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading, DotList, NumberList, CheckedList, BaseText } from './models/ContentMode';
 
 @Injectable()
 export class FullNoteContentService {
@@ -137,5 +137,51 @@ export class FullNoteContentService {
     return content3;
   }
 
+  getContentByType(type: ContentType)
+  {
+    switch (type)
+    {
+      case ContentType.TEXT: {
+        return this.getTextElement();
+      }
+      case ContentType.HEADING: {
+        return this.getHeadingElement();
+      }
+      case ContentType.DOTLIST: {
+        return this.getDotList();
+      }
+      case ContentType.CHECKLIST: {
+        return this.getCheckList();
+      }
+      case ContentType.NUMBERLIST: {
+        return this.getNumberList();
+      }
+      case ContentType.PHOTO: {
+        return this.getPhotoELEMENT();
+      }
+    }
+  }
+
+  getTextContentByType(type: ContentType): ContentModel<BaseText>
+  {
+    switch (type)
+    {
+      case ContentType.TEXT: {
+        return this.getTextElement();
+      }
+      case ContentType.HEADING: {
+        return this.getHeadingElement();
+      }
+      case ContentType.DOTLIST: {
+        return this.getDotList();
+      }
+      case ContentType.CHECKLIST: {
+        return this.getCheckList();
+      }
+      case ContentType.NUMBERLIST: {
+        return this.getNumberList();
+      }
+    }
+  }
 
 }
