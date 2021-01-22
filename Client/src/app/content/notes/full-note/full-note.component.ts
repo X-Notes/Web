@@ -37,6 +37,8 @@ import { SelectionDirective } from '../directives/selection.directive';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { EnterEvent } from '../models/enterEvent';
+import { ParentInteraction } from '../models/parent-interaction.interface';
+import { HtmlTextPartComponent } from '../full-note-components/html-components/html-text-part/html-text-part.component';
 
 
 @Component({
@@ -59,7 +61,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('fullWrap') wrap: ElementRef;
 
-  @ViewChildren('htmlComp') htmlElements: QueryList<HtmlComponent>;
+  @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
@@ -169,15 +171,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   placeHolderClick($event) {
     $event.preventDefault();
-    setTimeout(() => this.htmlElements.last.setFocus());
+    setTimeout(() => this.textElements.last.setFocus());
   }
 
   mouseEnter($event) {
-    this.htmlElements.last.mouseEnter($event);
+    this.textElements.last.mouseEnter($event);
   }
 
   mouseOut($event) {
-    this.htmlElements.last.mouseOut($event);
+   this.textElements.last.mouseOut($event);
   }
 
   enterHandler(value: EnterEvent) // TODO SETTIMEOUT
@@ -190,20 +192,20 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     switch (value.breakModel.typeBreakLine) {
       case LineBreakType.PREV_NO_CONTENT: {
         this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_WITH_CONTENT: {
         newElement.data.content = value.breakModel.nextText;
         index++;
         this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_NO_CONTENT: {
         index++;
         this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.htmlElements.toArray()[index].setFocus(); }, 0);
+        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
         break;
       }
     }
@@ -217,38 +219,27 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const item = this.contents.find(z => z.contentId === id);
     const indexOf = this.contents.indexOf(item);
 
-    if (indexOf !== 0 && (indexOf !== this.contents.length - 1 || this.isElementEmpty(indexOf - 1))) {
+    if (indexOf !== 0 && (indexOf !== this.contents.length - 1)) {
       this.contents = this.contents.filter(z => z.contentId !== id);
       const index = indexOf - 1;
-      if (this.contents[index].type === ContentType.TEXT)
+      if (this.contents[index].type !== ContentType.PHOTO)
       {
-        this.htmlElements.toArray()[index].setFocusToEnd();
+        this.textElements.toArray()[index].setFocusToEnd();
       }
     }
     if (indexOf === this.contents.length - 1){
       const index = indexOf - 1;
-      this.htmlElements.toArray()[index].setFocusToEnd();
+      this.textElements.toArray()[index].setFocusToEnd();
     }
   }
 
-  isElementEmpty(index: number)
-  {
-    const content = this.contents[index];
-    if (content.type === ContentType.TEXT)
-    {
-      const contentHTML = content as ContentModel<HtmlText>;
-      return contentHTML.data.content === '';
-    }
-    return false;
-  }
-
-  concatThisWithPrev(id: string) {
-    const item = this.contents.find(z => z.contentId === id) as ContentModel<HtmlText>;
+  concatThisWithPrev(id: string) { // TODO SETTIMEOUT
+    const item = this.contents.find(z => z.contentId === id) as ContentModel<BaseText>;
     const indexOf = this.contents.indexOf(item);
     if (indexOf > 0 && indexOf !== this.contents.length - 1)
     {
-      const prevItem = this.contents[indexOf - 1] as ContentModel<HtmlText>;
-      const prevItemHtml = this.htmlElements.toArray()[indexOf - 1];
+      const prevItem = this.contents[indexOf - 1] as ContentModel<BaseText>;
+      const prevItemHtml = this.textElements.toArray()[indexOf - 1];
 
       this.contents = this.contents.filter(z => z.contentId !== id);
 
@@ -258,7 +249,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
       setTimeout(() => {
         const range = new Range();
-        range.setStart(prevItemHtml.getTextChild.firstChild, lengthText);
+        range.setStart(prevItemHtml.getNative().firstChild, lengthText);
         const selection = this.apiBrowserFunctions.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
@@ -287,7 +278,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const item = this.contents.find(z => z.contentId === id);
     const indexOf = this.contents.indexOf(item);
     item.type = ContentType.TEXT;
-    setTimeout(() => { this.htmlElements.toArray()[indexOf].setFocus(); }, 0);
+    setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
   }
 
 

@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable, } from '@angular/core';
-import { ContentModel, ContentType, Heading } from '../../models/ContentMode';
+import { BaseText, ContentModel, ContentType, Heading } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 
@@ -42,12 +42,13 @@ export class HeadingService extends HtmlService {
         enterEvent.emit(event);
     }
 
-    backDown(e: any) {
-        throw new Error('Method not implemented.');
+    backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
+             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
+        super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
     }
 
     backUp(e: any) {
-        throw new Error('Method not implemented.');
+
     }
 
 

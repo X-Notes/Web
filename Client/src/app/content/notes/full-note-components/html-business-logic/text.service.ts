@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { ContentModel, ContentType, HtmlText } from '../../models/ContentMode';
+import { BaseText, ContentModel, ContentType, HtmlText } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 
@@ -37,12 +37,13 @@ export class TextService extends HtmlService {
         enterEvent.emit(event);
     }
 
-    backDown(e: any) {
-        throw new Error('Method not implemented.');
+    backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
+             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
+        super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
     }
 
     backUp(e: any) {
-        throw new Error('Method not implemented.');
+
     }
 
     mouseEnter($event, contentHtml: ElementRef) {
@@ -63,8 +64,7 @@ export class TextService extends HtmlService {
         this.visible = true && this.isContentEmpty(contentHtml);
     }
 
-    focusOut()
-    {
+    focusOut() {
         this.visible = false;
         this.menuSelectionService.menuActive = false;
     }

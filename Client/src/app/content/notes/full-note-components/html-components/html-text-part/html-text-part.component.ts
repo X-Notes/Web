@@ -18,13 +18,19 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: ContentModel<HtmlText>;
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   constructor(public textService: TextService) { }
 
 
   ngAfterViewInit(): void {
-    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent);
+    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
 
@@ -63,6 +69,16 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   focusOut($event)
   {
     this.textService.focusOut();
+  }
+
+  updateHTML(content: string) {
+    this.content.data.content = content;
+    this.contentHtml.nativeElement.innerHTML = content;
+  }
+
+  getNative()
+  {
+    return this.contentHtml.nativeElement;
   }
 
 }

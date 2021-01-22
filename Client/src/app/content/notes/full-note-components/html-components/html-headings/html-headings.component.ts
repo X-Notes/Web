@@ -15,6 +15,12 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
   @Input()
   content: ContentModel<Heading>;
 
@@ -25,7 +31,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   constructor(public headingService: HeadingService) { }
 
   ngAfterViewInit(): void {
-    this.headingService.setHandlers(this.content, this.contentHtml, this.enterEvent);
+    this.headingService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
 
@@ -43,6 +49,22 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   setFocusToEnd() {
     this.headingService.setFocusToEnd(this.contentHtml);
+  }
+
+  updateHTML(content: string) {
+    this.content.data.content = content;
+    this.contentHtml.nativeElement.innerHTML = content;
+  }
+
+  getNative()
+  {
+    return this.contentHtml.nativeElement;
+  }
+
+  mouseEnter($event) {
+  }
+
+  mouseOut($event) {
   }
 
 }

@@ -18,6 +18,11 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
   content: ContentModel<CheckedList>;
@@ -28,7 +33,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
 
   ngAfterViewInit(): void {
-    this.checkListService.setHandlers(this.content, this.contentHtml, this.enterEvent);
+    this.checkListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
   ngOnDestroy(): void {
@@ -48,5 +53,20 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.checkListService.setFocusToEnd(this.contentHtml);
   }
 
+  updateHTML(content: string) {
+    this.content.data.content = content;
+    this.contentHtml.nativeElement.innerHTML = content;
+  }
+
+  getNative()
+  {
+    return this.contentHtml.nativeElement;
+  }
+
+  mouseEnter($event) {
+  }
+
+  mouseOut($event) {
+  }
 
 }

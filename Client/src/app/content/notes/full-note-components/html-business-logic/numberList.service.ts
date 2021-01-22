@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable, } from '@angular/core';
-import { ContentModel, ContentType, NumberList } from '../../models/ContentMode';
+import { BaseText, ContentModel, ContentType, NumberList } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 
@@ -40,7 +40,7 @@ export class NumberListService extends HtmlService {
         $event.preventDefault();
         if (this.isContentEmpty(contentHtml)) {
             this.transformToTextEvent.emit(content.contentId);
-        }else{
+        } else {
             const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
             content.data.content = this.getNativeElement(contentHtml).innerText;
             const event = super.eventEventFactory(content.contentId, breakModel, ContentType.NUMBERLIST);
@@ -48,12 +48,13 @@ export class NumberListService extends HtmlService {
         }
     }
 
-    backDown(e: any) {
-        throw new Error('Method not implemented.');
+    backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
+             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
+        super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
     }
 
     backUp(e: any) {
-        throw new Error('Method not implemented.');
+
     }
 
 }

@@ -18,6 +18,12 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
   @Input()
   content: ContentModel<DotList>;
 
@@ -26,7 +32,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   constructor(public dotListService: DotListService) { }
 
   ngAfterViewInit(): void {
-    this.dotListService.setHandlers(this.content, this.contentHtml, this.enterEvent);
+    this.dotListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
 
@@ -47,4 +53,19 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.dotListService.setFocusToEnd(this.contentHtml);
   }
 
+  updateHTML(content: string) {
+    this.content.data.content = content;
+    this.contentHtml.nativeElement.innerHTML = content;
+  }
+
+  getNative()
+  {
+    return this.contentHtml.nativeElement;
+  }
+  
+  mouseEnter($event) {
+  }
+
+  mouseOut($event) {
+  }
 }

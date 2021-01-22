@@ -18,6 +18,12 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
   @Input()
   prevContent: ContentModel;
 
@@ -36,7 +42,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.numberService.setHandlers(this.content, this.contentHtml, this.enterEvent);
+    this.numberService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
   ngOnDestroy(): void {
@@ -64,4 +70,19 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
     this.numberService.setFocusToEnd(this.contentHtml);
   }
 
+  updateHTML(content: string) {
+    this.content.data.content = content;
+    this.contentHtml.nativeElement.innerHTML = content;
+  }
+
+  getNative()
+  {
+    return this.contentHtml.nativeElement;
+  }
+
+  mouseEnter($event) {
+  }
+
+  mouseOut($event) {
+  }
 }
