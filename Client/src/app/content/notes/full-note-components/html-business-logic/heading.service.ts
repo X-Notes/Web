@@ -15,7 +15,7 @@ export class HeadingService extends HtmlService {
     }
 
     onInput(content: ContentModel<Heading>, contentHtml: ElementRef) {
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
     }
 
     onBlur(e: any) {
@@ -37,7 +37,7 @@ export class HeadingService extends HtmlService {
     enter($event: any, content: ContentModel<Heading>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
         const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
         const event = super.eventEventFactory(content.contentId, breakModel, ContentType.TEXT);
         enterEvent.emit(event);
     }

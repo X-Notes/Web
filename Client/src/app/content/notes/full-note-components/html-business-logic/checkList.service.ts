@@ -16,7 +16,7 @@ export class CheckListService extends HtmlService {
     }
 
     onInput(content: ContentModel<CheckedList>, contentHtml: ElementRef) {
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
     }
 
     onBlur(e: any) {
@@ -38,7 +38,7 @@ export class CheckListService extends HtmlService {
     enter($event: any, content: ContentModel<CheckedList>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
         const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
         const event = super.eventEventFactory(content.contentId, breakModel, ContentType.CHECKLIST);
         enterEvent.emit(event);
     }

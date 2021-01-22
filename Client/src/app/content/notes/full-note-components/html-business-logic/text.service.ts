@@ -9,7 +9,7 @@ export class TextService extends HtmlService {
     visible = false;
 
     onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef) {
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
         this.visible = this.isContentEmpty(contentHtml);
     }
 
@@ -32,7 +32,7 @@ export class TextService extends HtmlService {
     enter($event: any, content: ContentModel<HtmlText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
         const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.data.content = contentHtml.nativeElement.innerText;
+        content.data.content = this.getNativeElement(contentHtml).innerText;
         const event = super.eventEventFactory(content.contentId, breakModel, ContentType.TEXT);
         enterEvent.emit(event);
     }
