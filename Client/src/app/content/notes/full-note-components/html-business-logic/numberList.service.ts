@@ -1,12 +1,13 @@
 import { ElementRef, EventEmitter, Injectable, } from '@angular/core';
 import { BaseText, ContentModel, ContentType, NumberList } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
+import { TransformContent } from '../../models/transform-content';
 import { HtmlService } from './html.service';
 
 @Injectable()
 export class NumberListService extends HtmlService {
 
-    transformToTextEvent = new EventEmitter<string>();
+    transformTo = new EventEmitter<TransformContent>();
 
     setFocus($event: any, contentHtml: ElementRef<any>) {
         this.getNativeElement(contentHtml).focus();
@@ -39,7 +40,7 @@ export class NumberListService extends HtmlService {
     enter($event: any, content: ContentModel<NumberList>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
         if (this.isContentEmpty(contentHtml)) {
-            this.transformToTextEvent.emit(content.contentId);
+            this.transformTo.emit({id: content.contentId, type: ContentType.TEXT});
         } else {
             const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
             content.data.content = this.getNativeElement(contentHtml).innerText;

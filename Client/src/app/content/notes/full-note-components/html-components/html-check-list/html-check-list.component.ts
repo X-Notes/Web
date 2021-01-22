@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { CheckedList, ContentModel, HtmlText } from '../../../models/ContentMode';
+import { CheckedList, ContentModel, ContentType, HtmlText } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content';
 import { CheckListService } from '../../html-business-logic/checkList.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { CheckListService } from '../../html-business-logic/checkList.service';
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
-  transformToTextEvent = new EventEmitter<string>();
+  transformTo = new EventEmitter<TransformContent>();
 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
@@ -42,7 +43,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   ngOnInit(): void {
     this.checkListService.contentStr = this.content.data.content;
-    this.checkListService.transformToTextEvent = this.transformToTextEvent;
+    this.checkListService.transformTo = this.transformTo;
   }
 
   setFocus($event?) {

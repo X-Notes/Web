@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, O
 import { ContentModel, DotList, HtmlText } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content';
 import { DotListService } from '../../html-business-logic/dotList.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { DotListService } from '../../html-business-logic/dotList.service';
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
-  transformToTextEvent = new EventEmitter<string>();
+  transformTo = new EventEmitter<TransformContent>();
 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
@@ -42,7 +43,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   ngOnInit(): void {
     this.dotListService.contentStr = this.content.data.content;
-    this.dotListService.transformToTextEvent = this.transformToTextEvent;
+    this.dotListService.transformTo = this.transformTo;
   }
 
   setFocus($event?) {

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, O
 import { ContentModel, ContentType, HtmlText, NumberList } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
 
   @Output()
-  transformToTextEvent = new EventEmitter<string>();
+  transformTo = new EventEmitter<TransformContent>();
 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
@@ -51,7 +52,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngOnInit(): void {
     this.numberService.contentStr = this.content.data.content;
-    this.numberService.transformToTextEvent = this.transformToTextEvent;
+    this.numberService.transformTo = this.transformTo;
   }
 
   setNumber() {

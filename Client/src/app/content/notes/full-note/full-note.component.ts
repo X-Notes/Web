@@ -39,6 +39,7 @@ import { MenuSelectionService } from '../menu-selection.service';
 import { EnterEvent } from '../models/enterEvent';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { HtmlTextPartComponent } from '../full-note-components/html-components/html-text-part/html-text-part.component';
+import { TransformContent } from '../models/transform-content';
 
 
 @Component({
@@ -273,11 +274,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  transformToText(id: string)
+  transformToType(value: TransformContent)
   {
-    const item = this.contents.find(z => z.contentId === id);
+    const item = this.contents.find(z => z.contentId === value.id);
     const indexOf = this.contents.indexOf(item);
-    item.type = ContentType.TEXT;
+    item.type = value.type;
     setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
   }
 
