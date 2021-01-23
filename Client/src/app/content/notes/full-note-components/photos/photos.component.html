@@ -1,10 +1,16 @@
 <div class="container" (mouseenter)="mouseEnterHandler($event)" (mouseleave)="mouseLeaveHandler($event)">
-    <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
-        <div class="block">
-            <img *ngFor="let item of block" [src]="item.url">
+    <div class="content-photos">
+        <div *ngFor="let block of mainBlocks;let i = index" class="blocks main">
+            <div class="block" [ngClass]="getMainBlockClass">
+                <img *ngFor="let item of block" [src]="item.url">
+            </div>
+        </div>
+        <div class="blocks">
+            <div class="block" [ngClass]="getLastBlockClass">
+                <img *ngFor="let item of lastBlock" [src]="item.url">
+            </div>
         </div>
     </div>
-    <p>photos works!</p>
     <div class="wrapper">
         <div class="menu" *ngIf="activeMenu"></div>
     </div>

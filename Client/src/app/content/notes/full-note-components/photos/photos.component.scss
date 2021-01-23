@@ -4,29 +4,72 @@
     position: relative;
     border-radius: 5px;
     margin-top: 3px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     padding-left: 8px;
     padding-right: 8px;
 
-    .blocks{
+    .content-photos{
         display: flex;
         flex-direction: column;
-
-        .block{
-            display: flex;
-            justify-content: space-between;
+        .blocks{ 
+            margin-top: 5px;
+            .block{
+                display: flex;
+                justify-content: space-between;
+                img{
+                    max-height: 550px;
+                    object-fit: cover;
+                    border-radius: 5px;
+                }
+            }
+            &:first-child{
+                margin-top: 0;
+            }
+        }
+        .fouth-child{
             img{
-                object-fit: cover;
-                border-radius: 5px;
                 &:nth-child(1){
-                    width: 24%;
+                    width: 25%;
                 }
                 &:nth-child(2){
-                    width: 24%;
+                    width: 25%;
                 }
                 &:nth-child(3){
-                    width: 50%;
+                    width: 25%;
+                }
+                &:nth-child(4){
+                    width: calc(25% - 10px);
+                }
+            }
+        }
+        .three-child{
+            img{
+                &:nth-child(1){
+                    width: 25%;
+                }
+                &:nth-child(2){
+                    width: 25%;
+                }
+                &:nth-child(3){
+                    width: calc(50% - 10px);
+                }
+            }
+        }
+        .two-child{
+            img{
+                &:nth-child(1){
+                    width: calc(50% - 5px);
+                }
+                &:nth-child(2){
+                    width: calc(50% - 5px);
+                }
+            }
+        }
+        .one-child{
+            img {
+                &:nth-child(1){
+                    width: calc(100%);
                 }
             }
         }
@@ -36,7 +79,7 @@
 .wrapper{
     position: absolute;
     right: -35px;
-    top: 0;
+    top: 5px;
     width: 35px;
     height: 100%;
     display: flex;

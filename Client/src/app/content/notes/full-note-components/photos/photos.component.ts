@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 
 @Component({
@@ -27,8 +27,8 @@ export class PhotosComponent implements OnInit {
     const photoLength = this.content.data.photos.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-        this.mainBlocks.push(this.content.data.photos.slice(j, j + this.countItemsInBlock));
-        j += this.countItemsInBlock;
+        this.mainBlocks.push(this.content.data.photos.slice(j, j + this.countItemsInMainBlock));
+        j += this.countItemsInMainBlock;
     }
     console.log('MainBlocks ', this.mainBlocks);
     console.log(this.countLastItems);
@@ -40,16 +40,16 @@ export class PhotosComponent implements OnInit {
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.data.photos.length / this.countItemsInBlock);
+    return Math.floor(this.content.data.photos.length / this.countItemsInMainBlock);
   }
 
-  get countItemsInBlock()
+  get countItemsInMainBlock()
   {
-    return 3;
+    return 4;
   }
 
   get countLastItems() {
-    return this.content.data.photos.length % 3;
+    return this.content.data.photos.length % this.countItemsInMainBlock;
   }
 
   mouseEnterHandler($event) {
@@ -59,5 +59,44 @@ export class PhotosComponent implements OnInit {
   mouseLeaveHandler($event) {
     this.activeMenu = false;
   }
+
+  get getMainBlockClass()
+  {
+    switch (this.countItemsInMainBlock)
+    {
+      case 1: {
+        return 'one-child';
+      }
+      case 2: {
+        return 'two-child';
+      }
+      case 3: {
+        return 'three-child';
+      }
+      case 4: {
+        return 'fouth-child';
+      }
+    }
+  }
+
+  get getLastBlockClass()
+  {
+    switch (this.countLastItems)
+    {
+      case 1: {
+        return 'one-child';
+      }
+      case 2: {
+        return 'two-child';
+      }
+      case 3: {
+        return 'three-child';
+      }
+      case 4: {
+        return 'fouth-child';
+      }
+    }
+  }
+
 
 }
