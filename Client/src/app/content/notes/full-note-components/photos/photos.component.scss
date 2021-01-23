@@ -30,29 +30,29 @@
         .fouth-child{
             img{
                 &:nth-child(1){
-                    width: 25%;
+                    width: calc(25% - 2.5px);
                 }
                 &:nth-child(2){
-                    width: 25%;
+                    width: calc(25% - 2.5px);
                 }
                 &:nth-child(3){
-                    width: 25%;
+                    width: calc(25% - 2.5px);
                 }
                 &:nth-child(4){
-                    width: calc(25% - 10px);
+                    width: calc(25% - 2.5px);
                 }
             }
         }
         .three-child{
             img{
                 &:nth-child(1){
-                    width: 25%;
+                    width: calc(25% - 3.33px);
                 }
                 &:nth-child(2){
-                    width: 25%;
+                    width: calc(25% - 3.33px);
                 }
                 &:nth-child(3){
-                    width: calc(50% - 10px);
+                    width: calc(50% - 3.33px);
                 }
             }
         }

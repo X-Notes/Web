@@ -45,7 +45,7 @@ export class PhotosComponent implements OnInit {
 
   get countItemsInMainBlock()
   {
-    return 4;
+    return 2;
   }
 
   get countLastItems() {
@@ -60,28 +60,9 @@ export class PhotosComponent implements OnInit {
     this.activeMenu = false;
   }
 
-  get getMainBlockClass()
+  getStyle(numb: number)
   {
-    switch (this.countItemsInMainBlock)
-    {
-      case 1: {
-        return 'one-child';
-      }
-      case 2: {
-        return 'two-child';
-      }
-      case 3: {
-        return 'three-child';
-      }
-      case 4: {
-        return 'fouth-child';
-      }
-    }
-  }
-
-  get getLastBlockClass()
-  {
-    switch (this.countLastItems)
+    switch (numb)
     {
       case 1: {
         return 'one-child';

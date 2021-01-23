@@ -55,9 +55,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   constructor(public pService: PersonalizationService,
-    private store: Store,
-    private rend: Renderer2,
-    private authService: AuthService) { }
+              private store: Store,
+              private rend: Renderer2,
+              private authService: AuthService) { }
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();

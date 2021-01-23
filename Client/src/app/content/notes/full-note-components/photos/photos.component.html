@@ -1,12 +1,12 @@
 <div class="container" (mouseenter)="mouseEnterHandler($event)" (mouseleave)="mouseLeaveHandler($event)">
     <div class="content-photos">
         <div *ngFor="let block of mainBlocks;let i = index" class="blocks main">
-            <div class="block" [ngClass]="getMainBlockClass">
+            <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
                 <img *ngFor="let item of block" [src]="item.url">
             </div>
         </div>
         <div class="blocks">
-            <div class="block" [ngClass]="getLastBlockClass">
+            <div class="block" [ngClass]="getStyle(countLastItems)">
                 <img *ngFor="let item of lastBlock" [src]="item.url">
             </div>
         </div>
