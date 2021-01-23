@@ -1,3 +1,11 @@
-<div class="container">
+<div class="container" (mouseenter)="mouseEnterHandler($event)" (mouseleave)="mouseLeaveHandler($event)">
+    <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
+        <div class="block">
+            <img *ngFor="let item of block" [src]="item.url">
+        </div>
+    </div>
     <p>photos works!</p>
+    <div class="wrapper">
+        <div class="menu" *ngIf="activeMenu"></div>
+    </div>
 </div>

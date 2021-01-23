@@ -28,7 +28,14 @@ export class Heading extends BaseText{
 }
 
 export class Photos{
-    photos: string[];
+    photos: Photo[];
+}
+
+export class Photo{
+    id: string;
+    url: string;
+    height: string;
+    width: string;
 }
 
 export enum HeadingType{

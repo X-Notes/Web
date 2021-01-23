@@ -140,12 +140,17 @@ export class FullNoteContentService implements OnDestroy {
       photos: []
     };
 
-    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=2`)
+    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=5`)
     .pipe(takeUntil(this.destroy))
     .subscribe(z => {
       for (const item of z as any)
       {
-        content3.data.photos.push(item.download_url);
+        content3.data.photos.push({
+          id: item.id,
+          url: item.download_url,
+          height: item.height,
+          width: item.width,
+        });
       }
     });
     return content3;
