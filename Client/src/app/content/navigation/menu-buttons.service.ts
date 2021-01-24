@@ -49,14 +49,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveNotes()
@@ -87,14 +87,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveNotes()
@@ -125,14 +125,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveNotes()
@@ -171,14 +171,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'delete',
       operation: () => this.setdeleteNotes()
@@ -206,14 +206,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveFolders()
@@ -244,14 +244,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveFolders()
@@ -282,14 +282,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'archive',
       operation: () => this.archiveFolders()
@@ -324,14 +324,14 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.changeColor()
     },
-    {
-      icon: 'download',
-      operation: () => 5
-    },
-    {
-      icon: 'lock',
-      operation: () => 5
-    },
+    // {
+    //   icon: 'download',
+    //   operation: () => 5
+    // },
+    // {
+    //   icon: 'lock',
+    //   operation: () => 5
+    // },
     {
       icon: 'delete',
       operation: () => this.setDeleteFolders()
@@ -351,7 +351,7 @@ export class MenuButtonsService {
   // FUNCTIONS
 
   // COLOR
-  private changeColor() {
+  changeColor() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '100%',
@@ -362,7 +362,7 @@ export class MenuButtonsService {
   }
 
   // LABELS
-  private changeLabels() {
+  changeLabels() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '90vh',
@@ -374,7 +374,7 @@ export class MenuButtonsService {
   }
 
   // SHARING
-  private shareEntity() {
+  shareEntity() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '100%',

@@ -1,6 +1,7 @@
 import { AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
+import { MenuButtonsService } from '../../menu-buttons.service';
 
 @Component({
   selector: 'app-interaction-inner',
@@ -15,7 +16,9 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
   @ViewChild('heightPeople') heightPeople: ElementRef;
   @ViewChild('scrollbar') scrollbar: ElementRef;
 
-  constructor(public pService: PersonalizationService, public renderer: Renderer2) { }
+  constructor(public pService: PersonalizationService,
+              public renderer: Renderer2,
+              public buttonService: MenuButtonsService) { }
 
   ngAfterViewInit(): void {
     this.setHeightScrollbar();
