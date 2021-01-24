@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DialogData } from '../dialog_data';
 import { EnumUtil } from '../../services/enum.util';
 import { NoteColorPallete } from '../../enums/NoteColors';
 import { Store, Select } from '@ngxs/store';
@@ -29,7 +28,6 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
 
   date: Date;
   constructor(public dialogRef: MatDialogRef<ChangeColorComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private store: Store, ) { }
 
   ngOnInit(): void {

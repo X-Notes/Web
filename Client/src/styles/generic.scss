@@ -1,9 +1,7 @@
 @import "variables";
 
 .custom-dialog-class-dark {
-  max-width: 90vw !important;
   mat-dialog-container {
-    max-width: 90vw;
     padding: 0;
     border-radius: 15px;
     overflow: hidden;
@@ -14,9 +12,7 @@
 }
 
 .custom-dialog-class-light {
-  max-width: 90vw !important;
   mat-dialog-container {
-    max-width: 90vw;
     padding: 0;
     border-radius: 15px;
     overflow: hidden;
@@ -398,6 +394,15 @@
     &:last-child {
       margin-right: 0;
     }
+  }
+}
+
+.checkbox-notification {
+  .mat-checkbox-checked.mat-accent .mat-ripple-element, .mat-checkbox:active.mat-accent .mat-ripple-element {
+    background-color: #4a85df;
+  }
+  .mat-checkbox-checked .mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-background {
+    background-color: #4a85df; 
   }
 }
 

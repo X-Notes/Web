@@ -4,7 +4,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
     </div>
     <ng-scrollbar class="wrapper-people"
-        [style.height.px]="heightPeople.offsetHeight + 2"
+        #scrollbar
         *ngIf="pService.users"
         [@showMenuLeftRight]
         [@.disabled]="pService.AnimationInnerUsers"

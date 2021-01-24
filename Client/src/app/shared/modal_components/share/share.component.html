@@ -37,7 +37,7 @@
     </div>
     <div class="sharing">
         <div class="header">
-            <span>{{ ('modal.ShareModal.' + data.title) | translate }}</span>
+            <span>{{ 'modal.ShareModal.Share' | translate }}</span>
             <i class="icon-plus" mat-dialog-close></i>
         </div>
         <mat-tab-group class="tabs" mat-align-tabs="center" #tabs>
@@ -248,15 +248,7 @@
                 </ng-scrollbar>
             </mat-tab>
             <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
-                <div class="search">
-                    <input type="search" aria-label="Search" placeholder="{{ 'modal.ShareModal.search' | translate }}"
-                        [ngModel]="searchStr" (ngModelChange)="changed($event)">
-                    <button type="button">
-                        <div class="icon">
-                            <i class="icon-search"></i>
-                        </div>
-                    </button>
-                </div>
+                <app-search class="search" (changeOutput)="changed($event)"></app-search>
                 <ng-scrollbar class="interaction-container"
                     [visibility]="'hover'"
                     [appearance]="'compact'">
@@ -271,16 +263,11 @@
                             </div>
                         </div>
                         <div class="checkbox-notification">
-                            <label>
+                            <mat-checkbox
+                                [checked]="isSendNotification"
+                                (change)="isSendNotification = !isSendNotification">
                                 {{ 'modal.ShareModal.alert' | translate }}
-                                <input type="checkbox" [checked]="isSendNotification"
-                                    (change)="isSendNotification = !isSendNotification">
-                                <span class="checkbox">
-                                    <div class="icon">
-                                        <i class="icon-plus"></i>
-                                    </div>
-                                </span>
-                            </label>
+                            </mat-checkbox>
                         </div>
                         <div class="interaction-mail">
                             <textarea [(ngModel)]="messageTextArea"></textarea>

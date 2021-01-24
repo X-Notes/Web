@@ -354,11 +354,8 @@ export class MenuButtonsService {
   private changeColor() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      width: '450px',
       maxHeight: '100%',
-      data: {
-        title: 'Colors'
-      },
+      maxWidth: '90vw',
       panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(ChangeColorComponent, config);
@@ -368,11 +365,9 @@ export class MenuButtonsService {
   private changeLabels() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      width: '450px',
-      maxHeight: '100%',
-      data: {
-        title: 'Labels'
-      },
+      maxHeight: '90vh',
+      maxWidth: '90vw',
+      autoFocus: false,
       panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(EditingLabelsNoteComponent, config);
@@ -382,11 +377,8 @@ export class MenuButtonsService {
   private shareEntity() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
-      maxWidth: '100%',
       maxHeight: '100%',
-      data: {
-        title: 'Share'
-      },
+      maxWidth: '90vw',
       autoFocus: false,
       panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };

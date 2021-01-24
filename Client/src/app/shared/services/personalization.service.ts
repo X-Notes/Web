@@ -80,6 +80,13 @@ export const tooltipAnimation = trigger('tooltip', [
   ]),
 ]);
 
+export const smoothOpacity = trigger('smoothOpacity', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate(100, style({ opacity: 1 })),
+  ])
+]);
+
 @Injectable({
   providedIn: 'root'
 })

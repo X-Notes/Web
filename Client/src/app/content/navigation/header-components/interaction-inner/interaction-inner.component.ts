@@ -1,3 +1,4 @@
+import { AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 
@@ -7,12 +8,18 @@ import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/servic
   styleUrls: ['./interaction-inner.component.scss'],
   animations: [showMenuLeftRight],
 })
-export class InteractionInnerComponent implements OnInit {
+export class InteractionInnerComponent implements OnInit, AfterViewInit {
 
-  user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'
-  ];
+  user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'];
 
-  constructor(public pService: PersonalizationService) { }
+  @ViewChild('heightPeople') heightPeople: ElementRef;
+  @ViewChild('scrollbar') scrollbar: ElementRef;
+
+  constructor(public pService: PersonalizationService, public renderer: Renderer2) { }
+
+  ngAfterViewInit(): void {
+    this.setHeightScrollbar();
+  }
 
   ngOnInit(): void {
   }
@@ -31,8 +38,17 @@ export class InteractionInnerComponent implements OnInit {
     this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
+  setHeightScrollbar(): void {
+    if (this.pService.users) {
+      this.pService.checkWidth() ?
+      this.renderer.setStyle(this.scrollbar.nativeElement, 'height', this.heightPeople.nativeElement.clientHeight + 'px') :
+      this.renderer.setStyle(this.scrollbar.nativeElement, 'height', '100%');
+    }
+  }
+
   showUsers() {
     this.pService.users = !this.pService.users;
+    setTimeout(() => this.setHeightScrollbar());
   }
 
   disableTooltpUser(): boolean {

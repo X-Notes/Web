@@ -1,19 +1,22 @@
 <div appTheme class="outer">
     <div class="header">
-        <span>{{ ('modal.labelModal.' + data.title) | translate }}</span>
+        <span>{{ 'modal.labelModal.Labels' | translate }}</span>
         <i class="icon-plus" mat-dialog-close></i>
     </div>
     <div class="search">
         <div class="search-content">
-            <input type="search" placeholder="{{ 'modal.labelModal.search' | translate }}" [(ngModel)]="searchStr">
-            <div class="button">
-                <i class="icon-search"></i>
-            </div>
+            <app-search (changeOutput)="changed($event)"></app-search>
         </div>
-        <i class="icon-plus" (click)="newLabel()"></i>
+        <button name="create label" type="button" class="button-plus" #createLabel (click)="newLabel()">
+            <div class="inner-content">
+                <i class="icon-plus"></i>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="createLabel"></div>
+        </button>
     </div>
     <ng-scrollbar class="label-container"
         *ngIf="loaded"
+        [@smoothOpacity]
         [visibility]="'hover'"
         [appearance]="'compact'">
         <div class="content-inner">
@@ -23,4 +26,5 @@
             </div>
         </div>
     </ng-scrollbar>
+    <app-spinner *ngIf="!loaded"></app-spinner>
 </div>

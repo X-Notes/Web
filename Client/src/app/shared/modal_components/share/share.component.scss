@@ -10,7 +10,6 @@
   display: flex;
   width: 650px;
   height: 650px;
-  max-height: 90vh;
 
   .header {
     display: flex;
@@ -285,55 +284,15 @@
       }
 
       .search {
-        display: flex;
-        width: calc(100% - 5rem);
-        height: 32px;
         margin: 1.25rem 2.5rem 0.625rem 2.5rem;
-
-        input[type="search"] {
-          height: 100%;
-          width: calc(100% - 42px);
-          border: 0;
-          border-radius: 5px 0 0 5px;
-          padding: 0 0 0 0.625rem;
-          user-select: none;
-          outline: none;
-          font-size: 1.0625rem;
-          background-color: #f2f2f2;
-          color: #484848;
-        }
-
-        button[type="button"] {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 42px;
-          height: 100%;
-          border: 0;
-          padding: 0;
-          outline: none;
-          user-select: none;
-          outline: none;
-          border-radius: 0 5px 5px 0;
-          cursor: not-allowed;
-          background-color: #ebebeb;
-
-          .icon {
-            display: flex;
-            font-size: 1.125rem;
-          }
-        }
-
-        input[type="search"]:not(:placeholder-shown) ~ button[type="button"] {
-          cursor: pointer;
-        }
+        width: calc(100% - 5rem);
       }
 
       .interaction-container {
         position: relative;
         display: flex;
         flex-direction: column;
-        height: calc(100% - 82px);
+        height: calc(100% - 84px);
         width: 100%;
 
         .mail-notification {
@@ -387,49 +346,7 @@
             display: flex;
             width: 100%;
             padding: 0.625rem 1rem;
-
-            label {
-              position: relative;
-              display: flex;
-              align-items: center;
-              color: $text-color;
-              padding-left: 2rem;
-              user-select: none;
-
-              input[type="checkbox"] {
-                display: none;
-              }
-
-              .checkbox {
-                position: absolute;
-                left: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 16px;
-                width: 16px;
-                border-radius: 2px;
-                background-color: #e8e8e8;
-                transition: 0.2s ease;
-                cursor: pointer;
-
-                .icon {
-                  display: flex;
-                  font-size: 0.5rem;
-                  color: white;
-                  opacity: 0;
-                  transition: 0.2s ease;
-                }
-              }
-
-              input:checked ~ .checkbox {
-                background-color: #4a85df;
-
-                .icon {
-                  opacity: 1;
-                }
-              }
-            }
+            color: $text-color;
           }
 
           .interaction-mail {
@@ -1007,6 +924,7 @@
 @media (max-width: 600px) {
   .outer {
     height: 600px;
+    max-height: 600px;
 
     .sharing {
       .tabs {
@@ -1058,10 +976,6 @@
 
         .search {
           margin: 1rem 2.5rem 0.5rem 2.5rem;
-
-          input[type="search"] {
-            font-size: 1rem;
-          }
         }
 
         .interaction-container {
@@ -1079,9 +993,7 @@
             }
 
             .checkbox-notification {
-              label {
-                font-size: 0.875rem;
-              }
+              font-size: 0.875rem;
             }
 
             .interaction-mail {
@@ -1225,10 +1137,6 @@
   .outer {
     .sharing {
       .tabs {
-        .search {
-          margin: 1rem 1.75rem 0.5rem 1.75rem;
-        }
-
         .user-access {
           margin: 1rem 1.125rem;
           width: calc(100% - 2.25rem);
@@ -1237,6 +1145,11 @@
         .content-access {
           width: calc(100% - 3.5rem);
           margin: 0 1.75rem;
+        }
+
+        .search {
+          margin: 1rem 1.75rem 0.5rem 1.75rem;
+          width: calc(100% - 3.5rem);
         }
 
         .interaction-container {
