@@ -154,27 +154,27 @@
   position: absolute;
   width: calc(100% / 4);
   padding: 0 0.75rem 1.5rem;
-  z-index: 1;
+  z-index: $grid-item;
 }
 
 .grid-item-small {
   position: absolute;
   width: 100%;
   padding-bottom: 1rem;
-  z-index: 1;
+  z-index: $grid-item;
 }
 
 .muuri-item-dragging {
-  z-index: 11;
+  z-index: $grid-item-dragging;
   cursor: move;
 }
 
 .muuri-item-releasing {
-  z-index: 11;
+  z-index: $grid-item-realising;
 }
 
 .muuri-item-hidden {
-  z-index: 0;
+  z-index: $grid-item-hidden;
 }
 
 .muuri-item-placeholder {
@@ -193,7 +193,7 @@
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 4;
+  z-index: $drag-helper;
   height: 0;
 }
 
@@ -235,7 +235,7 @@
   position: absolute;
   right: 5vw;
   bottom: calc(5vh + 80px);
-  z-index: 9;
+  z-index: $add-mobile;
   display: none;
   justify-content: center;
   align-items: center;
@@ -319,7 +319,6 @@
   border-color: #c5c5c5;
 
   .content-button {
-    z-index: 50;
     justify-content: space-between;
     padding: 0 1rem;
     cursor: pointer;

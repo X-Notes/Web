@@ -31,7 +31,7 @@
 
     .search {
         position: relative;
-        z-index: 6;
+        z-index: $header-search;
         display: flex;
         height: 30px;
         width: 200px;

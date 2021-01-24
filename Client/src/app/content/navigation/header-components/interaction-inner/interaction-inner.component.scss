@@ -151,7 +151,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 40;
+    z-index: $header-inner-overlay;
     display: none;
   }
 }
@@ -241,6 +241,7 @@
   .interactions {
     .user-circle {
       display: flex;
+      z-index: $header-wrapper-people;
     }
 
     ng-scrollbar {
@@ -249,7 +250,7 @@
 
     .wrapper-people {
       position: absolute;
-      z-index: 6;
+      z-index: $header-wrapper-people;
       left: 4vw;
       top: 50px;
       height: auto;
@@ -309,9 +310,10 @@
 
 @media (min-width: 1024px) and (max-width: 1440px) {
   .visible-people {
+    $header-wrapper-people: 50;
     .user-circle,
     .wrapper-people {
-      z-index: 50;
+      z-index: $header-wrapper-people;
     }
 
     .overlay {
@@ -331,7 +333,7 @@
     button,
     .menu-inner,
     .three-dots {
-      z-index: 50;
+      z-index: $header-visible-elements;
     }
 
     .overlay {
@@ -357,7 +359,7 @@
 
     .menu-inner {
       position: absolute;
-      z-index: 6;
+      z-index: $header-menu;
       top: 50px;
       right: 4vw;
       margin-right: 0;
