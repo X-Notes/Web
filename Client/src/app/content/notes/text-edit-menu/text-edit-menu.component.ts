@@ -49,6 +49,8 @@ export class TextEditMenuComponent implements OnInit {
     } else {
       item.type = type;
     }
+    const selection = this.apiBrowserService.getSelection();
+    selection.removeAllRanges();
   }
 
 }
