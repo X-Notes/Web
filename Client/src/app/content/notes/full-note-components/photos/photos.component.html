@@ -1,13 +1,13 @@
 <div class="container" (mouseenter)="mouseEnterHandler($event)" (mouseleave)="mouseLeaveHandler($event)">
     <div class="content-photos">
-        <div *ngFor="let block of mainBlocks;let i = index" class="blocks main">
+        <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
             <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
-                <img *ngFor="let item of block" [src]="item.url">
+                <img *ngFor="let item of block" [src]="item.url" (load)="onLoadImage($event)">
             </div>
         </div>
         <div class="blocks">
             <div class="block" [ngClass]="getStyle(countLastItems)">
-                <img *ngFor="let item of lastBlock" [src]="item.url">
+                <img *ngFor="let item of lastBlock" [src]="item.url" (load)="onLoadImage($event)">
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
                             Photos in row
                         </mat-panel-title>
                         <mat-panel-description class="expansion-description">
-                            {{photosInRow}}
+                            {{countItemsInMainBlock}}
                         </mat-panel-description>
                     </mat-expansion-panel-header>
                     <div *ngFor="let item of [1,2,3,4]" #firstItem class="item" (click)="setPhotosInRow(item)">

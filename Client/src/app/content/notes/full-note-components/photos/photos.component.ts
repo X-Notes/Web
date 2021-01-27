@@ -12,11 +12,11 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 export class PhotosComponent implements OnInit, ParentInteraction {
 
   panelOpenState = false;
-  photosInRow = 1;
   isOpened = false;
 
   mainBlocks: Photo[][] = [];
   lastBlock: Photo[] = [];
+  countItemsInMainBlock = 1;
 
   activeMenu = false;
 
@@ -28,6 +28,11 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   ngOnInit(): void {
     this.initPhotos();
+  }
+
+  onLoadImage($event)
+  {
+    console.log($event);
   }
 
   openMenu($event: MouseEvent) {
@@ -43,35 +48,31 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   setPhotosInRow(count: number)
   {
-    this.photosInRow = count;
+    this.countItemsInMainBlock = count;
     this.panelOpenState = false;
+    this.initPhotos();
+    this.isOpened = false;
   }
 
   initPhotos() {
-    console.log('Total ', this.content.data.photos);
+    this.mainBlocks = [];
+    this.lastBlock = [];
     const photoLength = this.content.data.photos.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
         this.mainBlocks.push(this.content.data.photos.slice(j, j + this.countItemsInMainBlock));
         j += this.countItemsInMainBlock;
     }
-    console.log('MainBlocks ', this.mainBlocks);
-    console.log(this.countLastItems);
     if (this.countLastItems > 0)
     {
       this.lastBlock = this.content.data.photos.slice(photoLength - this.countLastItems, photoLength);
     }
-    console.log('Last ', this.lastBlock);
   }
 
   get countOfBlocks() {
     return Math.floor(this.content.data.photos.length / this.countItemsInMainBlock);
   }
 
-  get countItemsInMainBlock()
-  {
-    return 2;
-  }
 
   get countLastItems() {
     return this.content.data.photos.length % this.countItemsInMainBlock;

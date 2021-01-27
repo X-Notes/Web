@@ -150,6 +150,7 @@ export class FullNoteContentService implements OnDestroy {
           url: item.download_url,
           height: item.height,
           width: item.width,
+          loaded: false
         });
       }
     });

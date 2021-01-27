@@ -36,6 +36,7 @@ export class Photo{
     url: string;
     height: string;
     width: string;
+    loaded: boolean;
 }
 
 export enum HeadingType{
