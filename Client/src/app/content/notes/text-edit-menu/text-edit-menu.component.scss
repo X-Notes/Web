@@ -1,6 +1,7 @@
-
+@import 'variables';
+ 
 .container{
-    background-color: #2b2e36;
+    background-color: $dark-button;
     height: 38px;
     padding: 5px;
     border-radius: 5px;

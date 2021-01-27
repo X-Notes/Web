@@ -12,6 +12,13 @@
         </div>
     </div>
     <div class="wrapper">
-        <div class="menu" *ngIf="activeMenu"></div>
+        <div class="menu" [style.visibility]="activeMenu? 'visible': 'hidden'" cdkOverlayOrigin
+            #trigger="cdkOverlayOrigin" (click)="openMenu($event)">
+        </div>
     </div>
+    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpened"
+        [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        (backdropClick)="closeMenu($event)">
+        <app-popup-full-note>1212</app-popup-full-note>
+    </ng-template>
 </div>

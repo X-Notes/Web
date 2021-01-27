@@ -1,13 +1,17 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { PhotoService } from '../photos-business-logic/photo.service';
 
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
-  styleUrls: ['./photos.component.scss']
+  styleUrls: ['./photos.component.scss'],
+  providers: [PhotoService]
 })
 export class PhotosComponent implements OnInit, ParentInteraction {
+
+  isOpened = false;
 
   mainBlocks: Photo[][] = [];
   lastBlock: Photo[] = [];
@@ -17,11 +21,21 @@ export class PhotosComponent implements OnInit, ParentInteraction {
   @Input()
   content: ContentModel<Photos>;
 
-  constructor() { }
+  constructor(private photoService: PhotoService) { }
 
 
   ngOnInit(): void {
     this.initPhotos();
+  }
+
+  openMenu($event: MouseEvent) {
+    this.isOpened = true;
+    this.photoService.setPosition($event.clientY - 20, $event.clientX - 80);
+  }
+
+  closeMenu($event: MouseEvent)
+  {
+    this.isOpened = false;
   }
 
   initPhotos() {
