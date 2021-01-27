@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
+import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss']
 })
-export class PhotosComponent implements OnInit {
+export class PhotosComponent implements OnInit, ParentInteraction {
 
   mainBlocks: Photo[][] = [];
   lastBlock: Photo[] = [];
@@ -17,6 +18,7 @@ export class PhotosComponent implements OnInit {
   content: ContentModel<Photos>;
 
   constructor() { }
+
 
   ngOnInit(): void {
     this.initPhotos();
@@ -79,5 +81,32 @@ export class PhotosComponent implements OnInit {
     }
   }
 
+  setFocus($event?: any) {
+    throw new Error('Method not implemented.');
+  }
+
+  setFocusToEnd() {
+    throw new Error('Method not implemented.');
+  }
+
+  updateHTML(content: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  getNative() {
+    throw new Error('Method not implemented.');
+  }
+
+  getContent() {
+    return this.content;
+  }
+
+  mouseEnter($event: any) {
+    throw new Error('Method not implemented.');
+  }
+
+  mouseOut($event: any) {
+    throw new Error('Method not implemented.');
+  }
 
 }

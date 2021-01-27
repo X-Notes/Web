@@ -26,9 +26,6 @@ export class HeadingService extends HtmlService {
         throw new Error('Method not implemented.');
     }
 
-    mouseUp(e: any, content: ContentModel<BaseText>) {
-        super.mouseUp(e, content);
-    }
 
     onSelectStart(e: any) {
         // SELECTIION

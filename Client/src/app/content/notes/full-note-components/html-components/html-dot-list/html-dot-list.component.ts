@@ -32,6 +32,10 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   constructor(public dotListService: DotListService) { }
 
+  getContent() {
+    return this.content;
+  }
+
   ngAfterViewInit(): void {
     this.dotListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }

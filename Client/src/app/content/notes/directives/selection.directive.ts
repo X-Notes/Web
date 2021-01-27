@@ -1,11 +1,11 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Output, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
 import { SelectionService } from '../selection.service';
 
 
 @Directive({
   selector: '[appSelection]'
 })
-export class SelectionDirective {
+export class SelectionDirective implements OnDestroy, OnInit {
 
   @Output()
   selectionEvent = new EventEmitter<DOMRect>();
@@ -13,6 +13,7 @@ export class SelectionDirective {
   @Output()
   selectionStartEvent = new EventEmitter<DOMRect>();
 
+  listeners = [];
 
   x;
   y;
@@ -28,8 +29,16 @@ export class SelectionDirective {
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2,
               private selectionService: SelectionService) {
+  }
 
-    setTimeout(() => this.init(), 1000); // TODO CHANGE
+  ngOnInit(): void {
+    this.init();
+  }
+
+  ngOnDestroy(): void {
+    for (const destroyFunc of this.listeners) {
+      destroyFunc();
+    }
   }
 
   init() {
@@ -39,11 +48,13 @@ export class SelectionDirective {
     this.mainContent = document.getElementsByClassName('main-content')[0];
     this.mainContent.appendChild(this.div);
 
-    this.mainContent.addEventListener('scroll', (e) => this.scrollEvent(e));
+    const scrollEventListener = this.renderer.listen(this.mainContent, 'scroll', (e) => this.scrollEvent(e));
+    this.listeners.push(scrollEventListener);
 
-    document.addEventListener('mousedown', (e) => this.mouseDown(e)); // TODO make unsubscribe
-    document.addEventListener('mouseup', (e) => this.mouseUp(e));
-    document.addEventListener('mousemove', (e) => this.mouseMove(e));
+    const mouseDownListener = this.renderer.listen('document', 'mousedown', (e) => this.mouseDown(e));
+    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => this.mouseUp(e));
+    const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) => this.mouseMove(e));
+    this.listeners.push(mouseDownListener, mouseMoveListener, mouseUpListener);
   }
 
   @HostListener('mousedown', ['$event'])
@@ -108,8 +119,7 @@ export class SelectionDirective {
     }
   }
 
-  get subtractionScrollTopAndScrollStart()
-  {
+  get subtractionScrollTopAndScrollStart() {
     return Math.abs(this.mainContent.scrollTop - this.startTop);
   }
 

@@ -27,10 +27,6 @@ export class TextService extends HtmlService {
         super.pasteCommandHandler(e);
     }
 
-    mouseUp(e: any, content: ContentModel<BaseText>) {
-        super.mouseUp(e, content);
-    }
-
     onSelectStart(e: any) {
         // SELECTIION
     }

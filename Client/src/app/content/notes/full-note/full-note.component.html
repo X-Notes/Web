@@ -27,7 +27,9 @@
     <div *ngIf="(canView$ | async) && loaded" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
         <div 
-        appSelection 
+        appSelection
+        [appMenuSelection]="textElements"
+        [appCopy]="refElements"
         (selectionEvent)="selectionHandler($event)" 
         (selectionStartEvent)="selectionStartHandler($event)"
         [style.width.px]="sliderService.mainWidth" 

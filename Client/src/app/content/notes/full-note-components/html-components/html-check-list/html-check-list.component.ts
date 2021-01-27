@@ -32,6 +32,9 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   constructor(public checkListService: CheckListService) { }
 
+  getContent() {
+    return this.content;
+  }
 
   ngAfterViewInit(): void {
     this.checkListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);

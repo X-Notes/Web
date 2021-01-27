@@ -30,6 +30,10 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   constructor(public headingService: HeadingService) { }
 
+  getContent() {
+    return this.content;
+  }
+
   ngAfterViewInit(): void {
     this.headingService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }

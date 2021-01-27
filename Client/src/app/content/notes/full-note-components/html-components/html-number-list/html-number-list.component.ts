@@ -38,6 +38,10 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
 
   constructor(public numberService: NumberListService) { }
 
+  getContent() {
+    return this.content;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.setNumber();
   }

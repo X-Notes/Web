@@ -22,6 +22,8 @@ import { HtmlNumberListComponent } from './full-note-components/html-components/
 import { HtmlDotListComponent } from './full-note-components/html-components/html-dot-list/html-dot-list.component';
 import { HtmlHeadingsComponent } from './full-note-components/html-components/html-headings/html-headings.component';
 import { HtmlCheckListComponent } from './full-note-components/html-components/html-check-list/html-check-list.component';
+import { MenuSelectionDirective } from './directives/menu-selection.directive';
+import { CopyDirective } from './directives/copy.directive';
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { HtmlCheckListComponent } from './full-note-components/html-components/h
     HtmlDotListComponent,
     HtmlHeadingsComponent,
     HtmlCheckListComponent,
+    MenuSelectionDirective,
+    CopyDirective,
   ],
   imports: [
     CommonModule,

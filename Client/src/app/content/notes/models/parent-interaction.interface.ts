@@ -3,6 +3,7 @@ export interface ParentInteraction{
     setFocusToEnd();
     updateHTML(content: string);
     getNative();
+    getContent();
     mouseEnter($event);
     mouseOut($event);
 }
