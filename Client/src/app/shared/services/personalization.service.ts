@@ -182,7 +182,7 @@ export class PersonalizationService {
   }
 
   checkWidth(): boolean {
-    return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
+    return (window.innerWidth > 1024 && window.innerWidth <= 1440) ? true : false;
   }
 
   waitPreloading() {

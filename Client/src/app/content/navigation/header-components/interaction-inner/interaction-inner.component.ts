@@ -28,6 +28,7 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
   }
 
   closeMenu(): void {
+    console.log(this.pService.checkWidth())
     if (this.pService.checkWidth()) {
       this.pService.users = false;
     }
