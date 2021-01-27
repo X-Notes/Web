@@ -140,7 +140,7 @@ export class FullNoteContentService implements OnDestroy {
       photos: []
     };
 
-    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=5`)
+    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=3`)
     .pipe(takeUntil(this.destroy))
     .subscribe(z => {
       for (const item of z as any)

@@ -25,6 +25,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -38,7 +39,7 @@ import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule
+    OverlayModule, MatExpansionModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -48,7 +49,8 @@ import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    PopupFullNoteComponent
+    PopupFullNoteComponent,
+    MatExpansionModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

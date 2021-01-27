@@ -11,6 +11,8 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 })
 export class PhotosComponent implements OnInit, ParentInteraction {
 
+  panelOpenState = false;
+  photosInRow = 1;
   isOpened = false;
 
   mainBlocks: Photo[][] = [];
@@ -30,12 +32,19 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   openMenu($event: MouseEvent) {
     this.isOpened = true;
-    this.photoService.setPosition($event.clientY - 20, $event.clientX - 80);
+    this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
   }
 
   closeMenu($event: MouseEvent)
   {
     this.isOpened = false;
+    this.panelOpenState = false;
+  }
+
+  setPhotosInRow(count: number)
+  {
+    this.photosInRow = count;
+    this.panelOpenState = false;
   }
 
   initPhotos() {
