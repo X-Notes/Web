@@ -16,7 +16,7 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   mainBlocks: Photo[][] = [];
   lastBlock: Photo[] = [];
-  countItemsInMainBlock = 1;
+  countItemsInMainBlock = 3;
 
   activeMenu = false;
 
@@ -28,11 +28,6 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   ngOnInit(): void {
     this.initPhotos();
-  }
-
-  onLoadImage($event)
-  {
-    console.log($event);
   }
 
   openMenu($event: MouseEvent) {

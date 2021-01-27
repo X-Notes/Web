@@ -17,18 +17,14 @@
             .block{
                 display: flex;
                 justify-content: space-between;
-                img{
-                    max-height: 550px;
-                    object-fit: cover;
-                    border-radius: 5px;
-                }
+                max-height: 550px;
             }
             &:first-child{
                 margin-top: 0;
             }
         }
         .fouth-child{
-            img{
+            app-photo{
                 &:nth-child(1){
                     width: calc(25% - 2.5px);
                 }
@@ -44,7 +40,7 @@
             }
         }
         .three-child{
-            img{
+            app-photo{
                 &:nth-child(1){
                     width: calc(25% - 3.33px);
                 }
@@ -57,7 +53,7 @@
             }
         }
         .two-child{
-            img{
+            app-photo{
                 &:nth-child(1){
                     width: calc(50% - 5px);
                 }
@@ -67,7 +63,7 @@
             }
         }
         .one-child{
-            img {
+            app-photo {
                 &:nth-child(1){
                     width: calc(100%);
                 }

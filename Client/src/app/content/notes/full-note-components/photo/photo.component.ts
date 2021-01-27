@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Photo } from '../../models/ContentMode';
 
 @Component({
   selector: 'app-photo',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PhotoComponent implements OnInit {
 
+  @Input()
+  photo: Photo;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onLoadImage($event)
+  {
+    console.log($event);
   }
 
 }

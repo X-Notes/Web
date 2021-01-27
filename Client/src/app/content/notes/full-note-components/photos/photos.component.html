@@ -2,12 +2,12 @@
     <div class="content-photos">
         <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
             <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
-                <img *ngFor="let item of block" [src]="item.url" (load)="onLoadImage($event)">
+                <app-photo *ngFor="let item of block" [photo]="item"></app-photo>
             </div>
         </div>
         <div class="blocks">
             <div class="block" [ngClass]="getStyle(countLastItems)">
-                <img *ngFor="let item of lastBlock" [src]="item.url" (load)="onLoadImage($event)">
+                <app-photo *ngFor="let item of lastBlock" [photo]="item"></app-photo>
             </div>
         </div>
     </div>

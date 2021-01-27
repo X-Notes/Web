@@ -1,1 +1,3 @@
-<p>photo works!</p>
+<div class="photo">
+    <img [src]="photo.url" (load)="onLoadImage($event)">
+</div>
