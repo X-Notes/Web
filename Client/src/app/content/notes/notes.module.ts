@@ -24,6 +24,7 @@ import { HtmlHeadingsComponent } from './full-note-components/html-components/ht
 import { HtmlCheckListComponent } from './full-note-components/html-components/html-check-list/html-check-list.component';
 import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { CopyDirective } from './directives/copy.directive';
+import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { CopyDirective } from './directives/copy.directive';
     HtmlCheckListComponent,
     MenuSelectionDirective,
     CopyDirective,
+    TextEditMenuDirective,
   ],
   imports: [
     CommonModule,

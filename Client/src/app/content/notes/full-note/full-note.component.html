@@ -27,6 +27,7 @@
     <div *ngIf="(canView$ | async) && loaded" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
         <div 
+        appTextEditMenu
         appSelection
         [appMenuSelection]="textElements"
         [appCopy]="refElements"
@@ -152,8 +153,8 @@
         No can View
     </div>
     <app-spinner *ngIf="!loaded"></app-spinner>
-    <app-text-edit-menu 
-    [style.top.px]="menuSelectionService.top"
+    <app-text-edit-menu
+    [style.top.px]="menuSelectionService.getTop"
     [style.left.px]="menuSelectionService.left"
     [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'">
     </app-text-edit-menu>

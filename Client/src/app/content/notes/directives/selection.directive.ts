@@ -45,7 +45,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.div = this.renderer.createElement('div');
     this.div.classList.add('full-note-selection');
 
-    this.mainContent = document.getElementsByClassName('main-content')[0];
+    this.mainContent = this.elementRef.nativeElement;
     this.mainContent.appendChild(this.div);
 
     const scrollEventListener = this.renderer.listen(this.mainContent, 'scroll', (e) => this.scrollEvent(e));
@@ -125,8 +125,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
   scrollEvent(e) {
     if (this.selectionService.ismousedown && this.isFullNote) {
-
-
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {
         newValueY = (this.finY - this.y + this.mainContent.scrollTop - this.startTop);

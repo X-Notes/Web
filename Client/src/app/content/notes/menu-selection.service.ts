@@ -6,7 +6,19 @@ export class MenuSelectionService {
 
   public currentItem: ContentModel<BaseText>;
   public menuActive = false;
-  public top = 0;
+  public startTop = 0;
+  public startScroll = 0;
+  public currentScroll = 0;
   public left = 0;
   constructor() { }
+
+  get getTop()
+  {
+    const positionNumber = this.startTop + this.startScroll - this.currentScroll;
+    if (positionNumber < 0)
+    {
+      return 5;
+    }
+    return positionNumber;
+  }
 }

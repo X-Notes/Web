@@ -1,4 +1,4 @@
-import { Directive, Input, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, QueryList, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ContentType } from '../models/ContentMode';
@@ -14,7 +14,8 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
 
   @Input() appMenuSelection: QueryList<ParentInteraction>;
 
-  constructor(private renderer: Renderer2,
+  constructor(private elementRef: ElementRef,
+              private renderer: Renderer2,
               public apiBrowserService: ApiBrowserTextService,
               public menuSelectionService: MenuSelectionService,
               public selectionService: SelectionService, ) { }
@@ -32,7 +33,8 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       this.menuSelectionService.menuActive = true;
       this.menuSelectionService.currentItem = this.getCurrentItem();
       this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
-      this.menuSelectionService.top = coords.top - this.selectionService.menuHeight - 45;
+      this.menuSelectionService.startTop = coords.top - this.selectionService.menuHeight - 45;
+      this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
     } else {
       this.menuSelectionService.menuActive = false;
       this.menuSelectionService.currentItem = null;
