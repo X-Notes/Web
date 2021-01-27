@@ -68,14 +68,17 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   mouseEnter($event) {
+    this.checkListService.mouseEnter($event, this.contentHtml);
   }
 
   mouseOut($event) {
+    this.checkListService.mouseOut($event, this.contentHtml);
   }
+
 
   get isActive()
   {
-    return this.content.data.content.length === 0 && document.activeElement === this.getNative();
+    return this.checkListService.isActive(this.contentHtml);
   }
 
 }

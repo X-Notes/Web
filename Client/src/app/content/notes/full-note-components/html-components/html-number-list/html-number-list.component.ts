@@ -86,13 +86,15 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   mouseEnter($event) {
+    this.numberService.mouseEnter($event, this.contentHtml);
   }
 
   mouseOut($event) {
+    this.numberService.mouseOut($event, this.contentHtml);
   }
 
   get isActive()
   {
-    return this.content.data.content.length === 0 && document.activeElement === this.getNative();
+    return this.numberService.isActive(this.contentHtml);
   }
 }

@@ -69,13 +69,15 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   mouseEnter($event) {
+    this.dotListService.mouseEnter($event, this.contentHtml);
   }
 
   mouseOut($event) {
+    this.dotListService.mouseOut($event, this.contentHtml);
   }
 
   get isActive()
   {
-    return this.content.data.content.length === 0 && document.activeElement === this.getNative();
+    return this.dotListService.isActive(this.contentHtml);
   }
 }

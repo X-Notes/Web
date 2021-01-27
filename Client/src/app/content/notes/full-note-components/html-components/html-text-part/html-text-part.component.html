@@ -2,10 +2,9 @@
     (mouseover)="mouseEnter($event)" 
     (mouseout)="mouseOut($event)" 
     (click)="setFocus($event)"
-    (focusout)="focusOut($event)"
     >
     <p #contentHtml class="block-generic default-text-size" contenteditable="true" [textContent]="textService.contentStr"></p>
-    <div *ngIf="textService.visible" class="no-content">
+    <div *ngIf="isActive" class="no-content">
         <p>Text</p>
         <div class="buttons" (mousedown)="preventClick($event)">
             <i (mousedown)="transformContent($event, contentType.CHECKLIST)" class="icon-plus"></i>

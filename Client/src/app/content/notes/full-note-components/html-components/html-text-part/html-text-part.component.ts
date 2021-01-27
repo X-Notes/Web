@@ -95,11 +95,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textService.setFocusToEnd(this.contentHtml);
   }
 
-  focusOut($event)
-  {
-    this.textService.focusOut();
-  }
-
   updateHTML(content: string) {
     this.content.data.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
@@ -108,6 +103,11 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   getNative()
   {
     return this.contentHtml?.nativeElement;
+  }
+
+  get isActive()
+  {
+    return this.textService.isActive(this.contentHtml);
   }
 
 }

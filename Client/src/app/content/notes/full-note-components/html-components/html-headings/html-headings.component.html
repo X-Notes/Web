@@ -1,4 +1,4 @@
-<div class="main-container" (click)="setFocus($event)"
+<div class="main-container" (click)="setFocus($event)" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)"
         [ngClass]="{'h1': content.data.headingType === hType.H1, 'h2': content.data.headingType === hType.H2, 'h3': content.data.headingType === hType.H3}">
         <p #contentHtml class="block-generic" contenteditable="true" [textContent]="headingService.contentStr"></p>
         <p class="no-content" *ngIf="isActive">Heading</p>

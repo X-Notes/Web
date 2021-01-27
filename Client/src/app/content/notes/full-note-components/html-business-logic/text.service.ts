@@ -6,13 +6,10 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class TextService extends HtmlService {
 
-    visible = false;
     isLast: boolean;
 
     onInput(content: ContentModel<HtmlText>, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>) {
         content.data.content = this.getNativeElement(contentHtml).innerText;
-        this.visible = this.isContentEmpty(contentHtml);
-
         if (this.isLast){
             addToEndNewText.emit();
             this.isLast = false;
@@ -48,25 +45,11 @@ export class TextService extends HtmlService {
 
     }
 
-    mouseEnter($event, contentHtml: ElementRef) {
-        this.visible = true && this.isContentEmpty(contentHtml) && !this.selectionService.ismousedown;
-    }
-
-    mouseOut($event, contentHtml: ElementRef) {
-        this.visible = (document.activeElement === this.getNativeElement(contentHtml)) && this.isContentEmpty(contentHtml);
-    }
-
     setFocus($event, contentHtml: ElementRef) {
         this.getNativeElement(contentHtml).focus();
-        this.visible = true && this.isContentEmpty(contentHtml);
     }
 
     setFocusToEnd(contentHtml: ElementRef) {
         this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
-        this.visible = true && this.isContentEmpty(contentHtml);
-    }
-
-    focusOut() {
-        this.visible = false;
     }
 }
