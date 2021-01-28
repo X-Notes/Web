@@ -18,6 +18,9 @@ import { Photo } from '../../models/ContentMode';
       transition('noLoaded => loaded', [
         animate('0.35s ease-out')
       ]),
+      transition('loaded => noLoaded', [
+        animate(0)
+      ]),
     ])
   ]
 })
@@ -34,7 +37,6 @@ export class PhotoComponent implements OnInit {
   onLoadImage($event)
   {
     this.photo.loaded = true;
-    console.log($event);
   }
 
 }

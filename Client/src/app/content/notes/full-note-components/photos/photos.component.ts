@@ -45,8 +45,18 @@ export class PhotosComponent implements OnInit, ParentInteraction {
   {
     this.countItemsInMainBlock = count;
     this.panelOpenState = false;
-    this.initPhotos();
     this.isOpened = false;
+    this.setFalseLoadedForAllPhotos();
+    this.initPhotos();
+  }
+
+  setFalseLoadedForAllPhotos()
+  {
+    for (const mainBlock of this.mainBlocks)
+    {
+      mainBlock.forEach(z => z.loaded = false);
+    }
+    this.lastBlock.forEach(z => z.loaded = false);
   }
 
   initPhotos() {

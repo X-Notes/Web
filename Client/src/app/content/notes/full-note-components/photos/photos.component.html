@@ -3,11 +3,13 @@
         <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
             <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
                 <app-photo *ngFor="let item of block" [photo]="item"></app-photo>
+                <div class="slider"></div>
             </div>
         </div>
-        <div class="blocks">
+        <div class="blocks" *ngIf="lastBlock.length > 0">
             <div class="block" [ngClass]="getStyle(countLastItems)">
                 <app-photo *ngFor="let item of lastBlock" [photo]="item"></app-photo>
+                <div class="slider"></div>
             </div>
         </div>
     </div>

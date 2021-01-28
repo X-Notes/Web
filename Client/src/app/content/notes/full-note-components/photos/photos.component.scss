@@ -15,9 +15,28 @@
         .blocks{ 
             margin-top: 5px;
             .block{
+                position: relative;
                 display: flex;
                 justify-content: space-between;
+                min-height: 100px;
                 max-height: 550px;
+                &:hover{
+                    .slider{
+                        display: block;
+                    }
+                }
+                .slider{
+                    cursor: pointer;
+                    display: none;
+                    position: absolute;
+                    bottom: 10px;
+                    left: calc(50% - 100px);
+                    width: 200px;
+                    border-radius: 20px;
+                    background-color: white;
+                    opacity: 0.8;
+                    height: 6px;
+                }
             }
             &:first-child{
                 margin-top: 0;
