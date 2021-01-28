@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { PhotoService } from '../photos-business-logic/photo.service';
@@ -11,18 +11,35 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 })
 export class PhotosComponent implements OnInit, ParentInteraction {
 
+  startHeight;
+  @ViewChild('album') albumChild: ElementRef;
+
   panelOpenState = false;
   isOpened = false;
 
   mainBlocks: Photo[][] = [];
   lastBlock: Photo[] = [];
-  countItemsInMainBlock = 3;
+  countItemsInMainBlock = 2;
 
   @Input()
   content: ContentModel<Photos>;
 
-  constructor(private photoService: PhotoService) { }
+  constructor(private photoService: PhotoService,
+              private renderer: Renderer2) { }
 
+
+  changeSize(diffrence: number)
+  {
+    const newHeight = this.startHeight + diffrence;
+    if (newHeight > 200){
+    this.renderer.setStyle(this.albumChild.nativeElement, 'height', newHeight + 'px');
+    }
+  }
+
+  saveHeight()
+  {
+    this.startHeight = this.albumChild.nativeElement.offsetHeight;
+  }
 
   ngOnInit(): void {
     this.initPhotos();
@@ -45,6 +62,7 @@ export class PhotosComponent implements OnInit, ParentInteraction {
     this.panelOpenState = false;
     this.isOpened = false;
     this.setFalseLoadedForAllPhotos();
+    this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
     this.initPhotos();
   }
 

@@ -17,6 +17,7 @@
         }
     }
     .content-photos{
+        overflow: hidden;
         position: relative;
         height: auto;
         display: flex;
@@ -28,7 +29,7 @@
                 position: relative;
                 display: flex;
                 justify-content: space-between;
-                min-height: 150px;
+                min-height: 200px;
                 height: 100%;
             }
             &:first-child{
