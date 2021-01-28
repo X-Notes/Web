@@ -1,4 +1,4 @@
-<div class="photo" [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'">
-    <img [src]="photo.url" (load)="onLoadImage($event)">
-    <p class="text">{{photo.loaded}}</p>
+<div class="photo">
+    <img [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'" [src]="photo.url" (load)="onLoadImage($event)">
+    <app-spinner *ngIf="!photo.loaded"></app-spinner>
 </div>
