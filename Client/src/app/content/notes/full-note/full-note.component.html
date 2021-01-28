@@ -40,7 +40,7 @@
             <div class="title-section">
                 <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
                     class="title" (input)="onInput($event)"></div>
-                <div class="placeholder">Give title man</div>
+                <div class="placeholder">Give your note a title</div>
                 <div class="left-border"></div>
             </div>
         </div>

@@ -76,14 +76,9 @@
         }
 
         .not-named {
-            display: none;
             font-size: 1.25rem;
             color: #808080;
             font-weight: 400;
-        }
-
-        h4:empty + .not-named {
-            display: block;
         }
     }
 
