@@ -18,8 +18,6 @@ export class PhotosComponent implements OnInit, ParentInteraction {
   lastBlock: Photo[] = [];
   countItemsInMainBlock = 3;
 
-  activeMenu = false;
-
   @Input()
   content: ContentModel<Photos>;
 
@@ -83,13 +81,6 @@ export class PhotosComponent implements OnInit, ParentInteraction {
     return this.content.data.photos.length % this.countItemsInMainBlock;
   }
 
-  mouseEnterHandler($event) {
-    this.activeMenu = true;
-  }
-
-  mouseLeaveHandler($event) {
-    this.activeMenu = false;
-  }
 
   getStyle(numb: number)
   {

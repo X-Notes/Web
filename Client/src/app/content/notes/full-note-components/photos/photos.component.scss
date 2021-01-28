@@ -9,38 +9,48 @@
     padding-left: 8px;
     padding-right: 8px;
 
+    &:hover{
+        .wrapper{
+            .menu-wrapper{
+                display: block;
+            }
+        }
+    }
     .content-photos{
+        position: relative;
+        height: auto;
         display: flex;
         flex-direction: column;
         .blocks{ 
+            height: 100%;
             margin-top: 5px;
             .block{
                 position: relative;
                 display: flex;
                 justify-content: space-between;
-                min-height: 100px;
-                max-height: 550px;
-                &:hover{
-                    .slider{
-                        display: block;
-                    }
-                }
-                .slider{
-                    cursor: pointer;
-                    display: none;
-                    position: absolute;
-                    bottom: 10px;
-                    left: calc(50% - 100px);
-                    width: 200px;
-                    border-radius: 20px;
-                    background-color: white;
-                    opacity: 0.8;
-                    height: 6px;
-                }
+                min-height: 150px;
+                height: 100%;
             }
             &:first-child{
                 margin-top: 0;
             }
+        }
+        &:hover{
+            .slider{
+                display: block;
+            }
+        }
+        .slider{
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: calc(50% - 100px);
+            width: 200px;
+            border-radius: 20px;
+            background-color: white;
+            opacity: 0.8;
+            height: 6px;
         }
         .fouth-child{
             app-photo{
@@ -100,6 +110,7 @@
     display: flex;
     justify-content: center;
     .menu-wrapper{
+        display: none;
         position: relative;
         cursor: pointer;
         border-radius: 5px;
