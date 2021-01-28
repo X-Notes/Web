@@ -1,12 +1,13 @@
 @import "header-components";
 
 .interactions {
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
 
   .history {
     width: auto;
     margin-right: 0;
+    margin-left: auto;
     font-size: 1.125rem;
     font-weight: 500;
 
@@ -81,9 +82,9 @@
   .wrapper-people {
     position: relative;
     display: flex;
+    flex: 1;
     height: 100%;
-    width: calc(100% - 660px);
-    margin-right: auto;
+    margin-right: 1rem;
     transition: background-color 0.2s ease;
 
     &::after,
@@ -324,7 +325,9 @@
 
 @media (max-width: 1320px) {
   .interactions {
-    justify-content: flex-start;
+    .history {
+      margin-left: initial;
+    }
   }
 }
 
@@ -396,7 +399,7 @@
       left: initial;
       top: initial;
       height: 100%;
-      width: calc(100% - 207px);
+      flex: 1;
       max-height: initial;
       margin-right: 1rem;
       background-color: initial;
@@ -450,10 +453,6 @@
     .generic {
       width: 30px;
     }
-
-    .wrapper-people {
-      width: calc(100% - 177px);
-    }
   }
 }
 
@@ -487,8 +486,6 @@
     }
 
     .wrapper-people {
-      width: calc(100% - 170px);
-
       .people-editing {
         .person {
           .inner-person {

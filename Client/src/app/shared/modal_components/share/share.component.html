@@ -253,7 +253,7 @@
                     [visibility]="'hover'"
                     [appearance]="'compact'">
 
-                    <div class="mail-notification">
+                    <div *ngIf="selectedUsers.length > 0" class="mail-notification">
                         <div class="mail-container">
                             <div *ngFor="let user of selectedUsers" class="user-mail">
                                 <p>{{user.email}}</p>
@@ -317,7 +317,7 @@
                         </div>
                     </div>
                     <div class="user-suggestions">
-                        <div *ngFor="let user of usersOnPrivateNote" class="user">
+                        <div *ngFor="let user of usersOnPrivateNote$" class="user">
                             <div class="photo">
                                 <img alt="user image" [src]="user.photoId">
                             </div>
