@@ -7,18 +7,19 @@ export class ReplacePipe implements PipeTransform {
 
   transform(value: string, type: string): string {
     if (type === 'note') {
-      if (value) {
-        return value?.length === 0 ? 'unknown note' : value;
-      } else {
-        return 'unknown note';
-      }
+      return this.unknownReturn(value, type);
+    } else if (type === 'label') {
+      return this.unknownReturn(value, type);
+    } else if (type === 'folder') {
+      return this.unknownReturn(value, type);
     }
-    if (type === 'label') {
-      if (value) {
-        return value?.length === 0 ? 'unknown label' : value;
-      } else {
-        return 'unknown label';
-      }
+  }
+
+  unknownReturn(value: string, type: string) {
+    if (value) {
+      return value?.length === 0 ? `unknown ${type}` : value;
+    } else {
+      return `unknown ${type}`;
     }
   }
 

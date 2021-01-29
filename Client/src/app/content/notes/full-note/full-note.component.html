@@ -1,11 +1,13 @@
 <div appTheme class="sub-nav">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <div appScrollControl class="notes-section">
+        <ng-scrollbar class="notes-section"
+            [visibility]="'hover'"
+            [appearance]="'compact'">
             <div class="note" *ngFor="let item of notesLink" [ngStyle]="{'backgroundColor': item.color}"
                 [routerLink]="['/notes/', item.id]">
                 <p>{{ item.title | replace: 'note' }}</p>
             </div>
-        </div>
+        </ng-scrollbar>
         <div class="information">
             <div class="separator"></div>
             <div class="progress-section">
@@ -38,61 +40,33 @@
             <div class="title-section">
                 <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
                     class="title" (input)="onInput($event)"></div>
-                <div class="placeholder">Give title man</div>
+                <div class="placeholder">Give your note a title</div>
                 <div class="left-border"></div>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
-            <!-- [ngStyle] = "{'background-image': 'url(' + (user$ | async).currentBackground?.path + ')'}" -->
             <div class="open" #open>
                 <i class="icon-plus"></i>
                 <p>open note or file</p>
                 <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
             </div>
             <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
-            <div appScrollControl class="small-notes autoscroll-helper"
-                [ngClass]="pService.toggleHistory? 'history-plus' : ''">
-                <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
-                    <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
-                        <div class="small-note">
-                            <div class="header">
-                                <button type="button" (click)="turnUpSmallNote()">
-                                    <div class="icon">
-                                        <i class="icon-select-label"></i>
-                                    </div>
-                                </button>
-                                <button type="button" (click)="deleteSmallNote(item)">
-                                    <div class="icon">
-                                        <i class="icon-cancel"></i>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="content" [ngClass]="turnUpNote? 'turn-up-note' : ''">
-                                <div class="note-color"></div>
-                                <div class="labels-section">
-                                    <div class="label">
-                                        <p>Hello Hello Hello Hello Hello</p>
-                                    </div>
-                                    <div class="label">
-                                        <p>Hello Hello </p>
-                                    </div>
-                                    <div class="label">
-                                        <p>Hello Hello Hello Hello Hello Hello Hello</p>
-                                    </div>
-                                </div>
-                                <div class="title-section">
-                                    <div class="left-border"></div>
-                                    <p>GIVE TITLE man GIVE TITLE man</p>
-                                </div>
-                                <div class="description">
-                                    <p>Hello Hello Hello Hello</p>
-                                </div>
-                            </div>
+            <ng-scrollbar class="scroll-helper small-notes"
+                [visibility]="'hover'"
+                [appearance]="'compact'">
+                <div class="content-inner-small">
+                    <div class="grid"
+                        *ngIf="loaded"
+                        [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+                        <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
+                            <app-small-note
+                            [note]="item"
+                            (deleteNote)="deleteSmallNote($event)"></app-small-note>
                         </div>
                     </div>
                 </div>
-                <div class="drag-helper second-helper"></div>
-            </div>
+            </ng-scrollbar>
+            <div class="drag-helper second-helper"></div>
         </div>
     </div>
     <div *ngIf="canNoView$ | async" class="wrapper">

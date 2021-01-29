@@ -80,6 +80,13 @@ export const tooltipAnimation = trigger('tooltip', [
   ]),
 ]);
 
+export const smoothOpacity = trigger('smoothOpacity', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate(100, style({ opacity: 1 })),
+  ])
+]);
+
 @Injectable({
   providedIn: 'root'
 })
@@ -100,6 +107,7 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+  isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
@@ -134,6 +142,16 @@ export class PersonalizationService {
       }
     }
 
+    if (this.check()) {
+      if (!this.isCollapseShared) {
+        this.isCollapseShared = true;
+      }
+    } else {
+      if (this.isCollapseShared) {
+        this.isCollapseShared =  false;
+      }
+    }
+
     if (this.checkWidth()) {
       if (this.users) {
         this.users = false;
@@ -164,7 +182,7 @@ export class PersonalizationService {
   }
 
   checkWidth(): boolean {
-    return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
+    return (window.innerWidth > 1024 && window.innerWidth <= 1440) ? true : false;
   }
 
   waitPreloading() {

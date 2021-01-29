@@ -22,7 +22,6 @@ import { NoteType } from '../../enums/NoteTypes';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
-import { DialogData } from '../dialog_data';
 
 export enum SharedType {
   Note,
@@ -43,7 +42,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   isOpenDropdown = false;
   isOpenDropdown2 = false;
   isOpenDropdown3 = false;
-  isCollapse = true;
   noteType = NoteType;
   folderType = FolderType;
   refType = RefType;
@@ -85,7 +83,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   refTypeForInvite: RefType = RefType.Viewer;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
     public pService: PersonalizationService,
     private store: Store,
     private searchService: SearchService,
@@ -102,6 +99,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.pService.onResize();
     const routing = this.store.selectSnapshot(AppStore.getRouting);
     switch (routing) {
       case EntityType.NoteArchive: {
@@ -371,14 +369,14 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   collapseToggle() {
-    this.isCollapse = !this.isCollapse;
+    this.pService.isCollapseShared = !this.pService.isCollapseShared;
     setTimeout(() => {
       this.tabs.realignInkBar();
     }, 150);
   }
 
   disableTooltipUser(): boolean {
-    if (this.isCollapse) {
+    if (this.pService.isCollapseShared) {
       return false;
     } else {
       return true;
@@ -386,6 +384,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   changed(text: string) {
+    console.log(text);
     this.searchStrChanged.next(text);
   }
 

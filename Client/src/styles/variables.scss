@@ -65,6 +65,31 @@ $header-small-note-icon: #D8D8D8;
 $header-small-note-icon-light: #666666;
 $header-small-note-light: #EAEAEA;
 
+//z-index`s
+
+//note-muuri-items
+
+$grid-item: 1;
+$grid-item-dragging: 50;
+$grid-item-realising: 50;
+$grid-item-hidden: 50;
+$drag-helper: 51;
+//navigation
+
+$sidebar: 100;
+$sidebar-section: 101;
+$sidebar-overlay: 100;
+$header-menu: 50;
+$header-inner-overlay: 40;
+$header-visible-elements: 50;
+$header-wrapper-people: 6;
+$header-search: 6;
+$add-mobile: 9;
+
+//full note
+
+$full-main-content: 52;
+
 //convert
 
 @function get-color($name) {

@@ -1,12 +1,13 @@
 @import "header-components";
 
 .interactions {
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
 
   .history {
     width: auto;
     margin-right: 0;
+    margin-left: auto;
     font-size: 1.125rem;
     font-weight: 500;
 
@@ -81,10 +82,10 @@
   .wrapper-people {
     position: relative;
     display: flex;
+    flex: 1;
     height: 100%;
-    width: calc(100% - 660px);
-    margin-right: auto;
-    transition: 0.2s ease;
+    margin-right: 1rem;
+    transition: background-color 0.2s ease;
 
     &::after,
     &::before {
@@ -108,14 +109,9 @@
 
     .people-editing {
       display: flex;
+      align-items: center;
       width: 100%;
-      padding-top: 5px;
-      overflow: auto hidden;
-
-      &::-webkit-scrollbar {
-        width: 7px;
-        height: 5px;
-      }
+      height: 100%;
 
       .person {
         display: flex;
@@ -156,7 +152,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 40;
+    z-index: $header-inner-overlay;
     display: none;
   }
 }
@@ -246,11 +242,16 @@
   .interactions {
     .user-circle {
       display: flex;
+      z-index: $header-wrapper-people;
+    }
+
+    ng-scrollbar {
+      max-height: 410px;
     }
 
     .wrapper-people {
       position: absolute;
-      z-index: 6;
+      z-index: $header-wrapper-people;
       left: 4vw;
       top: 50px;
       height: auto;
@@ -268,7 +269,8 @@
 
       .people-editing {
         flex-direction: column;
-        overflow: hidden auto;
+        height: auto;
+
         .person {
           width: 100%;
           padding: 1rem;
@@ -309,9 +311,10 @@
 
 @media (min-width: 1024px) and (max-width: 1440px) {
   .visible-people {
+    $header-wrapper-people: 50;
     .user-circle,
     .wrapper-people {
-      z-index: 50;
+      z-index: $header-wrapper-people;
     }
 
     .overlay {
@@ -322,7 +325,9 @@
 
 @media (max-width: 1320px) {
   .interactions {
-    justify-content: flex-start;
+    .history {
+      margin-left: initial;
+    }
   }
 }
 
@@ -331,7 +336,7 @@
     button,
     .menu-inner,
     .three-dots {
-      z-index: 50;
+      z-index: $header-visible-elements;
     }
 
     .overlay {
@@ -357,7 +362,7 @@
 
     .menu-inner {
       position: absolute;
-      z-index: 6;
+      z-index: $header-menu;
       top: 50px;
       right: 4vw;
       margin-right: 0;
@@ -389,21 +394,26 @@
     }
 
     .wrapper-people {
-      position: static;
+      position: relative;
       z-index: initial;
       left: initial;
       top: initial;
       height: 100%;
-      width: calc(100% - 207px);
+      flex: 1;
       max-height: initial;
       margin-right: 1rem;
       background-color: initial;
       border: 0;
       border-radius: initial;
 
+      &::after,
+      &::before {
+        content: "";
+      }
+
       .people-editing {
         flex-direction: row;
-        overflow: auto hidden;
+        height: 100%;
 
         .person {
           width: auto;
@@ -422,11 +432,6 @@
           &:hover {
             background-color: initial;
           }
-        }
-
-        &::after,
-        &::before {
-          content: "";
         }
       }
     }
@@ -447,10 +452,6 @@
   .interactions {
     .generic {
       width: 30px;
-    }
-
-    .wrapper-people {
-      width: calc(100% - 177px);
     }
   }
 }
@@ -485,8 +486,6 @@
     }
 
     .wrapper-people {
-      width: calc(100% - 170px);
-
       .people-editing {
         .person {
           .inner-person {

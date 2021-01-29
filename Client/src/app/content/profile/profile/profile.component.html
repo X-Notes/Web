@@ -1,6 +1,8 @@
 <div appTheme class="sub-nav">
     <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <div appScrollControl class="background-section">
+        <ng-scrollbar class="background-section"
+            [visibility]="'hover'"
+            [appearance]="'compact'">
             <div class="background" *ngFor="let item of backgrounds$ | async"
                 [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''">
                 <img alt="background" [src]="item.path" (click)="setCurrent(item.id)">
@@ -8,7 +10,7 @@
                     <i class="icon-plus"></i>
                 </div>
             </div>
-        </div>
+        </ng-scrollbar>
         <div class="information">
             <div class="separator"></div>
             <div class="progress-section">
@@ -26,193 +28,200 @@
     </div>
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
+
+
 <div appTheme class="content"
     [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
-    <div appScrollControl class="content-inner autoscroll-helper">
-        <div class="main">
-            <div class="sections">
-                <div class="header">
-                    <p>{{ 'profile.sectionProfile' | translate }}</p>
-                </div>
-                <div class="user-info generic-section">
-                    <div class="photo" appDrop>
-                        <img *ngIf="!photoError" [src]="(user$ | async).photoId" alt="User photo"
-                            (error)="changeSource($event)">
-                        <i *ngIf="photoError" class="icon-people"></i>
-                        <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
-                        <label for="upl" class="change-photo" #profilePhoto>
-                            <div class="icon">
-                                <i class="icon-newphoto"></i>
-                            </div>
-                            <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
-                        </label>
+
+    <ng-scrollbar
+        [visibility]="'hover'"
+        [appearance]="'compact'">
+        <div class="content-inner">
+            <div class="main">
+                <div class="sections">
+                    <div class="header">
+                        <p>{{ 'profile.sectionProfile' | translate }}</p>
                     </div>
-                    <div class="fields">
-                        <div class="field">
-                            <div class="field-name">
-                                <p>{{ 'profile.nameUser' | translate }}</p>
+                    <div class="user-info generic-section">
+                        <div class="photo" appDrop>
+                            <img *ngIf="!photoError" [src]="(user$ | async).photoId" alt="User photo"
+                                (error)="changeSource($event)">
+                            <i *ngIf="photoError" class="icon-people"></i>
+                            <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
+                            <label for="upl" class="change-photo" #profilePhoto>
+                                <div class="icon">
+                                    <i class="icon-newphoto"></i>
+                                </div>
+                                <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
+                            </label>
+                        </div>
+                        <div class="fields">
+                            <div class="field">
+                                <div class="field-name">
+                                    <p>{{ 'profile.nameUser' | translate }}</p>
+                                </div>
+                                <input type="text" placeholder="Your name" [(ngModel)]="userName">
                             </div>
-                            <input type="text" placeholder="Your name" [(ngModel)]="userName">
-                        </div>
-                        <div class="field">
-                            <div class="field-name">
-                                <p>{{ 'profile.email' | translate }}</p>
-                            </div>
-                            <input type="text" placeholder="Your name" disabled value="{{(user$ | async).email}}">
-                            <div class="help-info">
-                                <p>{{ 'profile.descriptionEmail' | translate }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="managment-buttons generic-section">
-                    <button class="generic-button" type="button" name="Log out button" #logOut (click)="logout()">
-                        <div class="content-button">
-                            <div class="icon">
-                                <i class="icon-logout"></i>
-                            </div>
-                            <p>{{ 'profile.logOut' | translate }}</p>
-                        </div>
-                        <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
-                    </button>
-                    <button class="generic-button" type="button" name="Update button" #updateProfile
-                        (click)="updateName()">
-                        <div class="content-button">
-                            <p>{{ 'profile.update' | translate }}</p>
-                        </div>
-                        <div class="ripple-container" matRipple [matRippleTrigger]="updateProfile"></div>
-                    </button>
-                </div>
-            </div>
-            <div class="sections">
-                <div class="header">
-                    <p>{{ 'profile.sectionGeneral' | translate }}</p>
-                </div>
-                <div class="billing-forms generic-section">
-                    <div class="form">
-                    </div>
-                    <div class="form">
-                    </div>
-                    <div class="form">
-                    </div>
-                </div>
-            </div>
-            <div class="sections">
-                <div class="header">
-                    <p>{{ 'profile.sectionAccount' | translate }}</p>
-                </div>
-                <div class="account-setting generic-section">
-                    <div class="field-language">
-                        <div class="field-name">
-                            <p>{{ 'profile.language' | translate }}</p>
-                        </div>
-                        <button class="generic-button dropdown-button"
-                                type="button"
-                                cdk-overlay-origin
-                                #origin="cdkOverlayOrigin"
-                                (click)="isOpen = !isOpen" >
-                            <div class="content-button" #dropdownSelect>
-                                <p>{{ 'languages.' + (language$ | async) | translate }}</p>
-                                <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
-                                    <i class="icon-select-label"></i>
+                            <div class="field">
+                                <div class="field-name">
+                                    <p>{{ 'profile.email' | translate }}</p>
+                                </div>
+                                <input type="text" placeholder="Your name" disabled value="{{(user$ | async).email}}">
+                                <div class="help-info">
+                                    <p>{{ 'profile.descriptionEmail' | translate }}</p>
                                 </div>
                             </div>
-                            <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                        </div>
+                    </div>
+                    <div class="managment-buttons generic-section">
+                        <button class="generic-button" type="button" name="Log out button" #logOut (click)="logout()">
+                            <div class="content-button">
+                                <div class="icon">
+                                    <i class="icon-logout"></i>
+                                </div>
+                                <p>{{ 'profile.logOut' | translate }}</p>
+                            </div>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
                         </button>
-                        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-                                    [cdkConnectedOverlayOpen]="isOpen"
-                                    [cdkConnectedOverlayHasBackdrop]="true"
-                                    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                    [cdkConnectedOverlayPositions]="positions"
-                                    (backdropClick)="closeDropdown()">
-                            <div class="dropdown" [@showDropdown]>
-                                <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
-                                    <p>{{ 'languages.' + item | translate }}</p>
-                                </div>
+                        <button class="generic-button" type="button" name="Update button" #updateProfile
+                            (click)="updateName()">
+                            <div class="content-button">
+                                <p>{{ 'profile.update' | translate }}</p>
                             </div>
-                        </ng-template>
+                            <div class="ripple-container" matRipple [matRippleTrigger]="updateProfile"></div>
+                        </button>
                     </div>
-                    <div class="field-key">
-                        <div class="field-name">
-                            <p>{{ 'profile.personalKey' | translate }}</p>
+                </div>
+                <div class="sections">
+                    <div class="header">
+                        <p>{{ 'profile.sectionGeneral' | translate }}</p>
+                    </div>
+                    <div class="billing-forms generic-section">
+                        <div class="form">
                         </div>
-                        <div class="personal-key">
-                            <input type="password" name="Personal key">
-                            <button class="generic-button" type="button" name="Update button" #changeKey>
-                                <div class="content-button">
-                                    <p>{{ 'profile.changeKey' | translate }}</p>
-                                </div>
-                                <div class="ripple-container" matRipple [matRippleTrigger]="changeKey"></div>
-                            </button>
-                            <button class="generic-button" type="button" name="Reset button" #resetKey>
-                                <div class="content-button">
-                                    <p>{{ 'profile.resetKey' | translate }}</p>
-                                </div>
-                                <div class="ripple-container" matRipple [matRippleTrigger]="resetKey"></div>
-                            </button>
+                        <div class="form">
+                        </div>
+                        <div class="form">
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="sections">
-                <div class="header">
-                    <p>{{ 'profile.sectionPersonalization' | translate }}</p>
-                </div>
-                <div class="personalization-setting generic-section">
-                    <div class="fields">
-                        <div class="field">
-                            <div class="general-row">
-                                <div class="field-name">
-                                    <p>{{ 'profile.theme' | translate }}</p>
-                                </div>
-                                <div class="toggle">
-                                    <input type="checkbox" (change)="changeTheme()">
-                                    <div class="rectangle"></div>
-                                    <div class="text-toggle">
-                                        <div class="text">
-                                            <p>{{ 'profile.themeDark' | translate }}</p>
-                                        </div>
-                                        <div class="text">
-                                            <p>{{ 'profile.themeLight' | translate }}</p>
-                                        </div>
+                <div class="sections">
+                    <div class="header">
+                        <p>{{ 'profile.sectionAccount' | translate }}</p>
+                    </div>
+                    <div class="account-setting generic-section">
+                        <div class="field-language">
+                            <div class="field-name">
+                                <p>{{ 'profile.language' | translate }}</p>
+                            </div>
+                            <button class="generic-button dropdown-button"
+                                    type="button"
+                                    cdk-overlay-origin
+                                    #origin="cdkOverlayOrigin"
+                                    (click)="isOpen = !isOpen" >
+                                <div class="content-button" #dropdownSelect>
+                                    <p>{{ 'languages.' + (language$ | async) | translate }}</p>
+                                    <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
+                                        <i class="icon-select-label"></i>
                                     </div>
                                 </div>
+                                <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
+                            </button>
+                            <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+                                        [cdkConnectedOverlayOpen]="isOpen"
+                                        [cdkConnectedOverlayHasBackdrop]="true"
+                                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                                        [cdkConnectedOverlayPositions]="positions"
+                                        (backdropClick)="closeDropdown()">
+                                <div class="dropdown" [@showDropdown]>
+                                    <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
+                                        <p>{{ 'languages.' + item | translate }}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="field-key">
+                            <div class="field-name">
+                                <p>{{ 'profile.personalKey' | translate }}</p>
                             </div>
-                            <div class="help-info">
-                                <p>{{ 'profile.genericTooltip' | translate }}<span>
-                                        {{ 'profile.genericPreview' | translate }}</span></p>
+                            <div class="personal-key">
+                                <input type="password" name="Personal key">
+                                <button class="generic-button" type="button" name="Update button" #changeKey>
+                                    <div class="content-button">
+                                        <p>{{ 'profile.changeKey' | translate }}</p>
+                                    </div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="changeKey"></div>
+                                </button>
+                                <button class="generic-button" type="button" name="Reset button" #resetKey>
+                                    <div class="content-button">
+                                        <p>{{ 'profile.resetKey' | translate }}</p>
+                                    </div>
+                                    <div class="ripple-container" matRipple [matRippleTrigger]="resetKey"></div>
+                                </button>
                             </div>
                         </div>
-                        <div class="field">
-                            <div class="general-row">
-                                <div class="field-name">
-                                    <p>{{ 'profile.noteSize' | translate }}</p>
+                    </div>
+                </div>
+                <div class="sections">
+                    <div class="header">
+                        <p>{{ 'profile.sectionPersonalization' | translate }}</p>
+                    </div>
+                    <div class="personalization-setting generic-section">
+                        <div class="fields">
+                            <div class="field">
+                                <div class="general-row">
+                                    <div class="field-name">
+                                        <p>{{ 'profile.theme' | translate }}</p>
+                                    </div>
+                                    <div class="toggle">
+                                        <input type="checkbox" (change)="changeTheme()">
+                                        <div class="rectangle"></div>
+                                        <div class="text-toggle">
+                                            <div class="text">
+                                                <p>{{ 'profile.themeDark' | translate }}</p>
+                                            </div>
+                                            <div class="text">
+                                                <p>{{ 'profile.themeLight' | translate }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="toggle">
-                                    <input type="checkbox" (change)="changeFontSize()">
-                                    <div class="rectangle"
-                                        [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
-                                    </div>
-                                    <div class="text-toggle">
-                                        <div class="text">
-                                            <p>{{ 'profile.noteDefault' | translate }}</p>
-                                        </div>
-                                        <div class="text">
-                                            <p>{{ 'profile.noteBig' | translate }}</p>
-                                        </div>
-                                    </div>
+                                <div class="help-info">
+                                    <p>{{ 'profile.genericTooltip' | translate }}<span>
+                                            {{ 'profile.genericPreview' | translate }}</span></p>
                                 </div>
                             </div>
-                            <div class="help-info">
-                                <p>{{ 'profile.genericTooltip' | translate }}<span>
-                                        {{ 'profile.genericPreview' | translate }}</span></p>
+                            <div class="field">
+                                <div class="general-row">
+                                    <div class="field-name">
+                                        <p>{{ 'profile.noteSize' | translate }}</p>
+                                    </div>
+                                    <div class="toggle">
+                                        <input type="checkbox" (change)="changeFontSize()">
+                                        <div class="rectangle"
+                                            [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
+                                        </div>
+                                        <div class="text-toggle">
+                                            <div class="text">
+                                                <p>{{ 'profile.noteDefault' | translate }}</p>
+                                            </div>
+                                            <div class="text">
+                                                <p>{{ 'profile.noteBig' | translate }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="help-info">
+                                    <p>{{ 'profile.genericTooltip' | translate }}<span>
+                                            {{ 'profile.genericPreview' | translate }}</span></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-scrollbar>
 </div>
 
 <input #uploadFile type="file" accept="image/jpeg,image/png" hidden="true" (change)="uploadImage($event)">

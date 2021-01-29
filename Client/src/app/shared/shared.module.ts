@@ -24,6 +24,9 @@ import { ThemeDirective } from './directives/theme.directive';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { SearchComponent } from './modal_components/search/search.component';
+import { MatCheckboxModule } from '@angular/material/checkbox'; 
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -32,11 +35,12 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     SpinnerComponent,
     ThemeDirective,
     SharingLinkPipe,
-    ScrollControlDirective
+    ScrollControlDirective,
+    SearchComponent,
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule
+    OverlayModule, NgScrollbarModule, MatCheckboxModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -45,7 +49,10 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    OverlayModule
+    OverlayModule,
+    NgScrollbarModule,
+    SearchComponent,
+    MatCheckboxModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

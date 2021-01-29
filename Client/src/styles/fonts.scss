@@ -28,107 +28,158 @@
     content: "\e900";
     color: #fff;
   }
-  .icon-cancel:before {
+  .icon-audio:before {
     content: "\e901";
+  }
+  .icon-bold:before {
+    content: "\e902";
+  }
+  .icon-cancel:before {
+    content: "\e903";
     color: #505050;
   }
   .icon-color:before {
-    content: "\e902";
-    color: #fff;
-  }
-  .icon-copy:before {
-    content: "\e903";
-    color: #fff;
-  }
-  .icon-delete:before {
     content: "\e904";
     color: #fff;
   }
-  .icon-download:before {
+  .icon-copy:before {
     content: "\e905";
     color: #fff;
   }
-  .icon-filter:before {
+  .icon-delete:before {
     content: "\e906";
     color: #fff;
   }
-  .icon-folders .path1:before {
+  .icon-download:before {
     content: "\e907";
-    color: rgb(157, 157, 157);
-  }
-  .icon-folders .path2:before {
-    content: "\e908";
-    margin-left: -1em;
-    color: rgb(255, 255, 255);
-  }
-  .icon-label:before {
-    content: "\e909";
     color: #fff;
   }
-  .icon-lock:before {
+  .icon-editing:before {
+    content: "\e908";
+  }
+  .icon-file:before {
+    content: "\e909";
+  }
+  .icon-filter:before {
     content: "\e90a";
     color: #fff;
   }
-  .icon-logout:before {
+  .icon-folders .path1:before {
     content: "\e90b";
-    color: #fff;
+    color: rgb(157, 157, 157);
   }
-  .icon-newphoto:before {
+  .icon-folders .path2:before {
     content: "\e90c";
-    color: #414141;
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
   }
-  .icon-notes:before {
+  .icon-h1:before {
     content: "\e90d";
-    color: #fff;
   }
-  .icon-notification:before {
+  .icon-h2:before {
     content: "\e90e";
-    color: #fff;
   }
-  .icon-people:before {
+  .icon-h3:before {
     content: "\e90f";
-    color: #fff;
   }
-  .icon-plus:before {
+  .icon-h4:before {
     content: "\e910";
   }
-  .icon-private:before {
+  .icon-image:before {
     content: "\e911";
-    color: #fff;
   }
-  .icon-question:before {
+  .icon-italic:before {
     content: "\e912";
-    color: #616161;
   }
-  .icon-restore:before {
+  .icon-label:before {
     content: "\e913";
-    color: #505050;
-  }
-  .icon-search:before {
-    content: "\e914";
-    color: #828282;
-  }
-  .icon-select:before {
-    content: "\e915";
-    color: #515151;
-  }
-  .icon-select-label:before {
-    content: "\e916";
-    color: #505050;
-  }
-  .icon-shared:before {
-    content: "\e917";
     color: #fff;
   }
-  .icon-theme_light:before {
-    content: "\e918";
-    color: #616161;
+  .icon-list:before {
+    content: "\e914";
   }
-  .icon-video:before {
+  .icon-list-checked:before {
+    content: "\e915";
+  }
+  .icon-list-dot:before {
+    content: "\e916";
+  }
+  .icon-location:before {
+    content: "\e917";
+  }
+  .icon-lock:before {
+    content: "\e918";
+    color: #fff;
+  }
+  .icon-logout:before {
     content: "\e919";
     color: #fff;
   }
-  .icon-view-change:before {
+  .icon-newphoto:before {
     content: "\e91a";
+  }
+  .icon-notes:before {
+    content: "\e91b";
     color: #fff;
+  }
+  .icon-notification:before {
+    content: "\e91c";
+    color: #fff;
+  }
+  .icon-people:before {
+    content: "\e91d";
+    color: #fff;
+  }
+  .icon-plus:before {
+    content: "\e91e";
+  }
+  .icon-private:before {
+    content: "\e91f";
+    color: #fff;
+  }
+  .icon-question:before {
+    content: "\e920";
+    color: #616161;
+  }
+  .icon-restore:before {
+    content: "\e921";
+  }
+  .icon-search:before {
+    content: "\e922";
+    color: #828282;
+  }
+  .icon-select:before {
+    content: "\e923";
+    color: #515151;
+  }
+  .icon-select-label:before {
+    content: "\e924";
+    color: #505050;
+  }
+  .icon-setting:before {
+    content: "\e925";
+    color: #484848;
+  }
+  .icon-shared:before {
+    content: "\e926";
+    color: #fff;
+  }
+  .icon-theme-light:before {
+    content: "\e927";
+    color: #616161;
+  }
+  .icon-video:before {
+    content: "\e928";
+    color: #fff;
+  }
+  .icon-video-inner:before {
+    content: "\e929";
+  }
+  .icon-view-change:before {
+    content: "\e92a";
+    color: #fff;
+  }
+  .icon-view-only:before {
+    content: "\e92b";
+    color: #c4c4c4;
   }
