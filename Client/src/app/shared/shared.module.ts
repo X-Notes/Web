@@ -20,12 +20,15 @@ import { TooltipComponent } from './tooltip/tooltip.component';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ShareComponent } from './modal_components/share/share.component';
-import { ThemeDirective } from './theme.directive';
+import { ThemeDirective } from './directives/theme.directive';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { SearchComponent } from './modal_components/search/search.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -35,11 +38,12 @@ import {MatExpansionModule} from '@angular/material/expansion';
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    PopupFullNoteComponent
+    PopupFullNoteComponent,
+    SearchComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule, MatExpansionModule
+    OverlayModule, MatExpansionModule, NgScrollbarModule, MatCheckboxModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -51,6 +55,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
     ScrollControlDirective,
     PopupFullNoteComponent,
     MatExpansionModule
+    NgScrollbarModule,
+    SearchComponent,
+    MatCheckboxModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

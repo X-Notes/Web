@@ -1,10 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogData } from '../dialog_data';
 import { Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
 import { Label } from 'src/app/content/labels/models/label';
-import { PersonalizationService } from '../../services/personalization.service';
+import { PersonalizationService, smoothOpacity } from '../../services/personalization.service';
 import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -17,12 +16,11 @@ import { LabelsOnSelectedNotes } from 'src/app/content/notes/models/labelsOnSele
   selector: 'app-editing-labels-note',
   templateUrl: './editing-labels-note.component.html',
   styleUrls: ['./editing-labels-note.component.scss'],
-  animations: []
+  animations: [smoothOpacity]
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   constructor(public dialogRef: MatDialogRef<EditingLabelsNoteComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               public pService: PersonalizationService,
               private store: Store) { }
 
@@ -84,7 +82,6 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     }
   }
 
-
   tryFind(z: LabelsOnSelectedNotes[]) {
     const labels = this.tranformLabels(this.labels);
     this.labels = labels;
@@ -104,6 +101,9 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     }
   }
 
+  changed(value): void {
+    this.searchStr = value;
+  }
 
   update(label: Label) {
     this.store.dispatch(new UpdateLabel(label));

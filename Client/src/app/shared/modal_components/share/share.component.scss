@@ -8,7 +8,7 @@
 
 .outer {
   display: flex;
-  width: 100%;
+  width: 650px;
   height: 650px;
 
   .header {
@@ -32,71 +32,6 @@
     }
   }
 
-  .few-notes {
-    display: flex;
-    flex-direction: column;
-    width: calc(68px - 0.3125rem);
-    margin-right: 0.3125rem;
-    border-radius: 15px;
-    transition: 0.2s ease;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-
-    .header {
-      justify-content: center;
-
-      span {
-        display: none;
-      }
-    }
-
-    .notes-sharing {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      padding-top: 0.625rem;
-      margin-bottom: 0.625rem;
-      height: calc(100% - 37px);
-      overflow-y: scroll;
-      &::after,
-      &::before {
-        content: "";
-        position: absolute;
-        z-index: 5;
-        width: 100%;
-        height: 10px;
-      }
-
-      &::before {
-        top: 0;
-      }
-
-      &::after {
-        bottom: 0;
-      }
-
-      .note {
-        display: flex;
-        font-size: 1rem;
-        padding: 0.25rem 0.5rem;
-        width: calc(100% - 2.25rem);
-        margin: 0.875rem 1.125rem 0 1.125rem;
-        color: $text-color;
-        height: 27px;
-        min-width: 27px;
-        border-radius: 50px;
-        cursor: pointer;
-
-        &:first-child {
-          margin-top: 0;
-        }
-      }
-      .active-note {
-        box-shadow: #0887a7 0px 0px 0px 2px;
-      }
-    }
-  }
-
   .sharing {
     display: flex;
     flex-direction: column;
@@ -110,30 +45,35 @@
       width: 100%;
       padding-top: 1.25rem;
 
-      .dropdown-button {
-        position: relative;
+      .dropdown-wrapper {
         display: flex;
-        height: 32px;
-        padding: 0;
-        border: 0.8px solid transparent;
-        border-radius: 5px;
-        outline: 0;
-        user-select: none;
-        transition: 0.2s ease;
 
-        .content-button {
+        .dropdown-button {
           position: relative;
           display: flex;
-          align-items: center;
-          height: 100%;
-          width: 100%;
+          height: 32px;
+          padding: 0;
+          border: 0.8px solid transparent;
+          border-radius: 5px;
+          outline: 0;
           user-select: none;
-          font-size: 1rem;
-        }
-
-        .dropdown {
-          .item {
-            min-height: 24px;
+          transition: 0.2s ease;
+          width: 100%;
+  
+          .content-button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            user-select: none;
+            font-size: 1rem;
+          }
+  
+          .dropdown {
+            .item {
+              min-height: 24px;
+            }
           }
         }
       }
@@ -168,12 +108,24 @@
             font-size: 1.125rem;
             color: #484848;
             background-color: #f2f2f2;
+            transition: 0.2s ease;
           }
 
-          .dropdown-button {
-            width: 145px;
+          .link-width-not-shared {
+            width: calc(100% - 42px);
+          }
+
+          .link-width-shared {
+            width: calc(100% - 203px);
+          }
+
+          .dropdown-wrapper {
             margin-left: 1rem;
-            background-color: #f2f2f2;
+            
+            .dropdown-button {
+              width: 145px;
+              background-color: #f2f2f2;
+            }
           }
 
           .copy {
@@ -232,92 +184,98 @@
         width: 100%;
         height: 390px;
         margin: 1.25rem 0;
-        padding: 0 2.5rem;
-        overflow: hidden auto;
 
-        .user {
+        .content-inner {
           display: flex;
-          align-items: center;
+          flex-direction: column;
           width: 100%;
-          height: 50px;
-          border-radius: 10px;
-          margin-bottom: 1rem;
-          padding-left: 0.875rem;
-          background-color: #ddffcd;
+          height: 100%;
+          padding: 0 2.5rem;
 
-          &:last-child {
-            margin-bottom: 0;
-          }
-
-          .photo {
-            display: flex;
-            height: 35px;
-            width: 35px;
-            overflow: hidden;
-            border-radius: 50%;
-
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-          }
-
-          .user-info {
-            display: flex;
-            flex-direction: column;
-            width: calc(100% - 171px);
-            margin-left: 0.875rem;
-
-            .name,
-            .email {
-              display: flex;
-              width: 100%;
-              color: $text-color;
-
-              p {
-                @include text-overflow;
-              }
-            }
-
-            .name {
-              font-size: 1.125rem;
-              font-weight: 500;
-              margin-bottom: 0.1875rem;
-            }
-
-            .email {
-              font-size: 0.875rem;
-              font-weight: 300;
-            }
-          }
-
-          .user-access-func {
+          .user {
             display: flex;
             align-items: center;
-            height: 100%;
-
-            button[type="button"] {
+            width: 100%;
+            height: 50px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding-left: 0.875rem;
+            background-color: #ddffcd;
+  
+            &:last-child {
+              margin-bottom: 0;
+            }
+  
+            .photo {
+              display: flex;
+              height: 35px;
+              width: 35px;
+              overflow: hidden;
+              border-radius: 50%;
+  
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+  
+            .user-info {
+              display: flex;
+              flex-direction: column;
+              width: calc(100% - 171px);
+              margin-left: 0.875rem;
+  
+              .name,
+              .email {
+                display: flex;
+                width: 100%;
+                color: $text-color;
+  
+                p {
+                  @include text-overflow;
+                }
+              }
+  
+              .name {
+                font-size: 1.125rem;
+                font-weight: 500;
+                margin-bottom: 0.1875rem;
+              }
+  
+              .email {
+                font-size: 0.875rem;
+                font-weight: 300;
+              }
+            }
+  
+            .user-access-func {
               display: flex;
               align-items: center;
               height: 100%;
-              padding: 0 0.875rem;
-              background-color: transparent;
-              border: 0;
-              outline: none;
-              user-select: none;
-              cursor: pointer;
-
-              .icon {
+  
+              button[type="button"] {
                 display: flex;
-                font-size: 0.75rem;
-                i::before {
-                  color: #c4c4c4;
+                align-items: center;
+                height: 100%;
+                padding: 0 0.875rem;
+                background-color: transparent;
+                border: 0;
+                outline: none;
+                user-select: none;
+                cursor: pointer;
+  
+                .icon {
+                  display: flex;
+                  font-size: 0.75rem;
+                  i::before {
+                    color: #c4c4c4;
+                  }
                 }
-              }
-              .black {
-                i::before {
-                  color: #202020 !important;
+                .black {
+                  i::before {
+                    color: #202020 !important;
+                  }
                 }
               }
             }
@@ -326,66 +284,24 @@
       }
 
       .search {
-        display: flex;
-        width: calc(100% - 5rem);
-        height: 32px;
         margin: 1.25rem 2.5rem 0.625rem 2.5rem;
-
-        input[type="search"] {
-          height: 100%;
-          width: calc(100% - 42px);
-          border: 0;
-          border-radius: 5px 0 0 5px;
-          padding: 0 0 0 0.625rem;
-          user-select: none;
-          outline: none;
-          font-size: 1.0625rem;
-          background-color: #f2f2f2;
-          color: #484848;
-        }
-
-        button[type="button"] {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 42px;
-          height: 100%;
-          border: 0;
-          padding: 0;
-          outline: none;
-          user-select: none;
-          outline: none;
-          border-radius: 0 5px 5px 0;
-          cursor: not-allowed;
-          background-color: #ebebeb;
-
-          .icon {
-            display: flex;
-            font-size: 1.125rem;
-          }
-        }
-
-        input[type="search"]:not(:placeholder-shown) ~ button[type="button"] {
-          cursor: pointer;
-        }
+        width: calc(100% - 5rem);
       }
 
       .interaction-container {
         position: relative;
         display: flex;
         flex-direction: column;
-        height: calc(100% - 82px);
+        height: calc(100% - 84px);
         width: 100%;
-        padding: 0 2.5rem;
-        overflow: hidden auto;
 
         .mail-notification {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          margin-top: 0.625rem;
+          width: calc(100% - 5rem);
           border-radius: 5px;
           background-color: #f2f2f2;
+          margin: 0.625rem 2.5rem 0 2.5rem;
 
           .mail-container {
             display: flex;
@@ -430,49 +346,7 @@
             display: flex;
             width: 100%;
             padding: 0.625rem 1rem;
-
-            label {
-              position: relative;
-              display: flex;
-              align-items: center;
-              color: $text-color;
-              padding-left: 2rem;
-              user-select: none;
-
-              input[type="checkbox"] {
-                display: none;
-              }
-
-              .checkbox {
-                position: absolute;
-                left: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 16px;
-                width: 16px;
-                border-radius: 2px;
-                background-color: #e8e8e8;
-                transition: 0.2s ease;
-                cursor: pointer;
-
-                .icon {
-                  display: flex;
-                  font-size: 0.5rem;
-                  color: white;
-                  opacity: 0;
-                  transition: 0.2s ease;
-                }
-              }
-
-              input:checked ~ .checkbox {
-                background-color: #4a85df;
-
-                .icon {
-                  opacity: 1;
-                }
-              }
-            }
+            color: $text-color;
           }
 
           .interaction-mail {
@@ -497,12 +371,14 @@
               flex-direction: column;
               width: 130px;
 
-              .dropdown-button {
-                background-color: #e8e8e8;
-
-                .content-button {
-                  .icon {
-                    font-size: 0.75rem;
+              .dropdown-wrapper {
+                .dropdown-button {
+                  background-color: #e8e8e8;
+  
+                  .content-button {
+                    .icon {
+                      font-size: 0.75rem;
+                    }
                   }
                 }
               }
@@ -538,8 +414,8 @@
         .user-suggestions {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          margin-top: 1.25rem;
+          width: calc(100% - 5rem);
+          margin: 1.25rem 2.5rem 0 2.5rem;
   
           .user {
             display: flex;
@@ -613,10 +489,142 @@
   }
 }
 
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  max-height: 144px;
+  padding: 0.25rem 0;
+  background-color: white;
+  border-radius: 5px;
+
+  .item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 24px;
+    min-height: 24px;
+    padding: 0 1rem;
+    transition: 0.2s ease;
+    border-radius: 5px;
+    color: #202020;
+    font-size: 0.825rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #dadada;
+    }
+  }
+}
+
 .many-notes {
+  width: 900px;
+
+  .few-notes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: calc(68px - 0.3125rem);
+    margin-right: 0.3125rem;
+    border-radius: 15px;
+    transition: 0.2s ease;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+
+    .header {
+      justify-content: center;
+
+      span {
+        display: none;
+      }
+    }
+
+    .notes-sharing {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 0.375rem 0 0.5rem 0;
+      height: calc(100% - 41px);
+
+      .note {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+        width: calc(100% - 2.25rem);
+        margin: 0.875rem 1.125rem 0 1.125rem;
+        color: $text-color;
+        height: 27px;
+        min-width: 27px;
+        border-radius: 50px;
+        cursor: pointer;
+
+        p {
+          @include text-overflow;
+        }
+
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+      .active-note {
+        box-shadow: #0887a7 0px 0px 0px 2px;
+      }
+    }
+  }
+  
   .sharing {
     width: calc(100% - 68px - 0.3125rem);
     margin-left: 0.3125rem;
+  }
+}
+
+.half-helper {
+  .few-notes {
+    width: calc(40% - 0.3125rem);
+
+    .header {
+      justify-content: space-between;
+      span {
+        display: block;
+      }
+    }
+
+    .notes-sharing {
+      .note {
+        border-radius: 5px;
+        p {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .sharing {
+    width: calc(60% - 0.3125rem);
+
+    .tabs {
+      .content-access {
+        .toggle-field {
+          flex-direction: column;
+          flex-wrap: wrap;
+
+          .toggle {
+            width: 100%;
+          }
+
+          .toggle-description {
+            justify-content: center;
+            width: 100%;
+            margin-top: 1.25rem;
+            margin-left: 0;
+          }
+        }
+      }
+
+      .user-access {
+        height: calc(100% - 202px);
+      }
+    }
   }
 }
 
@@ -629,27 +637,20 @@
 .light {
   .few-notes {
     background-color: white;
-
-    .notes-sharing {
-      &::before {
-        background: linear-gradient(0, hsla(0, 0%, 100%, 0), white);
-      }
-
-      &::after {
-        background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), white);
-      }
-    }
   }
 
   .sharing {
     background-color: white;
 
     .tabs {
-      .dropdown-button {
-        color: #484848;
 
-        .dropdown {
-          box-shadow: 0px 1px 2px grey;
+      .dropdown-wrapper {
+        .dropdown-button {
+          color: #484848;
+  
+          .dropdown {
+            box-shadow: 0px 1px 2px grey;
+          }
         }
       }
 
@@ -693,9 +694,11 @@
             }
 
             .interaction-buttons {
-              .dropdown-button {
-                .dropdown {
-                  box-shadow: 0px 1px 2px grey;
+              .dropdown-wrapper {
+                .dropdown-button {
+                  .dropdown {
+                    box-shadow: 0px 1px 2px grey;
+                  }
                 }
               }
             }
@@ -709,24 +712,16 @@
 .dark {
   .few-notes {
     background-color: $dark-color;
-
-    .notes-sharing {
-      &::before {
-        background: linear-gradient(0, hsla(0, 0%, 100%, 0), $dark-color);
-      }
-
-      &::after {
-        background: linear-gradient(180deg, hsla(0, 0%, 100%, 0), $dark-color);
-      }
-    }
   }
 
   .sharing {
     background-color: $dark-color;
 
     .tabs {
-      .dropdown-button {
-        color: #484848;
+      .dropdown-wrapper {
+        .dropdown-button {
+          color: #484848;
+        }
       }
 
       .content-access {
@@ -781,56 +776,6 @@
   }
 }
 
-.half-helper {
-  .few-notes {
-    width: calc(40% - 0.3125rem);
-
-    .header {
-      justify-content: space-between;
-      span {
-        display: block;
-      }
-    }
-
-    .notes-sharing {
-      .note {
-        border-radius: 5px;
-        p {
-          display: block;
-        }
-      }
-    }
-  }
-
-  .sharing {
-    width: calc(60% - 0.3125rem);
-
-    .tabs {
-      .content-access {
-        .toggle-field {
-          flex-direction: column;
-          flex-wrap: wrap;
-
-          .toggle {
-            width: 100%;
-          }
-
-          .toggle-description {
-            justify-content: center;
-            width: 100%;
-            margin-top: 1.25rem;
-            margin-left: 0;
-          }
-        }
-      }
-
-      .user-access {
-        height: calc(100% - 202px);
-      }
-    }
-  }
-}
-
 @media (max-width: 1024px) {
   .outer {
     flex-direction: column;
@@ -847,15 +792,18 @@
         .user-access {
           height: calc(100% - 165px);
           width: calc(100% - 3.75rem);
-          padding: 0 0.625rem;
           margin: 1.25rem 1.875rem;
 
-          .user {
-            height: 45px;
+          .content-inner {
+            padding: 0 0.625rem;
 
-            .user-info {
-              .name {
-                margin-bottom: 0;
+            .user {
+              height: 45px;
+  
+              .user-info {
+                .name {
+                  margin-bottom: 0;
+                }
               }
             }
           }
@@ -863,10 +811,23 @@
 
         .interaction-container {
           width: calc(100% - 3.75rem);
-          padding: 0 0.625rem;
           margin: 0 1.875rem 1.25rem 1.875rem;
+
+          .mail-notification, .user-suggestions {
+            margin-left: 0.625rem;
+            margin-right: 0.625rem;
+            width: calc(100% - 1.25rem);
+          }
         }
       }
+    }
+  }
+
+  .many-notes {
+    .sharing {
+      height: calc(100% - 94px);
+      margin-bottom: 0.625rem;
+      order: 1;
     }
 
     .few-notes {
@@ -886,51 +847,19 @@
       }
 
       .notes-sharing {
+        align-content: baseline;
         flex-direction: row;
-        width: calc(100% - 3.75rem);
-        margin-bottom: 0;
-        padding: 0.625rem 0 1.25rem 1.25rem;
-        margin: 0 2.5rem 0 1.25rem;
-
-        &::before,
-        &::after {
-          width: 10px;
-          height: 100%;
-        }
-
-        &::before {
-          left: 0;
-        }
-
-        &::after {
-          right: 0;
-        }
+        height: calc(100% - 27px);
+        width: calc(100% - 2.5rem);
+        margin: 0 1.25rem 0 1.25rem;
 
         .note {
-          height: 100%;
+          height: auto;
           width: 27px;
           min-width: 27px;
           margin: 0 1.125rem 0 0;
           padding: 0.25rem 0.5rem;
-
-          &:first-child {
-            margin-top: 0;
-          }
         }
-      }
-    }
-  }
-
-  .many-notes {
-    .sharing {
-      height: calc(100% - 94px);
-      margin-bottom: 0.625rem;
-      order: 1;
-    }
-
-    .few-notes {
-      .notes-sharing {
-        height: calc(100% - 27px);
       }
     }
   }
@@ -948,89 +877,15 @@
       height: 100%;
       width: 100%;
 
-      .notes-sharing-helper {
+      .notes-sharing {
+        flex-direction: column;
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.625rem 2.5rem 0 2.5rem;
-
-        &::before,
-        &::after {
-          width: 100%;
-          height: 10px;
-        }
-
-        &::before {
-          top: 0;
-        }
-
-        &::after {
-          bottom: 0;
-        }
 
         .note {
           width: 100%;
           margin: 0.875rem 0 0 0;
-        }
-      }
-    }
-  }
-
-  .light {
-    .few-notes {
-      .notes-sharing {
-        &::before {
-          background: linear-gradient(270deg, rgba(255, 255, 255, 0), white);
-        }
-
-        &::after {
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0), white);
-        }
-      }
-
-      .notes-sharing-helper {
-        &::before {
-          background: linear-gradient(0, rgba(255, 255, 255, 0), white);
-        }
-
-        &::after {
-          background: linear-gradient(180deg, rgba(255, 255, 255, 0), white);
-        }
-      }
-    }
-  }
-
-  .dark {
-    .few-notes {
-      .notes-sharing {
-        &::before {
-          background: linear-gradient(
-            270deg,
-            rgba(255, 255, 255, 0),
-            $dark-color
-          );
-        }
-
-        &::after {
-          background: linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0),
-            $dark-color
-          );
-        }
-      }
-
-      .notes-sharing-helper {
-        &::before {
-          background: linear-gradient(0, rgba(255, 255, 255, 0), $dark-color);
-        }
-
-        &::after {
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0),
-            $dark-color
-          );
         }
       }
     }
@@ -1070,6 +925,7 @@
 @media (max-width: 600px) {
   .outer {
     height: 600px;
+    max-height: 600px;
 
     .sharing {
       .tabs {
@@ -1093,11 +949,15 @@
               order: 2;
             }
 
-            .dropdown-button {
+            .dropdown-wrapper {
               width: 100%;
+              order: 3;
               margin-top: 1rem;
               margin-left: 0;
-              order: 3;
+
+              .dropdown-button {
+                width: 100%;
+              }
             }
           }
 
@@ -1117,18 +977,10 @@
 
         .search {
           margin: 1rem 2.5rem 0.5rem 2.5rem;
-
-          input[type="search"] {
-            font-size: 1rem;
-          }
         }
 
         .interaction-container {
           margin-bottom: 1rem;
-
-          &::before {
-            height: 8px;
-          }
 
           .mail-notification {
             margin-top: 0.5rem;
@@ -1142,9 +994,7 @@
             }
 
             .checkbox-notification {
-              label {
-                font-size: 0.875rem;
-              }
+              font-size: 0.875rem;
             }
 
             .interaction-mail {
@@ -1165,7 +1015,7 @@
                   margin-top: 0;
                 }
 
-                .dropdown-button {
+                .dropdown-wrapper {
                   width: calc(50% - 0.25rem);
                   margin-right: 0.25rem;
                 }
@@ -1200,19 +1050,21 @@
     .sharing {
       .tabs {
         .user-access {
-          .user {
-            flex-wrap: wrap;
-            height: auto;
-            padding: 0.5rem 0.875rem;
-
-            .user-info {
-              width: calc(100% - 49px);
-            }
-
-            .user-access-func {
-              width: 100%;
-              padding-top: 0.5rem;
-              justify-content: space-around;
+          .content-inner {
+            .user {
+              flex-wrap: wrap;
+              height: auto;
+              padding: 0.5rem 0.875rem;
+  
+              .user-info {
+                width: calc(100% - 49px);
+              }
+  
+              .user-access-func {
+                width: 100%;
+                padding-top: 0.5rem;
+                justify-content: space-around;
+              }
             }
           }
         }
@@ -1224,12 +1076,12 @@
                 flex-wrap: wrap;
                 margin-top: 0;
 
-                .dropdown-button,
                 .send-button {
                   width: 100%;
                 }
 
-                .dropdown-button {
+                .dropdown-wrapper {
+                  width: 100%;
                   margin-top: 0.5rem;
                   margin-right: 0;
                 }
@@ -1249,8 +1101,10 @@
   .many-notes {
     .few-notes {
       height: 83px;
+
       .notes-sharing {
         .note {
+          height: 26px;
           width: 26px;
           min-width: 26px;
         }
@@ -1284,10 +1138,6 @@
   .outer {
     .sharing {
       .tabs {
-        .search {
-          margin: 1rem 1.75rem 0.5rem 1.75rem;
-        }
-
         .user-access {
           margin: 1rem 1.125rem;
           width: calc(100% - 2.25rem);
@@ -1296,6 +1146,11 @@
         .content-access {
           width: calc(100% - 3.5rem);
           margin: 0 1.75rem;
+        }
+
+        .search {
+          margin: 1rem 1.75rem 0.5rem 1.75rem;
+          width: calc(100% - 3.5rem);
         }
 
         .interaction-container {
@@ -1311,7 +1166,6 @@
       .notes-sharing {
         width: calc(100% - 3rem);
         margin: 0 1.75rem 0 1.25rem;
-        padding: 0.625rem 0 1.25rem 0.5rem;
       }
     }
   }
@@ -1322,7 +1176,6 @@
         width: 100%;
         height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
-        padding: 0.625rem 1.75rem 0 1.75rem;
 
         .note {
           width: 100%;

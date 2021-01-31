@@ -57,6 +57,19 @@ export const showHistory = trigger('showHistory', [
   ])
 ]);
 
+export const showDropdown = trigger('showDropdown', [
+  state('void', style({
+    transform: 'scaleY(0.8)',
+    opacity: 0
+  })),
+  state('showing', style({
+    opacity: 1,
+    transform: 'scaleY(1)'
+  })),
+  transition('void => *', animate('120ms cubic-bezier(0, 0, 0.2, 1)')),
+  transition('* => void', animate('100ms 25ms linear', style({opacity: 0})))
+]);
+
 export const tooltipAnimation = trigger('tooltip', [
   transition(':enter', [
     style({ opacity: 0 }),
@@ -65,6 +78,13 @@ export const tooltipAnimation = trigger('tooltip', [
   transition(':leave', [
     animate(150, style({ opacity: 0 })),
   ]),
+]);
+
+export const smoothOpacity = trigger('smoothOpacity', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate(100, style({ opacity: 1 })),
+  ])
 ]);
 
 @Injectable({
@@ -87,6 +107,7 @@ export class PersonalizationService {
   AnimationInnerUsers = true;
   users = true;
   toggleHistory = false;
+  isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
@@ -121,6 +142,16 @@ export class PersonalizationService {
       }
     }
 
+    if (this.check()) {
+      if (!this.isCollapseShared) {
+        this.isCollapseShared = true;
+      }
+    } else {
+      if (this.isCollapseShared) {
+        this.isCollapseShared =  false;
+      }
+    }
+
     if (this.checkWidth()) {
       if (this.users) {
         this.users = false;
@@ -151,7 +182,7 @@ export class PersonalizationService {
   }
 
   checkWidth(): boolean {
-    return (window.innerWidth > 1024 && window.innerWidth < 1440) ? true : false;
+    return (window.innerWidth > 1024 && window.innerWidth <= 1440) ? true : false;
   }
 
   waitPreloading() {

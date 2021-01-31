@@ -70,8 +70,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   theme = Theme;
 
-  notes: number[] = [1, 2, 3, 4, 5, 6];
-  turnUpNote = false;
+  notes: number[] = [0, 1, 2, 3, 4, 5];
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
@@ -164,7 +163,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
       document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
-
+    this.loaded = true;
   }
 
   removeAlbumHandler(id: string)
@@ -364,11 +363,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.panEnd(e, this.wrap);
   }
 
-
-
   deleteSmallNote(item: any) {
     let counter = 0;
-    this.notes = this.notes.filter(x => x !== item);
+    this.notes = this.notes.filter(x => x !== this.notes[item]);
     const interval = setInterval(() => {
       if (counter === 35) {
         clearInterval(interval);
@@ -378,10 +375,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 10);
   }
 
-  turnUpSmallNote() {
-    this.turnUpNote = !this.turnUpNote;
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
-  }
 
 
   updateDoc(str: string) {

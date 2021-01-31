@@ -3,7 +3,7 @@
 
 :host {
   position: relative;
-  z-index: 6;
+  z-index: 100;
 }
 
 header {
@@ -25,7 +25,6 @@ header {
 
     .profile {
       position: relative;
-      z-index: 50;
       display: flex;
       height: 30px;
       font-weight: 500;
@@ -231,17 +230,14 @@ header {
   .management-section {
     .right-tools {
       background-color: $dark-color;
-      transition: none;
     }
 
     .interactions {
       .hamburger {
-        transition: none;
 
         span,
         span::after,
         span::before {
-          transition: none;
           background-color: white;
         }
       }
@@ -291,6 +287,7 @@ header {
         position: fixed;
         right: 20px;
         top: 50px;
+        z-index: $header-menu;
         height: auto;
       }
 

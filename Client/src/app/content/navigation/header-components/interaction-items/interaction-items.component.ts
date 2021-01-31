@@ -1,8 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SelectAllNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { SelectAllFolder, UnSelectAllFolder } from 'src/app/content/folders/state/folders-actions';
@@ -17,8 +15,6 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 })
 export class InteractionItemsComponent implements OnInit {
 
-  @Input() themeHeader: Theme;
-
   public countSelected: number;
 
   destroy = new Subject<void>();
@@ -29,8 +25,6 @@ export class InteractionItemsComponent implements OnInit {
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
-  theme = Theme;
-
   constructor(private store: Store) { }
 
   ngOnInit(): void {
@@ -39,7 +33,6 @@ export class InteractionItemsComponent implements OnInit {
     .subscribe(x => {
       if (x > 0) {
         this.countSelected = x;
-        console.log(this.themeHeader);
       }
     });
 

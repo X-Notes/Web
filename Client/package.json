@@ -36,6 +36,7 @@
     "firebase": "^8.2.0",
     "hammerjs": "^2.0.8",
     "muuri": "^0.9.1",
+    "ngx-scrollbar": "^7.5.3",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

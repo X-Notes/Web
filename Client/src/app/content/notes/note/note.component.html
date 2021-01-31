@@ -13,8 +13,10 @@
         </div>
     </div>
     <div class="header">
-        <h4>{{note.title}}</h4>
-        <h4 class="not-named">Give your note a title</h4>
+        <h4 *ngIf="note.title; else notNamed">{{note.title}}</h4>
+        <ng-template #notNamed>
+            <h4 class="not-named">Add content to your note</h4>
+        </ng-template>
     </div>
     <div class="description">
         <p>Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello

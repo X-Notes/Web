@@ -17,7 +17,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 10;
+    z-index: $sidebar-overlay;
     display: none;
     opacity: 0;
     background-color: rgba(0, 0, 0, 0.4);
@@ -32,7 +32,7 @@
 
   .sub-nav-section {
     position: relative;
-    z-index: 11;
+    z-index: $sidebar-section;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -155,7 +155,6 @@
         flex-direction: column;
         height: 100%;
         width: 100%;
-        overflow-y: auto;
 
         .label {
           position: relative;
@@ -230,7 +229,6 @@
       flex-direction: column;
       width: 100%;
       height: calc(100% - 40px);
-      overflow-y: scroll;
 
       .background {
         position: relative;
@@ -240,6 +238,7 @@
         cursor: pointer;
         border-radius: 5px;
         transition: 0.2s ease;
+        overflow: hidden;
 
         .thumbnail {
           position: absolute;
@@ -289,7 +288,6 @@
       height: calc(100% - 40px);
       width: 100%;
       transition: 0.2s ease;
-      overflow-y: scroll;
 
       .note {
         font-size: 1rem;
@@ -299,6 +297,14 @@
         border-radius: 5px;
         color: $text-color;
         cursor: pointer;
+
+        p {
+          @include text-overflow
+        }
+
+        &:last-child {
+          margin-bottom: 0.875rem;
+        }
       }
     }
 

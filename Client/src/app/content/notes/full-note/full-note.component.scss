@@ -1,10 +1,6 @@
 @import "submenu";
 @import "variables";
 
-:host{
-    z-index: 5;
-}
-
 .full-content {
   flex-direction: row;
 
@@ -14,58 +10,13 @@
     width: 100%;
 
     .note-color {
-      position: absolute;
-      top: 0;
-      right: 0;
       width: 40px;
       height: 40px;
-      border-radius: 0 0 0 40px;
-    }
-
-    .left-border {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      border-radius: 10px;
-      background-color: #2997ff;
-      transition: 0.2s ease;
-    }
-
-    .labels-section {
-      display: flex;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      width: 100%;
-
-      .label {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 20px;
-        max-width: 100%;
-        margin-right: 1.25rem;
-        margin-bottom: 0.5rem;
-        padding: 0 0.625rem;
-        color: $note-label-color;
-        border-radius: 40px;
-        cursor: pointer;
-        background-color: white;
-
-        p {
-          @include text-overflow;
-        }
-
-        &:last-child {
-          margin-right: 0;
-        }
-      }
     }
 
     .main-content {
       position: relative;
-      z-index: 7;
+      z-index: $full-main-content;
       display: flex;
       flex-direction: column;
       width: 70%;
@@ -177,90 +128,14 @@
       }
 
       .small-notes {
-        display: flex;
         width: 100%;
         height: calc(100% - 71px);
-        padding: 0 2vw;
         transition: 0.3s ease;
-        overflow-y: scroll;
 
-        .small-note {
-          display: flex;
-          flex-direction: column;
+        .content-inner-small {
           width: 100%;
-          background-color: $light-inner-color;
-          border-radius: 5px;
-          transition: 0.2s ease;
-
-          .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 25px;
-            width: 100%;
-            padding: 0 0.625rem;
-            background-color: $header-small-note;
-            border-radius: 5px 5px 0px 0px;
-            transition: 0.2s ease;
-
-            button {
-              display: flex;
-              background-color: transparent;
-              border: 0;
-              padding: 0;
-              outline: none;
-              user-select: none;
-              cursor: pointer;
-
-              .icon {
-                display: flex;
-
-                i::before {
-                  color: $header-small-note-icon;
-                }
-              }
-            }
-          }
-
-          .content {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            padding: 0.875rem 1.5rem 1.25rem 1.5rem;
-
-            .note-color {
-              width: 22px;
-              height: 22px;
-            }
-
-            .title-section {
-              position: relative;
-
-              p {
-                font-size: 1.25rem;
-                font-weight: 700;
-                padding-left: 0.625rem;
-              }
-            }
-          }
-
-          .content > .title-section,
-          .labels-section {
-            display: flex;
-            width: 100%;
-            margin-bottom: 0.75rem;
-          }
-
-          .turn-up-note > div:not(.title-section) {
-            display: none;
-          }
-
-          .turn-up-note {
-            .title-section {
-              margin-bottom: 0;
-            }
-          }
+          height: 100%;
+          padding: 0 2vw;
         }
       }
 
@@ -289,25 +164,6 @@
       .open {
         background-color: $light-color;
         color: $text-color;
-      }
-
-      .small-notes {
-        .small-note {
-          background-color: $light-color;
-          color: $text-color;
-
-          .header {
-            background-color: $header-small-note-light;
-
-            button {
-              .icon {
-                i::before {
-                  color: $header-small-note-icon-light;
-                }
-              }
-            }
-          }
-        }
       }
 
       .history-section {
@@ -354,7 +210,9 @@
         }
 
         .small-notes {
-          padding: 0 4vw;
+          .content-inner-small {
+            padding: 0 4vw;
+          }
         }
 
         .history-section {

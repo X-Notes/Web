@@ -142,7 +142,7 @@ export class MurriService  {
       dragAutoScroll: {
         targets: [
           { element: window, priority: -1 },
-          { element: document.querySelector('.autoscroll-helper') as HTMLElement, priority: 1, axis: 2 },
+          { element: document.querySelector('.scroll-helper .ng-native-scrollbar-hider') as HTMLElement, priority: 1, axis: 2 },
         ],
         sortDuringScroll: false,
         smoothStop: true,

@@ -1,12 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DialogData } from '../dialog_data';
 import { EnumUtil } from '../../services/enum.util';
 import { NoteColorPallete } from '../../enums/NoteColors';
-import { Theme } from '../../enums/Theme';
 import { Store, Select } from '@ngxs/store';
 import { ChangeColorFullNote, ChangeColorNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
@@ -26,18 +23,11 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   @Select(AppStore.isFolder)
   public isFolder$: Observable<boolean>;
 
-
-
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
   current;
-  theme = Theme;
 
   date: Date;
   constructor(public dialogRef: MatDialogRef<ChangeColorComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private store: Store, ) { }
 
   ngOnInit(): void {

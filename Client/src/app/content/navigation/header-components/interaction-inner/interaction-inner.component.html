@@ -3,9 +3,15 @@
         <p>8</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
     </div>
-    <div appScrollControl class="wrapper-people" *ngIf="pService.users" [@showMenuLeftRight]
-        [@.disabled]="pService.AnimationInnerUsers">
-        <div class="people-editing">
+    <ng-scrollbar class="wrapper-people"
+        #scrollbar
+        *ngIf="pService.users"
+        [@showMenuLeftRight]
+        [@.disabled]="pService.AnimationInnerUsers"
+        [visibility]="'hover'"
+        [track]="'all'"
+        [appearance]="'compact'">
+        <div class="people-editing" #heightPeople>
             <div class="person" *ngFor="let item of user" CustomTooltip="{{item}}" position="Bottom" flagDisable="{{ disableTooltpUser() }}">
                 <div class="inner-person">
                     <img src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
@@ -14,7 +20,8 @@
                 <p>12321321321333333333333333333333333333333333333333333333333</p>
             </div>
         </div>
-    </div>
+    </ng-scrollbar>
+
     <button CustomTooltip="{{ 'header.video' | translate }}" position="Bottom" name="Filter" type="button" class="generic generic-2" #video>
         <div class="inner-content">
             <i class="icon-video"></i>
@@ -22,7 +29,7 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
     </button>
 
-    <app-menu class="menu-inner menu-inner-fixed" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
+    <app-menu class="menu-inner" *ngIf="pService.hideInnerMenu" [@showMenuLeftRight]
         [@.disabled]="pService.AnimationInnerMenu"></app-menu>
 
     <button name="History" type="button" class="generic generic-2 history" #history
@@ -32,19 +39,37 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="history"></div>
     </button>
-    <button CustomTooltip="{{ 'menu.label' | translate }}" position="Bottom" name="label" type="button" class="generic generic-2 mobile-buttons" #label>
+    <button
+        CustomTooltip="{{ 'menu.label' | translate }}"
+        position="Bottom"
+        name="label"
+        type="button"
+        class="generic generic-2 mobile-buttons"
+        (click)="buttonService.changeLabels()"
+        #label>
         <div class="inner-content">
             <i class="icon-label"></i>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
     </button>
-    <button CustomTooltip="{{ 'menu.shared' | translate }}" position="Bottom" name="shared" type="button" class="generic generic-2 mobile-buttons" #shared>
+    <button
+        CustomTooltip="{{ 'menu.shared' | translate }}"
+        position="Bottom"
+        name="shared"
+        type="button"
+        class="generic generic-2 mobile-buttons"
+        (click)="buttonService.shareEntity()"
+        #shared>
         <div class="inner-content">
             <i class="icon-shared"></i>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
     </button>
-    <div CustomTooltip="{{ 'header.menu' | translate }}" position="Bottom" class="three-dots mobile-buttons" (click)="hideMenu()" #dots>
+    <div CustomTooltip="{{ 'header.menu' | translate }}"
+        position="Bottom"
+        class="three-dots mobile-buttons"
+        (click)="hideMenu()"
+        #dots>
         <span></span>
         <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
     </div>

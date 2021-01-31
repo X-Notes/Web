@@ -49,9 +49,13 @@
 </div>
 <div class="content"
     [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
-    <div appScrollControl class="content-inner autoscroll-helper">
-        <router-outlet></router-outlet>
-    </div>
+    <ng-scrollbar class="scroll-helper"
+        [visibility]="'hover'"
+        [appearance]="'compact'">
+        <div class="content-inner">
+            <router-outlet></router-outlet>
+        </div>
+    </ng-scrollbar>
     <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
 </div>
 <div class="drag-helper main-helper"></div>

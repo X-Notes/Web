@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -43,10 +42,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
-  @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
-
-  theme = Theme;
   router: string;
 
   constructor(public pService: PersonalizationService,

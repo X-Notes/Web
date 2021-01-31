@@ -1,0 +1,35 @@
+<div class="small-note" appTheme>
+    <div class="header">
+        <button type="button" (click)="turnUpSmallNote()">
+            <div class="icon">
+                <i class="icon-select-label"></i>
+            </div>
+        </button>
+        <button type="button" (click)="deleteSmallNote()">
+            <div class="icon">
+                <i class="icon-cancel"></i>
+            </div>
+        </button>
+    </div>
+    <div class="content" [ngClass]="turnUpNote? 'turn-up-note' : ''">
+        <div class="note-color"></div>
+        <div class="labels-section">
+            <div class="label">
+                <p>Hello Hello Hello Hello Hello</p>
+            </div>
+            <div class="label">
+                <p>Hello Hello </p>
+            </div>
+            <div class="label">
+                <p>Hello Hello Hello Hello Hello Hello Hello</p>
+            </div>
+        </div>
+        <div class="title-section">
+            <div class="left-border"></div>
+            <p>GIVE TITLE man GIVE TITLE man</p>
+        </div>
+        <div class="description">
+            <p>Hello Hello Hello Hello</p>
+        </div>
+    </div>
+</div>

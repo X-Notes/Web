@@ -52,6 +52,7 @@ import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-wi
     PhotoComponent,
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
+   // SmallNoteComponent TODO
   ],
   imports: [
     CommonModule,

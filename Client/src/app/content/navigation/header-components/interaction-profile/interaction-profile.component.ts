@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { SetDefaultBackground } from 'src/app/core/stateUser/user-action';
-import { Theme } from 'src/app/shared/enums/Theme';
 
 @Component({
   selector: 'app-interaction-profile',
@@ -9,10 +8,6 @@ import { Theme } from 'src/app/shared/enums/Theme';
   styleUrls: ['./interaction-profile.component.scss']
 })
 export class InteractionProfileComponent implements OnInit {
-
-  @Input() themeHeader: Theme;
-
-  theme = Theme;
 
   constructor(private store: Store) { }
 
