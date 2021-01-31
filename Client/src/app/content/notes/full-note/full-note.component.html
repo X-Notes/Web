@@ -26,10 +26,18 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div appTheme class="content full-content">
-    <div *ngIf="canView$ | async" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
+    <div *ngIf="(canView$ | async) && loaded" class="wrapper" #fullWrap (panstart)="sliderService.panStart($event)"
         (panmove)="panMove($event)" (panend)="panEnd($event)">
-        <div [style.width.px]="sliderService.mainWidth"
-            class="main-content">
+        <div 
+        appTextEditMenu
+        appSelection
+        [appMenuSelection]="textElements"
+        [appCopy]="refElements"
+        (selectionEvent)="selectionHandler($event)" 
+        (selectionStartEvent)="selectionStartHandler($event)"
+        [style.width.px]="sliderService.mainWidth" 
+        class="main-content"
+        >
             <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
             <div class="labels-section">
                 <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"
@@ -40,8 +48,55 @@
             <div class="title-section">
                 <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
                     class="title" (input)="onInput($event)"></div>
-                <div class="placeholder">Give your note a title</div>
+                <div class="placeholder">Title</div>
                 <div class="left-border"></div>
+            </div>
+            <div class="content-section">
+                <div *ngFor="let item of contents; let i = index;">
+                    <div [ngSwitch]="item.type">
+                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.TEXT" 
+                        [content]="item"
+                        (enterEvent)="enterHandler($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"
+                        (transformTo)="transformToType($event)" 
+                        [isLast]="i === contents.length - 1"
+                        (addToEndNewText)="addNewElementToEnd()"                  
+                        ></app-html-text-part>
+                        <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
+                        [prevContent]="contents[i - 1]"
+                        [prevType]="contents[i - 1]?.type"
+                        [content]="item"
+                        (enterEvent)="enterHandler($event)"
+                        (transformTo)="transformToType($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        ></app-html-number-list>
+                        <app-html-dot-list #htmlComp *ngSwitchCase="contentType.DOTLIST"
+                        [content]="item"
+                        (enterEvent)="enterHandler($event)"
+                        (transformTo)="transformToType($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        ></app-html-dot-list>
+                        <app-html-check-list #htmlComp *ngSwitchCase="contentType.CHECKLIST" 
+                        [content]="item"
+                        (enterEvent)="enterHandler($event)"
+                        (transformTo)="transformToType($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        ></app-html-check-list>
+                        <app-html-headings #htmlComp *ngSwitchCase="contentType.HEADING" 
+                        [content]="item"
+                        (enterEvent)="enterHandler($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        ></app-html-headings>
+                        <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
+                        <div *ngSwitchDefault>Default</div>
+                    </div>               
+                </div>
+                <div class="empty" (mousedown)="placeHolderClick($event)" (mousemove)="mouseEnter($event)" (mouseout)="mouseOut($event)"></div>
             </div>
         </div>
         <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
@@ -69,7 +124,13 @@
             <div class="drag-helper second-helper"></div>
         </div>
     </div>
-    <div *ngIf="canNoView$ | async" class="wrapper">
+    <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
         No can View
     </div>
+    <app-spinner *ngIf="!loaded"></app-spinner>
+    <app-text-edit-menu
+    [style.top.px]="menuSelectionService.getTop"
+    [style.left.px]="menuSelectionService.left"
+    [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'">
+    </app-text-edit-menu>
 </div>

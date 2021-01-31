@@ -1,4 +1,4 @@
-<div appTheme class="interactions" [ngClass]="[pService.hideInnerMenu ? 'visible' : '', pService.users ? 'visible-people' : '']">
+<div *ngIf="note$ | async" appTheme class="interactions" [ngClass]="[pService.hideInnerMenu ? 'visible' : '', pService.users ? 'visible-people' : '']">
     <div CustomTooltip="{{ 'header.countUsers' | translate }}" position="Bottom" class="user-circle" (click)="showUsers()" #userCircle>
         <p>8</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>

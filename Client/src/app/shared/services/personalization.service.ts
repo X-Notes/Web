@@ -96,7 +96,7 @@ export class PersonalizationService {
   constructor() {}
 
   spinnerActive = false;
-  timeForSpinnerLoading = 30;
+  timeForSpinnerLoading = 150;
   subject = new Subject();
 
   stateSidebar = true;

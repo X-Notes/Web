@@ -9,6 +9,7 @@ import { Folder } from 'src/app/content/folders/models/folder';
 import { ChangeTypeFullFolder, GetInvitedUsersToFolder,
   TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
@@ -87,7 +88,8 @@ export class ShareComponent implements OnInit, OnDestroy {
     private store: Store,
     private searchService: SearchService,
     private apiNote: ApiServiceNotes,
-    private apiFolder: ApiFoldersService) {
+    private apiFolder: ApiFoldersService,
+    private apiBrowserFunctions: ApiBrowserTextService) {
   }
 
   ngOnDestroy(): void {
@@ -225,22 +227,18 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   copyInputLink() {
     const type = this.currentWindowType;
+    let input;
     switch (type) {
       case SharedType.Folder: {
-        const input = document.getElementById('linkInputFolder') as HTMLInputElement;
-        input.select();
-        document.execCommand('copy');
-        input.setSelectionRange(0, 0);
+        input = document.getElementById('linkInputFolder') as HTMLInputElement;
         break;
       }
       case SharedType.Note: {
-        const input = document.getElementById('linkInputNote') as HTMLInputElement;
-        input.select();
-        document.execCommand('copy');
-        input.setSelectionRange(0, 0);
+        input = document.getElementById('linkInputNote') as HTMLInputElement;
         break;
       }
     }
+    this.apiBrowserFunctions.copyInputLink(input);
   }
 
   async changeNoteType() {

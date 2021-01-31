@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -19,16 +19,22 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
   styleUrls: ['./private.component.scss'],
   providers: [FolderService]
 })
-export class PrivateComponent implements OnInit, OnDestroy {
+export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSize;
   destroy = new Subject<void>();
   loaded = false;
 
+  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
+
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
               public folderService: FolderService) { }
+
+  ngAfterViewInit(): void {
+    this.folderService.murriInitialise(this.refElements, FolderType.Private);
+  }
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
@@ -63,8 +69,6 @@ export class PrivateComponent implements OnInit, OnDestroy {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-    await this.murriService.initMurriFolderAsync(FolderType.Private);
-    await this.murriService.setOpacityTrueAsync();
 
     this.store.select(FolderStore.foldersAddingPrivate)
       .pipe(takeUntil(this.destroy))

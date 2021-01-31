@@ -1,0 +1,22 @@
+<div class="main-container" 
+    (mouseover)="mouseEnter($event)" 
+    (mouseout)="mouseOut($event)" 
+    (click)="setFocus($event)"
+    >
+    <p #contentHtml class="block-generic default-text-size" contenteditable="true" [textContent]="textService.contentStr"></p>
+    <div *ngIf="isActive" class="no-content">
+        <p>Text</p>
+        <div class="buttons" (mousedown)="preventClick($event)">
+            <i (mousedown)="transformContent($event, contentType.CHECKLIST)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.DOTLIST)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.NUMBERLIST)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.PHOTO)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.PHOTO)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.PHOTO)" class="icon-plus"></i>
+            <i (mousedown)="transformContent($event, contentType.PHOTO)" class="icon-plus"></i>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="container">
+    <div #album class="content-photos">
+        <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
+            <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
+                <app-photo *ngFor="let item of block" [photo]="item" (deleteEvent)="removePhotoHandler($event)"></app-photo>
+            </div>
+        </div>
+        <div class="blocks" *ngIf="lastBlock.length > 0">
+            <div class="block" [ngClass]="getStyle(countLastItems)">
+                <app-photo *ngFor="let item of lastBlock" [photo]="item" (deleteEvent)="removePhotoHandler($event)"></app-photo>
+            </div>
+        </div>
+        <div appChangeSizeAlbumWidth (mouseClick)="saveWidth()" (changeWeight)="changeWidth($event)" class="slider-right"></div>
+        <div appChangeSizeAlbumHeight (mouseClick)="saveHeight($event)" (changeHeight)="changeHeight($event)" class="slider-bottom"></div>
+    </div>
+    <div class="wrapper">
+        <div class="menu-wrapper" #check>
+            <div class="menu" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="openMenu($event)">
+                <div class="ripple-container" matRipple [matRippleTrigger]="check"></div>
+            </div>
+        </div>
+    </div>
+    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpened"
+        [cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        (backdropClick)="closeMenu($event)">
+        <app-popup-full-note>
+            <div class="menu-items">
+                <div #itemDownload class="item">
+                    <i class="icon-download"></i>
+                    <p>Download</p>
+                    <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
+                </div>
+                <div #itemDelete class="item" (click)="removeHandler()">
+                    <i class="icon-delete"></i>
+                    <p>Delete</p>
+                    <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
+                </div>
+                <mat-expansion-panel hideToggle class="expansion" [expanded]="panelOpenState" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                    <mat-expansion-panel-header class="expansion-header">
+                        <mat-panel-title class="expansion-title">
+                            Photos in row
+                        </mat-panel-title>
+                        <mat-panel-description class="expansion-description">
+                            {{countItemsInMainBlock}}
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div *ngFor="let item of [1,2,3,4]" #firstItem class="item" (click)="setPhotosInRow(item)">
+                        <p>{{item}}</p>
+                        <div class="ripple-container" matRipple [matRippleTrigger]="firstItem"></div>
+                    </div>
+                </mat-expansion-panel>
+            </div>
+        </app-popup-full-note>
+    </ng-template>
+</div>

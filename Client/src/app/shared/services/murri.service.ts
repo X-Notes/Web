@@ -56,7 +56,7 @@ export class MurriService  {
     ));
   }
 
-  private initMurriNote(type: NoteType, isDragEnabled: boolean) {
+  initMurriNote(type: NoteType, isDragEnabled: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -74,15 +74,7 @@ export class MurriService  {
     });
   }
 
-  initMurriFolderAsync(type: FolderType) {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.initMurriFolder(type);
-      resolve(true);
-    }
-    ));
-  }
-
-  private initMurriFolder(type: FolderType) {
+  initMurriFolder(type: FolderType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
@@ -100,16 +92,7 @@ export class MurriService  {
     });
   }
 
-  initMurriLabelAsync(deleted: boolean) {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => {
-      this.initMurriLabel(deleted);
-      resolve(true);
-    }
-    ));
-  }
-
-
-  private initMurriLabel(deleted: boolean) {
+  initMurriLabel(deleted: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;

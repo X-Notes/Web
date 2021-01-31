@@ -21,7 +21,7 @@
       flex-direction: column;
       width: 70%;
       background-color: $light-inner-color;
-      padding: 1.25rem 4vw;
+      padding: 1.25rem 30px;
       transition: 0.2s background-color ease;
       overflow-y: scroll;
       &::-webkit-scrollbar {
@@ -32,10 +32,11 @@
       }
 
       .title-section {
+        margin-left: 8px;
         position: relative;
         display: flex;
         width: 100%;
-        font-size: 1.5rem;
+        font-size: 1.625rem;
         font-weight: 700;
 
         .title {
@@ -68,6 +69,14 @@
           pointer-events: none;
           user-select: none;
           color: #7b7b7b;
+        }
+      }
+      .content-section{
+        display: flex;
+        flex-direction: column;
+        margin-top: 35px;
+        .empty{
+          height: 400px;
         }
       }
     }
@@ -213,4 +222,9 @@
       }
     }
   }
+}
+
+app-text-edit-menu {
+  z-index: 20;
+  position: absolute;
 }

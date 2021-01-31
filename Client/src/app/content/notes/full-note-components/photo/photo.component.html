@@ -1,0 +1,23 @@
+<div class="photo">
+    <img [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'" [src]="photo.url" (load)="onLoadImage($event)">
+    <app-spinner *ngIf="!photo.loaded"></app-spinner>
+    <div class="three-buttons" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="openMenu($event)"></div>
+</div>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOpened"
+[cdkConnectedOverlayHasBackdrop]="true" cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+(backdropClick)="closeMenu($event)">
+<app-popup-full-note>
+    <div class="menu-items">
+        <div #itemDownload class="item">
+            <i class="icon-download"></i>
+            <p>Download</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
+        </div>
+        <div #itemDelete class="item" (click)="deletePhoto()">
+            <i class="icon-delete"></i>
+            <p>Delete</p>
+            <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
+        </div>
+    </div>
+</app-popup-full-note>
+</ng-template>

@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { UpdateColor } from '../notes/state/updateColor';
 import { Folder } from './models/folder';
 import { Store } from '@ngxs/store';
@@ -7,6 +7,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FolderType } from 'src/app/shared/enums/FolderTypes';
 
 @Injectable()
 export class FolderService implements OnDestroy {
@@ -14,6 +15,7 @@ export class FolderService implements OnDestroy {
   destroy  = new Subject<void>();
   allFolders: Folder[] = [];
   folders: Folder[] = [];
+  firstInitedMurri = false;
 
   constructor(private store: Store,
               public pService: PersonalizationService,
@@ -59,6 +61,20 @@ export class FolderService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  murriInitialise(refElements: QueryList<ElementRef>, folderType: FolderType)
+  {
+    refElements.changes
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (z) => {
+      if (z.length === this.folders.length && !this.firstInitedMurri)
+      {
+        this.murriService.initMurriFolder(folderType);
+        await this.murriService.setOpacityTrueAsync();
+        this.firstInitedMurri = true;
+      }
+    });
   }
 
   transformFolders(folders: Folder[]) {

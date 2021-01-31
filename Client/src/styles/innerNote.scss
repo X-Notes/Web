@@ -1,0 +1,36 @@
+
+.main-container{
+    border-radius: 5px;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    position: relative;
+    width: 100%;
+}
+
+.block-generic{
+    height: 100%;
+    outline: 1px solid transparent;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+}
+
+.default-text-size{
+    font-size: 1.125rem;
+    line-height: 25px;
+}
+
+.no-content-list {
+    margin-left: 4px;
+    width: 100%;
+    top: 0;
+    position: absolute;
+    color: #6B6B6B;               
+    font-weight: 300;
+    line-height: 25px;
+}

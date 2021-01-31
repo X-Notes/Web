@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { AfterViewInit, ElementRef, Injectable, OnDestroy, OnInit, QueryList } from '@angular/core';
 import { UpdateColor } from './state/updateColor';
 import { SmallNote } from './models/smallNote';
 import { FullNote } from './models/fullNote';
@@ -11,17 +11,10 @@ import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { CancelAllSelectedLabels, ClearUpdatelabelEvent } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
+import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
 @Injectable()
 export class NotesService implements OnDestroy {
-
-  labelsIds: Subscription;
-
-  destroy = new Subject<void>();
-  allNotes: SmallNote[] = [];
-  notes: SmallNote[] = [];
-  firstInitFlag = false;
-
   constructor(public pService: PersonalizationService, private store: Store,
               private murriService: MurriService) {
 
@@ -90,6 +83,29 @@ export class NotesService implements OnDestroy {
           }
         }
       });
+  }
+
+  labelsIds: Subscription;
+
+  destroy = new Subject<void>();
+  allNotes: SmallNote[] = [];
+  notes: SmallNote[] = [];
+  firstInitFlag = false;
+  firstInitedMurri = false;
+
+
+  murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteType)
+  {
+    refElements.changes
+    .pipe(takeUntil(this.destroy))
+    .subscribe(async (z) => {
+      if (z.length === this.notes.length && !this.firstInitedMurri)
+      {
+        this.murriService.initMurriNote(noteType, !this.isFiltedMode());
+        await this.murriService.setOpacityTrueAsync();
+        this.firstInitedMurri = true;
+      }
+    });
   }
 
   ngOnDestroy(): void {
