@@ -1,4 +1,5 @@
 import { Directive, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
+import { ScrollEvent } from 'muuri';
 import { SelectionService } from '../selection.service';
 
 
@@ -51,10 +52,20 @@ export class SelectionDirective implements OnDestroy, OnInit {
     const scrollEventListener = this.renderer.listen(this.mainContent, 'scroll', (e) => this.scrollEvent(e));
     this.listeners.push(scrollEventListener);
 
+    const mousewheelEventListener = this.renderer.listen(this.mainContent, 'wheel', (e) => this.mousewheelHandler(e));
+    this.listeners.push(mousewheelEventListener);
+
     const mouseDownListener = this.renderer.listen('document', 'mousedown', (e) => this.mouseDown(e));
     const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => this.mouseUp(e));
     const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) => this.mouseMove(e));
     this.listeners.push(mouseDownListener, mouseMoveListener, mouseUpListener);
+  }
+
+  mousewheelHandler(e: WheelEvent): boolean | void {
+    if (this.selectionService.isResizingPhoto)
+    {
+      e.preventDefault(); // lock scroll when changing height
+    }
   }
 
   @HostListener('mousedown', ['$event'])
@@ -123,7 +134,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return Math.abs(this.mainContent.scrollTop - this.startTop);
   }
 
-  scrollEvent(e) {
+  scrollEvent(e: ScrollEvent) {
     if (this.selectionService.ismousedown && this.isFullNote) {
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {
