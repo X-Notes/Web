@@ -15,10 +15,11 @@ export class MenuSelectionService {
   get getTop()
   {
     const positionNumber = this.startTop + this.startScroll - this.currentScroll;
+    /*
     if (positionNumber < 0)
     {
       return 5;
-    }
+    }*/
     return positionNumber;
   }
 }
