@@ -8,7 +8,7 @@ export class SelectionService {
   sidebarWidth = 270;
 
   ismousedown = false;
-
+  isResizingPhoto = false;
   isSelectionInside;
 
   constructor(private apiBrowserService: ApiBrowserTextService) { }

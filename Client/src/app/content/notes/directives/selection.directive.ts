@@ -90,7 +90,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseMove(evt) {
-    if (this.selectionService.ismousedown && this.isFullNote) {
+    if (this.selectionService.ismousedown && this.isFullNote && !this.selectionService.isResizingPhoto) {
       this.finX = evt.pageX;
       this.finY = evt.pageY;
       const newValueX = (this.finX - this.x);

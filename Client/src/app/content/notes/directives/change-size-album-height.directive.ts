@@ -8,8 +8,9 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
   listeners = [];
 
   @Output()
-  mouseClick = new EventEmitter();
-
+  mouseClick = new EventEmitter<boolean>();
+  // true = down
+  // false = up
 
   @Output()
   changeHeight = new EventEmitter<number>();
@@ -35,13 +36,13 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
   mousedownHandler(event: MouseEvent) {
     this.startY = event.clientY;
     this.isChangeSizeMode = true;
-    this.mouseClick.emit();
+    this.mouseClick.emit(true);
   }
 
 
   mouseupHandler(event: MouseEvent) {
     this.isChangeSizeMode = false;
-    this.mouseClick.emit();
+    this.mouseClick.emit(false);
   }
 
   mousemoveHandler(event: MouseEvent) {

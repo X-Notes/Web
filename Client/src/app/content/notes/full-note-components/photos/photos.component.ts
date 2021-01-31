@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { SelectionService } from '../../selection.service';
 import { PhotoService } from '../photos-business-logic/photo.service';
 
 @Component({
@@ -29,7 +30,8 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
 
   constructor(private photoService: PhotoService,
               private renderer: Renderer2,
-              private elRef: ElementRef) { }
+              private elRef: ElementRef,
+              private selectionService: SelectionService) { }
 
   ngAfterViewInit(): void {
     this.mainContainer =  this.elRef.nativeElement.parentElement.
@@ -61,9 +63,10 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     }
   }
 
-  saveHeight()
+  saveHeight(isResizingPhoto: boolean)
   {
     this.startHeight = this.albumChild.nativeElement.offsetHeight;
+    this.selectionService.isResizingPhoto = isResizingPhoto;
   }
 
   saveWidth()
