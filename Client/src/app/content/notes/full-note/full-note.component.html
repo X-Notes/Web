@@ -90,7 +90,7 @@
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"  
                         ></app-html-headings>
-                        <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item"></app-photos>
+                        <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>

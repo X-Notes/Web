@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Photo } from '../../models/ContentMode';
 import { PhotoService } from '../photos-business-logic/photo.service';
 
@@ -28,6 +28,9 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 })
 export class PhotoComponent implements OnInit {
 
+  @Output()
+  deleteEvent = new EventEmitter<string>();
+
   @Input()
   photo: Photo;
 
@@ -51,6 +54,11 @@ export class PhotoComponent implements OnInit {
   closeMenu($event: MouseEvent)
   {
     this.isOpened = false;
+  }
+
+  deletePhoto()
+  {
+    this.deleteEvent.emit(this.photo.id);
   }
 
 }

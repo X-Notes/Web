@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../selection.service';
@@ -23,6 +23,9 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   lastBlock: Photo[] = [];
   countItemsInMainBlock = 2;
 
+  @Output()
+  deleteEvent = new EventEmitter<string>();
+
   @Input()
   content: ContentModel<Photos>;
 
@@ -45,6 +48,11 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     if (newHeight > 200){
     this.renderer.setStyle(this.albumChild.nativeElement, 'height', newHeight + 'px');
     }
+  }
+
+  removeHandler()
+  {
+    this.deleteEvent.emit(this.content.contentId);
   }
 
   changeWidth(diffrence: number)
@@ -132,6 +140,11 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     return this.content.data.photos.length % this.countItemsInMainBlock;
   }
 
+  removePhotoHandler(id: string)
+  {
+    this.content.data.photos = this.content.data.photos.filter(x => x.id !== id);
+    this.initPhotos();
+  }
 
   getStyle(numb: number)
   {

@@ -167,6 +167,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
+  removeAlbumHandler(id: string)
+  {
+    console.log(id);
+    this.contents = this.contents.filter(x => x.contentId !== id);
+  }
+
   placeHolderClick($event) {
     $event.preventDefault();
     setTimeout(() => this.textElements.last.setFocus());

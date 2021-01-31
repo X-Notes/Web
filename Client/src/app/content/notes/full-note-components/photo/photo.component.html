@@ -13,7 +13,7 @@
             <p>Download</p>
             <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
         </div>
-        <div #itemDelete class="item">
+        <div #itemDelete class="item" (click)="deletePhoto()">
             <i class="icon-delete"></i>
             <p>Delete</p>
             <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>

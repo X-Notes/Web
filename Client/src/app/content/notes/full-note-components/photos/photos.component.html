@@ -2,12 +2,12 @@
     <div #album class="content-photos">
         <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
             <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
-                <app-photo *ngFor="let item of block" [photo]="item"></app-photo>
+                <app-photo *ngFor="let item of block" [photo]="item" (deleteEvent)="removePhotoHandler($event)"></app-photo>
             </div>
         </div>
         <div class="blocks" *ngIf="lastBlock.length > 0">
             <div class="block" [ngClass]="getStyle(countLastItems)">
-                <app-photo *ngFor="let item of lastBlock" [photo]="item"></app-photo>
+                <app-photo *ngFor="let item of lastBlock" [photo]="item" (deleteEvent)="removePhotoHandler($event)"></app-photo>
             </div>
         </div>
         <div appChangeSizeAlbumWidth (mouseClick)="saveWidth()" (changeWeight)="changeWidth($event)" class="slider-right"></div>
@@ -30,7 +30,7 @@
                     <p>Download</p>
                     <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
                 </div>
-                <div #itemDelete class="item">
+                <div #itemDelete class="item" (click)="removeHandler()">
                     <i class="icon-delete"></i>
                     <p>Delete</p>
                     <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
