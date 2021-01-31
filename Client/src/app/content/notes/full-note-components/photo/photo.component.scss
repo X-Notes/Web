@@ -1,3 +1,5 @@
+@import 'variables';
+
 .photo{
     position: relative;
     height: 100%;
@@ -14,10 +16,46 @@
         -webkit-user-select: none;
         -ms-user-select: none;
     }
-    .text{
-        color: white;
+    .three-buttons{
+        cursor: pointer;
         position: absolute;
+        width: 40px;
+        height: 20px;
+        background-color: $dark-button;
+        border-radius: 5px;
         top: 10px;
-        left: 50%;
+        right: 15px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    &:hover{
+        .three-buttons{
+            display: flex;
+        }
+    }
+}
+
+.menu-items{
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    width: 200px;
+    .item{
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: 5px;
+        &:hover {
+            background-color: #3d4049;
+        }
+        i{
+            padding: 1rem;
+        }
+        p{
+            padding: 1rem 1rem 1rem 0;
+        }
     }
 }

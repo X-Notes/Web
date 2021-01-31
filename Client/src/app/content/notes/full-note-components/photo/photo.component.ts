@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
 import { Photo } from '../../models/ContentMode';
+import { PhotoService } from '../photos-business-logic/photo.service';
 
 @Component({
   selector: 'app-photo',
@@ -22,14 +23,17 @@ import { Photo } from '../../models/ContentMode';
         animate(0)
       ]),
     ])
-  ]
+  ],
+  providers: [PhotoService]
 })
 export class PhotoComponent implements OnInit {
 
   @Input()
   photo: Photo;
 
-  constructor() { }
+  isOpened = false;
+
+  constructor(private photoService: PhotoService) { }
 
   ngOnInit(): void {
   }
@@ -37,6 +41,16 @@ export class PhotoComponent implements OnInit {
   onLoadImage($event)
   {
     this.photo.loaded = true;
+  }
+
+  openMenu($event: MouseEvent) {
+    this.isOpened = true;
+    this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
+  }
+
+  closeMenu($event: MouseEvent)
+  {
+    this.isOpened = false;
   }
 
 }
