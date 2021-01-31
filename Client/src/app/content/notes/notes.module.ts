@@ -26,7 +26,8 @@ import { MenuSelectionDirective } from './directives/menu-selection.directive';
 import { CopyDirective } from './directives/copy.directive';
 import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { PhotoComponent } from './full-note-components/photo/photo.component';
-import { ChangeSizeAlbumDirective } from './directives/change-size-album.directive';
+import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
+import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ChangeSizeAlbumDirective } from './directives/change-size-album.directi
     CopyDirective,
     TextEditMenuDirective,
     PhotoComponent,
-    ChangeSizeAlbumDirective,
+    ChangeSizeAlbumHeightDirective,
+    ChangeSizeAlbumWidthDirective,
   ],
   imports: [
     CommonModule,

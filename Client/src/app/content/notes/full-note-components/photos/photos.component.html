@@ -10,7 +10,8 @@
                 <app-photo *ngFor="let item of lastBlock" [photo]="item"></app-photo>
             </div>
         </div>
-        <div appChangeSizeAlbum (mouseClick)="saveHeight()" (changeSize)="changeSize($event)" class="slider"></div>
+        <div appChangeSizeAlbumWidth (mouseClick)="saveWidth()" (changeWeight)="changeWidth($event)" class="slider-right"></div>
+        <div appChangeSizeAlbumHeight (mouseClick)="saveHeight()" (changeHeight)="changeHeight($event)" class="slider-bottom"></div>
     </div>
     <div class="wrapper">
         <div class="menu-wrapper" #check>

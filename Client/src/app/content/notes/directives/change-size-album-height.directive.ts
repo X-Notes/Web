@@ -1,9 +1,9 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
+import { Directive, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
 
 @Directive({
-  selector: '[appChangeSizeAlbum]'
+  selector: '[appChangeSizeAlbumHeight]'
 })
-export class ChangeSizeAlbumDirective implements OnInit, OnDestroy {
+export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
 
   listeners = [];
 
@@ -12,7 +12,7 @@ export class ChangeSizeAlbumDirective implements OnInit, OnDestroy {
 
 
   @Output()
-  changeSize = new EventEmitter<number>();
+  changeHeight = new EventEmitter<number>();
 
   startY: number;
   isChangeSizeMode = false;
@@ -47,7 +47,7 @@ export class ChangeSizeAlbumDirective implements OnInit, OnDestroy {
   mousemoveHandler(event: MouseEvent) {
     if (this.isChangeSizeMode)
     {
-      this.changeSize.emit(event.clientY - this.startY);
+      this.changeHeight.emit(event.clientY - this.startY);
     }
   }
 

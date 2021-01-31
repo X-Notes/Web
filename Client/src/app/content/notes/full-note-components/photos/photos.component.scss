@@ -37,17 +37,32 @@
             }
         }
         &:hover{
-            .slider{
+            .slider-bottom{
+                display: block;
+            }
+            .slider-right{
                 display: block;
             }
         }
-        .slider{
+        .slider-right{
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: calc(37.5%);
+            width: 6px;
+            border-radius: 20px;
+            background-color: white;
+            opacity: 0.8;
+            height: 25%;
+        }
+        .slider-bottom{
             cursor: pointer;
             display: none;
             position: absolute;
             bottom: 10px;
-            left: calc(50% - 100px);
-            width: 200px;
+            left: calc(37.5%);
+            width: 25%;
             border-radius: 20px;
             background-color: white;
             opacity: 0.8;

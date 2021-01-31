@@ -11,6 +11,7 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 })
 export class PhotosComponent implements OnInit, ParentInteraction {
 
+  startWidth;
   startHeight;
   @ViewChild('album') albumChild: ElementRef;
 
@@ -28,7 +29,7 @@ export class PhotosComponent implements OnInit, ParentInteraction {
               private renderer: Renderer2) { }
 
 
-  changeSize(diffrence: number)
+  changeHeight(diffrence: number)
   {
     const newHeight = this.startHeight + diffrence;
     if (newHeight > 200){
@@ -36,9 +37,22 @@ export class PhotosComponent implements OnInit, ParentInteraction {
     }
   }
 
+  changeWidth(diffrence: number)
+  {
+    const newWidth = this.startWidth + diffrence;
+    if (newWidth > 200){
+    this.renderer.setStyle(this.albumChild.nativeElement, 'width', newWidth + 'px');
+    }
+  }
+
   saveHeight()
   {
     this.startHeight = this.albumChild.nativeElement.offsetHeight;
+  }
+
+  saveWidth()
+  {
+    this.startWidth = this.albumChild.nativeElement.offsetWidth;
   }
 
   ngOnInit(): void {
