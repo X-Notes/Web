@@ -51,9 +51,13 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     const paddingMainContainer = 60; // main-content padding left, right
     const mainContainerWidth = this.mainContainer.offsetWidth - paddingMainContainer;
     const newWidth = this.startWidth + diffrence;
-    const procent = (newWidth / mainContainerWidth * 100).toFixed(2);
+    const procent = (newWidth / mainContainerWidth * 100).toFixed(3);
     if (newWidth > 200 && newWidth < mainContainerWidth - wrapperWidth){
     this.renderer.setStyle(this.albumChild.nativeElement, 'width', procent + '%');
+    }
+    if (newWidth >= mainContainerWidth - wrapperWidth)
+    {
+      this.renderer.setStyle(this.albumChild.nativeElement, 'width', mainContainerWidth - wrapperWidth + 'px');
     }
   }
 
