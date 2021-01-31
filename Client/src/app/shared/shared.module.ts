@@ -54,7 +54,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     SharingLinkPipe,
     ScrollControlDirective,
     PopupFullNoteComponent,
-    MatExpansionModule
+    MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,
     MatCheckboxModule

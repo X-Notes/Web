@@ -28,6 +28,7 @@ import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { PhotoComponent } from './full-note-components/photo/photo.component';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
+import { SmallNoteComponent } from './small-note/small-note.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,7 @@ import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-wi
     PhotoComponent,
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
-   // SmallNoteComponent TODO
+    SmallNoteComponent
   ],
   imports: [
     CommonModule,
