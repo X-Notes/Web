@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { ContentModel, Photo, Photos } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { PhotoService } from '../photos-business-logic/photo.service';
@@ -9,7 +9,7 @@ import { PhotoService } from '../photos-business-logic/photo.service';
   styleUrls: ['./photos.component.scss'],
   providers: [PhotoService]
 })
-export class PhotosComponent implements OnInit, ParentInteraction {
+export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction {
 
   startWidth;
   startHeight;
@@ -25,8 +25,16 @@ export class PhotosComponent implements OnInit, ParentInteraction {
   @Input()
   content: ContentModel<Photos>;
 
+  mainContainer;
+
   constructor(private photoService: PhotoService,
-              private renderer: Renderer2) { }
+              private renderer: Renderer2,
+              private elRef: ElementRef) { }
+
+  ngAfterViewInit(): void {
+    this.mainContainer =  this.elRef.nativeElement.parentElement.
+    parentElement.parentElement.parentElement;
+  }
 
 
   changeHeight(diffrence: number)
@@ -39,9 +47,13 @@ export class PhotosComponent implements OnInit, ParentInteraction {
 
   changeWidth(diffrence: number)
   {
+    const wrapperWidth = 40; // wrapper weight;
+    const paddingMainContainer = 60; // main-content padding left, right
+    const mainContainerWidth = this.mainContainer.offsetWidth - paddingMainContainer;
     const newWidth = this.startWidth + diffrence;
-    if (newWidth > 200){
-    this.renderer.setStyle(this.albumChild.nativeElement, 'width', newWidth + 'px');
+    const procent = (newWidth / mainContainerWidth * 100).toFixed(2);
+    if (newWidth > 200 && newWidth < mainContainerWidth - wrapperWidth){
+    this.renderer.setStyle(this.albumChild.nativeElement, 'width', procent + '%');
     }
   }
 
