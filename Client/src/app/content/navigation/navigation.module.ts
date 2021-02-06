@@ -11,6 +11,7 @@ import { InteractionToolsComponent } from './header-components/interaction-tools
 import { InteractionItemsComponent } from './header-components/interaction-items/interaction-items.component';
 import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
 import { InteractionCreateComponent } from './header-components/interaction-create/interaction-create.component';
+import { NotificationComponent } from './header-components/notification/notification.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { InteractionCreateComponent } from './header-components/interaction-crea
     InteractionToolsComponent,
     InteractionItemsComponent,
     InteractionInnerComponent,
-    InteractionCreateComponent],
+    InteractionCreateComponent,
+    NotificationComponent],
   imports: [
     CommonModule,
     RouterModule,
