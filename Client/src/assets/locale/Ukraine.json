@@ -19,7 +19,7 @@
   },
   "subMenu": {
     "all": "Всі",
-    "private": "Приватні",
+    "personal": "Особисті",
     "shared": "Спільні",
     "archive": "Архив",
     "bin": "Кошик",
@@ -95,7 +95,7 @@
     "ShareModal": {
       "Share": "Поділитися",
       "access": "Доступ",
-      "private": "Приватні",
+      "personal": "Особисті",
       "shared": "Спільні",
       "selectedNotes": "Вибрані замітки",
       "search": "Пошук...",
