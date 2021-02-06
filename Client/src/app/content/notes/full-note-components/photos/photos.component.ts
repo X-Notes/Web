@@ -67,7 +67,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     }
     if (newWidth >= mainContainerWidth - wrapperWidth)
     {
-      this.renderer.setStyle(this.albumChild.nativeElement, 'width', mainContainerWidth - wrapperWidth + 'px');
+      this.renderer.setStyle(this.albumChild.nativeElement, 'width', 'calc(100% - 40px)' + '%');
     }
   }
 

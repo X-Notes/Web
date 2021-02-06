@@ -80,6 +80,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   mouseEnter($event) {
+    $event.preventDefault();
     this.textService.mouseEnter($event, this.contentHtml);
   }
 
