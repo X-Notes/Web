@@ -30,10 +30,13 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     const selection = this.apiBrowserService.getSelection();
     if (selection.toString() !== '') {
       const coords = selection.getRangeAt(0).getBoundingClientRect();
+      const left = ((coords.left + coords.right) / 2);
+      const top = coords.top - 48;
+
       this.menuSelectionService.menuActive = true;
       this.menuSelectionService.currentItem = this.getCurrentItem();
-      this.menuSelectionService.left = ((coords.left + coords.right) / 2) - this.selectionService.sidebarWidth;
-      this.menuSelectionService.startTop = coords.top - this.selectionService.menuHeight - 45;
+      this.menuSelectionService.left = left;
+      this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
     } else {
       this.menuSelectionService.menuActive = false;

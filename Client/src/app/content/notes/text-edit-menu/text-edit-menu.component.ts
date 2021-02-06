@@ -29,7 +29,6 @@ export class TextEditMenuComponent implements OnInit {
 
   transformContent(e, type: ContentType, heading?: HeadingType) {
     const item = this.menuSelectionService.currentItem;
-
     if (item.type === type) {
       if (item.type === ContentType.HEADING) {
         const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
@@ -51,6 +50,21 @@ export class TextEditMenuComponent implements OnInit {
     }
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
+  }
+
+  getIsActive(type: ContentType, heading?: HeadingType) {
+    const item = this.menuSelectionService.currentItem;
+    if (!item) {
+      return;
+    }
+
+    if (type === ContentType.HEADING && item.type === type) {
+      const Hitem = item as any;
+      return heading === Hitem.data.headingType ? 'active' : '';
+    } else {
+      return type === item.type ? 'active' : '';
+    }
+
   }
 
 }

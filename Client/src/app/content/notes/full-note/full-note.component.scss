@@ -4,7 +4,7 @@
 .full-content {
   flex-direction: row;
 
-  .wrapper {
+  .wrapper-note {
     position: relative;
     z-index: 1;
     display: flex;
@@ -151,7 +151,7 @@
 }
 
 .light {
-  .wrapper {
+  .wrapper-note {
     .main-content {
       background-color: $light-color;
 
@@ -177,7 +177,7 @@
 
 @media (max-width: 1240px) {
   .full-content {
-    .wrapper {
+    .wrapper-note {
       .secondary-content {
         .open {
           padding: 0 1rem;
@@ -194,7 +194,7 @@
 @media (max-width: 1024px) {
   .full-content {
     flex-direction: column;
-    .wrapper {
+    .wrapper-note {
       width: 200%;
       .main-content {
         width: 100%;
@@ -228,5 +228,5 @@
 
 app-text-edit-menu {
   z-index: 2;
-  position: absolute;
+  position: fixed;
 }

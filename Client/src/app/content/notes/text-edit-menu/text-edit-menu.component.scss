@@ -1,19 +1,26 @@
 @import 'variables';
- 
-.container{
-    background-color: $dark-button;
-    height: 38px;
-    padding: 5px;
-    border-radius: 5px;
 
-    display: flex;
-    align-items: center;
-    i {
-        cursor: pointer;
-        margin-left: 7px;
-        margin-right: 7px;
-    }
-    i::before{
-        font-size: 1.25rem;
-    }
+.container {
+  background-color: $dark-button;
+  height: 38px;
+  padding: 5px;
+  border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+
+  i {
+    cursor: pointer;
+    margin-left: 7px;
+    margin-right: 7px;
+  }
+
+  i::before {
+    font-size: 1.25rem;
+  }
+
 }
+
+.active {
+    color: #2997ff !important;
+  }
