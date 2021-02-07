@@ -27,6 +27,7 @@ import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SearchComponent } from './modal_components/search/search.component';
 import { MatCheckboxModule } from '@angular/material/checkbox'; 
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -40,7 +41,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule, NgScrollbarModule, MatCheckboxModule
+    OverlayModule, NgScrollbarModule, MatCheckboxModule, MatSnackBarModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -52,7 +53,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     OverlayModule,
     NgScrollbarModule,
     SearchComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSnackBarModule
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

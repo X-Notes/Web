@@ -405,6 +405,23 @@
   }
 }
 
+.snackbar-dark {
+  background-color: $dark-color;
+  
+  .mat-simple-snackbar-action {
+    color: #5e99cc;
+  }
+}
+
+.snackbar-light {
+  background-color: white;
+  color: $text-color;
+  
+  .mat-simple-snackbar-action {
+    color: #5e99cc;
+  }
+}
+
 @media (max-width: 1680px) {
   .grid-item {
     width: calc(100% / 3);

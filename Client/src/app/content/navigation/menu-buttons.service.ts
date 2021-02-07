@@ -16,13 +16,15 @@ import { ShareComponent } from 'src/app/shared/modal_components/share/share.comp
 import { NoteStore } from '../notes/state/notes-state';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderStore } from '../folders/state/folders-state';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 
 
 @Injectable({providedIn: 'root'})
 export class MenuButtonsService {
 
   constructor(private store: Store,
-              private dialogService: DialogService, ) {}
+              private dialogService: DialogService,
+              private snackService: SnackbarService) {}
 
 
   public saveItems: MenuItem[] = [];
@@ -409,16 +411,96 @@ export class MenuButtonsService {
   // SET DELETE
   private setdeleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
+
+      const snackbarRef = this.deleteNotesSnackbar(language);
+      snackbarRef.afterDismissed().subscribe(x => {
+        if (x.dismissedByAction) {
+          this.snackbarMoveToInner(note.noteType, ids);
+        }
+      });
       this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
       this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+
+      const snackbarRef = this.deleteNotesSnackbar(language);
+      snackbarRef.afterDismissed().subscribe(x => {
+        if (x.dismissedByAction) {
+          this.snackbarMoveTo(noteType, ids);
+        }
+      });
       this.store.dispatch(new SetDeleteNotes(noteType, ids));
     }
+  }
+
+  snackbarMoveTo(type: NoteType, ids) {
+    const types = NoteType;
+    switch (type) {
+      case types.Private : {
+        this.store.dispatch(new MakePrivateNotes(type , ids));
+        break;
+      }
+      case types.Shared : {
+        break;
+      }
+      case types.Archive : {
+        this.store.dispatch(new ArchiveNotes(type, ids));
+        break;
+      }
+      case types.Deleted : {
+        this.store.dispatch(new SetDeleteNotes(type, ids));
+        break;
+      }
+    }
+  }
+
+  snackbarMoveToInner(type: NoteType, ids) {
+    const types = NoteType;
+    switch (type) {
+      case types.Private : {
+        this.store.dispatch(new MakePrivateNotes(type, ids));
+        this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+        break;
+      }
+      case types.Shared : {
+        break;
+      }
+      case types.Archive : {
+        this.store.dispatch(new ArchiveNotes(type, ids));
+        this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+        break;
+      }
+      case types.Deleted : {
+        this.store.dispatch(new SetDeleteNotes(type, ids));
+        this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+        break;
+      }
+    }
+  }
+
+  deleteNotesSnackbar(language: string) {
+    let snackbarRef;
+    switch (language) {
+      case 'English': {
+        snackbarRef = this.snackService.openSnackBar('Note moved to bin', 'Undo');
+        break;
+      }
+      case 'Russian': {
+        snackbarRef = this.snackService.openSnackBar('Заметка перенесена в корзину', 'Отменить');
+        break;
+      }
+      case 'Ukraine': {
+        snackbarRef = this.snackService.openSnackBar('Замітка перенесена в кошик', 'Відмінити');
+        break;
+      }
+    }
+    return snackbarRef;
   }
 
   private setDeleteFolders() {
@@ -451,16 +533,51 @@ export class MenuButtonsService {
 
   archiveNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
+
+      const snackbarRef = this.archiveNotesSnackbar(language);
+      snackbarRef.afterDismissed().subscribe(x => {
+        if (x.dismissedByAction) {
+          this.snackbarMoveToInner(note.noteType, ids);
+        }
+      });
       this.store.dispatch(new ArchiveNotes(note.noteType, ids));
       this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      const snackbarRef = this.archiveNotesSnackbar(language);
+
+      snackbarRef.afterDismissed().subscribe(x => {
+        if (x.dismissedByAction) {
+          this.snackbarMoveTo(noteType, ids);
+        }
+      });
       this.store.dispatch(new ArchiveNotes(noteType, ids));
     }
+  }
+
+  archiveNotesSnackbar(language: string) {
+    let snackbarRef;
+    switch (language) {
+      case 'English': {
+        snackbarRef = this.snackService.openSnackBar('Note moved to archive', 'Undo');
+        break;
+      }
+      case 'Russian': {
+        snackbarRef = this.snackService.openSnackBar('Заметка перенесена в архив', 'Отменить');
+        break;
+      }
+      case 'Ukraine': {
+        snackbarRef = this.snackService.openSnackBar('Замітка перенесена в архів', 'Відмінити');
+        break;
+      }
+    }
+    return snackbarRef;
   }
 
   archiveFolders() {
