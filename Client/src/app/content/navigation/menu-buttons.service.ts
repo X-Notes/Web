@@ -17,6 +17,7 @@ import { NoteStore } from '../notes/state/notes-state';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderStore } from '../folders/state/folders-state';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
+import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 
 
 @Injectable({providedIn: 'root'})
@@ -385,6 +386,17 @@ export class MenuButtonsService {
       panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
+  }
+
+  openSideModal() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const config: MatDialogConfig =  {
+      maxHeight: '100%',
+      maxWidth: '90vw',
+      autoFocus: false,
+      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+    };
+    this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
 
 

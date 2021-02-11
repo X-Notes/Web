@@ -27,6 +27,7 @@ import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 
 
 @Component({
@@ -72,7 +73,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public pService: PersonalizationService,
               private rend: Renderer2,
               public sliderService: FullNoteSliderService,
-              public murriService: MurriService) {
+              public murriService: MurriService,
+              public buttonService: MenuButtonsService) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 

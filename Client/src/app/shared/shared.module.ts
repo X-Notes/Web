@@ -26,8 +26,10 @@ import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SearchComponent } from './modal_components/search/search.component';
-import { MatCheckboxModule } from '@angular/material/checkbox'; 
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component'; 
+import { NoteComponent } from '../content/notes/note/note.component';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -38,6 +40,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     SharingLinkPipe,
     ScrollControlDirective,
     SearchComponent,
+    OpenInnerSideComponent,
+    NoteComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
@@ -54,7 +58,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     NgScrollbarModule,
     SearchComponent,
     MatCheckboxModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NoteComponent
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

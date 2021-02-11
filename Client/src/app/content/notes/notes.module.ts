@@ -20,7 +20,6 @@ import { SmallNoteComponent } from './small-note/small-note.component';
   declarations: [
     NotesComponent,
     FullNoteComponent,
-    NoteComponent,
     PrivatesComponent,
     SharedComponent,
     DeletedComponent,
