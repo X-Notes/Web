@@ -43,7 +43,6 @@ export class PrivatesComponent implements OnInit, OnDestroy {
       }
     }
     );
-
   }
 
   async loadContent() {

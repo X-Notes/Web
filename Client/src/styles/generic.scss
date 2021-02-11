@@ -60,7 +60,7 @@
 }
 
 .light {
-  .sharing {
+  .sharing, .dialog-content {
     .mat-tab-label {
       color: #808080;
     }
@@ -79,7 +79,7 @@
 }
 
 .dark {
-  .sharing {
+  .sharing, .dialog-content {
     .mat-tab-label {
       color: white;
     }
@@ -147,7 +147,7 @@
   opacity: 0;
   transition: 0.1s linear;
   position: relative;
-  width: calc(100%);
+  width: 100%;
 }
 
 .grid-item {
@@ -402,6 +402,31 @@
   }
   .mat-checkbox-checked .mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-background {
     background-color: #4a85df; 
+  }
+}
+
+.dark, .light {
+  .dialog-content {
+    .mat-tab-label {
+      flex: 0 1 calc(100% / 3);
+      min-width: initial;
+      font-size: 1.25rem;
+      opacity: 1;
+      user-select: none;
+    }
+    .mat-ink-bar {
+      height: 3px;
+      border-radius: 5px;
+      flex: 0 1 calc(100% / 3);
+      transition-property: left, right;
+    }
+    .mat-tab-body-wrapper {
+      height: 100%;
+    }
+
+    .mat-tab-body-content {
+      overflow: hidden;
+    }
   }
 }
 

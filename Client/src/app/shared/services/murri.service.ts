@@ -20,7 +20,7 @@ export class MurriService  {
   constructor(private store: Store,
               private pService: PersonalizationService) {
 
-    pService.changeOrientationSubject.subscribe(z => {
+    this.pService.changeOrientationSubject.subscribe(z => {
       setTimeout(() => this.grid.refreshItems().layout(), 0);
     });
   }
