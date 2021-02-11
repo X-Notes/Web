@@ -1,0 +1,184 @@
+@import 'variables';
+
+.container{
+    position: relative;
+    border-radius: 5px;
+    margin-top: 3px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+    &:hover{
+        .wrapper{
+            .menu-wrapper{
+                display: block;
+            }
+        }
+    }
+    .content-photos{
+        overflow: hidden;
+        position: relative;
+        height: auto;
+        width: calc(100% - 40px);
+        display: flex;
+        flex-direction: column;
+        padding-left: 8px;
+        .blocks{ 
+            height: 100%;
+            margin-top: 5px;
+            .block{
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                min-height: 200px;
+                height: 100%;
+            }
+            &:first-child{
+                margin-top: 0;
+            }
+        }
+        &:hover{
+            .slider-bottom{
+                display: block;
+            }
+            .slider-right{
+                display: block;
+            }
+        }
+        .slider-right{
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: calc(37.5%);
+            width: 6px;
+            border-radius: 20px;
+            background-color: white;
+            opacity: 0.4;
+            height: 25%;
+        }
+        .slider-bottom{
+            cursor: pointer;
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: calc(37.5%);
+            width: 25%;
+            border-radius: 20px;
+            background-color: white;
+            opacity: 0.4;
+            height: 6px;
+        }
+        .fouth-child{
+            app-photo{
+                &:nth-child(1){
+                    width: calc(25% - 2.5px);
+                }
+                &:nth-child(2){
+                    width: calc(25% - 2.5px);
+                }
+                &:nth-child(3){
+                    width: calc(25% - 2.5px);
+                }
+                &:nth-child(4){
+                    width: calc(25% - 2.5px);
+                }
+            }
+        }
+        .three-child{
+            app-photo{
+                &:nth-child(1){
+                    width: calc(25% - 3.33px);
+                }
+                &:nth-child(2){
+                    width: calc(25% - 3.33px);
+                }
+                &:nth-child(3){
+                    width: calc(50% - 3.33px);
+                }
+            }
+        }
+        .two-child{
+            app-photo{
+                &:nth-child(1){
+                    width: calc(50% - 5px);
+                }
+                &:nth-child(2){
+                    width: calc(50% - 5px);
+                }
+            }
+        }
+        .one-child{
+            app-photo {
+                &:nth-child(1){
+                    width: calc(100%);
+                }
+            }
+        }
+    }
+    .wrapper{
+        position: absolute;
+        right: 0;
+        top: 8px;
+        width: 40px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        .menu-wrapper{
+            display: none;
+            position: relative;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: $dark-button;
+            height: 40px;
+            width: 20px;
+            &:hover {
+                background-color: #3d4049;
+            }
+            .menu{
+                cursor: pointer;
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+}
+
+
+
+.menu-items{
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    width: 200px;
+    .item{
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: 5px;
+        &:hover {
+            background-color: #3d4049;
+        }
+        i{
+            padding: 1rem;
+        }
+        p{
+            padding: 1rem 1rem 1rem 0;
+        }
+    }
+    .expansion{
+        color: white;
+        box-shadow: none;
+        background: transparent;
+        .item{
+            position: relative;
+            p{
+                padding: 0.5rem;
+            }
+        }
+    }
+    .expansion-header, .expansion-title, .expansion-description{
+        color: white;
+    }
+}

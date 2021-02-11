@@ -1,5 +1,9 @@
 import { AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { FullNote } from 'src/app/content/notes/models/fullNote';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
 import { MenuButtonsService } from '../../menu-buttons.service';
 
@@ -12,6 +16,9 @@ import { MenuButtonsService } from '../../menu-buttons.service';
 export class InteractionInnerComponent implements OnInit, AfterViewInit {
 
   user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'];
+
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
 
   @ViewChild('heightPeople') heightPeople: ElementRef;
   @ViewChild('scrollbar') scrollbar: ElementRef;
@@ -28,7 +35,7 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
   }
 
   closeMenu(): void {
-    console.log(this.pService.checkWidth())
+    console.log(this.pService.checkWidth());
     if (this.pService.checkWidth()) {
       this.pService.users = false;
     }

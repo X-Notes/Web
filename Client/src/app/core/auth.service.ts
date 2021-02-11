@@ -38,7 +38,7 @@ export class AuthService {
         const user = this.getUser(firebaseUser);
         this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
       }
-      setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000);
+      setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
     } else {
       await this.logout();
     }

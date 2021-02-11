@@ -1,0 +1,18 @@
+@import 'innerNote';
+
+.number-list{
+    width: 100%;
+    display: flex;
+    .number-container{
+        display: flex;
+        justify-content: center;
+        min-width: 30px;
+        .number{
+            line-height: 25px;
+        }
+    }
+    .text-container{
+        position: relative;
+        width: calc(100% - 30px);
+    }
+}
