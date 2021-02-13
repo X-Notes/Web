@@ -9,7 +9,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { CancelAllSelectedLabels, ClearUpdatelabelEvent } from './state/notes-actions';
+import { CancelAllSelectedLabels, ClearUpdatelabelEvent, SelectIdNote, UnSelectIdNote } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 
@@ -106,6 +106,15 @@ export class NotesService implements OnDestroy {
         this.firstInitedMurri = true;
       }
     });
+  }
+
+  highlightNote(note) {
+    if (!note.isSelected) {
+      const labelsIds = note.labels.map(x => x.id);
+      this.store.dispatch(new SelectIdNote(note.id, labelsIds));
+    } else {
+      this.store.dispatch(new UnSelectIdNote(note.id));
+    }
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,4 @@
-<div #highlightNote class="highlighting-note" (click)="highlight(note.id)"
+<div #highlightNote class="highlighting-note" (click)="highlight(note)"
     [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
     [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''">
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>

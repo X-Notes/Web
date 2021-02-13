@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
 import { Store } from '@ngxs/store';
@@ -19,6 +19,7 @@ export class NoteComponent implements OnInit, OnDestroy {
   fontSize = FontSize;
 
   @Input() note: SmallNote;
+  @Output() highlightNote = new EventEmitter<SmallNote>();
 
   constructor(public pService: PersonalizationService,
               private store: Store,
@@ -33,19 +34,14 @@ export class NoteComponent implements OnInit, OnDestroy {
 
   }
 
-  highlight(id: string) {
-    if (!this.note.isSelected) {
-      const labelsIds = this.note.labels.map(x => x.id);
-      this.store.dispatch(new SelectIdNote(id, labelsIds));
-    } else {
-      this.store.dispatch(new UnSelectIdNote(id));
-    }
+  highlight(note: SmallNote) {
+    this.highlightNote.emit(note);
   }
 
   toNote() {
     const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0 ? true : false;
     if (isSelectedMode) {
-      this.highlight(this.note.id);
+      this.highlight(this.note);
     } else {
       this.router.navigate([`notes/${this.note.id}`]);
     }

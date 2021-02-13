@@ -4,7 +4,6 @@ import { NotesComponent } from './notes/notes.component';
 import { NoteRouting } from './notes-routing';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note/full-note.component';
-import { NoteComponent } from './note/note.component';
 import { PrivatesComponent } from './privates/privates.component';
 import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';

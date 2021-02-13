@@ -74,6 +74,14 @@ export class MurriService  {
     });
   }
 
+  initMurriAllNote(gridItem: string) {
+    const gridElement = document.querySelector('.grid-modal') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+    this.gridSettings(gridItem, gridElement, false);
+  }
+
   initMurriFolder(type: FolderType) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {

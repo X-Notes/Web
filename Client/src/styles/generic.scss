@@ -144,7 +144,7 @@
   }
 }
 
-.grid {
+.grid, .grid-modal {
   opacity: 0;
   transition: 0.1s linear;
   position: relative;
@@ -162,6 +162,14 @@
   position: absolute;
   width: 100%;
   padding-bottom: 1rem;
+  z-index: $grid-item;
+}
+
+
+.grid-modal-item {
+  position: absolute;
+  width: 50%;
+  padding: 0 0.75rem 1.5rem;
   z-index: $grid-item;
 }
 
@@ -439,11 +447,7 @@
       transition-property: left, right;
     }
     .mat-tab-body-wrapper {
-      height: 100%;
-    }
-
-    .mat-tab-body-content {
-      overflow: hidden;
+      flex-grow: 1;
     }
   }
 }
@@ -489,7 +493,7 @@
     }
   }
 
-  .grid-item {
+  .grid-item, .grid-modal-item  {
     width: 100%;
   }
 

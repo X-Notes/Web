@@ -1,14 +1,10 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NotesService } from 'src/app/content/notes/notes.service';
 import { LoadAllExceptNotes, LoadPrivateNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { AppStore } from 'src/app/core/stateApp/app-state';
-import { EntityType } from '../../enums/EntityTypes';
 import { FontSize } from '../../enums/FontSize';
 import { NoteType } from '../../enums/NoteTypes';
 import { MurriService } from '../../services/murri.service';
@@ -19,15 +15,18 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
   templateUrl: './open-inner-side.component.html',
   styleUrls: ['./open-inner-side.component.scss'],
   animations: [ showDropdown ],
-  providers: [ MurriService, NotesService ]
+  providers: [ MurriService ]
 })
-export class OpenInnerSideComponent implements OnInit {
+export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isOpenDropdown = false;
   loaded = false;
   fontSize = FontSize;
   destroy = new Subject<void>();
-  selectTypes = ['All', 'Personal', 'Shared', 'Archive', 'Bin']
+  selectTypes = ['All', 'Personal', 'Shared', 'Archive', 'Bin'];
+  notes = [];
+  firstInitedMurri = false;
+  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
 
   public positions = [
     new ConnectionPositionPair({
@@ -40,42 +39,44 @@ export class OpenInnerSideComponent implements OnInit {
   ];
   constructor(private store: Store,
               public murriService: MurriService,
-              public pService: PersonalizationService,
-              public noteService: NotesService) { }
+              public pService: PersonalizationService) { }
 
-  async ngOnInit(): Promise<void> {
-    await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
-    this.pService.setSpinnerState(true);
-
-    this.store.select(AppStore.getTokenUpdated)
+  ngAfterViewInit(): void {
+    this.refElements.changes
     .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        await this.loadContent();
+    .subscribe(async (z) => {
+      if (z.length === this.notes.length && !this.firstInitedMurri)
+      {
+        this.murriService.initMurriAllNote('.grid-modal-item');
+        await this.murriService.setOpacityTrueAsync();
+        this.firstInitedMurri = true;
       }
-    }
-    );
+    });
+  }
+
+  async ngOnInit() {
+    this.pService.setSpinnerState(true);
+    setTimeout(async () => {
+      await this.loadContent();
+    }, 500);
   }
 
   async loadContent() {
     await this.store.dispatch(new LoadPrivateNotes()).toPromise();
     this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
 
-    let notes = this.store.selectSnapshot(NoteStore.privateNotes);
-    notes = this.noteService.transformNotes(notes);
-    this.noteService.firstInit(notes);
+    // TODO SELECT ALL NOTES
+
+    this.notes = this.store.selectSnapshot(NoteStore.privateNotes);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-    await this.murriService.initMurriNoteAsync(NoteType.Private, false);
-    await this.murriService.setOpacityTrueAsync();
-
-    this.store.select(NoteStore.notesAddingPrivate)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.noteService.addToDom(x));
   }
 
+  highlightNote(note) {
+    console.log(note);
+  }
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
@@ -86,7 +87,7 @@ export class OpenInnerSideComponent implements OnInit {
   }
 
   closeDropdown() {
-    this.isOpenDropdown = false
+    this.isOpenDropdown = false;
   }
 
 }
