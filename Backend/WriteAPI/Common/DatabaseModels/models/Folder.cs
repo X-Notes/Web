@@ -13,7 +13,7 @@ namespace Common.DatabaseModels.models
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
         public User User { set; get; }
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }

@@ -7,7 +7,7 @@ namespace Common.DatabaseModels.models
 {
     public class UsersOnPrivateFolders
     {
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
         public User User { set; get; }
 
         public Guid FolderId { set; get; }

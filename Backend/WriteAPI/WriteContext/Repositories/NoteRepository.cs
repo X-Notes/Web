@@ -78,35 +78,35 @@ namespace WriteContext.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Note>> GetPrivateNotesByUserId(int userId)
+        public async Task<List<Note>> GetPrivateNotesByUserId(Guid userId)
         {
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Private).ToListAsync();
         }
 
-        public async Task<List<Note>> GetSharedNotesByUserId(int userId)
+        public async Task<List<Note>> GetSharedNotesByUserId(Guid userId)
         {
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Shared).ToListAsync();
         }
 
-        public async Task<List<Note>> GetArchiveNotesByUserId(int userId)
+        public async Task<List<Note>> GetArchiveNotesByUserId(Guid userId)
         {
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Archive).ToListAsync();
         }
 
-        public async Task<List<Note>> GetDeletedNotesByUserId(int userId)
+        public async Task<List<Note>> GetDeletedNotesByUserId(Guid userId)
         {
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteType == NotesType.Deleted).ToListAsync();
         }
 
-        public async Task<List<Note>> GetNotesWithLabelsByUserId(int userId)
+        public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)
         {
             return await contextDB.Notes.Include(x => x.LabelsNotes).ThenInclude(x => x.Label).Where(x => x.UserId == userId).ToListAsync();
         }

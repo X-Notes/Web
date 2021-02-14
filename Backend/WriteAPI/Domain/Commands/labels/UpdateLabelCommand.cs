@@ -9,7 +9,7 @@ namespace Domain.Commands.labels
     public class UpdateLabelCommand : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public int Id { set; get; }
+        public Guid Id { set; get; }
         [Required]
         public string Name { set; get; }
         [Required]

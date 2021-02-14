@@ -41,7 +41,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("count/{id}")]
-        public async Task<int> NotesCountByLabel(int id)
+        public async Task<int> NotesCountByLabel(Guid id)
         {
             var command = new GetCountNotesByLabel { LabelId = id };
             command.Email = this.GetUserEmail();
@@ -58,21 +58,21 @@ namespace WriteAPI.Controllers
         }
 
         [HttpDelete("perm/{id}")]
-        public async Task DeletePerm(int id)
+        public async Task DeletePerm(Guid id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new SetDeleteLabelCommand(email, id));
         }
 
         [HttpDelete("{id}")]
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new SetDeletedLabelCommand(email, id));
         }
 
         [HttpGet("restore/{id}")]
-        public async Task RestoreLabel(int id)
+        public async Task RestoreLabel(Guid id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new RestoreLabelCommand(email, id));

@@ -178,25 +178,25 @@ namespace WriteContext.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetPrivateFoldersByUserId(int userId)
+        public async Task<List<Folder>> GetPrivateFoldersByUserId(Guid userId)
         {
             return await contextDB.Folders
                 .Where(x => x.UserId == userId && x.FolderType == FoldersType.Private).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetSharedFoldersByUserId(int userId)
+        public async Task<List<Folder>> GetSharedFoldersByUserId(Guid userId)
         {
             return await contextDB.Folders
                 .Where(x => x.UserId == userId && x.FolderType == FoldersType.Shared).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetArchiveFoldersByUserId(int userId)
+        public async Task<List<Folder>> GetArchiveFoldersByUserId(Guid userId)
         {
             return await contextDB.Folders
                 .Where(x => x.UserId == userId && x.FolderType == FoldersType.Archive).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetDeletedFoldersByUserId(int userId)
+        public async Task<List<Folder>> GetDeletedFoldersByUserId(Guid userId)
         {
             return await contextDB.Folders
                 .Where(x => x.UserId == userId && x.FolderType == FoldersType.Deleted).ToListAsync();

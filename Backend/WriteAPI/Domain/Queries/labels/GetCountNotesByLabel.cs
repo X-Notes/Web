@@ -7,6 +7,6 @@ namespace Domain.Queries.labels
 {
     public class GetCountNotesByLabel : BaseQueryEntity, IRequest<int>
     {
-        public int LabelId { set; get; }
+        public Guid LabelId { set; get; }
     }
 }

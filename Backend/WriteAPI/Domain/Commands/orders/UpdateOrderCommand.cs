@@ -14,6 +14,6 @@ namespace Domain.Commands.orders
         [Required]
         public int Position { set; get; }
         [Required]
-        public string EntityId { set; get; }
+        public Guid EntityId { set; get; }
     }
 }

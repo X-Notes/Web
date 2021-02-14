@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Domain.Commands.labels
 {
-    public class NewLabelCommand : BaseCommandEntity, IRequest<int>
+    public class NewLabelCommand : BaseCommandEntity, IRequest<Guid>
     {
         public NewLabelCommand(string email)
             :base(email)

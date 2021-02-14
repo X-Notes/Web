@@ -119,7 +119,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
             services.AddScoped<IRequestHandler<GetCountNotesByLabel, int>, LabelHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
@@ -193,14 +193,14 @@ namespace WriteAPI.ConfigureAPP
             string writeConnection = Configuration.GetSection("WriteDB").Value;
             Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
-            services.AddTransient<LabelRepository>();
-            services.AddTransient<UserRepository>();
-            services.AddTransient<BackgroundRepository>();
-            services.AddTransient<NoteRepository>();
-            services.AddTransient<FolderRepository>();
-            services.AddTransient<UserOnNoteRepository>();
-            services.AddTransient<UsersOnPrivateNotesRepository>();
-            services.AddTransient<UsersOnPrivateFoldersRepository>();
+            services.AddScoped<LabelRepository>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<BackgroundRepository>();
+            services.AddScoped<NoteRepository>();
+            services.AddScoped<FolderRepository>();
+            services.AddScoped<UserOnNoteRepository>();
+            services.AddScoped<UsersOnPrivateNotesRepository>();
+            services.AddScoped<UsersOnPrivateFoldersRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

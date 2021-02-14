@@ -1,11 +1,12 @@
 ﻿using Common.DatabaseModels.helpers;
+using System;
 using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
 {
     public class User
     {
-        public int Id { set; get; }
+        public Guid Id { set; get; }
         public string Name { set; get; }
         public string Email { set; get; }
         public string PhotoId { set; get; }
@@ -16,7 +17,7 @@ namespace Common.DatabaseModels.models
         public List<Label> Labels { set; get; }
         public List<Backgrounds> Backgrounds { set; get; }
 
-        public int? CurrentBackgroundId { set; get; }
+        public Guid? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
         // public ICollection<RelantionShip> FriendRequestsMade { get; set; }

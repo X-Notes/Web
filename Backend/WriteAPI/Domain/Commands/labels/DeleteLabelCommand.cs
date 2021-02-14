@@ -7,8 +7,8 @@ namespace Domain.Commands.labels
 {
     public class SetDeleteLabelCommand : BaseCommandEntity, IRequest<Unit>
     {
-        public int Id { set; get; }
-        public SetDeleteLabelCommand(string email, int id)
+        public Guid Id { set; get; }
+        public SetDeleteLabelCommand(string email, Guid id)
             :base(email)
         {
             this.Id = id;

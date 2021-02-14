@@ -10,7 +10,7 @@ namespace Domain.Commands.share.notes
     public class SendInvitesToUsersNotes : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public List<int> UserIds { set; get; }
+        public List<Guid> UserIds { set; get; }
         [Required]
         public Guid NoteId { set; get; }
         [Required]

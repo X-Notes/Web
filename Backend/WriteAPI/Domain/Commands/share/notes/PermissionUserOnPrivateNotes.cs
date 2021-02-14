@@ -12,7 +12,7 @@ namespace Domain.Commands.share.notes
         [Required]
         public Guid NoteId { set; get; }
         [Required]
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
         [Required]
         public RefType AccessType { set; get; }
     }

@@ -7,8 +7,8 @@ namespace Domain.Commands.labels
 {
     public class RestoreLabelCommand : BaseCommandEntity, IRequest<Unit>
     {
-        public int Id { set; get; }
-        public RestoreLabelCommand(string email, int id)
+        public Guid Id { set; get; }
+        public RestoreLabelCommand(string email, Guid id)
             : base(email)
         {
             this.Id = id;

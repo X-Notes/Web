@@ -7,8 +7,8 @@ namespace Domain.Commands.backgrounds
 {
     public class UpdateBackgroundCommand : BaseCommandEntity, IRequest<Unit>
     {
-        public int Id { set; get; }
-        public UpdateBackgroundCommand(string email, int id)
+        public Guid Id { set; get; }
+        public UpdateBackgroundCommand(string email, Guid id)
             :base(email)
         {
             this.Id = id;

@@ -28,7 +28,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<UserOnPrivateNotes> GetByUserIdandNoteId(int userId, Guid noteId)
+        public async Task<UserOnPrivateNotes> GetByUserIdandNoteId(Guid userId, Guid noteId)
         {
             return await this.contextDB.UserOnPrivateNotes.FirstOrDefaultAsync(x => x.NoteId == noteId && x.UserId == userId);
         }

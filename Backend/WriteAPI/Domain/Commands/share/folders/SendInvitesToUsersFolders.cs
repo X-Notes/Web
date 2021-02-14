@@ -10,7 +10,7 @@ namespace Domain.Commands.share.folders
     public class SendInvitesToUsersFolders : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public List<int> UserIds { set; get; }
+        public List<Guid> UserIds { set; get; }
         [Required]
         public Guid FolderId { set; get; }
         [Required]

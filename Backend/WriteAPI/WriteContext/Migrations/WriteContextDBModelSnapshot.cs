@@ -15,22 +15,21 @@ namespace WriteContext.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .UseIdentityByDefaultColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.2");
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Path")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -66,8 +65,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -93,10 +92,9 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Color")
                         .HasColumnType("text");
@@ -116,8 +114,8 @@ namespace WriteContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -131,8 +129,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("LabelId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("LabelId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("AddedAt")
                         .HasColumnType("timestamp with time zone");
@@ -171,8 +169,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -183,13 +181,12 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -201,10 +198,9 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<int>("FontSize")
                         .HasColumnType("integer");
@@ -212,8 +208,8 @@ namespace WriteContext.Migrations
                     b.Property<int>("Theme")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -225,13 +221,12 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
-                    b.Property<int?>("CurrentBackgroundId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("CurrentBackgroundId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -261,8 +256,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
@@ -279,8 +274,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessType")
                         .HasColumnType("integer");
@@ -297,8 +292,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("FolderId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessType")
                         .HasColumnType("integer");
@@ -317,6 +312,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
@@ -326,6 +323,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
@@ -341,6 +340,10 @@ namespace WriteContext.Migrations
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("Note");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
@@ -350,6 +353,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.LabelsNotes", b =>
@@ -365,6 +370,10 @@ namespace WriteContext.Migrations
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Label");
+
+                    b.Navigation("Note");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
@@ -374,6 +383,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -383,6 +394,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("Common.DatabaseModels.models.NotificationSetting", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
@@ -392,6 +405,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("Common.DatabaseModels.models.PersonalitionSetting", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
@@ -399,6 +414,8 @@ namespace WriteContext.Migrations
                     b.HasOne("Common.DatabaseModels.models.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
+
+                    b.Navigation("CurrentBackground");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
@@ -414,6 +431,10 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
@@ -429,6 +450,10 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
@@ -444,6 +469,59 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
+                {
+                    b.Navigation("CurrentUserBackground");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
+                {
+                    b.Navigation("FoldersNotes");
+
+                    b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
+                {
+                    b.Navigation("LabelsNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
+                {
+                    b.Navigation("FoldersNotes");
+
+                    b.Navigation("LabelsNotes");
+
+                    b.Navigation("UserOnNotesNow");
+
+                    b.Navigation("UsersOnPrivateNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
+                {
+                    b.Navigation("Backgrounds");
+
+                    b.Navigation("Folders");
+
+                    b.Navigation("Labels");
+
+                    b.Navigation("Notes");
+
+                    b.Navigation("NotificationSettings");
+
+                    b.Navigation("PersonalitionSettings");
+
+                    b.Navigation("UserOnNotes");
+
+                    b.Navigation("UserOnPrivateNotes");
+
+                    b.Navigation("UsersOnPrivateFolders");
                 });
 #pragma warning restore 612, 618
         }

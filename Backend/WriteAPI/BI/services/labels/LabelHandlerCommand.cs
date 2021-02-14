@@ -14,7 +14,7 @@ using WriteContext.Repositories;
 namespace BI.services.labels
 {
     public class LabelHandlerCommand :
-        IRequestHandler<NewLabelCommand, int>,
+        IRequestHandler<NewLabelCommand, Guid>,
         IRequestHandler<SetDeleteLabelCommand, Unit>,
         IRequestHandler<UpdateLabelCommand, Unit>,
         IRequestHandler<SetDeletedLabelCommand, Unit>,
@@ -56,7 +56,7 @@ namespace BI.services.labels
             return Unit.Value;
         }
 
-        public async Task<int> Handle(NewLabelCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
 
