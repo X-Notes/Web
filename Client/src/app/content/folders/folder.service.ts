@@ -117,17 +117,5 @@ export class FolderService implements OnDestroy {
     }
   }
 
-  addToDomAppend(folders: Folder[]) {
-    if (folders.length > 0) {
-      this.folders = [...folders.map(note => { note = { ...note }; return note; }) , ...this.folders];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < folders.length; i++) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, {index: -1, layout: true});
-        }
-      }, 0);
-    }
-  }
 
 }

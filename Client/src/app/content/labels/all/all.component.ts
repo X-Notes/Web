@@ -74,12 +74,9 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
 
-    this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => {
-      this.labelService.labels.unshift(x[0]);
-      setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
-    });
-
+    const labels = this.store.selectSnapshot(LabelStore.all);
+    this.labelService.labels.unshift(labels[0]);
+    setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
   }
 
   async setDelete(label: Label) {

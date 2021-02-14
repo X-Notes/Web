@@ -42,17 +42,4 @@ export class LabelsService implements OnDestroy  {
     this.allLabels = [...labels].map(label => { label = {...label}; return label; });
     this.labels = this.allLabels;
   }
-
-  addToDomAppend(labels: Label[]) {
-    if (labels.length > 0) {
-      this.labels = [...labels.map(note => { note = { ...note }; return note; }) , ...this.labels];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < labels.length; i++) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, {index: -1, layout: true});
-        }
-      }, 0);
-    }
-  }
 }
