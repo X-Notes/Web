@@ -23,8 +23,6 @@ using Domain.Commands.orders;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Commands.users;
-using Domain.Ids;
-using Domain.Models;
 using Domain.Queries.backgrounds;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
@@ -32,8 +30,6 @@ using Domain.Queries.notes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
-using Domain.Repository;
-using Marten;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -41,13 +37,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
-using RabbitMQ.Client;
-using Shared.Queue.Interfaces;
-using Shared.Queue.QueueServices;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WriteAPI.Services;
 using WriteContext;
 using WriteContext.Repositories;
 
@@ -55,44 +47,7 @@ namespace WriteAPI.ConfigureAPP
 {
     public static class ConfigureHelper
     {
-        public static void Queue(this IServiceCollection services, IConfiguration Configuration)
-        {
-            var uri = Configuration.GetSection("Rabbit").Value;
-            services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(x => new RabbitMQ.Client.ConnectionFactory()
-            {
-                Uri = new Uri(uri),
-                RequestedConnectionTimeout = TimeSpan.FromTicks(30000),
-                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
-                AutomaticRecoveryEnabled = true,
-                TopologyRecoveryEnabled = true,
-                RequestedHeartbeat = TimeSpan.FromTicks(60),
-            });
 
-
-            services.AddSingleton<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
-            services.AddSingleton<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
-
-            services.AddSingleton<CommandsPushQueue>();
-            services.AddHostedService<CommandsGetQueue>();
-        }
-        public static void Marten(this IServiceCollection services, IConfiguration Configuration)
-        {
-            var connection = Configuration.GetSection("EventStore").Value;
-            services.AddMarten(opts =>
-            {
-                opts.Connection(connection);
-                opts.AutoCreateSchemaObjects = AutoCreate.All;
-
-                opts.Events.AsyncProjections.AggregateStreamsWith<User>();
-
-                opts.Events.AddEventType(typeof(NewUserCommand));
-                opts.Events.AddEventType(typeof(UpdateMainUserInfoCommand));
-
-            });
-
-            services.AddScoped<IIdGenerator, MartenIdGenerator>();
-            services.AddTransient<IRepository<User>, MartenRepository<User>>();
-        }
         public static void Mediatr(this IServiceCollection services)
         {
             services.AddMediatR(typeof(Startup));

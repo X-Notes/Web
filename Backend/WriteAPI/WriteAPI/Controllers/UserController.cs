@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using Common.DatabaseModels.helpers;
 using Common.DTO.users;
-using Domain;
 using Domain.Commands.users;
-using Domain.Ids;
-using Domain.Models;
 using Domain.Queries.users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
-using WriteAPI.Services;
 
 namespace WriteAPI.Controllers
 {

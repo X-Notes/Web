@@ -54,8 +54,6 @@ namespace WriteAPI
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, IdProvider>();
 
-            //services.Queue(Configuration);
-            services.Marten(Configuration);
             services.Mediatr();
             services.DataBase(Configuration);
             services.BI();
