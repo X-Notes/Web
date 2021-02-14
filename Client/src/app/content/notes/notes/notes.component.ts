@@ -93,7 +93,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
-  filterNotes(id: number) {
+  filterNotes(id: string) {
     const label = this.labelsFilters.find(z => z.label.id === id);
     label.selected = !label.selected;
     this.labelsActive = this.labelsFilters.filter(z => z.selected === true).length > 0;

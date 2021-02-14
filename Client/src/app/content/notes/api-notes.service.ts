@@ -47,7 +47,7 @@ export class ApiServiceNotes {
   }
 
 
-  addLabel(labelId: number, noteIds: string[]) {
+  addLabel(labelId: string, noteIds: string[]) {
     const obj = {
       labelId,
       noteIds
@@ -55,7 +55,7 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/label/add`, obj);
   }
 
-  removeLabel(labelId: number, noteIds: string[]) {
+  removeLabel(labelId: string, noteIds: string[]) {
     const obj = {
       labelId,
       noteIds
@@ -127,7 +127,7 @@ export class ApiServiceNotes {
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/share`, obj);
   }
 
-  sendInvitesToNote(userIds: number[], noteId: string, refType: RefType, sendMessage: boolean, message: string) {
+  sendInvitesToNote(userIds: string[], noteId: string, refType: RefType, sendMessage: boolean, message: string) {
     const obj = {
       userIds,
       noteId,
@@ -138,7 +138,7 @@ export class ApiServiceNotes {
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/invites`, obj);
   }
 
-  removeUserFromPrivateNote(noteId: string, userId: number) {
+  removeUserFromPrivateNote(noteId: string, userId: string) {
     const obj = {
       noteId,
       userId
@@ -146,7 +146,7 @@ export class ApiServiceNotes {
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/remove`, obj);
   }
 
-  changeUserPermission(noteId: string, userId: number, accessType: RefType) {
+  changeUserPermission(noteId: string, userId: string, accessType: RefType) {
     const obj = {
       noteId,
       userId,

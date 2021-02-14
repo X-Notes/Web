@@ -1,7 +1,7 @@
 import { RefType } from 'src/app/core/models/refType';
 
 export interface InvitedUsersToNoteOrFolder {
-    id: number;
+    id: string;
     photoId: string;
     name: string;
     email: string;

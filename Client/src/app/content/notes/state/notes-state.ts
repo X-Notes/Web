@@ -45,7 +45,7 @@ interface NoteState {
     updateLabelsOnNoteEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
-    selectedLabelsFilter: number[];
+    selectedLabelsFilter: string[];
     isCanceled: boolean;
     InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
@@ -213,13 +213,13 @@ export class NoteStore {
     static getNotesByTypeStatic(state: NoteState, type: NoteType) {
         return state.notes.find(x => x.typeNotes === type);
     }
-    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: number[]) {
+    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
         return notes.filter(x => x.labels.some(label => selectedLabelsFilter.some(z => z === label.id))).length;
     }
 
 
     @Selector()
-    static getSelectedLabelFilter(state: NoteState): number[] {
+    static getSelectedLabelFilter(state: NoteState): string[] {
         return state.selectedLabelsFilter;
     }
 

@@ -139,7 +139,7 @@ export class GetInvitedUsersToNote {
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';
-    constructor(public id: string, public labelIds: number[]) { }
+    constructor(public id: string, public labelIds: string[]) { }
 }
 
 export class UnSelectIdNote {
@@ -175,7 +175,7 @@ export class CancelAllSelectedLabels {
 
 export class UpdateSelectLabel {
     static type = '[Notes] Updated selected label';
-    constructor(public id: number) {
+    constructor(public id: string) {
     }
 }
 // FULL NOTE

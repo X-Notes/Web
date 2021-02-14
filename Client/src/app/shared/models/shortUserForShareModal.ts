@@ -1,5 +1,5 @@
 export interface SearchUserForShareModal {
-    id: number;
+    id: string;
     photoId: string;
     name: string;
     email: string;

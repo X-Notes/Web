@@ -163,7 +163,7 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  async UpdateLabelSelected(ids: number[]) {
+  async UpdateLabelSelected(ids: string[]) {
     console.log('ids labels');
     if (ids.length !== 0 && this.firstInitFlag) {
       console.log('in');

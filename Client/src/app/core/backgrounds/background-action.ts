@@ -12,11 +12,11 @@ export class LoadBackgrounds {
 
 export class SetBackground {
     static type = '[Background] Set Background';
-    constructor(public id: number) {}
+    constructor(public id: string) {}
 }
 
 export class RemoveBackground {
     static type = '[Background] Remove Background';
-    constructor(public id: number) {}
+    constructor(public id: string) {}
 }
 

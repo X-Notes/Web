@@ -106,11 +106,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isOpen = false;
   }
 
-  setCurrent(id: number) {
+  setCurrent(id: string) {
     this.store.dispatch(new SetBackground(id));
   }
 
-  removeBackground(id: number) {
+  removeBackground(id: string) {
     this.store.dispatch(new RemoveBackground(id));
     this.store.dispatch(new SetDefaultBackground());
   }

@@ -14,14 +14,14 @@ export class ApiServiceLabels {
   }
 
   new() {
-    return this.httpClient.post<number>(environment.writeAPI + '/api/label', {});
+    return this.httpClient.post<string>(environment.writeAPI + '/api/label', {});
   }
 
-  setDeleted(id: number) {
+  setDeleted(id: string) {
     return this.httpClient.delete(environment.writeAPI + `/api/label/${id}`);
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.httpClient.delete(environment.writeAPI + `/api/label/perm/${id}`);
   }
 
@@ -29,7 +29,7 @@ export class ApiServiceLabels {
     return this.httpClient.put(environment.writeAPI + `/api/label`, label);
   }
 
-  restore(id: number) {
+  restore(id: string) {
     return this.httpClient.get(environment.writeAPI + `/api/label/restore/${id}`);
   }
 
@@ -37,7 +37,7 @@ export class ApiServiceLabels {
     return this.httpClient.delete(environment.writeAPI + `/api/label`);
   }
 
-  getCountNotes(labelId: number) {
+  getCountNotes(labelId: string) {
     return this.httpClient.get<number>(environment.writeAPI + `/api/label/count/${labelId}`);
   }
 

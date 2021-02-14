@@ -105,7 +105,7 @@ export class MurriService  {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionLabel(deleted, parseInt(order.entityId, 10), order));
+      this.store.dispatch(new PositionLabel(deleted, order.entityId, order));
     });
   }
 

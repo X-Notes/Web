@@ -50,7 +50,7 @@ export class ApiFoldersService {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(environment.writeAPI + `/api/share/folders/user/invites/${id}`);
   }
 
-  changeUserPermission(folderId: string, userId: number, accessType: RefType) {
+  changeUserPermission(folderId: string, userId: string, accessType: RefType) {
     const obj = {
       folderId,
       userId,
@@ -59,7 +59,7 @@ export class ApiFoldersService {
     return this.httpClient.post(environment.writeAPI + `/api/share/folders/user/permission`, obj);
   }
 
-  sendInvitesToFolder(userIds: number[], folderId: string, refType: RefType, sendMessage: boolean, message: string) {
+  sendInvitesToFolder(userIds: string[], folderId: string, refType: RefType, sendMessage: boolean, message: string) {
     const obj = {
       userIds,
       folderId,
@@ -70,7 +70,7 @@ export class ApiFoldersService {
     return this.httpClient.post(environment.writeAPI + `/api/share/folders/user/invites`, obj);
   }
 
-  removeUserFromPrivateFolder(folderId: string, userId: number) {
+  removeUserFromPrivateFolder(folderId: string, userId: string) {
     const obj = {
       folderId,
       userId

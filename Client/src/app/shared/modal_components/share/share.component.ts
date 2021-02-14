@@ -396,7 +396,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.searchUsers.unshift(user);
   }
 
-  async removeUserWithPermissions(userId: number) {
+  async removeUserWithPermissions(userId: string) {
     switch (this.currentWindowType) {
       case SharedType.Folder: {
         await this.apiFolder.removeUserFromPrivateFolder(this.currentFolder.id, userId).toPromise();
@@ -411,7 +411,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
   }
 
-  async changeUserPermission(refType: RefType, id: number) {
+  async changeUserPermission(refType: RefType, id: string) {
     switch (this.currentWindowType) {
       case SharedType.Folder: {
         await this.apiFolder.changeUserPermission(this.currentFolder.id, id, refType).toPromise();
