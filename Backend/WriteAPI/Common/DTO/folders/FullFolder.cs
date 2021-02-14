@@ -7,7 +7,7 @@ namespace Common.DTO.folders
 {
     public class FullFolder
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { set; get; }
         public string Color { set; get; }
         public FoldersType FolderType { set; get; }
