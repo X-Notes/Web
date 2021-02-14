@@ -49,7 +49,7 @@ import { TransformContent } from '../models/transform-content';
     deleteSmallNote,
     showHistory],
   providers: [NotesService, FullNoteContentService,
-    ContentEditableService, FullNoteSliderService]
+    ContentEditableService, FullNoteSliderService, MurriService]
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 

@@ -184,14 +184,13 @@ export class NotesService implements OnDestroy {
   addToDom(notes: SmallNote[]) {
     if (notes.length > 0) {
       this.notes = [...notes.map(note => { note = { ...note }; return note; }).reverse(), ...this.notes];
-      const set = setTimeout(() => {
+      setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
-
         for (let i = 0; i < notes.length; i++) {
           const el = DOMnodes[i];
           this.murriService.grid.add(el, { index: 0, layout: true });
         }
-      }, 1000);
+      }, 0);
     }
   }
 
