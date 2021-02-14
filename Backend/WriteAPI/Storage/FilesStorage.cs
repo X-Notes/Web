@@ -9,9 +9,8 @@ namespace Storage
 {
     public class FilesStorage : IFilesStorage
     {
-        private string root = "UserFiles";
+        private string root = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent + "\\" + "UserFiles";
         private List<string> folders;
-        DirectoryInfo rootFilesDirectory = new DirectoryInfo(Environment.CurrentDirectory).Parent;
         public FilesStorage()
         {
             folders = new List<string>()
@@ -25,19 +24,21 @@ namespace Storage
 
         public void CreateIfMissing()
         {
-            var directory = rootFilesDirectory.FullName + root;
-            bool folderExists = Directory.Exists(directory);
+            bool folderExists = Directory.Exists(root);
             if (!folderExists)
-                Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(root);
         }
 
 
         public void CreateUserFolders(Guid userId)
         {
-            foreach (var folder in folders)
+            var userDirectory = root + "\\" + userId;
+            Directory.CreateDirectory(userDirectory);
+
+            foreach (var folderName in folders)
             {
-                var path = root + userId + folder;
-                DirectoryInfo di = Directory.CreateDirectory(path);
+                var path = userDirectory + "\\" + folderName;
+                Directory.CreateDirectory(path);
             }
         }
 

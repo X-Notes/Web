@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.Filters;
+using WriteAPI.Hosted;
 
 namespace WriteAPI
 {
@@ -57,6 +58,9 @@ namespace WriteAPI
             services.Mediatr();
             services.DataBase(Configuration);
             services.BI();
+
+            services.AddHostedService<StartAppHosted>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
