@@ -7,6 +7,7 @@ using Domain.Commands.users;
 using MediatR;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,11 +28,17 @@ namespace BI.services.user
         private readonly UserRepository userRepository;
         private readonly IMapper imapper;
         private readonly PhotoHelpers photoHelpers;
-        public UserHandlerСommand(UserRepository userRepository, IMapper imapper, PhotoHelpers photoHelpers)
+        private readonly IFilesStorage filesStorage;
+        public UserHandlerСommand(
+            UserRepository userRepository, 
+            IMapper imapper, 
+            PhotoHelpers photoHelpers, 
+            IFilesStorage filesStorage)
         {
             this.userRepository = userRepository;
             this.imapper = imapper;
             this.photoHelpers = photoHelpers;
+            this.filesStorage = filesStorage;
         }
 
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
@@ -43,6 +50,9 @@ namespace BI.services.user
                 FontSize = FontSize.Medium,
             };
             await userRepository.Add(user);
+
+            filesStorage.CreateUserFolders(user.Id);
+
             return Unit.Value;
         }
 

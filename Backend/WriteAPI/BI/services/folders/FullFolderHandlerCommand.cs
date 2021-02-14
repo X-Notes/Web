@@ -38,7 +38,6 @@ namespace BI.services.folders
                                 case RefType.Editor:
                                     {
                                         throw new Exception("No implimented");
-                                        break;
                                     }
                                 case RefType.Viewer:
                                     {

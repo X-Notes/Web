@@ -75,6 +75,7 @@ namespace WriteContext.Repositories
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.UsersOnPrivateNotes)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 

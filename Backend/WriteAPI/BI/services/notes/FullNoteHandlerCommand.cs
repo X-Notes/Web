@@ -37,7 +37,6 @@ namespace BI.services.notes
                                 case RefType.Editor:
                                     {
                                         throw new Exception("No implimented");
-                                        break;
                                     }
                                 case RefType.Viewer:
                                     {

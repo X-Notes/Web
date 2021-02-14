@@ -37,6 +37,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using Storage;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -193,6 +194,8 @@ namespace WriteAPI.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<PhotoHelpers>();
+
+            services.AddScoped<IFilesStorage, FilesStorage>();
         }
     }
 }

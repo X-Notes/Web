@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Storage
 {
-    public interface IFilesStorage
+    public interface IFilesStorage : IDisposable
     {
+        public void CreateUserFolders(Guid userId);
+        public void CreateIfMissing();
     }
 }
