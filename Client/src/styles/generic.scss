@@ -332,11 +332,6 @@
     padding: 0 1rem;
     cursor: pointer;
 
-    .icon {
-      display: flex;
-      transition: 0.2s ease;
-    }
-
     p {
       font-weight: 500;
     }
@@ -347,7 +342,7 @@
       z-index: 5;
     }
   }
-}
+} // TODO remove this shit
 
 .separator-buttons {
   height: 20px;

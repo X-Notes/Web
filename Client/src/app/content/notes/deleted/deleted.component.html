@@ -1,6 +1,10 @@
 <div *ngIf="loaded" class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
     <div  #item class="grid-item" id="{{item.id}}" *ngFor="let item of noteService.notes"
         [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
-        <app-note [note]="item" (highlightNote)="noteService.highlightNote($event)" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
+        <app-note [note]="item"
+            (highlightNote)="noteService.highlightNote($event)"
+            [ngStyle]="{'backgroundColor': item.color }"
+            (clickOnNote)="noteService.toNote($event)"
+            class="note"></app-note>
     </div>
 </div>

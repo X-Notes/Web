@@ -1,5 +1,6 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,29 +20,25 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
 })
 export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  isOpenDropdown = false;
   loaded = false;
   fontSize = FontSize;
   destroy = new Subject<void>();
-  selectTypes = ['All', 'Personal', 'Shared', 'Archive', 'Bin'];
+  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
+  selectedNotes = [];
   notes = [];
   firstInitedMurri = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
+  @ViewChild('wrapperChips') wrapperChips: ElementRef;
+  @ViewChild('filterRow') filterRow: ElementRef;
+  @ViewChild('scrollbar') scrollbar: ElementRef;
 
-  public positions = [
-    new ConnectionPositionPair({
-        originX: 'end',
-        originY: 'bottom'},
-        {overlayX: 'end',
-        overlayY: 'top'},
-        0,
-        1)
-  ];
   constructor(private store: Store,
               public murriService: MurriService,
-              public pService: PersonalizationService) { }
+              public pService: PersonalizationService,
+              public dialogRef: MatDialogRef<OpenInnerSideComponent>,
+              public renderer: Renderer2) { }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     this.refElements.changes
     .pipe(takeUntil(this.destroy))
     .subscribe(async (z) => {
@@ -52,13 +49,16 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
         this.firstInitedMurri = true;
       }
     });
+    this.renderer.setStyle(this.scrollbar.nativeElement, 'height',
+      'calc(100% - ' + ' - 24px -' + this.filterRow.nativeElement.offsetHeight + this.wrapperChips.nativeElement.offsetHeight + 'px)');
   }
 
-  async ngOnInit() {
+   ngOnInit() {
     this.pService.setSpinnerState(true);
-    setTimeout(async () => {
-      await this.loadContent();
-    }, 500);
+    this.dialogRef.afterOpened().pipe(takeUntil(this.destroy))
+    .subscribe(async () => {
+      this.loadContent();
+    });
   }
 
   async loadContent() {
@@ -76,6 +76,11 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   highlightNote(note) {
     console.log(note);
+    this.selectedNotes.push(note);
+  }
+
+  unSelectNote(note) {
+    this.selectedNotes = this.selectedNotes.filter(x => x.id !== note.id);
   }
 
   ngOnDestroy(): void {
@@ -86,8 +91,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     this.store.dispatch(new UnSelectAllNote());
   }
 
-  closeDropdown() {
-    this.isOpenDropdown = false;
+  selectItem(item) {
+    console.log(item);
   }
-
 }

@@ -12,11 +12,13 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { CancelAllSelectedLabels, ClearUpdatelabelEvent, SelectIdNote, UnSelectIdNote } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class NotesService implements OnDestroy {
   constructor(public pService: PersonalizationService, private store: Store,
-              private murriService: MurriService) {
+              private murriService: MurriService,
+              private router: Router) {
 
     this.store.select(NoteStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -114,6 +116,15 @@ export class NotesService implements OnDestroy {
       this.store.dispatch(new SelectIdNote(note.id, labelsIds));
     } else {
       this.store.dispatch(new UnSelectIdNote(note.id));
+    }
+  }
+
+  toNote(note) {
+    const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0 ? true : false;
+    if (isSelectedMode) {
+      this.highlightNote(note);
+    } else {
+      this.router.navigate([`notes/${note.id}`]);
     }
   }
 

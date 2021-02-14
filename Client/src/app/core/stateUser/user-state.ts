@@ -66,7 +66,7 @@ export class UserStore {
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
-            user.photoId = await this.api.getImageFromGoogle(user.photoId);
+            user.photoId =  null; // TODO getImageFromGoogle
             userdb = await this.api.newUser(user).toPromise();
         }
         dispatch(new SetToken(token));

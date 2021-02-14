@@ -32,6 +32,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SelectComponent } from './custom-components/select/select.component';
+import { ChipComponent } from './custom-components/chip/chip.component';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -44,7 +46,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     SearchComponent,
     OpenInnerSideComponent,
     NoteComponent,
-    PopupFullNoteComponent
+    PopupFullNoteComponent,
+    SelectComponent,
+    ChipComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,

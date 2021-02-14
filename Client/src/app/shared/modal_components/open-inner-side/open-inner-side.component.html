@@ -6,36 +6,23 @@
     <div class="dialog-content" mat-dialog-content>
         <mat-tab-group class="tabs" mat-align-tabs="start">
             <mat-tab label="Notes">
-                <div class="filter-row">
+                <div #filterRow class="filter-row">
                     <app-search class="search"></app-search>
-                    <button
-                        class="dropdown-button" type="button"
-                        cdkOverlayOrigin
-                        #dropdown1
-                        #origin="cdkOverlayOrigin"
-                        (click)="isOpenDropdown = !isOpenDropdown">
-                        <div class="content-button" #dropdownSelect>
-                            <p>Personal</p>
-                            <div class="icon" [ngStyle]="{'transform': isOpenDropdown ? 'rotate(180deg)' : '' }">
-                                <i class="icon-select-label"></i>
-                            </div>
-                        </div>
-                        <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                    </button>
-                    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-                                [cdkConnectedOverlayOpen]="isOpenDropdown"
-                                [cdkConnectedOverlayHasBackdrop]="true"
-                                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                [cdkConnectedOverlayPositions]="positions"
-                                (backdropClick)="closeDropdown()">
-                        <div class="dropdown" [@showDropdown] [style.width.px]="dropdown1.offsetWidth">
-                            <div *ngFor="let item of selectTypes" class="item">
-                                <p>{{ item }}</p>
-                            </div>
-                        </div>
-                    </ng-template>
+                    <app-select class="select"
+                        [array]="selectTypes"
+                        [selectedItem]="'all'"
+                        [translateItem]="'subMenu'"
+                        (changeItem)="selectItem($event)"></app-select>
+                </div>
+                <div #wrapperChips class="wrapper-chips">
+                    <app-chip *ngFor="let item of selectedNotes"
+                        [color]="item.color"
+                        [text]="item.title"
+                        [isRemovable]="true"
+                        (remove)="unSelectNote(item)"></app-chip>
                 </div>
                 <ng-scrollbar
+                    #scrollbar
                     class="content-scroll"
                     [visibility]="'hover'"
                     [appearance]="'compact'">
