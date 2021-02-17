@@ -60,21 +60,6 @@ namespace BI.services.user
 
             filesStorage.CreateUserFolders(user.Id);
 
-            if(request.Photo != null)
-            {
-                try
-                {
-                    var photoType = photoHelpers.GetPhotoType(request.Photo);
-                    var getContentString = filesStorage.GetValueFromDictionary(ContentTypes.Images);
-                    var pathToCreatedFile = await filesStorage.SaveUserFile(request.Photo, user.Id, getContentString, photoType);
-                    var file = new AppFile { Path = pathToCreatedFile, Type = request.Photo.ContentType };
-                    await userRepository.UpdatePhoto(user, file);
-                }catch(Exception e)
-                {
-                    Console.WriteLine("Photo not saved");
-                }
-            }
-
             return Unit.Value;
         }
 

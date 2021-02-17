@@ -68,9 +68,11 @@ export class UserAPIService {
     return this.httpClient.post<AnswerChangePhoto>(environment.writeAPI + '/api/user/photo', photo);
   }
 
-  async getImageFromGoogle(imageUrl): Promise<string> {
+  async getImageFromGoogle(imageUrl): Promise<FormData> {
     const imageBlob = await this.httpClient.get(imageUrl, { responseType: 'blob' }).toPromise();
-    return this.getBase64FromBlob(imageBlob);
+    const form = new FormData();
+    form.append('Photo', imageBlob);
+    return form;
   }
 
   private async getBase64FromBlob(blob: Blob) {

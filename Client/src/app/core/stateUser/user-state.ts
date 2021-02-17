@@ -67,6 +67,7 @@ export class UserStore {
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
             userdb = await this.api.newUser(user).toPromise();
+            dispatch(new UpdateUserPhoto(user.photo));
         }
         dispatch(new SetToken(token));
         setState({ user: userdb, isLogin: true});

@@ -11,7 +11,6 @@ namespace Domain.Commands.users
     {
         [Required]
         public string Name { set; get; }
-        public IFormFile Photo { set; get; }
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
         public Language Language { set; get; }

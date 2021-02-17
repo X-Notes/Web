@@ -19,7 +19,7 @@ export class AuthService {
     private router: Router,
     private store: Store,
     private api: UserAPIService) {
-      this.afAuth.authState.subscribe(async (firebaseUser) => {
+    this.afAuth.authState.subscribe(async (firebaseUser) => {
       await this.configureAuthState(firebaseUser);
     });
   }
@@ -36,7 +36,13 @@ export class AuthService {
       const flag = this.store.selectSnapshot(UserStore.getStatus);
       if (!flag) {
         const user = this.getUser(firebaseUser);
-        this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
+        try {
+          user.photo = await this.api.getImageFromGoogle(firebaseUser.photoURL);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
+        }
       }
       setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
     } else {
@@ -53,7 +59,7 @@ export class AuthService {
   private getUser(user: firebase.default.User) {
     const temp: User = {
       name: user.displayName,
-      photoId: user.photoURL,
+      photo: null,
       language: Language.UA
     };
     return temp;
