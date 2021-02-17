@@ -66,7 +66,6 @@ export class UserStore {
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
-            user.photoId = await this.api.getImageFromGoogle(user.photoId);
             userdb = await this.api.newUser(user).toPromise();
         }
         dispatch(new SetToken(token));
@@ -137,10 +136,9 @@ export class UserStore {
 
     @Action(UpdateUserPhoto)
     async updateUserPhoto({ patchState, getState }: StateContext<UserState>, {photo}: UpdateUserPhoto) {
-        let newPhoto = await this.api.updateUserPhoto(photo).toPromise();
-        newPhoto = newPhoto.url;
+        const newPhoto = await this.api.updateUserPhoto(photo).toPromise();
         patchState({
-            user: {...getState().user, photoId: newPhoto}
+            user: {...getState().user, photoId: newPhoto.id}
         });
     }
 }

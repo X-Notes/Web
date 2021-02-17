@@ -29,10 +29,9 @@ namespace WriteAPI.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ShortUser> Authorize(NewUser user)
+        public async Task<ShortUser> Authorize(NewUserCommand command)
         {
             var currentUserEmail = this.GetUserEmail();
-            var command = mapper.Map<NewUserCommand>(user);
             command.Email = currentUserEmail;
             await _mediator.Send(command);
             return await _mediator.Send(new GetShortUser(currentUserEmail));
@@ -56,7 +55,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("photo")]
-        public async Task<JObject> ChangeProfilePhoto(IFormFile photo)
+        public async Task<AnswerChangeUserPhoto> ChangeProfilePhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new UpdatePhotoCommand(photo, email));

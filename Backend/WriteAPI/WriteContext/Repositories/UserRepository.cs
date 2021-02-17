@@ -68,6 +68,32 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
+        public async Task<bool> UpdatePhoto(User user, AppFile file)
+        {
+            var success = true;
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await contextDB.Files.AddAsync(file);
+                    await contextDB.SaveChangesAsync();
+
+                    user.PhotoId = file.Id;
+                    await Update(user);
+
+                    await transaction.CommitAsync();
+
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    success = false;
+                }
+            }
+            return success;
+        }
+
+
 
         public async Task<bool> IsUserNote(string email, Guid noteId)
         {

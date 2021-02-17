@@ -6,6 +6,7 @@ import { ShortUser } from './models/short-user';
 import { Theme } from '../shared/enums/Theme';
 import { FontSize } from '../shared/enums/FontSize';
 import { Language } from '../shared/enums/Language';
+import { AnswerChangePhoto } from './models/asnwer-change-photo';
 
 export interface Token {
   token: string;
@@ -64,7 +65,7 @@ export class UserAPIService {
   }
 
   updateUserPhoto(photo: FormData) {
-    return this.httpClient.post<any>(environment.writeAPI + '/api/user/photo', photo);
+    return this.httpClient.post<AnswerChangePhoto>(environment.writeAPI + '/api/user/photo', photo);
   }
 
   async getImageFromGoogle(imageUrl): Promise<string> {

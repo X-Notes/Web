@@ -16,7 +16,7 @@ namespace WriteContext
         public DbSet<Note> Notes { set; get; }
         public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
-
+        public DbSet<AppFile> Files { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }

@@ -32,6 +32,15 @@ namespace WriteAPI.Controllers
             command.Email = email;
             await this._mediator.Send(command);
         }
+
+        [HttpPost("images")]
+        public async Task UploadImages(UploadImageToNoteCommand command)
+        {
+            var email = this.GetUserEmail();
+            command.Email = email;
+            await this._mediator.Send(command);
+        }
+
     }
 
 }

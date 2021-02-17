@@ -8,13 +8,25 @@ namespace WriteContext.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Path = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
-                    PhotoId = table.Column<string>(type: "text", nullable: true),
+                    PhotoId = table.Column<Guid>(type: "uuid", nullable: true),
                     PersonalKey = table.Column<string>(type: "text", nullable: true),
                     Language = table.Column<int>(type: "integer", nullable: false),
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true)
@@ -22,6 +34,12 @@ namespace WriteContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Files_PhotoId",
+                        column: x => x.PhotoId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -343,6 +361,12 @@ namespace WriteContext.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_PhotoId",
+                table: "Users",
+                column: "PhotoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UsersOnPrivateFolders_UserId",
                 table: "UsersOnPrivateFolders",
                 column: "UserId");
@@ -397,6 +421,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "Backgrounds");
+
+            migrationBuilder.DropTable(
+                name: "Files");
         }
     }
 }

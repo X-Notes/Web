@@ -23,7 +23,7 @@ namespace WriteContext.Repositories
 
         public async Task Add(Backgrounds background)
         {
-            await contextDB.AddAsync(background);
+            await contextDB.Backgrounds.AddAsync(background);
             await contextDB.SaveChangesAsync();
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,8 @@ namespace Storage
     {
         public void CreateUserFolders(Guid userId);
         public void CreateIfMissing();
+        Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd);
+        string GetValueFromDictionary(ContentTypes type);
+        void RemoveFile(string path);
     }
 }

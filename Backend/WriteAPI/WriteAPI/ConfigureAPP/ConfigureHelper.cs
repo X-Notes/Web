@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using BI.services;
 using BI.services.backgrounds;
+using BI.services.files;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
@@ -8,6 +9,7 @@ using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using Common.DTO.backgrounds;
+using Common.DTO.files;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -24,6 +26,7 @@ using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Commands.users;
 using Domain.Queries.backgrounds;
+using Domain.Queries.files;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
@@ -58,7 +61,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, JObject>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, AnswerChangeUserPhoto>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
@@ -104,6 +107,7 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
@@ -143,6 +147,9 @@ namespace WriteAPI.ConfigureAPP
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
+
+            //Files
+            services.AddScoped<IRequestHandler<GetBytesPhotoById, FilesBytes>, FilesHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -157,6 +164,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UserOnNoteRepository>();
             services.AddScoped<UsersOnPrivateNotesRepository>();
             services.AddScoped<UsersOnPrivateFoldersRepository>();
+            services.AddScoped<FileRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

@@ -4,7 +4,7 @@
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
                 <div class="photo">
-                    <img alt="photo" [src]="(user$ | async).photoId">
+                    <img alt="photo" [src]="(user$ | async).photoId | getImage">
                 </div>
                 <p>{{(user$ | async).name}}</p>
             </div>

@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210214175341_init")]
-    partial class init
+    [Migration("20210217203244_add-file-type")]
+    partial class addfiletype
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,23 @@ namespace WriteContext.Migrations
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.2");
+
+            modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+                });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
                 {
@@ -242,8 +259,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("PersonalKey")
                         .HasColumnType("text");
 
-                    b.Property<string>("PhotoId")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("PhotoId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -251,6 +268,9 @@ namespace WriteContext.Migrations
                         .IsUnique();
 
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("PhotoId")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -417,7 +437,13 @@ namespace WriteContext.Migrations
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
 
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "Photo")
+                        .WithOne("User")
+                        .HasForeignKey("Common.DatabaseModels.models.User", "PhotoId");
+
                     b.Navigation("CurrentBackground");
+
+                    b.Navigation("Photo");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
@@ -474,6 +500,11 @@ namespace WriteContext.Migrations
 
                     b.Navigation("Folder");
 
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
+                {
                     b.Navigation("User");
                 });
 

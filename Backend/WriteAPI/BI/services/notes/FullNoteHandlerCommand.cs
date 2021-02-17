@@ -12,7 +12,8 @@ using WriteContext.Repositories;
 namespace BI.services.notes
 {
     public class FullNoteHandlerCommand :
-        IRequestHandler<UpdateTitleNoteCommand, Unit>
+        IRequestHandler<UpdateTitleNoteCommand, Unit>,
+        IRequestHandler<UploadImageToNoteCommand, Unit>
     {
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
@@ -69,6 +70,12 @@ namespace BI.services.notes
                         }
                 }
             }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(UploadImageToNoteCommand request, CancellationToken cancellationToken)
+        {
+            Console.WriteLine("TODO");
             return Unit.Value;
         }
     }

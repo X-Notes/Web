@@ -29,6 +29,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SearchComponent } from './modal_components/search/search.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { GetImagePipe } from './pipes/get-image.pipe';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -39,7 +40,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     SharingLinkPipe,
     ScrollControlDirective,
     PopupFullNoteComponent,
-    SearchComponent
+    SearchComponent,
+    GetImagePipe
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
@@ -57,7 +59,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    GetImagePipe
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

@@ -42,5 +42,24 @@ namespace BI.helpers
             }
             return base64;
         }
+
+        public string GetPhotoType(IFormFile file)
+        {
+            switch (file.ContentType.ToString())
+            {
+                case "image/png":
+                    {
+                        return ".png";
+                    }
+                case "image/jpeg":
+                    {
+                        return ".jpg";
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect photo type");
+                    }
+            }
+        }
     }
 }

@@ -9,7 +9,10 @@ namespace Common.DatabaseModels.models
         public Guid Id { set; get; }
         public string Name { set; get; }
         public string Email { set; get; }
-        public string PhotoId { set; get; }
+
+        public Guid? PhotoId { set; get; }
+        public AppFile Photo { set; get; }
+
         public string PersonalKey { set; get; }
         public Language Language { set; get; }
         public NotificationSetting NotificationSettings { set; get; }
@@ -20,9 +23,6 @@ namespace Common.DatabaseModels.models
         public Guid? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
-        // public ICollection<RelantionShip> FriendRequestsMade { get; set; }
-
-        // public ICollection<RelantionShip> FriendRequestsAccepted { get; set; }
 
         public List<Folder> Folders { set; get; }
         public List<Note> Notes { set; get; }
