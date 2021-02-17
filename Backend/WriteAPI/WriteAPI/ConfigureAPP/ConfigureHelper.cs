@@ -149,7 +149,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
 
             //Files
-            services.AddScoped<IRequestHandler<GetBytesPhotoById, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetBytesUserPhotoById, FilesBytes>, FilesHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {

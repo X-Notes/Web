@@ -12,14 +12,14 @@ using WriteContext.Repositories;
 namespace BI.services.files
 {
     public class FilesHandlerQuery :
-        IRequestHandler<GetBytesPhotoById, FilesBytes>
+        IRequestHandler<GetBytesUserPhotoById, FilesBytes>
     {
         private readonly FileRepository fileRepository;
         public FilesHandlerQuery(FileRepository fileRepository)
         {
             this.fileRepository = fileRepository;
         }
-        public async Task<FilesBytes> Handle(GetBytesPhotoById request, CancellationToken cancellationToken)
+        public async Task<FilesBytes> Handle(GetBytesUserPhotoById request, CancellationToken cancellationToken)
         {
             var file = await fileRepository.GetFileById(request.Id);
             if(file != null)

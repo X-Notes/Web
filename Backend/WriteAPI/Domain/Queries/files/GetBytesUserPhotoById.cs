@@ -4,10 +4,10 @@ using System;
 
 namespace Domain.Queries.files
 {
-    public class GetBytesPhotoById : BaseQueryEntity, IRequest<FilesBytes>
+    public class GetBytesUserPhotoById : BaseQueryEntity, IRequest<FilesBytes>
     {
         public Guid Id { set; get; }
-        public GetBytesPhotoById(Guid Id)
+        public GetBytesUserPhotoById(Guid Id)
         {
             this.Id = Id;
         }

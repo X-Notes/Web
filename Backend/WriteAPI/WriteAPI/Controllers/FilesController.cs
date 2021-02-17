@@ -23,7 +23,7 @@ namespace WriteAPI.Controllers
         [HttpGet("user/image/{id}")]
         public async Task<IActionResult> GetPhotoByUrl(Guid id)
         {
-            var bytes = await _mediator.Send(new GetBytesPhotoById(id));
+            var bytes = await _mediator.Send(new GetBytesUserPhotoById(id));
             if (bytes != null)
             {
                 return File(bytes.Bytes, bytes.Type);
