@@ -1,6 +1,8 @@
 <div class="outer" [routerLink]="['/folders/', folder.id]"
-    [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"></div>
-<div class="folder" [ngStyle]="{'backgroundColor': folder.color}">
+    [ngStyle]="{'backgroundColor': shadeColor(folder.color, -10) }"
+    [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-outer' : ''"></div>
+<div class="folder" [ngStyle]="{'backgroundColor': folder.color}"
+    [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''">
     <div class="highligt" (click)="highlight(folder.id)"
         [ngStyle]="{'backgroundColor': folder.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }" #highlightFolder>
         <div class="ripple-container" matRipple [matRippleTrigger]="highlightFolder"></div>
