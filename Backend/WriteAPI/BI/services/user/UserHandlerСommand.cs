@@ -31,23 +31,28 @@ namespace BI.services.user
 
         private readonly PhotoHelpers photoHelpers;
         private readonly IFilesStorage filesStorage;
+        private readonly AppRepository appRepository;
         public UserHandlerСommand(
             UserRepository userRepository, 
             PhotoHelpers photoHelpers, 
             IFilesStorage filesStorage,
-            FileRepository fileRepository)
+            FileRepository fileRepository,
+            AppRepository appRepository)
         {
             this.userRepository = userRepository;
             this.photoHelpers = photoHelpers;
             this.filesStorage = filesStorage;
             this.fileRepository = fileRepository;
+            this.appRepository = appRepository;
         }
 
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
+            var language = await appRepository.GetLanguageByName("English");
+
             var user = new User() { 
                 Name = request.Name, 
-                Language = request.Language,
+                LanguageId = language.Id,
                 Email = request.Email
             };
 
@@ -56,6 +61,7 @@ namespace BI.services.user
                 Theme = Theme.Dark,
                 FontSize = FontSize.Medium,
             };
+
             await userRepository.Add(user);
 
             filesStorage.CreateUserFolders(user.Id);
@@ -101,7 +107,7 @@ namespace BI.services.user
         public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-            user.Language = request.Language;
+            user.LanguageId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
         }

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from './core/stateUser/user-state';
-import { Language } from './shared/enums/Language';
+import { LanguageDTO } from './shared/enums/Language';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -24,9 +24,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (lang) => {
         if (lang) {
-          await this.translateService.use(lang).toPromise();
+          await this.translateService.use(lang.name).toPromise();
         } else {
-          await this.translateService.use(Language.EN).toPromise();
+          await this.translateService.use('English').toPromise();
         }
       });
   }

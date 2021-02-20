@@ -5,7 +5,7 @@ import { User } from './models/user';
 import { ShortUser } from './models/short-user';
 import { Theme } from '../shared/enums/Theme';
 import { FontSize } from '../shared/enums/FontSize';
-import { Language } from '../shared/enums/Language';
+import { LanguageDTO } from '../shared/enums/Language';
 import { AnswerChangePhoto } from './models/asnwer-change-photo';
 
 export interface Token {
@@ -50,9 +50,9 @@ export class UserAPIService {
     return this.httpClient.post(environment.writeAPI + '/api/user/font' , obj);
   }
 
-  changeLanguage(language: Language) {
+  changeLanguage(language: LanguageDTO) {
     const obj = {
-      language
+      Id: language.id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/language' , obj);
   }

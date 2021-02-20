@@ -1,4 +1,6 @@
 ﻿using Common.DatabaseModels.helpers;
+using Common.DatabaseModels.models;
+using Common.DTO.app;
 using Common.DTO.backgrounds;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -14,8 +16,7 @@ namespace Common.DTO.users
         public string Email { set; get; }
         public string PhotoId { set; get; }
         public BackgroundDTO CurrentBackground { set; get; }
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Language Language { set; get; }
+        public LanguageDTO Language { set; get; }
         public Theme Theme { set; get; }
         public FontSize FontSize { set; get; }
     }

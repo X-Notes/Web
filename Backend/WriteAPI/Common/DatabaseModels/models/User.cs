@@ -14,7 +14,10 @@ namespace Common.DatabaseModels.models
         public AppFile Photo { set; get; }
 
         public string PersonalKey { set; get; }
+
+        public Guid LanguageId { set; get; }
         public Language Language { set; get; }
+
         public NotificationSetting NotificationSettings { set; get; }
         public PersonalitionSetting PersonalitionSettings { set; get; }
         public List<Label> Labels { set; get; }

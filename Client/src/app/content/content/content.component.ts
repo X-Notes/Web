@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
+import { LoadLanguages } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-content',
@@ -26,6 +27,7 @@ export class ContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.store.dispatch(LoadLanguages);
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {

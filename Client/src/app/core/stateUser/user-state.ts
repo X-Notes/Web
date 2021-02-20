@@ -7,7 +7,7 @@ import { Login, Logout, ChangeTheme, ChangeLanguage,
     SetCurrentBackground,
     SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
 import { Theme } from 'src/app/shared/enums/Theme';
-import { Language } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/enums/Language';
 import { TranslateService } from '@ngx-translate/core';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';
@@ -69,7 +69,7 @@ export class UserStore {
     }
 
     @Selector()
-    static getUserLanguage(state: UserState): Language {
+    static getUserLanguage(state: UserState): LanguageDTO {
         return state.user.language;
     }
 
@@ -109,7 +109,7 @@ export class UserStore {
     @Action(ChangeLanguage)
     async changeLanguage({ patchState, getState }: StateContext<UserState>, {language}: ChangeLanguage ) {
         await this.api.changeLanguage(language).toPromise();
-        await this.translateService.use(language).toPromise();
+        await this.translateService.use(language.name).toPromise();
         patchState({ user: {...getState().user, language}});
     }
 

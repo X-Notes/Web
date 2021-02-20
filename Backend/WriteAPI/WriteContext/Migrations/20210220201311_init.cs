@@ -12,11 +12,24 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: true)
+                    Path = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Files", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -28,7 +41,7 @@ namespace WriteContext.Migrations
                     Email = table.Column<string>(type: "text", nullable: true),
                     PhotoId = table.Column<Guid>(type: "uuid", nullable: true),
                     PersonalKey = table.Column<string>(type: "text", nullable: true),
-                    Language = table.Column<int>(type: "integer", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
@@ -40,6 +53,12 @@ namespace WriteContext.Migrations
                         principalTable: "Files",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,7 +66,7 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: true),
+                    FileId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -296,6 +315,16 @@ namespace WriteContext.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Languages",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("e526f629-0fa3-4873-9bde-a93d15ea3e18"), "Ukraine" },
+                    { new Guid("9c615562-7eb4-4ba8-86cf-ee5f109301a3"), "Russian" },
+                    { new Guid("fca983ad-816d-4c6b-9f3d-ec0795ef1eed"), "English" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Backgrounds_UserId",
                 table: "Backgrounds",
@@ -361,6 +390,11 @@ namespace WriteContext.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_LanguageId",
+                table: "Users",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_PhotoId",
                 table: "Users",
                 column: "PhotoId",
@@ -424,6 +458,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "Files");
+
+            migrationBuilder.DropTable(
+                name: "Languages");
         }
     }
 }

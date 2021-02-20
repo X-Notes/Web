@@ -3,7 +3,7 @@ import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
-import { Language } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/enums/Language';
 import {
   ChangeLanguage, ChangeFontSize, ChangeTheme,
   UpdateUserName, UpdateUserPhoto, SetDefaultBackground
@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public userBackground$: Observable<ShortUser>;
 
   @Select(UserStore.getUserLanguage)
-  public language$: Observable<Language>;
+  public language$: Observable<LanguageDTO>;
 
   @Select(BackgroundStore.getUserBackgrounds)
   public backgrounds$: Observable<Background[]>;
@@ -48,7 +48,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild(CdkConnectedOverlay) cdkConnectedOverlay: CdkConnectedOverlay;
 
   userName;
-  languages = EnumUtil.getEnumValues(Language);
+
+  @Select(AppStore.getLanguages)
+  languages$: Observable<LanguageDTO[]>;
+
   public photoError = false;
   destroy = new Subject<void>();
   isOpen = false;
@@ -87,18 +90,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(x => this.newBackground());
   }
 
-  setLanguage(item: any): void {
-    switch (item) {
-      case 'Ukraine':
-        this.store.dispatch(new ChangeLanguage(Language.UA));
-        break;
-      case 'Russian':
-        this.store.dispatch(new ChangeLanguage(Language.RU));
-        break;
-      case 'English':
-        this.store.dispatch(new ChangeLanguage(Language.EN));
-        break;
-    }
+  setLanguage(item: LanguageDTO): void {
+    this.store.dispatch(new ChangeLanguage(item));
     this.isOpen = false;
     setTimeout( () => {
       this.cdkConnectedOverlay.overlayRef.updatePosition();
@@ -135,10 +128,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (oldName !== this.userName) {
       this.store.dispatch(new UpdateUserName(this.userName));
     }
-  }
-
-  changeLanguage(event) {
-    this.store.dispatch(new ChangeLanguage(Language.EN));
   }
 
   changeTheme() {

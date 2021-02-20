@@ -1,5 +1,5 @@
 import { User } from '../models/user';
-import { Language } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/enums/Language';
 import { Background } from '../models/background';
 
 export class Login {
@@ -20,7 +20,7 @@ export class ChangeTheme {
 
 export class ChangeLanguage {
     static type = '[User] Change Language';
-    constructor(public language: Language) {}
+    constructor(public language: LanguageDTO) {}
 }
 
 export class ChangeFontSize {

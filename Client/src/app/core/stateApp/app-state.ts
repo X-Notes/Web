@@ -1,9 +1,11 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, SetToken, TokenSetNoUpdate } from './app-action';
+import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadLanguages } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { AppServiceAPI } from '../app.service';
+import { LanguageDTO } from 'src/app/shared/enums/Language';
 import { AuthService } from '../auth.service';
 
 
@@ -11,6 +13,7 @@ interface AppState {
     routing: EntityType;
     token: string;
     tokenUpdated: boolean;
+    languages: LanguageDTO[];
 }
 
 @State<AppState>({
@@ -19,15 +22,22 @@ interface AppState {
         routing: null,
         token: null,
         tokenUpdated: false,
+        languages: []
     }
 })
 @Injectable()
 export class AppStore {
 
 
-    constructor(authService: AuthService) {
+    constructor(
+        authService: AuthService, // DONT DELETE THIS ROW
+        public appService: AppServiceAPI) {
     }
 
+    @Selector()
+    static getLanguages(state: AppState): LanguageDTO[] {
+        return state.languages;
+    }
 
     @Selector()
     static getToken(state: AppState): string {
@@ -194,4 +204,11 @@ export class AppStore {
     setNoUpdateToken({ patchState }: StateContext<AppState>) {
         patchState({  token: null , tokenUpdated: false });
     }
+
+    @Action(LoadLanguages)
+    async loadLanguages({ patchState }: StateContext<AppState>) {
+        const languages = await this.appService.getLanguages().toPromise();
+        patchState({  languages });
+    }
+
 }

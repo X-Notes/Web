@@ -159,6 +159,37 @@ namespace WriteContext.Migrations
                     b.ToTable("LabelsNotes");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Language", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e526f629-0fa3-4873-9bde-a93d15ea3e18"),
+                            Name = "Ukraine"
+                        },
+                        new
+                        {
+                            Id = new Guid("9c615562-7eb4-4ba8-86cf-ee5f109301a3"),
+                            Name = "Russian"
+                        },
+                        new
+                        {
+                            Id = new Guid("fca983ad-816d-4c6b-9f3d-ec0795ef1eed"),
+                            Name = "English"
+                        });
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
                 {
                     b.Property<Guid>("Id")
@@ -248,8 +279,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.Property<int>("Language")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -267,6 +298,8 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("LanguageId");
 
                     b.HasIndex("PhotoId")
                         .IsUnique();
@@ -435,11 +468,19 @@ namespace WriteContext.Migrations
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
 
+                    b.HasOne("Common.DatabaseModels.models.Language", "Language")
+                        .WithMany("User")
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.AppFile", "Photo")
                         .WithOne("User")
                         .HasForeignKey("Common.DatabaseModels.models.User", "PhotoId");
 
                     b.Navigation("CurrentBackground");
+
+                    b.Navigation("Language");
 
                     b.Navigation("Photo");
                 });
@@ -521,6 +562,11 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
                 {
                     b.Navigation("LabelsNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Language", b =>
+                {
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>

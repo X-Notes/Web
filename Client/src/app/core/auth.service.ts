@@ -4,7 +4,6 @@ import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserAPIService } from './user-api.service';
 import { User } from './models/user';
-import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
 import { Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
@@ -60,7 +59,7 @@ export class AuthService {
     const temp: User = {
       name: user.displayName,
       photo: null,
-      language: Language.UA
+      language: null
     };
     return temp;
   }

@@ -11,8 +11,5 @@ namespace Domain.Commands.users
     {
         [Required]
         public string Name { set; get; }
-        [Required]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Language Language { set; get; }
     }
 }

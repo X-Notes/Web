@@ -17,6 +17,7 @@ namespace WriteContext
         public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
         public DbSet<AppFile> Files { set; get; }
+        public DbSet<Language> Languages { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
@@ -85,6 +86,11 @@ namespace WriteContext
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.UserId);
+
+            modelBuilder.Entity<Language>().HasData(
+                new { Id = Guid.NewGuid(), Name = "Ukraine" },
+                new { Id = Guid.NewGuid(), Name = "Russian" },
+                new { Id = Guid.NewGuid(), Name = "English" });
         }
     }
 }

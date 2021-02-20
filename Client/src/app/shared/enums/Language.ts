@@ -1,3 +1,4 @@
-export enum Language {
-  EN = 'English', UA = 'Ukraine', RU = 'Russian'
+export interface LanguageDTO {
+  id: number;
+  name: string;
 }

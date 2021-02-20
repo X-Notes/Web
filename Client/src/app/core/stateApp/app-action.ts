@@ -14,3 +14,8 @@ export class TokenSetNoUpdate {
     static type = '[App] Set noUpdateToken';
     constructor() {  }
 }
+
+export class LoadLanguages{
+    static type = '[App] Load Languages';
+    constructor() {  }
+}

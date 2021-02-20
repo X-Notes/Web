@@ -165,6 +165,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UsersOnPrivateNotesRepository>();
             services.AddScoped<UsersOnPrivateFoldersRepository>();
             services.AddScoped<FileRepository>();
+            services.AddScoped<AppRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

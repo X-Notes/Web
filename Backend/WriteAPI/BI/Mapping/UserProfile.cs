@@ -15,7 +15,7 @@ namespace BI.Mapping
                 .ForMember(x => x.Email, dest => dest.MapFrom(d => d.Email))
                 .ForMember(x => x.PhotoId, dest => dest.MapFrom(d => d.PhotoId))
                 .ForMember(x => x.CurrentBackground, dest => dest.MapFrom(d => d.CurrentBackground))
-                .ForMember(x => x.Name, dest => dest.MapFrom(d => d.Name))
+                .ForMember(x => x.Language, dest => dest.MapFrom(d => d.Language))
                 .ForMember(x => x.FontSize, dest => dest.MapFrom(z => z.PersonalitionSettings.FontSize))
                 .ForMember(x => x.Theme, dest => dest.MapFrom(z => z.PersonalitionSettings.Theme));
 

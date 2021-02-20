@@ -134,7 +134,7 @@
                                         [cdkConnectedOverlayPositions]="positions"
                                         (backdropClick)="closeDropdown()">
                                 <div class="dropdown" [@showDropdown]>
-                                    <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
+                                    <div class="item" *ngFor="let item of languages$ | async" (click)="setLanguage(item)">
                                         <p>{{ 'languages.' + item | translate }}</p>
                                     </div>
                                 </div>

@@ -10,12 +10,12 @@ namespace Domain.Commands.users
     public class UpdateLanguageCommand : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public Language Language { set; get; }
+        public Guid Id { set; get; }
 
-        public UpdateLanguageCommand(Language Language, string Email)
+        public UpdateLanguageCommand(Guid Id, string Email)
             :base(Email)
         {
-            this.Language = Language;
+            this.Id = Id;
         }
     }
 }
