@@ -10,7 +10,6 @@ namespace BI.Mapping
     {
         public LabelProfile()
         {
-            CreateMap<NewLabelCommand, Label>().ReverseMap();
             CreateMap<Label, LabelDTO>()
                 .ForMember(z => z.Color, dest => dest.MapFrom(x => x.Color))
                 .ForMember(z => z.CountNotes, dest => dest.MapFrom(x => x.LabelsNotes.Count))

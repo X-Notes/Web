@@ -5,7 +5,7 @@
             [appearance]="'compact'">
             <div class="background" *ngFor="let item of backgrounds$ | async"
                 [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''">
-                <img alt="background" [src]="item.path" (click)="setCurrent(item.id)">
+                <img alt="background" [src]="item.path | getImage" (click)="setCurrent(item.id)">
                 <div class="thumbnail" (click)="removeBackground(item.id)">
                     <i class="icon-plus"></i>
                 </div>
@@ -31,7 +31,7 @@
 
 
 <div appTheme class="content"
-    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}">
 
     <ng-scrollbar
         [visibility]="'hover'"

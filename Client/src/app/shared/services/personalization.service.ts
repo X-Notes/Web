@@ -9,6 +9,7 @@ import {  Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../enums/FontSize';
+import { environment } from 'src/environments/environment';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -193,5 +194,6 @@ export class PersonalizationService {
     this.orientationMobile = !this.orientationMobile;
     this.changeOrientationSubject.next(true);
   }
+
 
 }

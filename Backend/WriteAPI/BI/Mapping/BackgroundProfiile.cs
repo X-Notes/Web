@@ -11,7 +11,13 @@ namespace BI.Mapping
     {
         public BackgroundProfiile()
         {
-            CreateMap<Backgrounds, BackgroundDTO>().ReverseMap();
+            CreateMap<Backgrounds, BackgroundDTO>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.Path, dest => dest.MapFrom(f => f.FileId));
+
+            CreateMap<BackgroundDTO, Backgrounds>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.FileId, dest => dest.MapFrom(f => f.Path));
         }
     }
 }

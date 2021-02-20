@@ -21,10 +21,30 @@ namespace WriteContext.Repositories
             await this.contextDB.SaveChangesAsync();
         }
 
-        public async Task Add(Backgrounds background)
+        public async Task<bool> Add(Backgrounds background, AppFile file)
         {
-            await contextDB.Backgrounds.AddAsync(background);
-            await contextDB.SaveChangesAsync();
+            var success = true;
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await contextDB.Files.AddAsync(file);
+                    await contextDB.SaveChangesAsync();
+
+                    background.FileId = file.Id;
+
+                    await contextDB.Backgrounds.AddAsync(background);
+
+                    await transaction.CommitAsync();
+
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    success = false;
+                }
+            }
+            return success;
         }
     }
 }

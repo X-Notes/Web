@@ -174,7 +174,7 @@
                     <div class="content-inner">
                         <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
                             <div class="photo">
-                                <img alt="user image" [src]="user.photoId">
+                                <img alt="user image" [src]="user.photoId | getImage">
                             </div>
                             <div class="user-info">
                                 <div class="name">
@@ -214,7 +214,7 @@
 
                     <div *ngFor="let user of usersOnPrivateFolder$ | async" class="user">
                         <div class="photo">
-                            <img alt="user image" [src]="user.photoId">
+                            <img alt="user image" [src]="user.photoId | getImage">
                         </div>
                         <div class="user-info">
                             <div class="name">
@@ -319,7 +319,7 @@
                     <div class="user-suggestions">
                         <div *ngFor="let user of usersOnPrivateNote$" class="user">
                             <div class="photo">
-                                <img alt="user image" [src]="user.photoId">
+                                <img alt="user image" [src]="user.photoId | getImage">
                             </div>
                             <div class="email">
                                 <p>{{user.email}}

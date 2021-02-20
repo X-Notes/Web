@@ -35,6 +35,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
+
   @Select(UserStore.getUserLanguage)
   public language$: Observable<Language>;
 

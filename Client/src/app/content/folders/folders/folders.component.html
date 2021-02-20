@@ -71,7 +71,7 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content"
-    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}">
     <ng-scrollbar class="scroll-helper"
         [visibility]="'hover'"
         [appearance]="'compact'">

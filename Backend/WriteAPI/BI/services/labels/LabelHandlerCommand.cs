@@ -60,11 +60,10 @@ namespace BI.services.labels
         {
             var user = await userRepository.GetUserByEmail(request.Email);
 
-            var label = mapper.Map<Label>(request);
+            var label = new Label();
             label.UserId = user.Id;
             label.Order = 1;
             label.Color = LabelsColorPallete.Red;
-            label.Name = "";
             label.CreatedAt = DateTimeOffset.Now;
 
             await labelRepository.NewLabel(label);

@@ -11,8 +11,17 @@ namespace BI.Mapping
     {
         public FolderProfile()
         {
-            CreateMap<Folder, FullFolder>();
-            CreateMap<Folder, SmallFolder>();
+            CreateMap<Folder, FullFolder>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.Color, dest => dest.MapFrom(f => f.Color))
+                .ForMember(x => x.RefType, dest => dest.MapFrom(f => f.RefType))
+                .ForMember(x => x.Title, dest => dest.MapFrom(f => f.Title));
+
+            CreateMap<Folder, SmallFolder>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.RefType, dest => dest.MapFrom(f => f.RefType))
+                .ForMember(x => x.Title, dest => dest.MapFrom(f => f.Title))
+                .ForMember(x => x.Color, dest => dest.MapFrom(f => f.Color));
         }
     }
 }

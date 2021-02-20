@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 export class GetImagePipe implements PipeTransform { // TODO MAKE THIS PIPE ASYNC // LONG LOAD SIDE BAR MENU
 
   transform(url: string): string {
-    return environment.writeAPI + `/api/Files/user/image/${url}`;
+    return environment.writeAPI + `/api/Files/image/${url}`;
   }
 
 }

@@ -12,11 +12,6 @@ namespace WriteContext.Repositories
         {
             this.contextDB = contextDB;
         }
-        public async Task Add(AppFile file)
-        {
-            await contextDB.Files.AddAsync(file);
-            await contextDB.SaveChangesAsync();
-        }
 
         public async Task<AppFile> GetFileById(Guid id)
         {

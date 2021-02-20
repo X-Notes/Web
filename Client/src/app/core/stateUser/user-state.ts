@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FontSize } from 'src/app/shared/enums/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
+import { environment } from 'src/environments/environment';
 
 interface UserState {
     user: ShortUser;
@@ -48,6 +49,17 @@ export class UserStore {
     @Selector()
     static getUserTheme(state: UserState): Theme {
         return state.user.theme;
+    }
+
+    @Selector()
+    static getUserBackground(state: UserState): string {
+        const path = state.user.currentBackground?.path;
+        if (path)
+        {
+            console.log(environment.writeAPI + `/api/Files/image/${path}`);
+            return environment.writeAPI + `/api/Files/image/${path}`;
+        }
+        return null;
     }
 
 
