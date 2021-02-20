@@ -6,20 +6,26 @@
     <div class="dialog-content" mat-dialog-content>
         <mat-tab-group class="tabs" mat-align-tabs="start">
             <mat-tab label="Notes">
-                <div #filterRow class="filter-row">
-                    <app-search class="search"></app-search>
-                    <app-select class="select"
-                        [array]="selectTypes"
-                        [selectedItem]="'all'"
-                        [translateItem]="'subMenu'"
-                        (changeItem)="selectItem($event)"></app-select>
-                </div>
-                <div #wrapperChips class="wrapper-chips">
-                    <app-chip *ngFor="let item of selectedNotes"
-                        [color]="item.color"
-                        [text]="item.title"
-                        [isRemovable]="true"
-                        (remove)="unSelectNote(item)"></app-chip>
+                <div class="fixed-filters">
+                    <div class="d-flex">
+                        <div class="filter-row">
+                            <app-search class="search"></app-search>
+                            <app-select class="select"
+                                [array]="selectTypes"
+                                [selectedItem]="'all'"
+                                [translateItem]="'subMenu'"
+                                (changeItem)="selectItem($event)"></app-select>
+                        </div>
+                    </div>
+                    <div class="d-flex" [hidden]="!(selectedNotes.length > 0)">
+                        <div class="wrapper-chips">
+                            <app-chip *ngFor="let item of selectedNotes"
+                                [color]="item.color"
+                                [text]="item.title"
+                                [isRemovable]="true"
+                                (remove)="unSelectNote(item)"></app-chip>
+                        </div>
+                    </div>
                 </div>
                 <ng-scrollbar
                     #scrollbar
@@ -41,7 +47,7 @@
             <mat-tab label="Photos">In development</mat-tab>
         </mat-tab-group>
     </div>
-    <div mat-dialog-actions>
+    <div class="dialog-actions" mat-dialog-actions>
         <div class="actions">
             <div class="save-button" #saveButton>
                 <span>{{ 'modal.ColorModal.save' | translate }}</span>

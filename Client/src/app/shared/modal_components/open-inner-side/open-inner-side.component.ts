@@ -28,9 +28,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   notes = [];
   firstInitedMurri = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
-  @ViewChild('wrapperChips') wrapperChips: ElementRef;
-  @ViewChild('filterRow') filterRow: ElementRef;
-  @ViewChild('scrollbar') scrollbar: ElementRef;
 
   constructor(private store: Store,
               public murriService: MurriService,
@@ -49,8 +46,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
         this.firstInitedMurri = true;
       }
     });
-    this.renderer.setStyle(this.scrollbar.nativeElement, 'height',
-      'calc(100% - ' + ' - 24px -' + this.filterRow.nativeElement.offsetHeight + this.wrapperChips.nativeElement.offsetHeight + 'px)');
   }
 
    ngOnInit() {
@@ -75,7 +70,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   highlightNote(note) {
-    console.log(note);
     this.selectedNotes.push(note);
   }
 

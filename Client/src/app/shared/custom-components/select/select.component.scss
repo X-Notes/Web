@@ -13,6 +13,7 @@
     transition: 0.2s ease;
     color: $text-color;
     background-color: #f2f2f2;
+    overflow: hidden;
     cursor: pointer;
 
     .content-button {
@@ -54,7 +55,8 @@
     padding: 0.25rem 0;
     background-color: white;
     border-radius: 5px;
-  
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+
     .item {
         display: flex;
         align-items: center;
@@ -75,5 +77,5 @@
 }
 
 .light {
-  border-color: #c5c5c5;
+  border-color: transparent;
 }

@@ -17,14 +17,15 @@
     margin: 0.25rem;
     max-width: 100%;
     min-height: 20px;
+    overflow: hidden;
     user-select: none;
 
-    p, .remove {
+    span, .remove {
         position: relative;
         z-index: 5;
     }
     
-    p {
+    span {
         @include text-overflow;
     }
 

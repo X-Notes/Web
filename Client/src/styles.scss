@@ -64,6 +64,8 @@ html {
   user-select: text;
 }
 
+[hidden] { display: none !important;}
+
 button,
 input {
   font-family: "Roboto", sans-serif;

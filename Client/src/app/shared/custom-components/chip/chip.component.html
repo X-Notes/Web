@@ -1,7 +1,7 @@
 <div #chip class="chip"
     [ngStyle]="{'backgroundColor': color}"
     [ngClass]="[tile ? 'tile' : '', dark ? 'dark' : '']">
-    <p> {{ text }}</p>
+    <span> {{ text }}</span>
     <div class="remove"
         *ngIf="isRemovable"
         (click)="remove.emit()">
