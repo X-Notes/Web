@@ -95,10 +95,10 @@ export class LabelComponent implements OnInit, OnDestroy {
       const timer = setInterval(() => {
         if (count === 60 && flag) {
           clearInterval(timer);
-          resolve();
+          resolve(null);
         } else if (count === 40 && flag === false) {
           clearInterval(timer);
-          resolve();
+          resolve(null);
         }
         if (this.murriService) {
           this.murriService.grid.refreshItems().layout();
