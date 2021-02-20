@@ -115,7 +115,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   removeBackground(id: string) {
     this.store.dispatch(new RemoveBackground(id));
-    this.store.dispatch(new SetDefaultBackground());
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    if (id === user.currentBackground.id)
+    {
+      this.store.dispatch(new SetDefaultBackground());
+    }
   }
 
   cancelSideBar() {
