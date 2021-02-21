@@ -8,7 +8,7 @@ import {
 import {  Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FontSize } from '../enums/FontSize';
+import { FontSize } from '../models/FontSize';
 import { environment } from 'src/environments/environment';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [

@@ -7,11 +7,12 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { take, takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
 
 @Component({
   selector: 'app-all',
@@ -21,7 +22,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
 
-  fontSize = FontSize;
+  fontSize = FontSizeNaming;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

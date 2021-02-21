@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
 
 
 @Component({
@@ -16,7 +16,7 @@ import { FontSize } from 'src/app/shared/enums/FontSize';
 
 export class NoteComponent implements OnInit, OnDestroy {
 
-  fontSize = FontSize;
+  fontSize = FontSizeNaming;
 
   @Input() note: SmallNote;
 

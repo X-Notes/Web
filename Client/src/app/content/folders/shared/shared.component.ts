@@ -8,10 +8,11 @@ import { LoadSharedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../s
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FolderService } from '../folder.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
 
 @Component({
   selector: 'app-shared',
@@ -21,7 +22,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSize;
+  fontSize = FontSizeNaming;
   destroy = new Subject<void>();
   loaded = false;
 

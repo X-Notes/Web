@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DatabaseModels.models
+namespace Common.DTO.app
 {
-    public class Language
+    public class ThemeDTO
     {
         public Guid Id { set; get; }
         public string Name { set; get; }
-        public List<User> Users { set; get; }
     }
 }

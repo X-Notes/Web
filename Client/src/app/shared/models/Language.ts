@@ -1,4 +1,4 @@
 export interface LanguageDTO {
-  id: number;
+  id: string;
   name: string;
 }

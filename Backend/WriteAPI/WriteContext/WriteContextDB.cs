@@ -8,7 +8,6 @@ namespace WriteContext
     {
 
         public DbSet<User> Users { get; set; }
-        public DbSet<PersonalitionSetting> PersonalitionSettings { get; set; }
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
         public DbSet<Backgrounds> Backgrounds { set; get; }
         public DbSet<Folder> Folders { set; get; }
@@ -18,6 +17,8 @@ namespace WriteContext
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
         public DbSet<AppFile> Files { set; get; }
         public DbSet<Language> Languages { set; get; }
+        public DbSet<Theme> Themes { set; get; }
+        public DbSet<FontSize> FontSizes { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
@@ -91,6 +92,14 @@ namespace WriteContext
                 new { Id = Guid.NewGuid(), Name = "Ukraine" },
                 new { Id = Guid.NewGuid(), Name = "Russian" },
                 new { Id = Guid.NewGuid(), Name = "English" });
+
+            modelBuilder.Entity<Theme>().HasData(
+                new { Id = Guid.NewGuid(), Name = "Light" },
+                new { Id = Guid.NewGuid(), Name = "Dark" });
+
+            modelBuilder.Entity<FontSize>().HasData(
+                new { Id = Guid.NewGuid(), Name = "Medium" },
+                new { Id = Guid.NewGuid(), Name = "Big" });
         }
     }
 }

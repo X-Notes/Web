@@ -6,7 +6,7 @@ import { FolderStore } from '../state/folders-state';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { Router } from '@angular/router';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({

@@ -6,7 +6,8 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
+import { Theme } from 'src/app/shared/models/Theme';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
@@ -39,7 +40,17 @@ export class InteractionToolsComponent implements OnInit {
   }
 
   toggleTheme() {
-    this.store.dispatch(new ChangeTheme());
+    const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const themes = this.store.selectSnapshot(AppStore.getThemes);
+    if (userTheme.name === ThemeNaming.Dark)
+    {
+      const whiteTheme = themes.find(x => x.name === ThemeNaming.Light);
+      this.store.dispatch(new ChangeTheme(whiteTheme));
+    }
+    if (userTheme.name === ThemeNaming.Light){
+      const blackTheme = themes.find(x => x.name === ThemeNaming.Dark);
+      this.store.dispatch(new ChangeTheme(blackTheme));
+    }
   }
 
 }

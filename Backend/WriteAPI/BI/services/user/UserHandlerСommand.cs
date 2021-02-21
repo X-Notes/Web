@@ -49,17 +49,15 @@ namespace BI.services.user
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
             var language = await appRepository.GetLanguageByName("English");
+            var fontSize = await appRepository.GetFontSizeByName("Big");
+            var theme = await appRepository.GetThemeByName("Dark");
 
-            var user = new User() { 
-                Name = request.Name, 
+            var user = new User() {
+                Name = request.Name,
                 LanguageId = language.Id,
-                Email = request.Email
-            };
-
-            user.PersonalitionSettings = new PersonalitionSetting()
-            {
-                Theme = Theme.Dark,
-                FontSize = FontSize.Medium,
+                Email = request.Email,
+                FontSizeId = fontSize.Id,
+                ThemeId = theme.Id
             };
 
             await userRepository.Add(user);
@@ -114,16 +112,16 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(UpdateThemeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmailWithPersonalization(request.Email);
-            user.PersonalitionSettings.Theme = request.Theme;
+            var user = await userRepository.GetUserByEmail(request.Email);
+            user.ThemeId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(UpdateFontSizeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmailWithPersonalization(request.Email);
-            user.PersonalitionSettings.FontSize = request.FontSize;
+            var user = await userRepository.GetUserByEmail(request.Email);
+            user.FontSizeId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
         }

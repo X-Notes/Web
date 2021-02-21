@@ -8,10 +8,11 @@ import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
 
 @Component({
   selector: 'app-archive',
@@ -21,7 +22,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSize;
+  fontSize = FontSizeNaming;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

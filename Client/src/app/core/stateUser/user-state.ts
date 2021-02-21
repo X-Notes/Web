@@ -6,10 +6,10 @@ import { Login, Logout, ChangeTheme, ChangeLanguage,
     ChangeFontSize,
     SetCurrentBackground,
     SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
-import { Theme } from 'src/app/shared/enums/Theme';
-import { LanguageDTO } from 'src/app/shared/enums/Language';
+import { Theme } from 'src/app/shared/models/Theme';
+import { LanguageDTO } from 'src/app/shared/models/Language';
 import { TranslateService } from '@ngx-translate/core';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import { environment } from 'src/environments/environment';
@@ -56,7 +56,6 @@ export class UserStore {
         const path = state.user.currentBackground?.path;
         if (path)
         {
-            console.log(environment.writeAPI + `/api/Files/image/${path}`);
             return environment.writeAPI + `/api/Files/image/${path}`;
         }
         return null;
@@ -94,35 +93,25 @@ export class UserStore {
 
 
     @Action(ChangeTheme)
-    async changeTheme({ patchState, getState }: StateContext<UserState>) {
+    async changeTheme({ patchState, getState }: StateContext<UserState>, {theme}: ChangeTheme) {
         let user = getState().user;
-        if (user.theme === Theme.Light) {
-            await this.api.changeTheme(Theme.Dark).toPromise();
-            user = {...user, theme: Theme.Dark};
-        } else {
-            await this.api.changeTheme(Theme.Light).toPromise();
-            user = {...user, theme: Theme.Light};
-        }
+        await this.api.changeTheme(theme.id).toPromise();
+        user = {...user, theme};
         patchState({ user });
     }
 
     @Action(ChangeLanguage)
     async changeLanguage({ patchState, getState }: StateContext<UserState>, {language}: ChangeLanguage ) {
-        await this.api.changeLanguage(language).toPromise();
+        await this.api.changeLanguage(language.id).toPromise();
         await this.translateService.use(language.name).toPromise();
         patchState({ user: {...getState().user, language}});
     }
 
     @Action(ChangeFontSize)
-    async changeFontSize({ patchState, getState }: StateContext<UserState>) {
+    async changeFontSize({ patchState, getState }: StateContext<UserState>, {fontSize}: ChangeFontSize) {
         let user = getState().user;
-        if (user.fontSize === FontSize.Big) {
-            await this.api.changeFontSize(FontSize.Medium).toPromise();
-            user = {...user, fontSize: FontSize.Medium};
-        } else {
-            await this.api.changeFontSize(FontSize.Big).toPromise();
-            user = {...user, fontSize: FontSize.Big};
-        }
+        await this.api.changeFontSize(fontSize.id).toPromise();
+        user = {...user, fontSize};
         patchState({ user });
     }
 

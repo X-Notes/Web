@@ -3,7 +3,6 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
@@ -16,6 +15,7 @@ import { ShareComponent } from 'src/app/shared/modal_components/share/share.comp
 import { NoteStore } from '../notes/state/notes-state';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderStore } from '../folders/state/folders-state';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
 
 
 @Injectable({providedIn: 'root'})
@@ -352,39 +352,41 @@ export class MenuButtonsService {
 
   // COLOR
   changeColor() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeNaming.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
   // LABELS
   changeLabels() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeNaming.Light  ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 
   // SHARING
   shareEntity() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig =  {
       maxHeight: '100%',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
+      panelClass: this.getTheme() === ThemeNaming.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }
 
+  getTheme()
+  {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    return theme.name;
+  }
 
   // COPY
   private copyNotes() {

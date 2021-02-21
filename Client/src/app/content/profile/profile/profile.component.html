@@ -120,7 +120,7 @@
                                     #origin="cdkOverlayOrigin"
                                     (click)="isOpen = !isOpen" >
                                 <div class="content-button" #dropdownSelect>
-                                    <p>{{ 'languages.' + (language$ | async) | translate }}</p>
+                                    <p>{{ 'languages.' + (language$ | async).name | translate }}</p>
                                     <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
                                         <i class="icon-select-label"></i>
                                     </div>
@@ -135,7 +135,7 @@
                                         (backdropClick)="closeDropdown()">
                                 <div class="dropdown" [@showDropdown]>
                                     <div class="item" *ngFor="let item of languages$ | async" (click)="setLanguage(item)">
-                                        <p>{{ 'languages.' + item | translate }}</p>
+                                        <p>{{ 'languages.' + item.name | translate }}</p>
                                     </div>
                                 </div>
                             </ng-template>
@@ -199,7 +199,7 @@
                                     <div class="toggle">
                                         <input type="checkbox" (change)="changeFontSize()">
                                         <div class="rectangle"
-                                            [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
+                                            [ngClass]="(fontSize$ | async).name === fontSize.Big ? 'active-toggle' : 'dark-text'">
                                         </div>
                                         <div class="text-toggle">
                                             <div class="text">

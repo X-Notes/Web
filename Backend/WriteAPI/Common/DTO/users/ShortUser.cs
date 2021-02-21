@@ -14,10 +14,10 @@ namespace Common.DTO.users
     {
         public string Name { set; get; }
         public string Email { set; get; }
-        public string PhotoId { set; get; }
+        public Guid PhotoId { set; get; }
         public BackgroundDTO CurrentBackground { set; get; }
         public LanguageDTO Language { set; get; }
-        public Theme Theme { set; get; }
-        public FontSize FontSize { set; get; }
+        public ThemeDTO Theme { set; get; }
+        public FontSizeDTO FontSize { set; get; }
     }
 }

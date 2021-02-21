@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from './core/stateUser/user-state';
-import { LanguageDTO } from './shared/enums/Language';
+import { LanguageDTO } from './shared/models/Language';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AppStore } from './core/stateApp/app-state';
 
 @Component({
   selector: 'app-root',
@@ -22,9 +23,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store
       .select(UserStore.getUserLanguage)
       .pipe(takeUntil(this.destroy))
-      .subscribe(async (lang) => {
-        if (lang) {
-          await this.translateService.use(lang.name).toPromise();
+      .subscribe(async (language) => {
+        if (language) {
+          await this.translateService.use(language.name).toPromise();
         } else {
           await this.translateService.use('English').toPromise();
         }

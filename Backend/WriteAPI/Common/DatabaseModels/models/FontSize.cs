@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class Language
+    public class FontSize
     {
         public Guid Id { set; get; }
         public string Name { set; get; }

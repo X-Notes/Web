@@ -1,6 +1,6 @@
 <div *ngIf="loaded" class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
     <div #item class="grid-item" id="{{item.id}}" *ngFor="let item of labelService.labels"
-        [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
+        [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']">
         <app-label [label]="item" [selectedMode]="false" (restoreLabel)="restoreLabel($event)"
             (updateLabel)="update($event)" (deleteLabel)="delete($event)"></app-label>
     </div>

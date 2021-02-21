@@ -19,13 +19,17 @@ namespace Common.DatabaseModels.models
         public Language Language { set; get; }
 
         public NotificationSetting NotificationSettings { set; get; }
-        public PersonalitionSetting PersonalitionSettings { set; get; }
         public List<Label> Labels { set; get; }
         public List<Backgrounds> Backgrounds { set; get; }
 
         public Guid? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
+        public Guid ThemeId { set; get; }
+        public Theme Theme { set; get; }
+
+        public Guid FontSizeId { set; get; }
+        public FontSize FontSize { set; get; }
 
         public List<Folder> Folders { set; get; }
         public List<Note> Notes { set; get; }

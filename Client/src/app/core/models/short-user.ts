@@ -1,13 +1,13 @@
-import { LanguageDTO } from 'src/app/shared/enums/Language';
-import { Theme } from 'src/app/shared/enums/Theme';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
+import { LanguageDTO } from 'src/app/shared/models/Language';
+import { Theme } from 'src/app/shared/models/Theme';
 import { Background } from './background';
 
 export interface ShortUser {
     name: string;
+    email: string;
     photoId: string;
     currentBackground: Background;
-    email: string;
     language: LanguageDTO;
     theme: Theme;
     fontSize: FontSize;

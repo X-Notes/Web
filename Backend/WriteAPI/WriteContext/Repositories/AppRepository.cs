@@ -25,5 +25,25 @@ namespace WriteContext.Repositories
         {
             return await contextDB.Languages.FirstOrDefaultAsync(x => x.Name == name);
         }
+
+        public async Task<List<FontSize>> GetFontSizes()
+        {
+            return await contextDB.FontSizes.ToListAsync();
+        }
+
+        public async Task<FontSize> GetFontSizeByName(string name)
+        {
+            return await contextDB.FontSizes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<List<Theme>> GetThemes()
+        {
+            return await contextDB.Themes.ToListAsync();
+        }
+
+        public async Task<Theme> GetThemeByName(string name)
+        {
+            return await contextDB.Themes.FirstOrDefaultAsync(x => x.Name == name);
+        }
     }
 }

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { User } from './models/user';
 import { ShortUser } from './models/short-user';
-import { Theme } from '../shared/enums/Theme';
-import { FontSize } from '../shared/enums/FontSize';
-import { LanguageDTO } from '../shared/enums/Language';
+import { Theme } from '../shared/models/Theme';
+import { FontSize } from '../shared/models/FontSize';
+import { LanguageDTO } from '../shared/models/Language';
 import { AnswerChangePhoto } from './models/asnwer-change-photo';
 
 export interface Token {
@@ -36,23 +36,23 @@ export class UserAPIService {
     return this.httpClient.get<ShortUser>(environment.writeAPI + '/api/user/short');
   }
 
-  changeTheme(theme: Theme) {
+  changeTheme(id: string) {
     const obj = {
-      theme
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/theme' , obj);
   }
 
-  changeFontSize(fontSize: FontSize) {
+  changeFontSize(id: string) {
     const obj = {
-      fontSize
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/font' , obj);
   }
 
-  changeLanguage(language: LanguageDTO) {
+  changeLanguage(id: string) {
     const obj = {
-      Id: language.id
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/language' , obj);
   }

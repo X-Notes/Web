@@ -14,8 +14,16 @@ namespace BI.Mapping
         public AppProfile()
         {
             CreateMap<Language, LanguageDTO>()
-            .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
-            .ForMember(x => x.Name, dest => dest.MapFrom(f => f.Name));
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.Name, dest => dest.MapFrom(f => f.Name));
+
+            CreateMap<FontSize, FontSizeDTO>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.Name, dest => dest.MapFrom(f => f.Name));
+
+            CreateMap<Theme, ThemeDTO>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
+                .ForMember(x => x.Name, dest => dest.MapFrom(f => f.Name));
         }
     }
 }

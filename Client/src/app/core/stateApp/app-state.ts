@@ -1,12 +1,14 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadLanguages } from './app-action';
+import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadLanguages, LoadThemes, LoadFontSizes } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { FolderType } from 'src/app/shared/enums/FolderTypes';
 import { AppServiceAPI } from '../app.service';
-import { LanguageDTO } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/models/Language';
 import { AuthService } from '../auth.service';
+import { Theme } from 'src/app/shared/models/Theme';
+import { FontSize } from 'src/app/shared/models/FontSize';
 
 
 interface AppState {
@@ -14,6 +16,8 @@ interface AppState {
     token: string;
     tokenUpdated: boolean;
     languages: LanguageDTO[];
+    themes: Theme[];
+    fontSizes: FontSize[];
 }
 
 @State<AppState>({
@@ -22,7 +26,9 @@ interface AppState {
         routing: null,
         token: null,
         tokenUpdated: false,
-        languages: []
+        languages: [],
+        themes: [],
+        fontSizes: []
     }
 })
 @Injectable()
@@ -37,6 +43,17 @@ export class AppStore {
     @Selector()
     static getLanguages(state: AppState): LanguageDTO[] {
         return state.languages;
+    }
+
+
+    @Selector()
+    static getThemes(state: AppState): Theme[] {
+        return state.themes;
+    }
+
+    @Selector()
+    static getFontSizes(state: AppState): FontSize[] {
+        return state.fontSizes;
     }
 
     @Selector()
@@ -210,5 +227,18 @@ export class AppStore {
         const languages = await this.appService.getLanguages().toPromise();
         patchState({  languages });
     }
+
+    @Action(LoadThemes)
+    async loadThemes({ patchState }: StateContext<AppState>) {
+        const themes = await this.appService.getThemes().toPromise();
+        patchState({  themes });
+    }
+
+    @Action(LoadFontSizes)
+    async loadFontSizes({ patchState }: StateContext<AppState>) {
+        const fontSizes = await this.appService.getFontSizes().toPromise();
+        patchState({  fontSizes });
+    }
+
 
 }

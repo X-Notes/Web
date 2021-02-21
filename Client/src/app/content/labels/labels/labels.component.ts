@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Theme } from 'src/app/shared/models/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Select } from '@ngxs/store';
 import { LabelStore } from '../state/labels-state';

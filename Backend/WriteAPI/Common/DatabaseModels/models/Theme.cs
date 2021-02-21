@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class Language
+    public class Theme
     {
         public Guid Id { set; get; }
         public string Name { set; get; }
+
         public List<User> Users { set; get; }
     }
 }

@@ -25,7 +25,10 @@ namespace WriteContext.Repositories
         {
             return await contextDB.Users
                 .Include(x => x.CurrentBackground)
-                .Include(x => x.PersonalitionSettings).FirstOrDefaultAsync(x => x.Email == email);
+                .Include(x => x.Language)
+                .Include(x => x.FontSize)
+                .Include(x => x.Theme)
+                .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithBackgrounds(string email)

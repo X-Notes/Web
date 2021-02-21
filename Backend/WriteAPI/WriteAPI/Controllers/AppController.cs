@@ -1,4 +1,6 @@
-﻿using Common.DatabaseModels.models;
+﻿using AutoMapper;
+using Common.DatabaseModels.models;
+using Common.DTO.app;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,15 +16,32 @@ namespace WriteAPI.Controllers
     public class AppController : ControllerBase
     {
         private readonly AppRepository appRepository;
-        public AppController(AppRepository appRepository)
+        private readonly IMapper mapper;
+        public AppController(AppRepository appRepository, IMapper mapper)
         {
             this.appRepository = appRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet("languages")]
-        public async Task<List<Language>> GetLanguages()
+        public async Task<List<LanguageDTO>> GetLanguages()
         {
-            return await this.appRepository.GetLanguages();
+            var languages = await appRepository.GetLanguages();
+            return mapper.Map<List<LanguageDTO>>(languages);
+        }
+
+        [HttpGet("fontSizes")]
+        public async Task<List<FontSizeDTO>> GetFontSize()
+        {
+            var fontSizes = await appRepository.GetFontSizes();
+            return mapper.Map<List<FontSizeDTO>>(fontSizes);
+        }
+
+        [HttpGet("themes")]
+        public async Task<List<ThemeDTO>> GetThemes()
+        {
+            var themes = await appRepository.GetThemes();
+            return mapper.Map<List<ThemeDTO>>(themes);
         }
     }
 }

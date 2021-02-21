@@ -17,7 +17,7 @@ import {
   deleteSmallNote,
   showHistory
 } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Theme } from 'src/app/shared/models/Theme';
 import { SmallNote } from '../models/smallNote';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';

@@ -3,14 +3,13 @@ import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
-import { LanguageDTO } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/models/Language';
 import {
   ChangeLanguage, ChangeFontSize, ChangeTheme,
   UpdateUserName, UpdateUserPhoto, SetDefaultBackground
 } from 'src/app/core/stateUser/user-action';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -19,7 +18,9 @@ import { Background } from 'src/app/core/models/background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from '@angular/cdk/overlay';
+import {CdkConnectedOverlay, ConnectionPositionPair} from '@angular/cdk/overlay';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
 
 @Component({
   selector: 'app-profile',
@@ -28,6 +29,8 @@ import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from 
   animations: [sideBarCloseOpen, showDropdown]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+
+  fontSize = FontSizeNaming;
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
@@ -131,11 +134,32 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   changeTheme() {
-    this.store.dispatch(new ChangeTheme());
+    const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const themes = this.store.selectSnapshot(AppStore.getThemes);
+    if (userTheme.name === ThemeNaming.Dark)
+    {
+      const whiteTheme = themes.find(x => x.name === ThemeNaming.Light);
+      this.store.dispatch(new ChangeTheme(whiteTheme));
+    }
+    if (userTheme.name === ThemeNaming.Light){
+      const darkTheme = themes.find(x => x.name === ThemeNaming.Dark);
+      this.store.dispatch(new ChangeTheme(darkTheme));
+    }
   }
 
   changeFontSize() {
-    this.store.dispatch(new ChangeFontSize());
+    const userFontSize = this.store.selectSnapshot(UserStore.getUserFontSize);
+    const fontSizes = this.store.selectSnapshot(AppStore.getFontSizes);
+
+    if (userFontSize.name === FontSizeNaming.Medium)
+    {
+      const bigSize = fontSizes.find(x => x.name === FontSizeNaming.Big);
+      this.store.dispatch(new ChangeFontSize(bigSize));
+    }
+    if (userFontSize.name === FontSizeNaming.Big){
+      const mediumSize = fontSizes.find(x => x.name === FontSizeNaming.Medium);
+      this.store.dispatch(new ChangeFontSize(mediumSize));
+    }
   }
 
   newBackground() {
