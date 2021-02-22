@@ -45,43 +45,38 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/color`, obj);
   }
 
-  setDeleteNotes(ids: string[], toId: string) {
+  setDeleteNotes(ids: string[]) {
     const obj = {
       ids,
-      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
   }
 
 
-  makePrivateNotes(ids: string[], toId: string) {
+  makePrivateNotes(ids: string[]) {
     const obj = {
-      ids,
-      toId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/ref/private`, obj);
   }
 
-  copyNotes(ids: string[], toId: string) {
+  copyNotes(ids: string[]) {
     const obj = {
       ids,
-      toId
     };
     return this.httpClient.patch<SmallNote[]>(environment.writeAPI + `/api/note/copy`, obj);
   }
 
-  deleteNotes(ids: string[], deleteTypeId: string) {
+  deleteNotes(ids: string[]) {
     const obj = {
-      ids,
-      deleteTypeId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete/permanently`, obj);
   }
 
-  archiveNotes(ids: string[], toId: string) {
+  archiveNotes(ids: string[]) {
     const obj = {
-      ids,
-      toId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/archive`, obj);
   }
@@ -98,11 +93,10 @@ export class ApiServiceNotes {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(environment.writeAPI + `/api/share/notes/user/invites/${id}`);
   }
 
-  makePublic(refType: EntityRef, id: string, sharedId: string) {
+  makePublic(refType: EntityRef, id: string) {
     const obj = {
       refTypeId: refType.id,
-      id,
-      sharedId
+      id
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/share`, obj);
   }

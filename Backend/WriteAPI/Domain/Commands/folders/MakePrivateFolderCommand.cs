@@ -11,9 +11,6 @@ namespace Domain.Commands.folders
         [Required]
         public List<Guid> Ids { set; get; }
 
-        [Required]
-        public Guid ToId { set; get; }
-
         public MakePrivateFolderCommand(string email) : base(email)
         {
 

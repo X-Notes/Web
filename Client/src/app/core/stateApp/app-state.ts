@@ -81,6 +81,11 @@ export class AppStore {
     }
 
     @Selector()
+    static isTokenUpdated(state: AppState): boolean {
+        return state.tokenUpdated;
+    }
+
+    @Selector()
     static isFolderInner(state: AppState): boolean {
         return state.routing === EntityType.FolderInner;
     }

@@ -60,42 +60,37 @@ export class ApiFoldersService {
     return this.httpClient.get<SmallFolder>(environment.writeAPI + `/api/folder/new`);
   }
 
-  archiveFolder(ids: string[], toId: string) {
+  archiveFolder(ids: string[]) {
     const obj = {
       ids,
-      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/archive`, obj);
   }
 
-  setDeleteFolder(ids: string[], toId: string) {
+  setDeleteFolder(ids: string[]) {
     const obj = {
-      ids,
-      toId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/delete`, obj);
   }
 
-  deleteFolders(ids: string[], deleteTypeId: string) {
+  deleteFolders(ids: string[]) {
     const obj = {
       ids,
-      deleteTypeId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/delete/permanently`, obj);
   }
 
-  copyFolders(ids: string[], toId: string) {
+  copyFolders(ids: string[]) {
     const obj = {
       ids,
-      toId
     };
     return this.httpClient.patch<SmallFolder[]>(environment.writeAPI + `/api/folder/copy`, obj);
   }
 
-  restoreFolder(ids: string[], toId: string) {
+  restoreFolder(ids: string[]) {
     const obj = {
-      ids,
-      toId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/restore`, obj);
   }
@@ -108,19 +103,17 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/color`, obj);
   }
 
-  makePrivateFolders(ids: string[], toId: string) {
+  makePrivateFolders(ids: string[]) {
     const obj = {
-      ids,
-      toId
+      ids
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/ref/private`, obj);
   }
 
-  makePublic(refType: EntityRef, id: string, sharedId: string) {
+  makePublic(refType: EntityRef, id: string) {
     const obj = {
       refTypeId: refType.id,
-      id,
-      sharedId
+      id
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/folders/share`, obj);
   }

@@ -10,9 +10,6 @@ namespace Domain.Commands.notes
         [Required]
         public List<Guid> Ids { set; get; }
 
-        [Required]
-        public Guid ToId { set; get; }
-
         public ArchiveNoteCommand(string email) : base(email)
         {
 

@@ -27,7 +27,15 @@ export class ContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store.dispatch([LoadGeneralEntites]);
+    this.store.select(AppStore.isTokenUpdated)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(z => {
+        if (z)
+        {
+          this.store.dispatch(LoadGeneralEntites);
+        }
+      });
+
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {
@@ -39,5 +47,7 @@ export class ContentComponent implements OnInit, OnDestroy {
       .subscribe(z => {
         setTimeout(() => this.newProfile = z);
       });
+
+
   }
 }

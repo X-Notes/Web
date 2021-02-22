@@ -11,10 +11,6 @@ namespace Domain.Commands.folders
         [Required]
         public List<Guid> Ids { set; get; }
 
-
-        [Required]
-        public Guid ToId { set; get; }
-
         public CopyFolderCommand(string email): base(email)
         {
 

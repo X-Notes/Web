@@ -2,6 +2,7 @@
 using Common;
 using Common.DatabaseModels.models;
 using Common.DTO.notes;
+using Common.Naming;
 using Domain.Commands.notes;
 using MediatR;
 using System;
@@ -28,27 +29,32 @@ namespace BI.services.notes
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly IMapper mapper;
-        public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository, IMapper mapper)
+        private readonly AppRepository appRepository;
+        public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
+            AppRepository appRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.mapper = mapper;
+            this.appRepository = appRepository;
         }
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
-           
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
+            var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
             var note = new Note()
             {
                 Id = Guid.NewGuid(),
                 UserId = user.Id,
                 Order = 1,
                 Color = NoteColorPallete.Green,
-                NoteTypeId = request.TypeId,
+                NoteTypeId = type.Id,
+                RefTypeId = refType.Id,
                 CreatedAt = DateTimeOffset.Now
             };
 
-            await noteRepository.Add(note, request.TypeId);
+            await noteRepository.Add(note, type.Id);
 
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
@@ -76,6 +82,7 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
@@ -83,7 +90,7 @@ namespace BI.services.notes
             {
                 notes.ForEach(note => note.RefType = null);
                 user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, request.ToId);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
             }
             else
             {
@@ -95,8 +102,9 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
-            var deletednotes = user.Notes.Where(x => x.NoteTypeId == request.DeleteTypeId).ToList();
+            var deletednotes = user.Notes.Where(x => x.NoteTypeId == type.Id).ToList();
             var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (selectdeletenotes.Count == request.Ids.Count)
@@ -113,13 +121,14 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.ArchivedNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, request.ToId);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
             }
             else
             {
@@ -131,13 +140,14 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
         {
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, request.ToId);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
             }
             else
             {
@@ -149,12 +159,13 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, note.NoteTypeId, request.ToId);
+                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, note.NoteTypeId, type.Id);
                 return mapper.Map<List<SmallNote>>(dbnotes);
             }
             else

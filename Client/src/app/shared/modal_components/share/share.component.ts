@@ -246,7 +246,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
       const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
       const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
-      await this.apiNote.makePublic(viewer, this.currentNote.id, shareType.id).toPromise();
+      await this.apiNote.makePublic(viewer, this.currentNote.id).toPromise();
       this.currentNote.noteType = shareType;
       this.notes.find(note => note.id === this.currentNote.id).noteType = shareType;
       const commands = this.factoryForCommandsShared([this.currentNote.id]);
@@ -254,7 +254,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ChangeTypeFullNote(shareType));
     } else {
       const privateType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Private);
-      await this.apiNote.makePrivateNotes([this.currentNote.id], privateType.id).toPromise();
+      await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
       this.currentNote.noteType = privateType;
       this.notes.find(note => note.id === this.currentNote.id).noteType = privateType;
       const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
@@ -267,7 +267,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     if (this.currentFolder.folderType.name !== FolderTypeENUM.Shared) {
       const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
       const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
-      await this.apiFolder.makePublic(viewer, this.currentFolder.id, shareType.id).toPromise();
+      await this.apiFolder.makePublic(viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderType = shareType;
       this.folders.find(note => note.id === this.currentFolder.id).folderType = shareType;
       const commands = this.factoryForCommandsSharedFolders([this.currentFolder.id]);
@@ -275,7 +275,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ChangeTypeFullFolder(shareType));
     } else {
       const privateType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Private);
-      await this.apiFolder.makePrivateFolders([this.currentFolder.id], privateType.id).toPromise();
+      await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
       this.currentFolder.folderType = privateType;
       this.folders.find(folder => folder.id === this.currentFolder.id).folderType = privateType;
       const commands = this.factoryForCommandsPrivateFolders([this.currentFolder.id]);
@@ -324,9 +324,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeNote(refTypeRoad: RefTypeENUM) {
-    const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
     const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
-    await this.apiNote.makePublic(refType, this.currentNote.id, shareType.id).toPromise();
+    await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
     this.currentNote.refType = refType;
     this.notes.find(note => note.id === this.currentNote.id).refType = refType;
     this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType.name));
@@ -334,9 +333,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeFolder(refTypeRoad: RefTypeENUM) {
-    const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
     const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
-    await this.apiFolder.makePublic(refType, this.currentFolder.id, shareType.id).toPromise();
+    await this.apiFolder.makePublic(refType, this.currentFolder.id).toPromise();
     this.currentFolder.refType = refType;
     this.folders.find(folder => folder.id === this.currentFolder.id).refType = refType;
     this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType.name));

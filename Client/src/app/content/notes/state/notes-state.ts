@@ -292,7 +292,7 @@ export class NoteStore {
     // Set deleting
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote, selectedIds }: SetDeleteNotes) {
-        await this.api.setDeleteNotes(selectedIds, typeNote.id).toPromise();
+        await this.api.setDeleteNotes(selectedIds).toPromise();
         dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
     }
 
@@ -300,7 +300,7 @@ export class NoteStore {
     @Action(DeleteNotesPermanently)
     async deleteNotesPermanently({ getState, dispatch, patchState }: StateContext<NoteState>,
                                  {selectedIds, typeNote}: DeleteNotesPermanently) {
-        await this.api.deleteNotes(selectedIds, typeNote.id).toPromise();
+        await this.api.deleteNotes(selectedIds).toPromise();
 
         const notesFrom = this.getNotesByType(getState, NoteTypeENUM.Deleted);
         const notesFromNew = notesFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
@@ -316,14 +316,14 @@ export class NoteStore {
     // Archive
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: ArchiveNotes) {
-        await this.api.archiveNotes(selectedIds, typeNote.id).toPromise();
+        await this.api.archiveNotes(selectedIds).toPromise();
         dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
     }
 
 
     @Action(MakePrivateNotes)
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: MakePrivateNotes) {
-        await this.api.makePrivateNotes(selectedIds, typeNote.id).toPromise();
+        await this.api.makePrivateNotes(selectedIds).toPromise();
         dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
     }
 
@@ -365,7 +365,7 @@ export class NoteStore {
 
     @Action(CopyNotes)
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote, selectedIds }: CopyNotes) {
-        const newNotes = await this.api.copyNotes(selectedIds, typeNote.id).toPromise();
+        const newNotes = await this.api.copyNotes(selectedIds).toPromise();
         const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
         dispatch(new UpdateNotes(new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]), NoteTypeENUM.Private));
         dispatch([UnSelectAllNote]);

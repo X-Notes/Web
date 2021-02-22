@@ -183,7 +183,7 @@ export class FolderStore {
 
     @Action(ArchiveFolders)
     async archiveFolders({ getState, patchState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: ArchiveFolders) {
-        await this.api.archiveFolder(selectedIds, typeFolder.id).toPromise();
+        await this.api.archiveFolder(selectedIds).toPromise();
         dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Archive, selectedIds));
     }
 
@@ -230,7 +230,7 @@ export class FolderStore {
 
     @Action(SetDeleteFolders)
     async setDeleteFolders({ patchState, getState, dispatch }: StateContext<FolderState>, { typeFolder, selectedIds }: SetDeleteFolders) {
-        await this.api.setDeleteFolder(selectedIds, typeFolder.id).toPromise();
+        await this.api.setDeleteFolder(selectedIds).toPromise();
         dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Deleted, selectedIds));
     }
 
@@ -238,7 +238,7 @@ export class FolderStore {
     @Action(CopyFolders)
     async copyFolders({ getState, dispatch, patchState }: StateContext<FolderState>, { typeFolder, selectedIds }: CopyFolders) {
 
-        const newFolders = await this.api.copyFolders(selectedIds, typeFolder.id).toPromise();
+        const newFolders = await this.api.copyFolders(selectedIds).toPromise();
 
         const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
         dispatch(new UpdateFolders(new Folders(FolderTypeENUM.Private, [...newFolders, ...privateFolders]), FolderTypeENUM.Private));
@@ -262,7 +262,7 @@ export class FolderStore {
     @Action(DeleteFoldersPermanently)
     async deleteFoldersPermanently({ getState, dispatch, patchState }: StateContext<FolderState>,
                                    {selectedIds, typeNote}: DeleteFoldersPermanently) {
-        await this.api.deleteFolders(selectedIds, typeNote.id).toPromise();
+        await this.api.deleteFolders(selectedIds).toPromise();
 
         const foldersFrom = this.getFoldersByType(getState, FolderTypeENUM.Deleted);
         const foldersFromNew = foldersFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
@@ -277,7 +277,7 @@ export class FolderStore {
 
     @Action(MakePrivateFolders)
     async MakePrivateFolder({ getState, dispatch, patchState }: StateContext<FolderState>, {typeFolder, selectedIds}: MakePrivateFolders) {
-        await this.api.makePrivateFolders(selectedIds, typeFolder.id).toPromise();
+        await this.api.makePrivateFolders(selectedIds).toPromise();
         dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Private, selectedIds));
     }
 

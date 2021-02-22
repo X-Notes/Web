@@ -14,8 +14,5 @@ namespace Domain.Commands.share.notes
 
         [Required]
         public Guid RefTypeId { set; get; }
-
-        [Required]
-        public Guid SharedId { set; get; }
     }
 }

@@ -27,18 +27,21 @@ namespace BI.services.sharing
         private readonly NoteRepository noteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+        private readonly AppRepository appRepository;
         public SharingHandlerCommand(
             FolderRepository folderRepository, 
             UserRepository userRepository, 
             NoteRepository noteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
-            UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
+            UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
+            AppRepository appRepository)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+            this.appRepository = appRepository;
         }
 
 
@@ -47,14 +50,14 @@ namespace BI.services.sharing
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folder = user.Folders.Where(x => request.Id == x.Id).FirstOrDefault();
-
+            var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
             if (folder != null)
             {
                 folder.RefTypeId = request.RefTypeId;
                 if (folder.FolderType.Name != ModelsNaming.SharedFolder)
                 {
                     var foldersList = new List<Folder>() { folder };
-                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, request.SharedId);
+                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, type.Id);
                 }
                 else
                 {
@@ -73,14 +76,14 @@ namespace BI.services.sharing
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var note = user.Notes.Where(x => request.Id == x.Id).FirstOrDefault();
-
+            var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
             if (note != null)
             {
                 note.RefTypeId = request.RefTypeId;
                 if (note.NoteType.Name != ModelsNaming.SharedNote)
                 {
                     var notesList = new List<Note>() { note };
-                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, request.SharedId);
+                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, type.Id);
                 }
                 else
                 {

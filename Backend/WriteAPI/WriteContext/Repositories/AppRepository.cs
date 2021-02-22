@@ -48,14 +48,29 @@ namespace WriteContext.Repositories
             return await contextDB.NotesTypes.ToListAsync();
         }
 
+        public async Task<NoteType> GetNoteTypeByName(string name)
+        {
+            return await contextDB.NotesTypes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
         public async Task<List<FolderType>> GetFolderTypes()
         {
             return await contextDB.FoldersTypes.ToListAsync();
+        }
+
+        public async Task<FolderType> GetFolderTypeByName(string name)
+        {
+            return await contextDB.FoldersTypes.FirstOrDefaultAsync(x => x.Name == name);
         }
 
         public async Task<List<RefType>> GetRefTypes()
         {
             return await contextDB.RefTypes.ToListAsync();
         }
+        public async Task<RefType> GetRefTypeByName(string name)
+        {
+            return await contextDB.RefTypes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
     }
 }
