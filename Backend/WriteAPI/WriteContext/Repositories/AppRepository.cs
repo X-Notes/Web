@@ -1,9 +1,6 @@
 ﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WriteContext.Repositories
@@ -44,6 +41,21 @@ namespace WriteContext.Repositories
         public async Task<Theme> GetThemeByName(string name)
         {
             return await contextDB.Themes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<List<NoteType>> GetNoteTypes()
+        {
+            return await contextDB.NotesTypes.ToListAsync();
+        }
+
+        public async Task<List<FolderType>> GetFolderTypes()
+        {
+            return await contextDB.FoldersTypes.ToListAsync();
+        }
+
+        public async Task<List<RefType>> GetRefTypes()
+        {
+            return await contextDB.RefTypes.ToListAsync();
         }
     }
 }

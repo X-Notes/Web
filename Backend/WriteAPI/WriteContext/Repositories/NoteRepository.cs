@@ -1,6 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using Common.DatabaseModels.models;
-using Common.DTO.notes;
+﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,13 +15,13 @@ namespace WriteContext.Repositories
             this.contextDB = contextDB;
         }
 
-        public async Task Add(Note note)
+        public async Task Add(Note note, Guid TypeId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var notes = await GetPrivateNotesByUserId(note.UserId);
+                    var notes = await GetNotesByUserIdAndTypeId(note.UserId , TypeId);
 
                     if (notes.Count() > 0)
                     {
@@ -66,7 +64,10 @@ namespace WriteContext.Repositories
         public async Task<Note> GetForUpdatingTitle(Guid id)
         {
             return await contextDB.Notes
+                .Include(x => x.NoteType)
+                .Include(x => x.RefType)
                 .Include(x => x.UsersOnPrivateNotes)
+                .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -75,37 +76,20 @@ namespace WriteContext.Repositories
             return await contextDB.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.UsersOnPrivateNotes)
+                .Include(x => x.NoteType)
+                .Include(x => x.RefType)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Note>> GetPrivateNotesByUserId(Guid userId)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeId(Guid userId, Guid typeId)
         {
             return await contextDB.Notes
+                .Include(x => x.RefType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.NoteType == NotesType.Private).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
 
-        public async Task<List<Note>> GetSharedNotesByUserId(Guid userId)
-        {
-            return await contextDB.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.NoteType == NotesType.Shared).ToListAsync();
-        }
-
-        public async Task<List<Note>> GetArchiveNotesByUserId(Guid userId)
-        {
-            return await contextDB.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.NoteType == NotesType.Archive).ToListAsync();
-        }
-
-        public async Task<List<Note>> GetDeletedNotesByUserId(Guid userId)
-        {
-            return await contextDB.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.NoteType == NotesType.Deleted).ToListAsync();
-        }
 
         public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)
         {
@@ -142,21 +126,21 @@ namespace WriteContext.Repositories
         }
 
 
-        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NotesType noteTypeFrom, NotesType noteTypeTo)
+        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, Guid FromId, Guid ToId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var notesTo = allUserNotes.Where(x => x.NoteType == noteTypeTo).ToList();
+                    var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
                     notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
                     await UpdateRangeNotes(notesTo);
 
-                    notesForCasting.ForEach(x => x.NoteType = noteTypeTo);
+                    notesForCasting.ForEach(x => x.NoteTypeId = ToId);
                     ChangeOrderHelper(notesForCasting);
                     await UpdateRangeNotes(notesForCasting);
 
-                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteTypeFrom).OrderBy(x => x.Order).ToList();
+                    var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
                     await UpdateRangeNotes(oldNotes);
 
@@ -169,20 +153,20 @@ namespace WriteContext.Repositories
             }
         }
 
-        public async Task<List<Note>> CopyNotes(List<Note> notesForCopy, List<Note> allUserNotes, NotesType noteTypeFrom, NotesType noteTypeTo)
+        public async Task<List<Note>> CopyNotes(List<Note> notesForCopy, List<Note> allUserNotes, Guid FromId, Guid ToId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var notesTo = allUserNotes.Where(x => x.NoteType == noteTypeTo).ToList();
+                    var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
                     notesTo.ForEach(x => x.Order = x.Order + notesForCopy.Count());
                     await UpdateRangeNotes(notesTo);
 
                     var newNotes = notesForCopy.Select(x => new Note() { 
                         Color = x.Color,
                         CreatedAt = DateTimeOffset.Now,
-                        NoteType = noteTypeTo,
+                        NoteTypeId = ToId,
                         Title = x.Title,
                         UserId = x.UserId,
                         LabelsNotes = x.LabelsNotes,
@@ -190,7 +174,7 @@ namespace WriteContext.Repositories
                     ChangeOrderHelper(newNotes);
                     await AddRange(newNotes);
 
-                    var oldNotes = allUserNotes.Where(x => x.NoteType == noteTypeFrom).OrderBy(x => x.Order).ToList();
+                    var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
                     await UpdateRangeNotes(oldNotes);
 
@@ -215,6 +199,11 @@ namespace WriteContext.Repositories
                 item.Order = order;
                 order++;
             }
+        }
+
+        public async Task<Note> GetOneById(Guid noteId)
+        {
+            return await contextDB.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
         }
     }
 }

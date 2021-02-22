@@ -1,5 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

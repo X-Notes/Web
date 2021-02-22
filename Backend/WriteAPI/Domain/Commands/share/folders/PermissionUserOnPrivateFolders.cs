@@ -1,9 +1,7 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DatabaseModels.models;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Domain.Commands.share.folders
 {
@@ -14,6 +12,6 @@ namespace Domain.Commands.share.folders
         [Required]
         public Guid UserId { set; get; }
         [Required]
-        public RefType AccessType { set; get; }
+        public Guid AccessTypeId { set; get; }
     }
 }

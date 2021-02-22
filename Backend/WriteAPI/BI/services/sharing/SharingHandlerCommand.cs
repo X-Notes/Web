@@ -102,14 +102,14 @@ namespace BI.services.sharing
             var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
             if(access != null)
             {
-                access.AccessType = request.AccessType;
+                access.AccessTypeId = request.AccessTypeId;
                 await this.usersOnPrivateFoldersRepository.Update(access);
             }
             else
             {
                 var perm = new UsersOnPrivateFolders()
                 {
-                    AccessType = request.AccessType,
+                    AccessTypeId = request.AccessTypeId,
                     FolderId = request.FolderId,
                     UserId = request.UserId
                 };
@@ -125,14 +125,14 @@ namespace BI.services.sharing
             var access = await this.usersOnPrivateNotesRepository.GetByUserIdandNoteId(request.UserId, request.NoteId);
             if (access != null)
             {
-                access.AccessType = request.AccessType;
+                access.AccessTypeId = request.AccessTypeId;
                 await this.usersOnPrivateNotesRepository.Update(access);
             }
             else
             {
                 var perm = new UsersOnPrivateFolders()
                 {
-                    AccessType = request.AccessType,
+                    AccessTypeId = request.AccessTypeId,
                     FolderId = request.NoteId,
                     UserId = request.UserId
                 };
@@ -179,7 +179,7 @@ namespace BI.services.sharing
 
             var permissions = request.UserIds.Select(userId => new UsersOnPrivateFolders()
             {
-                AccessType = request.RefType,
+                AccessTypeId = request.RefTypeId,
                 FolderId = request.FolderId,
                 UserId = userId
             }).ToList();
@@ -195,7 +195,7 @@ namespace BI.services.sharing
 
             var permissions = request.UserIds.Select(userId => new UserOnPrivateNotes()
             {
-                AccessType = request.RefType,
+                AccessTypeId = request.RefTypeId,
                 NoteId = request.NoteId,
                 UserId = userId
             }).ToList();

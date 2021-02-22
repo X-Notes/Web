@@ -1,10 +1,8 @@
-﻿using Common.DatabaseModels.helpers;
-using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WriteContext.Repositories
@@ -34,13 +32,13 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task Add(Folder folder)
+        public async Task Add(Folder folder, Guid TypeId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var notes = await GetPrivateFoldersByUserId(folder.UserId);
+                    var notes = await GetFoldersByUserIdAndTypeId(folder.UserId, TypeId);
 
                     if (notes.Count() > 0)
                     {
@@ -60,21 +58,21 @@ namespace WriteContext.Repositories
                 }
             }
         }
-        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, FoldersType folderTypeFrom, FoldersType folderTypeTo)
+        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, Guid FromId, Guid ToId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var foldersTo = allUserFolders.Where(x => x.FolderType == folderTypeTo).ToList();
+                    var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCasting.Count());
                     await UpdateRangeFolders(foldersTo);
 
-                    foldersForCasting.ForEach(x => x.FolderType = folderTypeTo);
+                    foldersForCasting.ForEach(x => x.FolderTypeId = ToId);
                     ChangeOrderHelper(foldersForCasting);
                     await UpdateRangeFolders(foldersForCasting);
 
-                    var oldFolders = allUserFolders.Where(x => x.FolderType == folderTypeFrom).OrderBy(x => x.Order).ToList();
+                    var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldFolders);
                     await UpdateRangeFolders(oldFolders);
 
@@ -124,13 +122,13 @@ namespace WriteContext.Repositories
             }
         }
 
-        public async Task<List<Folder>> CopyFolders(List<Folder> foldersForCopy, List<Folder> allUserFolders, FoldersType folderTypeFrom, FoldersType folderTypeTo)
+        public async Task<List<Folder>> CopyFolders(List<Folder> foldersForCopy, List<Folder> allUserFolders, Guid FromId, Guid ToId)
         {
             using (var transaction = await contextDB.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var foldersTo = allUserFolders.Where(x => x.FolderType == folderTypeTo).ToList();
+                    var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCopy.Count());
                     await UpdateRangeFolders(foldersTo);
 
@@ -138,14 +136,14 @@ namespace WriteContext.Repositories
                     {
                         Color = x.Color,
                         CreatedAt = DateTimeOffset.Now,
-                        FolderType = folderTypeTo,
+                        FolderTypeId = ToId,
                         Title = x.Title,
                         UserId = x.UserId
                     }).ToList();
                     ChangeOrderHelper(newFolders);
                     await AddRange(newFolders);
 
-                    var oldFolders = allUserFolders.Where(x => x.FolderType == folderTypeFrom).OrderBy(x => x.Order).ToList();
+                    var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldFolders);
                     await UpdateRangeFolders(oldFolders);
 
@@ -166,7 +164,10 @@ namespace WriteContext.Repositories
         public async Task<Folder> GetForUpdateTitle(Guid id)
         {
             return await contextDB.Folders
+                .Include(x => x.FolderType)
+                .Include(x => x.RefType)
                 .Include(x => x.UsersOnPrivateFolders)
+                .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -175,31 +176,22 @@ namespace WriteContext.Repositories
             return await contextDB.Folders
                 .Include(folder => folder.FoldersNotes)
                 .Include(folder => folder.UsersOnPrivateFolders)
+                .Include(x => x.FolderType)
+                .Include(x => x.RefType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetPrivateFoldersByUserId(Guid userId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, Guid typeId)
         {
             return await contextDB.Folders
-                .Where(x => x.UserId == userId && x.FolderType == FoldersType.Private).ToListAsync();
+                .Include(x => x.RefType)
+                .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetSharedFoldersByUserId(Guid userId)
+        public async Task<Folder> GetOneById(Guid folderId)
         {
-            return await contextDB.Folders
-                .Where(x => x.UserId == userId && x.FolderType == FoldersType.Shared).ToListAsync();
+            return await contextDB.Folders.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == folderId);
         }
 
-        public async Task<List<Folder>> GetArchiveFoldersByUserId(Guid userId)
-        {
-            return await contextDB.Folders
-                .Where(x => x.UserId == userId && x.FolderType == FoldersType.Archive).ToListAsync();
-        }
-
-        public async Task<List<Folder>> GetDeletedFoldersByUserId(Guid userId)
-        {
-            return await contextDB.Folders
-                .Where(x => x.UserId == userId && x.FolderType == FoldersType.Deleted).ToListAsync();
-        }
     }
 }

@@ -7,7 +7,6 @@ using Domain.Commands.folders;
 using Domain.Queries.folders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
@@ -27,44 +26,23 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet("new")]
-        public async Task<JsonResult> Add()
+        public async Task<SmallFolder> Add()
         {
             var email = this.GetUserEmail();
             var command = new NewFolderCommand(email);
-            return new JsonResult(await _mediator.Send(command));
+            return await _mediator.Send(command);
         }
 
-        [HttpGet("private")]
-        public async Task<List<SmallFolder>> GetPrivateFolders()
+        [HttpGet("type/{id}")]
+        public async Task<List<SmallFolder>> GetPrivateFolders(Guid id)
         {
             var email = this.GetUserEmail();
-            var query = new GetPrivateFoldersQuery(email);
+            var query = new GetFoldersByTypeQuery(email, id);
             return await _mediator.Send(query);
         }
 
-        [HttpGet("shared")]
-        public async Task<List<SmallFolder>> GetSharedFolders()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetSharedFoldersQuery(email);
-            return await _mediator.Send(query);
-        }
 
-        [HttpGet("archive")]
-        public async Task<List<SmallFolder>> GetArchiveFolders()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetArchiveFoldersQuery(email);
-            return await _mediator.Send(query);
-        }
 
-        [HttpGet("deleted")]
-        public async Task<List<SmallFolder>> GetDeletedFolders()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetDeletedFoldersQuery(email);
-            return await _mediator.Send(query);
-        }
 
         [HttpGet("{id}")]
         public async Task<FullFolderAnswer> Get(Guid id)

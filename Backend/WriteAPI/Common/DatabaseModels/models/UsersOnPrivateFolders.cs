@@ -9,6 +9,8 @@ namespace Common.DatabaseModels.models
 
         public Guid FolderId { set; get; }
         public Folder Folder { set; get; }
+
+        public Guid AccessTypeId { set; get; }
         public RefType AccessType { set; get; }
     }
 }

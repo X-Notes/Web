@@ -51,12 +51,18 @@ namespace WriteContext.Repositories
 
         public async Task<User> GetUserWithNotes(string email)
         {
-            return await contextDB.Users.Include(x => x.Notes).FirstOrDefaultAsync(x => x.Email == email);
+            return await contextDB.Users
+                .Include(x => x.Notes)
+                .ThenInclude(x => x.NoteType)
+                .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithFolders(string email)
         {
-            return await contextDB.Users.Include(x => x.Folders).FirstOrDefaultAsync(x => x.Email == email);
+            return await contextDB.Users
+                .Include(x => x.Folders)
+                .ThenInclude(x => x.FolderType)
+                .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task Add(User user)
