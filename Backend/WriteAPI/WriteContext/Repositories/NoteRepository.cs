@@ -171,6 +171,7 @@ namespace WriteContext.Repositories
                         Title = x.Title,
                         UserId = x.UserId,
                         LabelsNotes = x.LabelsNotes,
+                        RefTypeId = x.RefTypeId,
                     }).ToList();
                     ChangeOrderHelper(newNotes);
                     await AddRange(newNotes);

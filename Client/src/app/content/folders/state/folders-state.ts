@@ -306,7 +306,9 @@ export class FolderStore {
         dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
 
         foldersAdded = [...foldersAdded.map(folder => {
-            return {...folder};
+            const newFolder = {...folder};
+            newFolder.folderType =  {...newFolder.folderType};
+            return newFolder;
         })];
         foldersAdded.forEach(folder => folder.folderType.name = typeTo);
 

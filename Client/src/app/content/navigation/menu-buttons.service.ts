@@ -418,7 +418,8 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
-      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Deleted);
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
@@ -441,7 +442,8 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new MakePrivateNotes(note.noteType, ids));
-      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Private);
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
@@ -466,7 +468,8 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new ArchiveNotes(note.noteType, ids));
-      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Archive);
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);

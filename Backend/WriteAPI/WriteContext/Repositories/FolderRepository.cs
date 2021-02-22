@@ -138,7 +138,8 @@ namespace WriteContext.Repositories
                         CreatedAt = DateTimeOffset.Now,
                         FolderTypeId = ToId,
                         Title = x.Title,
-                        UserId = x.UserId
+                        UserId = x.UserId,
+                        RefTypeId = x.RefTypeId
                     }).ToList();
                     ChangeOrderHelper(newFolders);
                     await AddRange(newFolders);

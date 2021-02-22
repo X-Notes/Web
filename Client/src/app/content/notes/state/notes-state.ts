@@ -293,7 +293,7 @@ export class NoteStore {
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote, selectedIds }: SetDeleteNotes) {
         await this.api.setDeleteNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
     }
 
     // Deleting
@@ -317,14 +317,14 @@ export class NoteStore {
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: ArchiveNotes) {
         await this.api.archiveNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Archive, selectedIds));
     }
 
 
     @Action(MakePrivateNotes)
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: MakePrivateNotes) {
         await this.api.makePrivateNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote.name, typeNote.name, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Private, selectedIds));
     }
 
     getNotesByType(getState: () => NoteState, type: NoteTypeENUM): SmallNote[] {
@@ -343,7 +343,9 @@ export class NoteStore {
         const notesTo = this.getNotesByType(getState, typeTo);
 
         notesAdded = [...notesAdded.map(note => {
-            return {...note};
+            const newNote = {...note};
+            newNote.noteType = {...newNote.noteType};
+            return newNote;
         })];
         notesAdded.forEach(note => note.noteType.name = typeTo);
         const newNotesTo = [...notesAdded, ...notesTo];
