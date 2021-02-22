@@ -12,7 +12,7 @@ import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-label',
@@ -71,10 +71,11 @@ export class LabelComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateLabelFullNote(this.label, flag));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       if (!this.label.isSelected) {
-        this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
+        this.store.dispatch(new AddLabelOnNote(this.label, type, ids));
       } else {
-        this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
+        this.store.dispatch(new RemoveLabelFromNote(this.label, type, ids));
       }
     }
   }
@@ -96,10 +97,10 @@ export class LabelComponent implements OnInit, OnDestroy {
       const timer = setInterval(() => {
         if (count === 60 && flag) {
           clearInterval(timer);
-          resolve();
+          resolve(null);
         } else if (count === 40 && flag === false) {
           clearInterval(timer);
-          resolve();
+          resolve(null);
         }
         if (this.murriService) {
           this.murriService.grid.refreshItems().layout();

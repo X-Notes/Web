@@ -15,18 +15,9 @@ export class TokenSetNoUpdate {
     constructor() {  }
 }
 
-export class LoadLanguages{
-    static type = '[App] Load Languages';
-    constructor() {  }
-}
 
-export class LoadThemes{
-    static type = '[App] Load Themes';
-    constructor() {  }
-}
-
-export class LoadFontSizes{
-    static type = '[App] Load FontSizes';
+export class LoadGeneralEntites{
+    static type = '[App] Load General Entities';
     constructor() {  }
 }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy} from '@angular/core';
-import { Folder } from '../models/folder';
+import { SmallFolder } from '../models/folder';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { FolderStore } from '../state/folders-state';
@@ -21,7 +21,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
-  @Input() folder: Folder;
+  @Input() folder: SmallFolder;
 
   constructor(private store: Store,
               private router: Router) { }
@@ -38,7 +38,8 @@ export class FolderComponent implements OnInit, OnDestroy {
       debounceTime(250))
       .subscribe(title => {
         if (title) {
-          const type = this.store.selectSnapshot(AppStore.getTypeFolder);
+          const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
+          const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === typeRoad);
           this.store.dispatch(new UpdateTitle(title, this.folder.id, type));
         }
       });

@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from '../../core/stateUser/user-state';
-import { ThemeNaming } from '../enums/ThemeNaming';
+import { ThemeNaming } from '../enums/ThemeEnum';
 
 @Directive({
   selector: '[appTheme]'

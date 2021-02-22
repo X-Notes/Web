@@ -6,7 +6,7 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeEnum';
 import { Theme } from 'src/app/shared/models/Theme';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 

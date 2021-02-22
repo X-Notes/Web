@@ -4,15 +4,14 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from '../state/folders-state';
-import { LoadSharedFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FolderService } from '../folder.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-shared',
@@ -34,7 +33,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
               public folderService: FolderService) { }
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderType.Shared);
+    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Shared);
   }
 
   ngOnDestroy(): void {
@@ -48,7 +47,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderShared)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
@@ -59,8 +58,8 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    await this.store.dispatch(new LoadSharedFolders()).toPromise();
-    this.store.dispatch(new LoadAllExceptFolders(FolderType.Shared));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
+    await this.folderService.loadFolders(type);
 
     let folders = this.store.selectSnapshot(FolderStore.sharedFolders);
     folders = this.folderService.transformFolders(folders);

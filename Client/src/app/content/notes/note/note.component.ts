@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { Router } from '@angular/router';
 import { NoteStore } from '../state/notes-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 
 @Component({

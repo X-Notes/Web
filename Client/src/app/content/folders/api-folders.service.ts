@@ -1,69 +1,43 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Folder } from './models/folder';
+import { SmallFolder } from './models/folder';
 import { environment } from 'src/environments/environment';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { map } from 'rxjs/operators';
 import { Folders } from './models/Folders';
 import { RequestFullFolder } from './models/requestFullFolder';
-import { RefType } from 'src/app/core/models/refType';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invitedUsersToNote';
+import { EntityRef } from 'src/app/shared/models/entityRef';
 
 @Injectable()
 export class ApiFoldersService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getPrivateFolders() {
-    return this.httpClient.get<Folder[]>(environment.writeAPI + '/api/folder/private')
-                          .pipe(map(z => {
-                            z.forEach(note => note.folderType = FolderType.Private);
-                            return new Folders(FolderType.Private, z);
-                          }));
+  getFolders(id: string, type: FolderTypeENUM) {
+    return this.httpClient.get<SmallFolder[]>(environment.writeAPI + `/api/folder/type/${id}`)
+      .pipe(map(folders => new Folders(type, folders)));
   }
 
-  getSharedFolders() {
-    return this.httpClient.get<Folder[]>(environment.writeAPI + '/api/folder/shared')
-                          .pipe(map(z => {
-                            z.forEach(note => note.folderType = FolderType.Shared);
-                            return new Folders(FolderType.Shared, z);
-                          }));
-  }
-
-  getDeletedFolders() {
-    return this.httpClient.get<Folder[]>(environment.writeAPI + '/api/folder/deleted')
-                          .pipe(map(z => {
-                            z.forEach(note => note.folderType = FolderType.Deleted);
-                            return new Folders(FolderType.Deleted, z);
-                          }));
-  }
-
-  getArchiveFolders() {
-    return this.httpClient.get<Folder[]>(environment.writeAPI + '/api/folder/archive')
-                          .pipe(map(z => {
-                            z.forEach(note => note.folderType = FolderType.Archive);
-                            return new Folders(FolderType.Archive, z);
-                          }));
-  }
 
   getUsersOnPrivateFolder(id: string) {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(environment.writeAPI + `/api/share/folders/user/invites/${id}`);
   }
 
-  changeUserPermission(folderId: string, userId: string, accessType: RefType) {
+  changeUserPermission(folderId: string, userId: string, accessTypeId: string) {
     const obj = {
       folderId,
       userId,
-      accessType
+      accessTypeId
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/folders/user/permission`, obj);
   }
 
-  sendInvitesToFolder(userIds: string[], folderId: string, refType: RefType, sendMessage: boolean, message: string) {
+  sendInvitesToFolder(userIds: string[], folderId: string, refTypeId: string, sendMessage: boolean, message: string) {
     const obj = {
       userIds,
       folderId,
-      refType,
+      refTypeId,
       sendMessage,
       message
     };
@@ -83,40 +57,45 @@ export class ApiFoldersService {
   }
 
   new() {
-    return this.httpClient.get<string>(environment.writeAPI + `/api/folder/new`);
+    return this.httpClient.get<SmallFolder>(environment.writeAPI + `/api/folder/new`);
   }
 
-  archiveFolder(ids: string[]) {
+  archiveFolder(ids: string[], toId: string) {
     const obj = {
       ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/archive`, obj);
   }
 
-  setDeleteFolder(ids: string[]) {
+  setDeleteFolder(ids: string[], toId: string) {
     const obj = {
-      ids
+      ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/delete`, obj);
   }
 
-  deleteFolders(ids: string[]) {
+  deleteFolders(ids: string[], deleteTypeId: string) {
     const obj = {
       ids,
+      deleteTypeId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/delete/permanently`, obj);
   }
 
-  copyFolders(ids: string[]) {
+  copyFolders(ids: string[], toId: string) {
     const obj = {
       ids,
+      toId
     };
-    return this.httpClient.patch<Folder[]>(environment.writeAPI + `/api/folder/copy`, obj);
+    return this.httpClient.patch<SmallFolder[]>(environment.writeAPI + `/api/folder/copy`, obj);
   }
 
-  restoreFolder(ids: string[]) {
+  restoreFolder(ids: string[], toId: string) {
     const obj = {
       ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/restore`, obj);
   }
@@ -129,17 +108,19 @@ export class ApiFoldersService {
     return this.httpClient.patch(environment.writeAPI + `/api/folder/color`, obj);
   }
 
-  makePrivateFolders(ids: string[]) {
+  makePrivateFolders(ids: string[], toId: string) {
     const obj = {
-      ids
+      ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/folder/ref/private`, obj);
   }
 
-  makePublic(refType: RefType, id: string) {
+  makePublic(refType: EntityRef, id: string, sharedId: string) {
     const obj = {
-      refType,
-      id
+      refTypeId: refType.id,
+      id,
+      sharedId
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/folders/share`, obj);
   }

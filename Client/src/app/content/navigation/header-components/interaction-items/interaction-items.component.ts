@@ -56,12 +56,14 @@ export class InteractionItemsComponent implements OnInit {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      this.store.dispatch(new SelectAllNote(noteType));
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      this.store.dispatch(new SelectAllNote(type));
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      this.store.dispatch(new SelectAllFolder(folderType));
+      const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+      this.store.dispatch(new SelectAllFolder(type));
     }
   }
 

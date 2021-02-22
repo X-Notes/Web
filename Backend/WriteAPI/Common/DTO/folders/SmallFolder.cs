@@ -9,5 +9,6 @@ namespace Common.DTO.folders
         public string Title { set; get; }
         public string Color { set; get; }
         public RefTypeDTO RefType { set; get; }
+        public FolderTypeDTO FolderType { set; get; }
     }
 }

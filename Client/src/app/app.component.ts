@@ -2,10 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from './core/stateUser/user-state';
-import { LanguageDTO } from './shared/models/Language';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AppStore } from './core/stateApp/app-state';
 
 @Component({
   selector: 'app-root',

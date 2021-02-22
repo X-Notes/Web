@@ -47,13 +47,15 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
         await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
       } else {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const type = this.store.selectSnapshot(AppStore.getTypeNote);
+        const typeRoad = this.store.selectSnapshot(AppStore.getTypeNote);
+        const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === typeRoad);
         await this.store.dispatch(new ChangeColorNote(this.current, type, ids)).toPromise();
       }
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const type = this.store.selectSnapshot(AppStore.getTypeFolder);
+      const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
+      const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === typeRoad);
       const ids = this.store.selectSnapshot(FolderStore.selectedIds);
       await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
     }

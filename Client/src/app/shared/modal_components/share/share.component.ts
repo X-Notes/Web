@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
-import { Folder } from 'src/app/content/folders/models/folder';
+import { SmallFolder } from 'src/app/content/folders/models/folder';
 import { ChangeTypeFullFolder, GetInvitedUsersToFolder,
   TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
@@ -15,14 +15,15 @@ import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invited
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
 import { ChangeTypeFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { RefType } from 'src/app/core/models/refType';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { EntityType } from '../../enums/EntityTypes';
-import { FolderType } from '../../enums/FolderTypes';
-import { NoteType } from '../../enums/NoteTypes';
+import { FolderTypeENUM } from '../../enums/FolderTypesEnum';
+import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
+import { EntityRef } from '../../models/entityRef';
 
 export enum SharedType {
   Note,
@@ -43,15 +44,15 @@ export class ShareComponent implements OnInit, OnDestroy {
   isOpenDropdown = false;
   isOpenDropdown2 = false;
   isOpenDropdown3 = false;
-  noteType = NoteType;
-  folderType = FolderType;
-  refType = RefType;
+  noteType = NoteTypeENUM;
+  folderType = FolderTypeENUM;
+  refType = RefTypeENUM;
 
   notes: SmallNote[] = [];
   currentNote: SmallNote;
 
-  folders: Folder[] = [];
-  currentFolder: Folder;
+  folders: SmallFolder[] = [];
+  currentFolder: SmallFolder;
 
   searchStr: string;
   searchStrChanged: Subject<string> = new Subject<string>();
@@ -81,7 +82,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   // INVITES
   messageTextArea: string;
   isSendNotification: boolean;
-  refTypeForInvite: RefType = RefType.Viewer;
+  refTypeForInvite: RefTypeENUM = RefTypeENUM.Viewer;
 
   constructor(
     public pService: PersonalizationService,
@@ -220,7 +221,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   getFullFolder() {
     const fullFolder = this.store.selectSnapshot(FolderStore.full);
-    const smallFolder = {...fullFolder} as Folder;
+    const smallFolder = {...fullFolder} as SmallFolder;
     this.folders = [smallFolder];
     this.changeFolder(smallFolder);
   }
@@ -242,97 +243,107 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeNoteType() {
-    if (this.currentNote.noteType !== NoteType.Shared) {
-      await this.apiNote.makePublic(RefType.Viewer, this.currentNote.id).toPromise();
-      this.currentNote.noteType = NoteType.Shared;
-      this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Shared;
+    if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
+      const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+      await this.apiNote.makePublic(viewer, this.currentNote.id, shareType.id).toPromise();
+      this.currentNote.noteType = shareType;
+      this.notes.find(note => note.id === this.currentNote.id).noteType = shareType;
       const commands = this.factoryForCommandsShared([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Shared));
+      this.store.dispatch(new ChangeTypeFullNote(shareType));
     } else {
-      await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
-      this.currentNote.noteType = NoteType.Private;
-      this.notes.find(note => note.id === this.currentNote.id).noteType = NoteType.Private;
+      const privateType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Private);
+      await this.apiNote.makePrivateNotes([this.currentNote.id], privateType.id).toPromise();
+      this.currentNote.noteType = privateType;
+      this.notes.find(note => note.id === this.currentNote.id).noteType = privateType;
       const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+      this.store.dispatch(new ChangeTypeFullNote(privateType));
     }
   }
 
   async changeFolderType() {
-    if (this.currentFolder.folderType !== FolderType.Shared) {
-      await this.apiFolder.makePublic(RefType.Viewer, this.currentFolder.id).toPromise();
-      this.currentFolder.folderType = FolderType.Shared;
-      this.folders.find(note => note.id === this.currentFolder.id).folderType = FolderType.Shared;
+    if (this.currentFolder.folderType.name !== FolderTypeENUM.Shared) {
+      const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+      await this.apiFolder.makePublic(viewer, this.currentFolder.id, shareType.id).toPromise();
+      this.currentFolder.folderType = shareType;
+      this.folders.find(note => note.id === this.currentFolder.id).folderType = shareType;
       const commands = this.factoryForCommandsSharedFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
-      this.store.dispatch(new ChangeTypeFullFolder(FolderType.Shared));
+      this.store.dispatch(new ChangeTypeFullFolder(shareType));
     } else {
-      await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
-      this.currentFolder.folderType = FolderType.Private;
-      this.folders.find(folder => folder.id === this.currentFolder.id).folderType = FolderType.Private;
+      const privateType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Private);
+      await this.apiFolder.makePrivateFolders([this.currentFolder.id], privateType.id).toPromise();
+      this.currentFolder.folderType = privateType;
+      this.folders.find(folder => folder.id === this.currentFolder.id).folderType = privateType;
       const commands = this.factoryForCommandsPrivateFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
-      this.store.dispatch(new ChangeTypeFullFolder(FolderType.Private));
+      this.store.dispatch(new ChangeTypeFullFolder(privateType));
     }
   }
 
 
   factoryForCommandsShared(ids: string[]) {
     const commands: any[] = [];
-    commands.push(new TransformTypeNotes(NoteType.Archive, NoteType.Shared, ids));
-    commands.push(new TransformTypeNotes(NoteType.Private, NoteType.Shared, ids));
-    commands.push(new TransformTypeNotes(NoteType.Deleted, NoteType.Shared, ids));
-    commands.push(new UpdateOneNote(this.currentNote,  NoteType.Shared));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Archive, NoteTypeENUM.Shared, ids));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Private, NoteTypeENUM.Shared, ids));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Deleted, NoteTypeENUM.Shared, ids));
+    commands.push(new UpdateOneNote(this.currentNote,  NoteTypeENUM.Shared));
     return commands;
   }
 
 
   factoryForCommandsPrivate(ids: string[]) {
     const commands: any[] = [];
-    commands.push(new TransformTypeNotes(NoteType.Archive, NoteType.Private, ids));
-    commands.push(new TransformTypeNotes(NoteType.Shared, NoteType.Private, ids));
-    commands.push(new TransformTypeNotes(NoteType.Deleted, NoteType.Private, ids));
-    commands.push(new UpdateOneNote(this.currentNote, NoteType.Private));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Archive, NoteTypeENUM.Private, ids));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Shared, NoteTypeENUM.Private, ids));
+    commands.push(new TransformTypeNotes(NoteTypeENUM.Deleted, NoteTypeENUM.Private, ids));
+    commands.push(new UpdateOneNote(this.currentNote, NoteTypeENUM.Private));
     return commands;
   }
 
   factoryForCommandsSharedFolders(ids: string[]) {
     const commands: any[] = [];
-    commands.push(new TransformTypeFolders(FolderType.Archive, FolderType.Shared, ids));
-    commands.push(new TransformTypeFolders(FolderType.Private, FolderType.Shared, ids));
-    commands.push(new TransformTypeFolders(FolderType.Deleted, FolderType.Shared, ids));
-    commands.push(new UpdateOneFolder(this.currentFolder,  FolderType.Shared));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Archive, FolderTypeENUM.Shared, ids));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Private, FolderTypeENUM.Shared, ids));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Deleted, FolderTypeENUM.Shared, ids));
+    commands.push(new UpdateOneFolder(this.currentFolder,  FolderTypeENUM.Shared));
     return commands;
   }
 
 
   factoryForCommandsPrivateFolders(ids: string[]) {
     const commands: any[] = [];
-    commands.push(new TransformTypeFolders(FolderType.Archive, FolderType.Private, ids));
-    commands.push(new TransformTypeFolders(FolderType.Shared, FolderType.Private, ids));
-    commands.push(new TransformTypeFolders(FolderType.Deleted, FolderType.Private, ids));
-    commands.push(new UpdateOneFolder(this.currentFolder, FolderType.Private));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Archive, FolderTypeENUM.Private, ids));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Shared, FolderTypeENUM.Private, ids));
+    commands.push(new TransformTypeFolders(FolderTypeENUM.Deleted, FolderTypeENUM.Private, ids));
+    commands.push(new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Private));
     return commands;
   }
 
-  async changeRefTypeNote(refType: RefType) {
-    await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
+  async changeRefTypeNote(refTypeRoad: RefTypeENUM) {
+    const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
+    await this.apiNote.makePublic(refType, this.currentNote.id, shareType.id).toPromise();
     this.currentNote.refType = refType;
     this.notes.find(note => note.id === this.currentNote.id).refType = refType;
-    this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType));
+    this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType.name));
     this.isOpenDropdown2 = false;
   }
 
-  async changeRefTypeFolder(refType: RefType) {
-    await this.apiFolder.makePublic(refType, this.currentFolder.id).toPromise();
+  async changeRefTypeFolder(refTypeRoad: RefTypeENUM) {
+    const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
+    await this.apiFolder.makePublic(refType, this.currentFolder.id, shareType.id).toPromise();
     this.currentFolder.refType = refType;
     this.folders.find(folder => folder.id === this.currentFolder.id).refType = refType;
-    this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType));
+    this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType.name));
     this.isOpenDropdown = false;
   }
 
-  refTypeNotification(refType: RefType): void {
+  refTypeNotification(refType: RefTypeENUM): void {
     this.refTypeForInvite = refType;
     this.isOpenDropdown3 = false;
   }
@@ -361,7 +372,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 
-  changeFolder(folder: Folder) {
+  changeFolder(folder: SmallFolder) {
     this.currentFolder = { ...folder };
     this.store.dispatch(new GetInvitedUsersToFolder(folder.id));
   }
@@ -411,7 +422,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
   }
 
-  async changeUserPermission(refType: RefType, id: string) {
+  async changeUserPermission(refType: RefTypeENUM, id: string) {
     switch (this.currentWindowType) {
       case SharedType.Folder: {
         await this.apiFolder.changeUserPermission(this.currentFolder.id, id, refType).toPromise();

@@ -119,7 +119,7 @@ namespace WriteAPI.Controllers
 
         // GET Entities
         [HttpGet("type/{id}")]
-        public async Task<List<SmallNote>> GetPrivateNotes(Guid id)
+        public async Task<List<SmallNote>> GetNotes(Guid id)
         {
             var email = this.GetUserEmail();
             var query = new GetNotesByTypeQuery(email, id);

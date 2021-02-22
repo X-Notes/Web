@@ -1,5 +1,5 @@
 import { User } from '../models/user';
-import { LanguageDTO } from 'src/app/shared/models/Language';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import { Background } from '../models/background';
 import { Theme } from 'src/app/shared/models/Theme';
 import { FontSize } from 'src/app/shared/models/FontSize';

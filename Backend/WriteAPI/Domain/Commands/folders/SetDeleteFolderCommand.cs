@@ -11,9 +11,6 @@ namespace Domain.Commands.folders
         public List<Guid> Ids { set; get; }
 
         [Required]
-        public Guid FromId { set; get; }
-
-        [Required]
         public Guid ToId { set; get; }
 
         public SetDeleteFolderCommand(string email) : base(email)

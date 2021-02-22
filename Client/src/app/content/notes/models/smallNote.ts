@@ -1,5 +1,6 @@
-import { RefType } from 'src/app/core/models/refType';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { EntityRef } from 'src/app/shared/models/entityRef';
+import { NoteType } from 'src/app/shared/models/noteType';
 import { Label } from '../../labels/models/label';
 
 export interface SmallNote {
@@ -7,7 +8,7 @@ export interface SmallNote {
     title: string;
     color: string;
     labels: Label[];
-    refType: RefType;
+    refType: EntityRef;
     noteType: NoteType;
     isSelected?: boolean;
     lockRedirect?: boolean;

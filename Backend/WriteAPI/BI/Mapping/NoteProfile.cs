@@ -21,6 +21,7 @@ namespace BI.Mapping
                 .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
                 .ForMember(x => x.Title, dest => dest.MapFrom(f => f.Title))
                 .ForMember(x => x.Color, dest => dest.MapFrom(f => f.Color))
+                .ForMember(x => x.NoteType, dest => dest.MapFrom(f => f.NoteType))
                 .ForMember(x => x.RefType, dest => dest.MapFrom(f => f.RefType))
                 .ForMember(x => x.Labels, dest => dest.MapFrom(z => z.LabelsNotes.Select(x => x.Label)));
         }

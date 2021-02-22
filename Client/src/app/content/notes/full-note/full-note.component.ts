@@ -7,7 +7,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { DeleteCurrentNote, LoadAllNotes, LoadFullNote, UpdateTitle } from '../state/notes-actions';
+import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -19,7 +19,7 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/models/Theme';
 import { SmallNote } from '../models/smallNote';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
@@ -100,7 +100,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
-      this.store.select(AppStore.getTokenUpdated)
+      this.store.select(AppStore.appLoaded)
         .pipe(takeUntil(this.destroy))
         .subscribe(async (x: boolean) => {
           if (x) {
@@ -137,12 +137,16 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async LoadSecond() {
-    await this.store.dispatch(new LoadAllNotes()).toPromise();
+
+    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
+    const actions = types.map(x => new LoadNotes(x.id, x));
+    await this.store.dispatch(actions).toPromise();
+
     this.store.select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (note) => {
         if (note) {
-          await this.setSideBarNotes(note.noteType);
+          await this.setSideBarNotes(note.noteType.name);
         }
       });
 
@@ -386,22 +390,22 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-  setSideBarNotes(noteType: NoteType) {
+  setSideBarNotes(noteType: NoteTypeENUM) {
     let notes: SmallNote[];
     switch (noteType) {
-      case NoteType.Deleted: {
+      case NoteTypeENUM.Deleted: {
         notes = this.store.selectSnapshot(NoteStore.deletedNotes);
         break;
       }
-      case NoteType.Private: {
+      case NoteTypeENUM.Private: {
         notes = this.store.selectSnapshot(NoteStore.privateNotes);
         break;
       }
-      case NoteType.Shared: {
+      case NoteTypeENUM.Shared: {
         notes = this.store.selectSnapshot(NoteStore.sharedNotes);
         break;
       }
-      case NoteType.Archive: {
+      case NoteTypeENUM.Archive: {
         notes = this.store.selectSnapshot(NoteStore.archiveNotes);
         break;
       }

@@ -9,7 +9,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FullNote } from '../../notes/models/fullNote';
 import { ShortUser } from 'src/app/core/models/short-user';
 
@@ -84,20 +84,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!note) {
       return;
     }
-    switch (note.noteType) {
-      case NoteType.Private: {
+    switch (note.noteType.name) {
+      case NoteTypeENUM.Private: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;
       }
-      case NoteType.Shared: {
+      case NoteTypeENUM.Shared: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
         break;
       }
-      case NoteType.Deleted: {
+      case NoteTypeENUM.Deleted: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
         break;
       }
-      case NoteType.Archive: {
+      case NoteTypeENUM.Archive: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
         break;
       }

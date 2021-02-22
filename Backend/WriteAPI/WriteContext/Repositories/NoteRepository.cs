@@ -86,6 +86,7 @@ namespace WriteContext.Repositories
         {
             return await contextDB.Notes
                 .Include(x => x.RefType)
+                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }

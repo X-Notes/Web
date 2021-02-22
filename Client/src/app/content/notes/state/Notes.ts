@@ -1,11 +1,11 @@
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { SmallNote } from '../models/smallNote';
 
 export class Notes {
-    typeNotes: NoteType;
+    typeNotes: NoteTypeENUM;
     notes: SmallNote[];
     count: number;
-    constructor(typeNotes: NoteType, notes: SmallNote[]) {
+    constructor(typeNotes: NoteTypeENUM, notes: SmallNote[]) {
         this.typeNotes = typeNotes;
         this.notes = notes;
         this.count = notes.length;

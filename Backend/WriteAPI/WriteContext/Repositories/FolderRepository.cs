@@ -185,6 +185,7 @@ namespace WriteContext.Repositories
         {
             return await contextDB.Folders
                 .Include(x => x.RefType)
+                .Include(x => x.FolderType)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 

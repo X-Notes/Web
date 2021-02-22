@@ -3,9 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { User } from './models/user';
 import { ShortUser } from './models/short-user';
-import { Theme } from '../shared/models/Theme';
-import { FontSize } from '../shared/models/FontSize';
-import { LanguageDTO } from '../shared/models/Language';
 import { AnswerChangePhoto } from './models/asnwer-change-photo';
 
 export interface Token {

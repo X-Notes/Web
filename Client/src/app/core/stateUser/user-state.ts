@@ -7,7 +7,7 @@ import { Login, Logout, ChangeTheme, ChangeLanguage,
     SetCurrentBackground,
     SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
 import { Theme } from 'src/app/shared/models/Theme';
-import { LanguageDTO } from 'src/app/shared/models/Language';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import { TranslateService } from '@ngx-translate/core';
 import { FontSize } from 'src/app/shared/models/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';

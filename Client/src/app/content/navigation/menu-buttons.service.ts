@@ -13,9 +13,10 @@ import { CopyFolders, SetDeleteFolders, ArchiveFolders,
    DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { NoteStore } from '../notes/state/notes-state';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FolderStore } from '../folders/state/folders-state';
-import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 
 
 @Injectable({providedIn: 'root'})
@@ -397,15 +398,17 @@ export class MenuButtonsService {
       this.store.dispatch(new CopyNotes(note.noteType, ids));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids));
+      this.store.dispatch(new CopyNotes(type, ids));
     }
   }
 
   private copyFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new CopyFolders(folderType, ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new CopyFolders(type, ids));
   }
 
   // SET DELETE
@@ -415,18 +418,21 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Deleted);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new SetDeleteNotes(noteType, ids));
+      this.store.dispatch(new SetDeleteNotes(type, ids));
     }
   }
 
   private setDeleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new SetDeleteFolders(folderType, ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new SetDeleteFolders(type, ids));
   }
 
   private makePrivateNotes() {
@@ -435,18 +441,21 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new MakePrivateNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Private);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new MakePrivateNotes(noteType , ids));
+      this.store.dispatch(new MakePrivateNotes(type , ids));
     }
   }
 
   private restoreFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new MakePrivateFolders(folderType, ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new MakePrivateFolders(type, ids));
   }
 
   // ARCHIVE
@@ -457,37 +466,42 @@ export class MenuButtonsService {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
       this.store.dispatch(new ArchiveNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Archive);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new ArchiveNotes(noteType, ids));
+      this.store.dispatch(new ArchiveNotes(type, ids));
     }
   }
 
   archiveFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new ArchiveFolders(folderType, ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new ArchiveFolders(type, ids));
   }
 
   // DELETE PERMANENTLY
 
   deleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Deleted);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids  = [note.id];
-      this.store.dispatch(new DeleteNotesPermanently(ids));
+      this.store.dispatch(new DeleteNotesPermanently(ids, type));
     } else {
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new DeleteNotesPermanently(ids));
+      this.store.dispatch(new DeleteNotesPermanently(ids, type));
     }
   }
 
   deleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    this.store.dispatch(new DeleteFoldersPermanently(ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Deleted);
+    this.store.dispatch(new DeleteFoldersPermanently(ids, type));
   }
 
 }

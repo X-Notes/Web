@@ -58,8 +58,7 @@ export class AuthService {
   private getUser(user: firebase.default.User) {
     const temp: User = {
       name: user.displayName,
-      photo: null,
-      language: null
+      photo: null
     };
     return temp;
   }

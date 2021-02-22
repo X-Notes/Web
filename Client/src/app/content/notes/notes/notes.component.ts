@@ -54,7 +54,7 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

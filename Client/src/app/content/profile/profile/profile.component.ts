@@ -3,7 +3,7 @@ import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
-import { LanguageDTO } from 'src/app/shared/models/Language';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import {
   ChangeLanguage, ChangeFontSize, ChangeTheme,
   UpdateUserName, UpdateUserPhoto, SetDefaultBackground
@@ -19,8 +19,8 @@ import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import {CdkConnectedOverlay, ConnectionPositionPair} from '@angular/cdk/overlay';
-import { ThemeNaming } from 'src/app/shared/enums/ThemeNaming';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
+import { ThemeNaming } from 'src/app/shared/enums/ThemeEnum';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-profile',
@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {

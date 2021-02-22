@@ -3,47 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { SmallNote } from './models/smallNote';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
-import { RefType } from 'src/app/core/models/refType';
+import { EntityRef } from 'src/app/shared/models/entityRef';
 
 @Injectable()
 export class ApiServiceNotes {
 
   constructor(private httpClient: HttpClient) { }
 
-  getPrivateNotes() {
-    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/private')
-    .pipe(map(z => {
-      z.forEach(note => note.noteType = NoteType.Private);
-      return new Notes(NoteType.Private, z);
-    }));
-  }
 
-  getSharedNotes() {
-    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/shared')
-    .pipe(map(z => {
-      z.forEach(note => note.noteType = NoteType.Shared);
-      return new Notes(NoteType.Shared, z);
-    }));
-  }
-
-  getDeletedNotes() {
-    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/deleted')
-    .pipe(map(z => {
-      z.forEach(note => note.noteType = NoteType.Deleted);
-      return new Notes(NoteType.Deleted, z);
-    }));
-  }
-
-  getArchiveNotes() {
-    return this.httpClient.get<SmallNote[]>(environment.writeAPI + '/api/note/archive')
-    .pipe(map(z => {
-      z.forEach(note => note.noteType = NoteType.Archive);
-      return new Notes(NoteType.Archive, z);
-    }));
+  getNotes(id: string, type: NoteTypeENUM) {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + `/api/note/type/${id}`)
+    .pipe(map(notes => new Notes(type, notes)));
   }
 
 
@@ -71,38 +45,43 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/note/color`, obj);
   }
 
-  setDeleteNotes(ids: string[]) {
+  setDeleteNotes(ids: string[], toId: string) {
     const obj = {
-      ids
+      ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete`, obj);
   }
 
 
-  makePrivateNotes(ids: string[]) {
+  makePrivateNotes(ids: string[], toId: string) {
     const obj = {
       ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/ref/private`, obj);
   }
 
-  copyNotes(ids: string[]) {
+  copyNotes(ids: string[], toId: string) {
     const obj = {
       ids,
+      toId
     };
     return this.httpClient.patch<SmallNote[]>(environment.writeAPI + `/api/note/copy`, obj);
   }
 
-  deleteNotes(ids: string[]) {
+  deleteNotes(ids: string[], deleteTypeId: string) {
     const obj = {
       ids,
+      deleteTypeId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/delete/permanently`, obj);
   }
 
-  archiveNotes(ids: string[]) {
+  archiveNotes(ids: string[], toId: string) {
     const obj = {
-      ids
+      ids,
+      toId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/note/archive`, obj);
   }
@@ -112,26 +91,27 @@ export class ApiServiceNotes {
   }
 
   new() {
-    return this.httpClient.get<string>(environment.writeAPI + `/api/note/new`);
+    return this.httpClient.get<SmallNote>(environment.writeAPI + `/api/note/new`);
   }
 
   getUsersOnPrivateNote(id: string) {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(environment.writeAPI + `/api/share/notes/user/invites/${id}`);
   }
 
-  makePublic(refType: RefType, id: string) {
+  makePublic(refType: EntityRef, id: string, sharedId: string) {
     const obj = {
-      refType,
-      id
+      refTypeId: refType.id,
+      id,
+      sharedId
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/share`, obj);
   }
 
-  sendInvitesToNote(userIds: string[], noteId: string, refType: RefType, sendMessage: boolean, message: string) {
+  sendInvitesToNote(userIds: string[], noteId: string, refTypeId: string, sendMessage: boolean, message: string) {
     const obj = {
       userIds,
       noteId,
-      refType,
+      refTypeId,
       sendMessage,
       message
     };
@@ -146,11 +126,11 @@ export class ApiServiceNotes {
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/remove`, obj);
   }
 
-  changeUserPermission(noteId: string, userId: string, accessType: RefType) {
+  changeUserPermission(noteId: string, userId: string, accessTypeId: string) {
     const obj = {
       noteId,
       userId,
-      accessType
+      accessTypeId
     };
     return this.httpClient.post(environment.writeAPI + `/api/share/notes/user/permission`, obj);
   }

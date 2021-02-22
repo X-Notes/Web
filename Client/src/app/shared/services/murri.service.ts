@@ -6,8 +6,10 @@ import { PositionNote } from 'src/app/content/notes/state/notes-actions';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
-import { NoteType } from '../enums/NoteTypes';
-import { FolderType } from '../enums/FolderTypes';
+import { NoteTypeENUM } from '../enums/NoteTypesEnum';
+import { FolderTypeENUM } from '../enums/FolderTypesEnum';
+import { NoteType } from '../models/noteType';
+import { FolderType } from '../models/folderType';
 
 @Injectable()
 export class MurriService  {

@@ -11,7 +11,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeNaming';
+import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-deleted',
@@ -47,7 +47,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
 
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {

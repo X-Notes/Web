@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
-import { LoadFontSizes, LoadLanguages, LoadThemes } from 'src/app/core/stateApp/app-action';
+import { LoadGeneralEntites } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-content',
@@ -27,7 +27,7 @@ export class ContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store.dispatch([LoadLanguages, LoadThemes, LoadFontSizes]);
+    this.store.dispatch([LoadGeneralEntites]);
     this.store.select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe(z => {

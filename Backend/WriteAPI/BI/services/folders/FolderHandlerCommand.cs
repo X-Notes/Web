@@ -112,7 +112,7 @@ namespace BI.services.folders
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
-                await folderRepository.CastFolders(folders, user.Folders, request.FromId, request.ToId);
+                await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, request.ToId);
             }
             else
             {
