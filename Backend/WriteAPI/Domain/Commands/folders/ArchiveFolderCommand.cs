@@ -1,5 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +10,10 @@ namespace Domain.Commands.folders
     {
         [Required]
         public List<Guid> Ids { set; get; }
+
+        [Required]
+        public Guid ToId { set; get; }
+
         public ArchiveFolderCommand(string email) : base(email)
         {
 

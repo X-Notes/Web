@@ -1,8 +1,7 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DTO.app;
 using Common.DTO.labels;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Common.DTO.notes
 {
@@ -12,6 +11,6 @@ namespace Common.DTO.notes
         public string Title { set; get; }
         public string Color { set; get; }
         public List<LabelDTO> Labels { set; get; }
-        public RefType RefType { set; get; }
+        public RefTypeDTO RefType { set; get; }
     }
 }

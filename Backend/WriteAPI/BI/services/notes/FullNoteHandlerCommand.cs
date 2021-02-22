@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.Naming;
 using Domain.Commands.noteInner;
 using MediatR;
 using System;
@@ -29,17 +29,17 @@ namespace BI.services.notes
             if (user != null)
             {
                 var note = await this.noteRepository.GetForUpdatingTitle(request.Id);
-                switch (note.NoteType)
+                switch (note.NoteType.Name)
                 {
-                    case NotesType.Shared:
+                    case ModelsNaming.SharedNote:
                         {
-                            switch (note.RefType)
+                            switch (note.RefType.Name)
                             {
-                                case RefType.Editor:
+                                case ModelsNaming.Editor:
                                     {
                                         throw new Exception("No implimented");
                                     }
-                                case RefType.Viewer:
+                                case ModelsNaming.Viewer:
                                     {
                                         throw new Exception("No implimented");
                                     }
@@ -56,7 +56,7 @@ namespace BI.services.notes
                             else
                             {
                                 var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                                if (noteUser != null && noteUser.AccessType == RefType.Editor)
+                                if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Editor)
                                 {
                                     note.Title = request.Title;
                                     await noteRepository.UpdateNote(note);

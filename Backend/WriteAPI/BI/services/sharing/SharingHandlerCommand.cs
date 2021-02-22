@@ -1,12 +1,11 @@
-﻿using Common.DatabaseModels.helpers;
-using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models;
+using Common.Naming;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
@@ -51,11 +50,11 @@ namespace BI.services.sharing
 
             if (folder != null)
             {
-                folder.RefType = request.RefType;
-                if (folder.FolderType != FoldersType.Shared)
+                folder.RefTypeId = request.RefTypeId;
+                if (folder.FolderType.Name != ModelsNaming.SharedFolder)
                 {
                     var foldersList = new List<Folder>() { folder };
-                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderType, FoldersType.Shared);
+                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, request.SharedId);
                 }
                 else
                 {
@@ -77,11 +76,11 @@ namespace BI.services.sharing
 
             if (note != null)
             {
-                note.RefType = request.RefType;
-                if (note.NoteType != NotesType.Shared)
+                note.RefTypeId = request.RefTypeId;
+                if (note.NoteType.Name != ModelsNaming.SharedNote)
                 {
                     var notesList = new List<Note>() { note };
-                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteType, NotesType.Shared);
+                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, request.SharedId);
                 }
                 else
                 {

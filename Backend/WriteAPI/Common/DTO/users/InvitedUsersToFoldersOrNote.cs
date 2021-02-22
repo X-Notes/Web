@@ -1,7 +1,5 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DatabaseModels.models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.DTO.users
 {

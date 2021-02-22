@@ -60,7 +60,7 @@ namespace BI.services
 
                         if (note != null)
                         {
-                            var notesWithType = notes.Where(x => x.NoteType == note.NoteType).ToList();
+                            var notesWithType = notes.Where(x => x.NoteTypeId == note.NoteTypeId).ToList();
 
                             if (note.Order < request.Position)
                             {
@@ -86,7 +86,7 @@ namespace BI.services
 
                         if (folder != null)
                         {
-                            var foldersWithType = folders.Where(x => x.FolderType == folder.FolderType).ToList();
+                            var foldersWithType = folders.Where(x => x.FolderTypeId == folder.FolderTypeId).ToList();
 
                             if (folder.Order < request.Position)
                             {

@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.Naming;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -18,6 +19,9 @@ namespace WriteContext
         public DbSet<AppFile> Files { set; get; }
         public DbSet<Language> Languages { set; get; }
         public DbSet<Theme> Themes { set; get; }
+        public DbSet<FolderType> FoldersTypes { set; get; }
+        public DbSet<NoteType> NotesTypes { set; get; }
+        public DbSet<RefType> RefTypes { set; get; }
         public DbSet<FontSize> FontSizes { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
@@ -94,12 +98,30 @@ namespace WriteContext
                 new { Id = Guid.NewGuid(), Name = "English" });
 
             modelBuilder.Entity<Theme>().HasData(
-                new { Id = Guid.NewGuid(), Name = "Light" },
-                new { Id = Guid.NewGuid(), Name = "Dark" });
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.LightTheme },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DarkTheme });
 
             modelBuilder.Entity<FontSize>().HasData(
-                new { Id = Guid.NewGuid(), Name = "Medium" },
-                new { Id = Guid.NewGuid(), Name = "Big" });
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Medium },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Big });
+
+
+
+            modelBuilder.Entity<FolderType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedFolder });
+
+            modelBuilder.Entity<NoteType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedNote });
+
+            modelBuilder.Entity<RefType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Viewer },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Editor });
         }
     }
 }

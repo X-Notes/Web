@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.helpers;
+using Common.DatabaseModels.models;
 using Common.DTO.folders;
+using Common.Naming;
 using Domain.Queries.folders;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
@@ -14,10 +14,7 @@ using WriteContext.Repositories;
 namespace BI.services.folders
 {
     public class FolderHandlerQuery :
-        IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>,
-        IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>,
-        IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>,
-        IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>,
+        IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>,
         IRequestHandler<GetFullFolderQuery, FullFolderAnswer>
     {
 
@@ -32,49 +29,17 @@ namespace BI.services.folders
         }
 
 
-        public async Task<List<SmallFolder>> Handle(GetPrivateFoldersQuery request, CancellationToken cancellationToken)
+        public async Task<List<SmallFolder>> Handle(GetFoldersByTypeQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
-                var folders = (await folderRepository.GetPrivateFoldersByUserId(user.Id)).OrderBy(x => x.Order);
+                var folders = (await folderRepository.GetFoldersByUserIdAndTypeId(user.Id, request.TypeId)).OrderBy(x => x.Order);
                 return mapper.Map<List<SmallFolder>>(folders);
             }
             return new List<SmallFolder>();
         }
 
-        public async Task<List<SmallFolder>> Handle(GetSharedFoldersQuery request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null)
-            {
-                var folders = (await folderRepository.GetSharedFoldersByUserId(user.Id)).OrderBy(x => x.Order);
-                return mapper.Map<List<SmallFolder>>(folders);
-            }
-            return new List<SmallFolder>();
-        }
-
-        public async Task<List<SmallFolder>> Handle(GetArchiveFoldersQuery request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null)
-            {
-                var folders = (await folderRepository.GetArchiveFoldersByUserId(user.Id)).OrderBy(x => x.Order);
-                return mapper.Map<List<SmallFolder>>(folders);
-            }
-            return new List<SmallFolder>();
-        }
-
-        public async Task<List<SmallFolder>> Handle(GetDeletedFoldersQuery request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null)
-            {
-                var folders = (await folderRepository.GetDeletedFoldersByUserId(user.Id)).OrderBy(x => x.Order);
-                return mapper.Map<List<SmallFolder>>(folders);
-            }
-            return new List<SmallFolder>();
-        }
 
         public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
@@ -88,32 +53,11 @@ namespace BI.services.folders
                     throw new Exception("Folder with this id does not exist");
                 }
 
-                switch (folder.FolderType)
+                switch (folder.FolderType.Name)
                 {
-                    case FoldersType.Shared:
+                    case ModelsNaming.SharedFolder:
                         {
-                            switch (folder.RefType)
-                            {
-                                case RefType.Editor:
-                                    {
-                                        return new FullFolderAnswer()
-                                        {
-                                            CanView = true,
-                                            AccessType = RefType.Editor,
-                                            FullFolder = mapper.Map<FullFolder>(folder)
-                                        };
-                                    }
-                                case RefType.Viewer:
-                                    {
-                                        return new FullFolderAnswer()
-                                        {
-                                            CanView = true,
-                                            AccessType = RefType.Viewer,
-                                            FullFolder = mapper.Map<FullFolder>(folder)
-                                        };
-                                    }
-                            }
-                            break;
+                            return GetFullFolderByRefTypeName(folder, folder.RefType.Name);
                         }
                     default:
                         {
@@ -122,7 +66,7 @@ namespace BI.services.folders
                                 return new FullFolderAnswer()
                                 {
                                     CanView = true,
-                                    AccessType = RefType.Editor,
+                                    CanEdit = true,
                                     FullFolder = mapper.Map<FullFolder>(folder)
                                 };
                             }
@@ -131,19 +75,14 @@ namespace BI.services.folders
                                 var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
                                 if (folderUser != null)
                                 {
-                                    return new FullFolderAnswer()
-                                    {
-                                        CanView = true,
-                                        AccessType = folderUser.AccessType,
-                                        FullFolder = mapper.Map<FullFolder>(folder)
-                                    };
+                                    return GetFullFolderByRefTypeName(folder, folderUser.AccessType.Name);
                                 }
                                 else
                                 {
                                     return new FullFolderAnswer()
                                     {
                                         CanView = false,
-                                        AccessType = null,
+                                        CanEdit = false,
                                         FullFolder = null
                                     };
                                 }
@@ -154,5 +93,32 @@ namespace BI.services.folders
             }
             throw new Exception("Incorrect user data");
         }
+
+        public FullFolderAnswer GetFullFolderByRefTypeName(Folder folder, string refTypeName)
+        {
+            switch (refTypeName)
+            {
+                case ModelsNaming.Editor:
+                    {
+                        return new FullFolderAnswer()
+                        {
+                            CanView = true,
+                            CanEdit = true,
+                            FullFolder = mapper.Map<FullFolder>(folder)
+                        };
+                    }
+                case ModelsNaming.Viewer:
+                    {
+                        return new FullFolderAnswer()
+                        {
+                            CanView = true,
+                            CanEdit = false,
+                            FullFolder = mapper.Map<FullFolder>(folder)
+                        };
+                    }
+            }
+            throw new Exception("Incorrect");
+        }
+
     }
 }

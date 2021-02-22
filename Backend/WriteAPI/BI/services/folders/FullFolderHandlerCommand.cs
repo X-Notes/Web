@@ -1,10 +1,8 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.Naming;
 using Domain.Commands.folderInner;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
@@ -29,17 +27,17 @@ namespace BI.services.folders
             if (user != null)
             {
                 var folder = await folderRepository.GetForUpdateTitle(request.Id);
-                switch(folder.FolderType)
+                switch(folder.FolderType.Name)
                 {
-                    case FoldersType.Shared:
+                    case ModelsNaming.SharedFolder:
                         {
-                            switch (folder.RefType)
+                            switch (folder.RefType.Name)
                             {
-                                case RefType.Editor:
+                                case ModelsNaming.Editor:
                                     {
                                         throw new Exception("No implimented");
                                     }
-                                case RefType.Viewer:
+                                case ModelsNaming.Viewer:
                                     {
                                         throw new Exception("No implimented");
                                     }
@@ -56,7 +54,7 @@ namespace BI.services.folders
                             else
                             {
                                 var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                                if (folderUser != null && folderUser.AccessType == RefType.Editor)
+                                if (folderUser != null && folderUser.AccessType.Name == ModelsNaming.Editor)
                                 {
                                     folder.Title = request.Title;
                                     await folderRepository.UpdateFolder(folder);

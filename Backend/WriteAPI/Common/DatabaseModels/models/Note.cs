@@ -1,7 +1,5 @@
-﻿using Common.DatabaseModels.helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Common.DatabaseModels.models
 {
@@ -9,8 +7,11 @@ namespace Common.DatabaseModels.models
     {
         public Guid Id { get; set; }
 
-        public NotesType NoteType { set; get; }
-        public RefType? RefType { set; get; }
+        public Guid NoteTypeId { set; get; }
+        public NoteType NoteType { set; get; }
+
+        public Guid RefTypeId { set; get; }
+        public RefType RefType { set; get; }
 
         public string Title { set; get; }
         public string Color { set; get; }

@@ -1,12 +1,6 @@
-﻿using Common.DatabaseModels.helpers;
-using Common.DatabaseModels.models;
-using Common.DTO.app;
+﻿using Common.DTO.app;
 using Common.DTO.backgrounds;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.DTO.users
 {

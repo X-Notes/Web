@@ -1,14 +1,12 @@
-﻿using Common.DatabaseModels.helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using Common.DatabaseModels.models;
 
 namespace Common.DTO.folders
 {
     public class FullFolderAnswer
     {
         public bool CanView { set; get; }
-        public RefType? AccessType { set; get; }
+        public bool CanEdit { set; get; }
         public FullFolder FullFolder { set; get; }
     }
 }

@@ -10,7 +10,7 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210220201311_init")]
+    [Migration("20210222120508_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,14 +72,14 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("FolderType")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("FolderTypeId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("RefType")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("RefTypeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -89,9 +89,49 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FolderTypeId");
+
+                    b.HasIndex("RefTypeId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.FolderType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoldersTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8d2f2643-7418-4fed-9a9a-aa8b41aa590f"),
+                            Name = "Private"
+                        },
+                        new
+                        {
+                            Id = new Guid("5a5763ce-7801-4127-84cb-7bc89e6f65b5"),
+                            Name = "Shared"
+                        },
+                        new
+                        {
+                            Id = new Guid("e55dc9f9-4ccf-4ba5-b19d-b61c27268f43"),
+                            Name = "Deleted"
+                        },
+                        new
+                        {
+                            Id = new Guid("e9d2286d-c33b-4f46-9fa5-e5f53a6ac440"),
+                            Name = "Archive"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
@@ -107,6 +147,32 @@ namespace WriteContext.Migrations
                     b.HasIndex("FolderId");
 
                     b.ToTable("FoldersNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.FontSize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FontSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("63d72c7f-d7c8-474c-9cc3-476d7b8b168e"),
+                            Name = "Medium"
+                        },
+                        new
+                        {
+                            Id = new Guid("58cd5687-c6f9-45a9-a990-09c82a90839a"),
+                            Name = "Big"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
@@ -177,17 +243,17 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e526f629-0fa3-4873-9bde-a93d15ea3e18"),
+                            Id = new Guid("32cff38a-51ce-4e5d-b741-b9bb7f2f7de7"),
                             Name = "Ukraine"
                         },
                         new
                         {
-                            Id = new Guid("9c615562-7eb4-4ba8-86cf-ee5f109301a3"),
+                            Id = new Guid("c674aa3d-46bc-47e3-a62b-f4744d8312b4"),
                             Name = "Russian"
                         },
                         new
                         {
-                            Id = new Guid("fca983ad-816d-4c6b-9f3d-ec0795ef1eed"),
+                            Id = new Guid("54fb0476-8938-406d-97d9-979d86991671"),
                             Name = "English"
                         });
                 });
@@ -207,14 +273,14 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("NoteType")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("NoteTypeId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("RefType")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("RefTypeId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -224,9 +290,49 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("NoteTypeId");
+
+                    b.HasIndex("RefTypeId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NotesTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2d6c43e1-5579-4210-a715-d011dd019336"),
+                            Name = "Private"
+                        },
+                        new
+                        {
+                            Id = new Guid("fae8d22e-b2fa-41c7-9f8c-0cd71a13d62e"),
+                            Name = "Shared"
+                        },
+                        new
+                        {
+                            Id = new Guid("676f3ad9-11fd-4bb0-be8b-944911987495"),
+                            Name = "Deleted"
+                        },
+                        new
+                        {
+                            Id = new Guid("cfb54e18-b917-46ab-9f35-39d8f41768bf"),
+                            Name = "Archive"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -246,27 +352,56 @@ namespace WriteContext.Migrations
                     b.ToTable("NotificationSettings");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.RefType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("FontSize")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Theme")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.ToTable("RefTypes");
 
-                    b.ToTable("PersonalitionSettings");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d534d569-57f6-428d-b378-919650804a99"),
+                            Name = "Viewer"
+                        },
+                        new
+                        {
+                            Id = new Guid("280c8737-01bf-4a0a-856f-8b5e4a3e4ecc"),
+                            Name = "Editor"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Themes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("28cf719f-32e9-4502-bf11-283872608bf1"),
+                            Name = "Light"
+                        },
+                        new
+                        {
+                            Id = new Guid("badfb373-1db2-44c6-8e34-daa76f4a28c6"),
+                            Name = "Dark"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
@@ -281,6 +416,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("FontSizeId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uuid");
 
@@ -293,6 +431,9 @@ namespace WriteContext.Migrations
                     b.Property<Guid?>("PhotoId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ThemeId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentBackgroundId")
@@ -301,10 +442,14 @@ namespace WriteContext.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("FontSizeId");
+
                     b.HasIndex("LanguageId");
 
                     b.HasIndex("PhotoId")
                         .IsUnique();
+
+                    b.HasIndex("ThemeId");
 
                     b.ToTable("Users");
                 });
@@ -332,10 +477,12 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AccessType")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("AccessTypeId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("NoteId", "UserId");
+
+                    b.HasIndex("AccessTypeId");
 
                     b.HasIndex("UserId");
 
@@ -350,10 +497,12 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AccessType")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("AccessTypeId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("FolderId", "UserId");
+
+                    b.HasIndex("AccessTypeId");
 
                     b.HasIndex("UserId");
 
@@ -373,11 +522,27 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.FolderType", "FolderType")
+                        .WithMany("Folders")
+                        .HasForeignKey("FolderTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.RefType", "RefType")
+                        .WithMany("Folders")
+                        .HasForeignKey("RefTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Folders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FolderType");
+
+                    b.Navigation("RefType");
 
                     b.Navigation("User");
                 });
@@ -433,11 +598,27 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.NoteType", "NoteType")
+                        .WithMany("Notes")
+                        .HasForeignKey("NoteTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.RefType", "RefType")
+                        .WithMany("Notes")
+                        .HasForeignKey("RefTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Notes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("NoteType");
+
+                    b.Navigation("RefType");
 
                     b.Navigation("User");
                 });
@@ -453,25 +634,20 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.PersonalitionSetting", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithOne("PersonalitionSettings")
-                        .HasForeignKey("Common.DatabaseModels.models.PersonalitionSetting", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
 
+                    b.HasOne("Common.DatabaseModels.models.FontSize", "FontSize")
+                        .WithMany("Users")
+                        .HasForeignKey("FontSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.Language", "Language")
-                        .WithMany("User")
+                        .WithMany("Users")
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -480,11 +656,21 @@ namespace WriteContext.Migrations
                         .WithOne("User")
                         .HasForeignKey("Common.DatabaseModels.models.User", "PhotoId");
 
+                    b.HasOne("Common.DatabaseModels.models.Theme", "Theme")
+                        .WithMany("Users")
+                        .HasForeignKey("ThemeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("CurrentBackground");
+
+                    b.Navigation("FontSize");
 
                     b.Navigation("Language");
 
                     b.Navigation("Photo");
+
+                    b.Navigation("Theme");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
@@ -508,6 +694,10 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.RefType", "AccessType")
+                        .WithMany()
+                        .HasForeignKey("AccessTypeId");
+
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("UsersOnPrivateNotes")
                         .HasForeignKey("NoteId")
@@ -520,6 +710,8 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("AccessType");
+
                     b.Navigation("Note");
 
                     b.Navigation("User");
@@ -527,6 +719,10 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.RefType", "AccessType")
+                        .WithMany()
+                        .HasForeignKey("AccessTypeId");
+
                     b.HasOne("Common.DatabaseModels.models.Folder", "Folder")
                         .WithMany("UsersOnPrivateFolders")
                         .HasForeignKey("FolderId")
@@ -538,6 +734,8 @@ namespace WriteContext.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AccessType");
 
                     b.Navigation("Folder");
 
@@ -561,6 +759,16 @@ namespace WriteContext.Migrations
                     b.Navigation("UsersOnPrivateFolders");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.FolderType", b =>
+                {
+                    b.Navigation("Folders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.FontSize", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
                 {
                     b.Navigation("LabelsNotes");
@@ -568,7 +776,7 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Language", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
@@ -582,6 +790,23 @@ namespace WriteContext.Migrations
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteType", b =>
+                {
+                    b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.RefType", b =>
+                {
+                    b.Navigation("Folders");
+
+                    b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
                     b.Navigation("Backgrounds");
@@ -593,8 +818,6 @@ namespace WriteContext.Migrations
                     b.Navigation("Notes");
 
                     b.Navigation("NotificationSettings");
-
-                    b.Navigation("PersonalitionSettings");
 
                     b.Navigation("UserOnNotes");
 

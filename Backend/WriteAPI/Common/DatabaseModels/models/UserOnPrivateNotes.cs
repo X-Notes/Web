@@ -1,7 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace Common.DatabaseModels.models
 {

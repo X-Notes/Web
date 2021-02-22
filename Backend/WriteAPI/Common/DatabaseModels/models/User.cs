@@ -1,5 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
