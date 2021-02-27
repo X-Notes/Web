@@ -10,6 +10,7 @@ namespace Storage
     public interface IFilesStorage : IDisposable
     {
         public void CreateUserFolders(Guid userId);
+        public void CreateNoteFolders(Guid noteId);
         public void CreateIfMissing();
         Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd);
         string GetValueFromDictionary(ContentTypes type);

@@ -5,6 +5,7 @@ using Common.DTO.notes;
 using Common.Naming;
 using Domain.Commands.notes;
 using MediatR;
+using Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,13 +31,15 @@ namespace BI.services.notes
         private readonly NoteRepository noteRepository;
         private readonly IMapper mapper;
         private readonly AppRepository appRepository;
+        private readonly IFilesStorage filesStorage;
         public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
-            AppRepository appRepository)
+            AppRepository appRepository, IFilesStorage filesStorage)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.mapper = mapper;
             this.appRepository = appRepository;
+            this.filesStorage = filesStorage;
         }
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
@@ -55,6 +58,8 @@ namespace BI.services.notes
             };
 
             await noteRepository.Add(note, type.Id);
+
+            filesStorage.CreateNoteFolders(note.Id);
 
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();

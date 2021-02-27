@@ -55,6 +55,18 @@ namespace Storage
             }
         }
 
+        public void CreateNoteFolders(Guid noteId)
+        {
+            var noteDirectory = root + notesRoot + "\\" + noteId;
+            Directory.CreateDirectory(noteDirectory);
+
+            foreach (var folderName in folders)
+            {
+                var path = noteDirectory + "\\" + folderName.Value;
+                Directory.CreateDirectory(path);
+            }
+        }
+
         public async Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd)
         {
             var userFolder = GetUserFolder(userId, contentFolder);
