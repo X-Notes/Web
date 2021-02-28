@@ -49,32 +49,8 @@
         display: flex;
 
         .dropdown-button {
-          position: relative;
-          display: flex;
           height: 32px;
-          padding: 0;
-          border: 0.8px solid transparent;
-          border-radius: 5px;
-          outline: 0;
-          user-select: none;
-          transition: 0.2s ease;
-          width: 100%;
-  
-          .content-button {
-            position: relative;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-            user-select: none;
-            font-size: 1rem;
-          }
-  
-          .dropdown {
-            .item {
-              min-height: 24px;
-            }
-          }
+          width: 145px;
         }
       }
 
@@ -124,6 +100,7 @@
             
             .dropdown-button {
               width: 145px;
+              height: 32px;
               background-color: #f2f2f2;
             }
           }
@@ -370,18 +347,6 @@
               display: flex;
               flex-direction: column;
               width: 130px;
-
-              .dropdown-wrapper {
-                .dropdown-button {
-                  background-color: #e8e8e8;
-  
-                  .content-button {
-                    .icon {
-                      font-size: 0.75rem;
-                    }
-                  }
-                }
-              }
 
               .send-button {
                 position: relative;
@@ -643,17 +608,6 @@
     background-color: white;
 
     .tabs {
-
-      .dropdown-wrapper {
-        .dropdown-button {
-          color: #484848;
-  
-          .dropdown {
-            box-shadow: 0px 1px 2px grey;
-          }
-        }
-      }
-
       .content-access {
         .link-access-field {
           input[type="text"] {
@@ -692,16 +646,6 @@
             textarea {
               background-color: white;
             }
-
-            .interaction-buttons {
-              .dropdown-wrapper {
-                .dropdown-button {
-                  .dropdown {
-                    box-shadow: 0px 1px 2px grey;
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -718,12 +662,6 @@
     background-color: $dark-color;
 
     .tabs {
-      .dropdown-wrapper {
-        .dropdown-button {
-          color: #484848;
-        }
-      }
-
       .content-access {
         .link-access-field {
           input[type="text"] {

@@ -8,6 +8,7 @@ import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-
 import { Router } from '@angular/router';
 import { FontSize } from 'src/app/shared/models/FontSize';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-folder',
@@ -24,7 +25,8 @@ export class FolderComponent implements OnInit, OnDestroy {
   @Input() folder: SmallFolder;
 
   constructor(private store: Store,
-              private router: Router) { }
+              private router: Router,
+              public pService: PersonalizationService) { }
 
   ngOnDestroy(): void {
     this.destroy.next();

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, showMenuLeftRight, notification } from 'src/app/shared/services/personalization.service';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -12,18 +12,29 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FullNote } from '../../notes/models/fullNote';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [showMenuLeftRight]
+  animations: [showMenuLeftRight, notification]
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
   newButtonActive = false;
+  isOpenNotification = false;
+
+  public positions = [
+    new ConnectionPositionPair({
+      originX: 'start',
+      originY: 'top'},
+      {overlayX: 'start',
+      overlayY: 'top'},
+      0, 1)
+  ];
   // Upper Menu
 
   @Select(FolderStore.activeMenu)
@@ -70,6 +81,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   showUsers() {
     this.pService.users = !this.pService.users;
+  }
+
+  closeNotification() {
+    this.isOpenNotification = false;
   }
 
   hideMenu() {

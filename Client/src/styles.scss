@@ -59,6 +59,13 @@ html {
   height: 100%;
 }
 
+[contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+[hidden] { display: none !important;}
+
 button,
 input {
   font-family: "Roboto", sans-serif;

@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Injectable, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { UpdateColor } from './state/updateColor';
 import { SmallNote } from './models/smallNote';
 import { FullNote } from './models/fullNote';
@@ -9,15 +9,16 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { CancelAllSelectedLabels, ClearUpdatelabelEvent, LoadNotes } from './state/notes-actions';
+import { CancelAllSelectedLabels, ClearUpdatelabelEvent, LoadNotes, SelectIdNote, UnSelectIdNote } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { NoteType } from 'src/app/shared/models/noteType';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class NotesService implements OnDestroy {
   constructor(public pService: PersonalizationService, private store: Store,
-              private murriService: MurriService) {
+              private murriService: MurriService,
+              private router: Router) {
 
     this.store.select(NoteStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -120,7 +121,24 @@ export class NotesService implements OnDestroy {
 
     const actions = types.filter(x => x.id !== type.id).map(t => new LoadNotes(t.id, t));
     this.store.dispatch(actions);
+  }
+  
+  highlightNote(note) {
+    if (!note.isSelected) {
+      const labelsIds = note.labels.map(x => x.id);
+      this.store.dispatch(new SelectIdNote(note.id, labelsIds));
+    } else {
+      this.store.dispatch(new UnSelectIdNote(note.id));
+    }
+  }
 
+  toNote(note) {
+    const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0 ? true : false;
+    if (isSelectedMode) {
+      this.highlightNote(note);
+    } else {
+      this.router.navigate([`notes/${note.id}`]);
+    }
   }
 
   ngOnDestroy(): void {

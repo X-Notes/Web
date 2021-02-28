@@ -88,6 +88,16 @@ export const smoothOpacity = trigger('smoothOpacity', [
   ])
 ]);
 
+export const notification = trigger('notification', [
+  transition(':enter', [
+    style({ opacity: 0 }),
+    animate(100, style({ opacity: 1 })),
+  ]),
+  transition(':leave', [
+    animate(100, style({ opacity: 0 })),
+  ]),
+]);
+
 @Injectable({
   providedIn: 'root'
 })

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadNotes, UnSelectAllNote } from '../state/notes-actions';
+import { UnSelectAllNote } from '../state/notes-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
@@ -11,7 +11,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 
 @Component({
   selector: 'app-privates',
@@ -21,7 +21,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSizeNaming;
+  fontSize = FolderTypeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
@@ -66,7 +66,6 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.noteService.addToDom(x));
   }
-
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;

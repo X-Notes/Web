@@ -1,11 +1,7 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
-import { Store } from '@ngxs/store';
-import { SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
-import { Router } from '@angular/router';
-import { NoteStore } from '../state/notes-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 
 
 @Component({
@@ -16,39 +12,27 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 
 export class NoteComponent implements OnInit, OnDestroy {
 
-  fontSize = FontSizeNaming;
+  fontSize = FolderTypeENUM;
 
   @Input() note: SmallNote;
+  @Output() highlightNote = new EventEmitter<SmallNote>();
+  @Output() clickOnNote = new EventEmitter<SmallNote>();
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              private router: Router) { }
+  constructor(public pService: PersonalizationService) { }
 
 
   ngOnDestroy(): void {
-
   }
 
   ngOnInit(): void {
-
   }
 
-  highlight(id: string) {
-    if (!this.note.isSelected) {
-      const labelsIds = this.note.labels.map(x => x.id);
-      this.store.dispatch(new SelectIdNote(id, labelsIds));
-    } else {
-      this.store.dispatch(new UnSelectIdNote(id));
-    }
+  highlight(note: SmallNote) {
+    this.highlightNote.emit(note);
   }
 
-  toNote() {
-    const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0 ? true : false;
-    if (isSelectedMode) {
-      this.highlight(this.note.id);
-    } else {
-      this.router.navigate([`notes/${this.note.id}`]);
-    }
+  toNote(note: SmallNote) {
+    this.clickOnNote.emit(note);
   }
 
 }

@@ -1,6 +1,6 @@
 ﻿{
   "notes": {
-    "name": "Замітки"
+    "name": "Нотатки"
   },
   "folders": {
     "name": "Папки"
@@ -19,7 +19,7 @@
   },
   "subMenu": {
     "all": "Всі",
-    "private": "Приватні",
+    "personal": "Особисті",
     "shared": "Спільні",
     "archive": "Архив",
     "bin": "Кошик",
@@ -77,9 +77,9 @@
     "theme": "Тема",
     "themeLight": "Світла",
     "themeDark": "Темна",
-    "genericTooltip": "Подивіться, як будуть виглядати замітки в",
+    "genericTooltip": "Подивіться, як будуть виглядати нотатки в",
     "genericPreview": "попередньому перегляді",
-    "noteSize": "Розмір замітки",
+    "noteSize": "Розмір нотатки",
     "noteDefault": "Звичайний",
     "noteBig": "Великий"
   },
@@ -95,9 +95,9 @@
     "ShareModal": {
       "Share": "Поділитися",
       "access": "Доступ",
-      "private": "Приватні",
+      "personal": "Особисті",
       "shared": "Спільні",
-      "selectedNotes": "Вибрані замітки",
+      "selectedNotes": "Вибрані нотатки",
       "search": "Пошук...",
       "alert": "Надіслати повідомлення",
       "editor": "Редактор ",

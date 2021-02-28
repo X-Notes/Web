@@ -1,0 +1,52 @@
+@import 'variables';
+
+:host {
+    max-width: 100%;
+}
+
+.chip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: inherit;
+    width: inherit;
+    color: $text-color;
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+    border-radius: 30px;
+    margin: 0.25rem;
+    max-width: 100%;
+    min-height: 20px;
+    overflow: hidden;
+    user-select: none;
+
+    span, .remove {
+        position: relative;
+        z-index: 5;
+    }
+    
+    span {
+        @include text-overflow;
+    }
+
+    .remove {
+        display: flex;
+        margin-left: 1rem;
+        font-size: 0.625rem;
+        cursor: pointer;
+    }
+}
+
+.tile {
+    border-radius: 0;
+}
+
+.dark {
+    color: white;
+
+    .remove {
+        i::before {
+            color: white;
+        }
+    }
+}

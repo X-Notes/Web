@@ -27,17 +27,18 @@ import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
 import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
-import { SelectionService } from '../selection.service';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
-import { ApiBrowserTextService } from '../api-browser-text.service';
-import { MenuSelectionService } from '../menu-selection.service';
 import { EnterEvent } from '../models/enterEvent';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content';
+import { SelectionService } from '../selection.service';
+import { ApiBrowserTextService } from '../api-browser-text.service';
+import { MenuSelectionService } from '../menu-selection.service';
 
 
 @Component({
@@ -97,7 +98,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               public contentService: FullNoteContentService,
               private selectionService: SelectionService,
               private apiBrowserFunctions: ApiBrowserTextService,
-              public menuSelectionService: MenuSelectionService) {
+              public menuSelectionService: MenuSelectionService,
+              public buttonService: MenuButtonsService) {
 
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;

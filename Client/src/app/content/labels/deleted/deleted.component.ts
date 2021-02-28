@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChildren, AfterViewInit, ElementRef, 
 import {  Store } from '@ngxs/store';
 import { Label } from '../models/label';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { UpdateLabel, LoadLabels, DeleteLabel, } from '../state/labels-actions';
+import { UpdateLabel, LoadLabels, DeleteLabel, SetDeleteLabel, } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import {UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -11,7 +11,10 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { SnackbarService } from 'src/app/shared/services/snackbar.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 @Component({
   selector: 'app-deleted',
@@ -21,7 +24,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
@@ -29,7 +32,8 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(public pService: PersonalizationService,
               private store: Store,
               public murriService: MurriService,
-              public labelService: LabelsService) { }
+              public labelService: LabelsService,
+              private snackService: SnackbarService) { }
 
 
   ngAfterViewInit(): void {
@@ -85,13 +89,44 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   restoreLabel(label: Label) {
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
+    let snackbarRef;
+    switch (language.name) {
+      case LanguagesENUM.English:
+        snackbarRef = this.snackService.openSnackBar(`Label moved to bin`, 'Undo');
+        break;
+      case LanguagesENUM.Russian:
+        snackbarRef = this.snackService.openSnackBar(`Ярлык перенесен в корзину`, 'Отменить');
+        break;
+      case LanguagesENUM.Ukraine:
+        snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
+        break;
+    }
+    snackbarRef.afterDismissed().subscribe(x => {
+      if (x.dismissedByAction) {
+        this.store.dispatch(new SetDeleteLabel(label));
+      }
+    });
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   async delete(label: Label) {
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
+    let snackbarRef;
+    switch (language.name) {
+      case LanguagesENUM.English:
+        snackbarRef = this.snackService.openSnackBar(`Label deleted permanently`, null);
+        break;
+      case LanguagesENUM.Russian:
+        snackbarRef = this.snackService.openSnackBar(`Ярлык удален безвозвратно`, null);
+        break;
+      case LanguagesENUM.Ukraine:
+        snackbarRef = this.snackService.openSnackBar(`Ярлык удален безповоротно`, null);
+        break;
+    }
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 

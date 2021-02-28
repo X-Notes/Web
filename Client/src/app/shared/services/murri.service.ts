@@ -22,7 +22,7 @@ export class MurriService  {
   constructor(private store: Store,
               private pService: PersonalizationService) {
 
-    pService.changeOrientationSubject.subscribe(z => {
+    this.pService.changeOrientationSubject.subscribe(z => {
       setTimeout(() => this.grid.refreshItems().layout(), 0);
     });
   }
@@ -74,6 +74,14 @@ export class MurriService  {
       };
       this.store.dispatch(new PositionNote(order, type));
     });
+  }
+
+  initMurriAllNote(gridItem: string) {
+    const gridElement = document.querySelector('.grid-modal') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+    this.gridSettings(gridItem, gridElement, false);
   }
 
   initMurriFolder(type: FolderType) {

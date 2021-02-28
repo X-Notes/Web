@@ -65,6 +65,12 @@ export class ArchiveNotes {
     }
 }
 
+export class MakeSharedNotes {
+    static type = '[Notes] Archive notes';
+    constructor(public typeNote: NoteType, public selectedIds: string[]) {
+    }
+}
+
 export class MakePrivateNotes {
     static type = '[Notes] MakePrivate notes';
     constructor(public typeNote: NoteType, public selectedIds: string[]) {
