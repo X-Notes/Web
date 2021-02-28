@@ -4,6 +4,7 @@ using Common.DTO.app;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
+using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace BI.Mapping
                     case AlbumNote aN:
                     {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.Album);
-                            var photosDTO = aN.Files.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, aN.Order, type);
                             resultList.Add(aNDTO);
                             break;

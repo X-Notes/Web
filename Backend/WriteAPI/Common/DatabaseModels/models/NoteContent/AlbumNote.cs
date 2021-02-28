@@ -10,6 +10,6 @@ namespace Common.DatabaseModels.models.NoteContent
     [Table("AlbumNote")]
     public class AlbumNote : BaseNoteContent
     {
-        public List<AppFile> Files { set; get; }
+        public List<AppFile> Photos { set; get; }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage
 {
-    public enum ContentTypes
+    public enum ContentTypesFile
     {
         Images,
         Videos,

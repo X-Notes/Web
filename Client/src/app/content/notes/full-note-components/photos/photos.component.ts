@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
-import { ContentModel, Photo, Photos } from '../../models/ContentMode';
+import { ContentModel, Photo, Album } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../selection.service';
 import { PhotoService } from '../photos-business-logic/photo.service';
@@ -27,7 +27,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   deleteEvent = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<Photos>;
+  content: ContentModel<Album>;
 
   mainContainer;
 

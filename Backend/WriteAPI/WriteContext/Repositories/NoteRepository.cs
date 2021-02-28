@@ -80,7 +80,7 @@ namespace WriteContext.Repositories
                 .Include(x => x.NoteType)
                 .Include(x => x.RefType)
                 .Include(x => x.Contents)
-                .ThenInclude(x => (x as AlbumNote).Files)
+                .ThenInclude(x => (x as AlbumNote).Photos)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -221,7 +221,7 @@ namespace WriteContext.Repositories
                     await contextDB.Files.AddRangeAsync(files);
                     await contextDB.SaveChangesAsync();
 
-                    var albumNote = new AlbumNote() { Files = files, Note = note };
+                    var albumNote = new AlbumNote() { Photos = files, Note = note };
 
                     await contextDB.AlbumNotes.AddAsync(albumNote);
                     await contextDB.SaveChangesAsync();

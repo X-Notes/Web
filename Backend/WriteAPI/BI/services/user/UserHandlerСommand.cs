@@ -78,7 +78,7 @@ namespace BI.services.user
             }
 
             var photoType = photoHelpers.GetPhotoType(request.File);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypes.Images);
+            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
             var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, getContentString, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
 

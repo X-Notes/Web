@@ -1,4 +1,4 @@
-export class ContentModel<T = BaseText | Photos>{
+export class ContentModel<T = BaseText | Album>{
     type: ContentType;
     contentId: string;
     data: T;
@@ -27,7 +27,7 @@ export class Heading extends BaseText{
     headingType: HeadingType;
 }
 
-export class Photos{
+export class Album{
     photos: Photo[];
 }
 

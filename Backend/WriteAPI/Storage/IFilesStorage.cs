@@ -14,7 +14,7 @@ namespace Storage
         public void CreateIfMissing();
         Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd);
         Task<string> SaveNoteFiles(IFormFile file, Guid noteId, string contentFolder, string fileTypeEnd);
-        string GetValueFromDictionary(ContentTypes type);
+        string GetValueFromDictionary(ContentTypesFile type);
         void RemoveFile(string path);
     }
 }

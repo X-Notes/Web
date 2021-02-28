@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DTO.notes.FullNoteContent
+namespace Common.DatabaseModels.models.NoteContent.NoteDict
 {
-    public enum NoteContentType
+    public enum HeadingNoteTypes
     {
-        Album,
-        Text
+        H1,
+        H2,
+        H3
     }
 }

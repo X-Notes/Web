@@ -116,7 +116,7 @@ namespace BI.services.notes
                                 foreach(var file in request.Photos)
                                 {
                                     var photoType = photoHelpers.GetPhotoType(file);
-                                    var getContentString = filesStorage.GetValueFromDictionary(ContentTypes.Images);
+                                    var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
                                     var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, note.Id, getContentString, photoType);
                                     var fileDB = new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                                     fileList.Add(fileDB);

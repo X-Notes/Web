@@ -14,19 +14,19 @@ namespace Storage
         private string userRoot = "\\Users";
         private string notesRoot = "\\Notes";
 
-        private Dictionary<ContentTypes, string> folders;
+        private Dictionary<ContentTypesFile, string> folders;
         public FilesStorage()
         {
-            folders = new Dictionary<ContentTypes, string>()
+            folders = new Dictionary<ContentTypesFile, string>()
             {
-                {  ContentTypes.Images, "Images" },
-                {  ContentTypes.Videos, "Videos" },
-                {  ContentTypes.Files,  "Files"  },
-                {  ContentTypes.Audios, "Audios" },
+                {  ContentTypesFile.Images, "Images" },
+                {  ContentTypesFile.Videos, "Videos" },
+                {  ContentTypesFile.Files,  "Files"  },
+                {  ContentTypesFile.Audios, "Audios" },
             };
         }
 
-        public string GetValueFromDictionary(ContentTypes type)
+        public string GetValueFromDictionary(ContentTypesFile type)
         {
             return folders.GetValueOrDefault(type);
         }
