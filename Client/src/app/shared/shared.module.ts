@@ -34,6 +34,7 @@ import { NoteComponent } from '../content/notes/note/note.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectComponent } from './custom-components/select/select.component';
 import { ChipComponent } from './custom-components/chip/chip.component';
+import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -48,7 +49,8 @@ import { ChipComponent } from './custom-components/chip/chip.component';
     NoteComponent,
     PopupFullNoteComponent,
     SelectComponent,
-    ChipComponent
+    ChipComponent,
+    SelectOptionComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
@@ -68,7 +70,8 @@ import { ChipComponent } from './custom-components/chip/chip.component';
     SearchComponent,
     MatCheckboxModule,
     MatSnackBarModule,
-    NoteComponent
+    NoteComponent,
+    SelectOptionComponent
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

@@ -11,10 +11,13 @@
                         <div class="filter-row">
                             <app-search class="search"></app-search>
                             <app-select class="select"
-                                [array]="selectTypes"
-                                [selectedItem]="'all'"
-                                [translateItem]="'subMenu'"
-                                (changeItem)="selectItem($event)"></app-select>
+                                [translate]="'subMenu'"
+                                [selectValue]="'shared'"
+                                (changeItem)="selectItem($event)">
+                                <app-select-option *ngFor="let item of selectTypes" [value]="item">
+                                    {{ ('subMenu.' + item) | translate }}
+                                </app-select-option>
+                            </app-select>
                         </div>
                     </div>
                     <div class="d-flex" [hidden]="!(selectedNotes.length > 0)">

@@ -1,0 +1,22 @@
+:host {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    height: 24px;
+    min-height: 24px;
+    margin: 0 0.5rem;
+    padding: 0 0.5rem;
+    transition: 0.2s ease;
+    border-radius: 5px;
+    color: #202020;
+    font-size: 0.825rem;
+    cursor: pointer;
+
+    &.active {
+        background-color: #e0e0e0;
+    }
+
+    &:hover {
+        background-color: #dadada;
+    }
+}
