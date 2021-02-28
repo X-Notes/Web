@@ -7,7 +7,7 @@ import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
+import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle, UploadImagesToNote } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -64,6 +64,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
+
+  @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
@@ -327,13 +329,22 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       }
       case ContentType.PHOTO: {
-        console.log('TODO'); // TODO
+        this.uploadPhoto.nativeElement.click();
         break;
       }
     }
     this.checkAddLastTextContent(indexOf);
   }
 
+  async uploadImages(event) {
+    const data = new FormData();
+    const files = event.target.files;
+    for (const file of files)
+    {
+      data.append('photos', file);
+    }
+    this.store.dispatch(new UploadImagesToNote(data));
+  }
 
   checkAddLastTextContent(index: number)
   {

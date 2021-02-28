@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.Mapping;
 using Common.DatabaseModels.models;
 using Common.DTO.notes;
 using Common.DTO.users;
@@ -24,12 +25,19 @@ namespace BI.services.notes
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
-        public NoteHandlerQuery(IMapper mapper, NoteRepository noteRepository, UserRepository userRepository, UserOnNoteRepository userOnNoteRepository)
+        private readonly NoteCustomMapper noteCustomMapper;
+        public NoteHandlerQuery(
+            IMapper mapper, 
+            NoteRepository noteRepository, 
+            UserRepository userRepository, 
+            UserOnNoteRepository userOnNoteRepository,
+            NoteCustomMapper noteCustomMapper)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
+            this.noteCustomMapper = noteCustomMapper;
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
@@ -71,7 +79,7 @@ namespace BI.services.notes
                                 {
                                     CanView = true,
                                     CanEdit = true,
-                                    FullNote = mapper.Map<FullNote>(note)
+                                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
                                 };
                             }
                             else
@@ -114,7 +122,7 @@ namespace BI.services.notes
                         {
                             CanView = true,
                             CanEdit = true,
-                            FullNote = mapper.Map<FullNote>(note)
+                            FullNote = noteCustomMapper.TranformNoteToFullNote(note)
                         };
                     }
                 case ModelsNaming.Viewer:
@@ -123,7 +131,7 @@ namespace BI.services.notes
                         {
                             CanView = true,
                             CanEdit = false,
-                            FullNote = mapper.Map<FullNote>(note)
+                            FullNote = noteCustomMapper.TranformNoteToFullNote(note)
                         };
                     }
             }

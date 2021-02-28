@@ -80,7 +80,7 @@ namespace BI.services.backgrounds
                 UserId = user.Id
             };
 
-            var success = await backgroundRepository.Add(item, file);
+            var success = await backgroundRepository.AddBackground(item, file);
 
             if (!success)
             {

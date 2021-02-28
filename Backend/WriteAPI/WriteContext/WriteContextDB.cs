@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
 using Common.Naming;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,6 +27,11 @@ namespace WriteContext
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+
+        public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
+        public DbSet<TextNote> TextNotes { set; get; }
+        public DbSet<AlbumNote> AlbumNotes { set; get; }
+
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
             //Database.EnsureCreated();

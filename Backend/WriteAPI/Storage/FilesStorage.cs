@@ -75,6 +75,14 @@ namespace Storage
             await file.CopyToAsync(stream);
             return path;
         }
+        public async Task<string> SaveNoteFiles(IFormFile file, Guid noteId, string contentFolder, string fileTypeEnd)
+        {
+            var noteFolder = GetNoteFolder(noteId, contentFolder);
+            var path = noteFolder + "\\" + Guid.NewGuid() + fileTypeEnd;
+            using var stream = File.Create(path);
+            await file.CopyToAsync(stream);
+            return path;
+        }
 
         public void RemoveFile(string path)
         {
@@ -94,6 +102,11 @@ namespace Storage
             var types = path.Split(".");
             var type = types[types.Length - 1];
             Console.WriteLine(type);
+        }
+
+        public string GetNoteFolder(Guid noteId, string contentFolder)
+        {
+            return root + "\\" + notesRoot + "\\" + noteId + "\\" + contentFolder;
         }
 
         public string GetUserFolder(Guid userId, string contentFolder)

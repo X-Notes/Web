@@ -73,7 +73,13 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.isFullNote = true;
   }
 
-  mouseDown(evt) {
+  mouseDown(evt: MouseEvent) {
+
+    if ((evt.target as HTMLElement).tagName === 'I')
+    {
+      return;
+    }
+
     const rectSize = this.div.getBoundingClientRect();
     if (rectSize.width === 0 || rectSize.height === 0) {
       rectSize.x = 0;
@@ -95,6 +101,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.isFullNote = false;
     this.selectionService.ismousedown = false;
     this.startTop = 0;
+
 
     this.div.style.width = 0 + 'px';
     this.div.style.height = 0 + 'px';

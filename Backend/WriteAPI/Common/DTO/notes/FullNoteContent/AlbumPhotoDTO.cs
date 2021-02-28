@@ -4,16 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DTO.app
+namespace Common.DTO.notes.FullNoteContent
 {
-    public class RefTypeDTO
+    public class AlbumPhotoDTO
     {
         public Guid Id { set; get; }
-        public string Name { set; get; }
-        public RefTypeDTO(Guid Id, string Name)
+        public AlbumPhotoDTO(Guid Id)
         {
             this.Id = Id;
-            this.Name = Name;
         }
     }
 }

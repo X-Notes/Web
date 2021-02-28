@@ -21,7 +21,7 @@ namespace WriteContext.Repositories
             await this.contextDB.SaveChangesAsync();
         }
 
-        public async Task<bool> Add(Backgrounds background, AppFile file)
+        public async Task<bool> AddBackground(Backgrounds background, AppFile file)
         {
             var success = true;
             using (var transaction = await contextDB.Database.BeginTransactionAsync())

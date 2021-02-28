@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<Note> GetForUpdatingTitle(Guid id)
+        public async Task<Note> GetForUpdating(Guid id)
         {
             return await contextDB.Notes
                 .Include(x => x.NoteType)
@@ -78,6 +79,8 @@ namespace WriteContext.Repositories
                 .Include(x => x.UsersOnPrivateNotes)
                 .Include(x => x.NoteType)
                 .Include(x => x.RefType)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AlbumNote).Files)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -206,6 +209,33 @@ namespace WriteContext.Repositories
         public async Task<Note> GetOneById(Guid noteId)
         {
             return await contextDB.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
+        }
+
+        public async Task<bool> AddAlbum(List<AppFile> files, Note note)
+        {
+            var success = true;
+            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await contextDB.Files.AddRangeAsync(files);
+                    await contextDB.SaveChangesAsync();
+
+                    var albumNote = new AlbumNote() { Files = files, Note = note };
+
+                    await contextDB.AlbumNotes.AddAsync(albumNote);
+                    await contextDB.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    success = false;
+                }
+            }
+            return success;
         }
     }
 }

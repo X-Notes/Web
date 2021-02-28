@@ -1,5 +1,7 @@
-﻿using Common.DTO.app;
+﻿using Common.DatabaseModels.models.NoteContent;
+using Common.DTO.app;
 using Common.DTO.labels;
+using Common.DTO.notes.FullNoteContent;
 using System;
 using System.Collections.Generic;
 
@@ -13,5 +15,6 @@ namespace Common.DTO.notes
         public List<LabelDTO> Labels { set; get; }
         public NoteTypeDTO NoteType { set; get; }
         public RefTypeDTO RefType { set; get; }
+        public List<BaseContentNoteDTO> Contents { set; get; }
     }
 }

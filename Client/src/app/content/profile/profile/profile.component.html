@@ -47,7 +47,7 @@
                             <img *ngIf="!photoError" [src]="(user$ | async).photoId | getImage" alt="User photo"
                                 (error)="changeSource($event)">
                             <i *ngIf="photoError" class="icon-people"></i>
-                            <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
+                            <input type="file" accept="image/jpeg,image/png" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
                             <label for="upl" class="change-photo" #profilePhoto>
                                 <div class="icon">
                                     <i class="icon-newphoto"></i>

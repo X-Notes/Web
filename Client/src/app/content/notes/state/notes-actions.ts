@@ -196,5 +196,11 @@ export class TransformTypeNotes {
     constructor(public typeFrom: NoteTypeENUM, public typeTo: NoteTypeENUM, public selectedIds: string[]) { }
 }
 
+export class UploadImagesToNote{
+    static type = '[Notes] upload image to note';
+    constructor(public data: FormData) {
+    }
+}
+
 
 

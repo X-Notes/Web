@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.models.NoteContent;
+using System;
 using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
@@ -27,5 +28,7 @@ namespace Common.DatabaseModels.models
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }
+
+        public List<BaseNoteContent> Contents { set; get; }
     }
 }

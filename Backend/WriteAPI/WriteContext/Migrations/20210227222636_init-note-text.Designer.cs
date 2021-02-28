@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,30 +10,16 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210227222636_init-note-text")]
+    partial class initnotetext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.2");
-
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
-                {
-                    b.Property<Guid>("AlbumNotesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FilesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AlbumNotesId", "FilesId");
-
-                    b.HasIndex("FilesId");
-
-                    b.ToTable("AlbumNoteAppFile");
-                });
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
                 {
@@ -64,8 +51,6 @@ namespace WriteContext.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FileId");
 
                     b.HasIndex("UserId");
 
@@ -129,22 +114,22 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3de45038-e3ee-4f55-81eb-756c4a268c30"),
+                            Id = new Guid("7c11f220-8f8d-42d3-b40f-3271a88d3828"),
                             Name = "Private"
                         },
                         new
                         {
-                            Id = new Guid("18642927-0508-4841-ac32-37e01a9013a1"),
+                            Id = new Guid("888a0eaa-2a0d-4100-902b-2e0e8c03978a"),
                             Name = "Shared"
                         },
                         new
                         {
-                            Id = new Guid("1fb2fe34-3cf0-47fb-9651-afe3396dca42"),
+                            Id = new Guid("aa8f432d-26ac-475d-9b77-24e94ae6e3b1"),
                             Name = "Deleted"
                         },
                         new
                         {
-                            Id = new Guid("df8e4a31-c6b8-4329-8ab0-0bc5b2169486"),
+                            Id = new Guid("feeb658b-a54f-4af7-ae84-dd17550295fa"),
                             Name = "Archive"
                         });
                 });
@@ -180,12 +165,12 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1f2e9c39-30ae-483c-95a5-bd114bcf6cfe"),
+                            Id = new Guid("935b9071-729b-4516-b6a1-cd34c95ada51"),
                             Name = "Medium"
                         },
                         new
                         {
-                            Id = new Guid("254f6c02-0655-4ae0-9e22-ed4437549ac8"),
+                            Id = new Guid("9dbfe312-d3ee-4b7a-bd84-2553e739c0aa"),
                             Name = "Big"
                         });
                 });
@@ -258,17 +243,17 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3108b3d9-073b-4db2-a0e3-066674b25b4c"),
+                            Id = new Guid("4edfaf05-bd8b-4618-a2eb-a781a27ad22e"),
                             Name = "Ukraine"
                         },
                         new
                         {
-                            Id = new Guid("7cf122d4-4ab5-41f4-b43c-ab8a5a67ca3d"),
+                            Id = new Guid("6c2f0824-847f-4133-8b57-ccb688f2b54e"),
                             Name = "Russian"
                         },
                         new
                         {
-                            Id = new Guid("a9650f0f-272c-45d4-8ae4-2ee20999ca74"),
+                            Id = new Guid("8e7ce172-8c49-42ee-9fe2-7d29bc274cfa"),
                             Name = "English"
                         });
                 });
@@ -320,17 +305,20 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NoteId");
 
                     b.ToTable("BaseNoteContents");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseNoteContent");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteType", b =>
@@ -349,22 +337,22 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("631c5b68-9253-4168-a926-ffa75caed66a"),
+                            Id = new Guid("b6bca8bb-e6c7-4a6a-a3a2-2fdeba400224"),
                             Name = "Private"
                         },
                         new
                         {
-                            Id = new Guid("dadcb143-3742-4b26-ac88-b2cdf606464a"),
+                            Id = new Guid("4dff2073-9f09-4026-bd76-532a994815ca"),
                             Name = "Shared"
                         },
                         new
                         {
-                            Id = new Guid("69eaeea3-d4e5-4a91-a895-630792fedff5"),
+                            Id = new Guid("a1c2ea15-b53b-49b5-af47-c175dd29d7ae"),
                             Name = "Deleted"
                         },
                         new
                         {
-                            Id = new Guid("88c54323-f758-4f90-91f5-cda02b23d73c"),
+                            Id = new Guid("db620ff8-44b7-44cb-b4af-f094e1d2d117"),
                             Name = "Archive"
                         });
                 });
@@ -402,12 +390,12 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6faafe15-df29-4dd5-9dae-8a9f1842519a"),
+                            Id = new Guid("47377f4c-3099-407d-a0f2-75ad077b55c4"),
                             Name = "Viewer"
                         },
                         new
                         {
-                            Id = new Guid("414bd645-71c2-411e-b0ce-32661d4b2576"),
+                            Id = new Guid("063c5d0e-b4d5-4973-bf1f-dec7d3ef13c4"),
                             Name = "Editor"
                         });
                 });
@@ -428,12 +416,12 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("301518d9-2e4c-4805-bc0a-7e10b7c59e63"),
+                            Id = new Guid("e9c5dd77-c8a2-4179-9189-dbc9687d6d47"),
                             Name = "Light"
                         },
                         new
                         {
-                            Id = new Guid("e40f23da-7f5c-437b-8d23-2f9517d315c9"),
+                            Id = new Guid("674af535-fb0a-4509-9dcb-6abd1fe906d1"),
                             Name = "Dark"
                         });
                 });
@@ -543,13 +531,6 @@ namespace WriteContext.Migrations
                     b.ToTable("UsersOnPrivateFolders");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
-                {
-                    b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
-
-                    b.ToTable("AlbumNote");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.TextNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
@@ -557,39 +538,16 @@ namespace WriteContext.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("text");
 
-                    b.ToTable("TextNote");
-                });
-
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", null)
-                        .WithMany()
-                        .HasForeignKey("AlbumNotesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.AppFile", null)
-                        .WithMany()
-                        .HasForeignKey("FilesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasDiscriminator().HasValue("TextNote");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Common.DatabaseModels.models.User", "User")
                         .WithMany("Backgrounds")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("File");
 
                     b.Navigation("User");
                 });
@@ -829,24 +787,6 @@ namespace WriteContext.Migrations
                     b.Navigation("Folder");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
-                        .WithOne()
-                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AlbumNote", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.TextNote", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
-                        .WithOne()
-                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.TextNote", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>

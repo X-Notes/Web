@@ -48,6 +48,7 @@ namespace WriteAPI
             services.JWT(Configuration);
                 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
+            services.AddScoped<NoteCustomMapper>();
 
             services.AddScoped<ValidationFilter>();
             services.AddControllers().AddNewtonsoftJson();

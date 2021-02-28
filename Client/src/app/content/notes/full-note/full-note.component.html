@@ -134,3 +134,4 @@
     [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'">
     </app-text-edit-menu>
 </div>
+<input #uploadPhotos type="file" multiple accept="image/jpeg,image/png" hidden="true" (change)="uploadImages($event)">
