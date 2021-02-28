@@ -6,8 +6,8 @@ import { PositionNote } from 'src/app/content/notes/state/notes-actions';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
-import { NoteType } from '../enums/NoteTypes';
-import { FolderType } from '../enums/FolderTypes';
+import { NoteType } from '../models/noteType';
+import { FolderType } from '../models/folderType';
 
 @Injectable()
 export class MurriService  {
@@ -113,7 +113,7 @@ export class MurriService  {
         position: item.getGrid().getItems().indexOf(item) + 1,
         entityId: item._element.id
       };
-      this.store.dispatch(new PositionLabel(deleted, parseInt(order.entityId, 10), order));
+      this.store.dispatch(new PositionLabel(deleted, order.entityId, order));
     });
   }
 

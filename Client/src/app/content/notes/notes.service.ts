@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Injectable, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { UpdateColor } from './state/updateColor';
 import { SmallNote } from './models/smallNote';
 import { FullNote } from './models/fullNote';
@@ -9,9 +9,9 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { CancelAllSelectedLabels, ClearUpdatelabelEvent, SelectIdNote, UnSelectIdNote } from './state/notes-actions';
+import { CancelAllSelectedLabels, ClearUpdatelabelEvent, LoadNotes, SelectIdNote, UnSelectIdNote } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -37,7 +37,9 @@ export class NotesService implements OnDestroy {
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
           this.notes = this.allNotes;
-          await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), true);
+          const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
+          const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(z => z.name === roadType);
+          await this.murriService.initMurriNoteAsync(type, true);
           await this.murriService.setOpacityTrueAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
@@ -96,20 +98,31 @@ export class NotesService implements OnDestroy {
   firstInitedMurri = false;
 
 
-  murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteType)
+  murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM)
   {
     refElements.changes
     .pipe(takeUntil(this.destroy))
     .subscribe(async (z) => {
       if (z.length === this.notes.length && !this.firstInitedMurri)
       {
-        this.murriService.initMurriNote(noteType, !this.isFiltedMode());
+        const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+        this.murriService.initMurriNote(type, !this.isFiltedMode());
         await this.murriService.setOpacityTrueAsync();
         this.firstInitedMurri = true;
       }
     });
   }
 
+  async loadNotes(typeENUM: NoteTypeENUM)
+  {
+    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
+    const type = types.find(x => x.name === typeENUM);
+    await this.store.dispatch(new LoadNotes(type.id, type)).toPromise();
+
+    const actions = types.filter(x => x.id !== type.id).map(t => new LoadNotes(t.id, t));
+    this.store.dispatch(actions);
+  }
+  
   highlightNote(note) {
     if (!note.isSelected) {
       const labelsIds = note.labels.map(x => x.id);
@@ -183,7 +196,7 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  async UpdateLabelSelected(ids: number[]) {
+  async UpdateLabelSelected(ids: string[]) {
     console.log('ids labels');
     if (ids.length !== 0 && this.firstInitFlag) {
       console.log('in');
@@ -191,7 +204,9 @@ export class NotesService implements OnDestroy {
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
       this.notes = this.allNotes.filter(x => x.labels.some(label => ids.some(z => z === label.id)));
-      await this.murriService.initMurriNoteAsync(this.store.selectSnapshot(AppStore.getTypeNote), false);
+      const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === roadType);
+      await this.murriService.initMurriNoteAsync(type, false);
       await this.murriService.setOpacityTrueAsync(0);
     }
   }
@@ -214,17 +229,5 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  addToDomAppend(notes: SmallNote[]) {
-    if (notes.length > 0) {
-      this.notes = [...notes.map(note => { note = { ...note }; return note; }), ...this.notes];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < notes.length; i++) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, { index: -1, layout: true });
-        }
-      }, 0);
-    }
-  }
 
 }

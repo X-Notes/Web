@@ -17,7 +17,7 @@ export class AboutComponent implements OnInit {
   }
 
   login() {
-    const flag = this.store.selectSnapshot(AppStore.getTokenUpdated);
+    const flag = this.store.selectSnapshot(AppStore.appLoaded);
     if (!flag) {
       this.authService.GoogleAuth();
     } else {

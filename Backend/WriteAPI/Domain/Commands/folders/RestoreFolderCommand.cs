@@ -10,6 +10,7 @@ namespace Domain.Commands.folders
     {
         [Required]
         public List<Guid> Ids { set; get; }
+
         public RestoreFolderCommand(string email): base(email)
         {
                 

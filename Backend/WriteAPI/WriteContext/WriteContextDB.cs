@@ -1,4 +1,6 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
+using Common.Naming;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -8,19 +10,28 @@ namespace WriteContext
     {
 
         public DbSet<User> Users { get; set; }
-        public DbSet<PersonalitionSetting> PersonalitionSettings { get; set; }
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
-        // public DbSet<RelantionShip> RelantionShips { get; set; }
         public DbSet<Backgrounds> Backgrounds { set; get; }
         public DbSet<Folder> Folders { set; get; }
         public DbSet<Label> Labels { set; get; }
         public DbSet<Note> Notes { set; get; }
         public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
-
+        public DbSet<AppFile> Files { set; get; }
+        public DbSet<Language> Languages { set; get; }
+        public DbSet<Theme> Themes { set; get; }
+        public DbSet<FolderType> FoldersTypes { set; get; }
+        public DbSet<NoteType> NotesTypes { set; get; }
+        public DbSet<RefType> RefTypes { set; get; }
+        public DbSet<FontSize> FontSizes { set; get; }
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+
+        public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
+        public DbSet<TextNote> TextNotes { set; get; }
+        public DbSet<AlbumNote> AlbumNotes { set; get; }
+
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
             //Database.EnsureCreated();
@@ -28,25 +39,6 @@ namespace WriteContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            /*
-            modelBuilder.Entity<RelantionShip>()
-                .HasKey(x => new { x.FirstUserId, x.SecondUserId});
-
-            modelBuilder.Entity<RelantionShip>()
-                .HasOne(x => x.FirstUser)
-                .WithMany(y => y.FriendRequestsMade)
-                .HasForeignKey(x => x.FirstUserId).OnDelete(DeleteBehavior.Restrict);
-
-            
-            modelBuilder.Entity<RelantionShip>()
-                .HasOne(x => x.SecondUser)
-                .WithMany(y => y.FriendRequestsAccepted)
-                .HasForeignKey(x => x.SecondUserId);
-                
-            modelBuilder.Entity<RelantionShip>()
-                .HasOne(e => e.ActionUser)
-                .WithOne().HasForeignKey<RelantionShip>(e => e.ActionUserId);
-                */
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
 
@@ -105,6 +97,37 @@ namespace WriteContext
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.UserId);
+
+            modelBuilder.Entity<Language>().HasData(
+                new { Id = Guid.NewGuid(), Name = "Ukraine" },
+                new { Id = Guid.NewGuid(), Name = "Russian" },
+                new { Id = Guid.NewGuid(), Name = "English" });
+
+            modelBuilder.Entity<Theme>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.LightTheme },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DarkTheme });
+
+            modelBuilder.Entity<FontSize>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Medium },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Big });
+
+
+
+            modelBuilder.Entity<FolderType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedFolder },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedFolder });
+
+            modelBuilder.Entity<NoteType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedNote },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedNote });
+
+            modelBuilder.Entity<RefType>().HasData(
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Viewer },
+                new { Id = Guid.NewGuid(), Name = ModelsNaming.Editor });
         }
     }
 }

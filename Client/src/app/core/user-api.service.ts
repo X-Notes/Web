@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { User } from './models/user';
 import { ShortUser } from './models/short-user';
-import { Theme } from '../shared/enums/Theme';
-import { FontSize } from '../shared/enums/FontSize';
-import { Language } from '../shared/enums/Language';
+import { AnswerChangePhoto } from './models/asnwer-change-photo';
 
 export interface Token {
   token: string;
@@ -35,23 +33,23 @@ export class UserAPIService {
     return this.httpClient.get<ShortUser>(environment.writeAPI + '/api/user/short');
   }
 
-  changeTheme(theme: Theme) {
+  changeTheme(id: string) {
     const obj = {
-      theme
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/theme' , obj);
   }
 
-  changeFontSize(fontSize: FontSize) {
+  changeFontSize(id: string) {
     const obj = {
-      fontSize
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/font' , obj);
   }
 
-  changeLanguage(language: Language) {
+  changeLanguage(id: string) {
     const obj = {
-      language
+      id
     };
     return this.httpClient.post(environment.writeAPI + '/api/user/language' , obj);
   }
@@ -64,12 +62,14 @@ export class UserAPIService {
   }
 
   updateUserPhoto(photo: FormData) {
-    return this.httpClient.post<any>(environment.writeAPI + '/api/user/photo', photo);
+    return this.httpClient.post<AnswerChangePhoto>(environment.writeAPI + '/api/user/photo', photo);
   }
 
-  async getImageFromGoogle(imageUrl): Promise<string> {
+  async getImageFromGoogle(imageUrl): Promise<FormData> {
     const imageBlob = await this.httpClient.get(imageUrl, { responseType: 'blob' }).toPromise();
-    return this.getBase64FromBlob(imageBlob);
+    const form = new FormData();
+    form.append('Photo', imageBlob);
+    return form;
   }
 
   private async getBase64FromBlob(blob: Blob) {

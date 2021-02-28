@@ -1,7 +1,6 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DatabaseModels.models.NoteContent;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Common.DatabaseModels.models
 {
@@ -9,14 +8,17 @@ namespace Common.DatabaseModels.models
     {
         public Guid Id { get; set; }
 
-        public NotesType NoteType { set; get; }
-        public RefType? RefType { set; get; }
+        public Guid NoteTypeId { set; get; }
+        public NoteType NoteType { set; get; }
+
+        public Guid RefTypeId { set; get; }
+        public RefType RefType { set; get; }
 
         public string Title { set; get; }
         public string Color { set; get; }
         public int Order { set; get; }
 
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
         public User User { set; get; }
 
         public DateTimeOffset DeletedAt { set; get; }
@@ -26,5 +28,7 @@ namespace Common.DatabaseModels.models
         public List<UserOnPrivateNotes> UsersOnPrivateNotes { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public List<FoldersNotes> FoldersNotes { set; get; }
+
+        public List<BaseNoteContent> Contents { set; get; }
     }
 }

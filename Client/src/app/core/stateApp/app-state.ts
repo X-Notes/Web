@@ -1,16 +1,25 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { UpdateRoute, SetToken, TokenSetNoUpdate } from './app-action';
+import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadGeneralEntites } from './app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { AppServiceAPI } from '../app.service';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import { AuthService } from '../auth.service';
+import { Theme } from 'src/app/shared/models/Theme';
+import { FontSize } from 'src/app/shared/models/FontSize';
+import { NoteType } from 'src/app/shared/models/noteType';
+import { FolderType } from 'src/app/shared/models/folderType';
+import { GeneralApp } from 'src/app/shared/models/generalApp';
+import { EntityRef } from 'src/app/shared/models/entityRef';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 
 
 interface AppState {
     routing: EntityType;
     token: string;
     tokenUpdated: boolean;
+    generalApp: GeneralApp;
 }
 
 @State<AppState>({
@@ -19,15 +28,47 @@ interface AppState {
         routing: null,
         token: null,
         tokenUpdated: false,
+        generalApp: null
     }
 })
 @Injectable()
 export class AppStore {
 
 
-    constructor(authService: AuthService) {
+    constructor(
+        authService: AuthService, // DONT DELETE THIS ROW
+        public appService: AppServiceAPI) {
     }
 
+    @Selector()
+    static getLanguages(state: AppState): LanguageDTO[] {
+        return state.generalApp.languages;
+    }
+
+    @Selector()
+    static getThemes(state: AppState): Theme[] {
+        return state.generalApp.themes;
+    }
+
+    @Selector()
+    static getFontSizes(state: AppState): FontSize[] {
+        return state.generalApp.fontSizes;
+    }
+
+    @Selector()
+    static getNoteTypes(state: AppState): NoteType[] {
+        return state.generalApp.noteTypes;
+    }
+
+    @Selector()
+    static getFolderTypes(state: AppState): FolderType[] {
+        return state.generalApp.folderTypes;
+    }
+
+    @Selector()
+    static getRefs(state: AppState): EntityRef[] {
+        return state.generalApp.refs;
+    }
 
     @Selector()
     static getToken(state: AppState): string {
@@ -35,7 +76,12 @@ export class AppStore {
     }
 
     @Selector()
-    static getTokenUpdated(state: AppState): boolean {
+    static appLoaded(state: AppState): boolean {
+        return state.tokenUpdated && state.generalApp !== null;
+    }
+
+    @Selector()
+    static isTokenUpdated(state: AppState): boolean {
         return state.tokenUpdated;
     }
 
@@ -128,19 +174,19 @@ export class AppStore {
 
 
     @Selector()
-    static getTypeNote(state: AppState): NoteType {
+    static getTypeNote(state: AppState): NoteTypeENUM {
         switch (state.routing) {
             case EntityType.NotePrivate: {
-                return NoteType.Private;
+                return NoteTypeENUM.Private;
             }
             case EntityType.NoteArchive: {
-                return NoteType.Archive;
+                return NoteTypeENUM.Archive;
             }
             case EntityType.NoteDeleted: {
-                return NoteType.Deleted;
+                return NoteTypeENUM.Deleted;
             }
             case EntityType.NoteShared: {
-                return NoteType.Shared;
+                return NoteTypeENUM.Shared;
             }
             default: {
                 throw new Error('Incorrect type');
@@ -149,20 +195,20 @@ export class AppStore {
     }
 
     @Selector()
-    static getTypeFolder(state: AppState): FolderType {
+    static getTypeFolder(state: AppState): FolderTypeENUM {
         switch (state.routing) {
 
             case EntityType.FolderPrivate: {
-                return FolderType.Private;
+                return FolderTypeENUM.Private;
             }
             case EntityType.FolderShared: {
-                return FolderType.Shared;
+                return FolderTypeENUM.Shared;
             }
             case EntityType.FolderDeleted: {
-                return FolderType.Deleted;
+                return FolderTypeENUM.Deleted;
             }
             case EntityType.FolderArchive: {
-                return FolderType.Archive;
+                return FolderTypeENUM.Archive;
             }
             default: {
                 throw new Error('Incorrect type');
@@ -194,4 +240,11 @@ export class AppStore {
     setNoUpdateToken({ patchState }: StateContext<AppState>) {
         patchState({  token: null , tokenUpdated: false });
     }
+
+    @Action(LoadGeneralEntites)
+    async loadGeneralEntites({ patchState }: StateContext<AppState>) {
+        const general = await this.appService.getLoadGeneral().toPromise();
+        patchState({  generalApp: general });
+    }
+
 }

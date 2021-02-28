@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { LoadAllExceptFolders, LoadFullFolder } from '../state/folders-actions';
+import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -43,13 +43,16 @@ export class FullFolderComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.id = params.id;
 
-      this.store.select(AppStore.getTokenUpdated)
+      this.store.select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
-          const type = this.store.selectSnapshot(FolderStore.full).folderType;
-          this.store.dispatch(new LoadAllExceptFolders(type));
+          const types = this.store.selectSnapshot(AppStore.getFolderTypes);
+          for (const type of types)
+          {
+            this.store.dispatch(new LoadFolders(type.id, type));
+          }
         }
       }
       );

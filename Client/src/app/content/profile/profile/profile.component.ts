@@ -3,14 +3,13 @@ import { PersonalizationService, sideBarCloseOpen, showDropdown } from 'src/app/
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
-import { Language } from 'src/app/shared/enums/Language';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import {
   ChangeLanguage, ChangeFontSize, ChangeTheme,
   UpdateUserName, UpdateUserPhoto, SetDefaultBackground
 } from 'src/app/core/stateUser/user-action';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -19,7 +18,9 @@ import { Background } from 'src/app/core/models/background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from '@angular/cdk/overlay';
+import {CdkConnectedOverlay, ConnectionPositionPair} from '@angular/cdk/overlay';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-profile',
@@ -29,14 +30,19 @@ import {CdkConnectedOverlay, ConnectionPositionPair, Overlay, OverlayRef } from 
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
+  fontSize = FontSizeENUM;
+
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
+
   @Select(UserStore.getUserLanguage)
-  public language$: Observable<Language>;
+  public language$: Observable<LanguageDTO>;
 
   @Select(BackgroundStore.getUserBackgrounds)
   public backgrounds$: Observable<Background[]>;
@@ -45,7 +51,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild(CdkConnectedOverlay) cdkConnectedOverlay: CdkConnectedOverlay;
 
   userName;
-  languages = EnumUtil.getEnumValues(Language);
+
+  @Select(AppStore.getLanguages)
+  languages$: Observable<LanguageDTO[]>;
+
   public photoError = false;
   destroy = new Subject<void>();
   isOpen = false;
@@ -70,7 +79,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
@@ -84,18 +93,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(x => this.newBackground());
   }
 
-  setLanguage(item: any): void {
-    switch (item) {
-      case 'Ukraine':
-        this.store.dispatch(new ChangeLanguage(Language.UA));
-        break;
-      case 'Russian':
-        this.store.dispatch(new ChangeLanguage(Language.RU));
-        break;
-      case 'English':
-        this.store.dispatch(new ChangeLanguage(Language.EN));
-        break;
-    }
+  setLanguage(item: LanguageDTO): void {
+    this.store.dispatch(new ChangeLanguage(item));
     this.isOpen = false;
     setTimeout( () => {
       this.cdkConnectedOverlay.overlayRef.updatePosition();
@@ -106,13 +105,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isOpen = false;
   }
 
-  setCurrent(id: number) {
+  setCurrent(id: string) {
     this.store.dispatch(new SetBackground(id));
   }
 
-  removeBackground(id: number) {
+  removeBackground(id: string) {
     this.store.dispatch(new RemoveBackground(id));
-    this.store.dispatch(new SetDefaultBackground());
+    const user = this.store.selectSnapshot(UserStore.getUser);
+    if (id === user.currentBackground.id)
+    {
+      this.store.dispatch(new SetDefaultBackground());
+    }
   }
 
   cancelSideBar() {
@@ -130,16 +133,33 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeLanguage(event) {
-    this.store.dispatch(new ChangeLanguage(Language.EN));
-  }
-
   changeTheme() {
-    this.store.dispatch(new ChangeTheme());
+    const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
+    const themes = this.store.selectSnapshot(AppStore.getThemes);
+    if (userTheme.name === ThemeENUM.Dark)
+    {
+      const whiteTheme = themes.find(x => x.name === ThemeENUM.Light);
+      this.store.dispatch(new ChangeTheme(whiteTheme));
+    }
+    if (userTheme.name === ThemeENUM.Light){
+      const darkTheme = themes.find(x => x.name === ThemeENUM.Dark);
+      this.store.dispatch(new ChangeTheme(darkTheme));
+    }
   }
 
   changeFontSize() {
-    this.store.dispatch(new ChangeFontSize());
+    const userFontSize = this.store.selectSnapshot(UserStore.getUserFontSize);
+    const fontSizes = this.store.selectSnapshot(AppStore.getFontSizes);
+
+    if (userFontSize.name === FontSizeENUM.Medium)
+    {
+      const bigSize = fontSizes.find(x => x.name === FontSizeENUM.Big);
+      this.store.dispatch(new ChangeFontSize(bigSize));
+    }
+    if (userFontSize.name === FontSizeENUM.Big){
+      const mediumSize = fontSizes.find(x => x.name === FontSizeENUM.Medium);
+      this.store.dispatch(new ChangeFontSize(mediumSize));
+    }
   }
 
   newBackground() {

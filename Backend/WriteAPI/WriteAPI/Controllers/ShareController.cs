@@ -1,5 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using Common.DTO.users;
+﻿using Common.DTO.users;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Queries.sharing;

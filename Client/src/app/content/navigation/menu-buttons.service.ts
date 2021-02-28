@@ -3,30 +3,37 @@ import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Theme } from 'src/app/shared/enums/Theme';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
 import { MenuItem } from './menu_item';
-import { CopyNotes, SetDeleteNotes, ArchiveNotes,
-  DeleteNotesPermanently, MakePrivateNotes, ChangeTypeFullNote } from '../notes/state/notes-actions';
-import { CopyFolders, SetDeleteFolders, ArchiveFolders,
-   DeleteFoldersPermanently, MakePrivateFolders } from '../folders/state/folders-actions';
+import {
+  CopyNotes, SetDeleteNotes, ArchiveNotes,
+  DeleteNotesPermanently, MakePrivateNotes, ChangeTypeFullNote
+} from '../notes/state/notes-actions';
+import {
+  CopyFolders, SetDeleteFolders, ArchiveFolders,
+  DeleteFoldersPermanently, MakePrivateFolders
+} from '../folders/state/folders-actions';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { NoteStore } from '../notes/state/notes-state';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FolderStore } from '../folders/state/folders-state';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FolderType } from 'src/app/shared/models/folderType';
+import { NoteType } from 'src/app/shared/models/noteType';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
 
   constructor(private store: Store,
-              private dialogService: DialogService,
-              private snackService: SnackbarService) {}
+    private dialogService: DialogService,
+    private snackService: SnackbarService) { }
 
 
   public saveItems: MenuItem[] = [];
@@ -356,46 +363,48 @@ export class MenuButtonsService {
 
   // COLOR
   changeColor() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
+    const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
   // LABELS
   changeLabels() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
+    const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 
   // SHARING
   shareEntity() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
+    const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme === Theme.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
+      panelClass: this.getTheme() === ThemeENUM.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }
 
+  getTheme() {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
+    return theme.name;
+  }
+
   openSideModal() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig =  {
+    const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme === Theme.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
@@ -406,19 +415,21 @@ export class MenuButtonsService {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids  = [note.id];
+      const ids = [note.id];
       this.store.dispatch(new CopyNotes(note.noteType, ids));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids));
+      this.store.dispatch(new CopyNotes(type, ids));
     }
   }
 
   private copyFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    this.store.dispatch(new CopyFolders(folderType, ids));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new CopyFolders(type, ids));
   }
 
   // SET DELETE
@@ -428,46 +439,50 @@ export class MenuButtonsService {
 
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids  = [note.id];
+      const ids = [note.id];
 
-      const snackbarRef = this.deleteSnackbar(language, 'Note', false);
+      const snackbarRef = this.deleteSnackbar(language.name, 'Note', false);
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
           this.snackbarMoveToInner(note.noteType, ids);
         }
       });
       this.store.dispatch(new SetDeleteNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new SetDeleteNotes(type, ids));
       const isMany = ids.length > 1 ? true : false;
 
-      const snackbarRef = this.deleteSnackbar(language, 'Note', isMany);
+      const snackbarRef = this.deleteSnackbar(language.name, 'Note', isMany);
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new SetDeleteNotes(noteType, ids));
+      this.store.dispatch(new SetDeleteNotes(type, ids));
     }
   }
 
   snackbarMoveTo(type: NoteType, ids) {
-    const types = NoteType;
-    switch (type) {
-      case types.Private : {
-        this.store.dispatch(new MakePrivateNotes(type , ids));
+    const types = NoteTypeENUM;
+    switch (type.name) {
+      case types.Private: {
+        this.store.dispatch(new MakePrivateNotes(type, ids));
         break;
       }
-      case types.Shared : {
+      case types.Shared: {
         break;
       }
-      case types.Archive : {
+      case types.Archive: {
         this.store.dispatch(new ArchiveNotes(type, ids));
         break;
       }
-      case types.Deleted : {
+      case types.Deleted: {
         this.store.dispatch(new SetDeleteNotes(type, ids));
         break;
       }
@@ -475,20 +490,20 @@ export class MenuButtonsService {
   }
 
   snackbarFolderMoveTo(type: FolderType, ids) {
-    const types = FolderType;
-    switch (type) {
-      case types.Private : {
+    const types = FolderTypeENUM;
+    switch (type.name) {
+      case types.Private: {
         this.store.dispatch(new MakePrivateFolders(type, ids));
         break;
       }
-      case types.Shared : {
+      case types.Shared: {
         break;
       }
-      case types.Archive : {
+      case types.Archive: {
         this.store.dispatch(new ArchiveFolders(type, ids));
         break;
       }
-      case types.Deleted : {
+      case types.Deleted: {
         this.store.dispatch(new SetDeleteFolders(type, ids));
         break;
       }
@@ -496,24 +511,24 @@ export class MenuButtonsService {
   }
 
   snackbarMoveToInner(type: NoteType, ids) {
-    const types = NoteType;
-    switch (type) {
-      case types.Private : {
+    const types = NoteTypeENUM;
+    switch (type.name) {
+      case types.Private: {
         this.store.dispatch(new MakePrivateNotes(type, ids));
-        this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+        this.store.dispatch(new ChangeTypeFullNote(type));
         break;
       }
-      case types.Shared : {
+      case types.Shared: {
         break;
       }
-      case types.Archive : {
+      case types.Archive: {
         this.store.dispatch(new ArchiveNotes(type, ids));
-        this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+        this.store.dispatch(new ChangeTypeFullNote(type));
         break;
       }
-      case types.Deleted : {
+      case types.Deleted: {
         this.store.dispatch(new SetDeleteNotes(type, ids));
-        this.store.dispatch(new ChangeTypeFullNote(NoteType.Deleted));
+        this.store.dispatch(new ChangeTypeFullNote(type));
         break;
       }
     }
@@ -522,15 +537,17 @@ export class MenuButtonsService {
   private setDeleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new SetDeleteFolders(type, ids));
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1 ? true : false;
-    const snackbarRef = this.deleteSnackbar(language, 'Folder', isMany);
+    const snackbarRef = this.deleteSnackbar(language.name, 'Folder', isMany);
     snackbarRef.afterDismissed().subscribe(x => {
       if (x.dismissedByAction) {
-        this.snackbarFolderMoveTo(folderType, ids);
+        this.snackbarFolderMoveTo(type, ids);
       }
     });
-    this.store.dispatch(new SetDeleteFolders(folderType, ids));
+    this.store.dispatch(new SetDeleteFolders(type, ids));
   }
 
   private makePrivateNotes() {
@@ -539,44 +556,50 @@ export class MenuButtonsService {
 
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids  = [note.id];
+      const ids = [note.id];
 
-      const snackbarRef = this.privateSnackbar(language, 'Note', false);
+      const snackbarRef = this.privateSnackbar(language.name, 'Note', false);
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
           this.snackbarMoveToInner(note.noteType, ids);
         }
       });
       this.store.dispatch(new MakePrivateNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Private));
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new MakePrivateNotes(type, ids));
       const isMany = ids.length > 1 ? true : false;
-      const snackbarRef = this.privateSnackbar(language, 'Note', isMany);
+      const snackbarRef = this.privateSnackbar(language.name, 'Note', isMany);
 
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new MakePrivateNotes(noteType , ids));
+      this.store.dispatch(new MakePrivateNotes(type, ids));
     }
   }
 
   private restoreFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new MakePrivateFolders(type, ids));
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1 ? true : false;
-    const snackbarRef = this.privateSnackbar(language, 'Folder', isMany);
+    const snackbarRef = this.privateSnackbar(language.name, 'Folder', isMany);
 
     snackbarRef.afterDismissed().subscribe(x => {
       if (x.dismissedByAction) {
-        this.snackbarFolderMoveTo(folderType, ids);
+        this.snackbarFolderMoveTo(type, ids);
       }
     });
-    this.store.dispatch(new MakePrivateFolders(folderType, ids));
+    this.store.dispatch(new MakePrivateFolders(type, ids));
   }
 
   // ARCHIVE
@@ -587,35 +610,39 @@ export class MenuButtonsService {
 
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids  = [note.id];
+      const ids = [note.id];
 
-      const snackbarRef = this.archiveSnackbar(language, 'Note', false);
+      const snackbarRef = this.archiveSnackbar(language.name, 'Note', false);
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
           this.snackbarMoveToInner(note.noteType, ids);
         }
       });
       this.store.dispatch(new ArchiveNotes(note.noteType, ids));
-      this.store.dispatch(new ChangeTypeFullNote(NoteType.Archive));
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      this.store.dispatch(new ChangeTypeFullNote(type));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+      this.store.dispatch(new ArchiveNotes(type, ids));
       const isMany = ids.length > 1 ? true : false;
-      const snackbarRef = this.archiveSnackbar(language, 'Note', isMany);
+      const snackbarRef = this.archiveSnackbar(language.name, 'Note', isMany);
 
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new ArchiveNotes(noteType, ids));
+      this.store.dispatch(new ArchiveNotes(type, ids));
     }
   }
 
   deleteSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to bin` : `Note moved to bin`, 'Undo');
         } else {
@@ -623,23 +650,23 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Заметки перенесены в корзину` : `Заметка перенесена в корзину`, 'Отменить');
+            this.snackService.openSnackBar(isMany ? `Заметки перенесены в корзину` : `Заметка перенесена в корзину`, 'Отменить');
         } else {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Папки перенесены в корзину` : `Папка перенесена в корзину`, 'Отменить');
+            this.snackService.openSnackBar(isMany ? `Папки перенесены в корзину` : `Папка перенесена в корзину`, 'Отменить');
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Нотатки перенесені в кошик` : `Нотаток перенесений в кошик`, 'Відмінити');
+            this.snackService.openSnackBar(isMany ? `Нотатки перенесені в кошик` : `Нотаток перенесений в кошик`, 'Відмінити');
         } else {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Папки перенесені в кошик` : `Папка перенесена в кошик`, 'Відмінити');
+            this.snackService.openSnackBar(isMany ? `Папки перенесені в кошик` : `Папка перенесена в кошик`, 'Відмінити');
         }
         break;
       }
@@ -650,16 +677,16 @@ export class MenuButtonsService {
   archiveSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Notes moved to archive` : `Note moved to archive`, 'Undo');
+            this.snackService.openSnackBar(isMany ? `Notes moved to archive` : `Note moved to archive`, 'Undo');
         } else {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Folders moved to archive` : `Folder moved to archive`, 'Undo');
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены в архив` : `Заметка перенесена в архив`, 'Отменить');
         } else {
@@ -667,7 +694,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені в архів` : `Нотаток перенесений в архів`, 'Відмінити');
         } else {
@@ -682,7 +709,7 @@ export class MenuButtonsService {
   privateSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to personal` : `Note moved to personal`, 'Undo');
         } else {
@@ -690,21 +717,21 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены ​​в личные` : `Заметка перенесена ​​в личные`, 'Отменить');
         } else {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Папки перенесены ​​в личные` : `Папка перенесена ​​в личные`, 'Отменить');
+            this.snackService.openSnackBar(isMany ? `Папки перенесены ​​в личные` : `Папка перенесена ​​в личные`, 'Отменить');
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
-          snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені до особистих` :  `Нотаток перенесений до особистих`, 'Відмінити');
+          snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені до особистих` : `Нотаток перенесений до особистих`, 'Відмінити');
         } else {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Папки перенесені до особистих` : `Папка перенесена до особистих`, 'Отменить');
+            this.snackService.openSnackBar(isMany ? `Папки перенесені до особистих` : `Папка перенесена до особистих`, 'Отменить');
         }
         break;
       }
@@ -715,7 +742,7 @@ export class MenuButtonsService {
   deletePermSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes deleted permanently` : `Note deleted permanently`, null);
         } else {
@@ -723,19 +750,19 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`, null);
+            this.snackService.openSnackBar(isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`, null);
         } else {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Папки удалены безвозвратно` : `Папка удалена безвозвратно`, null);
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef =
-          this.snackService.openSnackBar(isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`, null);
+            this.snackService.openSnackBar(isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`, null);
         } else {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Папки видалені безповоротно` : `Папка видалена безповоротно`, null);
         }
@@ -748,42 +775,54 @@ export class MenuButtonsService {
   archiveFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+    this.store.dispatch(new ArchiveFolders(type, ids));
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
 
-    const snackbarRef = this.archiveSnackbar(language, 'Folder', false);
+    const snackbarRef = this.archiveSnackbar(language.name, 'Folder', false);
     snackbarRef.afterDismissed().subscribe(x => {
       if (x.dismissedByAction) {
-        this.snackbarFolderMoveTo(folderType, ids);
+        this.snackbarFolderMoveTo(type, ids);
       }
     });
-    this.store.dispatch(new ArchiveFolders(folderType, ids));
   }
 
   // DELETE PERMANENTLY
 
   deleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-
+    const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Deleted);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids  = [note.id];
-      this.deletePermSnackbar(language, 'Note', false);
-      this.store.dispatch(new DeleteNotesPermanently(ids));
+      const ids = [note.id];
+      this.store.dispatch(new DeleteNotesPermanently(ids, type));
     } else {
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      const isMany = ids.length > 1 ? true : false;
-      this.deletePermSnackbar(language, 'Note', isMany);
-      this.store.dispatch(new DeleteNotesPermanently(ids));
+      this.store.dispatch(new DeleteNotesPermanently(ids, type));
+      const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+
+      if (isInnerNote) {
+        const note = this.store.selectSnapshot(NoteStore.oneFull);
+        const ids = [note.id];
+        this.deletePermSnackbar(language.name, 'Note', false);
+        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+      } else {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        const isMany = ids.length > 1 ? true : false;
+        this.deletePermSnackbar(language.name, 'Note', isMany);
+        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+      }
     }
   }
 
   deleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Deleted);
+    this.store.dispatch(new DeleteFoldersPermanently(ids, type));
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1 ? true : false;
-    this.deletePermSnackbar(language, 'Folder', isMany);
-    this.store.dispatch(new DeleteFoldersPermanently(ids));
+    this.deletePermSnackbar(language.name, 'Folder', isMany);
+    this.store.dispatch(new DeleteFoldersPermanently(ids, type));
   }
 
 }

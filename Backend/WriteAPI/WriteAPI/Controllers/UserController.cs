@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using Common.DatabaseModels.helpers;
 using Common.DTO.users;
-using Domain;
 using Domain.Commands.users;
-using Domain.Ids;
-using Domain.Models;
 using Domain.Queries.users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
-using WriteAPI.Services;
 
 namespace WriteAPI.Controllers
 {
@@ -38,10 +29,9 @@ namespace WriteAPI.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ShortUser> Authorize(NewUser user)
+        public async Task<ShortUser> Authorize(NewUserCommand command)
         {
             var currentUserEmail = this.GetUserEmail();
-            var command = mapper.Map<NewUserCommand>(user);
             command.Email = currentUserEmail;
             await _mediator.Send(command);
             return await _mediator.Send(new GetShortUser(currentUserEmail));
@@ -65,7 +55,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("photo")]
-        public async Task<JObject> ChangeProfilePhoto(IFormFile photo)
+        public async Task<AnswerChangeUserPhoto> ChangeProfilePhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new UpdatePhotoCommand(photo, email));

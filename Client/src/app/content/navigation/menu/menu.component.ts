@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Theme } from 'src/app/shared/models/Theme';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable } from 'rxjs';

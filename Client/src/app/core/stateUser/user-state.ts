@@ -6,12 +6,13 @@ import { Login, Logout, ChangeTheme, ChangeLanguage,
     ChangeFontSize,
     SetCurrentBackground,
     SetDefaultBackground, UpdateUserName, UpdateUserPhoto  } from './user-action';
-import { Theme } from 'src/app/shared/enums/Theme';
-import { Language } from 'src/app/shared/enums/Language';
+import { Theme } from 'src/app/shared/models/Theme';
+import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import { TranslateService } from '@ngx-translate/core';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
+import { environment } from 'src/environments/environment';
 
 interface UserState {
     user: ShortUser;
@@ -50,6 +51,16 @@ export class UserStore {
         return state.user.theme;
     }
 
+    @Selector()
+    static getUserBackground(state: UserState): string {
+        const path = state.user.currentBackground?.path;
+        if (path)
+        {
+            return environment.writeAPI + `/api/Files/image/${path}`;
+        }
+        return null;
+    }
+
 
     @Selector()
     static getUserFontSize(state: UserState): FontSize {
@@ -57,7 +68,7 @@ export class UserStore {
     }
 
     @Selector()
-    static getUserLanguage(state: UserState): Language {
+    static getUserLanguage(state: UserState): LanguageDTO {
         return state.user.language;
     }
 
@@ -66,8 +77,8 @@ export class UserStore {
     async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
         let userdb = await this.api.getUser().toPromise();
         if (userdb === null) {
-            user.photoId =  null; // TODO getImageFromGoogle
             userdb = await this.api.newUser(user).toPromise();
+            dispatch(new UpdateUserPhoto(user.photo));
         }
         dispatch(new SetToken(token));
         setState({ user: userdb, isLogin: true});
@@ -82,35 +93,25 @@ export class UserStore {
 
 
     @Action(ChangeTheme)
-    async changeTheme({ patchState, getState }: StateContext<UserState>) {
+    async changeTheme({ patchState, getState }: StateContext<UserState>, {theme}: ChangeTheme) {
         let user = getState().user;
-        if (user.theme === Theme.Light) {
-            await this.api.changeTheme(Theme.Dark).toPromise();
-            user = {...user, theme: Theme.Dark};
-        } else {
-            await this.api.changeTheme(Theme.Light).toPromise();
-            user = {...user, theme: Theme.Light};
-        }
+        await this.api.changeTheme(theme.id).toPromise();
+        user = {...user, theme};
         patchState({ user });
     }
 
     @Action(ChangeLanguage)
     async changeLanguage({ patchState, getState }: StateContext<UserState>, {language}: ChangeLanguage ) {
-        await this.api.changeLanguage(language).toPromise();
-        await this.translateService.use(language).toPromise();
+        await this.api.changeLanguage(language.id).toPromise();
+        await this.translateService.use(language.name).toPromise();
         patchState({ user: {...getState().user, language}});
     }
 
     @Action(ChangeFontSize)
-    async changeFontSize({ patchState, getState }: StateContext<UserState>) {
+    async changeFontSize({ patchState, getState }: StateContext<UserState>, {fontSize}: ChangeFontSize) {
         let user = getState().user;
-        if (user.fontSize === FontSize.Big) {
-            await this.api.changeFontSize(FontSize.Medium).toPromise();
-            user = {...user, fontSize: FontSize.Medium};
-        } else {
-            await this.api.changeFontSize(FontSize.Big).toPromise();
-            user = {...user, fontSize: FontSize.Big};
-        }
+        await this.api.changeFontSize(fontSize.id).toPromise();
+        user = {...user, fontSize};
         patchState({ user });
     }
 
@@ -137,10 +138,9 @@ export class UserStore {
 
     @Action(UpdateUserPhoto)
     async updateUserPhoto({ patchState, getState }: StateContext<UserState>, {photo}: UpdateUserPhoto) {
-        let newPhoto = await this.api.updateUserPhoto(photo).toPromise();
-        newPhoto = newPhoto.url;
+        const newPhoto = await this.api.updateUserPhoto(photo).toPromise();
         patchState({
-            user: {...getState().user, photoId: newPhoto}
+            user: {...getState().user, photoId: newPhoto.id}
         });
     }
 }

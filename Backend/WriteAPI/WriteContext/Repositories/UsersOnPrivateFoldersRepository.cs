@@ -28,7 +28,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task<UsersOnPrivateFolders> GetById(int userId, Guid folderId)
+        public async Task<UsersOnPrivateFolders> GetById(Guid userId, Guid folderId)
         {
             return await this.contextDB.UsersOnPrivateFolders.FirstOrDefaultAsync(x => x.FolderId == folderId && x.UserId == userId);
         }

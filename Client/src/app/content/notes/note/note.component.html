@@ -1,10 +1,10 @@
 <div #highlightNote class="highlighting-note" (click)="highlight(note)"
     [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
-    [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''">
+    [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-select' : ''">
     <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
 <div (click)="toNote(note)" class="note-inner" [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
-    [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']">
+    [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']">
     <div class="labels">
         <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
             [ngStyle]="{backgroundColor: label.color}" CustomTooltip="{{ label.name }}" position="Top"

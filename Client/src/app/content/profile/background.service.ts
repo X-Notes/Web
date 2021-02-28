@@ -16,11 +16,11 @@ export class BackgroundService {
     return this.httpClient.post<Background>(environment.writeAPI + '/api/backgrounds/new', photo);
   }
 
-  setBackground(id: number) {
+  setBackground(id: string) {
     return this.httpClient.get(environment.writeAPI + `/api/backgrounds/background/${id}`);
   }
 
-  removeBackground(id: number) {
+  removeBackground(id: string) {
     return this.httpClient.delete(environment.writeAPI + `/api/backgrounds/background/${id}`);
   }
 

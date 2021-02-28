@@ -32,7 +32,7 @@ export class UpdateLabelCount {
 
 export class PositionLabel {
     static type = '[Labels] Position Label';
-    constructor(public deleted: boolean, public id: number, public order: Order) {}
+    constructor(public deleted: boolean, public id: string, public order: Order) {}
 }
 
 export class RestoreLabel {

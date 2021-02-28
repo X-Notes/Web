@@ -11,6 +11,6 @@ namespace Domain.Commands.share.folders
         [Required]
         public Guid FolderId { set; get; }
         [Required]
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
     }
 }

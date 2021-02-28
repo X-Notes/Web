@@ -4,7 +4,7 @@
             <div class="sub-nav-item" routerLink="/profile" #profile>
                 <div class="item">
                     <div class="photo">
-                        <img *ngIf="!photoError" alt="photo" [src]="(user$ | async).photoId"
+                        <img *ngIf="!photoError" alt="photo" [src]="(user$ | async).photoId | getImage"
                             (error)="changeSource($event)">
                         <i *ngIf="photoError" class="icon-people"></i>
                     </div>
@@ -82,7 +82,7 @@
     <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
 </div>
 <div class="content"
-    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}">
     <ng-scrollbar class="scroll-helper"
         [visibility]="'hover'"
         [appearance]="'compact'">

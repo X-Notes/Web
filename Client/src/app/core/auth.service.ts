@@ -4,7 +4,6 @@ import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UserAPIService } from './user-api.service';
 import { User } from './models/user';
-import { Language } from '../shared/enums/Language';
 import { Store } from '@ngxs/store';
 import { Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
@@ -19,7 +18,7 @@ export class AuthService {
     private router: Router,
     private store: Store,
     private api: UserAPIService) {
-      this.afAuth.authState.subscribe(async (firebaseUser) => {
+    this.afAuth.authState.subscribe(async (firebaseUser) => {
       await this.configureAuthState(firebaseUser);
     });
   }
@@ -36,7 +35,13 @@ export class AuthService {
       const flag = this.store.selectSnapshot(UserStore.getStatus);
       if (!flag) {
         const user = this.getUser(firebaseUser);
-        this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
+        try {
+          user.photo = await this.api.getImageFromGoogle(firebaseUser.photoURL);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
+        }
       }
       setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
     } else {
@@ -53,8 +58,7 @@ export class AuthService {
   private getUser(user: firebase.default.User) {
     const temp: User = {
       name: user.displayName,
-      photoId: user.photoURL,
-      language: Language.UA
+      photo: null
     };
     return temp;
   }

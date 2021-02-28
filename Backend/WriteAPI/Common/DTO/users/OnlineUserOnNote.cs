@@ -7,6 +7,6 @@ namespace Common.DTO.users
     public class OnlineUserOnNote
     {
         public string Name { set; get; }
-        public string PhotoId { set; get; }
+        public Guid? PhotoId { set; get; }
     }
 }

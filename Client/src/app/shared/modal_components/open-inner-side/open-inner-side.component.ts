@@ -1,13 +1,13 @@
-import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Renderer2, ViewChildren } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { LoadAllExceptNotes, LoadPrivateNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
+import { LoadNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { FontSize } from '../../enums/FontSize';
-import { NoteType } from '../../enums/NoteTypes';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeENUM } from '../../enums/FontSizeEnum';
+import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 
@@ -21,7 +21,7 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
 export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loaded = false;
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
   selectedNotes = [];
@@ -57,8 +57,13 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   async loadContent() {
-    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
-    this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
+    
+    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
+    const type = types.find(x => x.name === NoteTypeENUM.Private);
+    await this.store.dispatch(new LoadNotes(type.id, type)).toPromise();
+
+    const actions = types.filter(x => x.id !== type.id).map(t => new LoadNotes(t.id, t));
+    this.store.dispatch(actions);
 
     // TODO SELECT ALL NOTES
 

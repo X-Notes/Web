@@ -21,7 +21,7 @@ namespace WriteContext.Repositories
             await contextDB.SaveChangesAsync();
         }
 
-        public async Task RemoveFromOnline(int userId)
+        public async Task RemoveFromOnline(Guid userId)
         {
             var connectionsds = await contextDB.UserOnNoteNow.Where(x => x.UserId == userId).ToListAsync();
             contextDB.UserOnNoteNow.RemoveRange(connectionsds);
@@ -33,7 +33,7 @@ namespace WriteContext.Repositories
             return await contextDB.UserOnNoteNow.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
         }
 
-        public async Task<UserOnNoteNow> GetUserFromNoteByIds(int userId, Guid noteId)
+        public async Task<UserOnNoteNow> GetUserFromNoteByIds(Guid userId, Guid noteId)
         {
             return await contextDB.UserOnNoteNow.Where(x => x.UserId == userId && x.NoteId == noteId).FirstOrDefaultAsync();
         }

@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
@@ -34,6 +33,8 @@ export class FoldersComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
 
   destroy = new Subject<void>();
 

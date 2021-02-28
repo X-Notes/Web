@@ -1,30 +1,27 @@
 import { SmallNote } from '../models/smallNote';
-import { State, Selector, StateContext, Action, Store } from '@ngxs/store';
+import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
-    LoadPrivateNotes, AddNote,
-    LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes, LoadAllExceptNotes, ChangeColorNote, SelectIdNote,
+    LoadNotes, AddNote, ChangeColorNote, SelectIdNote,
     UnSelectIdNote, UnSelectAllNote, SelectAllNote, UpdateNotes, ClearColorNotes, SetDeleteNotes
     , DeleteNotesPermanently, ArchiveNotes,
     RemoveFromDomMurri, MakePrivateNotes, CopyNotes, ClearAddedPrivateNotes,
     CancelAllSelectedLabels, UpdateSelectLabel,
-    AddLabelOnNote, RemoveLabelFromNote, LoadAllNotes,
+    AddLabelOnNote, RemoveLabelFromNote,
     ClearUpdatelabelEvent, UpdateLabelOnNote,
     UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle,
-    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote, ChangeTypeFullNote,
+    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote, ChangeTypeFullNote, UploadImagesToNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { NoteColorPallete } from 'src/app/shared/enums/NoteColors';
 import { UpdateColor } from './updateColor';
 import { OrderService } from 'src/app/shared/services/order.service';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { LabelsOnSelectedNotes } from '../models/labelsOnSelectedNotes';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
 import { FullNote } from '../models/fullNote';
-import { AccessType } from '../models/accessType';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
 import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
 
@@ -33,7 +30,7 @@ import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
 interface FullNoteState {
     note: FullNote;
     canView: boolean;
-    accessType: AccessType;
+    canEdit: boolean;
 }
 
 interface NoteState {
@@ -45,7 +42,7 @@ interface NoteState {
     updateLabelsOnNoteEvent: UpdateLabelEvent[];
     removeFromMurriEvent: string[];
     notesAddingPrivate: SmallNote[];
-    selectedLabelsFilter: number[];
+    selectedLabelsFilter: string[];
     isCanceled: boolean;
     InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
@@ -150,29 +147,29 @@ export class NoteStore {
 
     @Selector()
     static privateNotes(state: NoteState): SmallNote[] {
-        return state.notes.find(x => x.typeNotes === NoteType.Private).notes;
+        return state.notes.find(x => x.typeNotes === NoteTypeENUM.Private).notes;
     }
 
     @Selector()
     static sharedNotes(state: NoteState): SmallNote[] {
-        return state.notes.find(x => x.typeNotes === NoteType.Shared).notes;
+        return state.notes.find(x => x.typeNotes === NoteTypeENUM.Shared).notes;
     }
 
     @Selector()
     static deletedNotes(state: NoteState): SmallNote[] {
-        return state.notes.find(x => x.typeNotes === NoteType.Deleted).notes;
+        return state.notes.find(x => x.typeNotes === NoteTypeENUM.Deleted).notes;
     }
 
     @Selector()
     static archiveNotes(state: NoteState): SmallNote[] {
-        return state.notes.find(x => x.typeNotes === NoteType.Archive).notes;
+        return state.notes.find(x => x.typeNotes === NoteTypeENUM.Archive).notes;
     }
 
     // Get count notes
 
     @Selector()
     static privateCount(state: NoteState): number {
-        const notes = this.getNotesByTypeStatic(state, NoteType.Private);
+        const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Private);
         if (state.selectedLabelsFilter.length === 0) {
             return notes.count;
         } else {
@@ -182,7 +179,7 @@ export class NoteStore {
 
     @Selector()
     static archiveCount(state: NoteState): number {
-        const notes = this.getNotesByTypeStatic(state, NoteType.Archive);
+        const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Archive);
         if (state.selectedLabelsFilter.length === 0) {
             return notes.count;
         } else {
@@ -192,7 +189,7 @@ export class NoteStore {
 
     @Selector()
     static deletedCount(state: NoteState): number {
-        const notes = this.getNotesByTypeStatic(state, NoteType.Deleted);
+        const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Deleted);
         if (state.selectedLabelsFilter.length === 0) {
             return notes.count;
         } else {
@@ -202,7 +199,7 @@ export class NoteStore {
 
     @Selector()
     static sharedCount(state: NoteState): number {
-        const notes = this.getNotesByTypeStatic(state, NoteType.Shared);
+        const notes = this.getNotesByTypeStatic(state, NoteTypeENUM.Shared);
         if (state.selectedLabelsFilter.length === 0) {
             return notes.count;
         } else {
@@ -210,16 +207,16 @@ export class NoteStore {
         }
     }
 
-    static getNotesByTypeStatic(state: NoteState, type: NoteType) {
+    static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
         return state.notes.find(x => x.typeNotes === type);
     }
-    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: number[]) {
+    static getCountWhenFilteting(notes: SmallNote[], selectedLabelsFilter: string[]) {
         return notes.filter(x => x.labels.some(label => selectedLabelsFilter.some(z => z === label.id))).length;
     }
 
 
     @Selector()
-    static getSelectedLabelFilter(state: NoteState): number[] {
+    static getSelectedLabelFilter(state: NoteState): string[] {
         return state.selectedLabelsFilter;
     }
 
@@ -231,13 +228,12 @@ export class NoteStore {
 
     @Action(AddNote)
     async newNote({ getState, patchState, dispatch }: StateContext<NoteState>) {
-        const id = await this.api.new().toPromise();
-        const newNote: SmallNote = { id, title: '', color: NoteColorPallete.Green, labels: [], refType: 0, noteType: NoteType.Private };
+        const note = await this.api.new().toPromise();
 
-        const notes = this.getNotesByType(getState, NoteType.Private);
+        const notes = this.getNotesByType(getState, NoteTypeENUM.Private);
 
-        const toUpdate = new Notes(NoteType.Private, [newNote, ...notes]);
-        dispatch(new UpdateNotes(toUpdate, NoteType.Private));
+        const toUpdate = new Notes(NoteTypeENUM.Private, [note, ...notes]);
+        dispatch(new UpdateNotes(toUpdate, NoteTypeENUM.Private));
     }
 
 
@@ -260,7 +256,7 @@ export class NoteStore {
 
         await this.api.changeColor(selectedIds, color).toPromise();
 
-        const notes = this.getNotesByType(getState, typeNote);
+        const notes = this.getNotesByType(getState, typeNote.name);
 
         const newNotes = notes.map(note => {
             note = { ...note };
@@ -276,7 +272,7 @@ export class NoteStore {
         });
         const updateColor = notesForUpdate.map(note => this.mapFromNoteToUpdateColor(note));
         patchState({ updateColorEvent: updateColor });
-        dispatch([new UpdateNotes(new Notes(typeNote, newNotes), typeNote), UnSelectAllNote, ClearColorNotes]);
+        dispatch([new UpdateNotes(new Notes(typeNote.name, newNotes), typeNote.name), UnSelectAllNote, ClearColorNotes]);
     }
 
     mapFromNoteToUpdateColor(note: SmallNote) {
@@ -297,17 +293,18 @@ export class NoteStore {
     @Action(SetDeleteNotes)
     async deleteNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote, selectedIds }: SetDeleteNotes) {
         await this.api.setDeleteNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote, NoteType.Deleted, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
     }
 
     // Deleting
     @Action(DeleteNotesPermanently)
-    async deleteNotesPermanently({ getState, dispatch, patchState }: StateContext<NoteState>, {selectedIds}: DeleteNotesPermanently) {
+    async deleteNotesPermanently({ getState, dispatch, patchState }: StateContext<NoteState>,
+                                 { selectedIds, typeNote }: DeleteNotesPermanently) {
         await this.api.deleteNotes(selectedIds).toPromise();
 
-        const notesFrom = this.getNotesByType(getState, NoteType.Deleted);
+        const notesFrom = this.getNotesByType(getState, NoteTypeENUM.Deleted);
         const notesFromNew = notesFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
-        dispatch(new UpdateNotes(new Notes(NoteType.Deleted, notesFromNew), NoteType.Deleted));
+        dispatch(new UpdateNotes(new Notes(NoteTypeENUM.Deleted, notesFromNew), NoteTypeENUM.Deleted));
 
         patchState({
             removeFromMurriEvent: [...selectedIds]
@@ -320,22 +317,22 @@ export class NoteStore {
     @Action(ArchiveNotes)
     async archiveNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: ArchiveNotes) {
         await this.api.archiveNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote, NoteType.Archive, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Archive, selectedIds));
     }
 
 
     @Action(MakePrivateNotes)
     async makePrivateNotes({ getState, patchState, dispatch }: StateContext<NoteState>, { typeNote, selectedIds }: MakePrivateNotes) {
         await this.api.makePrivateNotes(selectedIds).toPromise();
-        dispatch(new TransformTypeNotes(typeNote, NoteType.Private, selectedIds));
+        dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Private, selectedIds));
     }
 
-    getNotesByType(getState: () => NoteState, type: NoteType): SmallNote[] {
+    getNotesByType(getState: () => NoteState, type: NoteTypeENUM): SmallNote[] {
         return getState().notes.find(z => z.typeNotes === type).notes;
     }
 
     @Action(TransformTypeNotes)
-    tranformFromTo({ getState, patchState, dispatch }: StateContext<NoteState>, {typeFrom, typeTo, selectedIds}: TransformTypeNotes) {
+    tranformFromTo({ getState, patchState, dispatch }: StateContext<NoteState>, { typeFrom, typeTo, selectedIds }: TransformTypeNotes) {
 
         const notesFrom = this.getNotesByType(getState, typeFrom);
         const notesFromNew = notesFrom.filter(x => this.itemNoFromFilterArray(selectedIds, x));
@@ -346,9 +343,11 @@ export class NoteStore {
         const notesTo = this.getNotesByType(getState, typeTo);
 
         notesAdded = [...notesAdded.map(note => {
-            return {...note};
+            const newNote = { ...note };
+            newNote.noteType = { ...newNote.noteType };
+            return newNote;
         })];
-        notesAdded.forEach(note => note.noteType = typeTo);
+        notesAdded.forEach(note => note.noteType.name = typeTo);
         const newNotesTo = [...notesAdded, ...notesTo];
         dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
 
@@ -369,11 +368,11 @@ export class NoteStore {
     @Action(CopyNotes)
     async copyNotes({ getState, dispatch, patchState }: StateContext<NoteState>, { typeNote, selectedIds }: CopyNotes) {
         const newNotes = await this.api.copyNotes(selectedIds).toPromise();
-        const privateNotes = this.getNotesByType(getState, NoteType.Private);
-        dispatch(new UpdateNotes(new Notes(NoteType.Private, [...newNotes, ...privateNotes]), NoteType.Private));
+        const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
+        dispatch(new UpdateNotes(new Notes(NoteTypeENUM.Private, [...newNotes, ...privateNotes]), NoteTypeENUM.Private));
         dispatch([UnSelectAllNote]);
 
-        if (typeNote === NoteType.Private) {
+        if (typeNote.name === NoteTypeENUM.Private) {
             patchState({
                 notesAddingPrivate: [...newNotes]
             });
@@ -396,7 +395,7 @@ export class NoteStore {
         notes.forEach(x => {
             if (!x.labels.some(z => z.id === label.id)) {
                 x.labels = [...x.labels,
-                    { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
+                { id: label.id, color: label.color, name: label.name, isDeleted: label.isDeleted, countNotes: 0 }];
                 labelUpdate.push({ id: x.id, labels: x.labels });
             }
             labelsArray.push({
@@ -411,7 +410,7 @@ export class NoteStore {
     @Action(AddLabelOnNote)
     async addLabel({ getState, dispatch, patchState }: StateContext<NoteState>, { label, typeNote, selectedIds }: AddLabelOnNote) {
         await this.api.addLabel(label.id, selectedIds).toPromise();
-        const notes = this.getNotesByType(getState, typeNote);
+        const notes = this.getNotesByType(getState, typeNote.name);
 
         const notesForUpdate = notes.filter(x => this.itemsFromFilterArray(selectedIds, x))
             .map(note => { note = { ...note }; return note; });
@@ -423,13 +422,15 @@ export class NoteStore {
             if (selectedIds.indexOf(note.id) !== -1) {
                 if (!note.labels.some(z => z.id === label.id)) {
                     note.labels = [...note.labels,
-                        { id: label.id, color: label.color, name: label.name,
-                            isDeleted: label.isDeleted, countNotes: 0}];
+                    {
+                        id: label.id, color: label.color, name: label.name,
+                        isDeleted: label.isDeleted, countNotes: 0
+                    }];
                 }
             }
             return note;
         });
-        dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateNotes(new Notes(typeNote.name, notesForStore), typeNote.name));
         dispatch(new UpdateLabelCount(label));
     }
 
@@ -454,7 +455,7 @@ export class NoteStore {
 
         await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
 
-        const notes = this.getNotesByType(getState, typeNote);
+        const notes = this.getNotesByType(getState, typeNote.name);
 
         const notesForUpdate = notes.filter(x => this.itemsFromFilterArray(selectedIds, x))
             .map(note => { note = { ...note }; return note; });
@@ -468,7 +469,7 @@ export class NoteStore {
             }
             return note;
         });
-        dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
+        dispatch(new UpdateNotes(new Notes(typeNote.name, notesForStore), typeNote.name));
         dispatch(new UpdateLabelCount(label));
     }
 
@@ -534,14 +535,14 @@ export class NoteStore {
     @Action(PositionNote)
     async changePosition({ getState, dispatch }: StateContext<NoteState>, { order, typeNote }: PositionNote) {
 
-        let notes = this.getNotesByType(getState, typeNote);
+        let notes = this.getNotesByType(getState, typeNote.name);
         const changedNote = notes.find(x => x.id === order.entityId);
         const flag = notes.indexOf(changedNote);
         if (flag + 1 !== order.position) {
             await this.orderService.changeOrder(order).toPromise();
             notes = notes.filter(x => x.id !== order.entityId);
             notes.splice(order.position - 1, 0, changedNote);
-            dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
+            dispatch(new UpdateNotes(new Notes(typeNote.name, [...notes]), typeNote.name));
         }
     }
 
@@ -566,7 +567,7 @@ export class NoteStore {
         patchState({
             fullNoteState: {
                 canView: request.canView,
-                accessType: request.accessType,
+                canEdit: request.caEdit,
                 note: request.fullNote
             }
         });
@@ -591,7 +592,8 @@ export class NoteStore {
             newNote = { ...note, labels: [...note.labels, label] };
             patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
         }
-        dispatch(new UpdateOneNote(newNote, note.noteType));
+        const noteUpdate = newNote as SmallNote;
+        dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
     }
 
     @Action(UpdateTitle)
@@ -600,7 +602,8 @@ export class NoteStore {
         const newNote: FullNote = { ...note, title: str };
         patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
         await this.api.updateTitle(str, note.id).toPromise();
-        dispatch(new UpdateOneNote(newNote, note.noteType));
+        const noteUpdate = newNote as SmallNote;
+        dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
     }
 
     @Action(ChangeColorFullNote)
@@ -611,16 +614,16 @@ export class NoteStore {
         const note = getState().fullNoteState.note;
         const newNote: FullNote = { ...note, color };
         patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-
-        dispatch(new UpdateOneNote(newNote, note.noteType));
+        const noteUpdate = newNote as SmallNote;
+        dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
     }
 
     @Action(ChangeTypeFullNote)
     async changeTypeFullNote({ getState, patchState, dispatch }: StateContext<NoteState>, { type }: ChangeTypeFullNote) {
         const note = getState().fullNoteState?.note;
         if (note) {
-        const newNote: FullNote = { ...note, noteType: type };
-        patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+            const newNote: FullNote = { ...note, noteType: type };
+            patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
         }
     }
 
@@ -640,75 +643,16 @@ export class NoteStore {
 
     // LOADING SMALL
 
-    @Action(LoadPrivateNotes)
-    async loadPrivateNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Private)) {
-            const notesAPI = await this.api.getPrivateNotes().toPromise();
+    @Action(LoadNotes)
+    async loadNotes({ getState, patchState }: StateContext<NoteState>, { id, type }: LoadNotes) {
+        if (!getState().notes.find(z => z.typeNotes === type.name)) {
+            const notesAPI = await this.api.getNotes(id, type.name).toPromise();
             patchState({
                 notes: [...getState().notes, notesAPI]
             });
         }
     }
 
-    @Action(LoadSharedNotes)
-    async loadSharedNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Shared)) {
-            const notesAPI = await this.api.getSharedNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadArchiveNotes)
-    async loadArchiveNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Archive)) {
-            const notesAPI = await this.api.getArchiveNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadDeletedNotes)
-    async loadDeletedNotes({ getState, patchState }: StateContext<NoteState>) {
-        if (!getState().notes.find(z => z.typeNotes === NoteType.Deleted)) {
-            const notesAPI = await this.api.getDeletedNotes().toPromise();
-            patchState({
-                notes: [...getState().notes, notesAPI]
-            });
-        }
-    }
-
-    @Action(LoadAllNotes)
-    async loadAllNotes({ dispatch }: StateContext<NoteState>) {
-        await dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]).toPromise();
-    }
-
-    @Action(LoadAllExceptNotes)
-    async loadExceptedNotes({ dispatch }: StateContext<NoteState>, { typeNote }: LoadAllExceptNotes) {
-        switch (typeNote) {
-            case NoteType.Archive: {
-                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Private: {
-                dispatch([LoadSharedNotes, LoadArchiveNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Shared: {
-                dispatch([LoadPrivateNotes, LoadArchiveNotes, LoadDeletedNotes]);
-                break;
-            }
-            case NoteType.Deleted: {
-                dispatch([LoadPrivateNotes, LoadSharedNotes, LoadArchiveNotes]);
-                break;
-            }
-            default: {
-                throw new Error('Inccorect type');
-            }
-        }
-    }
 
     // NOTES SELECTION
 
@@ -738,7 +682,7 @@ export class NoteStore {
 
     @Action(SelectAllNote)
     selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
-        const notes = this.getNotesByType(getState, typeNote);
+        const notes = this.getNotesByType(getState, typeNote.name);
         const ids = notes.map(z => z.id);
         const labelsIds = notes.map(x => {
             const values: LabelsOnSelectedNotes = {
@@ -767,6 +711,14 @@ export class NoteStore {
             }
         } else {
             patchState({ selectedLabelsFilter: [...labels, id] });
+        }
+    }
+
+    @Action(UploadImagesToNote)
+    async uploadImagesToNote({ patchState, getState, dispatch }: StateContext<NoteState>, { data }: UploadImagesToNote) {
+        const id = getState().fullNoteState.note.id;
+        if (id) {
+            const resp = await this.api.uploadImagesToNote(data, id).toPromise();
         }
     }
 }

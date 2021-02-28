@@ -6,7 +6,7 @@ namespace Common.DatabaseModels.models
 {
     public class UserOnNoteNow
     {
-        public int UserId { set; get; }
+        public Guid UserId { set; get; }
         public User User { set; get; }
 
         public Guid NoteId { set; get; }

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, } from '@angular/core';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { Theme } from 'src/app/shared/models/Theme';
 import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil, } from 'rxjs/operators';
@@ -37,6 +37,9 @@ export class NotesComponent implements OnInit, OnDestroy {
   @Select(NoteStore.sharedCount)
   public countShared: Observable<number>;
 
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
+
   @Select(NoteStore.deletedCount)
   public countDeleted: Observable<number>;
 
@@ -51,7 +54,7 @@ export class NotesComponent implements OnInit, OnDestroy {
               private router: Router) { }
 
   async ngOnInit() {
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -93,7 +96,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
-  filterNotes(id: number) {
+  filterNotes(id: string) {
     const label = this.labelsFilters.find(z => z.label.id === id);
     label.selected = !label.selected;
     this.labelsActive = this.labelsFilters.filter(z => z.selected === true).length > 0;

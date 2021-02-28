@@ -1,4 +1,4 @@
 export interface Background {
-    id: number;
+    id: string;
     path: string;
 }

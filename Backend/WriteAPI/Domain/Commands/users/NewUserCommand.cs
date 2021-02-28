@@ -1,17 +1,12 @@
-﻿using Common;
-using Common.DatabaseModels.helpers;
-using Domain.Models;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace Domain.Commands.users
 {
     public class NewUserCommand : BaseCommandEntity, IRequest<Unit>
     {
+        [Required]
         public string Name { set; get; }
-        public string PhotoId { set; get; }
-        public Language Language { set; get; }
     }
 }

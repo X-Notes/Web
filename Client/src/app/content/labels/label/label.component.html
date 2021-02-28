@@ -1,5 +1,5 @@
 <div class="field" [ngStyle]="{backgroundColor: label.color}"
-    [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''">
+    [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : ''">
     <div class="select" *ngIf="selectedMode" (click)="select()"
         [ngStyle]="{'backgroundColor': label.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"></div>
     <input type="text" [disabled]="label.isDeleted" placeholder="Label name" [ngModel]="label.name"

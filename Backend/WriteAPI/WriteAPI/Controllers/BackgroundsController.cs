@@ -33,14 +33,14 @@ namespace WriteAPI.Controllers
         }
 
         [HttpDelete("background/{id}")]
-        public async Task DeleteBackground(int id)
+        public async Task DeleteBackground(Guid id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new RemoveBackgroundCommand(email, id));
         }
 
         [HttpGet("background/{id}")]
-        public async Task UpdateBackgroundCover(int id)
+        public async Task UpdateBackgroundCover(Guid id)
         {
             var email = this.GetUserEmail();
             await _mediator.Send(new UpdateBackgroundCommand(email, id));

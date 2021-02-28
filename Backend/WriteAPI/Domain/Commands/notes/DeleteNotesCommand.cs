@@ -10,6 +10,7 @@ namespace Domain.Commands.notes
     {
         [Required]
         public List<Guid> Ids { set; get; }
+
         public DeleteNotesCommand(string email): base(email)
         {
 

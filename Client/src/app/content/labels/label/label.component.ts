@@ -10,8 +10,9 @@ import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { NoteStore } from '../../notes/state/notes-state';
 import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-label',
@@ -23,7 +24,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Output() updateLabel = new EventEmitter<Label>();
@@ -70,10 +71,11 @@ export class LabelComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateLabelFullNote(this.label, flag));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
       if (!this.label.isSelected) {
-        this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
+        this.store.dispatch(new AddLabelOnNote(this.label, type, ids));
       } else {
-        this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
+        this.store.dispatch(new RemoveLabelFromNote(this.label, type, ids));
       }
     }
   }

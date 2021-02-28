@@ -28,11 +28,11 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet("new")]
-        public async Task<JsonResult> Add()
+        public async Task<SmallNote> Add()
         {
             var email = this.GetUserEmail();
             var command = new NewPrivateNoteCommand(email);
-            return new JsonResult(await _mediator.Send(command));
+            return await _mediator.Send(command);
         }
 
         // Commands
@@ -118,37 +118,14 @@ namespace WriteAPI.Controllers
 
 
         // GET Entities
-        [HttpGet("private")]
-        public async Task<List<SmallNote>> GetPrivateNotes()
+        [HttpGet("type/{id}")]
+        public async Task<List<SmallNote>> GetNotes(Guid id)
         {
             var email = this.GetUserEmail();
-            var query = new GetPrivateNotesQuery(email);
+            var query = new GetNotesByTypeQuery(email, id);
             return await _mediator.Send(query);
         }
 
-        [HttpGet("shared")]
-        public async Task<List<SmallNote>> GetSharedNotes()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetSharedNotesQuery(email);
-            return await _mediator.Send(query);
-        }
-
-        [HttpGet("archive")]
-        public async Task<List<SmallNote>> GetArchiveNotes()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetArchiveNotesQuery(email);
-            return await _mediator.Send(query);
-        }
-
-        [HttpGet("deleted")]
-        public async Task<List<SmallNote>> GetDeletedNotes()
-        {
-            var email = this.GetUserEmail();
-            var query = new GetDeletedNotesQuery(email);
-            return await _mediator.Send(query);
-        }
 
         [HttpGet("{id}")]
         public async Task<FullNoteAnswer> Get(Guid id)

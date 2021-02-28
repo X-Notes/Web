@@ -7,11 +7,12 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { take, takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-all',
@@ -21,7 +22,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
@@ -35,7 +36,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
 
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -74,12 +75,9 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
 
-    this.store.select(x => x.Labels.labelsAll).pipe(take(1))
-    .subscribe(x => {
-      this.labelService.labels.unshift(x[0]);
-      setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
-    });
-
+    const labels = this.store.selectSnapshot(LabelStore.all);
+    this.labelService.labels.unshift(labels[0]);
+    setTimeout(() =>  this.murriService.grid.add(document.querySelector('.grid-item'), {index : 0, layout: true}), 0);
   }
 
   async setDelete(label: Label) {

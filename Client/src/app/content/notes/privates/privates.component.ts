@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote, LoadAllExceptNotes, SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
+import { UnSelectAllNote } from '../state/notes-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
-import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-privates',
@@ -21,7 +21,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
@@ -32,7 +32,7 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
               public noteService: NotesService) { }
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialise(this.refElements, NoteType.Private);
+    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Private);
   }
 
 
@@ -40,7 +40,7 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
     this.pService.setSpinnerState(true);
 
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -50,9 +50,9 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  async loadContent() {
-    await this.store.dispatch(new LoadPrivateNotes()).toPromise();
-    this.store.dispatch(new LoadAllExceptNotes(NoteType.Private));
+  async loadContent(typeENUM = NoteTypeENUM.Private) {
+
+    await this.noteService.loadNotes(typeENUM);
 
     let notes = this.store.selectSnapshot(NoteStore.privateNotes);
     notes = this.noteService.transformNotes(notes);

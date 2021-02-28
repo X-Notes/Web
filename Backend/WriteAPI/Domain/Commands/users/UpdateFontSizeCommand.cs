@@ -1,5 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,10 +9,10 @@ namespace Domain.Commands.users
     public class UpdateFontSizeCommand : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public FontSize FontSize { set; get; }
-        public UpdateFontSizeCommand(FontSize FontSize, string Email) : base(Email)
+        public Guid Id { set; get; }
+        public UpdateFontSizeCommand(Guid Id, string Email) : base(Email)
         {
-            this.FontSize = FontSize;
+            this.Id = Id;
         }
     }
 }

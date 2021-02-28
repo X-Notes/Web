@@ -135,6 +135,9 @@
                 background-color: #3d4049;
             }
             .menu{
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 cursor: pointer;
                 height: 100%;
                 width: 100%;

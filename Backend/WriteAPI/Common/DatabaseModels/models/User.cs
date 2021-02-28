@@ -1,27 +1,34 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
 {
     public class User
     {
-        public int Id { set; get; }
+        public Guid Id { set; get; }
         public string Name { set; get; }
         public string Email { set; get; }
-        public string PhotoId { set; get; }
+
+        public Guid? PhotoId { set; get; }
+        public AppFile Photo { set; get; }
+
         public string PersonalKey { set; get; }
+
+        public Guid LanguageId { set; get; }
         public Language Language { set; get; }
+
         public NotificationSetting NotificationSettings { set; get; }
-        public PersonalitionSetting PersonalitionSettings { set; get; }
         public List<Label> Labels { set; get; }
         public List<Backgrounds> Backgrounds { set; get; }
 
-        public int? CurrentBackgroundId { set; get; }
+        public Guid? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
-        // public ICollection<RelantionShip> FriendRequestsMade { get; set; }
+        public Guid ThemeId { set; get; }
+        public Theme Theme { set; get; }
 
-        // public ICollection<RelantionShip> FriendRequestsAccepted { get; set; }
+        public Guid FontSizeId { set; get; }
+        public FontSize FontSize { set; get; }
 
         public List<Folder> Folders { set; get; }
         public List<Note> Notes { set; get; }

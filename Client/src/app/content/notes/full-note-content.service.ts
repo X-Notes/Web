@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ContentModel, ContentType, HtmlText, Photos, HeadingType, Heading, DotList, NumberList, CheckedList, BaseText } from './models/ContentMode';
+import { ContentModel, ContentType, HtmlText, Album, HeadingType, Heading, DotList, NumberList, CheckedList, BaseText } from './models/ContentMode';
 
 @Injectable()
 export class FullNoteContentService implements OnDestroy {
@@ -133,7 +133,7 @@ export class FullNoteContentService implements OnDestroy {
     const number2 = Math.floor(Math.random() * (max - min + 1) + min);
 
 
-    const content3 = new ContentModel<Photos>();
+    const content3 = new ContentModel<Album>();
     content3.contentId = (Math.random() * (100000 - 1) + 1).toString();
     content3.type = ContentType.PHOTO;
     content3.data = {

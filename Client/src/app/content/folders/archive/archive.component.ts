@@ -3,15 +3,15 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { LoadArchiveFolders, UnSelectAllFolder, LoadAllExceptFolders } from '../state/folders-actions';
+import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FolderService } from '../folder.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-archive',
@@ -21,7 +21,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
 
@@ -33,7 +33,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
               public folderService: FolderService) { }
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderType.Archive);
+    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Archive);
   }
 
   ngOnDestroy(): void {
@@ -47,7 +47,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderArchive)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
@@ -58,8 +58,8 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    await this.store.dispatch(new LoadArchiveFolders()).toPromise();
-    this.store.dispatch(new LoadAllExceptFolders(FolderType.Archive));
+    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Archive);
+    await this.folderService.loadFolders(type);
 
     let folders = this.store.selectSnapshot(FolderStore.archiveFolders);
     folders = this.folderService.transformFolders(folders);

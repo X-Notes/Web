@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.Filters;
+using WriteAPI.Hosted;
 
 namespace WriteAPI
 {
@@ -47,6 +48,7 @@ namespace WriteAPI
             services.JWT(Configuration);
                 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
+            services.AddScoped<NoteCustomMapper>();
 
             services.AddScoped<ValidationFilter>();
             services.AddControllers().AddNewtonsoftJson();
@@ -54,11 +56,12 @@ namespace WriteAPI
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, IdProvider>();
 
-            //services.Queue(Configuration);
-            services.Marten(Configuration);
             services.Mediatr();
             services.DataBase(Configuration);
             services.BI();
+
+            services.AddHostedService<StartAppHosted>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

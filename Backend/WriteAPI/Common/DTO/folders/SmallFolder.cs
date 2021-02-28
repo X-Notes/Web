@@ -1,12 +1,14 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DTO.app;
+using System;
 
 namespace Common.DTO.folders
 {
     public class SmallFolder
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { set; get; }
         public string Color { set; get; }
-        public RefType RefType { set; get; }
+        public RefTypeDTO RefType { set; get; }
+        public FolderTypeDTO FolderType { set; get; }
     }
 }

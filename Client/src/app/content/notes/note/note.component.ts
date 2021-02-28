@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { SmallNote } from '../models/smallNote';
-import { FontSize } from 'src/app/shared/enums/FontSize';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 
 @Component({
@@ -12,7 +12,7 @@ import { FontSize } from 'src/app/shared/enums/FontSize';
 
 export class NoteComponent implements OnInit, OnDestroy {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
 
   @Input() note: SmallNote;
   @Output() highlightNote = new EventEmitter<SmallNote>();

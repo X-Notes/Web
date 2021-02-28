@@ -1,28 +1,16 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { Folders } from '../models/Folders';
-import { Folder } from '../models/folder';
+import { SmallFolder } from '../models/folder';
+import { FolderType } from 'src/app/shared/models/folderType';
+import { NoteType } from 'src/app/shared/models/noteType';
 
 
-export class LoadPrivateFolders {
+export class LoadFolders {
     static type = '[Folders] Load private folders';
-}
+    constructor(public id: string, public type: FolderType){
 
-export class LoadSharedFolders {
-    static type = '[Folders] Load shared folders';
-}
-
-export class LoadDeletedFolders {
-    static type = '[Folders] Load deleted folders';
-}
-
-export class LoadArchiveFolders {
-    static type = '[Folders] Load archive folders';
-}
-
-export class LoadAllExceptFolders {
-    static type = '[Folders] Load all folders';
-    constructor(public typeFolder: FolderType) {    }
+    }
 }
 
 // FUNCTIONS
@@ -49,7 +37,7 @@ export class ClearColorFolders {
 
 export class UpdateFolders {
     static type = '[Folders] Update folders';
-    constructor(public folders: Folders, public typeFolder: FolderType) { }
+    constructor(public folders: Folders, public typeFolder: FolderTypeENUM) { }
 }
 
 
@@ -62,7 +50,7 @@ export class SetDeleteFolders {
 
 export class DeleteFoldersPermanently {
     static type = '[Folders] Delete folders';
-    constructor(public selectedIds: string[]) {
+    constructor(public selectedIds: string[], public typeNote: FolderType) {
     }
 }
 
@@ -131,7 +119,7 @@ export class UpdateTitle {
 
 export class UpdateOneFolder {
     static type = '[Folders] update one one';
-    constructor(public folder: Folder, public typeFolder: FolderType) {
+    constructor(public folder: SmallFolder, public typeFolder: FolderTypeENUM) {
     }
 }
 
@@ -143,7 +131,7 @@ export class LoadFullFolder {
 
 export class TransformTypeFolders {
     static type = '[Folders] transform type folders';
-    constructor(public typeFrom: FolderType, public typeTo: FolderType, public selectedIds: string[]) { }
+    constructor(public typeFrom: FolderTypeENUM, public typeTo: FolderTypeENUM, public selectedIds: string[]) { }
 }
 
 export class ChangeTypeFullFolder {

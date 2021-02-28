@@ -9,7 +9,7 @@ namespace Domain.Commands.notes
     public class AddLabelOnNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public int LabelId { set; get; }
+        public Guid LabelId { set; get; }
         [Required]
         public List<Guid> NoteIds { set; get; }
     }

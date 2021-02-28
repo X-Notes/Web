@@ -14,3 +14,10 @@ export class TokenSetNoUpdate {
     static type = '[App] Set noUpdateToken';
     constructor() {  }
 }
+
+
+export class LoadGeneralEntites{
+    static type = '[App] Load General Entities';
+    constructor() {  }
+}
+

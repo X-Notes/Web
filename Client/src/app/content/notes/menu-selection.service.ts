@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BaseText, ContentModel } from './models/ContentMode';
+import { BaseText, CheckedList, ContentModel, DotList, Heading, HtmlText, NumberList } from './models/ContentMode';
 
 @Injectable()
 export class MenuSelectionService {
 
-  public currentItem: ContentModel<BaseText>;
+  public currentItem: ContentModel<HtmlText | Heading | DotList | NumberList | CheckedList>;
   public menuActive = false;
   public startTop = 0;
   public startScroll = 0;

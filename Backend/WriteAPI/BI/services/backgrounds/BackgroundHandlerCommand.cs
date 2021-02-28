@@ -4,6 +4,7 @@ using Common.DatabaseModels.models;
 using Common.DTO.backgrounds;
 using Domain.Commands.backgrounds;
 using MediatR;
+using Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,15 +25,18 @@ namespace BI.services.backgrounds
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
         private readonly PhotoHelpers photoHelpers;
+        private readonly IFilesStorage filesStorage;
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
                                         PhotoHelpers photoHelpers,
-                                        IMapper mapper)
+                                        IMapper mapper,
+                                        IFilesStorage filesStorage)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
             this.photoHelpers = photoHelpers;
             this.mapper = mapper;
+            this.filesStorage = filesStorage;
         }
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
@@ -65,12 +69,25 @@ namespace BI.services.backgrounds
         public async Task<BackgroundDTO> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmail(request.Email);
+
+            var photoType = photoHelpers.GetPhotoType(request.File);
+            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
+            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, getContentString, photoType);
+            var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
+
             var item = new Backgrounds()
             {
-                Path = await photoHelpers.GetBase64(request.File),
                 UserId = user.Id
             };
-            await backgroundRepository.Add(item);
+
+            var success = await backgroundRepository.AddBackground(item, file);
+
+            if (!success)
+            {
+                filesStorage.RemoveFile(pathToCreatedFile);
+                return null;
+            }
+
             await Handle(new UpdateBackgroundCommand(request.Email, item.Id), CancellationToken.None);
             return mapper.Map<BackgroundDTO>(item);
         }

@@ -32,6 +32,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { GetImagePipe } from './pipes/get-image.pipe';
 import { SelectComponent } from './custom-components/select/select.component';
 import { ChipComponent } from './custom-components/chip/chip.component';
 import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
@@ -48,6 +49,8 @@ import { SelectOptionComponent } from './custom-components/select-option/select-
     OpenInnerSideComponent,
     NoteComponent,
     PopupFullNoteComponent,
+    SearchComponent,
+    GetImagePipe,
     SelectComponent,
     ChipComponent,
     SelectOptionComponent
@@ -69,6 +72,7 @@ import { SelectOptionComponent } from './custom-components/select-option/select-
     NgScrollbarModule,
     SearchComponent,
     MatCheckboxModule,
+    GetImagePipe,
     MatSnackBarModule,
     NoteComponent,
     SelectOptionComponent

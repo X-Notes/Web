@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DatabaseModels.models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,11 +10,11 @@ namespace Domain.Commands.share.notes
     public class SendInvitesToUsersNotes : BaseCommandEntity, IRequest<Unit>
     {
         [Required]
-        public List<int> UserIds { set; get; }
+        public List<Guid> UserIds { set; get; }
         [Required]
         public Guid NoteId { set; get; }
         [Required]
-        public RefType RefType { set; get; }
+        public Guid RefTypeId { set; get; }
         [Required]
         public bool SendMessage { set; get; }
         public string Message { set; get; }

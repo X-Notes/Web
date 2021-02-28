@@ -22,7 +22,11 @@ namespace BI.services.user
         public async Task<ShortUser> Handle(GetShortUser request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailWithPersonalization(request.Email);
-            return imapper.Map<ShortUser>(user);
+            if(user != null)
+            {
+                return imapper.Map<ShortUser>(user);
+            }
+            return null;
         }
     }
 }

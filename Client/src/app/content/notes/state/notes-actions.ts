@@ -1,35 +1,15 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
 import { Label } from '../../labels/models/label';
 import { Notes } from './Notes';
 import { SmallNote } from '../models/smallNote';
+import { NoteType } from 'src/app/shared/models/noteType';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 
 
-export class LoadPrivateNotes {
+export class LoadNotes {
     static type = '[Notes] Load private notes';
+    constructor(public id: string, public type: NoteType){}
 }
-
-export class LoadSharedNotes {
-    static type = '[Notes] Load shared notes';
-}
-
-export class LoadDeletedNotes {
-    static type = '[Notes] Load deleted notes';
-}
-
-export class LoadArchiveNotes {
-    static type = '[Notes] Load archive notes';
-}
-
-export class LoadAllExceptNotes {
-    static type = '[Notes] Load excepted notes';
-    constructor(public typeNote: NoteType) { }
-}
-
-export class LoadAllNotes {
-    static type = '[Notes] Load all notes';
-}
-
 
 export class AddNote {
     static type = '[Notes] Add note';
@@ -38,7 +18,7 @@ export class AddNote {
 
 export class UpdateNotes {
     static type = '[Notes] Update notes';
-    constructor(public notes: Notes, public typeNote: NoteType) { }
+    constructor(public notes: Notes, public typeNote: NoteTypeENUM) { }
 }
 
 
@@ -75,7 +55,7 @@ export class SetDeleteNotes {
 
 export class DeleteNotesPermanently {
     static type = '[Notes] Delete notes';
-    constructor(public selectedIds: string[]) {
+    constructor(public selectedIds: string[], public typeNote: NoteType) {
     }
 }
 
@@ -145,7 +125,7 @@ export class GetInvitedUsersToNote {
 // SELECTION
 export class SelectIdNote {
     static type = '[Notes] Select note';
-    constructor(public id: string, public labelIds: number[]) { }
+    constructor(public id: string, public labelIds: string[]) { }
 }
 
 export class UnSelectIdNote {
@@ -169,7 +149,7 @@ export class SelectAllNote {
 
 export class UpdateOneNote {
     static type = '[Notes] update one one';
-    constructor(public note: SmallNote, public typeNote: NoteType) {
+    constructor(public note: SmallNote, public typeNote: NoteTypeENUM) {
     }
 }
 
@@ -181,7 +161,7 @@ export class CancelAllSelectedLabels {
 
 export class UpdateSelectLabel {
     static type = '[Notes] Updated selected label';
-    constructor(public id: number) {
+    constructor(public id: string) {
     }
 }
 // FULL NOTE
@@ -219,7 +199,13 @@ export class ChangeTypeFullNote {
 
 export class TransformTypeNotes {
     static type = '[Notes] transform type notes';
-    constructor(public typeFrom: NoteType, public typeTo: NoteType, public selectedIds: string[]) { }
+    constructor(public typeFrom: NoteTypeENUM, public typeTo: NoteTypeENUM, public selectedIds: string[]) { }
+}
+
+export class UploadImagesToNote{
+    static type = '[Notes] upload image to note';
+    constructor(public data: FormData) {
+    }
 }
 
 

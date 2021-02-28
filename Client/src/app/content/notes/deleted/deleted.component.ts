@@ -2,16 +2,16 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChildren, ElementRef, 
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
-import { UnSelectAllNote, LoadDeletedNotes, LoadAllExceptNotes } from '../state/notes-actions';
+import { UnSelectAllNote} from '../state/notes-actions';
 import { takeUntil } from 'rxjs/operators';
-import { NoteType } from 'src/app/shared/enums/NoteTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
-import { FontSize } from 'src/app/shared/enums/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-deleted',
@@ -21,7 +21,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
@@ -34,7 +34,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store.select(AppStore.getTokenUpdated)
+    this.store.select(AppStore.appLoaded)
     .pipe(takeUntil(this.destroy))
     .subscribe(async (x: boolean) => {
       if (x) {
@@ -45,13 +45,12 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialise(this.refElements, NoteType.Deleted);
+    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Deleted);
   }
 
-  async loadContent() {
-    await this.store.dispatch(new LoadDeletedNotes()).toPromise();
+  async loadContent(typeENUM = NoteTypeENUM.Deleted) {
 
-    this.store.dispatch(new LoadAllExceptNotes(NoteType.Deleted));
+    await this.noteService.loadNotes(typeENUM);
 
     let notes = this.store.selectSnapshot(NoteStore.deletedNotes);
     notes = this.noteService.transformNotes(notes);

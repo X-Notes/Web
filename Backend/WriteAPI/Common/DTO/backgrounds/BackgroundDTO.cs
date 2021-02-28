@@ -6,7 +6,7 @@ namespace Common.DTO.backgrounds
 {
     public class BackgroundDTO
     {
-        public int Id { set; get; }
-        public string Path { set; get; }
+        public Guid Id { set; get; }
+        public Guid Path { set; get; }
     }
 }

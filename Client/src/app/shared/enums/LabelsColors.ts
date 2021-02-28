@@ -1,4 +1,4 @@
-export enum LabelsColor {
+export enum LabelsColor { // TODO MOVE TO BACKEND
     Red = '#FFB2B2',
     Orange = '#FFE0B2',
     Yellow = '#FFFCB2',

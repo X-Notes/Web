@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using BI.services;
 using BI.services.backgrounds;
+using BI.services.files;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
@@ -8,6 +9,7 @@ using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using Common.DTO.backgrounds;
+using Common.DTO.files;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -23,17 +25,14 @@ using Domain.Commands.orders;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Commands.users;
-using Domain.Ids;
-using Domain.Models;
 using Domain.Queries.backgrounds;
+using Domain.Queries.files;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
-using Domain.Repository;
-using Marten;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -41,13 +40,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
-using RabbitMQ.Client;
-using Shared.Queue.Interfaces;
-using Shared.Queue.QueueServices;
+using Storage;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WriteAPI.Services;
 using WriteContext;
 using WriteContext.Repositories;
 
@@ -55,44 +51,7 @@ namespace WriteAPI.ConfigureAPP
 {
     public static class ConfigureHelper
     {
-        public static void Queue(this IServiceCollection services, IConfiguration Configuration)
-        {
-            var uri = Configuration.GetSection("Rabbit").Value;
-            services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(x => new RabbitMQ.Client.ConnectionFactory()
-            {
-                Uri = new Uri(uri),
-                RequestedConnectionTimeout = TimeSpan.FromTicks(30000),
-                NetworkRecoveryInterval = TimeSpan.FromSeconds(30),
-                AutomaticRecoveryEnabled = true,
-                TopologyRecoveryEnabled = true,
-                RequestedHeartbeat = TimeSpan.FromTicks(60),
-            });
 
-
-            services.AddSingleton<IMessageProducerScopeFactory, MessageProducerScopeFactory>();
-            services.AddSingleton<IMessageConsumerScopeFactory, MessageConsumerScopeFactory>();
-
-            services.AddSingleton<CommandsPushQueue>();
-            services.AddHostedService<CommandsGetQueue>();
-        }
-        public static void Marten(this IServiceCollection services, IConfiguration Configuration)
-        {
-            var connection = Configuration.GetSection("EventStore").Value;
-            services.AddMarten(opts =>
-            {
-                opts.Connection(connection);
-                opts.AutoCreateSchemaObjects = AutoCreate.All;
-
-                opts.Events.AsyncProjections.AggregateStreamsWith<User>();
-
-                opts.Events.AddEventType(typeof(NewUserCommand));
-                opts.Events.AddEventType(typeof(UpdateMainUserInfoCommand));
-
-            });
-
-            services.AddScoped<IIdGenerator, MartenIdGenerator>();
-            services.AddTransient<IRepository<User>, MartenRepository<User>>();
-        }
         public static void Mediatr(this IServiceCollection services)
         {
             services.AddMediatR(typeof(Startup));
@@ -102,7 +61,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, JObject>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, AnswerChangeUserPhoto>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
@@ -119,7 +78,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
             services.AddScoped<IRequestHandler<GetCountNotesByLabel, int>, LabelHandlerQuery>();
 
-            services.AddScoped<IRequestHandler<NewLabelCommand, int>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
@@ -128,7 +87,7 @@ namespace WriteAPI.ConfigureAPP
 
 
             //Notes
-            services.AddScoped<IRequestHandler<NewPrivateNoteCommand, string>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewPrivateNoteCommand, SmallNote>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
@@ -138,19 +97,18 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
-            services.AddScoped<IRequestHandler<GetPrivateNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSharedNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetDeletedNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetArchiveNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
+
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
 
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
 
             //FOLDERS
-            services.AddScoped<IRequestHandler<NewFolderCommand, string>, FolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveFolderCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorFolderCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<RestoreFolderCommand, Unit>, FolderHandlerCommand>();
@@ -159,10 +117,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, Unit>, FolderHandlerCommand>();
 
-            services.AddScoped<IRequestHandler<GetPrivateFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSharedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetDeletedFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetArchiveFoldersQuery, List<SmallFolder>>, FolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
@@ -187,20 +142,25 @@ namespace WriteAPI.ConfigureAPP
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
+
+            //Files
+            services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
             Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
-            services.AddTransient<LabelRepository>();
-            services.AddTransient<UserRepository>();
-            services.AddTransient<BackgroundRepository>();
-            services.AddTransient<NoteRepository>();
-            services.AddTransient<FolderRepository>();
-            services.AddTransient<UserOnNoteRepository>();
-            services.AddTransient<UsersOnPrivateNotesRepository>();
-            services.AddTransient<UsersOnPrivateFoldersRepository>();
+            services.AddScoped<LabelRepository>();
+            services.AddScoped<UserRepository>();
+            services.AddScoped<BackgroundRepository>();
+            services.AddScoped<NoteRepository>();
+            services.AddScoped<FolderRepository>();
+            services.AddScoped<UserOnNoteRepository>();
+            services.AddScoped<UsersOnPrivateNotesRepository>();
+            services.AddScoped<UsersOnPrivateFoldersRepository>();
+            services.AddScoped<FileRepository>();
+            services.AddScoped<AppRepository>();
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -238,6 +198,8 @@ namespace WriteAPI.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<PhotoHelpers>();
+
+            services.AddScoped<IFilesStorage, FilesStorage>();
         }
     }
 }

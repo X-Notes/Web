@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.helpers;
+﻿using Common.DatabaseModels.models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,8 @@ namespace Domain.Commands.share.notes
     {
         [Required]
         public Guid Id { get; set; }
+
         [Required]
-        public RefType RefType { set; get; }
+        public Guid RefTypeId { set; get; }
     }
 }

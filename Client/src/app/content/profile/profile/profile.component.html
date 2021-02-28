@@ -5,7 +5,7 @@
             [appearance]="'compact'">
             <div class="background" *ngFor="let item of backgrounds$ | async"
                 [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''">
-                <img alt="background" [src]="item.path" (click)="setCurrent(item.id)">
+                <img alt="background" [src]="item.path | getImage" (click)="setCurrent(item.id)">
                 <div class="thumbnail" (click)="removeBackground(item.id)">
                     <i class="icon-plus"></i>
                 </div>
@@ -31,7 +31,7 @@
 
 
 <div appTheme class="content"
-    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (user$ | async).currentBackground?.path + ')' : ''}">
+    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}">
 
     <ng-scrollbar
         [visibility]="'hover'"
@@ -44,10 +44,10 @@
                     </div>
                     <div class="user-info generic-section">
                         <div class="photo" appDrop>
-                            <img *ngIf="!photoError" [src]="(user$ | async).photoId" alt="User photo"
+                            <img *ngIf="!photoError" [src]="(user$ | async).photoId | getImage" alt="User photo"
                                 (error)="changeSource($event)">
                             <i *ngIf="photoError" class="icon-people"></i>
-                            <input type="file" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
+                            <input type="file" accept="image/jpeg,image/png" name="choose photo" id="upl" (change)="uploadImageUserPhoto($event)">
                             <label for="upl" class="change-photo" #profilePhoto>
                                 <div class="icon">
                                     <i class="icon-newphoto"></i>
@@ -120,7 +120,7 @@
                                     #origin="cdkOverlayOrigin"
                                     (click)="isOpen = !isOpen" >
                                 <div class="content-button" #dropdownSelect>
-                                    <p>{{ 'languages.' + (language$ | async) | translate }}</p>
+                                    <p>{{ 'languages.' + (language$ | async).name | translate }}</p>
                                     <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
                                         <i class="icon-select-label"></i>
                                     </div>
@@ -134,8 +134,8 @@
                                         [cdkConnectedOverlayPositions]="positions"
                                         (backdropClick)="closeDropdown()">
                                 <div class="dropdown" [@showDropdown]>
-                                    <div class="item" *ngFor="let item of languages" (click)="setLanguage(item)">
-                                        <p>{{ 'languages.' + item | translate }}</p>
+                                    <div class="item" *ngFor="let item of languages$ | async" (click)="setLanguage(item)">
+                                        <p>{{ 'languages.' + item.name | translate }}</p>
                                     </div>
                                 </div>
                             </ng-template>
@@ -199,7 +199,7 @@
                                     <div class="toggle">
                                         <input type="checkbox" (change)="changeFontSize()">
                                         <div class="rectangle"
-                                            [ngClass]="(fontSize$ | async) ? 'active-toggle' : 'dark-text'">
+                                            [ngClass]="(fontSize$ | async).name === fontSize.Big ? 'active-toggle' : 'dark-text'">
                                         </div>
                                         <div class="text-toggle">
                                             <div class="text">

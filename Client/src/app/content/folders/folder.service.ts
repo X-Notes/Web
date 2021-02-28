@@ -1,20 +1,23 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { UpdateColor } from '../notes/state/updateColor';
-import { Folder } from './models/folder';
+import { SmallFolder } from './models/folder';
 import { Store } from '@ngxs/store';
 import { FolderStore } from './state/folders-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FolderType } from 'src/app/shared/enums/FolderTypes';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { AppStore } from 'src/app/core/stateApp/app-state';
+import { LoadFolders } from './state/folders-actions';
+import { FolderType } from 'src/app/shared/models/folderType';
 
 @Injectable()
 export class FolderService implements OnDestroy {
 
   destroy  = new Subject<void>();
-  allFolders: Folder[] = [];
-  folders: Folder[] = [];
+  allFolders: SmallFolder[] = [];
+  folders: SmallFolder[] = [];
   firstInitedMurri = false;
 
   constructor(private store: Store,
@@ -63,28 +66,40 @@ export class FolderService implements OnDestroy {
     this.destroy.complete();
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>, folderType: FolderType)
+  murriInitialise(refElements: QueryList<ElementRef>, folderType: FolderTypeENUM)
   {
     refElements.changes
     .pipe(takeUntil(this.destroy))
     .subscribe(async (z) => {
       if (z.length === this.folders.length && !this.firstInitedMurri)
       {
-        this.murriService.initMurriFolder(folderType);
+        const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+        this.murriService.initMurriFolder(type);
         await this.murriService.setOpacityTrueAsync();
         this.firstInitedMurri = true;
       }
     });
   }
 
-  transformFolders(folders: Folder[]) {
+  async loadFolders(typeENUM: FolderType)
+  {
+    const types = this.store.selectSnapshot(AppStore.getFolderTypes);
+    const type = types.find(x => x.name === typeENUM.name);
+    await this.store.dispatch(new LoadFolders(type.id, typeENUM)).toPromise();
+
+    const actions = types.filter(x => x.id !== type.id).map(t => new LoadFolders(t.id, t));
+    this.store.dispatch(actions);
+
+  }
+
+  transformFolders(folders: SmallFolder[]) {
     folders = [...folders];
     return folders.map(note => {
       return {...note, isSelected: false, lockRedirect: false};
     });
   }
 
-  firstInit(folders: Folder[]) {
+  firstInit(folders: SmallFolder[]) {
     this.allFolders = [...folders].map(note => { note = {...note}; return note; });
     this.folders = this.allFolders;
   }
@@ -104,7 +119,7 @@ export class FolderService implements OnDestroy {
     }
   }
 
-  addToDom(folders: Folder[]) {
+  addToDom(folders: SmallFolder[]) {
     if (folders.length > 0) {
       this.folders = [...folders.map(folder => { folder = { ...folder }; return folder; }).reverse(), ...this.folders];
       setTimeout(() => {
@@ -117,17 +132,5 @@ export class FolderService implements OnDestroy {
     }
   }
 
-  addToDomAppend(folders: Folder[]) {
-    if (folders.length > 0) {
-      this.folders = [...folders.map(note => { note = { ...note }; return note; }) , ...this.folders];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < folders.length; i++) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, {index: -1, layout: true});
-        }
-      }, 0);
-    }
-  }
 
 }
