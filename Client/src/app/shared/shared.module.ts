@@ -28,7 +28,13 @@ import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.
 import {MatExpansionModule} from '@angular/material/expansion';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SearchComponent } from './modal_components/search/search.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
+import { NoteComponent } from '../content/notes/note/note.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SelectComponent } from './custom-components/select/select.component';
+import { ChipComponent } from './custom-components/chip/chip.component';
+import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -38,12 +44,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
+    SearchComponent,
+    OpenInnerSideComponent,
+    NoteComponent,
     PopupFullNoteComponent,
-    SearchComponent
+    SelectComponent,
+    ChipComponent,
+    SelectOptionComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
-    OverlayModule, MatExpansionModule, NgScrollbarModule, MatCheckboxModule
+    OverlayModule, NgScrollbarModule, MatCheckboxModule, MatSnackBarModule, MatExpansionModule
   ],
   exports: [TranslateModule, MatRippleModule, MatDialogModule, HammerModule, ReplacePipe, FormsModule,
     LabelComponent, SearchLabelPipe, NoDeletedLabelsPipe, LastTwoNoDeletedLabelsPipe, MatTabsModule,
@@ -57,7 +68,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSnackBarModule,
+    NoteComponent,
+    SelectOptionComponent
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

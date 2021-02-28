@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ShortUser } from 'src/app/core/models/short-user';
@@ -13,6 +13,11 @@ export class SpinnerComponent implements OnInit {
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
+
+  @Input() size: number;
+
+  @HostBinding('style.--target-color')
+  @Input() color: string;
 
   constructor() { }
 

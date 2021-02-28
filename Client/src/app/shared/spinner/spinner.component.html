@@ -1,5 +1,5 @@
-<div class="wrapper" [ngStyle]="{'background-color':  (user$ | async).currentBackground?.path !== null ? 'rgba(0, 0, 0, 0.25)': ''}">
-    <div class="loader">
+<div class="wrapper" [ngStyle]="{'background-color':  (user$ | async).currentBackground?.path !== null ? 'rgba(0, 0, 0, 0.10)': ''}">
+    <div class="loader" [style.font-size.px]="size">
         <div></div>
         <div></div>
         <div></div>

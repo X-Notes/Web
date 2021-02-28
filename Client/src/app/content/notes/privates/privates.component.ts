@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { LoadPrivateNotes, UnSelectAllNote, LoadAllExceptNotes } from '../state/notes-actions';
+import { LoadPrivateNotes, UnSelectAllNote, LoadAllExceptNotes, SelectIdNote, UnSelectIdNote } from '../state/notes-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { NoteType } from 'src/app/shared/enums/NoteTypes';
@@ -66,7 +66,6 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe(x => this.noteService.addToDom(x));
   }
-
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;

@@ -30,11 +30,24 @@
     <div CustomTooltip="{{ 'header.notification' | translate }}"
         position="Bottom"
         class="auxiliary-icon"
-        *ngIf="!pService.check()" #notificationHeader>
+        (click)="isOpenNotification = !isOpenNotification"
+        *ngIf="!pService.check()" #notificationHeader
+        cdk-overlay-origin
+        #origin="cdkOverlayOrigin">
 
         <i class="icon-notification"></i>
         <div class="push">1</div>
         <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
+
+        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+            [cdkConnectedOverlayOpen]="isOpenNotification"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayPositions]="positions"
+            (backdropClick)="closeNotification()">
+            <app-notification [@notification]
+                (oncloseNotification)="closeNotification()"></app-notification>
+        </ng-template>
     </div>
 
     <div CustomTooltip="{{ 'header.orientation' | translate }}"

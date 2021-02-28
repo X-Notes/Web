@@ -1,0 +1,30 @@
+<button class="generic-button dropdown-button"
+        type="button"
+        cdk-overlay-origin
+        #origin="cdkOverlayOrigin"
+        #dropdown
+        (click)="isOpen = !isOpen"
+        (keyup)="onKeydown($event)"
+        appTheme>
+    <div class="content-button">
+        <p *ngIf="translate; else NotTranslated">{{ (translate + '.' + selected) | translate }}</p>
+        <ng-template #NotTranslated>
+            <p>{{ selected }}</p>
+        </ng-template>
+        <div class="icon" [ngStyle]="{'transform': isOpen ? 'rotate(180deg)' : '' }">
+            <i class="icon-select-label"></i>
+        </div>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="dropdown"></div>
+</button>
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+            [cdkConnectedOverlayOpen]="isOpen"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayPositions]="positions"
+            (backdropClick)="closeDropdown()">
+            <div class="dropdown" [@showDropdown]
+            [style.width.px]="dropdown.offsetWidth">
+                <ng-content></ng-content>
+            </div>
+</ng-template>

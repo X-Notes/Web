@@ -19,7 +19,7 @@
   },
   "subMenu": {
     "all": "All",
-    "private": "Private",
+    "personal": "Personal",
     "shared": "Shared",
     "archive": "Archive",
     "bin": "Bin",
@@ -94,7 +94,7 @@
       "Share": "Share",
       "access": "Access",
       "sharing": "Sharing",
-      "private": "Private",
+      "personal": "Personal",
       "shared": "Shared",
       "selectedNotes": "Selected notes",
       "search": "Search...",

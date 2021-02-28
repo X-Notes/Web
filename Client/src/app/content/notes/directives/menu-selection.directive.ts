@@ -22,7 +22,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
 
 
   ngOnInit(): void {
-    const mouseupListener = this.renderer.listen('body', 'mouseup', (e) => this.mouseUp(e));
+    const mouseupListener = this.renderer.listen(this.elementRef.nativeElement, 'mouseup', (e) => this.mouseUp(e));
     this.listeners.push(mouseupListener);
   }
 

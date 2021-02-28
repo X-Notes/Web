@@ -61,7 +61,7 @@
 }
 
 .light {
-  .sharing {
+  .sharing, .dialog-content {
     .mat-tab-label {
       color: #808080;
     }
@@ -80,7 +80,7 @@
 }
 
 .dark {
-  .sharing {
+  .sharing, .dialog-content {
     .mat-tab-label {
       color: white;
     }
@@ -144,11 +144,11 @@
   }
 }
 
-.grid {
+.grid, .grid-modal {
   opacity: 0;
   transition: 0.1s linear;
   position: relative;
-  width: calc(100%);
+  width: 100%;
 }
 
 .grid-item {
@@ -162,6 +162,14 @@
   position: absolute;
   width: 100%;
   padding-bottom: 1rem;
+  z-index: $grid-item;
+}
+
+
+.grid-modal-item {
+  position: absolute;
+  width: 50%;
+  padding: 0 0.75rem 1.5rem;
   z-index: $grid-item;
 }
 
@@ -324,11 +332,6 @@
     padding: 0 1rem;
     cursor: pointer;
 
-    .icon {
-      display: flex;
-      transition: 0.2s ease;
-    }
-
     p {
       font-weight: 500;
     }
@@ -339,7 +342,7 @@
       z-index: 5;
     }
   }
-}
+} // TODO remove this shit
 
 .separator-buttons {
   height: 20px;
@@ -406,6 +409,48 @@
   }
 }
 
+.d-flex {
+  display: flex;
+}
+
+.snackbar-dark {
+  background-color: $dark-color;
+  
+  .mat-simple-snackbar-action {
+    color: #5e99cc;
+  }
+}
+
+.snackbar-light {
+  background-color: white;
+  color: $text-color;
+  
+  .mat-simple-snackbar-action {
+    color: #5e99cc;
+  }
+}
+
+.dark, .light {
+  .dialog-content {
+    .mat-tab-label {
+      flex: 0 1 calc(100% / 3);
+      min-width: initial;
+      font-size: 1.25rem;
+      opacity: 1;
+      user-select: none;
+    }
+    .mat-ink-bar {
+      height: 3px;
+      border-radius: 5px;
+      flex: 0 1 calc(100% / 3);
+      transition-property: left, right;
+    }
+    .mat-tab-body-wrapper {
+      flex-grow: 1;
+    }
+  }
+}
+
 @media (max-width: 1680px) {
   .grid-item {
     width: calc(100% / 3);
@@ -447,7 +492,7 @@
     }
   }
 
-  .grid-item {
+  .grid-item, .grid-modal-item  {
     width: 100%;
   }
 

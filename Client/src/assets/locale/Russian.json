@@ -21,7 +21,7 @@
   },
   "subMenu": {
     "all": "Все",
-    "private": "Приватные",
+    "personal": "Личные",
     "shared": "Общие",
     "archive": "Архив",
     "bin": "Корзина",
@@ -95,7 +95,7 @@
     "ShareModal": {
       "Share": "Поделиться",
       "access": "Доступ",
-      "private": "Приватные",
+      "personal": "Личные",
       "shared": "Общие",
       "selectedNotes": "Выбранные заметки",
       "search": "Поиск...",

@@ -1,6 +1,8 @@
 <header appTheme>
     
-    <div class="profile-section">
+    <div class="profile-section"
+        cdk-overlay-origin
+        #origin="cdkOverlayOrigin">
         <div class="profile" routerLink="/profile" #profile>
             <div class="profile-data">
                 <div class="photo">
@@ -10,13 +12,27 @@
             </div>
             <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
         </div>
-        <button name="Notification" type="button" class="notification" #notification>
+        <button 
+            name="Notification"
+            type="button"
+            class="notification"
+            (click)="isOpenNotification = !isOpenNotification"
+            #notification>
             <div class="notification-data">
                 <i class="icon-notification"></i>
                 <div class="push">10</div>
             </div>
             <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
         </button>
+        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
+            [cdkConnectedOverlayOpen]="isOpenNotification"
+            [cdkConnectedOverlayHasBackdrop]="true"
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayPositions]="positions"
+            (backdropClick)="closeNotification()">
+            <app-notification [@notification]
+                (oncloseNotification)="closeNotification()"></app-notification>
+        </ng-template>
     </div>
 
     <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''" [ngSwitch]="router">
