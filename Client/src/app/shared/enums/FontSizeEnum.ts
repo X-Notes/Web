@@ -1,4 +1,4 @@
-export enum FontSizeNaming{
+export enum FontSizeENUM{
     Medium = 'Medium',
     Big = 'Big'
 }

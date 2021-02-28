@@ -12,7 +12,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-all',
@@ -22,7 +22,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class AllComponent implements OnInit, OnDestroy, AfterViewInit  {
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

@@ -19,12 +19,13 @@ import { ShareComponent } from 'src/app/shared/modal_components/share/share.comp
 import { NoteStore } from '../notes/state/notes-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FolderStore } from '../folders/state/folders-state';
-import { ThemeNaming } from 'src/app/shared/enums/ThemeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { FolderType } from 'src/app/shared/models/folderType';
 import { NoteType } from 'src/app/shared/models/noteType';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 
 @Injectable({ providedIn: 'root' })
@@ -365,7 +366,7 @@ export class MenuButtonsService {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
-      panelClass: this.getTheme() === ThemeNaming.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(ChangeColorComponent, config);
   }
@@ -376,7 +377,7 @@ export class MenuButtonsService {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: this.getTheme() === ThemeNaming.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: this.getTheme() === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
@@ -387,7 +388,7 @@ export class MenuButtonsService {
       maxHeight: '100%',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: this.getTheme() === ThemeNaming.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
+      panelClass: this.getTheme() === ThemeENUM.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
     };
     this.dialogService.openDialog(ShareComponent, config);
   }
@@ -403,7 +404,7 @@ export class MenuButtonsService {
       maxHeight: '100%',
       maxWidth: '90vw',
       autoFocus: false,
-      panelClass: theme.name === ThemeNaming.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
+      panelClass: theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
     };
     this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
@@ -641,7 +642,7 @@ export class MenuButtonsService {
   deleteSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to bin` : `Note moved to bin`, 'Undo');
         } else {
@@ -649,7 +650,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Заметки перенесены в корзину` : `Заметка перенесена в корзину`, 'Отменить');
@@ -659,7 +660,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Нотатки перенесені в кошик` : `Нотаток перенесений в кошик`, 'Відмінити');
@@ -676,7 +677,7 @@ export class MenuButtonsService {
   archiveSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Notes moved to archive` : `Note moved to archive`, 'Undo');
@@ -685,7 +686,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены в архив` : `Заметка перенесена в архив`, 'Отменить');
         } else {
@@ -693,7 +694,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені в архів` : `Нотаток перенесений в архів`, 'Відмінити');
         } else {
@@ -708,7 +709,7 @@ export class MenuButtonsService {
   privateSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to personal` : `Note moved to personal`, 'Undo');
         } else {
@@ -716,7 +717,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены ​​в личные` : `Заметка перенесена ​​в личные`, 'Отменить');
         } else {
@@ -725,7 +726,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені до особистих` : `Нотаток перенесений до особистих`, 'Відмінити');
         } else {
@@ -741,7 +742,7 @@ export class MenuButtonsService {
   deletePermSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case 'English': {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes deleted permanently` : `Note deleted permanently`, null);
         } else {
@@ -749,7 +750,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Russian': {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`, null);
@@ -758,7 +759,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case 'Ukraine': {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`, null);

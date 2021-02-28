@@ -12,7 +12,7 @@ import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-label',
@@ -24,7 +24,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
   pallete = EnumUtil.getEnumValues(LabelsColor);
   @Input() label: Label;
   @Output() updateLabel = new EventEmitter<Label>();
