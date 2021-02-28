@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { Theme } from 'src/app/shared/enums/Theme';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class SnackbarService {
 
     return this.snackbar.open(message, action, {
        duration: 5000,
-       panelClass: theme === Theme.Light ? 'snackbar-light' : 'snackbar-dark',
+       panelClass: theme.name === ThemeENUM.Light ? 'snackbar-light' : 'snackbar-dark',
        horizontalPosition: 'end',
        verticalPosition: 'bottom'
     });

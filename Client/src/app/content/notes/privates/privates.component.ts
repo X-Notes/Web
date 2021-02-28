@@ -11,7 +11,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-privates',
@@ -21,7 +21,7 @@ import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 })
 export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FolderTypeENUM;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

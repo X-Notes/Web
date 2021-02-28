@@ -6,9 +6,9 @@ import { FolderStore } from '../state/folders-state';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { Router } from '@angular/router';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-folder',
@@ -17,7 +17,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 })
 export class FolderComponent implements OnInit, OnDestroy {
 
-  fontSize = FontSize;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE

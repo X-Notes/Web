@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from '../../core/stateUser/user-state';
-import { ThemeNaming } from '../enums/ThemeEnum';
+import { ThemeENUM } from '../enums/ThemeEnum';
 
 @Directive({
   selector: '[appTheme]'
@@ -22,7 +22,7 @@ export class ThemeDirective implements OnDestroy {
       {
         return;
       }
-      if (theme.name === ThemeNaming.Dark)
+      if (theme.name === ThemeENUM.Dark)
       {
         this.renderer.addClass(this.el.nativeElement, 'dark');
         this.renderer.removeClass(this.el.nativeElement, 'light');

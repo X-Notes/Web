@@ -11,7 +11,7 @@ import { NoteStore } from '../state/notes-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-archive',
@@ -21,7 +21,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

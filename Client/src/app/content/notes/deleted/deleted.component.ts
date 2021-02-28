@@ -2,17 +2,16 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChildren, ElementRef, 
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
-import { LoadNotes, UnSelectAllNote} from '../state/notes-actions';
+import { UnSelectAllNote} from '../state/notes-actions';
 import { takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteStore } from '../state/notes-state';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesService } from '../notes.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-deleted',
@@ -22,7 +21,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
   destroy = new Subject<void>();
   loaded = false;
   @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;

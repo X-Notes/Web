@@ -461,16 +461,16 @@ export class MenuButtonsService {
       const snackbarRef = this.deleteSnackbar(language.name, 'Note', isMany);
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new SetDeleteNotes(noteType, ids));
+      this.store.dispatch(new SetDeleteNotes(type, ids));
     }
   }
 
-  snackbarMoveTo(type: NoteTypeENUM, ids) {
+  snackbarMoveTo(type: NoteType, ids) {
     const types = NoteTypeENUM;
-    switch (type) {
+    switch (type.name) {
       case types.Private: {
         this.store.dispatch(new MakePrivateNotes(type, ids));
         break;
@@ -578,10 +578,10 @@ export class MenuButtonsService {
 
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new MakePrivateNotes(noteType, ids));
+      this.store.dispatch(new MakePrivateNotes(type, ids));
     }
   }
 
@@ -632,10 +632,10 @@ export class MenuButtonsService {
 
       snackbarRef.afterDismissed().subscribe(x => {
         if (x.dismissedByAction) {
-          this.snackbarMoveTo(noteType, ids);
+          this.snackbarMoveTo(type, ids);
         }
       });
-      this.store.dispatch(new ArchiveNotes(noteType, ids));
+      this.store.dispatch(new ArchiveNotes(type, ids));
     }
   }
 

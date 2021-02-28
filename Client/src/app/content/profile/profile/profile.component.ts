@@ -19,8 +19,8 @@ import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import { LoadBackgrounds, NewBackground, RemoveBackground, SetBackground } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import {CdkConnectedOverlay, ConnectionPositionPair} from '@angular/cdk/overlay';
-import { ThemeNaming } from 'src/app/shared/enums/ThemeEnum';
-import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +30,7 @@ import { FontSizeNaming } from 'src/app/shared/enums/FontSizeEnum';
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
-  fontSize = FontSizeNaming;
+  fontSize = FontSizeENUM;
 
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
@@ -136,13 +136,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   changeTheme() {
     const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
     const themes = this.store.selectSnapshot(AppStore.getThemes);
-    if (userTheme.name === ThemeNaming.Dark)
+    if (userTheme.name === ThemeENUM.Dark)
     {
-      const whiteTheme = themes.find(x => x.name === ThemeNaming.Light);
+      const whiteTheme = themes.find(x => x.name === ThemeENUM.Light);
       this.store.dispatch(new ChangeTheme(whiteTheme));
     }
-    if (userTheme.name === ThemeNaming.Light){
-      const darkTheme = themes.find(x => x.name === ThemeNaming.Dark);
+    if (userTheme.name === ThemeENUM.Light){
+      const darkTheme = themes.find(x => x.name === ThemeENUM.Dark);
       this.store.dispatch(new ChangeTheme(darkTheme));
     }
   }
@@ -151,13 +151,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const userFontSize = this.store.selectSnapshot(UserStore.getUserFontSize);
     const fontSizes = this.store.selectSnapshot(AppStore.getFontSizes);
 
-    if (userFontSize.name === FontSizeNaming.Medium)
+    if (userFontSize.name === FontSizeENUM.Medium)
     {
-      const bigSize = fontSizes.find(x => x.name === FontSizeNaming.Big);
+      const bigSize = fontSizes.find(x => x.name === FontSizeENUM.Big);
       this.store.dispatch(new ChangeFontSize(bigSize));
     }
-    if (userFontSize.name === FontSizeNaming.Big){
-      const mediumSize = fontSizes.find(x => x.name === FontSizeNaming.Medium);
+    if (userFontSize.name === FontSizeENUM.Big){
+      const mediumSize = fontSizes.find(x => x.name === FontSizeENUM.Medium);
       this.store.dispatch(new ChangeFontSize(mediumSize));
     }
   }
