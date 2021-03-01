@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges,
   OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { ContentModel, ContentType, HeadingType, HtmlText } from '../../../models/ContentMode';
+import { BaseText, ContentType, HeadingType } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -24,7 +24,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Input()
-  content: ContentModel<HtmlText>;
+  content: BaseText;
 
   @Input()
   isLast: boolean;
@@ -66,13 +66,13 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    this.textService.contentStr = this.content.data.content;
+    this.textService.contentStr = this.content.content;
     this.textService.isLast = this.isLast;
   }
 
-  transformContent($event, type: ContentType, heading?: HeadingType) {
+  transformContent($event, contentType: ContentType, heading?: HeadingType) {
     $event.preventDefault();
-    this.transformTo.emit({type, heading, id: this.content.contentId});
+    this.transformTo.emit({contentType, headingType: heading, id: this.content.id});
   }
 
   preventClick($event) {
@@ -97,7 +97,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

@@ -1,33 +1,19 @@
-export class ContentModel<T = BaseText | Album>{
+
+export class ContentModel{
     type: ContentType;
-    contentId: string;
-    data: T;
+    id: string;
+    order: number;
 }
 
-export class BaseText {
+export class BaseText extends ContentModel {
     content: string;
-}
-
-
-export class HtmlText extends BaseText{
-}
-
-export class DotList extends BaseText{
-}
-
-export class NumberList extends BaseText{
+    headingType: HeadingType;
+    checked: boolean;
     number?: number;
 }
 
-export class CheckedList extends BaseText{
-    checked: boolean;
-}
 
-export class Heading extends BaseText{
-    headingType: HeadingType;
-}
-
-export class Album{
+export class Album extends ContentModel{
     photos: Photo[];
 }
 
@@ -45,11 +31,12 @@ export enum HeadingType{
     H3 = 'H3'
 }
 
+
 export enum ContentType{
-    TEXT = 'TEXT',
+    DEFAULT = 'DEFAULT',
     HEADING = 'HEADING',
-    DOTLIST = 'DotList',
-    NUMBERLIST = 'NumberList',
-    CHECKLIST = 'CheckList',
-    PHOTO = 'Photo',
+    DOTLIST = 'DOTLIST',
+    NUMBERLIST = 'NUMBERLIST',
+    CHECKLIST = 'CHECKLIST',
+    ALBUM = 'ALBUM',
 }

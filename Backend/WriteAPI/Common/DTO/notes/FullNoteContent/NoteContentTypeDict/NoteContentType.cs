@@ -2,7 +2,6 @@
 {
     public enum NoteContentType
     {
-        Album,
-        Text
+        ALBUM
     }
 }

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ContentModel, DotList, HtmlText } from '../../../models/ContentMode';
+import { BaseText, ContentModel, } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -26,7 +26,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<DotList>;
+  content: BaseText;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -46,7 +46,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   ngOnInit(): void {
-    this.dotListService.contentStr = this.content.data.content;
+    this.dotListService.contentStr = this.content.content;
     this.dotListService.transformTo = this.transformTo;
   }
 
@@ -59,7 +59,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

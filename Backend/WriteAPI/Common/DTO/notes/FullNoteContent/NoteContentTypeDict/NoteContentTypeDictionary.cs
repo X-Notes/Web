@@ -11,8 +11,7 @@ namespace Common.DTO.notes.FullNoteContent.NoteContentTypeDict
         {
             types = new Dictionary<NoteContentType, string>()
             {
-                {  NoteContentType.Album, "ALBUM" },
-                {  NoteContentType.Text, "TEXT" },
+                {  NoteContentType.ALBUM, "ALBUM" }
             };
         }
 

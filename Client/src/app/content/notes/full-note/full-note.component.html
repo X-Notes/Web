@@ -38,34 +38,34 @@
         [style.width.px]="sliderService.mainWidth" 
         class="main-content"
         >
-            <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
+            <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
-                <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"
+                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels"
                     [ngStyle]="{backgroundColor: label.color}">
                     <p>{{label.name}}</p>
                 </div>
             </div>
             <div class="title-section">
-                <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
+                <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="note?.title"
                     class="title" (input)="onInput($event)"></div>
                 <div class="placeholder">Title</div>
                 <div class="left-border"></div>
             </div>
             <div class="content-section">
-                <div *ngFor="let item of contents; let i = index;">
+                <div *ngFor="let item of note?.contents; let i = index;">
                     <div [ngSwitch]="item.type">
-                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.TEXT" 
+                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.DEFAULT" 
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"
                         (transformTo)="transformToType($event)" 
-                        [isLast]="i === contents.length - 1"
+                        [isLast]="i === note.contents.length - 1"
                         (addToEndNewText)="addNewElementToEnd()"                  
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
-                        [prevContent]="contents[i - 1]"
-                        [prevType]="contents[i - 1]?.type"
+                        [prevContent]="note.contents[i - 1]"
+                        [prevType]="note.contents[i - 1]?.type"
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"
@@ -92,7 +92,7 @@
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"  
                         ></app-html-headings>
-                        <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
+                        <app-photos #htmlComp *ngSwitchCase="contentType.ALBUM" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>

@@ -49,7 +49,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     for (const item of this.appMenuSelection)
     {
       const contentItem = item.getContent();
-      if (contentItem.type !== ContentType.PHOTO && item.getNative() === document.activeElement){
+      if (contentItem.type !== ContentType.ALBUM && item.getNative() === document.activeElement){
         return contentItem;
       }
     }

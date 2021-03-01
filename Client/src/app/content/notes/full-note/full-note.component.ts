@@ -29,7 +29,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList } from '../models/ContentMode';
+import { BaseText, ContentType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -39,6 +39,7 @@ import { TransformContent } from '../models/transform-content';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
+
 
 
 @Component({
@@ -56,7 +57,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loaded = false;
   contentType = ContentType;
-  contents: ContentModel[] = [];
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
@@ -68,8 +68,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
-  @Select(NoteStore.oneFull)
-  note$: Observable<FullNote>;
+  note: FullNote;
 
   theme = Theme;
 
@@ -157,11 +156,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit() {
-    this.contents = this.contentService.getContent();
     this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
+
+    this.store.select(NoteStore.oneFull)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(note => this.note = note);
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
@@ -176,91 +178,98 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   removeAlbumHandler(id: string)
   {
-    console.log(id);
-    this.contents = this.contents.filter(x => x.contentId !== id);
+    console.log('TODO');
   }
 
   placeHolderClick($event) {
     $event.preventDefault();
-    setTimeout(() => this.textElements.last.setFocus());
+    setTimeout(() => this.textElements?.last?.setFocus());
   }
 
   mouseEnter($event) {
-    const native = this.textElements.last.getNative();
-    if (native.textContent.length !== 0)
+    const native = this.textElements?.last?.getNative();
+    if (native?.textContent.length !== 0)
     {
       this.addNewElementToEnd();
     }
-    this.textElements.last.mouseEnter($event);
+    this.textElements?.last?.mouseEnter($event);
   }
 
   mouseOut($event) {
-   this.textElements.last.mouseOut($event);
+   this.textElements?.last?.mouseOut($event);
   }
 
   enterHandler(value: EnterEvent) // TODO SETTIMEOUT
   {
+
     const newElement = this.contentService.getTextContentByType(value.nextItemType);
 
-    const elementCurrent = this.contents.find(x => x.contentId === value.id);
-    let index = this.contents.indexOf(elementCurrent);
+    const contents = this.note.contents as BaseText[];
+    const elementCurrent = contents.find(x => x.id === value.id);
+    let index = contents.indexOf(elementCurrent);
 
     switch (value.breakModel.typeBreakLine) {
       case LineBreakType.PREV_NO_CONTENT: {
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
+        this.note.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_WITH_CONTENT: {
-        newElement.data.content = value.breakModel.nextText;
+        newElement.content = value.breakModel.nextText;
         index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
+        this.note.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
         break;
       }
       case LineBreakType.NEXT_NO_CONTENT: {
         index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
+        this.note.contents.splice(index, 0, newElement);
+        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
         break;
       }
     }
 
     const numb = Math.random() * (100000 - 1) + 1;
-    setTimeout(() => newElement.contentId = numb.toString(), 100);
+    setTimeout(() => newElement.id = numb.toString(), 100);
+
   }
 
   deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
   {
-    const item = this.contents.find(z => z.contentId === id);
-    const indexOf = this.contents.indexOf(item);
+    const contents = this.note.contents as BaseText[];
+    const item = contents.find(x => x.id === id);
+    const indexOf = contents.indexOf(item);
 
-    if (indexOf !== 0 && (indexOf !== this.contents.length - 1)) {
-      this.contents = this.contents.filter(z => z.contentId !== id);
+    if (indexOf !== 0 && (indexOf !== contents.length - 1)) {
+      this.note.contents = contents.filter(z => z.id !== id);
       const index = indexOf - 1;
-      if (this.contents[index].type !== ContentType.PHOTO)
+      if (contents[index].type !== ContentType.ALBUM)
       {
-        this.textElements.toArray()[index].setFocusToEnd();
+        this.textElements?.toArray()[index].setFocusToEnd();
       }
     }
-    if (indexOf === this.contents.length - 1){
+    if (indexOf === contents.length - 1){
       const index = indexOf - 1;
-      this.textElements.toArray()[index].setFocusToEnd();
+      this.textElements?.toArray()[index].setFocusToEnd();
     }
+
   }
 
   concatThisWithPrev(id: string) { // TODO SETTIMEOUT
-    const item = this.contents.find(z => z.contentId === id) as ContentModel<BaseText>;
-    const indexOf = this.contents.indexOf(item);
-    if (indexOf > 0 && indexOf !== this.contents.length - 1)
+
+    const contents = this.note.contents as BaseText[];
+    const item = contents.find(x => x.id === id);
+    const indexOf = contents.indexOf(item);
+
+    if (indexOf > 0 && indexOf !== contents.length - 1)
     {
-      const prevItem = this.contents[indexOf - 1] as ContentModel<BaseText>;
-      const prevItemHtml = this.textElements.toArray()[indexOf - 1];
+      const prevItem = contents[indexOf - 1] as BaseText;
+      const prevItemHtml = this.textElements?.toArray()[indexOf - 1];
 
-      this.contents = this.contents.filter(z => z.contentId !== id);
+      this.note.contents = contents.filter(z => z.id !== id);
 
-      const lengthText = prevItem.data.content.length;
-      const resultHTML = prevItem.data.content += item.data.content;
+      const lengthText = prevItem.content.length;
+      const resultHTML = prevItem.content += item.content;
       prevItemHtml.updateHTML(resultHTML);
 
       setTimeout(() => {
@@ -271,6 +280,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         selection.addRange(range);
       });
     }
+
   }
 
   selectionHandler(secondRect: DOMRect) {
@@ -291,46 +301,47 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   transformToType(value: TransformContent)
   {
+    const contents = this.note.contents as BaseText[];
     let indexOf;
-    switch (value.type)
+    switch (value.contentType)
     {
-      case ContentType.TEXT: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<HtmlText>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.HEADING: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<Heading>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        item.data.headingType = value.heading;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.DOTLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<DotList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.NUMBERLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<NumberList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+      case ContentType.DEFAULT: {
+        const item = contents.find(z => z.id === value.id) as BaseText;
+        indexOf = contents.indexOf(item);
+        item.type = value.contentType;
+        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
         break;
       }
       case ContentType.CHECKLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<CheckedList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
+        const item = contents.find(z => z.id === value.id) as BaseText;
+        indexOf = contents.indexOf(item);
+        item.type = value.contentType;
+        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.DOTLIST: {
+        const item = contents.find(z => z.id === value.id) as BaseText;
+        indexOf = contents.indexOf(item);
+        item.type = value.contentType;
+        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.HEADING: {
+        const item = contents.find(z => z.id === value.id) as BaseText;
+        indexOf = contents.indexOf(item);
+        item.type = value.contentType;
+        item.headingType = value.headingType;
+        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        break;
+      }
+      case ContentType.NUMBERLIST: {
+        const item = contents.find(z => z.id === value.id) as BaseText;
+        indexOf = contents.indexOf(item);
+        item.type = value.contentType;
         setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
         break;
       }
-      case ContentType.PHOTO: {
+      case ContentType.ALBUM: {
         this.uploadPhoto.nativeElement.click();
         break;
       }
@@ -350,15 +361,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkAddLastTextContent(index: number)
   {
+    /*
     if (index === this.contents.length - 1)
     {
       this.addNewElementToEnd();
     }
+    */
   }
 
   addNewElementToEnd()
   {
-    this.contents.push(this.contentService.getTextElement());
+    // this.contents.push(this.contentService.getTextElement());
   }
 
   @HostListener('window:resize', ['$event'])

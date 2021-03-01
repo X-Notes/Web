@@ -11,7 +11,7 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
         {
             textNoteTypes = new Dictionary<TextNoteTypes, string>()
             {
-                {  TextNoteTypes.TEXT, "TEXT" },
+                {  TextNoteTypes.DEFAULT, "DEFAULT" },
                 {  TextNoteTypes.HEADING, "HEADING" },
                 {  TextNoteTypes.DOTLIST, "DOTLIST" },
                 {  TextNoteTypes.NUMBERLIST, "NUMBERLIST" },

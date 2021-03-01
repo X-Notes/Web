@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DTO.app;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -38,14 +39,13 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                     {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.Text);
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.Order, type);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.Order, tN.TextType, tN.HeadingType, tN.Checked);
                             resultList.Add(tNDTO);
                             break;
                     }
                     case AlbumNote aN:
                     {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.Album);
+                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, aN.Order, type);
                             resultList.Add(aNDTO);

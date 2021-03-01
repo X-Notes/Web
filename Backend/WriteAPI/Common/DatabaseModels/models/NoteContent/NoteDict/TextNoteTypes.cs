@@ -2,7 +2,7 @@
 {
     public enum TextNoteTypes
     {
-        TEXT,
+        DEFAULT,
         HEADING,
         DOTLIST,
         NUMBERLIST,

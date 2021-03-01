@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ContentModel, Heading, HeadingType } from '../../../models/ContentMode';
+import { BaseText, HeadingType } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { HeadingService } from '../../html-business-logic/heading.service';
@@ -22,7 +22,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<Heading>;
+  content: BaseText;
 
   hType = HeadingType;
 
@@ -44,7 +44,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    this.headingService.contentStr = this.content.data.content;
+    this.headingService.contentStr = this.content.content;
   }
 
   setFocus($event?) {
@@ -56,7 +56,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentModel, ContentType, Heading, HeadingType } from '../models/ContentMode';
+import { BaseText, ContentType, HeadingType } from '../models/ContentMode';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -31,20 +31,20 @@ export class TextEditMenuComponent implements OnInit {
     const item = this.menuSelectionService.currentItem;
     if (item.type === type) {
       if (item.type === ContentType.HEADING) {
-        const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
-        if (itemH.data.headingType === heading) {
-          itemH.type = ContentType.TEXT;
+        const itemH = this.menuSelectionService.currentItem as BaseText;
+        if (itemH.headingType === heading) {
+          itemH.type = ContentType.DEFAULT;
         } else {
-          itemH.data.headingType = heading;
+          itemH.headingType = heading;
         }
       } else {
-        item.type = ContentType.TEXT;
+        item.type = ContentType.DEFAULT;
       }
     }
     else if (type === ContentType.HEADING) {
-      const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
+      const itemH = this.menuSelectionService.currentItem as BaseText;
       itemH.type = type;
-      itemH.data.headingType = heading;
+      itemH.headingType = heading;
     } else {
       item.type = type;
     }

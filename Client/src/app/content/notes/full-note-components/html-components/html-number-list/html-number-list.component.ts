@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { ContentModel, ContentType, HtmlText, NumberList } from '../../../models/ContentMode';
+import { BaseText, ContentType } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -26,13 +26,13 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  prevContent: ContentModel;
+  prevContent: BaseText;
 
   @Input()
   prevType: ContentType;
 
   @Input()
-  content: ContentModel<NumberList>;
+  content: BaseText;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -55,15 +55,15 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngOnInit(): void {
-    this.numberService.contentStr = this.content.data.content;
+    this.numberService.contentStr = this.content.content;
     this.numberService.transformTo = this.transformTo;
   }
 
   setNumber() {
     if (this.prevContent && this.prevContent.type === ContentType.NUMBERLIST) {
-      this.content.data.number = (this.prevContent as ContentModel<NumberList>).data.number + 1;
+      this.content.number = this.prevContent.number + 1;
     } else {
-      this.content.data.number = 1;
+      this.content.number = 1;
     }
   }
 
@@ -76,7 +76,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

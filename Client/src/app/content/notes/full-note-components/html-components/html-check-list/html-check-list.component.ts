@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { CheckedList, ContentModel, ContentType, HtmlText } from '../../../models/ContentMode';
+import { BaseText } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -26,7 +26,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<CheckedList>;
+  content: BaseText;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -45,7 +45,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   ngOnInit(): void {
-    this.checkListService.contentStr = this.content.data.content;
+    this.checkListService.contentStr = this.content.content;
     this.checkListService.transformTo = this.transformTo;
   }
 
@@ -58,7 +58,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
