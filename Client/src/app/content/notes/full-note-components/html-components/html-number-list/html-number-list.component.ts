@@ -55,7 +55,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngOnInit(): void {
-    this.numberService.contentStr = this.content.content;
+    this.numberService.contentStr = this.content?.content;
     this.numberService.transformTo = this.transformTo;
   }
 

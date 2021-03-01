@@ -66,7 +66,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    this.textService.contentStr = this.content.content;
+    this.textService.contentStr = this.content?.content;
     this.textService.isLast = this.isLast;
   }
 

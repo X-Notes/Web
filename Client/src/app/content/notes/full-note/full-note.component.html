@@ -96,6 +96,18 @@
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>
+                <div *ngIf="note?.contents.length === 0">
+                    <div>
+                        <app-html-text-part #htmlComp
+                        (enterEvent)="enterHandler($event)"
+                        (deleteThis)="deleteHTMLHandler($event)"
+                        (concatThisWithPrev)="concatThisWithPrev($event)"
+                        (transformTo)="transformToType($event)" 
+                        [isLast]="true"
+                        (addToEndNewText)="addNewElementToEnd()"                  
+                        ></app-html-text-part>
+                    </div>
+                </div>
                 <div class="empty" (mousedown)="placeHolderClick($event)" (mousemove)="mouseEnter($event)" (mouseout)="mouseOut($event)"></div>
             </div>
         </div>
