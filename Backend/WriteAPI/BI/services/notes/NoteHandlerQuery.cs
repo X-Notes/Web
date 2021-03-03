@@ -5,6 +5,7 @@ using Common.DTO.notes;
 using Common.DTO.users;
 using Common.Naming;
 using Domain.Queries.notes;
+using Domain.Queries.permissions;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -26,18 +27,21 @@ namespace BI.services.notes
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly NoteCustomMapper noteCustomMapper;
+        private readonly IMediator _mediator;
         public NoteHandlerQuery(
             IMapper mapper, 
             NoteRepository noteRepository, 
             UserRepository userRepository, 
             UserOnNoteRepository userOnNoteRepository,
-            NoteCustomMapper noteCustomMapper)
+            NoteCustomMapper noteCustomMapper,
+            IMediator _mediator)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
             this.noteCustomMapper = noteCustomMapper;
+            this._mediator = _mediator;
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
@@ -54,88 +58,44 @@ namespace BI.services.notes
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if (user != null)
+            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if(permissions.CanWrite)
             {
-                var note = await noteRepository.GetFull(request.Id);
-
-                if(note == null)
-                {
-                    throw new Exception("Note with this id does not exist");
-                }
-
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                switch (note.NoteType.Name)
+                return new FullNoteAnswer()
                 {
-                    case ModelsNaming.SharedNote:
-                        {
-                            return GetFullNoteByRefTypeName(note, note.RefType.Name);
-                        }
-                    default:
-                        {
-                            if (note.UserId == user.Id)
-                            {
-                                return new FullNoteAnswer()
-                                {
-                                    CanView = true,
-                                    CanEdit = true,
-                                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
-                                };
-                            }
-                            else
-                            {
-                                var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                                if (noteUser != null)
-                                {
-                                    return GetFullNoteByRefTypeName(note, noteUser.AccessType.Name);
-                                }
-                                else
-                                {
-                                    return new FullNoteAnswer()
-                                    {
-                                        CanView = false,
-                                        CanEdit = false,
-                                        FullNote = null
-                                    };
-                                }
-                            }
-                        }
-                }
+                    CanView = true,
+                    CanEdit = true,
+                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
+                };
             }
-            throw new Exception("Incorrect user data");
+
+            if(permissions.CanRead)
+            {
+                note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
+                return new FullNoteAnswer()
+                {
+                    CanView = true,
+                    CanEdit = false,
+                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
+                };
+            }
+
+            return new FullNoteAnswer()
+            {
+                CanView = false,
+                CanEdit = false,
+                FullNote = null
+            };
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
         {
             var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
             return mapper.Map<List<OnlineUserOnNote>>(users);
-        }
-
-
-        public FullNoteAnswer GetFullNoteByRefTypeName(Note note, string refTypeName)
-        {
-            switch (refTypeName)
-            {
-                case ModelsNaming.Editor:
-                    {
-                        return new FullNoteAnswer()
-                        {
-                            CanView = true,
-                            CanEdit = true,
-                            FullNote = noteCustomMapper.TranformNoteToFullNote(note)
-                        };
-                    }
-                case ModelsNaming.Viewer:
-                    {
-                        return new FullNoteAnswer()
-                        {
-                            CanView = true,
-                            CanEdit = false,
-                            FullNote = noteCustomMapper.TranformNoteToFullNote(note)
-                        };
-                    }
-            }
-            throw new Exception("Incorrect");
         }
     }
 

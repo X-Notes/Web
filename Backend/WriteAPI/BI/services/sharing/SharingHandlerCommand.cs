@@ -2,6 +2,7 @@
 using Common.Naming;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
+using Domain.Queries.permissions;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace BI.services.sharing
         private readonly NoteRepository noteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+        private readonly IMediator _mediator;
         private readonly AppRepository appRepository;
         public SharingHandlerCommand(
             FolderRepository folderRepository, 
@@ -34,7 +36,8 @@ namespace BI.services.sharing
             NoteRepository noteRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
-            AppRepository appRepository)
+            AppRepository appRepository,
+            IMediator _mediator)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
@@ -42,6 +45,7 @@ namespace BI.services.sharing
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.appRepository = appRepository;
+            this._mediator = _mediator;
         }
 
 
@@ -100,131 +104,128 @@ namespace BI.services.sharing
 
         public async Task<Unit> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingFolders(request.Email, request.FolderId);
+            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
-            if(access != null)
+            if (permissions.IsOwner)
             {
-                access.AccessTypeId = request.AccessTypeId;
-                await this.usersOnPrivateFoldersRepository.Update(access);
-            }
-            else
-            {
-                var perm = new UsersOnPrivateFolders()
+                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                if (access != null)
                 {
-                    AccessTypeId = request.AccessTypeId,
-                    FolderId = request.FolderId,
-                    UserId = request.UserId
-                };
-                await this.usersOnPrivateFoldersRepository.Add(perm);
+                    access.AccessTypeId = request.AccessTypeId;
+                    await this.usersOnPrivateFoldersRepository.Update(access);
+                }
+                else
+                {
+                    var perm = new UsersOnPrivateFolders()
+                    {
+                        AccessTypeId = request.AccessTypeId,
+                        FolderId = request.FolderId,
+                        UserId = request.UserId
+                    };
+                    await this.usersOnPrivateFoldersRepository.Add(perm);
+                }
             }
+
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var access = await this.usersOnPrivateNotesRepository.GetByUserIdandNoteId(request.UserId, request.NoteId);
-            if (access != null)
+            if (permissions.IsOwner)
             {
-                access.AccessTypeId = request.AccessTypeId;
-                await this.usersOnPrivateNotesRepository.Update(access);
-            }
-            else
-            {
-                var perm = new UsersOnPrivateFolders()
+                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                if (access != null)
                 {
-                    AccessTypeId = request.AccessTypeId,
-                    FolderId = request.NoteId,
-                    UserId = request.UserId
-                };
-                await this.usersOnPrivateFoldersRepository.Add(perm);
+                    access.AccessTypeId = request.AccessTypeId;
+                    await this.usersOnPrivateNotesRepository.Update(access);
+                }
+                else
+                {
+                    var perm = new UsersOnPrivateFolders()
+                    {
+                        AccessTypeId = request.AccessTypeId,
+                        FolderId = request.NoteId,
+                        UserId = request.UserId
+                    };
+                    await this.usersOnPrivateFoldersRepository.Add(perm);
+                }
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingFolders(request.Email, request.FolderId);
+            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
-            if(access != null)
+            if (permissions.IsOwner)
             {
-                await this.usersOnPrivateFoldersRepository.Remove(access);
-            }
-            else
-            {
-                throw new Exception();
+                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                if (access != null)
+                {
+                    await this.usersOnPrivateFoldersRepository.Remove(access);
+                }
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var access = await this.usersOnPrivateNotesRepository.GetByUserIdandNoteId(request.UserId, request.NoteId);
-            if (access != null)
+            if (permissions.IsOwner)
             {
-                await this.usersOnPrivateNotesRepository.Remove(access);
-            }
-            else
-            {
-                throw new Exception();
+                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                if (access != null)
+                {
+                    await this.usersOnPrivateNotesRepository.Remove(access);
+                }
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingFolders(request.Email, request.FolderId);
+            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var permissions = request.UserIds.Select(userId => new UsersOnPrivateFolders()
+            if(permissions.IsOwner)
             {
-                AccessTypeId = request.RefTypeId,
-                FolderId = request.FolderId,
-                UserId = userId
-            }).ToList();
+                var permissionsRequests = request.UserIds.Select(userId => new UsersOnPrivateFolders()
+                {
+                    AccessTypeId = request.RefTypeId,
+                    FolderId = request.FolderId,
+                    UserId = userId
+                }).ToList();
 
-            await this.usersOnPrivateFoldersRepository.AddRange(permissions);
+                await this.usersOnPrivateFoldersRepository.AddRange(permissionsRequests);
+            }
 
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
         {
-            await CheckUserPermissionForEditingNotes(request.Email, request.NoteId);
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-            var permissions = request.UserIds.Select(userId => new UserOnPrivateNotes()
-            {
-                AccessTypeId = request.RefTypeId,
-                NoteId = request.NoteId,
-                UserId = userId
-            }).ToList();
+            if (permissions.IsOwner) {
+                var permissionsRequests = request.UserIds.Select(userId => new UserOnPrivateNotes()
+                {
+                    AccessTypeId = request.RefTypeId,
+                    NoteId = request.NoteId,
+                    UserId = userId
+                }).ToList();
 
-            await this.usersOnPrivateNotesRepository.AddRange(permissions);
+                await this.usersOnPrivateNotesRepository.AddRange(permissionsRequests);
+            }
 
             return Unit.Value;
-        }
-
-
-
-        private async Task CheckUserPermissionForEditingNotes(string email, Guid noteId)
-        {
-            var flag = await userRepository.IsUserNote(email, noteId);
-            if(!flag)
-            {
-                throw new Exception("Impossible to access someone else's note");
-            }
-        }
-        private async Task CheckUserPermissionForEditingFolders(string email, Guid folderId)
-        {
-            var flag = await userRepository.IsUserFolder(email, folderId);
-            if (!flag)
-            {
-                throw new Exception("Impossible to access someone else's folder");
-            }
         }
     }
 }

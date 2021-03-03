@@ -5,6 +5,7 @@ using BI.services.files;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
+using BI.services.permissions;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
@@ -13,6 +14,7 @@ using Common.DTO.files;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
+using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
@@ -30,6 +32,7 @@ using Domain.Queries.files;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
+using Domain.Queries.permissions;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
@@ -145,6 +148,11 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
+
+
+            // Permissions
+            services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserPermissionsForFolder, UserPermissionsForFolder>, PermissionHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
