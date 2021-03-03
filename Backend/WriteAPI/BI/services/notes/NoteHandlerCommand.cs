@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Common;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DTO.notes;
 using Common.Naming;
 using Domain.Commands.notes;
@@ -46,6 +48,11 @@ namespace BI.services.notes
             var user = await userRepository.GetUserByEmail(request.Email);
             var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
+
+            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
+            var _contents = new List<BaseNoteContent>();
+            _contents.Add(new TextNote() { TextType = textType });
+
             var note = new Note()
             {
                 Id = Guid.NewGuid(),
@@ -54,7 +61,8 @@ namespace BI.services.notes
                 Color = NoteColorPallete.Green,
                 NoteTypeId = type.Id,
                 RefTypeId = refType.Id,
-                CreatedAt = DateTimeOffset.Now
+                CreatedAt = DateTimeOffset.Now,
+                Contents = _contents
             };
 
             await noteRepository.Add(note, type.Id);

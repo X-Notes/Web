@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Common.DatabaseModels.models
 {
@@ -7,6 +8,8 @@ namespace Common.DatabaseModels.models
     {
         public Guid Id { set; get; }
         public string Name { set; get; }
+
+        [Required]
         public string Email { set; get; }
 
         public Guid? PhotoId { set; get; }
