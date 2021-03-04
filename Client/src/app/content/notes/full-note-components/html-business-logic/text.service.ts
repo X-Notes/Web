@@ -6,15 +6,6 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class TextService extends HtmlService {
 
-    isLast: boolean;
-
-    onInput(content: BaseText, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>) {
-        content.content = this.getNativeElement(contentHtml).innerText;
-        if (this.isLast){
-            addToEndNewText.emit();
-            this.isLast = false;
-        }
-    }
 
     onBlur(e: any) {
         // BLUR HANDLER

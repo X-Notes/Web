@@ -23,8 +23,6 @@ export abstract class HtmlService {
     public contEditService: ContentEditableService) {
   }
 
-  abstract onInput(content: ContentModel, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>);
-
   pasteCommandHandler(e) {
     this.apiBrowserService.pasteCommandHandler(e);
   }
@@ -69,8 +67,6 @@ export abstract class HtmlService {
 
   setHandlers(content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
               concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>, addToEndNewText?: EventEmitter<any>) {
-    const input = this.renderer.listen(contentHtml.nativeElement, 'input',
-      (e) => { this.onInput(content, contentHtml, addToEndNewText); });
     const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
     const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
     const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });
@@ -79,7 +75,7 @@ export abstract class HtmlService {
     const keydownBackspace = this.renderer.listen(contentHtml.nativeElement, 'keydown.backspace',
       (e) => { this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis); });
     const keyupBackspace = this.renderer.listen(contentHtml.nativeElement, 'keyup.backspace', (e) => { this.backUp(e); });
-    this.listeners.push(input, blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
+    this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
   }
 
   destroysListeners() {

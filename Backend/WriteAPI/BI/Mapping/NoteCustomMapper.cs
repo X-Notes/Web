@@ -24,7 +24,6 @@ namespace BI.Mapping
                 NoteType = TranformTypeToTypeDTO(note.NoteType),
                 RefType = TranformRefToRefDTO(note.RefType),
                 Title = note.Title,
-                Contents = TranformContentsToContentsDTO(note.Contents),
                 Labels = TranformLabelsToLabelsDTO(note.LabelsNotes)
             };
             return _fullNote;

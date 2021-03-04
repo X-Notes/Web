@@ -2,6 +2,7 @@
 using BI.Mapping;
 using Common.DatabaseModels.models;
 using Common.DTO.notes;
+using Common.DTO.notes.FullNoteContent;
 using Common.DTO.users;
 using Common.Naming;
 using Domain.Queries.notes;
@@ -18,9 +19,9 @@ namespace BI.services.notes
 {
     public class NoteHandlerQuery :
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
-
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
-        IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>
+        IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>,
+        IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>
     {
         private readonly IMapper mapper;
         private readonly NoteRepository noteRepository;
@@ -28,13 +29,15 @@ namespace BI.services.notes
         private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly NoteCustomMapper noteCustomMapper;
         private readonly IMediator _mediator;
+        private readonly BaseNoteContentRepository baseNoteContentRepository;
         public NoteHandlerQuery(
             IMapper mapper, 
             NoteRepository noteRepository, 
             UserRepository userRepository, 
             UserOnNoteRepository userOnNoteRepository,
             NoteCustomMapper noteCustomMapper,
-            IMediator _mediator)
+            IMediator _mediator,
+            BaseNoteContentRepository baseNoteContentRepository)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
@@ -42,6 +45,7 @@ namespace BI.services.notes
             this.userOnNoteRepository = userOnNoteRepository;
             this.noteCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
+            this.baseNoteContentRepository = baseNoteContentRepository;
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
@@ -65,7 +69,6 @@ namespace BI.services.notes
             {
                 var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                note.Contents = note.Contents.OrderBy(x => x.Order).ToList();
                 return new FullNoteAnswer()
                 {
                     CanView = true,
@@ -98,6 +101,21 @@ namespace BI.services.notes
         {
             var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
             return mapper.Map<List<OnlineUserOnNote>>(users);
+        }
+
+        public async Task<List<BaseContentNoteDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanRead)
+            {
+                var contents = await baseNoteContentRepository.GetAllContentByNoteId(request.NoteId);
+                return new NoteCustomMapper().TranformContentsToContentsDTO(contents);
+            }
+
+            // TODO WHEN NO ACCESS
+            return null;
         }
     }
 

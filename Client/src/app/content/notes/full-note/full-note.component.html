@@ -52,20 +52,21 @@
                 <div class="left-border"></div>
             </div>
             <div class="content-section">
-                <div *ngFor="let item of note?.contents; let i = index;">
+                <div *ngFor="let item of contents; let i = index;">
                     <div [ngSwitch]="item.type">
                         <app-html-text-part #htmlComp *ngSwitchCase="contentType.DEFAULT" 
+                        [noteId]="note.id"
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"
                         (transformTo)="transformToType($event)" 
-                        [isLast]="i === note.contents.length - 1"
+                        [isLast]="i === contents.length - 1"
                         (addToEndNewText)="addNewElementToEnd()"                  
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
-                        [prevContent]="note.contents[i - 1]"
-                        [prevType]="note.contents[i - 1]?.type"
+                        [prevContent]="contents[i - 1]"
+                        [prevType]="contents[i - 1]?.type"
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"

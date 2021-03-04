@@ -3,7 +3,7 @@
     (mouseleave)="mouseOut($event)" 
     (click)="setFocus($event)"
     >
-    <p #contentHtml class="block-generic default-text-size" contenteditable="true" [textContent]="textService.contentStr"></p>
+    <p #contentHtml class="block-generic default-text-size" (input)="onInput($event)" contenteditable="true" [textContent]="textService.contentStr"></p>
     <div *ngIf="isActive" class="no-content">
         <p>Text</p>
         <div class="buttons" (mousedown)="preventClick($event)">

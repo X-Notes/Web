@@ -32,8 +32,8 @@ import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 export class MenuButtonsService {
 
   constructor(private store: Store,
-    private dialogService: DialogService,
-    private snackService: SnackbarService) { }
+              private dialogService: DialogService,
+              private snackService: SnackbarService) { }
 
 
   public saveItems: MenuItem[] = [];

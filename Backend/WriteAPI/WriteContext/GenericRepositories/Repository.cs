@@ -12,7 +12,7 @@ namespace WriteContext.GenericRepositories
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly WriteContextDB context;
-        private DbSet<T> entities;
+        protected DbSet<T> entities;
         public Repository(WriteContextDB context)
         {
             this.context = context;

@@ -58,14 +58,11 @@ namespace WriteContext.Repositories
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.UsersOnPrivateNotes)
                 .Include(x => x.NoteType)
                 .Include(x => x.RefType)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AlbumNote).Photos)
-                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+
 
         public async Task<List<Note>> GetNotesByUserIdAndTypeId(Guid userId, Guid typeId)
         {
@@ -79,7 +76,9 @@ namespace WriteContext.Repositories
 
         public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)
         {
-            return await context.Notes.Include(x => x.LabelsNotes).ThenInclude(x => x.Label).Where(x => x.UserId == userId).ToListAsync();
+            return await context.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(x => x.Label)
+                .Where(x => x.UserId == userId).ToListAsync();
         }
 
         // UPPER MENU FUNCTIONS

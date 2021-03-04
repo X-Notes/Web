@@ -1,5 +1,11 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges,
-  OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges,
+  OnDestroy, OnInit, Output, SimpleChanges, ViewChild
+} from '@angular/core';
+import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { ApiServiceNotes } from '../../../api-notes.service';
 import { BaseText, ContentType, HeadingType } from '../../../models/ContentMode';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -29,8 +35,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   isLast: boolean;
 
+  @Input()
+  noteId: string;
+
   contentType = ContentType;
   headingType = HeadingType;
+
+  textChanged: Subject<string> = new Subject<string>();
+  destroy = new Subject<void>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -40,17 +52,17 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  constructor(public textService: TextService) { }
+  constructor(public textService: TextService,
+              private store: Store,
+              private api: ApiServiceNotes) { }
 
   getContent() {
     return this.content;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.isLast)
-    {
+    if (changes.isLast) {
       this.isLast = changes.isLast.currentValue;
-      this.textService.isLast = this.isLast;
     }
   }
 
@@ -63,16 +75,29 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   ngOnDestroy(): void {
     this.textService.destroysListeners();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
     this.textService.contentStr = this.content?.content;
-    this.textService.isLast = this.isLast;
+
+    this.textChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(300))
+      .subscribe(str => {
+        this.api.updateContentText(this.noteId, this.content.id, str).toPromise();
+        if (this.isLast) {
+          this.addToEndNewText.emit();
+          this.isLast = false;
+        }
+      }
+      );
   }
 
   transformContent($event, contentType: ContentType, heading?: HeadingType) {
     $event.preventDefault();
-    this.transformTo.emit({contentType, headingType: heading, id: this.content.id});
+    this.transformTo.emit({ contentType, headingType: heading, id: this.content.id });
   }
 
   preventClick($event) {
@@ -101,14 +126,16 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative()
-  {
+  getNative() {
     return this.contentHtml?.nativeElement;
   }
 
-  get isActive()
-  {
+  get isActive() {
     return this.textService.isActive(this.contentHtml);
+  }
+
+  onInput($event) {
+    this.textChanged.next($event.target.innerText);
   }
 
 }

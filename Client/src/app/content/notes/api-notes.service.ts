@@ -8,6 +8,7 @@ import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
 import { EntityRef } from 'src/app/shared/models/entityRef';
+import { BaseText, ContentModel } from './models/ContentMode';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -140,6 +141,29 @@ export class ApiServiceNotes {
 
   uploadImagesToNote(data: FormData, id: string){
     return this.httpClient.post(environment.writeAPI + `/api/fullnote/images/${id}`, data);
+  }
+
+  newLine(noteId: string)
+  {
+    const obj = {
+      noteId
+    };
+    return this.httpClient.post<BaseText>(environment.writeAPI + `/api/fullnote/content/new`, obj);
+  }
+
+  updateContentText(noteId: string, contentId: string, content: string)
+  {
+    const obj = {
+      contentId,
+      content,
+      noteId
+    };
+    return this.httpClient.patch(environment.writeAPI + `/api/fullnote/text`, obj);
+  }
+
+  getContents(noteId: string)
+  {
+    return this.httpClient.get<ContentModel[]>(environment.writeAPI + `/api/fullnote/contents/${noteId}`);
   }
 
 }
