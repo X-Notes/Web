@@ -1,17 +1,15 @@
 ﻿using Common.Attributes;
+using Common.DatabaseModels.models.NoteContent;
+using Common.DTO.notes.FullNoteContent;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 
 namespace Domain.Commands.noteInner
 {
-    public class UploadImageToNoteCommand : BaseCommandEntity, IRequest<Unit>
+    public class NewLineTextContentNoteCommand : BaseCommandEntity, IRequest<TextNoteDTO>
     {
-        [Required]
-        public List<IFormFile> Photos { set; get; }
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }
     }

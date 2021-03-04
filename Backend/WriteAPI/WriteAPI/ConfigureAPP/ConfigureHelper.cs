@@ -9,11 +9,13 @@ using BI.services.permissions;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
+using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
 using Common.DTO.files;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
+using Common.DTO.notes.FullNoteContent;
 using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
@@ -48,6 +50,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WriteContext;
+using WriteContext.GenericRepositories;
 using WriteContext.Repositories;
 
 namespace WriteAPI.ConfigureAPP
@@ -109,6 +112,8 @@ namespace WriteAPI.ConfigureAPP
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextNoteDTO>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
@@ -169,6 +174,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UsersOnPrivateFoldersRepository>();
             services.AddScoped<FileRepository>();
             services.AddScoped<AppRepository>();
+            services.AddScoped<AlbumNoteRepository>();
+            services.AddScoped<TextNotesRepository>();
+            services.AddScoped<BaseNoteContentRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

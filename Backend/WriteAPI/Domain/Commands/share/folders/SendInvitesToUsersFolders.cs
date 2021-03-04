@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.Attributes;
+using Common.DatabaseModels.models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace Domain.Commands.share.folders
     {
         [Required]
         public List<Guid> UserIds { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid FolderId { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid RefTypeId { set; get; }
         [Required]
         public bool SendMessage { set; get; }

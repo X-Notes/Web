@@ -60,11 +60,12 @@ namespace BI.services.notes
         {
             var command = new GetUserPermissionsForNote(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
 
             if(permissions.CanWrite)
             {
+                var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
+                note.Contents = note.Contents.OrderBy(x => x.Order).ToList();
                 return new FullNoteAnswer()
                 {
                     CanView = true,
@@ -75,6 +76,7 @@ namespace BI.services.notes
 
             if(permissions.CanRead)
             {
+                var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 return new FullNoteAnswer()
                 {

@@ -1,4 +1,5 @@
-﻿using Common.DTO.orders;
+﻿using Common.Attributes;
+using Common.DTO.orders;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Domain.Commands.orders
         public OrderEntity OrderEntity { set; get; }
         [Required]
         public int Position { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid EntityId { set; get; }
     }
 }

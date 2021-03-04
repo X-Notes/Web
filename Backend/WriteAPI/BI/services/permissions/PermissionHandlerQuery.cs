@@ -34,7 +34,7 @@ namespace BI.services.permissions
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
-                var note = await this.noteRepository.GetForUpdating(request.NoteId);
+                var note = await this.noteRepository.GetForCheckPermission(request.NoteId);
 
                 if(note == null)
                 {

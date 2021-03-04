@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Attributes;
+using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,7 +8,7 @@ namespace Domain.Commands.users
 {
     public class UpdateThemeCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [ValidationGuidAttribute]
         public Guid Id { set; get; }
 
         public UpdateThemeCommand(Guid Id, string Email)

@@ -44,7 +44,7 @@ namespace WriteContext.Repositories
         }
 
 
-        public async Task<Note> GetForUpdating(Guid id)
+        public async Task<Note> GetForCheckPermission(Guid id)
         {
             return await context.Notes
                 .Include(x => x.NoteType)
