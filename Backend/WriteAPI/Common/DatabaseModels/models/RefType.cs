@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class RefType
+    public class RefType : BaseEntity
     {
-        public Guid Id { set; get; }
         public string Name { set; get; }
         public List<Note> Notes { set; get; }
         public List<Folder> Folders { set; get; }

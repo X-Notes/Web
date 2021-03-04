@@ -65,7 +65,7 @@ namespace BI.services.sharing
                 }
                 else
                 {
-                    await folderRepository.UpdateFolder(folder);
+                    await folderRepository.Update(folder);
                 }
             }
             else
@@ -91,7 +91,7 @@ namespace BI.services.sharing
                 }
                 else
                 {
-                    await noteRepository.UpdateNote(note);
+                    await noteRepository.Update(note);
                 }
             }
             else

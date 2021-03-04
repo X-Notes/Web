@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
 {
-    public class Label
+    public class Label : BaseEntity
     {
-        public Guid Id { set; get; }
         public string Color { set; get; }
         public string Name { set; get; }
         public int Order { set; get; }

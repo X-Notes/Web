@@ -30,7 +30,7 @@ namespace BI.services.folders
             if(permissions.CanWrite)
             {
                 folder.Title = request.Title;
-                await folderRepository.UpdateFolder(folder);
+                await folderRepository.Update(folder);
             }
 
             return Unit.Value;

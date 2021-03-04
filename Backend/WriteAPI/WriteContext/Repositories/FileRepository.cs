@@ -2,20 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class FileRepository
+    public class FileRepository : Repository<AppFile>
     {
-        private readonly WriteContextDB contextDB;
         public FileRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
-        }
-
-        public async Task<AppFile> GetFileById(Guid id)
-        {
-            return await this.contextDB.Files.FirstOrDefaultAsync(x => x.Id == id);
         }
 
     }

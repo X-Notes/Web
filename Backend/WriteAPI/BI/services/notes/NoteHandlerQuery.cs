@@ -45,7 +45,7 @@ namespace BI.services.notes
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);

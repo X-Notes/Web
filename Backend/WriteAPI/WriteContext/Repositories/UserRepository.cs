@@ -4,26 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class UserRepository
+    public class UserRepository : Repository<User>
     {
-        private readonly WriteContextDB contextDB;
 
         public UserRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
         }
 
-        public async Task<User> GetUserByEmail(string email)
-        {
-            return await contextDB.Users.FirstOrDefaultAsync(x => x.Email == email);
-        }
 
         public async Task<User> GetUserByEmailWithPersonalization(string email)
         {
-            return await contextDB.Users
+            return await context.Users
                 .Include(x => x.CurrentBackground)
                 .Include(x => x.Language)
                 .Include(x => x.FontSize)
@@ -33,12 +29,12 @@ namespace WriteContext.Repositories
 
         public async Task<User> GetUserWithBackgrounds(string email)
         {
-            return await contextDB.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<List<User>> SearchByEmailAndName(string search, string email) // TODO BAD TOLOWER MAYBE FIX
         {
-            return await contextDB.Users
+            return await context.Users
                 .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
                 .Where(x => x.Email != email)
                 .ToListAsync();
@@ -46,12 +42,12 @@ namespace WriteContext.Repositories
 
         public async Task<User> GetUserWithLabels(string email)
         {
-            return await contextDB.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithNotes(string email)
         {
-            return await contextDB.Users
+            return await context.Users
                 .Include(x => x.Notes)
                 .ThenInclude(x => x.NoteType)
                 .FirstOrDefaultAsync(x => x.Email == email);
@@ -59,33 +55,22 @@ namespace WriteContext.Repositories
 
         public async Task<User> GetUserWithFolders(string email)
         {
-            return await contextDB.Users
+            return await context.Users
                 .Include(x => x.Folders)
                 .ThenInclude(x => x.FolderType)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task Add(User user)
-        {
-            await contextDB.Users.AddAsync(user);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task Update(User user)
-        {
-            contextDB.Users.Update(user);
-            await contextDB.SaveChangesAsync();
-        }
 
         public async Task<bool> UpdatePhoto(User user, AppFile file)
         {
             var success = true;
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    await contextDB.Files.AddAsync(file);
-                    await contextDB.SaveChangesAsync();
+                    await context.Files.AddAsync(file);
+                    await context.SaveChangesAsync();
 
                     user.PhotoId = file.Id;
                     await Update(user);
@@ -100,28 +85,6 @@ namespace WriteContext.Repositories
                 }
             }
             return success;
-        }
-
-
-
-        public async Task<bool> IsUserNote(string email, Guid noteId)
-        {
-            var user  = await contextDB.Users.Include(x => x.Notes).FirstOrDefaultAsync(x => x.Email == email);
-            if(user.Notes.Any(x => x.Id == noteId))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> IsUserFolder(string email, Guid folderId)
-        {
-            var user = await contextDB.Users.Include(x => x.Folders).FirstOrDefaultAsync(x => x.Email == email);
-            if (user.Folders.Any(x => x.Id == folderId))
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

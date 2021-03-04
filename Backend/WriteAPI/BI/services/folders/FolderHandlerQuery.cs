@@ -37,7 +37,7 @@ namespace BI.services.folders
 
         public async Task<List<SmallFolder>> Handle(GetFoldersByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
                 var folders = (await folderRepository.GetFoldersByUserIdAndTypeId(user.Id, request.TypeId)).OrderBy(x => x.Order);

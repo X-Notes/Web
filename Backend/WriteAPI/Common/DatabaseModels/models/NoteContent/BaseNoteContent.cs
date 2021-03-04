@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.NoteContent
 {
-    public class BaseNoteContent
+    public class BaseNoteContent : BaseEntity
     {
-        public Guid Id { set; get;}
         [Required]
         public int Order { set; get; }
         public Guid NoteId { set; get; }

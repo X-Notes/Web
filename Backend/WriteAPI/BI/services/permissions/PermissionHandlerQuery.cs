@@ -31,8 +31,8 @@ namespace BI.services.permissions
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNote request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if(user != null)
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            if (user != null)
             {
                 var note = await this.noteRepository.GetForUpdating(request.NoteId);
 
@@ -83,7 +83,7 @@ namespace BI.services.permissions
 
         public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolder request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
                 var folder = await folderRepository.GetForUpdateTitle(request.FolderId);

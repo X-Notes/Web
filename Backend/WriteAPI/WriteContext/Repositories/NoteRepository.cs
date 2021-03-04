@@ -5,20 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class NoteRepository
+    public class NoteRepository : Repository<Note>
     {
-        private readonly WriteContextDB contextDB;
         public NoteRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
         }
 
         public async Task Add(Note note, Guid TypeId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -27,11 +27,11 @@ namespace WriteContext.Repositories
                     if (notes.Count() > 0)
                     {
                         notes.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRangeNotes(notes);
+                        await UpdateRange(notes);
                     }
 
-                    await contextDB.Notes.AddAsync(note);
-                    await contextDB.SaveChangesAsync();
+                    await context.Notes.AddAsync(note);
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 
@@ -44,27 +44,9 @@ namespace WriteContext.Repositories
         }
 
 
-        public async Task AddRange(List<Note> list)
-        {
-            contextDB.Notes.AddRange(list);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task UpdateNote(Note note)
-        {
-            this.contextDB.Notes.Update(note);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task UpdateRangeNotes(List<Note> notes)
-        {
-            this.contextDB.Notes.UpdateRange(notes);
-            await contextDB.SaveChangesAsync();
-        }
-
         public async Task<Note> GetForUpdating(Guid id)
         {
-            return await contextDB.Notes
+            return await context.Notes
                 .Include(x => x.NoteType)
                 .Include(x => x.RefType)
                 .Include(x => x.UsersOnPrivateNotes)
@@ -74,7 +56,7 @@ namespace WriteContext.Repositories
 
         public async Task<Note> GetFull(Guid id)
         {
-            return await contextDB.Notes
+            return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.UsersOnPrivateNotes)
                 .Include(x => x.NoteType)
@@ -87,7 +69,7 @@ namespace WriteContext.Repositories
 
         public async Task<List<Note>> GetNotesByUserIdAndTypeId(Guid userId, Guid typeId)
         {
-            return await contextDB.Notes
+            return await context.Notes
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -97,19 +79,19 @@ namespace WriteContext.Repositories
 
         public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)
         {
-            return await contextDB.Notes.Include(x => x.LabelsNotes).ThenInclude(x => x.Label).Where(x => x.UserId == userId).ToListAsync();
+            return await context.Notes.Include(x => x.LabelsNotes).ThenInclude(x => x.Label).Where(x => x.UserId == userId).ToListAsync();
         }
 
         // UPPER MENU FUNCTIONS
 
         public async Task DeleteRangeDeleted(List<Note> selectdeletenotes, List<Note> deletednotes)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    this.contextDB.Notes.RemoveRange(selectdeletenotes);
-                    await contextDB.SaveChangesAsync();
+                    this.context.Notes.RemoveRange(selectdeletenotes);
+                    await context.SaveChangesAsync();
 
                     foreach (var item in selectdeletenotes)
                     {
@@ -118,7 +100,7 @@ namespace WriteContext.Repositories
 
                     deletednotes = deletednotes.OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(deletednotes);
-                    await UpdateRangeNotes(deletednotes);
+                    await UpdateRange(deletednotes);
 
                     await transaction.CommitAsync();
                 }
@@ -132,21 +114,21 @@ namespace WriteContext.Repositories
 
         public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, Guid FromId, Guid ToId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
                     notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
-                    await UpdateRangeNotes(notesTo);
+                    await UpdateRange(notesTo);
 
                     notesForCasting.ForEach(x => x.NoteTypeId = ToId);
                     ChangeOrderHelper(notesForCasting);
-                    await UpdateRangeNotes(notesForCasting);
+                    await UpdateRange(notesForCasting);
 
                     var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
-                    await UpdateRangeNotes(oldNotes);
+                    await UpdateRange(oldNotes);
 
                     await transaction.CommitAsync();
                 }
@@ -159,13 +141,13 @@ namespace WriteContext.Repositories
 
         public async Task<List<Note>> CopyNotes(List<Note> notesForCopy, List<Note> allUserNotes, Guid FromId, Guid ToId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
                     notesTo.ForEach(x => x.Order = x.Order + notesForCopy.Count());
-                    await UpdateRangeNotes(notesTo);
+                    await UpdateRange(notesTo);
 
                     var newNotes = notesForCopy.Select(x => new Note() { 
                         Color = x.Color,
@@ -181,7 +163,7 @@ namespace WriteContext.Repositories
 
                     var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
-                    await UpdateRangeNotes(oldNotes);
+                    await UpdateRange(oldNotes);
 
                     await transaction.CommitAsync();
 
@@ -208,23 +190,23 @@ namespace WriteContext.Repositories
 
         public async Task<Note> GetOneById(Guid noteId)
         {
-            return await contextDB.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
+            return await context.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
         public async Task<bool> AddAlbum(List<AppFile> files, Note note)
         {
             var success = true;
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    await contextDB.Files.AddRangeAsync(files);
-                    await contextDB.SaveChangesAsync();
+                    await context.Files.AddRangeAsync(files);
+                    await context.SaveChangesAsync();
 
                     var albumNote = new AlbumNote() { Photos = files, Note = note };
 
-                    await contextDB.AlbumNotes.AddAsync(albumNote);
-                    await contextDB.SaveChangesAsync();
+                    await context.AlbumNotes.AddAsync(albumNote);
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 

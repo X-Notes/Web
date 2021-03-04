@@ -45,7 +45,7 @@ namespace BI.services.notes
         }
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
 
@@ -83,7 +83,7 @@ namespace BI.services.notes
             if (notes.Any())
             {
                 notes.ForEach(x => x.Color = request.Color);
-                await noteRepository.UpdateRangeNotes(notes);
+                await noteRepository.UpdateRange(notes);
             }
             else
             {
@@ -189,7 +189,7 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
 
             var selectedNotes = notes.Where(x => request.NoteIds.Any(z => z == x.Id)).ToList();
@@ -198,14 +198,14 @@ namespace BI.services.notes
 
             noteWithLabels.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.LabelId != request.LabelId).ToList());
 
-            await noteRepository.UpdateRangeNotes(noteWithLabels);
+            await noteRepository.UpdateRange(noteWithLabels);
 
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(AddLabelOnNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             var notes = await noteRepository.GetNotesWithLabelsByUserId(user.Id);
 
             var selectedNotes = notes.Where(x => request.NoteIds.Any(z => z == x.Id)).ToList();
@@ -214,7 +214,7 @@ namespace BI.services.notes
 
             noteWithoutLabels.ForEach(x => x.LabelsNotes.Add(new LabelsNotes() { LabelId = request.LabelId, NoteId = x.Id, AddedAt = DateTimeOffset.Now }));;
 
-            await noteRepository.UpdateRangeNotes(noteWithoutLabels);
+            await noteRepository.UpdateRange(noteWithoutLabels);
 
             return Unit.Value;
         }
