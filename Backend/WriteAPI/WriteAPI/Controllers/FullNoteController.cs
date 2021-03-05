@@ -51,8 +51,22 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [HttpPost("content/remove")]
+        public async Task<TextOperationResult<Unit>> RemoveLine(RemoveContentCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPost("content/insert")]
+        public async Task<TextOperationResult<TextNoteDTO>> InsertLine(InsertLineCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
         [HttpPost("content/new")]
-        public async Task<TextNoteDTO> NewLine(NewLineTextContentNoteCommand command)
+        public async Task<TextOperationResult<TextNoteDTO>> NewLine(NewLineTextContentNoteCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

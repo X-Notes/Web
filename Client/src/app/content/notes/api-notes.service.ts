@@ -9,6 +9,7 @@ import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
 import { EntityRef } from 'src/app/shared/models/entityRef';
 import { BaseText, ContentModel } from './models/ContentMode';
+import { TextOperationResult } from './models/TextOperationResult';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -148,7 +149,27 @@ export class ApiServiceNotes {
     const obj = {
       noteId
     };
-    return this.httpClient.post<BaseText>(environment.writeAPI + `/api/fullnote/content/new`, obj);
+    return this.httpClient.post<TextOperationResult<BaseText>>(environment.writeAPI + `/api/fullnote/content/new`, obj);
+  }
+
+  insertLine(noteId: string, contentId: string, lineBreakType: string, nextContent?: string)
+  {
+    const obj = {
+      noteId,
+      contentId,
+      lineBreakType,
+      nextContent
+    };
+    return this.httpClient.post<TextOperationResult<BaseText>>(environment.writeAPI + `/api/fullnote/content/insert`, obj);
+  }
+
+  removeContent(noteId: string, contentId: string)
+  {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<TextOperationResult<any>>(environment.writeAPI + `/api/fullnote/content/remove`, obj);
   }
 
   updateContentText(noteId: string, contentId: string, content: string)

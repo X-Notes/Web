@@ -2,7 +2,7 @@ import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BreakEnterModel, ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { BaseText, ContentModel, ContentType } from '../../models/ContentMode';
+import { BaseText, ContentType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 
@@ -27,11 +27,12 @@ export abstract class HtmlService {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType): EnterEvent {
+  eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType, contentId: string): EnterEvent {
     const eventModel: EnterEvent = {
       id,
       breakModel,
-      nextItemType
+      nextItemType,
+      contentId
     };
     return eventModel;
   }

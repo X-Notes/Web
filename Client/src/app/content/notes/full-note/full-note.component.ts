@@ -174,8 +174,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       takeUntil(this.destroy),
       debounceTime(50))
       .subscribe(async (event) => {
-        const content = await this.api.newLine(this.note.id).toPromise();
-        this.contents.push(content);
+        const resp = await this.api.newLine(this.note.id).toPromise();
+        if(resp.success){  
+        this.contents.push(resp.data);
+        }
       });
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
@@ -207,60 +209,42 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
    this.textElements?.last?.mouseOut($event);
   }
 
-  enterHandler(value: EnterEvent) // TODO SETTIMEOUT
+  async enterHandler(value: EnterEvent) // TODO SETTIMEOUT
   {
+    const breakLineType = value.breakModel.typeBreakLine;
+    const nextText = value.breakModel.nextText;
+    const newElement = await this.api.insertLine(this.note.id, value.contentId, breakLineType, nextText).toPromise();
 
-    const newElement = this.contentService.getTextContentByType(value.nextItemType);
-
-    const contents = this.contents;
-    const elementCurrent = contents.find(x => x.id === value.id);
-    let index = contents.indexOf(elementCurrent);
-
-    switch (value.breakModel.typeBreakLine) {
-      case LineBreakType.PREV_NO_CONTENT: {
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
-        break;
-      }
-      case LineBreakType.NEXT_WITH_CONTENT: {
-        newElement.content = value.breakModel.nextText;
-        index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
-        break;
-      }
-      case LineBreakType.NEXT_NO_CONTENT: {
-        index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
-        break;
-      }
+    if(!newElement.success)
+    {
+      return;
     }
 
-    const numb = Math.random() * (100000 - 1) + 1;
-    setTimeout(() => newElement.id = numb.toString(), 100);
+    const elementCurrent = this.contents.find(x => x.id === value.id);
+    let index = this.contents.indexOf(elementCurrent);
+
+    if(breakLineType === LineBreakType.NEXT)
+    {
+      index++;
+    }
+
+    this.contents.splice(index, 0, newElement.data);
+    setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
 
   }
 
-  deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
+  async deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
   {
-    const contents = this.contents;
-    const item = contents.find(x => x.id === id);
-    const indexOf = contents.indexOf(item);
+    const resp = await this.api.removeContent(this.note.id, id).toPromise();
 
-    if (indexOf !== 0 && (indexOf !== contents.length - 1)) {
-      this.contents = contents.filter(z => z.id !== id);
-      const index = indexOf - 1;
-      if (contents[index].type !== ContentType.ALBUM)
-      {
-        this.textElements?.toArray()[index].setFocusToEnd();
-      }
-    }
-    if (indexOf === contents.length - 1){
+    if(resp.success)
+    {
+      const item = this.contents.find(x => x.id === id);
+      const indexOf = this.contents.indexOf(item);
+      this.contents = this.contents.filter(z => z.id !== id);
       const index = indexOf - 1;
       this.textElements?.toArray()[index].setFocusToEnd();
     }
-
   }
 
   concatThisWithPrev(id: string) { // TODO SETTIMEOUT

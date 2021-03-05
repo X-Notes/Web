@@ -113,8 +113,10 @@ namespace WriteAPI.ConfigureAPP
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextNoteDTO>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

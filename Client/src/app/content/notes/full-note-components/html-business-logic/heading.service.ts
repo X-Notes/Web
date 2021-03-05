@@ -35,7 +35,7 @@ export class HeadingService extends HtmlService {
         $event.preventDefault();
         const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
         content.content = this.getNativeElement(contentHtml).innerText;
-        const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT);
+        const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
         enterEvent.emit(event);
     }
 

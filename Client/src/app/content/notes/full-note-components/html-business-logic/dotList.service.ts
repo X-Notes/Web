@@ -40,7 +40,7 @@ export class DotListService extends HtmlService {
         } else {
             const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
             content.content = this.getNativeElement(contentHtml).innerText;
-            const event = super.eventEventFactory(content.id, breakModel, ContentType.DOTLIST);
+            const event = super.eventEventFactory(content.id, breakModel, ContentType.DOTLIST, content.id);
             enterEvent.emit(event);
         }
     }

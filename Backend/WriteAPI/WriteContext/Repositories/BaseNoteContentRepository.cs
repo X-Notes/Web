@@ -21,6 +21,7 @@ namespace WriteContext.Repositories
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
                 .Where(x => x.NoteId == id)
+                .OrderBy(x => x.Order)
                 .ToListAsync();
         }
     }

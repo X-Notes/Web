@@ -40,7 +40,7 @@ export class NumberListService extends HtmlService {
         } else {
             const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
             content.content = this.getNativeElement(contentHtml).innerText;
-            const event = super.eventEventFactory(content.id, breakModel, ContentType.NUMBERLIST);
+            const event = super.eventEventFactory(content.id, breakModel, ContentType.NUMBERLIST, content.id);
             enterEvent.emit(event);
         }
     }
