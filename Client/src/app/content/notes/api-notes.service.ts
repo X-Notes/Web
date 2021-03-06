@@ -172,12 +172,13 @@ export class ApiServiceNotes {
     return this.httpClient.post<TextOperationResult<any>>(environment.writeAPI + `/api/fullnote/content/remove`, obj);
   }
 
-  updateContentText(noteId: string, contentId: string, content: string)
+  updateContentText(noteId: string, contentId: string, content: string, checked: boolean)
   {
     const obj = {
       contentId,
       content,
-      noteId
+      noteId,
+      checked
     };
     return this.httpClient.patch(environment.writeAPI + `/api/fullnote/text`, obj);
   }

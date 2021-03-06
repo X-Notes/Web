@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText } from '../../../models/ContentMode';
@@ -37,7 +37,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  textChanged: Subject<string> = new Subject<string>();
+  textChanged: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   destroy = new Subject<void>();
 
   constructor(public checkListService: CheckListService) { }
@@ -100,6 +100,13 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
+  }
+
+  changeCheckBox()
+  {
+    this.content.checked = !this.content.checked;
+    const str = this.textChanged.getValue();
+    this.updateText.emit({content: str, contentId: this.content.id, checked: this.content.checked});
   }
 
 }

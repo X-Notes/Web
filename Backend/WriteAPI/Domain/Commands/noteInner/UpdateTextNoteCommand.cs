@@ -11,5 +11,6 @@ namespace Domain.Commands.noteInner
         [ValidationGuidAttribute]
         public Guid ContentId { set; get; }
         public string Content { set; get; }
+        public bool? Checked { set; get; }
     }
 }

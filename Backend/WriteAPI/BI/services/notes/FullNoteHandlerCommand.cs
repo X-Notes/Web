@@ -110,6 +110,10 @@ namespace BI.services.notes
                 if (content != null)
                 {
                     content.Content = request.Content;
+                    if(request.Checked.HasValue)
+                    {
+                        content.Checked = request.Checked.Value;
+                    }
                     await textNotesRepository.Update(content);
                     // TODO DEADLOCK
                 }
