@@ -3,8 +3,6 @@ using Common.DTO.notes;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Domain.Queries.notes
 {

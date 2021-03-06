@@ -70,8 +70,20 @@ namespace WriteContext.Repositories
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
+        public async Task<List<Note>> GetNotesByUserId(Guid userId)
+        {
+            return await context.Notes
+                .Include(x => x.RefType)
+                .Include(x => x.NoteType)
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.CreatedAt)
+                .ToListAsync();
+        }
+
 
 
         public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)

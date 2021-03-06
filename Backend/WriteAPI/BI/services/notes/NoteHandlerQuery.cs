@@ -19,6 +19,7 @@ namespace BI.services.notes
 {
     public class NoteHandlerQuery :
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
+        IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
         IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>
@@ -54,7 +55,6 @@ namespace BI.services.notes
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
-                notes = notes.OrderBy(x => x.Order).ToList();
                 return mapper.Map<List<SmallNote>>(notes);
             }
             return new List<SmallNote>();
@@ -116,6 +116,19 @@ namespace BI.services.notes
 
             // TODO WHEN NO ACCESS
             return null;
+        }
+
+        public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            if (user != null)
+            {
+                var notes = await noteRepository.GetNotesByUserId(user.Id);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
+                notes = notes.OrderBy(x => x.Order).ToList();
+                return mapper.Map<List<SmallNote>>(notes);
+            }
+            return new List<SmallNote>();
         }
     }
 

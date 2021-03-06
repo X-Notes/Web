@@ -87,6 +87,11 @@ export class ApiServiceNotes {
     return this.httpClient.get<RequestFullNote>(environment.writeAPI + `/api/note/${id}`);
   }
 
+  getAll()
+  {
+    return this.httpClient.get<SmallNote[]>(environment.writeAPI + `/api/note/all`);
+  }
+
   new() {
     return this.httpClient.get<SmallNote>(environment.writeAPI + `/api/note/new`);
   }
