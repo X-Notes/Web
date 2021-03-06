@@ -23,7 +23,8 @@ namespace BI.services.notes
         IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>,
         IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>,
         IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>,
-        IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>
+        IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>,
+        IRequestHandler<ConcatWithPreviousCommand, TextOperationResult<TextNoteDTO>>
     {
         private readonly NoteRepository noteRepository;
         private readonly PhotoHelpers photoHelpers;
@@ -312,14 +313,13 @@ namespace BI.services.notes
                     await baseNoteContentRepository.Remove(contentForRemove);
                     await baseNoteContentRepository.UpdateRange(updateList);
                     await transaction.CommitAsync();
+                    return new TextOperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                 }
-
-                return new TextOperationResult<Unit>(Success: true, Unit.Value);
             }
             return new TextOperationResult<Unit>(Success: false, Unit.Value);
         }
@@ -359,6 +359,64 @@ namespace BI.services.notes
             }
 
             return new TextOperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public async Task<TextOperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if(permissions.CanWrite)
+            {
+                var contents = await textNotesRepository.GetWhere(x => x.NoteId == note.Id);
+                var contentForConcat = contents.FirstOrDefault(x => x.Id == request.ContentId);
+
+                if (contentForConcat == null || contentForConcat.PrevId == null)
+                {
+                    return new TextOperationResult<TextNoteDTO>(Success: false,null);
+                }
+
+                var contentPrev = contents.First(x => x.Id == contentForConcat.PrevId);
+                var contentNext = contents.FirstOrDefault(x => x.Id == contentForConcat.NextId);
+
+                contentPrev.Content += contentForConcat.Content;
+
+                var updateList = new List<BaseNoteContent>();
+                if (contentNext != null)
+                {
+                    contentPrev.NextId = contentNext.Id;
+                    contentNext.PrevId = contentPrev.Id;
+                    updateList.Add(contentPrev);
+                    updateList.Add(contentNext);
+                }
+                else
+                {
+                    contentPrev.NextId = null;
+                    updateList.Add(contentPrev);
+                }
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    await baseNoteContentRepository.Remove(contentForConcat);
+                    await baseNoteContentRepository.UpdateRange(updateList);
+                    await transaction.CommitAsync();
+                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
+                                    contentPrev.HeadingType, contentPrev.Checked,
+                                    contentPrev.NextId, contentPrev.PrevId);
+
+                    return new TextOperationResult<TextNoteDTO>(Success: true, textResult);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
+                }
+            }
+
+            return new TextOperationResult<TextNoteDTO>(Success: false, null);
         }
     }
 }

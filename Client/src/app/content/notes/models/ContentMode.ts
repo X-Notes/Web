@@ -2,7 +2,8 @@
 export class ContentModel{
     type: ContentType;
     id: string;
-    order: number;
+    nextId: string;
+    prevId: string;
 }
 
 export class BaseText extends ContentModel {

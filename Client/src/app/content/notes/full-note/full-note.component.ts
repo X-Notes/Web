@@ -249,32 +249,22 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  concatThisWithPrev(id: string) { // TODO SETTIMEOUT
+  async concatThisWithPrev(id: string) { // TODO SETTIMEOUT
 
-    const contents = this.contents as BaseText[];
-    const item = contents.find(x => x.id === id);
-    const indexOf = contents.indexOf(item);
+    const resp = await this.api.concatWithPrevious(this.note.id, id).toPromise();
 
-    if (indexOf > 0 && indexOf !== contents.length - 1)
+    if (resp.success)
     {
-      const prevItem = contents[indexOf - 1] as BaseText;
-      const prevItemHtml = this.textElements?.toArray()[indexOf - 1];
-
-      this.contents = contents.filter(z => z.id !== id);
-
-      const lengthText = prevItem.content.length;
-      const resultHTML = prevItem.content += item.content;
-      prevItemHtml.updateHTML(resultHTML);
+      const item = this.contents.find(x => x.id === resp.data.id) as BaseText;
+      const indexOf = this.contents.indexOf(item);
+      this.contents[indexOf] = resp.data;
+      this.contents = this.contents.filter(x => x.id !== id);
 
       setTimeout(() => {
-        const range = new Range();
-        range.setStart(prevItemHtml.getNative().firstChild, lengthText);
-        const selection = this.apiBrowserFunctions.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
+        const prevItemHtml = this.textElements?.toArray()[indexOf];
+        prevItemHtml.setFocusToEnd();
       });
     }
-
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean)

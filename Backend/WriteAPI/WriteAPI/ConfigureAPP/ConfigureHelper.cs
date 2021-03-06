@@ -118,6 +118,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
@@ -131,6 +132,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
+
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
 

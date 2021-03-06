@@ -58,6 +58,14 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [HttpPost("content/concat")]
+        public async Task<TextOperationResult<TextNoteDTO>> ConcatLine(ConcatWithPreviousCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+
         [HttpPost("content/remove")]
         public async Task<TextOperationResult<Unit>> RemoveLine(RemoveContentCommand command)
         {

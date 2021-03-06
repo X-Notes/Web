@@ -72,7 +72,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   ngOnInit(): void {
     this.textService.contentStr = this.content?.content;
-
     this.textChanged.pipe(
       takeUntil(this.destroy),
       debounceTime(updateNoteContentDelay))

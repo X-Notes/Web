@@ -183,6 +183,15 @@ export class ApiServiceNotes {
     return this.httpClient.patch(environment.writeAPI + `/api/fullnote/text`, obj);
   }
 
+  concatWithPrevious(noteId: string, contentId: string)
+  {
+    const obj = {
+      contentId,
+      noteId,
+    };
+    return this.httpClient.post<TextOperationResult<BaseText>>(environment.writeAPI + `/api/fullnote/content/concat`, obj);
+  }
+
   updateContentType(noteId: string, contentId: string, type: string, headingType: string)
   {
     const obj = {
