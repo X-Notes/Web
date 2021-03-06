@@ -29,7 +29,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, ContentModel, ContentType } from '../models/ContentMode';
+import { BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -304,39 +304,23 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     switch (value.contentType)
     {
       case ContentType.DEFAULT: {
-        const item = this.contents.find(z => z.id === value.id);
-        indexOf = this.contents.indexOf(item);
-        item.type = value.contentType;
-        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
       case ContentType.CHECKLIST: {
-        const item = this.contents.find(z => z.id === value.id);
-        indexOf = this.contents.indexOf(item);
-        item.type = value.contentType;
-        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
       case ContentType.DOTLIST: {
-        const item = this.contents.find(z => z.id === value.id);
-        indexOf = this.contents.indexOf(item);
-        item.type = value.contentType;
-        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
       case ContentType.HEADING: {
-        const item = this.contents.find(z => z.id === value.id) as BaseText;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.contentType;
-        item.headingType = value.headingType;
-        setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType, value.headingType);
         break;
       }
       case ContentType.NUMBERLIST: {
-        const item = this.contents.find(z => z.id === value.id);
-        indexOf = this.contents.indexOf(item);
-        item.type = value.contentType;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
       case ContentType.ALBUM: {
@@ -345,6 +329,19 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     this.checkAddLastTextContent(indexOf);
+  }
+
+  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number
+  {
+    const item = this.contents.find(z => z.id === id) as BaseText;
+    const indexOf = this.contents.indexOf(item);
+    item.type = contentType;
+    if (headingType)
+    {
+      item.headingType = headingType;
+    }
+    setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+    return indexOf;
   }
 
   async uploadImages(event) {

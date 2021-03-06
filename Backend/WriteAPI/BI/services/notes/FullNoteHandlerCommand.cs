@@ -171,7 +171,7 @@ namespace BI.services.notes
             {
                 var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
 
-                var content = contents.First(x => x.Id == request.ContentId);
+                var content = contents.First(x => x.Id == request.ContentId) as TextNote;
 
                 switch (request.LineBreakType)
                 {
@@ -179,7 +179,7 @@ namespace BI.services.notes
                         {
                             var contentNext = contents.FirstOrDefault(x => x.Id == content.NextId);
 
-                            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
+                            var textType = TextNoteTypesDictionary.GetNextTypeForInserting(content.TextType);
                             var newText = new TextNote(NoteId: note.Id, PrevId: content.Id, contentNext?.Id, textType, Content: request.NextText);
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -219,7 +219,8 @@ namespace BI.services.notes
                             var contentPrev = contents.FirstOrDefault(x => x.Id == content.PrevId);
 
                             var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                            var newText = new TextNote(NoteId: note.Id, PrevId: contentPrev.Id, content?.NextId, textType, Content: request.NextText);
+                            var newText = new TextNote(NoteId: note.Id, PrevId: contentPrev?.Id, NextId: content?.Id, 
+                                                        textType, Content: request.NextText);
 
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -228,10 +229,20 @@ namespace BI.services.notes
                             {
                                 await textNotesRepository.Add(newText);
 
-                                content.PrevId = newText.Id;
-                                contentPrev.NextId = newText.Id;
-
-                                var updateList = new List<BaseNoteContent>() { content, contentPrev };
+                                var updateList = new List<BaseNoteContent>();
+                                if (contentPrev != null)
+                                {
+                                    content.PrevId = newText.Id;
+                                    contentPrev.NextId = newText.Id;
+                                    updateList.Add(content);
+                                    updateList.Add(contentPrev);
+                                }
+                                else
+                                {
+                                    content.PrevId = newText.Id;
+                                    updateList.Add(content);
+                                }
+  
                                 await baseNoteContentRepository.UpdateRange(updateList);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked,

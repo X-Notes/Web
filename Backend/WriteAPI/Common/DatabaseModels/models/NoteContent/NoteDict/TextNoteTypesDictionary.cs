@@ -24,9 +24,27 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
             return textNoteTypes.GetValueOrDefault(type);
         }
 
+        public static TextNoteTypes GetKeyFromDictionary(string key)
+        {
+            return textNoteTypes.First(x => x.Value == key).Key;
+        }
+
         public static bool IsExistValue(string value)
         {
             return textNoteTypes.Any(x => x.Value == value);
+        }
+
+        public static string GetNextTypeForInserting(string typeStr)
+        {
+            var type = GetKeyFromDictionary(typeStr);
+            var result = type switch
+            {
+                TextNoteTypes.CHECKLIST => GetValueFromDictionary(TextNoteTypes.CHECKLIST),
+                TextNoteTypes.DOTLIST => GetValueFromDictionary(TextNoteTypes.DOTLIST),
+                TextNoteTypes.NUMBERLIST => GetValueFromDictionary(TextNoteTypes.NUMBERLIST),
+                _ => GetValueFromDictionary(TextNoteTypes.DEFAULT),
+            };
+            return result;
         }
     }
 }
