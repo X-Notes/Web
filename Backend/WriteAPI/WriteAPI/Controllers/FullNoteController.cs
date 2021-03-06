@@ -44,6 +44,13 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+        [HttpPatch("text/type")]
+        public async Task<TextOperationResult<Unit>> UpdateType(TransformTextTypeCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
         [HttpPatch("text")]
         public async Task UpdateText(UpdateTextNoteCommand command)
         {

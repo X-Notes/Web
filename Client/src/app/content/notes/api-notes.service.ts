@@ -152,13 +152,13 @@ export class ApiServiceNotes {
     return this.httpClient.post<TextOperationResult<BaseText>>(environment.writeAPI + `/api/fullnote/content/new`, obj);
   }
 
-  insertLine(noteId: string, contentId: string, lineBreakType: string, nextContent?: string)
+  insertLine(noteId: string, contentId: string, lineBreakType: string, nextText?: string)
   {
     const obj = {
       noteId,
       contentId,
       lineBreakType,
-      nextContent
+      nextText
     };
     return this.httpClient.post<TextOperationResult<BaseText>>(environment.writeAPI + `/api/fullnote/content/insert`, obj);
   }
@@ -180,6 +180,17 @@ export class ApiServiceNotes {
       noteId
     };
     return this.httpClient.patch(environment.writeAPI + `/api/fullnote/text`, obj);
+  }
+
+  updateContentType(noteId: string, contentId: string, type: string, headingType: string)
+  {
+    const obj = {
+      contentId,
+      type,
+      noteId,
+      headingType
+    };
+    return this.httpClient.patch<TextOperationResult<any>>(environment.writeAPI + `/api/fullnote/text/type`, obj);
   }
 
   getContents(noteId: string)

@@ -175,7 +175,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       debounceTime(50))
       .subscribe(async (event) => {
         const resp = await this.api.newLine(this.note.id).toPromise();
-        if(resp.success){  
+        if (resp.success){
         this.contents.push(resp.data);
         }
       });
@@ -215,7 +215,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const nextText = value.breakModel.nextText;
     const newElement = await this.api.insertLine(this.note.id, value.contentId, breakLineType, nextText).toPromise();
 
-    if(!newElement.success)
+    if (!newElement.success)
     {
       return;
     }
@@ -223,7 +223,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const elementCurrent = this.contents.find(x => x.id === value.id);
     let index = this.contents.indexOf(elementCurrent);
 
-    if(breakLineType === LineBreakType.NEXT)
+    if (breakLineType === LineBreakType.NEXT)
     {
       index++;
     }
@@ -237,7 +237,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   {
     const resp = await this.api.removeContent(this.note.id, id).toPromise();
 
-    if(resp.success)
+    if (resp.success)
     {
       const item = this.contents.find(x => x.id === id);
       const indexOf = this.contents.indexOf(item);
@@ -291,8 +291,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  transformToType(value: TransformContent)
+  async transformToType(value: TransformContent)
   {
+    const resp = await this.api.updateContentType(this.note.id, value.id, value.contentType, value.headingType).toPromise();
+
+    if (!resp.success)
+    {
+      return;
+    }
+
     let indexOf;
     switch (value.contentType)
     {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 
 namespace Common.DatabaseModels.models.NoteContent.NoteDict
 {
@@ -22,6 +22,11 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
         public static string GetValueFromDictionary(TextNoteTypes type)
         {
             return textNoteTypes.GetValueOrDefault(type);
+        }
+
+        public static bool IsExistValue(string value)
+        {
+            return textNoteTypes.Any(x => x.Value == value);
         }
     }
 }

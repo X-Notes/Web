@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Common.DatabaseModels.models.NoteContent.NoteDict
 {
@@ -23,6 +21,11 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
         public static string GetValueFromDictionary(HeadingNoteTypes type)
         {
             return headingNoteTypes.GetValueOrDefault(type);
+        }
+
+        public static bool IsExistValue(string value)
+        {
+            return headingNoteTypes.Any(x => x.Value == value);
         }
     }
 }

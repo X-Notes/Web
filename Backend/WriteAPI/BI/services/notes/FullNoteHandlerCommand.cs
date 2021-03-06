@@ -20,6 +20,7 @@ namespace BI.services.notes
         IRequestHandler<UpdateTitleNoteCommand, Unit>,
         IRequestHandler<UploadImageToNoteCommand, Unit>,
         IRequestHandler<UpdateTextNoteCommand, Unit>,
+        IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>,
         IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>,
         IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>,
         IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>
@@ -110,6 +111,7 @@ namespace BI.services.notes
                 {
                     content.Content = request.Content;
                     await textNotesRepository.Update(content);
+                    // TODO DEADLOCK
                 }
             }
 
@@ -304,6 +306,43 @@ namespace BI.services.notes
 
                 return new TextOperationResult<Unit>(Success: true, Unit.Value);
             }
+            return new TextOperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public async Task<TextOperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            var typeIsExist = TextNoteTypesDictionary.IsExistValue(request.Type);
+
+            if(request.HeadingType != null)
+            {
+                var headingIsExist = HeadingNoteTypesDictionary.IsExistValue(request.HeadingType);
+                if (!headingIsExist)
+                {
+                    return new TextOperationResult<Unit>(Success: false, Unit.Value);
+                }
+            }
+
+            if (!typeIsExist)
+            {
+                return new TextOperationResult<Unit>(Success: false, Unit.Value);
+            }
+
+            if (permissions.CanWrite)
+            {
+                var content = await textNotesRepository.GetById(request.ContentId);
+                if (content != null)
+                {
+                    content.TextType = request.Type;
+                    content.HeadingType = request.HeadingType;
+                    await textNotesRepository.Update(content);
+                    // TODO DEADLOCK
+                    return new TextOperationResult<Unit>(Success: true, Unit.Value);
+                }
+            }
+
             return new TextOperationResult<Unit>(Success: false, Unit.Value);
         }
     }

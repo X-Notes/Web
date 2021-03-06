@@ -60,6 +60,11 @@ namespace BI.Mapping
                 content = content.Next;
             }
 
+            if(resultList.Count != Contents.Count)
+            {
+                Console.WriteLine("Some Data is lost");
+            }
+
             return resultList;
         }
 

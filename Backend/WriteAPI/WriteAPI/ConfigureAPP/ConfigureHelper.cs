@@ -116,6 +116,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
 
             //FOLDERS
