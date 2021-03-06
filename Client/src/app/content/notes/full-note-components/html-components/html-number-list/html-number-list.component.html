@@ -4,7 +4,7 @@
             <div class="number">{{content.number}}.</div>
         </div>
         <div class="text-container">
-            <p class="block-generic default-text-size" #contentHtml contenteditable="true" [textContent]="numberService.contentStr"></p>
+            <p class="block-generic default-text-size" #contentHtml contenteditable="true" (input)="onInput($event)" [textContent]="numberService.contentStr"></p>
             <p class="no-content-list" *ngIf="isActive">Item</p>
         </div>
     </div>

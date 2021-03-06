@@ -1,5 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText } from '../../../models/ContentMode';
+import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -12,6 +16,9 @@ import { CheckListService } from '../../html-business-logic/checkList.service';
   providers: [CheckListService]
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+
+  @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -30,6 +37,9 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
+  textChanged: Subject<string> = new Subject<string>();
+  destroy = new Subject<void>();
+
   constructor(public checkListService: CheckListService) { }
 
   getContent() {
@@ -42,11 +52,18 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   ngOnDestroy(): void {
     this.checkListService.destroysListeners();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
     this.checkListService.contentStr = this.content?.content;
     this.checkListService.transformTo = this.transformTo;
+
+    this.textChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(updateNoteContentDelay))
+      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
   }
 
   setFocus($event?) {
@@ -79,6 +96,10 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   get isActive()
   {
     return this.checkListService.isActive(this.contentHtml);
+  }
+
+  onInput($event) {
+    this.textChanged.next($event.target.innerText);
   }
 
 }

@@ -67,7 +67,7 @@ export abstract class HtmlService {
   }
 
   setHandlers(content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
-              concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>, addToEndNewText?: EventEmitter<any>) {
+              concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
     const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
     const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
     const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });

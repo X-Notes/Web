@@ -5,8 +5,10 @@ import {
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ApiServiceNotes } from '../../../api-notes.service';
 import { BaseText, ContentType, HeadingType } from '../../../models/ContentMode';
+import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -18,10 +20,7 @@ import { TextService } from '../../html-business-logic/text.service';
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService]
 })
-export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
-
-  @Output()
-  addToEndNewText = new EventEmitter();
+export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -29,14 +28,12 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
+  @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
+
   @Input()
   content: BaseText;
 
-  @Input()
-  isLast: boolean;
-
-  @Input()
-  noteId: string;
 
   contentType = ContentType;
   headingType = HeadingType;
@@ -60,16 +57,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     return this.content;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.isLast) {
-      this.isLast = changes.isLast.currentValue;
-    }
-  }
 
 
   ngAfterViewInit(): void {
-    this.textService.setHandlers(this.content, this.contentHtml,
-      this.enterEvent, this.concatThisWithPrev, this.deleteThis, this.addToEndNewText);
+    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
   }
 
 
@@ -84,15 +75,8 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
     this.textChanged.pipe(
       takeUntil(this.destroy),
-      debounceTime(300))
-      .subscribe(str => {
-        this.api.updateContentText(this.noteId, this.content.id, str).toPromise();
-        if (this.isLast) {
-          this.addToEndNewText.emit();
-          this.isLast = false;
-        }
-      }
-      );
+      debounceTime(updateNoteContentDelay))
+      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
   }
 
   transformContent($event, contentType: ContentType, heading?: HeadingType) {

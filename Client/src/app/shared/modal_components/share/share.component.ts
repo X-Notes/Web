@@ -24,6 +24,7 @@ import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { EntityRef } from '../../models/entityRef';
+import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 
 export enum SharedType {
   Note,
@@ -158,7 +159,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
 
     this.searchStrChanged.pipe(
-      debounceTime(350),
+      debounceTime(searchDelay),
       distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {

@@ -40,6 +40,8 @@ import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
+import { EditTextEventModel } from '../models/EditTextEventModel';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 
 
 
@@ -167,12 +169,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
-      debounceTime(50))
+      debounceTime(updateNoteContentDelay))
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
 
     this.newLine.pipe(
       takeUntil(this.destroy),
-      debounceTime(50))
+      debounceTime(updateNoteContentDelay))
       .subscribe(async (event) => {
         const resp = await this.api.newLine(this.note.id).toPromise();
         if (resp.success){
@@ -273,6 +275,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
 
+  }
+
+  async updateTextHandler(event: EditTextEventModel, isLast: boolean)
+  {
+    this.api.updateContentText(this.note.id, event.contentId, event.content).toPromise();
+    if (isLast) {
+      this.addNewElementToEnd();
+    }
   }
 
   selectionHandler(secondRect: DOMRect) {
