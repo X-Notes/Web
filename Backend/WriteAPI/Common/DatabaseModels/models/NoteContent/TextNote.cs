@@ -14,25 +14,21 @@ namespace Common.DatabaseModels.models.NoteContent
         public string HeadingType { set; get; }
         public bool Checked { set; get; }
 
-        public TextNote(string TextType, int Order, Guid NoteId, string Content)
+        public TextNote(Guid NoteId, Guid? PrevId, Guid? NextId, string TextType, string Content = null)
         {
             this.TextType = TextType;
-            this.Order = Order;
             this.NoteId = NoteId;
             this.Content = Content;
+            this.PrevId = PrevId;
+            this.NextId = NextId;
         }
 
-        public TextNote(string TextType, int Order)
+        public TextNote(Guid? PrevId, Guid? NextId, string TextType, string Content = null)
         {
             this.TextType = TextType;
-            this.Order = Order;
+            this.Content = Content;
+            this.PrevId = PrevId;
+            this.NextId = NextId;
         }
-        public TextNote(string TextType, int Order, Guid NoteId)
-        {
-            this.TextType = TextType;
-            this.Order = Order;
-            this.NoteId = NoteId;
-        }
-
     }
 }

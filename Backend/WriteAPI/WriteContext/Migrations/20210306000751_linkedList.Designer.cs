@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210306000751_linkedList")]
+    partial class linkedList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -323,6 +325,9 @@ namespace WriteContext.Migrations
                     b.Property<Guid?>("NextId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("NextId1")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
@@ -333,9 +338,9 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("NextId");
 
-                    b.HasIndex("NoteId");
+                    b.HasIndex("NextId1");
 
-                    b.HasIndex("PrevId");
+                    b.HasIndex("NoteId");
 
                     b.ToTable("BaseNoteContents");
                 });
@@ -717,21 +722,20 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Next")
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Prev")
                         .WithMany()
                         .HasForeignKey("NextId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Next")
+                        .WithMany()
+                        .HasForeignKey("NextId1");
 
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Prev")
-                        .WithMany()
-                        .HasForeignKey("PrevId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Next");
 

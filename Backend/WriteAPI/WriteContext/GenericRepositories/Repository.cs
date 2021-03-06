@@ -11,7 +11,7 @@ namespace WriteContext.GenericRepositories
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        protected readonly WriteContextDB context;
+        public readonly WriteContextDB context;
         protected DbSet<T> entities;
         public Repository(WriteContextDB context)
         {

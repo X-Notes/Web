@@ -1,6 +1,5 @@
 ﻿using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DTO.app;
 using Common.DTO.labels;
 using Common.DTO.notes;
@@ -32,30 +31,35 @@ namespace BI.Mapping
         public List<BaseContentNoteDTO> TranformContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
             var resultList = new List<BaseContentNoteDTO>();
-            foreach(var content in Contents)
+
+            var content = Contents.First(x => x.PrevId == null);
+
+            while(content != null)
             {
                 switch (content)
                 {
                     case TextNote tN:
-                    {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.Order, tN.TextType, tN.HeadingType, tN.Checked);
+                        {
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.NextId, tN.PrevId);
                             resultList.Add(tNDTO);
                             break;
-                    }
+                        }
                     case AlbumNote aN:
-                    {
+                        {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, aN.Order, type);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, type, aN.NextId, aN.PrevId);
                             resultList.Add(aNDTO);
                             break;
-                    }
+                        }
                     default:
-                    {
+                        {
                             throw new Exception("Incorrect type");
-                    }
+                        }
                 }
+                content = content.Next;
             }
+
             return resultList;
         }
 
