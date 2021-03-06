@@ -9,16 +9,13 @@
 .outer {
   display: flex;
   width: 650px;
-  height: 650px;
 
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 27px;
     width: 100%;
     padding: 0.625rem 1.25rem 0 1.25rem;
-    overflow: hidden;
 
     span {
       font-weight: 500;
@@ -45,168 +42,381 @@
       width: 100%;
       padding-top: 1.25rem;
 
-      .dropdown-wrapper {
-        display: flex;
-
-        .dropdown-button {
-          height: 32px;
-          width: 145px;
-        }
-      }
-
-      .content-access {
+      .tab-content {
         display: flex;
         flex-direction: column;
-        width: calc(100% - 5rem);
-        margin: 0 2.5rem;
-
-        &::after {
-          content: "";
-          width: 100%;
-          height: 1px;
-          margin-top: 1.25rem;
-          background-color: #f2f2f2;
-          border-radius: 5px;
-        }
-
-        .link-access-field {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          margin-top: 1.25rem;
-
-          input[type="text"] {
-            height: 32px;
-            padding-left: 0.75rem;
-            border-radius: 5px;
-            border: 0.8px solid;
-            outline: none;
-            font-size: 1.125rem;
-            color: #484848;
-            background-color: #f2f2f2;
-            transition: 0.2s ease;
-          }
-
-          .link-width-not-shared {
-            width: calc(100% - 42px);
-          }
-
-          .link-width-shared {
-            width: calc(100% - 203px);
-          }
-
-          .dropdown-wrapper {
-            margin-left: 1rem;
-            
-            .dropdown-button {
-              width: 145px;
-              height: 32px;
-              background-color: #f2f2f2;
-            }
-          }
-
-          .copy {
-            position: relative;
-            z-index: 5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 32px;
-            width: 36px;
-            margin-left: 0.375rem;
-            border-radius: 5px;
-            transition: 0.2s ease;
-            font-size: 1.5rem;
-            cursor: pointer;
-            overflow: hidden;
-
-            i {
-              position: relative;
-              z-index: 5;
-            }
-          }
-        }
-
-        .toggle-field {
-          display: flex;
-          width: 100%;
-          margin-top: 1.25rem;
-
-          .toggle {
-            width: 200px;
-
-            .rectangle {
-              background: #f2f2f2;
-            }
-          }
-
-          .toggle-description {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            width: calc(100% - 216px);
-            margin-left: 1rem;
-            font-size: 0.875rem;
-
-            p {
-              @include text-overflow;
-            }
-          }
-        }
-      }
-
-      .user-access {
-        display: flex;
-        flex-direction: column;
+        height: 550px;
         width: 100%;
-        height: 390px;
-        margin: 1.25rem 0;
 
-        .content-inner {
+        .dropdown-wrapper {
+          display: flex;
+  
+          .dropdown-button {
+            height: 32px;
+            width: 145px;
+          }
+        }
+  
+        .content-access {
           display: flex;
           flex-direction: column;
-          width: 100%;
-          height: 100%;
-          padding: 0 2.5rem;
-
-          .user {
+          width: calc(100% - 5rem);
+          margin: 0 2.5rem;
+  
+          &::after {
+            content: "";
+            width: 100%;
+            height: 1px;
+            margin-top: 1.25rem;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+          }
+  
+          .link-access-field {
             display: flex;
             align-items: center;
             width: 100%;
-            height: 50px;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            padding-left: 0.875rem;
-            background-color: #ddffcd;
+            margin-top: 1.25rem;
   
-            &:last-child {
-              margin-bottom: 0;
+            input[type="text"] {
+              height: 32px;
+              padding-left: 0.75rem;
+              border-radius: 5px;
+              border: 0.8px solid;
+              outline: none;
+              font-size: 1.125rem;
+              color: #484848;
+              background-color: #f2f2f2;
+              transition: 0.2s ease;
             }
   
-            .photo {
-              display: flex;
-              height: 35px;
-              width: 35px;
-              overflow: hidden;
-              border-radius: 50%;
+            .link-width-not-shared {
+              width: calc(100% - 42px);
+            }
   
-              img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
+            .link-width-shared {
+              width: calc(100% - 203px);
+            }
+  
+            .dropdown-wrapper {
+              margin-left: 1rem;
+              
+              .dropdown-button {
+                width: 145px;
+                height: 32px;
+                background-color: #f2f2f2;
               }
             }
   
-            .user-info {
+            .copy {
+              position: relative;
+              z-index: 5;
               display: flex;
-              flex-direction: column;
-              width: calc(100% - 171px);
-              margin-left: 0.875rem;
+              justify-content: center;
+              align-items: center;
+              height: 32px;
+              width: 36px;
+              margin-left: 0.375rem;
+              border-radius: 5px;
+              transition: 0.2s ease;
+              font-size: 1.5rem;
+              cursor: pointer;
+              overflow: hidden;
   
-              .name,
+              i {
+                position: relative;
+                z-index: 5;
+              }
+            }
+          }
+  
+          .toggle-field {
+            display: flex;
+            width: 100%;
+            margin-top: 1.25rem;
+  
+            .toggle {
+              width: 200px;
+  
+              .rectangle {
+                background: #f2f2f2;
+              }
+            }
+  
+            .toggle-description {
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              width: calc(100% - 216px);
+              margin-left: 1rem;
+              font-size: 0.875rem;
+  
+              p {
+                @include text-overflow;
+              }
+            }
+          }
+        }
+  
+        .user-access {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 390px;
+          margin: 1.25rem 0;
+  
+          .content-inner {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 0 2.5rem;
+  
+            .user {
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 50px;
+              border-radius: 10px;
+              margin-bottom: 1rem;
+              padding-left: 0.875rem;
+              background-color: #ddffcd;
+    
+              &:last-child {
+                margin-bottom: 0;
+              }
+    
+              .photo {
+                display: flex;
+                height: 35px;
+                width: 35px;
+                overflow: hidden;
+                border-radius: 50%;
+    
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+    
+              .user-info {
+                display: flex;
+                flex-direction: column;
+                width: calc(100% - 171px);
+                margin-left: 0.875rem;
+    
+                .name,
+                .email {
+                  display: flex;
+                  width: 100%;
+                  color: $text-color;
+    
+                  p {
+                    @include text-overflow;
+                  }
+                }
+    
+                .name {
+                  font-size: 1.125rem;
+                  font-weight: 500;
+                  margin-bottom: 0.1875rem;
+                }
+    
+                .email {
+                  font-size: 0.875rem;
+                  font-weight: 300;
+                }
+              }
+    
+              .user-access-func {
+                display: flex;
+                align-items: center;
+                height: 100%;
+    
+                button[type="button"] {
+                  display: flex;
+                  align-items: center;
+                  height: 100%;
+                  padding: 0 0.875rem;
+                  background-color: transparent;
+                  border: 0;
+                  outline: none;
+                  user-select: none;
+                  cursor: pointer;
+    
+                  .icon {
+                    display: flex;
+                    font-size: 0.75rem;
+                    i::before {
+                      color: #c4c4c4;
+                    }
+                  }
+                  .black {
+                    i::before {
+                      color: #202020 !important;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  
+        .search {
+          margin: 1.25rem 2.5rem 0.625rem 2.5rem;
+          width: calc(100% - 5rem);
+        }
+  
+        .interaction-container {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          height: calc(100% - 84px);
+          width: 100%;
+  
+          .mail-notification {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 5rem);
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            margin: 0.625rem 2.5rem 0 2.5rem;
+  
+            .mail-container {
+              display: flex;
+              flex-wrap: wrap;
+              width: 100%;
+              padding: 0.625rem 1rem;
+  
+              &::after {
+                content: "";
+                width: 100%;
+                height: 2px;
+                border-radius: 5px;
+              }
+  
+              .user-mail {
+                display: flex;
+                padding: 0.375rem 0.75rem;
+                color: $text-color;
+                border-radius: 5px;
+                cursor: pointer;
+                max-width: 100%;
+                margin-right: 1rem;
+                margin-bottom: 0.75rem;
+  
+                p {
+                  @include text-overflow;
+                  width: calc(100% - 26px);
+                }
+  
+                .icon {
+                  display: flex;
+                  margin-left: 0.625rem;
+  
+                  i {
+                    transform: rotate(45deg);
+                  }
+                }
+              }
+            }
+  
+            .checkbox-notification {
+              display: flex;
+              width: 100%;
+              padding: 0.625rem 1rem;
+              color: $text-color;
+            }
+  
+            .interaction-mail {
+              display: flex;
+              width: 100%;
+              padding: 0.625rem 1rem;
+  
+              textarea {
+                width: calc(100% - 142px);
+                min-height: 60px;
+                margin-right: 0.75rem;
+                resize: none;
+                border-radius: 5px;
+                border: 0;
+                outline: none;
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+              }
+  
+              .interaction-buttons {
+                display: flex;
+                flex-direction: column;
+                width: 130px;
+  
+                .send-button {
+                  position: relative;
+                  height: 32px;
+                  border: 0.8px solid transparent;
+                  padding: 0;
+                  outline: none;
+                  overflow: hidden;
+                  user-select: none;
+                  cursor: pointer;
+                  border-radius: 5px;
+                  background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
+                  margin-top: 0.5rem;
+  
+                  .content-button {
+                    position: relative;
+                    z-index: 5;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0 0.75rem;
+                    font-size: 1rem;
+                    color: white;
+                  }
+                }
+              }
+            }
+          }
+  
+          .user-suggestions {
+            display: flex;
+            flex-direction: column;
+            width: calc(100% - 5rem);
+            margin: 1.25rem 2.5rem 0 2.5rem;
+    
+            .user {
+              display: flex;
+              align-items: center;
+              width: 100%;
+              height: 40px;
+              border-radius: 5px;
+              margin-bottom: 0.9rem;
+              padding: 0 0.875rem;
+              background-color: #f2f2f2;
+  
+              &:last-child {
+                margin-bottom: 0;
+              }
+  
+              .photo {
+                display: flex;
+                height: 30px;
+                width: 30px;
+                overflow: hidden;
+                border-radius: 50%;
+  
+                img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+  
               .email {
                 display: flex;
-                width: 100%;
+                width: calc(100% - 74px);
+                margin-left: 0.875rem;
                 color: $text-color;
   
                 p {
@@ -214,236 +424,30 @@
                 }
               }
   
-              .name {
-                font-size: 1.125rem;
-                font-weight: 500;
-                margin-bottom: 0.1875rem;
-              }
-  
-              .email {
-                font-size: 0.875rem;
-                font-weight: 300;
-              }
-            }
-  
-            .user-access-func {
-              display: flex;
-              align-items: center;
-              height: 100%;
-  
-              button[type="button"] {
+              .user-access-func {
                 display: flex;
                 align-items: center;
                 height: 100%;
-                padding: 0 0.875rem;
-                background-color: transparent;
-                border: 0;
-                outline: none;
-                user-select: none;
-                cursor: pointer;
   
-                .icon {
-                  display: flex;
-                  font-size: 0.75rem;
-                  i::before {
-                    color: #c4c4c4;
-                  }
-                }
-                .black {
-                  i::before {
-                    color: #202020 !important;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .search {
-        margin: 1.25rem 2.5rem 0.625rem 2.5rem;
-        width: calc(100% - 5rem);
-      }
-
-      .interaction-container {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: calc(100% - 84px);
-        width: 100%;
-
-        .mail-notification {
-          display: flex;
-          flex-direction: column;
-          width: calc(100% - 5rem);
-          border-radius: 5px;
-          background-color: #f2f2f2;
-          margin: 0.625rem 2.5rem 0 2.5rem;
-
-          .mail-container {
-            display: flex;
-            flex-wrap: wrap;
-            width: 100%;
-            padding: 0.625rem 1rem;
-
-            &::after {
-              content: "";
-              width: 100%;
-              height: 2px;
-              border-radius: 5px;
-            }
-
-            .user-mail {
-              display: flex;
-              padding: 0.375rem 0.75rem;
-              color: $text-color;
-              border-radius: 5px;
-              cursor: pointer;
-              max-width: 100%;
-              margin-right: 1rem;
-              margin-bottom: 0.75rem;
-
-              p {
-                @include text-overflow;
-                width: calc(100% - 26px);
-              }
-
-              .icon {
-                display: flex;
-                margin-left: 0.625rem;
-
-                i {
-                  transform: rotate(45deg);
-                }
-              }
-            }
-          }
-
-          .checkbox-notification {
-            display: flex;
-            width: 100%;
-            padding: 0.625rem 1rem;
-            color: $text-color;
-          }
-
-          .interaction-mail {
-            display: flex;
-            width: 100%;
-            padding: 0.625rem 1rem;
-
-            textarea {
-              width: calc(100% - 142px);
-              min-height: 60px;
-              margin-right: 0.75rem;
-              resize: none;
-              border-radius: 5px;
-              border: 0;
-              outline: none;
-              font-size: 1rem;
-              padding: 0.5rem 1rem;
-            }
-
-            .interaction-buttons {
-              display: flex;
-              flex-direction: column;
-              width: 130px;
-
-              .send-button {
-                position: relative;
-                height: 32px;
-                border: 0.8px solid transparent;
-                padding: 0;
-                outline: none;
-                overflow: hidden;
-                user-select: none;
-                cursor: pointer;
-                border-radius: 5px;
-                background: linear-gradient(97.88deg, #0083bb 0%, #00afe7 100%);
-                margin-top: 0.5rem;
-
-                .content-button {
-                  position: relative;
-                  z-index: 5;
+                button[type="button"] {
                   display: flex;
                   align-items: center;
-                  justify-content: center;
-                  padding: 0 0.75rem;
-                  font-size: 1rem;
-                  color: white;
-                }
-              }
-            }
-          }
-        }
-
-        .user-suggestions {
-          display: flex;
-          flex-direction: column;
-          width: calc(100% - 5rem);
-          margin: 1.25rem 2.5rem 0 2.5rem;
+                  height: 100%;
+                  padding: 0 0.875rem;
+                  background-color: transparent;
+                  border: 0;
+                  outline: none;
+                  user-select: none;
+                  cursor: pointer;
   
-          .user {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            height: 40px;
-            border-radius: 5px;
-            margin-bottom: 0.9rem;
-            padding: 0 0.875rem;
-            background-color: #f2f2f2;
-
-            &:last-child {
-              margin-bottom: 0;
-            }
-
-            .photo {
-              display: flex;
-              height: 30px;
-              width: 30px;
-              overflow: hidden;
-              border-radius: 50%;
-
-              img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-              }
-            }
-
-            .email {
-              display: flex;
-              width: calc(100% - 74px);
-              margin-left: 0.875rem;
-              color: $text-color;
-
-              p {
-                @include text-overflow;
-              }
-            }
-
-            .user-access-func {
-              display: flex;
-              align-items: center;
-              height: 100%;
-
-              button[type="button"] {
-                display: flex;
-                align-items: center;
-                height: 100%;
-                padding: 0 0.875rem;
-                background-color: transparent;
-                border: 0;
-                outline: none;
-                user-select: none;
-                cursor: pointer;
-
-                &:last-child {
-                  padding-right: 0;
-                }
-
-                .icon {
-                  display: flex;
-                  font-size: 1rem;
+                  &:last-child {
+                    padding-right: 0;
+                  }
+  
+                  .icon {
+                    display: flex;
+                    font-size: 1rem;
+                  }
                 }
               }
             }
@@ -568,26 +572,28 @@
     width: calc(60% - 0.3125rem);
 
     .tabs {
-      .content-access {
-        .toggle-field {
-          flex-direction: column;
-          flex-wrap: wrap;
-
-          .toggle {
-            width: 100%;
-          }
-
-          .toggle-description {
-            justify-content: center;
-            width: 100%;
-            margin-top: 1.25rem;
-            margin-left: 0;
+      .tab-content {
+        .content-access {
+          .toggle-field {
+            flex-direction: column;
+            flex-wrap: wrap;
+  
+            .toggle {
+              width: 100%;
+            }
+  
+            .toggle-description {
+              justify-content: center;
+              width: 100%;
+              margin-top: 1.25rem;
+              margin-left: 0;
+            }
           }
         }
-      }
-
-      .user-access {
-        height: calc(100% - 202px);
+  
+        .user-access {
+          height: calc(100% - 202px);
+        }
       }
     }
   }
@@ -608,43 +614,45 @@
     background-color: white;
 
     .tabs {
-      .content-access {
-        .link-access-field {
-          input[type="text"] {
-            border-color: transparent;
-          }
-
-          .copy {
-            .icon-copy::before {
-              color: #cacaca;
+      .tab-content {
+        .content-access {
+          .link-access-field {
+            input[type="text"] {
+              border-color: transparent;
+            }
+  
+            .copy {
+              .icon-copy::before {
+                color: #cacaca;
+              }
             }
           }
-        }
-
-        .toggle-field {
-          .toggle {
-            border-color: #f2f2f2;
-
-            .text-toggle {
-              .text {
-                color: #484848;
+  
+          .toggle-field {
+            .toggle {
+              border-color: #f2f2f2;
+  
+              .text-toggle {
+                .text {
+                  color: #484848;
+                }
               }
             }
           }
         }
-      }
-
-      .interaction-container {
-        .mail-notification {
-          .mail-container {
-            .user-mail {
-              background-color: white;
+  
+        .interaction-container {
+          .mail-notification {
+            .mail-container {
+              .user-mail {
+                background-color: white;
+              }
             }
-          }
-
-          .interaction-mail {
-            textarea {
-              background-color: white;
+  
+            .interaction-mail {
+              textarea {
+                background-color: white;
+              }
             }
           }
         }
@@ -662,50 +670,52 @@
     background-color: $dark-color;
 
     .tabs {
-      .content-access {
-        .link-access-field {
-          input[type="text"] {
-            border-color: #c5c5c5;
-          }
-        }
-
-        .toggle-field {
-          .toggle {
-            .text-toggle {
-              .text {
-                color: #484848;
-
-                &:last-child {
-                  color: white;
-                }
-              }
+      .tab-content {
+        .content-access {
+          .link-access-field {
+            input[type="text"] {
+              border-color: #c5c5c5;
             }
-
-            .active-toggle + .text-toggle {
-              .text {
-                &:first-child {
-                  color: white;
-                }
-                &:last-child {
+          }
+  
+          .toggle-field {
+            .toggle {
+              .text-toggle {
+                .text {
                   color: #484848;
+  
+                  &:last-child {
+                    color: white;
+                  }
+                }
+              }
+  
+              .active-toggle + .text-toggle {
+                .text {
+                  &:first-child {
+                    color: white;
+                  }
+                  &:last-child {
+                    color: #484848;
+                  }
                 }
               }
             }
           }
         }
-      }
-
-      .interaction-container {
-        .mail-notification {
-          .mail-container {
-            .user-mail {
-              background-color: #e8e8e8;
+  
+        .interaction-container {
+          .mail-notification {
+            .mail-container {
+              .user-mail {
+                background-color: #e8e8e8;
+              }
             }
-          }
-
-          .interaction-mail {
-            textarea {
-              background-color: #e8e8e8;
+  
+            .interaction-mail {
+              textarea {
+                background-color: #e8e8e8;
+              }
             }
           }
         }
@@ -718,7 +728,6 @@
   .outer {
     flex-direction: column;
     justify-content: flex-end;
-    height: 80vh;
     overflow: hidden;
 
     .sharing {
@@ -727,34 +736,38 @@
       margin-left: 0;
 
       .tabs {
-        .user-access {
-          height: calc(100% - 165px);
-          width: calc(100% - 3.75rem);
-          margin: 1.25rem 1.875rem;
+        .tab-content {
+          height: 60vh;
 
-          .content-inner {
-            padding: 0 0.625rem;
-
-            .user {
-              height: 45px;
+          .user-access {
+            height: calc(100% - 165px);
+            width: calc(100% - 3.75rem);
+            margin: 1.25rem 1.875rem;
   
-              .user-info {
-                .name {
-                  margin-bottom: 0;
+            .content-inner {
+              padding: 0 0.625rem;
+  
+              .user {
+                height: 45px;
+    
+                .user-info {
+                  .name {
+                    margin-bottom: 0;
+                  }
                 }
               }
             }
           }
-        }
-
-        .interaction-container {
-          width: calc(100% - 3.75rem);
-          margin: 0 1.875rem 1.25rem 1.875rem;
-
-          .mail-notification, .user-suggestions {
-            margin-left: 0.625rem;
-            margin-right: 0.625rem;
-            width: calc(100% - 1.25rem);
+  
+          .interaction-container {
+            width: calc(100% - 3.75rem);
+            margin: 0 1.875rem 1.25rem 1.875rem;
+  
+            .mail-notification, .user-suggestions {
+              margin-left: 0.625rem;
+              margin-right: 0.625rem;
+              width: calc(100% - 1.25rem);
+            }
           }
         }
       }
@@ -818,7 +831,7 @@
       .notes-sharing {
         flex-direction: column;
         width: 100%;
-        height: calc(100% - 37px);
+        height: 70vh;
         margin: 0 0 0.625rem 0;
 
         .note {
@@ -834,26 +847,28 @@
   .outer {
     .sharing {
       .tabs {
-        .content-access {
-          .toggle-field {
-            flex-direction: column;
-            flex-wrap: wrap;
-
-            .toggle {
-              width: 100%;
-            }
-
-            .toggle-description {
-              justify-content: center;
-              width: 100%;
-              margin-top: 1.25rem;
-              margin-left: 0;
+        .tab-content {
+          .content-access {
+            .toggle-field {
+              flex-direction: column;
+              flex-wrap: wrap;
+  
+              .toggle {
+                width: 100%;
+              }
+  
+              .toggle-description {
+                justify-content: center;
+                width: 100%;
+                margin-top: 1.25rem;
+                margin-left: 0;
+              }
             }
           }
-        }
-
-        .user-access {
-          height: calc(100% - 202px);
+  
+          .user-access {
+            height: calc(100% - 202px);
+          }
         }
       }
     }
@@ -862,118 +877,117 @@
 
 @media (max-width: 600px) {
   .outer {
-    height: 600px;
-    max-height: 600px;
-
     .sharing {
       .tabs {
         padding-top: 1rem;
 
-        .content-access {
-          &::after {
-            margin-top: 1rem;
-          }
-
-          .link-access-field {
-            flex-wrap: wrap;
-            margin-top: 1rem;
-
-            input[type="text"] {
-              width: calc(100% - 42px);
-              order: 1;
-            }
-
-            .copy {
-              order: 2;
-            }
-
-            .dropdown-wrapper {
-              width: 100%;
-              order: 3;
-              margin-top: 1rem;
-              margin-left: 0;
-
-              .dropdown-button {
-                width: 100%;
-              }
-            }
-          }
-
-          .toggle-field {
-            margin-top: 1rem;
-
-            .toggle-description {
+        .tab-content {
+          .content-access {
+            &::after {
               margin-top: 1rem;
             }
-          }
-        }
-
-        .user-access {
-          height: calc(100% - 226px);
-          margin: 1rem 1.875rem;
-        }
-
-        .search {
-          margin: 1rem 2.5rem 0.5rem 2.5rem;
-        }
-
-        .interaction-container {
-          margin-bottom: 1rem;
-
-          .mail-notification {
-            margin-top: 0.5rem;
-
-            .mail-container {
-              .user-mail {
-                margin-bottom: 0.5rem;
-                margin-right: 0.5rem;
-                font-size: 0.875rem;
+  
+            .link-access-field {
+              flex-wrap: wrap;
+              margin-top: 1rem;
+  
+              input[type="text"] {
+                width: calc(100% - 42px);
+                order: 1;
               }
-            }
-
-            .checkbox-notification {
-              font-size: 0.875rem;
-            }
-
-            .interaction-mail {
-              flex-direction: column;
-
-              textarea {
-                width: 100%;
+  
+              .copy {
+                order: 2;
               }
-
-              .interaction-buttons {
-                flex-direction: row;
+  
+              .dropdown-wrapper {
                 width: 100%;
-                margin-top: 0.5rem;
-
-                .send-button {
-                  width: calc(50% - 0.25rem);
-                  margin-left: 0.25rem;
-                  margin-top: 0;
-                }
-
-                .dropdown-wrapper {
-                  width: calc(50% - 0.25rem);
-                  margin-right: 0.25rem;
+                order: 3;
+                margin-top: 1rem;
+                margin-left: 0;
+  
+                .dropdown-button {
+                  width: 100%;
                 }
               }
             }
-          }
-
-          .user-suggestions {
-            margin-top: 1rem;
-
-            .user {
-              height: 35px;
-
-              .photo {
-                height: 25px;
-                width: 25px;
+  
+            .toggle-field {
+              margin-top: 1rem;
+  
+              .toggle-description {
+                margin-top: 1rem;
               }
-
-              .email {
+            }
+          }
+  
+          .user-access {
+            height: calc(100% - 226px);
+            margin: 1rem 1.875rem;
+          }
+  
+          .search {
+            margin: 1rem 2.5rem 0.5rem 2.5rem;
+          }
+  
+          .interaction-container {
+            margin-bottom: 1rem;
+  
+            .mail-notification {
+              margin-top: 0.5rem;
+  
+              .mail-container {
+                .user-mail {
+                  margin-bottom: 0.5rem;
+                  margin-right: 0.5rem;
+                  font-size: 0.875rem;
+                }
+              }
+  
+              .checkbox-notification {
                 font-size: 0.875rem;
+              }
+  
+              .interaction-mail {
+                flex-direction: column;
+  
+                textarea {
+                  width: 100%;
+                }
+  
+                .interaction-buttons {
+                  flex-direction: row;
+                  width: 100%;
+                  margin-top: 0.5rem;
+  
+                  .send-button {
+                    width: calc(50% - 0.25rem);
+                    margin-left: 0.25rem;
+                    margin-top: 0;
+                  }
+  
+                  .dropdown-wrapper {
+                    width: calc(50% - 0.25rem);
+                    margin-right: 0.25rem;
+                  }
+                }
+              }
+            }
+  
+            .user-suggestions {
+              margin-top: 1rem;
+  
+              .user {
+                height: 35px;
+  
+                .photo {
+                  height: 25px;
+                  width: 25px;
+                }
+  
+                .email {
+                  font-size: 0.875rem;
+                }
               }
             }
           }
@@ -987,46 +1001,48 @@
   .outer {
     .sharing {
       .tabs {
-        .user-access {
-          .content-inner {
-            .user {
-              flex-wrap: wrap;
-              height: auto;
-              padding: 0.5rem 0.875rem;
-  
-              .user-info {
-                width: calc(100% - 49px);
-              }
-  
-              .user-access-func {
-                width: 100%;
-                padding-top: 0.5rem;
-                justify-content: space-around;
+        .tab-content {
+          .user-access {
+            .content-inner {
+              .user {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 0.5rem 0.875rem;
+    
+                .user-info {
+                  width: calc(100% - 49px);
+                }
+    
+                .user-access-func {
+                  width: 100%;
+                  padding-top: 0.5rem;
+                  justify-content: space-around;
+                }
               }
             }
           }
-        }
-
-        .interaction-container {
-          .mail-notification {
-            .interaction-mail {
-              .interaction-buttons {
-                flex-wrap: wrap;
-                margin-top: 0;
-
-                .send-button {
-                  width: 100%;
-                }
-
-                .dropdown-wrapper {
-                  width: 100%;
-                  margin-top: 0.5rem;
-                  margin-right: 0;
-                }
-
-                .send-button {
-                  margin-top: 0.5rem;
-                  margin-left: 0;
+  
+          .interaction-container {
+            .mail-notification {
+              .interaction-mail {
+                .interaction-buttons {
+                  flex-wrap: wrap;
+                  margin-top: 0;
+  
+                  .send-button {
+                    width: 100%;
+                  }
+  
+                  .dropdown-wrapper {
+                    width: 100%;
+                    margin-top: 0.5rem;
+                    margin-right: 0;
+                  }
+  
+                  .send-button {
+                    margin-top: 0.5rem;
+                    margin-left: 0;
+                  }
                 }
               }
             }
@@ -1076,24 +1092,26 @@
   .outer {
     .sharing {
       .tabs {
-        .user-access {
-          margin: 1rem 1.125rem;
-          width: calc(100% - 2.25rem);
-        }
-
-        .content-access {
-          width: calc(100% - 3.5rem);
-          margin: 0 1.75rem;
-        }
-
-        .search {
-          margin: 1rem 1.75rem 0.5rem 1.75rem;
-          width: calc(100% - 3.5rem);
-        }
-
-        .interaction-container {
-          margin: 0 1.125rem 1rem 1.125rem;
-          width: calc(100% - 2.25rem);
+        .tab-content {
+          .user-access {
+            margin: 1rem 1.125rem;
+            width: calc(100% - 2.25rem);
+          }
+  
+          .content-access {
+            width: calc(100% - 3.5rem);
+            margin: 0 1.75rem;
+          }
+  
+          .search {
+            margin: 1rem 1.75rem 0.5rem 1.75rem;
+            width: calc(100% - 3.5rem);
+          }
+  
+          .interaction-container {
+            margin: 0 1.125rem 1rem 1.125rem;
+            width: calc(100% - 2.25rem);
+          }
         }
       }
     }
@@ -1112,7 +1130,6 @@
     .few-notes {
       .notes-sharing {
         width: 100%;
-        height: calc(100% - 37px);
         margin: 0 0 0.625rem 0;
 
         .note {

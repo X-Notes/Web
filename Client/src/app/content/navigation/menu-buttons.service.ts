@@ -32,8 +32,8 @@ import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 export class MenuButtonsService {
 
   constructor(private store: Store,
-    private dialogService: DialogService,
-    private snackService: SnackbarService) { }
+              private dialogService: DialogService,
+              private snackService: SnackbarService) { }
 
 
   public saveItems: MenuItem[] = [];
@@ -385,7 +385,7 @@ export class MenuButtonsService {
   // SHARING
   shareEntity() {
     const config: MatDialogConfig = {
-      maxHeight: '100%',
+      maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass: this.getTheme() === ThemeENUM.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
@@ -401,7 +401,7 @@ export class MenuButtonsService {
   openSideModal() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig = {
-      maxHeight: '100%',
+      maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass: theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
@@ -803,14 +803,14 @@ export class MenuButtonsService {
 
       if (isInnerNote) {
         const note = this.store.selectSnapshot(NoteStore.oneFull);
-        const ids = [note.id];
+        const idsInner = [note.id];
         this.deletePermSnackbar(language.name, 'Note', false);
-        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+        this.store.dispatch(new DeleteNotesPermanently(idsInner, type));
       } else {
-        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const isMany = ids.length > 1 ? true : false;
+        const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
+        const isMany = idsOuter.length > 1 ? true : false;
         this.deletePermSnackbar(language.name, 'Note', isMany);
-        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+        this.store.dispatch(new DeleteNotesPermanently(idsOuter, type));
       }
     }
   }

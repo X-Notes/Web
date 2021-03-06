@@ -40,18 +40,14 @@
 }
 
 .dark, .light {
-  .sharing {
+  .tabs {
     .mat-tab-label {
-      width: 50%;
-      min-width: initial;
       font-size: 1.25rem;
       opacity: 1;
-      user-select: none;
     }
     .mat-ink-bar {
       height: 3px;
       border-radius: 5px;
-      width: 50% !important;
       transition-property: left, right;
     }
     .mat-tab-body-wrapper {
@@ -61,7 +57,7 @@
 }
 
 .light {
-  .sharing, .dialog-content {
+  .tabs {
     .mat-tab-label {
       color: #808080;
     }
@@ -80,7 +76,7 @@
 }
 
 .dark {
-  .sharing, .dialog-content {
+  .tabs {
     .mat-tab-label {
       color: white;
     }
@@ -430,27 +426,6 @@
   }
 }
 
-.dark, .light {
-  .dialog-content {
-    .mat-tab-label {
-      flex: 0 1 calc(100% / 3);
-      min-width: initial;
-      font-size: 1.25rem;
-      opacity: 1;
-      user-select: none;
-    }
-    .mat-ink-bar {
-      height: 3px;
-      border-radius: 5px;
-      flex: 0 1 calc(100% / 3);
-      transition-property: left, right;
-    }
-    .mat-tab-body-wrapper {
-      flex-grow: 1;
-    }
-  }
-}
-
 @media (max-width: 1680px) {
   .grid-item {
     width: calc(100% / 3);
@@ -517,7 +492,7 @@
 
 @media (max-width: 450px) {
   .light, .dark {
-    .sharing {
+    .tabs {
       .mat-tab-label {
         font-size: 1rem;
         height: 44px;
