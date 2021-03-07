@@ -1,6 +1,6 @@
 import { ActiveDescendantKeyManager, FocusKeyManager } from '@angular/cdk/a11y';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { AfterViewInit, Component, ContentChildren, forwardRef, Input, OnInit, Optional, QueryList } from '@angular/core';
+import { AfterViewInit, Component, ContentChildren, EventEmitter, forwardRef, Input, OnInit, Optional, Output, QueryList } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { showDropdown } from '../../services/personalization.service';
 import { SelectService } from '../../services/select.service';
@@ -38,6 +38,9 @@ export class SelectComponent implements OnInit, AfterViewInit {
   @Optional()
   selectValue: string;
 
+  @Output()
+  selectValueChange = new EventEmitter<string>();
+
   public positions = [
     new ConnectionPositionPair({
       originX: 'end',
@@ -62,11 +65,12 @@ export class SelectComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.selectValue = this.selectValue.toLowerCase();
   }
 
   onKeydown(event) {
     if (event.keyCode === ENTER && this.keyManager.activeItem?.value !== this.selected) {
-      this.selected = this.keyManager.activeItem?.value;
+      this.selectOption(this.keyManager.activeItem)
       this.closeDropdown();
     }
     else {
@@ -75,8 +79,10 @@ export class SelectComponent implements OnInit, AfterViewInit {
   }
 
   public selectOption(option: SelectOptionComponent) {
+    this.keyManager.setActiveItem(option);
     this.selectedOption = option;
     this.selected = this.selectedOption ? this.selectedOption.value : '';
+    this.selectValueChange.emit(this.selected);
     this.closeDropdown();
   }
 

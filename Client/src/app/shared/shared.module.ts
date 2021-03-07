@@ -75,6 +75,7 @@ import { SelectOptionComponent } from './custom-components/select-option/select-
     GetImagePipe,
     MatSnackBarModule,
     NoteComponent,
+    SelectComponent,
     SelectOptionComponent
   ],
   providers: [DialogService, OrderService, BackgroundService],

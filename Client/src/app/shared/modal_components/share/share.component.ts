@@ -57,12 +57,49 @@ export class ShareComponent implements OnInit, OnDestroy {
   searchStr: string;
   searchStrChanged: Subject<string> = new Subject<string>();
   searchUsers: SearchUserForShareModal[] = [];
-  selectedUsers: SearchUserForShareModal[] = [];
+  selectedUsers: SearchUserForShareModal[] = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    }
+  ];
 
   @ViewChild('tabs', { static: false }) tabs;
 
-  @Select(NoteStore.getUsersOnPrivateNote)
-  public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
+  public usersOnPrivateNote$: any = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    }
+  ];
 
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
@@ -82,7 +119,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   // INVITES
   messageTextArea: string;
   isSendNotification: boolean;
-  refTypeForInvite: RefTypeENUM = RefTypeENUM.Viewer;
+  refTypeForInvite: RefTypeENUM = RefTypeENUM.viewer;
 
   constructor(
     public pService: PersonalizationService,
@@ -245,7 +282,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   async changeNoteType() {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
       const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === RefTypeENUM.viewer);
       await this.apiNote.makePublic(viewer, this.currentNote.id).toPromise();
       this.currentNote.noteType = shareType;
       this.notes.find(note => note.id === this.currentNote.id).noteType = shareType;
@@ -266,7 +303,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   async changeFolderType() {
     if (this.currentFolder.folderType.name !== FolderTypeENUM.Shared) {
       const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.viewer);
       await this.apiFolder.makePublic(viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderType = shareType;
       this.folders.find(note => note.id === this.currentFolder.id).folderType = shareType;
@@ -323,8 +360,8 @@ export class ShareComponent implements OnInit, OnDestroy {
     return commands;
   }
 
-  async changeRefTypeNote(refTypeRoad: RefTypeENUM) {
-    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
+  async changeRefTypeNote(refTypeRoad: string) {
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === refTypeRoad);
     await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
     this.currentNote.refType = refType;
     this.notes.find(note => note.id === this.currentNote.id).refType = refType;
@@ -367,6 +404,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   changeNote(note: SmallNote) {
     this.currentNote = { ...note };
+    console.log(this.currentNote);
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 

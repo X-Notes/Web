@@ -46,75 +46,30 @@
                     <div class="content-access">
                         <div class="link-access-field">
                             <input *ngIf="currentWindowType === windowType.Note"
-                                [ngClass]="currentNote?.noteType !== noteType.Shared ? 'link-width-not-shared' : 'link-width-shared'"
                                 readonly type="text" value="{{ currentNote?.id | sharingLink: currentWindowType}}"
                                 id="linkInputNote">
                             <input *ngIf="currentWindowType === windowType.Folder"
-                                [ngClass]="currentNote?.noteType !== noteType.Shared ? 'link-width-not-shared' : 'link-width-shared'"
                                 readonly type="text" value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
                                 id="linkInputFolder">
                             <div class="dropdown-wrapper" *ngIf="currentFolder?.folderType === folderType.Shared && currentWindowType === windowType.Folder">
-                                <button
-                                    class="dropdown-button" type="button"
-                                    cdkOverlayOrigin
-                                    #dropdown1
-                                    #origin="cdkOverlayOrigin"
-                                    (click)="isOpenDropdown = !isOpenDropdown">
-                                    <div class="content-button" #dropdownSelect>
-                                        <p *ngIf="currentFolder?.refType === refType.Viewer">Viewer</p>
-                                        <p *ngIf="currentFolder?.refType === refType.Editor">Editor</p>
-                                        <div class="icon" [ngStyle]="{'transform': isOpenDropdown ? 'rotate(180deg)' : '' }">
-                                            <i class="icon-select-label"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                                </button>
-                                <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-                                            [cdkConnectedOverlayOpen]="isOpenDropdown"
-                                            [cdkConnectedOverlayHasBackdrop]="true"
-                                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                            [cdkConnectedOverlayPositions]="positions"
-                                            (backdropClick)="closeDropdown()">
-                                    <div class="dropdown" [@showDropdown] [style.width.px]="dropdown1.offsetWidth">
-                                        <div class="item" (click)="changeRefTypeFolder(refType.Viewer)">
-                                            <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
-                                        </div>
-                                        <div class="item" (click)="changeRefTypeFolder(refType.Editor)">
-                                            <p>{{ 'modal.ShareModal.editor' | translate }}</p>
-                                        </div>
-                                    </div>
-                                </ng-template>
+                                <app-select class="dropdown-button"
+                                    [translate]="'modal.ShareModal'"
+                                    [selectValue]="currentNote?.refType.name"
+                                    (selectValueChange)="changeRefTypeFolder($event)">
+                                    <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                                        {{ ('modal.ShareModal.' + item) | translate }}
+                                    </app-select-option>
+                                </app-select>
                             </div>
-                            <div class="dropdown-wrapper" *ngIf="currentNote?.noteType === noteType.Shared && currentWindowType === windowType.Note">
-                                <button class="dropdown-button" type="button"
-                                    cdkOverlayOrigin
-                                    #origin2="cdkOverlayOrigin"
-                                    #dropdown2
-                                    (click)="isOpenDropdown2 = !isOpenDropdown2">
-                                    <div class="content-button" #dropdownSelect>
-                                        <p *ngIf="currentNote?.refType === refType.Viewer">Viewer</p>
-                                        <p *ngIf="currentNote?.refType === refType.Editor">Editor</p>
-                                        <div class="icon" [ngStyle]="{'transform': isOpenDropdown2 ? 'rotate(180deg)' : '' }">
-                                            <i class="icon-select-label"></i>
-                                        </div>
-                                    </div>
-                                    <div class="ripple-container" matRipple [matRippleTrigger]="dropdownSelect"></div>
-                                </button>
-                                <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin2"
-                                            [cdkConnectedOverlayOpen]="isOpenDropdown2"
-                                            [cdkConnectedOverlayHasBackdrop]="true"
-                                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                            [cdkConnectedOverlayPositions]="positions"
-                                            (backdropClick)="closeDropdown()">
-                                    <div class="dropdown" [@showDropdown] [style.width.px]="dropdown2.offsetWidth">
-                                        <div class="item" (click)="changeRefTypeNote(refType.Viewer)">
-                                            <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
-                                        </div>
-                                        <div class="item" (click)="changeRefTypeNote(refType.Editor)">
-                                            <p>{{ 'modal.ShareModal.editor' | translate }}</p>
-                                        </div>
-                                    </div>
-                                </ng-template>
+                            <div class="dropdown-wrapper" *ngIf="currentNote?.noteType.name === noteType.Shared && currentWindowType === windowType.Note">
+                                <app-select class="dropdown-button"
+                                    [translate]="'modal.ShareModal'"
+                                    [selectValue]="currentNote?.refType.name"
+                                    (selectValueChange)="changeRefTypeNote($event)">
+                                    <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                                        {{ ('modal.ShareModal.' + item) | translate }}
+                                    </app-select-option>
+                                </app-select>
                             </div>
                             <div class="copy" #copy (click)="copyInputLink()">
                                 <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
@@ -173,7 +128,7 @@
                         [visibility]="'hover'"
                         [appearance]="'compact'">
                         <div class="content-inner">
-                            <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
+                            <div *ngFor="let user of usersOnPrivateNote$" class="user">
                                 <div class="photo">
                                     <img alt="user image" [src]="user.photoId | getImage">
                                 </div>
@@ -186,14 +141,14 @@
                                     </div>
                                 </div>
                                 <div class="user-access-func">
-                                    <button type="button" name="" (click)="changeUserPermission(refType.Viewer, user.id)">
-                                        <div class="icon" [ngClass]="(user.accessType === refType.Viewer) ? 'black' : ''">
+                                    <button type="button" name="" (click)="changeUserPermission(refType.viewer, user.id)">
+                                        <div class="icon" [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''">
                                             <i class="icon-cancel"></i>
                                         </div>
                                     </button>
                                     <div class="separator-buttons"></div>
-                                    <button type="button" name="" (click)="changeUserPermission(refType.Editor, user.id)">
-                                        <div class="icon" [ngClass]="(user.accessType === refType.Editor) ? 'black' : ''">
+                                    <button type="button" name="" (click)="changeUserPermission(refType.editor, user.id)">
+                                        <div class="icon" [ngClass]="(user.accessType === refType.editor) ? 'black' : ''">
                                             <i class="icon-cancel"></i>
                                         </div>
                                     </button>
@@ -226,14 +181,14 @@
                                 </div>
                             </div>
                             <div class="user-access-func">
-                                <button type="button" name="" (click)="changeUserPermission(refType.Viewer, user.id)">
-                                    <div class="icon" [ngClass]="(user.accessType === refType.Viewer) ? 'black' : ''">
+                                <button type="button" name="" (click)="changeUserPermission(refType.viewer, user.id)">
+                                    <div class="icon" [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''">
                                         <i class="icon-cancel"></i>
                                     </div>
                                 </button>
                                 <div class="separator-buttons"></div>
-                                <button type="button" name="" (click)="changeUserPermission(refType.Editor, user.id)">
-                                    <div class="icon" [ngClass]="(user.accessType === refType.Editor) ? 'black' : ''">
+                                <button type="button" name="" (click)="changeUserPermission(refType.editor, user.id)">
+                                    <div class="icon" [ngClass]="(user.accessType === refType.editor) ? 'black' : ''">
                                         <i class="icon-cancel"></i>
                                     </div>
                                 </button>
@@ -275,40 +230,14 @@
                             <div class="interaction-mail">
                                 <textarea [(ngModel)]="messageTextArea"></textarea>
                                 <div class="interaction-buttons">
-                                    <div class="dropdown-wrapper">
-                                        <button class="dropdown-button" type="button"
-                                                cdkOverlayOrigin
-                                                #origin3="cdkOverlayOrigin"
-                                                #dropdown3
-                                                (click)="isOpenDropdown3 = !isOpenDropdown3">
-                                            <div class="content-button" #AccessSelect>
-                                                <p *ngIf="refTypeForInvite === refType.Viewer">
-                                                    {{ 'modal.ShareModal.viewer' | translate }}</p>
-                                                <p *ngIf="refTypeForInvite === refType.Editor">
-                                                    {{ 'modal.ShareModal.editor' | translate }}</p>
-                                                <div class="icon"
-                                                    [ngStyle]="{'transform': isOpenDropdown3 ? 'rotate(180deg)' : '' }">
-                                                    <i class="icon-select-label"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ripple-container" matRipple [matRippleTrigger]="AccessSelect"></div>
-                                        </button>
-                                        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin3"
-                                            [cdkConnectedOverlayOpen]="isOpenDropdown3"
-                                            [cdkConnectedOverlayHasBackdrop]="true"
-                                            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-                                            [cdkConnectedOverlayPositions]="positions"
-                                            (backdropClick)="closeDropdown()">
-                                            <div class="dropdown" [@showDropdown] [style.width.px]="dropdown3.offsetWidth">
-                                                <div class="item" (click)="refTypeNotification(refType.Viewer)">
-                                                    <p>{{ 'modal.ShareModal.viewer' | translate }}</p>
-                                                </div>
-                                                <div class="item" (click)="refTypeNotification(refType.Editor)">
-                                                    <p>{{ 'modal.ShareModal.editor' | translate }}</p>
-                                                </div>
-                                            </div>
-                                        </ng-template>
-                                    </div>
+                                    <app-select class="dropdown-button"
+                                        [translate]="'modal.ShareModal'"
+                                        [selectValue]="currentNote?.refType.name"
+                                        (selectValueChange)="refTypeNotification($event)">
+                                        <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                                            {{ ('modal.ShareModal.' + item) | translate }}
+                                        </app-select-option>
+                                    </app-select>
                                     <button class="send-button" type="button" #changeAccessRipple (click)="sendInvites()">
                                         <div class="content-button">
                                             <p>{{ 'modal.ShareModal.send' | translate }}</p>

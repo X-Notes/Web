@@ -43,6 +43,7 @@
   .tabs {
     .mat-tab-label {
       font-size: 1.25rem;
+      user-select: none;
       opacity: 1;
     }
     .mat-ink-bar {
@@ -319,26 +320,6 @@
     left: 50%;
   }
 }
-
-.dropdown-button {
-  border-color: #c5c5c5;
-
-  .content-button {
-    justify-content: space-between;
-    padding: 0 1rem;
-    cursor: pointer;
-
-    p {
-      font-weight: 500;
-    }
-
-    p,
-    .icon {
-      position: relative;
-      z-index: 5;
-    }
-  }
-} // TODO remove this shit
 
 .separator-buttons {
   height: 20px;
