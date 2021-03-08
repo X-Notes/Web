@@ -36,6 +36,8 @@ import { GetImagePipe } from './pipes/get-image.pipe';
 import { SelectComponent } from './custom-components/select/select.component';
 import { ChipComponent } from './custom-components/chip/chip.component';
 import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
+import { ButtonToggleComponent } from './custom-components/button-toggle/button-toggle.component';
+import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
 
 @NgModule({
   declarations: [ChangeColorComponent, EditingLabelsNoteComponent, ReplacePipe,
@@ -53,7 +55,9 @@ import { SelectOptionComponent } from './custom-components/select-option/select-
     GetImagePipe,
     SelectComponent,
     ChipComponent,
-    SelectOptionComponent
+    SelectOptionComponent,
+    ButtonToggleComponent,
+    ToggleTextComponent
   ],
   imports: [CommonModule, MatRippleModule,
     TranslateModule, MatDialogModule, HammerModule, FormsModule, MatTabsModule,
@@ -76,7 +80,9 @@ import { SelectOptionComponent } from './custom-components/select-option/select-
     MatSnackBarModule,
     NoteComponent,
     SelectComponent,
-    SelectOptionComponent
+    SelectOptionComponent,
+    ButtonToggleComponent,
+    ToggleTextComponent
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent]

@@ -93,13 +93,13 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
     let snackbarRef;
     switch (language.name) {
-      case LanguagesENUM.English:
+      case LanguagesENUM.english:
         snackbarRef = this.snackService.openSnackBar(`Label moved to bin`, 'Undo');
         break;
-      case LanguagesENUM.Russian:
+      case LanguagesENUM.russian:
         snackbarRef = this.snackService.openSnackBar(`Ярлык перенесен в корзину`, 'Отменить');
         break;
-      case LanguagesENUM.Ukraine:
+      case LanguagesENUM.ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
         break;
     }
@@ -117,13 +117,13 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
     let snackbarRef;
     switch (language.name) {
-      case LanguagesENUM.English:
+      case LanguagesENUM.english:
         snackbarRef = this.snackService.openSnackBar(`Label deleted permanently`, null);
         break;
-      case LanguagesENUM.Russian:
+      case LanguagesENUM.russian:
         snackbarRef = this.snackService.openSnackBar(`Ярлык удален безвозвратно`, null);
         break;
-      case LanguagesENUM.Ukraine:
+      case LanguagesENUM.ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлык удален безповоротно`, null);
         break;
     }

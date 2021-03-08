@@ -65,12 +65,12 @@ export class SelectComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.selectValue = this.selectValue.toLowerCase();
+    this.selectValue = this.selectValue ? this.selectValue.toLowerCase() : undefined;
   }
 
   onKeydown(event) {
     if (event.keyCode === ENTER && this.keyManager.activeItem?.value !== this.selected) {
-      this.selectOption(this.keyManager.activeItem)
+      this.selectOption(this.keyManager.activeItem);
       this.closeDropdown();
     }
     else {

@@ -129,11 +129,8 @@
             margin-top: 1.25rem;
   
             .toggle {
+              height: 32px;
               width: 200px;
-  
-              .rectangle {
-                background: #f2f2f2;
-              }
             }
   
             .toggle-description {
@@ -641,31 +638,6 @@
           .link-access-field {
             input[type="text"] {
               border-color: #c5c5c5;
-            }
-          }
-  
-          .toggle-field {
-            .toggle {
-              .text-toggle {
-                .text {
-                  color: #484848;
-  
-                  &:last-child {
-                    color: white;
-                  }
-                }
-              }
-  
-              .active-toggle + .text-toggle {
-                .text {
-                  &:first-child {
-                    color: white;
-                  }
-                  &:last-child {
-                    color: #484848;
-                  }
-                }
-              }
             }
           }
         }

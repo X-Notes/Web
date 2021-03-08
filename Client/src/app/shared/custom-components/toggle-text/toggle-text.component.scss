@@ -1,0 +1,22 @@
+@import 'variables';
+
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+    transition: 0.2s ease;
+}
+
+p {
+    transition: 0.15s ease;
+}
+
+.light {
+    color: $text-color;
+}
+
+.dark {
+    color: white;
+}

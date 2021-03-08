@@ -16,7 +16,7 @@ export class SelectOptionComponent implements OnInit, Highlightable {
   private select: SelectComponent;
 
   @HostBinding('class.selected')
-  public get selected(): boolean {  
+  public get selected(): boolean {
     return this.select.selectedOption === this;
   }
 
@@ -40,6 +40,7 @@ export class SelectOptionComponent implements OnInit, Highlightable {
   }
 
   ngOnInit(): void {
+    this.value.toLowerCase();
   }
 
   @HostListener('click', ['$event'])

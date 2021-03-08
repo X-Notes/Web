@@ -51,10 +51,10 @@
                             <input *ngIf="currentWindowType === windowType.Folder"
                                 readonly type="text" value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
                                 id="linkInputFolder">
-                            <div class="dropdown-wrapper" *ngIf="currentFolder?.folderType === folderType.Shared && currentWindowType === windowType.Folder">
+                            <div class="dropdown-wrapper" *ngIf="currentFolder?.folderType.name.toLowerCase() === folderType.Shared && currentWindowType === windowType.Folder">
                                 <app-select class="dropdown-button"
                                     [translate]="'modal.ShareModal'"
-                                    [selectValue]="currentNote?.refType.name"
+                                    [selectValue]="currentFolder?.refType.name"
                                     (selectValueChange)="changeRefTypeFolder($event)">
                                     <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
                                         {{ ('modal.ShareModal.' + item) | translate }}
@@ -77,20 +77,18 @@
                             </div>
                         </div>
                         <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
-                            <div class="toggle">
-                                <input type="checkbox" (change)="changeNoteType()">
-                                <div class="rectangle"
-                                    [ngClass]="currentNote?.noteType !== noteType.Shared ? '' : 'active-toggle'">
-                                </div>
-                                <div class="text-toggle">
-                                    <div class="text">
-                                        <p>{{ 'modal.ShareModal.personal' | translate }}</p>
-                                    </div>
-                                    <div class="text">
-                                        <p>{{ 'modal.ShareModal.shared' | translate }}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <app-button-toggle
+                                class="toggle"
+                                [value]="currentNote?.noteType.name === 'Private' ?  false : true"
+                                [style]="'classic'"
+                                (valueChange)=changeNoteType()>
+                                <app-toggle-text on
+                                    [color]="(theme$ | async).name === 'Dark' && currentNote?.noteType.name === 'Private' ? '#202020' : ''">
+                                    {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text>
+                                <app-toggle-text off
+                                    [color]="(theme$ | async).name === 'Dark' && currentNote?.noteType.name === 'Shared' ? '#202020' : ''">
+                                    {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text>
+                            </app-button-toggle>
                             <div class="toggle-description">
                                 <p *ngIf="currentNote?.noteType !== noteType.Shared">Anyone on the internet with this links
                                 </p>
@@ -99,20 +97,18 @@
                             </div>
                         </div>
                         <div *ngIf="currentWindowType === windowType.Folder" class="toggle-field">
-                            <div class="toggle">
-                                <input type="checkbox" (change)="changeFolderType()">
-                                <div class="rectangle"
-                                    [ngClass]="currentFolder?.folderType !== folderType.Shared ? '' : 'active-toggle'">
-                                </div>
-                                <div class="text-toggle">
-                                    <div class="text">
-                                        <p>{{ 'modal.ShareModal.personal' | translate }}</p>
-                                    </div>
-                                    <div class="text">
-                                        <p>{{ 'modal.ShareModal.shared' | translate }}</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <app-button-toggle
+                                class="toggle"
+                                [value]="currentFolder?.folderType.name === 'Private' ?  false : true"
+                                [style]="'classic'"
+                                (valueChange)=changeFolderType()>
+                                <app-toggle-text on
+                                    [color]="(theme$ | async).name === 'Dark' && currentFolder?.folderType.name === 'Private' ? '#202020' : ''">
+                                    {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text>
+                                <app-toggle-text off
+                                    [color]="(theme$ | async).name === 'Dark' && currentFolder?.folderType.name === 'Shared' ? '#202020' : ''">
+                                    {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text>
+                            </app-button-toggle>
                             <div class="toggle-description">
                                 <p *ngIf="currentFolder?.folderType !== folderType.Shared">Anyone on the internet with this
                                     links
