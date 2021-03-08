@@ -254,9 +254,8 @@
               }
 
               .toggle {
-                .rectangle {
-                  background: linear-gradient(97.88deg, #0083BB 0%, #00AFE7 100%);
-                }
+                width: 190px;
+                height: 32px;
               }
             }
 
@@ -279,10 +278,8 @@
 
           .dropdown-button {
             width: 150px;
-            background-color: white;
+            height: 32px;
             margin-left: 1.25rem;
-            color: $text-color;
-            cursor: default;
 
             .content-button {
               justify-content: space-between;
@@ -331,35 +328,6 @@
   }
 }
 
-.dropdown {
-  display: flex;
-  flex-direction: column;
-  width: 150px;
-  max-height: 144px;
-  padding: 0.25rem 0;
-  background-color: white;
-  border-radius: 5px;
-
-  .item {
-    display: flex;
-    align-items: center;
-    width: calc(100% - 1rem);
-    height: 24px;
-    min-height: 24px;
-    margin: 0 0.5rem;
-    padding-left: 0.5rem;
-    transition: 0.2s ease;
-    border-radius: 5px;
-    color: #202020;
-    font-size: 0.825rem;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #dadada;
-    }
-  }
-}
-
 .light {
   .content-inner {
     .main {
@@ -401,44 +369,6 @@
               
               .dropdown {
                 box-shadow: 0px 1px 2px grey;
-              }
-            }
-          }
-        }
-
-        .personalization-setting {
-          .fields {
-
-            .field:first-child {
-              .general-row {
-                .toggle {
-                  .rectangle {
-                    left: 50%;
-                  }
-
-                  .text-toggle {
-                    .text:first-child {
-                      color: $text-color;
-                    }
-                  }
-                }
-              }
-            }
-            .field {
-              .general-row {
-                .toggle {
-                  .active-toggle+.text-toggle {
-                    .text:first-child {
-                      color: $text-color;
-                    }
-                  }
-
-                  .dark-text+.text-toggle {
-                    .text:last-child {
-                      color: $text-color;
-                    }
-                  }
-                }
               }
             }
           }

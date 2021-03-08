@@ -13,6 +13,10 @@
     cursor: pointer;
 
     &.active {
+        background-color: #efefef;
+    }
+
+    &.selected {
         background-color: #e0e0e0;
     }
 

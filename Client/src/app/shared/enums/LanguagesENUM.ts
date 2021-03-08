@@ -1,5 +1,5 @@
 export enum LanguagesENUM{
-    Ukraine = 'Ukraine',
-    Russian = 'Russian',
-    English = 'English'
+    ukraine = 'ukraine',
+    russian = 'russian',
+    english = 'english'
 }

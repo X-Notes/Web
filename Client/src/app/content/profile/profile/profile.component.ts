@@ -21,6 +21,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import {CdkConnectedOverlay, ConnectionPositionPair} from '@angular/cdk/overlay';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { Theme } from 'src/app/shared/models/Theme';
 
 @Component({
   selector: 'app-profile',
@@ -37,6 +38,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<ShortUser>;
@@ -133,30 +137,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  changeTheme() {
-    const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
+  changeTheme(value: boolean) {
     const themes = this.store.selectSnapshot(AppStore.getThemes);
-    if (userTheme.name === ThemeENUM.Dark)
-    {
+    if (value) {
       const whiteTheme = themes.find(x => x.name === ThemeENUM.Light);
       this.store.dispatch(new ChangeTheme(whiteTheme));
-    }
-    if (userTheme.name === ThemeENUM.Light){
+    } else {
       const darkTheme = themes.find(x => x.name === ThemeENUM.Dark);
       this.store.dispatch(new ChangeTheme(darkTheme));
     }
   }
 
-  changeFontSize() {
-    const userFontSize = this.store.selectSnapshot(UserStore.getUserFontSize);
+  changeFontSize(value: boolean) {
     const fontSizes = this.store.selectSnapshot(AppStore.getFontSizes);
-
-    if (userFontSize.name === FontSizeENUM.Medium)
-    {
+    if (value) {
       const bigSize = fontSizes.find(x => x.name === FontSizeENUM.Big);
       this.store.dispatch(new ChangeFontSize(bigSize));
-    }
-    if (userFontSize.name === FontSizeENUM.Big){
+    } else {
       const mediumSize = fontSizes.find(x => x.name === FontSizeENUM.Medium);
       this.store.dispatch(new ChangeFontSize(mediumSize));
     }

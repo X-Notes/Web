@@ -1,0 +1,6 @@
+<input type="checkbox" [ngModel]="value" (ngModelChange)="modelChangeFn($event)">
+<div class="rectangle" [ngClass]="style ? style : ''" [ngStyle]="{'left': value ? '50%' : '0'}" ></div>
+<div class="text-toggle">
+    <ng-content select="[on]"></ng-content>
+    <ng-content select="[off]"></ng-content>
+</div>

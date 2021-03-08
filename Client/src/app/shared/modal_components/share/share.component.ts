@@ -24,6 +24,8 @@ import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { EntityRef } from '../../models/entityRef';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Theme } from '../../models/Theme';
 
 export enum SharedType {
   Note,
@@ -41,9 +43,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   windowType = SharedType;
   currentWindowType: SharedType;
 
-  isOpenDropdown = false;
-  isOpenDropdown2 = false;
-  isOpenDropdown3 = false;
   noteType = NoteTypeENUM;
   folderType = FolderTypeENUM;
   refType = RefTypeENUM;
@@ -57,12 +56,52 @@ export class ShareComponent implements OnInit, OnDestroy {
   searchStr: string;
   searchStrChanged: Subject<string> = new Subject<string>();
   searchUsers: SearchUserForShareModal[] = [];
-  selectedUsers: SearchUserForShareModal[] = [];
+  selectedUsers: SearchUserForShareModal[] = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    }
+  ];
 
   @ViewChild('tabs', { static: false }) tabs;
 
-  @Select(NoteStore.getUsersOnPrivateNote)
-  public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
+  public usersOnPrivateNote$: any = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null
+    }
+  ];
+
+  @Select(UserStore.getUserTheme)
+  public theme$: Observable<Theme>;
 
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
@@ -82,7 +121,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   // INVITES
   messageTextArea: string;
   isSendNotification: boolean;
-  refTypeForInvite: RefTypeENUM = RefTypeENUM.Viewer;
+  refTypeForInvite: RefTypeENUM = RefTypeENUM.viewer;
 
   constructor(
     public pService: PersonalizationService,
@@ -184,12 +223,6 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeDropdown() {
-    this.isOpenDropdown = false;
-    this.isOpenDropdown2 = false;
-    this.isOpenDropdown3 = false;
-  }
-
   getFolders() {
     const selectionIds = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
@@ -245,7 +278,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   async changeNoteType() {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
       const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === RefTypeENUM.viewer);
       await this.apiNote.makePublic(viewer, this.currentNote.id).toPromise();
       this.currentNote.noteType = shareType;
       this.notes.find(note => note.id === this.currentNote.id).noteType = shareType;
@@ -264,9 +297,9 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeFolderType() {
-    if (this.currentFolder.folderType.name !== FolderTypeENUM.Shared) {
-      const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === RefTypeENUM.Viewer);
+    if (this.currentFolder.folderType.name.toLowerCase() !== FolderTypeENUM.Shared) {
+      const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x?.name.toLowerCase() === FolderTypeENUM.Shared);
+      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x?.name.toLowerCase() === RefTypeENUM.viewer);
       await this.apiFolder.makePublic(viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderType = shareType;
       this.folders.find(note => note.id === this.currentFolder.id).folderType = shareType;
@@ -274,7 +307,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.commandsForChange.set(this.currentFolder.id, commands);
       this.store.dispatch(new ChangeTypeFullFolder(shareType));
     } else {
-      const privateType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Private);
+      const privateType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x?.name.toLowerCase() === FolderTypeENUM.Private);
       await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
       this.currentFolder.folderType = privateType;
       this.folders.find(folder => folder.id === this.currentFolder.id).folderType = privateType;
@@ -323,27 +356,24 @@ export class ShareComponent implements OnInit, OnDestroy {
     return commands;
   }
 
-  async changeRefTypeNote(refTypeRoad: RefTypeENUM) {
-    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
+  async changeRefTypeNote(refTypeRoad: string) {
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === refTypeRoad);
     await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
     this.currentNote.refType = refType;
     this.notes.find(note => note.id === this.currentNote.id).refType = refType;
     this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType.name));
-    this.isOpenDropdown2 = false;
   }
 
-  async changeRefTypeFolder(refTypeRoad: RefTypeENUM) {
-    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name === refTypeRoad);
+  async changeRefTypeFolder(refTypeRoad: string) {
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === refTypeRoad);
     await this.apiFolder.makePublic(refType, this.currentFolder.id).toPromise();
     this.currentFolder.refType = refType;
     this.folders.find(folder => folder.id === this.currentFolder.id).refType = refType;
     this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType.name));
-    this.isOpenDropdown = false;
   }
 
   refTypeNotification(refType: RefTypeENUM): void {
     this.refTypeForInvite = refType;
-    this.isOpenDropdown3 = false;
   }
 
   async sendInvites() {
@@ -367,6 +397,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   changeNote(note: SmallNote) {
     this.currentNote = { ...note };
+    console.log(this.currentNote);
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 
