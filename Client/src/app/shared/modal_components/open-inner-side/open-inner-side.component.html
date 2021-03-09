@@ -4,23 +4,35 @@
         <i class="icon-plus" mat-dialog-close></i>
     </div>
     <div class="dialog-content" mat-dialog-content>
-        <mat-tab-group class="tabs" mat-align-tabs="start">
+        <mat-tab-group class="tabs" mat-stretch-tabs>
             <mat-tab label="Notes">
-                <div class="fixed-filters">
-                    <div class="d-flex">
-                        <div class="filter-row">
-                            <app-search class="search"></app-search>
-                            <app-select class="select"
-                                [translate]="'subMenu'"
-                                [selectValue]="'shared'"
-                                (changeItem)="selectItem($event)">
-                                <app-select-option *ngFor="let item of selectTypes" [value]="item">
-                                    {{ ('subMenu.' + item) | translate }}
-                                </app-select-option>
-                            </app-select>
-                        </div>
+                <div class="tab-content">
+                    <div class="filter-row">
+                        <app-search class="search"></app-search>
+                        <app-select class="select"
+                            [translate]="'subMenu'"
+                            [selectValue]="'shared'"
+                            (changeItem)="selectItem($event)">
+                            <app-select-option *ngFor="let item of selectTypes" [value]="item">
+                                {{ ('subMenu.' + item) | translate }}
+                            </app-select-option>
+                        </app-select>
                     </div>
-                    <div class="d-flex" [hidden]="!(selectedNotes.length > 0)">
+                    <ng-scrollbar
+                        #scrollbar
+                        class="content-scroll"
+                        [visibility]="'hover'"
+                        [appearance]="'compact'">
+                        <div class="content-inner">
+                            <div *ngIf="loaded" class="grid-modal" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+                                <div #item class="grid-modal-item" id="{{item.id}}" *ngFor="let item of notes"
+                                    [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']">
+                                    <app-note [note]="item" (highlightNote)="highlightNote($event)" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-scrollbar>
+                    <div class="fixed-filters" [hidden]="!(selectedNotes.length > 0)">
                         <div class="wrapper-chips">
                             <app-chip *ngFor="let item of selectedNotes"
                                 [color]="item.color"
@@ -29,25 +41,19 @@
                                 (remove)="unSelectNote(item)"></app-chip>
                         </div>
                     </div>
+                    <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
                 </div>
-                <ng-scrollbar
-                    #scrollbar
-                    class="content-scroll"
-                    [visibility]="'hover'"
-                    [appearance]="'compact'">
-                    <div class="content-inner">
-                        <div *ngIf="loaded" class="grid-modal" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
-                            <div #item class="grid-modal-item" id="{{item.id}}" *ngFor="let item of notes"
-                                [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']">
-                                <app-note [note]="item" (highlightNote)="highlightNote($event)" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
-                            </div>
-                        </div>
-                    </div>
-                </ng-scrollbar>
-                <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
             </mat-tab>
-            <mat-tab label="Files">In development</mat-tab>
-            <mat-tab label="Photos">In development</mat-tab>
+            <mat-tab label="Files">
+                <div class="tab-content">
+                    In development
+                </div>
+            </mat-tab>
+            <mat-tab label="Photos">
+                <div class="tab-content">
+                    In development
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
     <div class="dialog-actions" mat-dialog-actions>

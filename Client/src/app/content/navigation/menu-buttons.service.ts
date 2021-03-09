@@ -385,7 +385,7 @@ export class MenuButtonsService {
   // SHARING
   shareEntity() {
     const config: MatDialogConfig = {
-      maxHeight: '100%',
+      maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass: this.getTheme() === ThemeENUM.Light ? ['custom-dialog-class-light', 'sharing-modal'] : ['custom-dialog-class-dark', 'sharing-modal'],
@@ -401,7 +401,7 @@ export class MenuButtonsService {
   openSideModal() {
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig = {
-      maxHeight: '100%',
+      maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass: theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark'
@@ -642,7 +642,7 @@ export class MenuButtonsService {
   deleteSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.english: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to bin` : `Note moved to bin`, 'Undo');
         } else {
@@ -650,7 +650,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.russian: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Заметки перенесены в корзину` : `Заметка перенесена в корзину`, 'Отменить');
@@ -660,7 +660,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.ukraine: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Нотатки перенесені в кошик` : `Нотаток перенесений в кошик`, 'Відмінити');
@@ -677,7 +677,7 @@ export class MenuButtonsService {
   archiveSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.english: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Notes moved to archive` : `Note moved to archive`, 'Undo');
@@ -686,7 +686,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены в архив` : `Заметка перенесена в архив`, 'Отменить');
         } else {
@@ -694,7 +694,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені в архів` : `Нотаток перенесений в архів`, 'Відмінити');
         } else {
@@ -709,7 +709,7 @@ export class MenuButtonsService {
   privateSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.english: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes moved to personal` : `Note moved to personal`, 'Undo');
         } else {
@@ -717,7 +717,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Заметки перенесены ​​в личные` : `Заметка перенесена ​​в личные`, 'Отменить');
         } else {
@@ -726,7 +726,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Нотатки перенесені до особистих` : `Нотаток перенесений до особистих`, 'Відмінити');
         } else {
@@ -742,7 +742,7 @@ export class MenuButtonsService {
   deletePermSnackbar(language: string, type: string, isMany: boolean) {
     let snackbarRef;
     switch (language) {
-      case LanguagesENUM.English: {
+      case LanguagesENUM.english: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(isMany ? `Notes deleted permanently` : `Note deleted permanently`, null);
         } else {
@@ -750,7 +750,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Russian: {
+      case LanguagesENUM.russian: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`, null);
@@ -759,7 +759,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.Ukraine: {
+      case LanguagesENUM.ukraine: {
         if (type === 'Note') {
           snackbarRef =
             this.snackService.openSnackBar(isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`, null);
@@ -803,14 +803,14 @@ export class MenuButtonsService {
 
       if (isInnerNote) {
         const note = this.store.selectSnapshot(NoteStore.oneFull);
-        const ids = [note.id];
+        const idsInner = [note.id];
         this.deletePermSnackbar(language.name, 'Note', false);
-        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+        this.store.dispatch(new DeleteNotesPermanently(idsInner, type));
       } else {
-        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const isMany = ids.length > 1 ? true : false;
+        const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
+        const isMany = idsOuter.length > 1 ? true : false;
         this.deletePermSnackbar(language.name, 'Note', isMany);
-        this.store.dispatch(new DeleteNotesPermanently(ids, type));
+        this.store.dispatch(new DeleteNotesPermanently(idsOuter, type));
       }
     }
   }

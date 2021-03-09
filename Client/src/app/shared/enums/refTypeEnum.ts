@@ -1,4 +1,4 @@
 export enum RefTypeENUM {
-    Viewer = 'viewer',
-    Editor = 'editor'
+    viewer = 'viewer',
+    editor = 'editor'
 }
