@@ -48,7 +48,7 @@ namespace BI.services
                                 tempLabels.Where(x => x.Order >= request.Position && x.Order < label.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 label.Order = request.Position;
                             }
-                            await labelRepository.UpdateRangeLabels(tempLabels);
+                            await labelRepository.UpdateRange(tempLabels);
                         }
                         break;
                     }
@@ -72,7 +72,7 @@ namespace BI.services
                                 notesWithType.Where(x => x.Order >= request.Position && x.Order < note.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 note.Order = request.Position;
                             }
-                            await noteRepository.UpdateRangeNotes(notesWithType);
+                            await noteRepository.UpdateRange(notesWithType);
                         }
 
                         Console.WriteLine("Note");
@@ -98,7 +98,7 @@ namespace BI.services
                                 foldersWithType.Where(x => x.Order >= request.Position && x.Order < folder.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 folder.Order = request.Position;
                             }
-                            await folderRepository.UpdateRangeFolders(foldersWithType);
+                            await folderRepository.UpdateRange(foldersWithType);
                         }
                         Console.WriteLine("Note");
                         break;

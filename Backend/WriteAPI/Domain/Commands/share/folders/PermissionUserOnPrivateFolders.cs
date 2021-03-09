@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.Attributes;
+using Common.DatabaseModels.models;
 using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,11 @@ namespace Domain.Commands.share.folders
 {
     public class PermissionUserOnPrivateFolders : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [ValidationGuidAttribute]
         public Guid FolderId { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid UserId { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid AccessTypeId { set; get; }
     }
 }

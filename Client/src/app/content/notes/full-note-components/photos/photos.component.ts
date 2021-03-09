@@ -27,7 +27,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   deleteEvent = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<Album>;
+  content: Album;
 
   mainContainer;
 
@@ -52,7 +52,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
 
   removeHandler()
   {
-    this.deleteEvent.emit(this.content.contentId);
+    this.deleteEvent.emit(this.content.id);
   }
 
   changeWidth(diffrence: number)
@@ -119,30 +119,30 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   initPhotos() {
     this.mainBlocks = [];
     this.lastBlock = [];
-    const photoLength = this.content.data.photos.length;
+    const photoLength = this.content.photos.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-        this.mainBlocks.push(this.content.data.photos.slice(j, j + this.countItemsInMainBlock));
+        this.mainBlocks.push(this.content.photos.slice(j, j + this.countItemsInMainBlock));
         j += this.countItemsInMainBlock;
     }
     if (this.countLastItems > 0)
     {
-      this.lastBlock = this.content.data.photos.slice(photoLength - this.countLastItems, photoLength);
+      this.lastBlock = this.content.photos.slice(photoLength - this.countLastItems, photoLength);
     }
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.data.photos.length / this.countItemsInMainBlock);
+    return Math.floor(this.content.photos.length / this.countItemsInMainBlock);
   }
 
 
   get countLastItems() {
-    return this.content.data.photos.length % this.countItemsInMainBlock;
+    return this.content.photos.length % this.countItemsInMainBlock;
   }
 
   removePhotoHandler(id: string)
   {
-    this.content.data.photos = this.content.data.photos.filter(x => x.id !== id);
+    this.content.photos = this.content.photos.filter(x => x.id !== id);
     this.initPhotos();
   }
 

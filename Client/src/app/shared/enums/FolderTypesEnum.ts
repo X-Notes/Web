@@ -1,6 +1,6 @@
 export enum FolderTypeENUM {
-    Private = 'Private',
-    Shared = 'Shared',
-    Deleted = 'Deleted',
-    Archive = 'Archive'
+    Private = 'private',
+    Shared = 'shared',
+    Deleted = 'deleted',
+    Archive = 'archive'
 }

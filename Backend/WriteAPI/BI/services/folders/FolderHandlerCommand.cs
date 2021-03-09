@@ -39,7 +39,7 @@ namespace BI.services.folders
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var privateType = await appRepository.GetFolderTypeByName(ModelsNaming.PrivateFolder);
             var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
@@ -88,7 +88,7 @@ namespace BI.services.folders
             if (folders.Any())
             {
                 folders.ForEach(x => x.Color = request.Color);
-                await folderRepository.UpdateRangeFolders(folders);
+                await folderRepository.UpdateRange(folders);
             }
             else
             {

@@ -38,15 +38,15 @@
         [style.width.px]="sliderService.mainWidth" 
         class="main-content"
         >
-            <div class="note-color" [ngStyle]="{backgroundColor: (note$ | async)?.color}"></div>
+            <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
             <div class="labels-section">
-                <div class="label" *ngFor="let label of (note$ | async)?.labels | noDeletedLabels"
+                <div class="label" *ngFor="let label of note?.labels | noDeletedLabels"
                     [ngStyle]="{backgroundColor: label.color}">
                     <p>{{label.name}}</p>
                 </div>
             </div>
             <div class="title-section">
-                <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="(note$ | async)?.title"
+                <div contenteditable="true" (paste)="pasteCommandHandler($event)" [textContent]="note?.title"
                     class="title" (input)="onInput($event)"></div>
                 <div class="placeholder">Title</div>
                 <div class="left-border"></div>
@@ -54,14 +54,13 @@
             <div class="content-section">
                 <div *ngFor="let item of contents; let i = index;">
                     <div [ngSwitch]="item.type">
-                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.TEXT" 
+                        <app-html-text-part #htmlComp *ngSwitchCase="contentType.DEFAULT"
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"
                         (transformTo)="transformToType($event)" 
-                        [isLast]="i === contents.length - 1"
-                        (addToEndNewText)="addNewElementToEnd()"                  
+                        (updateText)="updateTextHandler($event, i === contents.length - 1)"
                         ></app-html-text-part>
                         <app-html-number-list #htmlComp *ngSwitchCase="contentType.NUMBERLIST" 
                         [prevContent]="contents[i - 1]"
@@ -70,6 +69,7 @@
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
+                        (updateText)="updateTextHandler($event, i === contents.length - 1)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"  
                         ></app-html-number-list>
                         <app-html-dot-list #htmlComp *ngSwitchCase="contentType.DOTLIST"
@@ -77,22 +77,25 @@
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
-                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        (concatThisWithPrev)="concatThisWithPrev($event)"
+                        (updateText)="updateTextHandler($event, i === contents.length - 1)"
                         ></app-html-dot-list>
                         <app-html-check-list #htmlComp *ngSwitchCase="contentType.CHECKLIST" 
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (transformTo)="transformToType($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
-                        (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        (concatThisWithPrev)="concatThisWithPrev($event)"
+                        (updateText)="updateTextHandler($event, i === contents.length - 1)"
                         ></app-html-check-list>
                         <app-html-headings #htmlComp *ngSwitchCase="contentType.HEADING" 
                         [content]="item"
                         (enterEvent)="enterHandler($event)"
                         (deleteThis)="deleteHTMLHandler($event)"
                         (concatThisWithPrev)="concatThisWithPrev($event)"  
+                        (updateText)="updateTextHandler($event, i === contents.length - 1)"
                         ></app-html-headings>
-                        <app-photos #htmlComp *ngSwitchCase="contentType.PHOTO" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
+                        <app-photos #htmlComp *ngSwitchCase="contentType.ALBUM" [content]="item" (deleteEvent)="removeAlbumHandler($event)"></app-photos>
                         <div *ngSwitchDefault>Default</div>
                     </div>               
                 </div>

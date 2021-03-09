@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Attributes;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Domain.Commands.noteInner
     {
         [Required]
         public List<IFormFile> Photos { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid NoteId { set; get; }
     }
 }

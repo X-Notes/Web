@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class AppFile
+    public class AppFile : BaseEntity
     {
-        public Guid Id { set; get; }
         public string Path { set; get; }
         public string Type { set; get; }
         public User User { get; set; }

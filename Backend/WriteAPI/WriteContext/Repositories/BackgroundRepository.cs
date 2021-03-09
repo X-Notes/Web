@@ -4,36 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class BackgroundRepository
+    public class BackgroundRepository : Repository<Backgrounds>
     {
-        private readonly WriteContextDB contextDB;
         public BackgroundRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
-        }
-
-        public async Task DeleteBackground(Backgrounds item)
-        {
-            this.contextDB.Remove(item);
-            await this.contextDB.SaveChangesAsync();
         }
 
         public async Task<bool> AddBackground(Backgrounds background, AppFile file)
         {
             var success = true;
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    await contextDB.Files.AddAsync(file);
-                    await contextDB.SaveChangesAsync();
+                    await context.Files.AddAsync(file);
+                    await context.SaveChangesAsync();
 
                     background.FileId = file.Id;
 
-                    await contextDB.Backgrounds.AddAsync(background);
+                    await context.Backgrounds.AddAsync(background);
 
                     await transaction.CommitAsync();
 

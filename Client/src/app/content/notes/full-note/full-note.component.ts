@@ -10,7 +10,7 @@ import { Store, Select } from '@ngxs/store';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle, UploadImagesToNote } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, take, takeUntil } from 'rxjs/operators';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -29,7 +29,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, CheckedList, ContentModel, ContentType, DotList, Heading, HtmlText, NumberList } from '../models/ContentMode';
+import { BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -39,6 +39,10 @@ import { TransformContent } from '../models/transform-content';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
+import { ApiServiceNotes } from '../api-notes.service';
+import { EditTextEventModel } from '../models/EditTextEventModel';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+
 
 
 @Component({
@@ -56,7 +60,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loaded = false;
   contentType = ContentType;
-  contents: ContentModel[] = [];
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
@@ -68,14 +71,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
-  @Select(NoteStore.oneFull)
-  note$: Observable<FullNote>;
+  note: FullNote;
+  contents: ContentModel[];
 
   theme = Theme;
 
   notes: number[] = [0, 1, 2, 3, 4, 5];
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+  newLine: Subject<void> = new Subject();
 
   private routeSubscription: Subscription;
   private id: string;
@@ -99,7 +103,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
               private selectionService: SelectionService,
               private apiBrowserFunctions: ApiBrowserTextService,
               public menuSelectionService: MenuSelectionService,
-              public buttonService: MenuButtonsService) {
+              public buttonService: MenuButtonsService,
+              private api: ApiServiceNotes) {
 
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -137,6 +142,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
+    this.contents = await this.api.getContents(this.id).toPromise();
+
+    this.store.select(NoteStore.oneFull)
+    .pipe(takeUntil(this.destroy))
+    .subscribe(note => this.note = note);
+
     this.loaded = true;
   }
 
@@ -146,18 +157,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const actions = types.map(x => new LoadNotes(x.id, x));
     await this.store.dispatch(actions).toPromise();
 
-    this.store.select(NoteStore.oneFull)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (note) => {
-        if (note) {
-          await this.setSideBarNotes(note.noteType.name);
-        }
-      });
+    await this.setSideBarNotes(this.note.noteType.name);
 
   }
 
   async ngOnInit() {
-    this.contents = this.contentService.getContent();
     this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
     this.sliderService.rend = this.rend;
@@ -165,8 +169,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
-      debounceTime(50))
+      debounceTime(updateNoteContentDelay))
       .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
+
+    this.newLine.pipe(
+      takeUntil(this.destroy),
+      debounceTime(updateNoteContentDelay))
+      .subscribe(async (event) => {
+        const resp = await this.api.newLine(this.note.id).toPromise();
+        if (resp.success){
+        this.contents.push(resp.data);
+        }
+      });
 
     setTimeout(() => this.murriService.gridSettings('.grid-item-small',
       document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
@@ -176,100 +190,88 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   removeAlbumHandler(id: string)
   {
-    console.log(id);
-    this.contents = this.contents.filter(x => x.contentId !== id);
+    console.log('TODO');
   }
 
   placeHolderClick($event) {
     $event.preventDefault();
-    setTimeout(() => this.textElements.last.setFocus());
+    setTimeout(() => this.textElements?.last?.setFocus());
   }
 
   mouseEnter($event) {
-    const native = this.textElements.last.getNative();
-    if (native.textContent.length !== 0)
+    const native = this.textElements?.last?.getNative();
+    if (native?.textContent.length !== 0)
     {
       this.addNewElementToEnd();
     }
-    this.textElements.last.mouseEnter($event);
+    this.textElements?.last?.mouseEnter($event);
   }
 
   mouseOut($event) {
-   this.textElements.last.mouseOut($event);
+   this.textElements?.last?.mouseOut($event);
   }
 
-  enterHandler(value: EnterEvent) // TODO SETTIMEOUT
+  async enterHandler(value: EnterEvent) // TODO SETTIMEOUT
   {
-    const newElement = this.contentService.getTextContentByType(value.nextItemType);
+    const breakLineType = value.breakModel.typeBreakLine;
+    const nextText = value.breakModel.nextText;
+    const newElement = await this.api.insertLine(this.note.id, value.contentId, breakLineType, nextText).toPromise();
 
-    const elementCurrent = this.contents.find(x => x.contentId === value.id);
+    if (!newElement.success)
+    {
+      return;
+    }
+
+    const elementCurrent = this.contents.find(x => x.id === value.id);
     let index = this.contents.indexOf(elementCurrent);
 
-    switch (value.breakModel.typeBreakLine) {
-      case LineBreakType.PREV_NO_CONTENT: {
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
-        break;
-      }
-      case LineBreakType.NEXT_WITH_CONTENT: {
-        newElement.data.content = value.breakModel.nextText;
-        index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
-        break;
-      }
-      case LineBreakType.NEXT_NO_CONTENT: {
-        index++;
-        this.contents.splice(index, 0, newElement);
-        setTimeout(() => { this.textElements.toArray()[index].setFocus(); }, 0);
-        break;
-      }
-    }
-
-    const numb = Math.random() * (100000 - 1) + 1;
-    setTimeout(() => newElement.contentId = numb.toString(), 100);
-  }
-
-  deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
-  {
-    const item = this.contents.find(z => z.contentId === id);
-    const indexOf = this.contents.indexOf(item);
-
-    if (indexOf !== 0 && (indexOf !== this.contents.length - 1)) {
-      this.contents = this.contents.filter(z => z.contentId !== id);
-      const index = indexOf - 1;
-      if (this.contents[index].type !== ContentType.PHOTO)
-      {
-        this.textElements.toArray()[index].setFocusToEnd();
-      }
-    }
-    if (indexOf === this.contents.length - 1){
-      const index = indexOf - 1;
-      this.textElements.toArray()[index].setFocusToEnd();
-    }
-  }
-
-  concatThisWithPrev(id: string) { // TODO SETTIMEOUT
-    const item = this.contents.find(z => z.contentId === id) as ContentModel<BaseText>;
-    const indexOf = this.contents.indexOf(item);
-    if (indexOf > 0 && indexOf !== this.contents.length - 1)
+    if (breakLineType === LineBreakType.NEXT)
     {
-      const prevItem = this.contents[indexOf - 1] as ContentModel<BaseText>;
-      const prevItemHtml = this.textElements.toArray()[indexOf - 1];
+      index++;
+    }
 
-      this.contents = this.contents.filter(z => z.contentId !== id);
+    this.contents.splice(index, 0, newElement.data);
+    setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
 
-      const lengthText = prevItem.data.content.length;
-      const resultHTML = prevItem.data.content += item.data.content;
-      prevItemHtml.updateHTML(resultHTML);
+  }
+
+  async deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
+  {
+    const resp = await this.api.removeContent(this.note.id, id).toPromise();
+
+    if (resp.success)
+    {
+      const item = this.contents.find(x => x.id === id);
+      const indexOf = this.contents.indexOf(item);
+      this.contents = this.contents.filter(z => z.id !== id);
+      const index = indexOf - 1;
+      this.textElements?.toArray()[index].setFocusToEnd();
+    }
+  }
+
+  async concatThisWithPrev(id: string) { // TODO SETTIMEOUT
+
+    const resp = await this.api.concatWithPrevious(this.note.id, id).toPromise();
+
+    if (resp.success)
+    {
+      const item = this.contents.find(x => x.id === resp.data.id) as BaseText;
+      const indexOf = this.contents.indexOf(item);
+      this.contents[indexOf] = resp.data;
+      this.contents = this.contents.filter(x => x.id !== id);
 
       setTimeout(() => {
-        const range = new Range();
-        range.setStart(prevItemHtml.getNative().firstChild, lengthText);
-        const selection = this.apiBrowserFunctions.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
+        const prevItemHtml = this.textElements?.toArray()[indexOf];
+        prevItemHtml.setFocusToEnd();
       });
+    }
+  }
+
+  async updateTextHandler(event: EditTextEventModel, isLast: boolean)
+  {
+    this.api.updateContentText(this.note.id, event.contentId, event.content, event.checked).toPromise();
+    if (isLast) {
+      this.addNewElementToEnd();
     }
   }
 
@@ -289,53 +291,57 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  transformToType(value: TransformContent)
+  async transformToType(value: TransformContent)
   {
-    let indexOf;
-    switch (value.type)
+    const resp = await this.api.updateContentType(this.note.id, value.id, value.contentType, value.headingType).toPromise();
+
+    if (!resp.success)
     {
-      case ContentType.TEXT: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<HtmlText>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.HEADING: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<Heading>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        item.data.headingType = value.heading;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.DOTLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<DotList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
-        break;
-      }
-      case ContentType.NUMBERLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<NumberList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+      return;
+    }
+
+    let indexOf;
+    switch (value.contentType)
+    {
+      case ContentType.DEFAULT: {
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
       case ContentType.CHECKLIST: {
-        const item = this.contents.find(z => z.contentId === value.id) as ContentModel<CheckedList>;
-        indexOf = this.contents.indexOf(item);
-        item.type = value.type;
-        setTimeout(() => { this.textElements.toArray()[indexOf].setFocus(); }, 0);
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
-      case ContentType.PHOTO: {
+      case ContentType.DOTLIST: {
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+        break;
+      }
+      case ContentType.HEADING: {
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType, value.headingType);
+        break;
+      }
+      case ContentType.NUMBERLIST: {
+        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+        break;
+      }
+      case ContentType.ALBUM: {
         this.uploadPhoto.nativeElement.click();
         break;
       }
     }
     this.checkAddLastTextContent(indexOf);
+  }
+
+  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number
+  {
+    const item = this.contents.find(z => z.id === id) as BaseText;
+    const indexOf = this.contents.indexOf(item);
+    item.type = contentType;
+    if (headingType)
+    {
+      item.headingType = headingType;
+    }
+    setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+    return indexOf;
   }
 
   async uploadImages(event) {
@@ -350,15 +356,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkAddLastTextContent(index: number)
   {
+    /*
     if (index === this.contents.length - 1)
     {
       this.addNewElementToEnd();
     }
+    */
   }
 
   addNewElementToEnd()
   {
-    this.contents.push(this.contentService.getTextElement());
+    this.newLine.next();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -439,7 +447,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   // EDITING DOCUMENT
 
   onInput($event) {
-    this.nameChanged.next($event.target.innerHTML);
+    this.nameChanged.next($event.target.innerText);
   }
 
   pasteCommandHandler(e) {

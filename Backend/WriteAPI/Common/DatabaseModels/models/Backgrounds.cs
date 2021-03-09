@@ -3,9 +3,8 @@ using System;
 
 namespace Common.DatabaseModels.models
 {
-    public class Backgrounds
+    public class Backgrounds : BaseEntity
     {
-        public Guid Id { set; get; }
         public Guid FileId { set; get; }
         public AppFile File { set; get; }
         public Guid UserId { set; get; }

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
 {
-    public class Folder
+    public class Folder : BaseEntity
     {
-        public Guid Id { get; set; }
-
         public Guid FolderTypeId { set; get; }
         public FolderType FolderType { set; get; }
 

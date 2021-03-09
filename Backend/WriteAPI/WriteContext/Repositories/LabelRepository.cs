@@ -5,32 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class LabelRepository
+    public class LabelRepository : Repository<Label>
     {
-        private readonly WriteContextDB contextDB;
-
         public LabelRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
+
         }
 
         public async Task SetDeleteLabel(Label label, List<Label> labels)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var order = label.Order;
 
-                    this.contextDB.Labels.Remove(label);
-                    await contextDB.SaveChangesAsync();
+                    this.context.Labels.Remove(label);
+                    await context.SaveChangesAsync();
 
                     var labelsForUpdate = labels.Where(x => x.Order > order && x.IsDeleted == true).ToList();
                     labelsForUpdate.ForEach(x => x.Order = x.Order - 1);
-                    await UpdateRangeLabels(labelsForUpdate);
+                    await UpdateRange(labelsForUpdate);
 
                     await transaction.CommitAsync();
                 }
@@ -42,43 +42,22 @@ namespace WriteContext.Repositories
 
         }
 
-        public async Task RemoveAll(List<Label> labels)
-        {
-            contextDB.Labels.RemoveRange(labels);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task<List<Label>> GetDeletedByUserID(Guid id)
-        {
-            return await this.contextDB.Labels.Where(x => x.UserId == id && x.IsDeleted == true).ToListAsync();
-        }
 
         public async Task<List<Label>> GetAllByUserID(Guid id)
         {
-            return await this.contextDB.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
+            return await this.context.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
         }
 
         public async Task<int> GetNotesCountByLabelId(Guid id)
         {
-            var labels = await this.contextDB.Labels.Include(x => x.LabelsNotes).FirstOrDefaultAsync(x => x.Id == id);
+            var labels = await this.context.Labels.Include(x => x.LabelsNotes).FirstOrDefaultAsync(x => x.Id == id);
             return labels.LabelsNotes.Count;
         }
 
-        public async Task UpdateLabel(Label label)
-        {
-            this.contextDB.Labels.Update(label);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task UpdateRangeLabels(List<Label> label)
-        {
-            this.contextDB.Labels.UpdateRange(label);
-            await contextDB.SaveChangesAsync();
-        }
 
         public async Task NewLabel(Label label)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -87,11 +66,11 @@ namespace WriteContext.Repositories
                     if (labels.Count() > 0)
                     {
                         labels.Where(x => x.IsDeleted == false).ToList().ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRangeLabels(labels);
+                        await UpdateRange(labels);
                     }
 
-                    await contextDB.Labels.AddAsync(label);
-                    await contextDB.SaveChangesAsync();
+                    await context.Labels.AddAsync(label);
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
                 }
@@ -104,25 +83,25 @@ namespace WriteContext.Repositories
 
         public async Task SetDeletedLabel(Label labelDeleted, List<Label> labels)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     // Update no deleted labels
                     var noDeletedLabels = labels.Where(x => x.IsDeleted == false && x.Order > labelDeleted.Order).ToList();
                     noDeletedLabels.ForEach(x => x.Order = x.Order - 1);
-                    await UpdateRangeLabels(noDeletedLabels);
+                    await UpdateRange(noDeletedLabels);
 
                     // Update deleted labels
                     var deletedLabels = labels.Where(x => x.IsDeleted == true).ToList();
                     deletedLabels.ForEach(x => x.Order = x.Order + 1);
-                    await UpdateRangeLabels(deletedLabels);
+                    await UpdateRange(deletedLabels);
 
                     // New Deleted Label
                     labelDeleted.Order = 1;
                     labelDeleted.IsDeleted = true;
                     labelDeleted.DeletedAt = DateTimeOffset.Now;
-                    await UpdateLabel(labelDeleted);
+                    await Update(labelDeleted);
 
                     await transaction.CommitAsync();
                 }
@@ -135,7 +114,7 @@ namespace WriteContext.Repositories
 
         public async Task RestoreLabel(Label label, List<Label> labels)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -143,7 +122,7 @@ namespace WriteContext.Repositories
                     // Update deleted labels
                     var deletedLabels = labels.Where(x => x.IsDeleted == true && x.Order > label.Order).ToList();
                     deletedLabels.ForEach(x => x.Order = x.Order - 1);
-                    await UpdateRangeLabels(deletedLabels);
+                    await UpdateRange(deletedLabels);
 
                     // Update all labels
                     var allLabels = labels.Where(x => x.IsDeleted == false).ToList();
@@ -151,7 +130,7 @@ namespace WriteContext.Repositories
                     label.Order = 1;
                     label.IsDeleted = false;
                     allLabels.Add(label);
-                    await UpdateRangeLabels(allLabels);
+                    await UpdateRange(allLabels);
 
                     await transaction.CommitAsync();
                 }

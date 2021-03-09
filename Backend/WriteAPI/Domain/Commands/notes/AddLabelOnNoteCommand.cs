@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Attributes;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ namespace Domain.Commands.notes
 {
     public class AddLabelOnNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [ValidationGuidAttribute]
         public Guid LabelId { set; get; }
         [Required]
         public List<Guid> NoteIds { set; get; }

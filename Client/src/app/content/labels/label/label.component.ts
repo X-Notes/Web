@@ -13,6 +13,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-label',
@@ -53,7 +54,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nameChanged.pipe(
-      debounceTime(350),
+      debounceTime(updateTitleEntitesDelay),
       distinctUntilChanged())
       .subscribe(name => {
         if (name) {

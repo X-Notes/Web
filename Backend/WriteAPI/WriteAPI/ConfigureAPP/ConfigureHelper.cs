@@ -5,14 +5,18 @@ using BI.services.files;
 using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
+using BI.services.permissions;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
+using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
 using Common.DTO.files;
 using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
+using Common.DTO.notes.FullNoteContent;
+using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
@@ -30,6 +34,7 @@ using Domain.Queries.files;
 using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
+using Domain.Queries.permissions;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
@@ -45,6 +50,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WriteContext;
+using WriteContext.GenericRepositories;
 using WriteContext.Repositories;
 
 namespace WriteAPI.ConfigureAPP
@@ -98,14 +104,21 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
-
+            services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
@@ -119,6 +132,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
+
             // FULL-FOLDER
             services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
 
@@ -145,6 +159,11 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
+
+
+            // Permissions
+            services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserPermissionsForFolder, UserPermissionsForFolder>, PermissionHandlerQuery>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -161,6 +180,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UsersOnPrivateFoldersRepository>();
             services.AddScoped<FileRepository>();
             services.AddScoped<AppRepository>();
+            services.AddScoped<AlbumNoteRepository>();
+            services.AddScoped<TextNotesRepository>();
+            services.AddScoped<BaseNoteContentRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {

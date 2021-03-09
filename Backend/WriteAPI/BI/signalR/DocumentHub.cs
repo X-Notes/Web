@@ -27,7 +27,7 @@ namespace BI.signalR
 
         public async Task JoinNote(string noteId)
         {
-            var user = await userRepository.GetUserByEmail(Context.UserIdentifier);
+            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var guid))
             {
                 var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, guid);
@@ -61,8 +61,8 @@ namespace BI.signalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var user = await userRepository.GetUserByEmail(Context.UserIdentifier);
-            if(user != null)
+            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            if (user != null)
             {
                 await userOnNoteRepository.RemoveFromOnline(user.Id);
             }

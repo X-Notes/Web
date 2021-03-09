@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable, } from '@angular/core';
-import { BaseText, ContentModel, ContentType, Heading } from '../../models/ContentMode';
+import { BaseText, ContentType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 
@@ -14,8 +14,8 @@ export class HeadingService extends HtmlService {
         this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
     }
 
-    onInput(content: ContentModel<Heading>, contentHtml: ElementRef) {
-        content.data.content = this.getNativeElement(contentHtml).innerText;
+    onInput(content: BaseText, contentHtml: ElementRef) {
+        content.content = this.getNativeElement(contentHtml).innerText;
     }
 
     onBlur(e: any) {
@@ -31,15 +31,15 @@ export class HeadingService extends HtmlService {
         // SELECTIION
     }
 
-    enter($event: any, content: ContentModel<Heading>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
+    enter($event: any, content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
         $event.preventDefault();
         const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.data.content = this.getNativeElement(contentHtml).innerText;
-        const event = super.eventEventFactory(content.contentId, breakModel, ContentType.TEXT);
+        content.content = this.getNativeElement(contentHtml).innerText;
+        const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
         enterEvent.emit(event);
     }
 
-    backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
+    backDown($event, content: BaseText, contentHtml: ElementRef,
              concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
         super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
     }

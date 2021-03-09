@@ -29,7 +29,7 @@ export class ContentEditableService {
       const atStart = (range.toString().replace(/^\s+|\s+$/g, '') === '');
       if (atStart)
       {
-        typeBreakLine = LineBreakType.PREV_NO_CONTENT;
+        typeBreakLine = LineBreakType.PREV;
       }
 
       range.selectNodeContents(el);
@@ -37,12 +37,12 @@ export class ContentEditableService {
       const atEnd = (range.toString().replace(/^\s+|\s+$/g, '') === '');
       if (atEnd)
       {
-        typeBreakLine = LineBreakType.NEXT_NO_CONTENT;
+        typeBreakLine = LineBreakType.NEXT;
       }
 
       if (!atStart && !atEnd)
       {
-        typeBreakLine = LineBreakType.NEXT_WITH_CONTENT;
+        typeBreakLine = LineBreakType.NEXT;
         range.selectNodeContents(el);
         range.setStart(selRange.endContainer, selRange.startOffset);
         nextContent = range.extractContents();

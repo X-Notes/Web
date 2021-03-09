@@ -4,50 +4,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories
 {
-    public class FolderRepository
+    public class FolderRepository : Repository<Folder>
     {
-        private readonly WriteContextDB contextDB;
         public FolderRepository(WriteContextDB contextDB)
+            :base(contextDB)
         {
-            this.contextDB = contextDB;
         }
 
-        public async Task AddRange(List<Folder> list)
-        {
-            contextDB.Folders.AddRange(list);
-            await contextDB.SaveChangesAsync();
-        }
-
-        public async Task UpdateFolder(Folder folder)
-        {
-            this.contextDB.Folders.Update(folder);
-            await contextDB.SaveChangesAsync();
-        }
-        public async Task UpdateRangeFolders(List<Folder> folders)
-        {
-            this.contextDB.Folders.UpdateRange(folders);
-            await contextDB.SaveChangesAsync();
-        }
 
         public async Task Add(Folder folder, Guid TypeId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    var notes = await GetFoldersByUserIdAndTypeId(folder.UserId, TypeId);
+                    var folders = await GetFoldersByUserIdAndTypeId(folder.UserId, TypeId);
 
-                    if (notes.Count() > 0)
+                    if (folders.Count() > 0)
                     {
-                        notes.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRangeFolders(notes);
+                        folders.ForEach(x => x.Order = x.Order + 1);
+                        await UpdateRange(folders);
                     }
 
-                    await contextDB.Folders.AddAsync(folder);
-                    await contextDB.SaveChangesAsync();
+                    await context.Folders.AddAsync(folder);
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 
@@ -60,21 +44,21 @@ namespace WriteContext.Repositories
         }
         public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, Guid FromId, Guid ToId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCasting.Count());
-                    await UpdateRangeFolders(foldersTo);
+                    await UpdateRange(foldersTo);
 
                     foldersForCasting.ForEach(x => x.FolderTypeId = ToId);
                     ChangeOrderHelper(foldersForCasting);
-                    await UpdateRangeFolders(foldersForCasting);
+                    await UpdateRange(foldersForCasting);
 
                     var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldFolders);
-                    await UpdateRangeFolders(oldFolders);
+                    await UpdateRange(oldFolders);
 
                     await transaction.CommitAsync();
                 }
@@ -97,12 +81,12 @@ namespace WriteContext.Repositories
 
         public async Task DeleteRangeDeleted(List<Folder> selectdeletefolders, List<Folder> deletedfolders)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    this.contextDB.Folders.RemoveRange(selectdeletefolders);
-                    await contextDB.SaveChangesAsync();
+                    this.context.Folders.RemoveRange(selectdeletefolders);
+                    await context.SaveChangesAsync();
 
                     foreach (var item in selectdeletefolders)
                     {
@@ -111,7 +95,7 @@ namespace WriteContext.Repositories
 
                     deletedfolders = deletedfolders.OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(deletedfolders);
-                    await UpdateRangeFolders(deletedfolders);
+                    await UpdateRange(deletedfolders);
 
                     await transaction.CommitAsync();
                 }
@@ -124,13 +108,13 @@ namespace WriteContext.Repositories
 
         public async Task<List<Folder>> CopyFolders(List<Folder> foldersForCopy, List<Folder> allUserFolders, Guid FromId, Guid ToId)
         {
-            using (var transaction = await contextDB.Database.BeginTransactionAsync())
+            using (var transaction = await context.Database.BeginTransactionAsync())
             {
                 try
                 {
                     var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCopy.Count());
-                    await UpdateRangeFolders(foldersTo);
+                    await UpdateRange(foldersTo);
 
                     var newFolders = foldersForCopy.Select(x => new Folder()
                     {
@@ -146,7 +130,7 @@ namespace WriteContext.Repositories
 
                     var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldFolders);
-                    await UpdateRangeFolders(oldFolders);
+                    await UpdateRange(oldFolders);
 
                     await transaction.CommitAsync();
 
@@ -164,7 +148,7 @@ namespace WriteContext.Repositories
 
         public async Task<Folder> GetForUpdateTitle(Guid id)
         {
-            return await contextDB.Folders
+            return await context.Folders
                 .Include(x => x.FolderType)
                 .Include(x => x.RefType)
                 .Include(x => x.UsersOnPrivateFolders)
@@ -174,7 +158,7 @@ namespace WriteContext.Repositories
 
         public async Task<Folder> GetFull(Guid id)
         {
-            return await contextDB.Folders
+            return await context.Folders
                 .Include(folder => folder.FoldersNotes)
                 .Include(folder => folder.UsersOnPrivateFolders)
                 .Include(x => x.FolderType)
@@ -184,7 +168,7 @@ namespace WriteContext.Repositories
 
         public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, Guid typeId)
         {
-            return await contextDB.Folders
+            return await context.Folders
                 .Include(x => x.RefType)
                 .Include(x => x.FolderType)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
@@ -192,7 +176,7 @@ namespace WriteContext.Repositories
 
         public async Task<Folder> GetOneById(Guid folderId)
         {
-            return await contextDB.Folders.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == folderId);
+            return await context.Folders.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == folderId);
         }
 
     }

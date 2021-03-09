@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-folder',
@@ -37,7 +38,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 
     this.nameChanged.pipe(
       takeUntil(this.destroy),
-      debounceTime(250))
+      debounceTime(updateTitleEntitesDelay))
       .subscribe(title => {
         if (title) {
           const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);

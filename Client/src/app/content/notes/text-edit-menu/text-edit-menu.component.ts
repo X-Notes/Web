@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { ApiBrowserTextService } from '../api-browser-text.service';
+import { ApiServiceNotes } from '../api-notes.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentModel, ContentType, Heading, HeadingType } from '../models/ContentMode';
+import { BaseText, ContentType, HeadingType } from '../models/ContentMode';
+import { NoteStore } from '../state/notes-state';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -12,7 +15,9 @@ export class TextEditMenuComponent implements OnInit {
 
   constructor(
     public menuSelectionService: MenuSelectionService,
-    private apiBrowserService: ApiBrowserTextService
+    private apiBrowserService: ApiBrowserTextService,
+    private api: ApiServiceNotes,
+    private store: Store
   ) { }
 
   contentType = ContentType;
@@ -27,26 +32,17 @@ export class TextEditMenuComponent implements OnInit {
     return false;
   }
 
-  transformContent(e, type: ContentType, heading?: HeadingType) {
+  async transformContent(e, type: ContentType, heading?: HeadingType) {
     const item = this.menuSelectionService.currentItem;
-    if (item.type === type) {
-      if (item.type === ContentType.HEADING) {
-        const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
-        if (itemH.data.headingType === heading) {
-          itemH.type = ContentType.TEXT;
-        } else {
-          itemH.data.headingType = heading;
-        }
-      } else {
-        item.type = ContentType.TEXT;
-      }
+    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
+    if (item.type === type && item.headingType === heading) {
+      await this.api.updateContentType(noteId, item.id, ContentType.DEFAULT, null).toPromise();
+      item.type = ContentType.DEFAULT;
     }
-    else if (type === ContentType.HEADING) {
-      const itemH = this.menuSelectionService.currentItem as ContentModel<Heading>;
-      itemH.type = type;
-      itemH.data.headingType = heading;
-    } else {
+     else {
+      await this.api.updateContentType(noteId, item.id, type, heading).toPromise();
       item.type = type;
+      item.headingType = heading;
     }
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
@@ -59,8 +55,7 @@ export class TextEditMenuComponent implements OnInit {
     }
 
     if (type === ContentType.HEADING && item.type === type) {
-      const Hitem = item as any;
-      return heading === Hitem.data.headingType ? 'active' : '';
+      return heading === item.headingType ? 'active' : '';
     } else {
       return type === item.type ? 'active' : '';
     }

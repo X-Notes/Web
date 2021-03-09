@@ -99,35 +99,51 @@ namespace WriteContext
                 .HasForeignKey(bc => bc.UserId);
 
             modelBuilder.Entity<Language>().HasData(
-                new { Id = Guid.NewGuid(), Name = "Ukraine" },
-                new { Id = Guid.NewGuid(), Name = "Russian" },
-                new { Id = Guid.NewGuid(), Name = "English" });
+                new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
+                new { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = ModelsNaming.Russian },
+                new { Id = Guid.Parse("6579263d-c4db-446a-8223-7d895dc45f1b"), Name = ModelsNaming.English });
 
             modelBuilder.Entity<Theme>().HasData(
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.LightTheme },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.DarkTheme });
+                new { Id = Guid.Parse("5b08dced-b041-4a77-b290-f08e36af1d70"), Name = ModelsNaming.LightTheme },
+                new { Id = Guid.Parse("f52a188b-5422-4144-91f6-bde40b82ce22"), Name = ModelsNaming.DarkTheme });
 
             modelBuilder.Entity<FontSize>().HasData(
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.Medium },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.Big });
+                new { Id = Guid.Parse("5c335a93-7aa7-40ff-b995-6c90f2536e98"), Name = ModelsNaming.Medium },
+                new { Id = Guid.Parse("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), Name = ModelsNaming.Big });
 
 
 
             modelBuilder.Entity<FolderType>().HasData(
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateFolder },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedFolder },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedFolder },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedFolder });
+                new { Id = Guid.Parse("381428f6-0568-4fb4-9c86-2d9e0f381308"), Name = ModelsNaming.PrivateFolder },
+                new { Id = Guid.Parse("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"), Name = ModelsNaming.SharedFolder },
+                new { Id = Guid.Parse("e3ea1cb2-5301-42fd-b283-2fe6133755c1"), Name = ModelsNaming.DeletedFolder },
+                new { Id = Guid.Parse("3e00dc8e-1030-4022-bc73-9d5c13b363d3"), Name = ModelsNaming.ArchivedFolder });
 
             modelBuilder.Entity<NoteType>().HasData(
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.PrivateNote },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.SharedNote },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.DeletedNote },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.ArchivedNote });
+                new { Id = Guid.Parse("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"), Name = ModelsNaming.PrivateNote },
+                new { Id = Guid.Parse("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"), Name = ModelsNaming.SharedNote },
+                new { Id = Guid.Parse("1f384f3c-1aa8-4664-ac8d-e264e68164dc"), Name = ModelsNaming.DeletedNote },
+                new { Id = Guid.Parse("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), Name = ModelsNaming.ArchivedNote });
 
             modelBuilder.Entity<RefType>().HasData(
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.Viewer },
-                new { Id = Guid.NewGuid(), Name = ModelsNaming.Editor });
+                new { Id = Guid.Parse("7c247026-36c6-4c17-b227-afb37e8ec7cd"), Name = ModelsNaming.Viewer },
+                new { Id = Guid.Parse("397821bf-74d5-4bdf-81e4-0698d5a92476"), Name = ModelsNaming.Editor });
+
+            modelBuilder.Entity<BaseNoteContent>()
+                .HasOne<BaseNoteContent>(x => x.Next)
+                .WithMany()
+                .HasPrincipalKey(x => x.Id)
+                .HasForeignKey(x => x.NextId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            modelBuilder.Entity<BaseNoteContent>()
+                .HasOne<BaseNoteContent>(x => x.Prev)
+                .WithMany()
+                .HasPrincipalKey(x => x.Id)
+                .HasForeignKey(x => x.PrevId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
         }
     }
 }

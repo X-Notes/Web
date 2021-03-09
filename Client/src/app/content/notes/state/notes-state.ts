@@ -11,7 +11,8 @@ import {
     AddLabelOnNote, RemoveLabelFromNote,
     ClearUpdatelabelEvent, UpdateLabelOnNote,
     UpdateOneNote, PositionNote, LoadFullNote, DeleteCurrentNote, UpdateTitle,
-    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote, ChangeTypeFullNote, UploadImagesToNote,
+    ChangeColorFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateLabelFullNote,
+    ChangeTypeFullNote, UploadImagesToNote,
 } from './notes-actions';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { UpdateColor } from './updateColor';
@@ -24,6 +25,7 @@ import { Notes } from './Notes';
 import { FullNote } from '../models/fullNote';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
 import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
+import { BaseText } from '../models/ContentMode';
 
 
 
@@ -239,13 +241,14 @@ export class NoteStore {
 
 
     @Action(UpdateNotes)
-    async updateSmallNote({ setState }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
+    updateSmallNote({ setState }: StateContext<NoteState>, { notes, typeNote }: UpdateNotes) {
         setState(
             patch({
                 notes: updateItem<Notes>(notess => notess.typeNotes === typeNote, notes)
             })
         );
     }
+
 
     // FUNCTION UPPER MENU
 
