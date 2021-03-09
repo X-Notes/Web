@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common.Naming;
+using System.Collections.Generic;
 using System.Linq;
 
 
@@ -12,9 +13,9 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
         {
             headingNoteTypes = new Dictionary<HeadingNoteTypes, string>()
             {
-                {  HeadingNoteTypes.H1, "H1" },
-                {  HeadingNoteTypes.H2, "H2" },
-                {  HeadingNoteTypes.H3, "H3" },
+                {  HeadingNoteTypes.H1, ModelsNaming.H1 },
+                {  HeadingNoteTypes.H2, ModelsNaming.H2 },
+                {  HeadingNoteTypes.H3, ModelsNaming.H3 },
             };
         }
 

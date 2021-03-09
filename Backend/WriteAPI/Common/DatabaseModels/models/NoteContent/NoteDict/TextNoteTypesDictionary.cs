@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common.Naming;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Common.DatabaseModels.models.NoteContent.NoteDict
@@ -11,11 +12,11 @@ namespace Common.DatabaseModels.models.NoteContent.NoteDict
         {
             textNoteTypes = new Dictionary<TextNoteTypes, string>()
             {
-                {  TextNoteTypes.DEFAULT, "DEFAULT" },
-                {  TextNoteTypes.HEADING, "HEADING" },
-                {  TextNoteTypes.DOTLIST, "DOTLIST" },
-                {  TextNoteTypes.NUMBERLIST, "NUMBERLIST" },
-                {  TextNoteTypes.CHECKLIST, "CHECKLIST" },
+                {  TextNoteTypes.DEFAULT, ModelsNaming.NoteTextDefault },
+                {  TextNoteTypes.HEADING, ModelsNaming.NoteTextHeading },
+                {  TextNoteTypes.DOTLIST, ModelsNaming.NoteTextDotList },
+                {  TextNoteTypes.NUMBERLIST, ModelsNaming.NoteTextNumberList },
+                {  TextNoteTypes.CHECKLIST, ModelsNaming.NoteTextCheckList },
             };
         }
 

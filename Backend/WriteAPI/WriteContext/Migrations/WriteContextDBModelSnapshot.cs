@@ -130,22 +130,22 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"),
-                            Name = "Private"
+                            Name = "private"
                         },
                         new
                         {
                             Id = new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"),
-                            Name = "Shared"
+                            Name = "shared"
                         },
                         new
                         {
                             Id = new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"),
-                            Name = "Deleted"
+                            Name = "deleted"
                         },
                         new
                         {
                             Id = new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"),
-                            Name = "Archive"
+                            Name = "archive"
                         });
                 });
 
@@ -181,12 +181,12 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"),
-                            Name = "Medium"
+                            Name = "medium"
                         },
                         new
                         {
                             Id = new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"),
-                            Name = "Big"
+                            Name = "big"
                         });
                 });
 
@@ -259,17 +259,17 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"),
-                            Name = "Ukraine"
+                            Name = "ukraine"
                         },
                         new
                         {
                             Id = new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"),
-                            Name = "Russian"
+                            Name = "russian"
                         },
                         new
                         {
                             Id = new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"),
-                            Name = "English"
+                            Name = "english"
                         });
                 });
 
@@ -357,22 +357,22 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"),
-                            Name = "Private"
+                            Name = "private"
                         },
                         new
                         {
                             Id = new Guid("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"),
-                            Name = "Shared"
+                            Name = "shared"
                         },
                         new
                         {
                             Id = new Guid("1f384f3c-1aa8-4664-ac8d-e264e68164dc"),
-                            Name = "Deleted"
+                            Name = "deleted"
                         },
                         new
                         {
                             Id = new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"),
-                            Name = "Archive"
+                            Name = "archive"
                         });
                 });
 
@@ -410,12 +410,12 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"),
-                            Name = "Viewer"
+                            Name = "viewer"
                         },
                         new
                         {
                             Id = new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"),
-                            Name = "Editor"
+                            Name = "editor"
                         });
                 });
 
@@ -436,12 +436,12 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"),
-                            Name = "Light"
+                            Name = "light"
                         },
                         new
                         {
                             Id = new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"),
-                            Name = "Dark"
+                            Name = "dark"
                         });
                 });
 
