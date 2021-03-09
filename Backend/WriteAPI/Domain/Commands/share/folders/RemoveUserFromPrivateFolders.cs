@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Attributes;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,9 +9,9 @@ namespace Domain.Commands.share.folders
 {
     public class RemoveUserFromPrivateFolders : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [ValidationGuidAttribute]
         public Guid FolderId { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid UserId { set; get; }
     }
 }

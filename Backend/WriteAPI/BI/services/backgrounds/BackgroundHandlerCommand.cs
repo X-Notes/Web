@@ -41,7 +41,7 @@ namespace BI.services.backgrounds
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             user.CurrentBackgroundId = null;
             await userRepository.Update(user);
             return Unit.Value;
@@ -53,14 +53,14 @@ namespace BI.services.backgrounds
             var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
             if (back != null)
             {
-                await backgroundRepository.DeleteBackground(back);
+                await backgroundRepository.Remove(back);
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(UpdateBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             user.CurrentBackgroundId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
@@ -68,7 +68,7 @@ namespace BI.services.backgrounds
 
         public async Task<BackgroundDTO> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var photoType = photoHelpers.GetPhotoType(request.File);
             var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);

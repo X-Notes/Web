@@ -8,24 +8,39 @@ namespace Common.Naming
 {
     public static class ModelsNaming
     {
-        public const string PrivateNote = "Private";
-        public const string SharedNote  = "Shared";
-        public const string DeletedNote  = "Deleted";
-        public const string ArchivedNote  = "Archive";
+        public const string PrivateNote = "private";
+        public const string SharedNote  = "shared";
+        public const string DeletedNote  = "deleted";
+        public const string ArchivedNote  = "archive";
 
-        public const string PrivateFolder = "Private";
-        public const string DeletedFolder = "Deleted";
-        public const string SharedFolder = "Shared";
-        public const string ArchivedFolder = "Archive";
+        public const string PrivateFolder = "private";
+        public const string DeletedFolder = "deleted";
+        public const string SharedFolder = "shared";
+        public const string ArchivedFolder = "archive";
 
-        public const string Viewer = "Viewer";
-        public const string Editor = "Editor";
+        public const string Viewer = "viewer";
+        public const string Editor = "editor";
 
-        public const string Medium  = "Medium";
-        public const string Big  = "Big";
+        public const string Medium  = "medium";
+        public const string Big  = "big";
 
-        public const string LightTheme = "Light";
-        public const string DarkTheme  = "Dark";
+        public const string LightTheme = "light";
+        public const string DarkTheme  = "dark";
 
+        public const string NoteTextDefault = "default";
+        public const string NoteTextHeading = "heading";
+        public const string NoteTextDotList = "dotlist";
+        public const string NoteTextNumberList = "numberlist";
+        public const string NoteTextCheckList = "checklist";
+
+        public const string Album = "album";
+
+        public const string H1 = "h1";
+        public const string H2 = "h2";
+        public const string H3 = "h3";
+
+        public const string Ukraine = "ukraine";
+        public const string Russian = "russian";
+        public const string English = "english";
     }
 }

@@ -1,5 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ContentModel, Heading, HeadingType } from '../../../models/ContentMode';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { BaseText, HeadingType } from '../../../models/ContentMode';
+import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { HeadingService } from '../../html-business-logic/heading.service';
@@ -13,6 +17,9 @@ import { HeadingService } from '../../html-business-logic/heading.service';
 export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
+
+  @Output()
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
@@ -22,9 +29,12 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<Heading>;
+  content: BaseText;
 
   hType = HeadingType;
+
+  textChanged: Subject<string> = new Subject<string>();
+  destroy = new Subject<void>();
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -41,10 +51,17 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   ngOnDestroy(): void {
     this.headingService.destroysListeners();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
-    this.headingService.contentStr = this.content.data.content;
+    this.headingService.contentStr = this.content?.content;
+
+    this.textChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(updateNoteContentDelay))
+      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
   }
 
   setFocus($event?) {
@@ -56,7 +73,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
@@ -76,6 +93,10 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   get isActive()
   {
     return this.headingService.isActive(this.contentHtml);
+  }
+
+  onInput($event) {
+    this.textChanged.next($event.target.innerText);
   }
 
 }

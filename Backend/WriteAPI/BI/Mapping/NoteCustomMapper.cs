@@ -23,7 +23,6 @@ namespace BI.Mapping
                 NoteType = TranformTypeToTypeDTO(note.NoteType),
                 RefType = TranformRefToRefDTO(note.RefType),
                 Title = note.Title,
-                Contents = TranformContentsToContentsDTO(note.Contents),
                 Labels = TranformLabelsToLabelsDTO(note.LabelsNotes)
             };
             return _fullNote;
@@ -32,31 +31,40 @@ namespace BI.Mapping
         public List<BaseContentNoteDTO> TranformContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
             var resultList = new List<BaseContentNoteDTO>();
-            foreach(var content in Contents)
+
+            var content = Contents.First(x => x.PrevId == null);
+
+            while(content != null)
             {
                 switch (content)
                 {
                     case TextNote tN:
-                    {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.Text);
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.Order, type);
+                        {
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.NextId, tN.PrevId);
                             resultList.Add(tNDTO);
                             break;
-                    }
+                        }
                     case AlbumNote aN:
-                    {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.Album);
+                        {
+                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, aN.Order, type);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Id, type, aN.NextId, aN.PrevId);
                             resultList.Add(aNDTO);
                             break;
-                    }
+                        }
                     default:
-                    {
+                        {
                             throw new Exception("Incorrect type");
-                    }
+                        }
                 }
+                content = content.Next;
             }
+
+            if(resultList.Count != Contents.Count)
+            {
+                Console.WriteLine("Some Data is lost");
+            }
+
             return resultList;
         }
 

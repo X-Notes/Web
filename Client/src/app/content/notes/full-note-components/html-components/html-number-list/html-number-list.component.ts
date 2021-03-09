@@ -1,5 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { ContentModel, ContentType, HtmlText, NumberList } from '../../../models/ContentMode';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { BaseText, ContentType } from '../../../models/ContentMode';
+import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -14,6 +18,9 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
 
   @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
+
+  @Output()
   transformTo = new EventEmitter<TransformContent>();
 
   @Output()
@@ -26,13 +33,16 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  prevContent: ContentModel;
+  prevContent: BaseText;
 
   @Input()
   prevType: ContentType;
 
   @Input()
-  content: ContentModel<NumberList>;
+  content: BaseText;
+
+  textChanged: Subject<string> = new Subject<string>();
+  destroy = new Subject<void>();
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -52,18 +62,25 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
 
   ngOnDestroy(): void {
     this.numberService.destroysListeners();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
-    this.numberService.contentStr = this.content.data.content;
+    this.numberService.contentStr = this.content?.content;
     this.numberService.transformTo = this.transformTo;
+
+    this.textChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(updateNoteContentDelay))
+      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
   }
 
   setNumber() {
     if (this.prevContent && this.prevContent.type === ContentType.NUMBERLIST) {
-      this.content.data.number = (this.prevContent as ContentModel<NumberList>).data.number + 1;
+      this.content.number = this.prevContent.number + 1;
     } else {
-      this.content.data.number = 1;
+      this.content.number = 1;
     }
   }
 
@@ -76,7 +93,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
@@ -97,4 +114,10 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   {
     return this.numberService.isActive(this.contentHtml);
   }
+
+  onInput($event) {
+    this.textChanged.next($event.target.innerText);
+  }
+
+
 }

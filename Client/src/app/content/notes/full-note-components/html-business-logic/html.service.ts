@@ -2,7 +2,7 @@ import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BreakEnterModel, ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { BaseText, ContentModel, ContentType, HtmlText } from '../../models/ContentMode';
+import { BaseText, ContentType } from '../../models/ContentMode';
 import { EnterEvent } from '../../models/enterEvent';
 import { SelectionService } from '../../selection.service';
 
@@ -23,39 +23,38 @@ export abstract class HtmlService {
     public contEditService: ContentEditableService) {
   }
 
-  abstract onInput(content: ContentModel, contentHtml: ElementRef, addToEndNewText?: EventEmitter<any>);
-
   pasteCommandHandler(e) {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType): EnterEvent {
+  eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType, contentId: string): EnterEvent {
     const eventModel: EnterEvent = {
       id,
       breakModel,
-      nextItemType
+      nextItemType,
+      contentId
     };
     return eventModel;
   }
 
   abstract onBlur(e);
   abstract onSelectStart(e);
-  abstract enter(e, content: ContentModel<BaseText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>);
+  abstract enter(e, content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>);
   abstract backUp(e);
   abstract setFocus($event, contentHtml: ElementRef);
   abstract setFocusToEnd(contentHtml: ElementRef);
 
-  backDown($event, content: ContentModel<BaseText>, contentHtml: ElementRef,
-    concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
+  backDown($event, content: BaseText, contentHtml: ElementRef,
+           concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
     const selection = this.apiBrowserService.getSelection().toString();
     if (this.contEditService.isStart(this.getNativeElement(contentHtml)) && !this.isContentEmpty(contentHtml) && selection === '') {
       $event.preventDefault();
-      concatThisWithPrev.emit(content.contentId);
+      concatThisWithPrev.emit(content.id);
     }
 
     if (this.isContentEmpty(contentHtml)) {
       $event.preventDefault();
-      deleteThis.emit(content.contentId);
+      deleteThis.emit(content.id);
     }
   }
 
@@ -67,10 +66,8 @@ export abstract class HtmlService {
     return contentHtml?.nativeElement;
   }
 
-  setHandlers(content: ContentModel<HtmlText>, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
-    concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>, addToEndNewText?: EventEmitter<any>) {
-    const input = this.renderer.listen(contentHtml.nativeElement, 'input',
-      (e) => { this.onInput(content, contentHtml, addToEndNewText); });
+  setHandlers(content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
+              concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
     const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
     const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
     const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });
@@ -79,7 +76,7 @@ export abstract class HtmlService {
     const keydownBackspace = this.renderer.listen(contentHtml.nativeElement, 'keydown.backspace',
       (e) => { this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis); });
     const keyupBackspace = this.renderer.listen(contentHtml.nativeElement, 'keyup.backspace', (e) => { this.backUp(e); });
-    this.listeners.push(input, blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
+    this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
   }
 
   destroysListeners() {

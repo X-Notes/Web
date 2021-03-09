@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Common.Attributes;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ namespace Domain.Commands.folderInner
     {
         [Required]
         public string Title { set; get; }
-        [Required]
+        [ValidationGuidAttribute]
         public Guid Id { set; get; }
     }
 }

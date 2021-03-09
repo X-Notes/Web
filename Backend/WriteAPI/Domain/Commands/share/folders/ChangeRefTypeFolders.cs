@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.Attributes;
+using Common.DatabaseModels.models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,10 @@ namespace Domain.Commands.share.folders
 {
     public class ChangeRefTypeFolders : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [ValidationGuidAttribute]
         public Guid Id { get; set; }
 
-        [Required]
+        [ValidationGuidAttribute]
         public Guid RefTypeId { set; get; }
     }
 }

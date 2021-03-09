@@ -93,12 +93,30 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AlbumNoteAppFile",
+                columns: table => new
+                {
+                    AlbumNotesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PhotosId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumNoteAppFile", x => new { x.AlbumNotesId, x.PhotosId });
+                    table.ForeignKey(
+                        name: "FK_AlbumNoteAppFile_Files_PhotosId",
+                        column: x => x.PhotosId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: false),
                     PhotoId = table.Column<Guid>(type: "uuid", nullable: true),
                     PersonalKey = table.Column<string>(type: "text", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -146,6 +164,12 @@ namespace WriteContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Backgrounds", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Backgrounds_Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Backgrounds_Users_UserId",
                         column: x => x.UserId,
@@ -276,7 +300,7 @@ namespace WriteContext.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     FolderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: true)
+                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -292,11 +316,43 @@ namespace WriteContext.Migrations
                         column: x => x.AccessTypeId,
                         principalTable: "RefTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UsersOnPrivateFolders_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BaseNoteContents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    NextId = table.Column<Guid>(type: "uuid", nullable: true),
+                    PrevId = table.Column<Guid>(type: "uuid", nullable: true),
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BaseNoteContents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContents_BaseNoteContents_NextId",
+                        column: x => x.NextId,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContents_BaseNoteContents_PrevId",
+                        column: x => x.PrevId,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContents_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -380,7 +436,7 @@ namespace WriteContext.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: true)
+                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -396,11 +452,49 @@ namespace WriteContext.Migrations
                         column: x => x.AccessTypeId,
                         principalTable: "RefTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserOnPrivateNotes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AlbumNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AlbumNote_BaseNoteContents_Id",
+                        column: x => x.Id,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TextNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    TextType = table.Column<string>(type: "text", nullable: false),
+                    HeadingType = table.Column<string>(type: "text", nullable: true),
+                    Checked = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TextNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TextNote_BaseNoteContents_Id",
+                        column: x => x.Id,
+                        principalTable: "BaseNoteContents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -410,10 +504,10 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("8d2f2643-7418-4fed-9a9a-aa8b41aa590f"), "Private" },
-                    { new Guid("5a5763ce-7801-4127-84cb-7bc89e6f65b5"), "Shared" },
-                    { new Guid("e55dc9f9-4ccf-4ba5-b19d-b61c27268f43"), "Deleted" },
-                    { new Guid("e9d2286d-c33b-4f46-9fa5-e5f53a6ac440"), "Archive" }
+                    { new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"), "private" },
+                    { new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"), "shared" },
+                    { new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"), "deleted" },
+                    { new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"), "archive" }
                 });
 
             migrationBuilder.InsertData(
@@ -421,8 +515,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("63d72c7f-d7c8-474c-9cc3-476d7b8b168e"), "Medium" },
-                    { new Guid("58cd5687-c6f9-45a9-a990-09c82a90839a"), "Big" }
+                    { new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"), "medium" },
+                    { new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), "big" }
                 });
 
             migrationBuilder.InsertData(
@@ -430,9 +524,9 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("c674aa3d-46bc-47e3-a62b-f4744d8312b4"), "Russian" },
-                    { new Guid("54fb0476-8938-406d-97d9-979d86991671"), "English" },
-                    { new Guid("32cff38a-51ce-4e5d-b741-b9bb7f2f7de7"), "Ukraine" }
+                    { new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"), "russian" },
+                    { new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"), "english" },
+                    { new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"), "ukraine" }
                 });
 
             migrationBuilder.InsertData(
@@ -440,10 +534,10 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("2d6c43e1-5579-4210-a715-d011dd019336"), "Private" },
-                    { new Guid("fae8d22e-b2fa-41c7-9f8c-0cd71a13d62e"), "Shared" },
-                    { new Guid("676f3ad9-11fd-4bb0-be8b-944911987495"), "Deleted" },
-                    { new Guid("cfb54e18-b917-46ab-9f35-39d8f41768bf"), "Archive" }
+                    { new Guid("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"), "private" },
+                    { new Guid("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"), "shared" },
+                    { new Guid("1f384f3c-1aa8-4664-ac8d-e264e68164dc"), "deleted" },
+                    { new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), "archive" }
                 });
 
             migrationBuilder.InsertData(
@@ -451,8 +545,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("d534d569-57f6-428d-b378-919650804a99"), "Viewer" },
-                    { new Guid("280c8737-01bf-4a0a-856f-8b5e4a3e4ecc"), "Editor" }
+                    { new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"), "viewer" },
+                    { new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"), "editor" }
                 });
 
             migrationBuilder.InsertData(
@@ -460,14 +554,39 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("28cf719f-32e9-4502-bf11-283872608bf1"), "Light" },
-                    { new Guid("badfb373-1db2-44c6-8e34-daa76f4a28c6"), "Dark" }
+                    { new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"), "light" },
+                    { new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"), "dark" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlbumNoteAppFile_PhotosId",
+                table: "AlbumNoteAppFile",
+                column: "PhotosId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Backgrounds_FileId",
+                table: "Backgrounds",
+                column: "FileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Backgrounds_UserId",
                 table: "Backgrounds",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BaseNoteContents_NextId",
+                table: "BaseNoteContents",
+                column: "NextId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BaseNoteContents_NoteId",
+                table: "BaseNoteContents",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BaseNoteContents_PrevId",
+                table: "BaseNoteContents",
+                column: "PrevId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Folders_FolderTypeId",
@@ -579,6 +698,14 @@ namespace WriteContext.Migrations
                 column: "UserId");
 
             migrationBuilder.AddForeignKey(
+                name: "FK_AlbumNoteAppFile_AlbumNote_AlbumNotesId",
+                table: "AlbumNoteAppFile",
+                column: "AlbumNotesId",
+                principalTable: "AlbumNote",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Users_Backgrounds_CurrentBackgroundId",
                 table: "Users",
                 column: "CurrentBackgroundId",
@@ -590,8 +717,19 @@ namespace WriteContext.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_Backgrounds_Files_FileId",
+                table: "Backgrounds");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Files_PhotoId",
+                table: "Users");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Backgrounds_Users_UserId",
                 table: "Backgrounds");
+
+            migrationBuilder.DropTable(
+                name: "AlbumNoteAppFile");
 
             migrationBuilder.DropTable(
                 name: "FoldersNotes");
@@ -603,6 +741,9 @@ namespace WriteContext.Migrations
                 name: "NotificationSettings");
 
             migrationBuilder.DropTable(
+                name: "TextNote");
+
+            migrationBuilder.DropTable(
                 name: "UserOnNoteNow");
 
             migrationBuilder.DropTable(
@@ -612,31 +753,37 @@ namespace WriteContext.Migrations
                 name: "UsersOnPrivateFolders");
 
             migrationBuilder.DropTable(
-                name: "Labels");
+                name: "AlbumNote");
 
             migrationBuilder.DropTable(
-                name: "Notes");
+                name: "Labels");
 
             migrationBuilder.DropTable(
                 name: "Folders");
 
             migrationBuilder.DropTable(
-                name: "NotesTypes");
+                name: "BaseNoteContents");
 
             migrationBuilder.DropTable(
                 name: "FoldersTypes");
 
             migrationBuilder.DropTable(
+                name: "Notes");
+
+            migrationBuilder.DropTable(
+                name: "NotesTypes");
+
+            migrationBuilder.DropTable(
                 name: "RefTypes");
+
+            migrationBuilder.DropTable(
+                name: "Files");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Backgrounds");
-
-            migrationBuilder.DropTable(
-                name: "Files");
 
             migrationBuilder.DropTable(
                 name: "FontSizes");

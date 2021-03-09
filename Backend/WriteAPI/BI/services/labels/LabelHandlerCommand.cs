@@ -51,14 +51,14 @@ namespace BI.services.labels
             {
                 label.Color = request.Color;
                 label.Name = request.Name;
-                await labelRepository.UpdateLabel(label);
+                await labelRepository.Update(label);
             }
             return Unit.Value;
         }
 
         public async Task<Guid> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var label = new Label();
             label.UserId = user.Id;
@@ -94,11 +94,11 @@ namespace BI.services.labels
 
         public async Task<Unit> Handle(RemoveAllFromBinCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmail(request.Email);
-            if(user != null)
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            if (user != null)
             {
-                var labels = await labelRepository.GetDeletedByUserID(user.Id);
-                await labelRepository.RemoveAll(labels);
+                var labels = await labelRepository.GetWhere(x => x.UserId == user.Id && x.IsDeleted == true);
+                await labelRepository.RemoveRange(labels);
             }
             return Unit.Value;
         }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class Theme
+    public class Theme : BaseEntity
     {
-        public Guid Id { set; get; }
         public string Name { set; get; }
 
         public List<User> Users { set; get; }

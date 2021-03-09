@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models
 {
-    public class Note
+    public class Note : BaseEntity
     {
-        public Guid Id { get; set; }
-
         public Guid NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
 

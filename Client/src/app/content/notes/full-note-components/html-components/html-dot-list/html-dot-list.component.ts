@@ -1,5 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ContentModel, DotList, HtmlText } from '../../../models/ContentMode';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { BaseText, ContentModel, } from '../../../models/ContentMode';
+import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
@@ -14,6 +18,12 @@ import { DotListService } from '../../html-business-logic/dotList.service';
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
 
   @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
+
+  textChanged: Subject<string> = new Subject<string>();
+  destroy = new Subject<void>();
+
+  @Output()
   transformTo = new EventEmitter<TransformContent>();
 
   @Output()
@@ -26,7 +36,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   concatThisWithPrev = new EventEmitter<string>();
 
   @Input()
-  content: ContentModel<DotList>;
+  content: BaseText;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -43,11 +53,18 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   ngOnDestroy(): void {
     this.dotListService.destroysListeners();
+    this.destroy.next();
+    this.destroy.complete();
   }
 
   ngOnInit(): void {
-    this.dotListService.contentStr = this.content.data.content;
+    this.dotListService.contentStr = this.content?.content;
     this.dotListService.transformTo = this.transformTo;
+
+    this.textChanged.pipe(
+      takeUntil(this.destroy),
+      debounceTime(updateNoteContentDelay))
+      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
   }
 
   setFocus($event?) {
@@ -59,7 +76,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   updateHTML(content: string) {
-    this.content.data.content = content;
+    this.content.content = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
@@ -80,4 +97,9 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   {
     return this.dotListService.isActive(this.contentHtml);
   }
+
+  onInput($event) {
+    this.textChanged.next($event.target.innerText);
+  }
+
 }

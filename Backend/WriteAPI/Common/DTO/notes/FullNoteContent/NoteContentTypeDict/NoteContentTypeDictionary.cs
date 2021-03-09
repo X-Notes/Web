@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common.Naming;
+using System.Collections.Generic;
 
 
 namespace Common.DTO.notes.FullNoteContent.NoteContentTypeDict
@@ -11,8 +12,7 @@ namespace Common.DTO.notes.FullNoteContent.NoteContentTypeDict
         {
             types = new Dictionary<NoteContentType, string>()
             {
-                {  NoteContentType.Album, "ALBUM" },
-                {  NoteContentType.Text, "TEXT" },
+                {  NoteContentType.ALBUM, ModelsNaming.Album }
             };
         }
 

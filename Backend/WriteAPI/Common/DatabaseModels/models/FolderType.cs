@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models
 {
-    public class FolderType
+    public class FolderType : BaseEntity
     {
-        public Guid Id { set; get; }
         public string Name { set; get; }
         public List<Folder> Folders { set; get; }
     }
