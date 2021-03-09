@@ -38,5 +38,9 @@ namespace Common.Naming
         public const string H1 = "h1";
         public const string H2 = "h2";
         public const string H3 = "h3";
+
+        public const string Ukraine = "ukraine";
+        public const string Russian = "russian";
+        public const string English = "english";
     }
 }

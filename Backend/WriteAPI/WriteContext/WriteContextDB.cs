@@ -99,9 +99,9 @@ namespace WriteContext
                 .HasForeignKey(bc => bc.UserId);
 
             modelBuilder.Entity<Language>().HasData(
-                new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = "ukraine" },
-                new { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = "russian" },
-                new { Id = Guid.Parse("6579263d-c4db-446a-8223-7d895dc45f1b"), Name = "english" });
+                new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
+                new { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = ModelsNaming.Russian },
+                new { Id = Guid.Parse("6579263d-c4db-446a-8223-7d895dc45f1b"), Name = ModelsNaming.English });
 
             modelBuilder.Entity<Theme>().HasData(
                 new { Id = Guid.Parse("5b08dced-b041-4a77-b290-f08e36af1d70"), Name = ModelsNaming.LightTheme },

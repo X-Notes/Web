@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using Common.DatabaseModels.models;
 using Common.DTO.users;
+using Common.Naming;
 using Domain.Commands.users;
 using MediatR;
 using Storage;
@@ -40,9 +41,9 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
-            var language = await appRepository.GetLanguageByName("English");
-            var fontSize = await appRepository.GetFontSizeByName("Big");
-            var theme = await appRepository.GetThemeByName("Dark");
+            var language = await appRepository.GetLanguageByName(ModelsNaming.English);
+            var fontSize = await appRepository.GetFontSizeByName(ModelsNaming.Big);
+            var theme = await appRepository.GetThemeByName(ModelsNaming.DarkTheme);
 
             var user = new User() {
                 Name = request.Name,

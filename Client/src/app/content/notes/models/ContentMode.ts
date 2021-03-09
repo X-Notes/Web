@@ -27,17 +27,17 @@ export class Photo{
 }
 
 export enum HeadingType{
-    H1 = 'H1',
-    H2 = 'H2',
-    H3 = 'H3'
+    H1 = 'h1',
+    H2 = 'h2',
+    H3 = 'h3'
 }
 
 
 export enum ContentType{
-    DEFAULT = 'DEFAULT',
-    HEADING = 'HEADING',
-    DOTLIST = 'DOTLIST',
-    NUMBERLIST = 'NUMBERLIST',
-    CHECKLIST = 'CHECKLIST',
-    ALBUM = 'ALBUM',
+    DEFAULT = 'default',
+    HEADING = 'heading',
+    DOTLIST = 'dotlist',
+    NUMBERLIST = 'numberlist',
+    CHECKLIST = 'checklist',
+    ALBUM = 'album',
 }
