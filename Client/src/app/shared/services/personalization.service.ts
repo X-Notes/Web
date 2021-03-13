@@ -1,130 +1,116 @@
 import { Injectable } from '@angular/core';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate } from '@angular/animations';
-import {  Subject, Observable } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../models/FontSize';
-import { environment } from 'src/environments/environment';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
-  transition(':enter', [
-    style({ transform: 'translateX(-100%)' }),
-    animate('200ms ease')
-  ]),
-  transition(':leave', [
-    animate('200ms ease', style({ transform: 'translateX(-100%)' }))
-  ])
+  transition(':enter', [style({ transform: 'translateX(-100%)' }), animate('200ms ease')]),
+  transition(':leave', [animate('200ms ease', style({ transform: 'translateX(-100%)' }))]),
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [
   transition(':enter', [
     style({ opacity: 0, 'max-height': 0, transform: 'translateY(-30%)' }),
-    animate('0.3s ease', style({ opacity: 1, 'max-height': '110px', height: '*', transform: 'translateY(0)'})),
+    animate(
+      '0.3s ease',
+      style({ opacity: 1, 'max-height': '110px', height: '*', transform: 'translateY(0)' }),
+    ),
   ]),
   transition(':leave', [
-    animate('0.3s ease', style({ opacity: 0, height: 0, transform: 'translateY(-30%)' }))
-  ])
+    animate('0.3s ease', style({ opacity: 0, height: 0, transform: 'translateY(-30%)' })),
+  ]),
 ]);
 
 export const showMenuLeftRight = trigger('showMenuLeftRight', [
   transition(':enter', [
-    style({ opacity: 0,  transform: 'translateX(-20%)' }),
-    animate('0.3s ease', style({ opacity: 1, transform: 'translateY(0)'})),
+    style({ opacity: 0, transform: 'translateX(-20%)' }),
+    animate('0.3s ease', style({ opacity: 1, transform: 'translateY(0)' })),
   ]),
-  transition(':leave', [
-    animate('0.3s ease', style({ opacity: 0, transform: 'translateX(10%)' }))
-  ])
+  transition(':leave', [animate('0.3s ease', style({ opacity: 0, transform: 'translateX(10%)' }))]),
 ]);
 
 export const deleteSmallNote = trigger('deleteSmallNote', [
   transition(':leave', [
-    animate('0.3s ease', style({ opacity: 0, height: '0', overflow: 'hidden'}))
-  ])
+    animate('0.3s ease', style({ opacity: 0, height: '0', overflow: 'hidden' })),
+  ]),
 ]);
 
 export const showHistory = trigger('showHistory', [
   transition(':enter', [
-    style({ opacity: 0,  height: 0 }),
-    animate('0.3s ease', style({ opacity: 1,  height: '*'})),
+    style({ opacity: 0, height: 0 }),
+    animate('0.3s ease', style({ opacity: 1, height: '*' })),
   ]),
   transition(':leave', [
-    animate('0.3s ease', style({ opacity: 0, height: 0, overflow: 'hidden' }))
-  ])
+    animate('0.3s ease', style({ opacity: 0, height: 0, overflow: 'hidden' })),
+  ]),
 ]);
 
 export const showDropdown = trigger('showDropdown', [
-  state('void', style({
-    transform: 'scaleY(0.8)',
-    opacity: 0
-  })),
-  state('showing', style({
-    opacity: 1,
-    transform: 'scaleY(1)'
-  })),
+  state(
+    'void',
+    style({
+      transform: 'scaleY(0.8)',
+      opacity: 0,
+    }),
+  ),
+  state(
+    'showing',
+    style({
+      opacity: 1,
+      transform: 'scaleY(1)',
+    }),
+  ),
   transition('void => *', animate('120ms cubic-bezier(0, 0, 0.2, 1)')),
-  transition('* => void', animate('100ms 25ms linear', style({opacity: 0})))
+  transition('* => void', animate('100ms 25ms linear', style({ opacity: 0 }))),
 ]);
 
 export const tooltipAnimation = trigger('tooltip', [
-  transition(':enter', [
-    style({ opacity: 0 }),
-    animate(300, style({ opacity: 1 })),
-  ]),
-  transition(':leave', [
-    animate(150, style({ opacity: 0 })),
-  ]),
+  transition(':enter', [style({ opacity: 0 }), animate(300, style({ opacity: 1 }))]),
+  transition(':leave', [animate(150, style({ opacity: 0 }))]),
 ]);
 
 export const smoothOpacity = trigger('smoothOpacity', [
-  transition(':enter', [
-    style({ opacity: 0 }),
-    animate(100, style({ opacity: 1 })),
-  ])
+  transition(':enter', [style({ opacity: 0 }), animate(100, style({ opacity: 1 }))]),
 ]);
 
 export const notification = trigger('notification', [
-  transition(':enter', [
-    style({ opacity: 0 }),
-    animate(100, style({ opacity: 1 })),
-  ]),
-  transition(':leave', [
-    animate(100, style({ opacity: 0 })),
-  ]),
+  transition(':enter', [style({ opacity: 0 }), animate(100, style({ opacity: 1 }))]),
+  transition(':leave', [animate(100, style({ opacity: 0 }))]),
 ]);
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class PersonalizationService {
-
-  constructor() {}
+  @Select(UserStore.getUserFontSize)
+  public fontSize$: Observable<FontSize>;
 
   spinnerActive = false;
+
   timeForSpinnerLoading = 150;
+
   subject = new Subject();
 
   stateSidebar = true;
+
   orientationMobile = false;
 
   hideInnerMenu = false;
+
   AnimationInnerMenu = true;
+
   AnimationInnerUsers = true;
+
   users = true;
+
   toggleHistory = false;
+
   isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
-
-
-  @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSize>;
 
   onResize(): void {
     if (this.check()) {
@@ -139,7 +125,7 @@ export class PersonalizationService {
         this.hideInnerMenu = false;
       }
       if (this.stateSidebar) {
-          this.stateSidebar = false;
+        this.stateSidebar = false;
       }
     }
 
@@ -147,20 +133,16 @@ export class PersonalizationService {
       if (!this.AnimationInnerMenu) {
         this.AnimationInnerMenu = true;
       }
-    } else {
-      if (this.AnimationInnerMenu) {
-        this.AnimationInnerMenu = false;
-      }
+    } else if (this.AnimationInnerMenu) {
+      this.AnimationInnerMenu = false;
     }
 
     if (this.check()) {
       if (!this.isCollapseShared) {
         this.isCollapseShared = true;
       }
-    } else {
-      if (this.isCollapseShared) {
-        this.isCollapseShared =  false;
-      }
+    } else if (this.isCollapseShared) {
+      this.isCollapseShared = false;
     }
 
     if (this.checkWidth()) {
@@ -168,11 +150,9 @@ export class PersonalizationService {
         this.users = false;
         this.AnimationInnerUsers = false;
       }
-    } else {
-      if (!this.users) {
-        this.users = true;
-        this.AnimationInnerUsers = true;
-      }
+    } else if (!this.users) {
+      this.users = true;
+      this.AnimationInnerUsers = true;
     }
   }
 
@@ -188,22 +168,22 @@ export class PersonalizationService {
     this.toggleHistory = !this.toggleHistory;
   }
 
-  check(): boolean {
-    return window.innerWidth > 1024 ? true : false;
-  }
+  check = () => {
+    return window.innerWidth > 1024;
+  };
 
-  checkWidth(): boolean {
-    return (window.innerWidth > 1024 && window.innerWidth <= 1440) ? true : false;
-  }
+  checkWidth = () => {
+    return !!(window.innerWidth > 1024 && window.innerWidth <= 1440);
+  };
 
   waitPreloading() {
-    return new Promise<boolean>((resolve, rej) => setTimeout(() => resolve(false), this.timeForSpinnerLoading));
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => resolve(false), this.timeForSpinnerLoading),
+    );
   }
 
   changeOrientation() {
     this.orientationMobile = !this.orientationMobile;
     this.changeOrientationSubject.next(true);
   }
-
-
 }

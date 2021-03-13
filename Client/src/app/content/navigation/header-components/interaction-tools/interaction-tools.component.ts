@@ -8,25 +8,30 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { notification, PersonalizationService } from 'src/app/shared/services/personalization.service';
+import {
+  notification,
+  PersonalizationService,
+} from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-interaction-tools',
   templateUrl: './interaction-tools.component.html',
   styleUrls: ['./interaction-tools.component.scss'],
-  animations: [notification]
+  animations: [notification],
 })
 export class InteractionToolsComponent implements OnInit {
-
   isOpenNotification = false;
 
   public positions = [
-    new ConnectionPositionPair({
-      originX: 'end',
-      originY: 'bottom'},
-      {overlayX: 'end',
-      overlayY: 'top'},
-      16, 10)
+    new ConnectionPositionPair(
+      {
+        originX: 'end',
+        originY: 'bottom',
+      },
+      { overlayX: 'end', overlayY: 'top' },
+      16,
+      10,
+    ),
   ];
 
   @Select(AppStore.isNoteInner)
@@ -41,11 +46,9 @@ export class InteractionToolsComponent implements OnInit {
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store) { }
+  constructor(public pService: PersonalizationService, private store: Store) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   closeNotification() {
     this.isOpenNotification = false;
@@ -58,15 +61,13 @@ export class InteractionToolsComponent implements OnInit {
   toggleTheme() {
     const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
     const themes = this.store.selectSnapshot(AppStore.getThemes);
-    if (userTheme.name === ThemeENUM.Dark)
-    {
-      const whiteTheme = themes.find(x => x.name === ThemeENUM.Light);
+    if (userTheme.name === ThemeENUM.Dark) {
+      const whiteTheme = themes.find((x) => x.name === ThemeENUM.Light);
       this.store.dispatch(new ChangeTheme(whiteTheme));
     }
-    if (userTheme.name === ThemeENUM.Light){
-      const blackTheme = themes.find(x => x.name === ThemeENUM.Dark);
+    if (userTheme.name === ThemeENUM.Light) {
+      const blackTheme = themes.find((x) => x.name === ThemeENUM.Dark);
       this.store.dispatch(new ChangeTheme(blackTheme));
     }
   }
-
 }

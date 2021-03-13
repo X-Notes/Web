@@ -1,31 +1,27 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { SmallNote } from '../models/smallNote';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-
+import { SmallNote } from '../models/smallNote';
 
 @Component({
   selector: 'app-note',
   templateUrl: './note.component.html',
-  styleUrls: ['./note.component.scss']
+  styleUrls: ['./note.component.scss'],
 })
-
 export class NoteComponent implements OnInit, OnDestroy {
-
   fontSize = FontSizeENUM;
 
   @Input() note: SmallNote;
+
   @Output() highlightNote = new EventEmitter<SmallNote>();
+
   @Output() clickOnNote = new EventEmitter<SmallNote>();
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService) {}
 
+  ngOnDestroy(): void {}
 
-  ngOnDestroy(): void {
-  }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   highlight(note: SmallNote) {
     this.highlightNote.emit(note);
@@ -34,5 +30,4 @@ export class NoteComponent implements OnInit, OnDestroy {
   toNote(note: SmallNote) {
     this.clickOnNote.emit(note);
   }
-
 }

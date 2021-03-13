@@ -8,7 +8,6 @@ import { SelectionService } from '../../selection.service';
 
 @Injectable()
 export abstract class HtmlService {
-
   preFocus = false;
 
   contentStr = '';
@@ -20,34 +19,58 @@ export abstract class HtmlService {
     public selectionService: SelectionService,
     public menuSelectionService: MenuSelectionService,
     private renderer: Renderer2,
-    public contEditService: ContentEditableService) {
-  }
+    public contEditService: ContentEditableService,
+  ) {}
 
   pasteCommandHandler(e) {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  eventEventFactory(id: string, breakModel: BreakEnterModel, nextItemType: ContentType, contentId: string): EnterEvent {
+  eventEventFactory(
+    id: string,
+    breakModel: BreakEnterModel,
+    nextItemType: ContentType,
+    contentId: string,
+  ): EnterEvent {
     const eventModel: EnterEvent = {
       id,
       breakModel,
       nextItemType,
-      contentId
+      contentId,
     };
     return eventModel;
   }
 
   abstract onBlur(e);
+
   abstract onSelectStart(e);
-  abstract enter(e, content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>);
+
+  abstract enter(
+    e,
+    content: BaseText,
+    contentHtml: ElementRef,
+    enterEvent: EventEmitter<EnterEvent>,
+  );
+
   abstract backUp(e);
+
   abstract setFocus($event, contentHtml: ElementRef);
+
   abstract setFocusToEnd(contentHtml: ElementRef);
 
-  backDown($event, content: BaseText, contentHtml: ElementRef,
-           concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
+  backDown(
+    $event,
+    content: BaseText,
+    contentHtml: ElementRef,
+    concatThisWithPrev: EventEmitter<string>,
+    deleteThis: EventEmitter<string>,
+  ) {
     const selection = this.apiBrowserService.getSelection().toString();
-    if (this.contEditService.isStart(this.getNativeElement(contentHtml)) && !this.isContentEmpty(contentHtml) && selection === '') {
+    if (
+      this.contEditService.isStart(this.getNativeElement(contentHtml)) &&
+      !this.isContentEmpty(contentHtml) &&
+      selection === ''
+    ) {
       $event.preventDefault();
       concatThisWithPrev.emit(content.id);
     }
@@ -66,16 +89,39 @@ export abstract class HtmlService {
     return contentHtml?.nativeElement;
   }
 
-  setHandlers(content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>,
-              concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
-    const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => { this.onBlur(e); });
-    const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => { this.pasteCommandHandler(e); });
-    const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => { this.onSelectStart(e); });
-    const keydownEnter = this.renderer.listen(contentHtml.nativeElement, 'keydown.enter',
-      (e) => { this.enter(e, content, contentHtml, enterEvent); });
-    const keydownBackspace = this.renderer.listen(contentHtml.nativeElement, 'keydown.backspace',
-      (e) => { this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis); });
-    const keyupBackspace = this.renderer.listen(contentHtml.nativeElement, 'keyup.backspace', (e) => { this.backUp(e); });
+  setHandlers(
+    content: BaseText,
+    contentHtml: ElementRef,
+    enterEvent: EventEmitter<EnterEvent>,
+    concatThisWithPrev: EventEmitter<string>,
+    deleteThis: EventEmitter<string>,
+  ) {
+    const blur = this.renderer.listen(contentHtml.nativeElement, 'blur', (e) => {
+      this.onBlur(e);
+    });
+    const paste = this.renderer.listen(contentHtml.nativeElement, 'paste', (e) => {
+      this.pasteCommandHandler(e);
+    });
+    const selectStart = this.renderer.listen(contentHtml.nativeElement, 'selectstart', (e) => {
+      this.onSelectStart(e);
+    });
+    const keydownEnter = this.renderer.listen(contentHtml.nativeElement, 'keydown.enter', (e) => {
+      this.enter(e, content, contentHtml, enterEvent);
+    });
+    const keydownBackspace = this.renderer.listen(
+      contentHtml.nativeElement,
+      'keydown.backspace',
+      (e) => {
+        this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis);
+      },
+    );
+    const keyupBackspace = this.renderer.listen(
+      contentHtml.nativeElement,
+      'keyup.backspace',
+      (e) => {
+        this.backUp(e);
+      },
+    );
     this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
   }
 
@@ -86,8 +132,11 @@ export abstract class HtmlService {
   }
 
   isActive(contentHtml: ElementRef) {
-    return (this.isContentEmpty(contentHtml) && document.activeElement === this.getNativeElement(contentHtml))
-      || (this.preFocus && this.isContentEmpty(contentHtml));
+    return (
+      (this.isContentEmpty(contentHtml) &&
+        document.activeElement === this.getNativeElement(contentHtml)) ||
+      (this.preFocus && this.isContentEmpty(contentHtml))
+    );
   }
 
   mouseEnter($event, contentHtml: ElementRef) {
@@ -97,5 +146,4 @@ export abstract class HtmlService {
   mouseOut($event, contentHtml: ElementRef) {
     this.preFocus = false;
   }
-
 }

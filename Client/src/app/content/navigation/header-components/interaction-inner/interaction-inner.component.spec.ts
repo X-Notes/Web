@@ -6,12 +6,13 @@ describe('InteractionInnerComponent', () => {
   let component: InteractionInnerComponent;
   let fixture: ComponentFixture<InteractionInnerComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InteractionInnerComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [InteractionInnerComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InteractionInnerComponent);

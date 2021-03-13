@@ -8,9 +8,8 @@ describe('HtmlDotListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HtmlDotListComponent ]
-    })
-    .compileComponents();
+      declarations: [HtmlDotListComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

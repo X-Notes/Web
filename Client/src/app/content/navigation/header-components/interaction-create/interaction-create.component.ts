@@ -7,23 +7,20 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 @Component({
   selector: 'app-interaction-create',
   templateUrl: './interaction-create.component.html',
-  styleUrls: ['./interaction-create.component.scss']
+  styleUrls: ['./interaction-create.component.scss'],
 })
 export class InteractionCreateComponent implements OnInit {
-
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 
-  constructor(public pService: PersonalizationService) { }
+  constructor(public pService: PersonalizationService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   newButton() {
     this.pService.subject.next(true);
   }
-
 }

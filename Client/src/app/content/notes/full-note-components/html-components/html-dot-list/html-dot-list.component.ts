@@ -1,8 +1,18 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, ContentModel, } from '../../../models/ContentMode';
+import { BaseText, ContentModel } from '../../../models/ContentMode';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -13,14 +23,14 @@ import { DotListService } from '../../html-business-logic/dotList.service';
   selector: 'app-html-dot-list',
   templateUrl: './html-dot-list.component.html',
   styleUrls: ['./html-dot-list.component.scss'],
-  providers: [DotListService]
+  providers: [DotListService],
 })
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
 
   textChanged: Subject<string> = new Subject<string>();
+
   destroy = new Subject<void>();
 
   @Output()
@@ -40,16 +50,21 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  constructor(public dotListService: DotListService) { }
+  constructor(public dotListService: DotListService) {}
 
   getContent() {
     return this.content;
   }
 
   ngAfterViewInit(): void {
-    this.dotListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.dotListService.setHandlers(
+      this.content,
+      this.contentHtml,
+      this.enterEvent,
+      this.concatThisWithPrev,
+      this.deleteThis,
+    );
   }
-
 
   ngOnDestroy(): void {
     this.dotListService.destroysListeners();
@@ -61,10 +76,9 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.dotListService.contentStr = this.content?.content;
     this.dotListService.transformTo = this.transformTo;
 
-    this.textChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
+    this.textChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
   }
 
   setFocus($event?) {
@@ -80,8 +94,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative()
-  {
+  getNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -93,13 +106,11 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.dotListService.mouseOut($event, this.contentHtml);
   }
 
-  get isActive()
-  {
+  get isActive() {
     return this.dotListService.isActive(this.contentHtml);
   }
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
-
 }

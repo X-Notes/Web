@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpResponse,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -7,17 +14,16 @@ import { AppStore } from './stateApp/app-state';
 
 @Injectable()
 export class TokenInterceptorService implements HttpInterceptor {
+  constructor(private store: Store) {}
 
-  constructor(private store: Store) { }
-
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.store.selectSnapshot(AppStore.getToken);
+    let request = req;
     if (!request.url.includes('google')) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
     }
 
@@ -29,12 +35,13 @@ export class TokenInterceptorService implements HttpInterceptor {
         return event;
       }),
       catchError((error: HttpErrorResponse) => {
-        let data = {};
-        data = {
+        const data = {
           reason: error && error.error && error.error.reason ? error.error.reason : '',
-          status: error.status
+          status: error.status,
         };
+        console.log(data);
         return throwError(error);
-      }));
+      }),
+    );
   }
 }

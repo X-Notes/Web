@@ -1,62 +1,84 @@
-<div appTheme class="interactions" [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']">
-    <div class="search">
-        <input id="searchField" type="search" placeholder="{{ 'header.search' | translate }}" aria-label="Search">
-        <label for="searchField">
-            <div class="icon">
-                <i class="icon-search"></i>
-            </div>
-        </label>
-    </div>
+<div
+  appTheme
+  class="interactions"
+  [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
+>
+  <div class="search">
+    <input
+      id="searchField"
+      type="search"
+      placeholder="{{ 'header.search' | translate }}"
+      aria-label="Search"
+    />
+    <label for="searchField">
+      <div class="icon">
+        <i class="icon-search"></i>
+      </div>
+    </label>
+  </div>
 
-    <div CustomTooltip="{{ 'header.theme' | translate }}"
-        position="Bottom"
-        class="auxiliary-icon"
-        (click)="toggleTheme()"
-        *ngIf="pService.check()" #themeApp>
+  <div
+    CustomTooltip="{{ 'header.theme' | translate }}"
+    position="Bottom"
+    class="auxiliary-icon"
+    (click)="toggleTheme()"
+    *ngIf="pService.check()"
+    #themeApp
+  >
+    <i class="icon-theme-light"></i>
+    <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
+  </div>
 
-        <i class="icon-theme-light"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
-    </div>
+  <div
+    CustomTooltip="{{ 'header.questions' | translate }}"
+    position="Bottom"
+    class="auxiliary-icon"
+    *ngIf="pService.check()"
+    #question
+  >
+    <i class="icon-question"></i>
+    <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
+  </div>
 
-    <div CustomTooltip="{{ 'header.questions' | translate }}"
-        position="Bottom"
-        class="auxiliary-icon"
-        *ngIf="pService.check()" #question>
+  <div
+    CustomTooltip="{{ 'header.notification' | translate }}"
+    position="Bottom"
+    class="auxiliary-icon"
+    (click)="isOpenNotification = !isOpenNotification"
+    *ngIf="!pService.check()"
+    #notificationHeader
+    cdk-overlay-origin
+    #origin="cdkOverlayOrigin"
+  >
+    <i class="icon-notification"></i>
+    <div class="push">1</div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
 
-        <i class="icon-question"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
-    </div>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayOpen]="isOpenNotification"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="closeNotification()"
+    >
+      <app-notification
+        [@notification]
+        (oncloseNotification)="closeNotification()"
+      ></app-notification>
+    </ng-template>
+  </div>
 
-    <div CustomTooltip="{{ 'header.notification' | translate }}"
-        position="Bottom"
-        class="auxiliary-icon"
-        (click)="isOpenNotification = !isOpenNotification"
-        *ngIf="!pService.check()" #notificationHeader
-        cdk-overlay-origin
-        #origin="cdkOverlayOrigin">
-
-        <i class="icon-notification"></i>
-        <div class="push">1</div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
-
-        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-            [cdkConnectedOverlayOpen]="isOpenNotification"
-            [cdkConnectedOverlayHasBackdrop]="true"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            [cdkConnectedOverlayPositions]="positions"
-            (backdropClick)="closeNotification()">
-            <app-notification [@notification]
-                (oncloseNotification)="closeNotification()"></app-notification>
-        </ng-template>
-    </div>
-
-    <div CustomTooltip="{{ 'header.orientation' | translate }}"
-        position="Bottom" 
-        class="auxiliary-icon"
-        (click)="toggleOrientation()"
-        *ngIf="!(isProfile$ | async) && !pService.check()" #orientationNote>
-
-        <i class="icon-view-change"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
-    </div>
+  <div
+    CustomTooltip="{{ 'header.orientation' | translate }}"
+    position="Bottom"
+    class="auxiliary-icon"
+    (click)="toggleOrientation()"
+    *ngIf="(isProfile$ | async) === false && !pService.check()"
+    #orientationNote
+  >
+    <i class="icon-view-change"></i>
+    <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
+  </div>
 </div>

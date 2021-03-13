@@ -1,32 +1,48 @@
 import {
-  Component, OnInit, OnDestroy,
-  Renderer2, ViewChild, ElementRef, HostListener, AfterViewInit, QueryList, ViewChildren, ChangeDetectorRef
+  Component,
+  OnInit,
+  OnDestroy,
+  Renderer2,
+  ViewChild,
+  ElementRef,
+  HostListener,
+  AfterViewInit,
+  QueryList,
+  ViewChildren,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle, UploadImagesToNote } from '../state/notes-actions';
-import { NoteStore } from '../state/notes-state';
-import { FullNote } from '../models/fullNote';
 import { catchError, debounceTime, take, takeUntil } from 'rxjs/operators';
 import {
   PersonalizationService,
   sideBarCloseOpen,
   deleteSmallNote,
-  showHistory
+  showHistory,
 } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/models/Theme';
-import { SmallNote } from '../models/smallNote';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { LoadLabels } from '../../labels/state/labels-actions';
-import { NotesService } from '../notes.service';
-import { FullNoteSliderService } from '../full-note-slider.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import {
+  DeleteCurrentNote,
+  LoadFullNote,
+  LoadNotes,
+  UpdateTitle,
+  UploadImagesToNote,
+} from '../state/notes-actions';
+import { NoteStore } from '../state/notes-state';
+import { FullNote } from '../models/fullNote';
+import { SmallNote } from '../models/smallNote';
+import { LoadLabels } from '../../labels/state/labels-actions';
+import { NotesService } from '../notes.service';
+import { FullNoteSliderService } from '../full-note-slider.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
 import { BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
@@ -41,30 +57,31 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-
-
 
 @Component({
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
-  animations: [
-    sideBarCloseOpen,
-    deleteSmallNote,
-    showHistory],
-  providers: [NotesService, FullNoteContentService,
-    ContentEditableService, FullNoteSliderService, MurriService]
+  animations: [sideBarCloseOpen, deleteSmallNote, showHistory],
+  providers: [
+    NotesService,
+    FullNoteContentService,
+    ContentEditableService,
+    FullNoteSliderService,
+    MurriService,
+  ],
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
-
   loaded = false;
+
   contentType = ContentType;
+
   destroy = new Subject<void>();
 
   @ViewChild('fullWrap') wrap: ElementRef;
 
   @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
+
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
@@ -72,6 +89,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
   note: FullNote;
+
   contents: ContentModel[];
 
   theme = Theme;
@@ -79,9 +97,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   notes: number[] = [0, 1, 2, 3, 4, 5];
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+
   newLine: Subject<void> = new Subject();
 
   private routeSubscription: Subscription;
+
   private id: string;
 
   @Select(NoteStore.canView)
@@ -92,39 +112,37 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public notesLink: SmallNote[];
 
-  constructor(private signal: SignalRService,
-              private route: ActivatedRoute,
-              private store: Store,
-              public pService: PersonalizationService,
-              private rend: Renderer2,
-              public sliderService: FullNoteSliderService,
-              public murriService: MurriService,
-              public contentService: FullNoteContentService,
-              private selectionService: SelectionService,
-              private apiBrowserFunctions: ApiBrowserTextService,
-              public menuSelectionService: MenuSelectionService,
-              public buttonService: MenuButtonsService,
-              private api: ApiServiceNotes) {
-
+  constructor(
+    private signal: SignalRService,
+    private route: ActivatedRoute,
+    private store: Store,
+    public pService: PersonalizationService,
+    private rend: Renderer2,
+    public sliderService: FullNoteSliderService,
+    public murriService: MurriService,
+    public contentService: FullNoteContentService,
+    private selectionService: SelectionService,
+    private apiBrowserFunctions: ApiBrowserTextService,
+    public menuSelectionService: MenuSelectionService,
+    public buttonService: MenuButtonsService,
+    private api: ApiServiceNotes,
+  ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
 
-      this.store.select(AppStore.appLoaded)
+      this.store
+        .select(AppStore.appLoaded)
         .pipe(takeUntil(this.destroy))
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.initNote();
             this.store.dispatch(new LoadLabels());
           }
-        }
-        );
+        });
     });
-
   }
 
-
   ngAfterViewInit(): void {
-
     const note = this.store.selectSnapshot(NoteStore.oneFull);
     if (note) {
       this.sliderService.goTo(this.sliderService.active, this.wrap);
@@ -144,21 +162,20 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     this.contents = await this.api.getContents(this.id).toPromise();
 
-    this.store.select(NoteStore.oneFull)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(note => this.note = note);
+    this.store
+      .select(NoteStore.oneFull)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((note) => (this.note = note));
 
     this.loaded = true;
   }
 
   async LoadSecond() {
-
     const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const actions = types.map(x => new LoadNotes(x.id, x));
+    const actions = types.map((x) => new LoadNotes(x.id, x));
     await this.store.dispatch(actions).toPromise();
 
     await this.setSideBarNotes(this.note.noteType.name);
-
   }
 
   async ngOnInit() {
@@ -167,29 +184,33 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 
-    this.nameChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(title => this.store.dispatch(new UpdateTitle(title)));
+    this.nameChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
 
-    this.newLine.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
+    this.newLine
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe(async (event) => {
         const resp = await this.api.newLine(this.note.id).toPromise();
-        if (resp.success){
-        this.contents.push(resp.data);
+        if (resp.success) {
+          this.contents.push(resp.data);
         }
       });
 
-    setTimeout(() => this.murriService.gridSettings('.grid-item-small',
-      document.querySelector('.grid') as HTMLElement, true), 3000); // CHANGE TODO
+    setTimeout(
+      () =>
+        this.murriService.gridSettings(
+          '.grid-item-small',
+          document.querySelector('.grid') as HTMLElement,
+          true,
+        ),
+      3000,
+    ); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
     this.loaded = true;
   }
 
-  removeAlbumHandler(id: string)
-  {
+  removeAlbumHandler(id: string) {
     console.log('TODO');
   }
 
@@ -200,65 +221,66 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   mouseEnter($event) {
     const native = this.textElements?.last?.getNative();
-    if (native?.textContent.length !== 0)
-    {
+    if (native?.textContent.length !== 0) {
       this.addNewElementToEnd();
     }
     this.textElements?.last?.mouseEnter($event);
   }
 
   mouseOut($event) {
-   this.textElements?.last?.mouseOut($event);
+    this.textElements?.last?.mouseOut($event);
   }
 
-  async enterHandler(value: EnterEvent) // TODO SETTIMEOUT
-  {
+  async enterHandler(
+    value: EnterEvent, // TODO SETTIMEOUT
+  ) {
     const breakLineType = value.breakModel.typeBreakLine;
-    const nextText = value.breakModel.nextText;
-    const newElement = await this.api.insertLine(this.note.id, value.contentId, breakLineType, nextText).toPromise();
+    const { nextText } = value.breakModel;
+    const newElement = await this.api
+      .insertLine(this.note.id, value.contentId, breakLineType, nextText)
+      .toPromise();
 
-    if (!newElement.success)
-    {
+    if (!newElement.success) {
       return;
     }
 
-    const elementCurrent = this.contents.find(x => x.id === value.id);
+    const elementCurrent = this.contents.find((x) => x.id === value.id);
     let index = this.contents.indexOf(elementCurrent);
 
-    if (breakLineType === LineBreakType.NEXT)
-    {
+    if (breakLineType === LineBreakType.NEXT) {
       index++;
     }
 
     this.contents.splice(index, 0, newElement.data);
-    setTimeout(() => { this.textElements?.toArray()[index].setFocus(); }, 0);
-
+    setTimeout(() => {
+      this.textElements?.toArray()[index].setFocus();
+    }, 0);
   }
 
-  async deleteHTMLHandler(id: string) // TODO SETTIMEOUT AND CHANGE LOGIC
-  {
+  async deleteHTMLHandler(
+    id: string, // TODO SETTIMEOUT AND CHANGE LOGIC
+  ) {
     const resp = await this.api.removeContent(this.note.id, id).toPromise();
 
-    if (resp.success)
-    {
-      const item = this.contents.find(x => x.id === id);
+    if (resp.success) {
+      const item = this.contents.find((x) => x.id === id);
       const indexOf = this.contents.indexOf(item);
-      this.contents = this.contents.filter(z => z.id !== id);
+      this.contents = this.contents.filter((z) => z.id !== id);
       const index = indexOf - 1;
       this.textElements?.toArray()[index].setFocusToEnd();
     }
   }
 
-  async concatThisWithPrev(id: string) { // TODO SETTIMEOUT
+  async concatThisWithPrev(id: string) {
+    // TODO SETTIMEOUT
 
     const resp = await this.api.concatWithPrevious(this.note.id, id).toPromise();
 
-    if (resp.success)
-    {
-      const item = this.contents.find(x => x.id === resp.data.id) as BaseText;
+    if (resp.success) {
+      const item = this.contents.find((x) => x.id === resp.data.id) as BaseText;
       const indexOf = this.contents.indexOf(item);
       this.contents[indexOf] = resp.data;
-      this.contents = this.contents.filter(x => x.id !== id);
+      this.contents = this.contents.filter((x) => x.id !== id);
 
       setTimeout(() => {
         const prevItemHtml = this.textElements?.toArray()[indexOf];
@@ -267,9 +289,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  async updateTextHandler(event: EditTextEventModel, isLast: boolean)
-  {
-    this.api.updateContentText(this.note.id, event.contentId, event.content, event.checked).toPromise();
+  async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
+    this.api
+      .updateContentText(this.note.id, event.contentId, event.content, event.checked)
+      .toPromise();
     if (isLast) {
       this.addNewElementToEnd();
     }
@@ -281,28 +304,26 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   selectionStartHandler($event: DOMRect) {
     const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.refElements);
-    if (isSelectionInZone)
-    {
+    if (isSelectionInZone) {
       this.selectionService.isSelectionInside = true;
       this.selectionDirective.div.style.opacity = '0';
-    }else{
+    } else {
       this.selectionService.isSelectionInside = false;
       this.selectionDirective.div.style.opacity = '1';
     }
   }
 
-  async transformToType(value: TransformContent)
-  {
-    const resp = await this.api.updateContentType(this.note.id, value.id, value.contentType, value.headingType).toPromise();
+  async transformToType(value: TransformContent) {
+    const resp = await this.api
+      .updateContentType(this.note.id, value.id, value.contentType, value.headingType)
+      .toPromise();
 
-    if (!resp.success)
-    {
+    if (!resp.success) {
       return;
     }
 
     let indexOf;
-    switch (value.contentType)
-    {
+    switch (value.contentType) {
       case ContentType.DEFAULT: {
         indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
@@ -331,31 +352,29 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkAddLastTextContent(indexOf);
   }
 
-  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number
-  {
-    const item = this.contents.find(z => z.id === id) as BaseText;
+  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number {
+    const item = this.contents.find((z) => z.id === id) as BaseText;
     const indexOf = this.contents.indexOf(item);
     item.type = contentType;
-    if (headingType)
-    {
+    if (headingType) {
       item.headingType = headingType;
     }
-    setTimeout(() => { this.textElements?.toArray()[indexOf].setFocus(); }, 0);
+    setTimeout(() => {
+      this.textElements?.toArray()[indexOf].setFocus();
+    }, 0);
     return indexOf;
   }
 
   async uploadImages(event) {
     const data = new FormData();
-    const files = event.target.files;
-    for (const file of files)
-    {
+    const { files } = event.target;
+    for (const file of files) {
       data.append('photos', file);
     }
     this.store.dispatch(new UploadImagesToNote(data));
   }
 
-  checkAddLastTextContent(index: number)
-  {
+  checkAddLastTextContent(index: number) {
     /*
     if (index === this.contents.length - 1)
     {
@@ -364,8 +383,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     */
   }
 
-  addNewElementToEnd()
-  {
+  addNewElementToEnd() {
     this.newLine.next();
   }
 
@@ -375,7 +393,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sliderService.getSize();
     } else {
       this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap.nativeElement, 'transform', 'translate3d( ' + 0 + '%,0,0)');
+      this.rend.setStyle(this.wrap.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
       this.sliderService.active = 0;
     }
   }
@@ -390,7 +408,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deleteSmallNote(item: any) {
     let counter = 0;
-    this.notes = this.notes.filter(x => x !== this.notes[item]);
+    this.notes = this.notes.filter((x) => x !== this.notes[item]);
     const interval = setInterval(() => {
       if (counter === 35) {
         clearInterval(interval);
@@ -400,16 +418,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }, 10);
   }
 
-
-
   updateDoc(str: string) {
     // TODO
     // const note = { ...this.note };
     // note.title = str;
     // this.store.dispatch(new UpdateFullNote(note));
   }
-
-
 
   setSideBarNotes(noteType: NoteTypeENUM) {
     let notes: SmallNote[];
@@ -431,9 +445,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
       }
     }
-    this.notesLink = notes.filter(z => z.id !== this.id);
+    this.notesLink = notes.filter((z) => z.id !== this.id);
   }
-
 
   connectToHub() {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
@@ -454,7 +467,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
-
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
     this.destroy.next();
@@ -463,5 +475,4 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.routeSubscription.unsubscribe();
     this.signal.hubConnection.invoke('LeaveNote', this.id);
   }
-
 }

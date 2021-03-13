@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
@@ -13,10 +23,9 @@ import { CheckListService } from '../../html-business-logic/checkList.service';
   selector: 'app-html-check-list',
   templateUrl: './html-check-list.component.html',
   styleUrls: ['./html-check-list.component.scss'],
-  providers: [CheckListService]
+  providers: [CheckListService],
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
 
@@ -38,16 +47,23 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
   destroy = new Subject<void>();
 
-  constructor(public checkListService: CheckListService) { }
+  constructor(public checkListService: CheckListService) {}
 
   getContent() {
     return this.content;
   }
 
   ngAfterViewInit(): void {
-    this.checkListService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.checkListService.setHandlers(
+      this.content,
+      this.contentHtml,
+      this.enterEvent,
+      this.concatThisWithPrev,
+      this.deleteThis,
+    );
   }
 
   ngOnDestroy(): void {
@@ -60,10 +76,9 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.checkListService.contentStr = this.content?.content;
     this.checkListService.transformTo = this.transformTo;
 
-    this.textChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
+    this.textChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
   }
 
   setFocus($event?) {
@@ -79,8 +94,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative()
-  {
+  getNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -92,9 +106,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.checkListService.mouseOut($event, this.contentHtml);
   }
 
-
-  get isActive()
-  {
+  get isActive() {
     return this.checkListService.isActive(this.contentHtml);
   }
 
@@ -102,11 +114,13 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.textChanged.next($event.target.innerText);
   }
 
-  changeCheckBox()
-  {
+  changeCheckBox() {
     this.content.checked = !this.content.checked;
     const str = this.textChanged.getValue();
-    this.updateText.emit({content: str, contentId: this.content.id, checked: this.content.checked});
+    this.updateText.emit({
+      content: str,
+      contentId: this.content.id,
+      checked: this.content.checked,
+    });
   }
-
 }

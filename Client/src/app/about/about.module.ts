@@ -3,12 +3,8 @@ import { CommonModule } from '@angular/common';
 import { AboutComponent } from './about/about.component';
 import { AboutRouting } from './about-routing';
 
-
 @NgModule({
   declarations: [AboutComponent],
-  imports: [
-    CommonModule,
-    AboutRouting
-  ]
+  imports: [CommonModule, AboutRouting],
 })
-export class AboutModule { }
+export class AboutModule {}

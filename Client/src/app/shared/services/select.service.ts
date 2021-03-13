@@ -2,12 +2,10 @@ import { Injectable } from '@angular/core';
 import { SelectComponent } from '../custom-components/select/select.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SelectService {
   private select: SelectComponent;
-
-  constructor() { }
 
   public register(select: SelectComponent) {
     this.select = select;

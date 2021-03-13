@@ -8,9 +8,8 @@ describe('ToggleTextComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToggleTextComponent ]
-    })
-    .compileComponents();
+      declarations: [ToggleTextComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

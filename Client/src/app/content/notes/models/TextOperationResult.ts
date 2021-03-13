@@ -1,4 +1,4 @@
-export interface TextOperationResult<T>{
-    data:T;
-    success: boolean;
+export interface TextOperationResult<T> {
+  data: T;
+  success: boolean;
 }

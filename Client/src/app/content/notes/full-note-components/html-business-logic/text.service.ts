@@ -5,42 +5,48 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class TextService extends HtmlService {
+  onBlur(e: any) {
+    // BLUR HANDLER
+  }
 
+  pasteCommandHandler(e: any) {
+    super.pasteCommandHandler(e);
+  }
 
-    onBlur(e: any) {
-        // BLUR HANDLER
-    }
+  onSelectStart(e: any) {
+    // SELECTIION
+  }
 
-    pasteCommandHandler(e: any) {
-        super.pasteCommandHandler(e);
-    }
+  enter(
+    $event: any,
+    content: BaseText,
+    contentHtml: ElementRef,
+    enterEvent: EventEmitter<EnterEvent>,
+  ) {
+    $event.preventDefault();
+    const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
+    content.content = this.getNativeElement(contentHtml).innerText;
+    const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
+    enterEvent.emit(event);
+  }
 
-    onSelectStart(e: any) {
-        // SELECTIION
-    }
+  backDown(
+    $event,
+    content: BaseText,
+    contentHtml: ElementRef,
+    concatThisWithPrev: EventEmitter<string>,
+    deleteThis: EventEmitter<string>,
+  ) {
+    super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
+  }
 
-    enter($event: any, content: BaseText, contentHtml: ElementRef, enterEvent: EventEmitter<EnterEvent>) {
-        $event.preventDefault();
-        const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-        content.content = this.getNativeElement(contentHtml).innerText;
-        const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
-        enterEvent.emit(event);
-    }
+  backUp(e: any) {}
 
-    backDown($event, content: BaseText, contentHtml: ElementRef,
-             concatThisWithPrev: EventEmitter<string>, deleteThis: EventEmitter<string>) {
-        super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
-    }
+  setFocus($event, contentHtml: ElementRef) {
+    this.getNativeElement(contentHtml).focus();
+  }
 
-    backUp(e: any) {
-
-    }
-
-    setFocus($event, contentHtml: ElementRef) {
-        this.getNativeElement(contentHtml).focus();
-    }
-
-    setFocusToEnd(contentHtml: ElementRef) {
-        this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
-    }
+  setFocusToEnd(contentHtml: ElementRef) {
+    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
+  }
 }

@@ -7,16 +7,12 @@ import { Theme } from 'src/app/shared/models/Theme';
 @Component({
   selector: 'app-interaction-labels',
   templateUrl: './interaction-labels.component.html',
-  styleUrls: ['./interaction-labels.component.scss']
+  styleUrls: ['./interaction-labels.component.scss'],
 })
 export class InteractionLabelsComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-  }
-
-  deleteAllLabels() {
-  }
-
+  deleteAllLabels() {}
 }

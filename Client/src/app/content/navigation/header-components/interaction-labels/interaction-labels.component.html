@@ -1,9 +1,15 @@
 <div appTheme class="interactions">
-    <button name="Delete labels" type="button" class="generic generic-2 generic-unfixed" (click)="deleteAllLabels()" #delete>
-        <div class="inner-content">
-            <p>{{'header.emptyTrash' | translate}}</p>
-            <i class="icon-delete"></i>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="delete"></div>
-    </button>
+  <button
+    name="Delete labels"
+    type="button"
+    class="generic generic-2 generic-unfixed"
+    (click)="deleteAllLabels()"
+    #delete
+  >
+    <div class="inner-content">
+      <p>{{'header.emptyTrash' | translate}}</p>
+      <i class="icon-delete"></i>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="delete"></div>
+  </button>
 </div>

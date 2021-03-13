@@ -9,22 +9,21 @@ import { NoteStore } from '../state/notes-state';
 @Component({
   selector: 'app-text-edit-menu',
   templateUrl: './text-edit-menu.component.html',
-  styleUrls: ['./text-edit-menu.component.scss']
+  styleUrls: ['./text-edit-menu.component.scss'],
 })
 export class TextEditMenuComponent implements OnInit {
-
   constructor(
     public menuSelectionService: MenuSelectionService,
     private apiBrowserService: ApiBrowserTextService,
     private api: ApiServiceNotes,
-    private store: Store
-  ) { }
+    private store: Store,
+  ) {}
 
   contentType = ContentType;
+
   headingType = HeadingType;
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   preventUnSelection(e) {
     e.preventDefault();
@@ -38,8 +37,7 @@ export class TextEditMenuComponent implements OnInit {
     if (item.type === type && item.headingType === heading) {
       await this.api.updateContentType(noteId, item.id, ContentType.DEFAULT, null).toPromise();
       item.type = ContentType.DEFAULT;
-    }
-     else {
+    } else {
       await this.api.updateContentType(noteId, item.id, type, heading).toPromise();
       item.type = type;
       item.headingType = heading;
@@ -56,10 +54,7 @@ export class TextEditMenuComponent implements OnInit {
 
     if (type === ContentType.HEADING && item.type === type) {
       return heading === item.headingType ? 'active' : '';
-    } else {
-      return type === item.type ? 'active' : '';
     }
-
+    return type === item.type ? 'active' : '';
   }
-
 }

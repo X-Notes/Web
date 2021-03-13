@@ -8,26 +8,26 @@ import { PhotoService } from '../photos-business-logic/photo.service';
   templateUrl: './photo.component.html',
   styleUrls: ['./photo.component.scss'],
   animations: [
-    trigger('photoInit',
-    [
-      state('noLoaded', style({
-        opacity: 0,
-      })),
-      state('loaded', style({
-        opacity: 1,
-      })),
-      transition('noLoaded => loaded', [
-        animate('0.35s ease-out')
-      ]),
-      transition('loaded => noLoaded', [
-        animate(0)
-      ]),
-    ])
+    trigger('photoInit', [
+      state(
+        'noLoaded',
+        style({
+          opacity: 0,
+        }),
+      ),
+      state(
+        'loaded',
+        style({
+          opacity: 1,
+        }),
+      ),
+      transition('noLoaded => loaded', [animate('0.35s ease-out')]),
+      transition('loaded => noLoaded', [animate(0)]),
+    ]),
   ],
-  providers: [PhotoService]
+  providers: [PhotoService],
 })
 export class PhotoComponent implements OnInit {
-
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -36,13 +36,11 @@ export class PhotoComponent implements OnInit {
 
   isOpened = false;
 
-  constructor(private photoService: PhotoService) { }
+  constructor(private photoService: PhotoService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  onLoadImage($event)
-  {
+  onLoadImage($event) {
     this.photo.loaded = true;
   }
 
@@ -51,14 +49,11 @@ export class PhotoComponent implements OnInit {
     this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
   }
 
-  closeMenu($event: MouseEvent)
-  {
+  closeMenu($event: MouseEvent) {
     this.isOpened = false;
   }
 
-  deletePhoto()
-  {
+  deletePhoto() {
     this.deleteEvent.emit(this.photo.id);
   }
-
 }

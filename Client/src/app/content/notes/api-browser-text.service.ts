@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiBrowserTextService {
-
-  constructor() { }
+  constructor() {}
 
   pasteCommandHandler(e) {
     e.preventDefault();
@@ -19,18 +18,18 @@ export class ApiBrowserTextService {
     this.copyTest(text);
   }
 
-  copyTest(text)
-  {
-    navigator.clipboard.writeText(text).then(() => {
-      /* clipboard successfully set */
-    }, () => {
-      /* clipboard write failed */
-    });
+  copyTest(text) {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        /* clipboard successfully set */
+      },
+      () => {
+        /* clipboard write failed */
+      },
+    );
   }
 
-  getSelection(): Selection
-  {
+  getSelection(): Selection {
     return window.getSelection();
   }
-
 }

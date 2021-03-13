@@ -10,19 +10,15 @@ import { MenuButtonsService } from '../menu-buttons.service';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit, OnDestroy {
-
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
-  constructor(public pService: PersonalizationService,
-              public buttonService: MenuButtonsService) { }
+  constructor(public pService: PersonalizationService, public buttonService: MenuButtonsService) {}
 
-  ngOnDestroy(): void {
-
-  }
+  ngOnDestroy(): void {}
 
   ngOnInit(): void {
     console.log('init');

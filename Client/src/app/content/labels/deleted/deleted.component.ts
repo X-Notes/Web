@@ -1,45 +1,55 @@
-import { Component, OnInit, OnDestroy, ViewChildren, AfterViewInit, ElementRef, QueryList } from '@angular/core';
-import {  Store } from '@ngxs/store';
-import { Label } from '../models/label';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChildren,
+  AfterViewInit,
+  ElementRef,
+  QueryList,
+} from '@angular/core';
+import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { UpdateLabel, LoadLabels, DeleteLabel, SetDeleteLabel, } from '../state/labels-actions';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import {UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { LabelsService } from '../labels.service';
-import { LabelStore } from '../state/labels-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { LabelStore } from '../state/labels-state';
+import { LabelsService } from '../labels.service';
+import { UpdateLabel, LoadLabels, DeleteLabel, SetDeleteLabel } from '../state/labels-actions';
+import { Label } from '../models/label';
 
 @Component({
   selector: 'app-deleted',
   templateUrl: './deleted.component.html',
   styleUrls: ['./deleted.component.scss'],
-  providers: [LabelsService]
+  providers: [LabelsService],
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
-
   fontSize = FontSizeENUM;
+
   destroy = new Subject<void>();
+
   loaded = false;
-  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              public murriService: MurriService,
-              public labelService: LabelsService,
-              private snackService: SnackbarService) { }
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    public murriService: MurriService,
+    public labelService: LabelsService,
+    private snackService: SnackbarService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.labelService.murriInitialise(this.refElements, true);
   }
-
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
@@ -51,15 +61,14 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
 
-    this.store.select(AppStore.appLoaded)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (x: boolean) => {
-      if (x) {
-        await this.loadContent();
-      }
-    }
-    );
-
+    this.store
+      .select(AppStore.appLoaded)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          await this.loadContent();
+        }
+      });
   }
 
   async loadContent() {
@@ -73,16 +82,16 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.store.select(LabelStore.deleted)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(labs => {
-      if (labs.length === 0) {
-        this.labelService.labels = [];
-        setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
-      }
-    });
+    this.store
+      .select(LabelStore.deleted)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((labs) => {
+        if (labs.length === 0) {
+          this.labelService.labels = [];
+          setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+        }
+      });
   }
-
 
   update(label: Label) {
     this.store.dispatch(new UpdateLabel(label));
@@ -90,7 +99,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   restoreLabel(label: Label) {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
+    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
     let snackbarRef;
     switch (language.name) {
       case LanguagesENUM.english:
@@ -103,7 +112,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
         snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
         break;
     }
-    snackbarRef.afterDismissed().subscribe(x => {
+    snackbarRef.afterDismissed().subscribe((x) => {
       if (x.dismissedByAction) {
         this.store.dispatch(new SetDeleteLabel(label));
       }
@@ -114,7 +123,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async delete(label: Label) {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
-    this.labelService.labels = this.labelService.labels.filter(x => x.id !== label.id);
+    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
     let snackbarRef;
     switch (language.name) {
       case LanguagesENUM.english:
@@ -129,5 +138,4 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
-
 }

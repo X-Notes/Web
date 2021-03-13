@@ -8,9 +8,8 @@ describe('TextEditMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TextEditMenuComponent ]
-    })
-    .compileComponents();
+      declarations: [TextEditMenuComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

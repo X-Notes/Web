@@ -1,8 +1,32 @@
 <div (mousedown)="preventUnSelection($event)" class="container">
-    <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)" class="icon-h1" [ngClass]="getIsActive(contentType.HEADING, headingType.H1)"></i>
-    <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)" class="icon-h2" [ngClass]="getIsActive(contentType.HEADING, headingType.H2)"></i>
-    <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)" class="icon-h3" [ngClass]="getIsActive(contentType.HEADING, headingType.H3)"></i>
-    <i (mousedown)="transformContent($event, contentType.CHECKLIST)" class="icon-list-checked" [ngClass]="getIsActive(contentType.CHECKLIST)"></i>
-    <i (mousedown)="transformContent($event, contentType.DOTLIST)" class="icon-list-dot" [ngClass]="getIsActive(contentType.DOTLIST)"></i>
-    <i (mousedown)="transformContent($event, contentType.NUMBERLIST)" class="icon-list" [ngClass]="getIsActive(contentType.NUMBERLIST)"></i>
+  <i
+    (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)"
+    class="icon-h1"
+    [ngClass]="getIsActive(contentType.HEADING, headingType.H1)"
+  ></i>
+  <i
+    (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)"
+    class="icon-h2"
+    [ngClass]="getIsActive(contentType.HEADING, headingType.H2)"
+  ></i>
+  <i
+    (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)"
+    class="icon-h3"
+    [ngClass]="getIsActive(contentType.HEADING, headingType.H3)"
+  ></i>
+  <i
+    (mousedown)="transformContent($event, contentType.CHECKLIST)"
+    class="icon-list-checked"
+    [ngClass]="getIsActive(contentType.CHECKLIST)"
+  ></i>
+  <i
+    (mousedown)="transformContent($event, contentType.DOTLIST)"
+    class="icon-list-dot"
+    [ngClass]="getIsActive(contentType.DOTLIST)"
+  ></i>
+  <i
+    (mousedown)="transformContent($event, contentType.NUMBERLIST)"
+    class="icon-list"
+    [ngClass]="getIsActive(contentType.NUMBERLIST)"
+  ></i>
 </div>

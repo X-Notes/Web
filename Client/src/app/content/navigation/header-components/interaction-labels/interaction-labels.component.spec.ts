@@ -6,12 +6,13 @@ describe('InteractionLabelsComponent', () => {
   let component: InteractionLabelsComponent;
   let fixture: ComponentFixture<InteractionLabelsComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InteractionLabelsComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [InteractionLabelsComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InteractionLabelsComponent);

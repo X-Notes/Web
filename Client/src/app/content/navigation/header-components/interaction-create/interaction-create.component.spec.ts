@@ -6,12 +6,13 @@ describe('InteractionCreateComponent', () => {
   let component: InteractionCreateComponent;
   let fixture: ComponentFixture<InteractionCreateComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InteractionCreateComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [InteractionCreateComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InteractionCreateComponent);

@@ -3,15 +3,17 @@ import { ApiBrowserTextService } from './api-browser-text.service';
 
 @Injectable()
 export class SelectionService {
-
   menuHeight = 49;
+
   sidebarWidth = 270;
 
   ismousedown = false;
+
   isResizingPhoto = false;
+
   isSelectionInside;
 
-  constructor(private apiBrowserService: ApiBrowserTextService) { }
+  constructor(private apiBrowserService: ApiBrowserTextService) {}
 
   selectionHandler(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
     const refElementsArray = refElements.toArray();
@@ -20,7 +22,7 @@ export class SelectionService {
     const itemsSelect: HTMLElement[] = [];
     const itemsNoSelect: HTMLElement[] = [];
 
-    for (let i = 0 ; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       const html = refElementsArray[i].nativeElement as HTMLElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
@@ -33,39 +35,31 @@ export class SelectionService {
     this.makeNoSelect(itemsNoSelect);
   }
 
-  makeSelect(refElements: HTMLElement[])
-  {
-    if (this.isSelectionInside)
-    {
-      if (refElements.length === 1)
-      {
+  makeSelect(refElements: HTMLElement[]) {
+    if (this.isSelectionInside) {
+      if (refElements.length === 1) {
         refElements[0].style.backgroundColor = null;
         return;
-      }else{
-        this.apiBrowserService.getSelection().empty();
       }
+      this.apiBrowserService.getSelection().empty();
     }
-    for (const elem of refElements)
-    {
+    for (const elem of refElements) {
       elem.style.backgroundColor = '#2a2d32';
       elem.setAttribute('selectedByUser', 'true');
     }
   }
 
-  makeNoSelect(refElements: HTMLElement[])
-  {
-    for (const elem of refElements)
-    {
+  makeNoSelect(refElements: HTMLElement[]) {
+    for (const elem of refElements) {
       elem.style.backgroundColor = null;
       elem.removeAttribute('selectedByUser');
     }
   }
 
-
   isSelectionInZone(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
     const refElementsArray = refElements.toArray();
     const length = refElementsArray.length - 1;
-    for (let i = 0 ; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       const html = refElementsArray[i].nativeElement as HTMLElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
@@ -76,11 +70,11 @@ export class SelectionService {
   }
 
   isRectToRect(firstRect: DOMRect, secondRect: DOMRect) {
-    return (firstRect.x < secondRect.x + secondRect.width) &&
-      (secondRect.x < (firstRect.x + firstRect.width)) &&
-      (firstRect.y < secondRect.y + secondRect.height) &&
-      (secondRect.y < (firstRect.y + firstRect.height));
+    return (
+      firstRect.x < secondRect.x + secondRect.width &&
+      secondRect.x < firstRect.x + firstRect.width &&
+      firstRect.y < secondRect.y + secondRect.height &&
+      secondRect.y < firstRect.y + firstRect.height
+    );
   }
-
-
 }

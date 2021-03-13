@@ -6,17 +6,14 @@ import { ContentType, Album, HeadingType, BaseText } from './models/ContentMode'
 
 @Injectable()
 export class FullNoteContentService implements OnDestroy {
-
   destroy = new Subject<void>();
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
   }
-
-
 
   getTextElement(str = '') {
     const contentDefault = new BaseText();
@@ -70,20 +67,20 @@ export class FullNoteContentService implements OnDestroy {
     content3.type = ContentType.ALBUM;
     content3.photos = [];
 
-    this.httpClient.get(`https://picsum.photos/v2/list?page=${number2}&limit=3`)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(z => {
-      for (const item of z as any)
-      {
-        content3.photos.push({
-          id: item.id,
-          url: item.download_url,
-          height: item.height,
-          width: item.width,
-          loaded: false
-        });
-      }
-    });
+    this.httpClient
+      .get(`https://picsum.photos/v2/list?page=${number2}&limit=3`)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((z) => {
+        for (const item of z as any) {
+          content3.photos.push({
+            id: item.id,
+            url: item.download_url,
+            height: item.height,
+            width: item.width,
+            loaded: false,
+          });
+        }
+      });
     return content3;
   }
 
@@ -129,5 +126,4 @@ export class FullNoteContentService implements OnDestroy {
       }
     }
   }
-
 }

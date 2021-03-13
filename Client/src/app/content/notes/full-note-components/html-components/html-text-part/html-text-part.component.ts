@@ -1,6 +1,15 @@
 import {
-  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges,
-  OnDestroy, OnInit, Output, SimpleChanges, ViewChild
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -18,10 +27,9 @@ import { TextService } from '../../html-business-logic/text.service';
   selector: 'app-html-text-part',
   templateUrl: './html-text-part.component.html',
   styleUrls: ['./html-text-part.component.scss'],
-  providers: [TextService]
+  providers: [TextService],
 })
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -34,11 +42,12 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
-
   contentType = ContentType;
+
   headingType = HeadingType;
 
   textChanged: Subject<string> = new Subject<string>();
+
   destroy = new Subject<void>();
 
   @Output()
@@ -49,20 +58,25 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  constructor(public textService: TextService,
-              private store: Store,
-              private api: ApiServiceNotes) { }
+  constructor(
+    public textService: TextService,
+    private store: Store,
+    private api: ApiServiceNotes,
+  ) {}
 
   getContent() {
     return this.content;
   }
 
-
-
   ngAfterViewInit(): void {
-    this.textService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.textService.setHandlers(
+      this.content,
+      this.contentHtml,
+      this.enterEvent,
+      this.concatThisWithPrev,
+      this.deleteThis,
+    );
   }
-
 
   ngOnDestroy(): void {
     this.textService.destroysListeners();
@@ -72,10 +86,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   ngOnInit(): void {
     this.textService.contentStr = this.content?.content;
-    this.textChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
+    this.textChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
   }
 
   transformContent($event, contentType: ContentType, heading?: HeadingType) {
@@ -120,5 +133,4 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
-
 }

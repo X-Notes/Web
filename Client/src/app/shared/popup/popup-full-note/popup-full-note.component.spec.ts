@@ -8,9 +8,8 @@ describe('PopupFullNoteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PopupFullNoteComponent ]
-    })
-    .compileComponents();
+      declarations: [PopupFullNoteComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

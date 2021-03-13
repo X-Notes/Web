@@ -1,61 +1,79 @@
 <div appTheme class="sub-nav">
-    <div class="sub-nav-section" *ngIf="pService.stateSidebar" [@sidebarCloseOpen] [@.disabled]="pService.check()">
-        <div class="sub-nav-item-section">
-            <div class="sub-nav-item" routerLink="/profile" #profile>
-                <div class="item">
-                    <div class="photo">
-                        <img *ngIf="!photoError" alt="photo" [src]="(user$ | async).photoId | getImage"
-                            (error)="changeSource($event)">
-                        <i *ngIf="photoError" class="icon-people"></i>
-                    </div>
-                    <p>{{(user$ | async).name}}</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
-            </div>
-            <div class="separator"></div>
-            <div class="sub-nav-item" routerLink="/labels" [routerLinkActiveOptions]="{exact:true}"
-                routerLinkActive="active" #sub1>
-                <div class="item">
-                    <p>{{ 'subMenu.all' | translate }}</p>
-                    <p>{{countAll$ | async}}</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
-            </div>
-            <div class="sub-nav-item" routerLink="/labels/deleted" routerLinkActive="active" #sub2>
-                <div class="item">
-                    <p>{{ 'subMenu.bin' | translate }}</p>
-                    <p>{{countDeleted$ | async}}</p>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
-            </div>
-            <div class="separator"></div>
+  <div
+    class="sub-nav-section"
+    *ngIf="pService.stateSidebar"
+    [@sidebarCloseOpen]
+    [@.disabled]="pService.check()"
+  >
+    <div class="sub-nav-item-section">
+      <div class="sub-nav-item" routerLink="/profile" #profile>
+        <div class="item">
+          <div class="photo">
+            <img
+              *ngIf="!photoError"
+              alt="photo"
+              [src]="(user$ | async).photoId | getImage"
+              (error)="changeSource($event)"
+            />
+            <i *ngIf="photoError" class="icon-people"></i>
+          </div>
+          <p>{{(user$ | async).name}}</p>
         </div>
-        <div class="information">
-            <div class="separator"></div>
-            <div class="progress-section">
-                <div class="billing">B</div>
-                <div class="progress-bar-section">
-                    <div class="text">
-                        <p>50mb of 100MB</p>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="indicator"></div>
-                    </div>
-                </div>
-            </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
+      </div>
+      <div class="separator"></div>
+      <div
+        class="sub-nav-item"
+        routerLink="/labels"
+        [routerLinkActiveOptions]="{exact:true}"
+        routerLinkActive="active"
+        #sub1
+      >
+        <div class="item">
+          <p>{{ 'subMenu.all' | translate }}</p>
+          <p>{{countAll$ | async}}</p>
         </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="sub1"></div>
+      </div>
+      <div class="sub-nav-item" routerLink="/labels/deleted" routerLinkActive="active" #sub2>
+        <div class="item">
+          <p>{{ 'subMenu.bin' | translate }}</p>
+          <p>{{countDeleted$ | async}}</p>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="sub2"></div>
+      </div>
+      <div class="separator"></div>
     </div>
-    <div class="overlay" (click)="pService.cancelSideBar()" [ngClass]="pService.stateSidebar ? 'visible' : ''"></div>
-</div>
-<div class="content"
-    [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}">
-    <ng-scrollbar class="scroll-helper"
-        [visibility]="'hover'"
-        [appearance]="'compact'">
-        <div class="content-inner">
-            <router-outlet></router-outlet>
+    <div class="information">
+      <div class="separator"></div>
+      <div class="progress-section">
+        <div class="billing">B</div>
+        <div class="progress-bar-section">
+          <div class="text">
+            <p>50mb of 100MB</p>
+          </div>
+          <div class="progress-bar">
+            <div class="indicator"></div>
+          </div>
         </div>
-    </ng-scrollbar>
-    <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+      </div>
+    </div>
+  </div>
+  <div
+    class="overlay"
+    (click)="pService.cancelSideBar()"
+    [ngClass]="pService.stateSidebar ? 'visible' : ''"
+  ></div>
+</div>
+<div
+  class="content"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
+  <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
+    <div class="content-inner">
+      <router-outlet></router-outlet>
+    </div>
+  </ng-scrollbar>
+  <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
 </div>
 <div class="drag-helper main-helper"></div>

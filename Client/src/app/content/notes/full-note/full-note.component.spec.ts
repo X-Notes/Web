@@ -6,12 +6,13 @@ describe('FullNoteComponent', () => {
   let component: FullNoteComponent;
   let fixture: ComponentFixture<FullNoteComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ FullNoteComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [FullNoteComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FullNoteComponent);

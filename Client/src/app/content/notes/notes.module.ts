@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { MyHammerConfig } from 'src/app/shared/hammer.config';
+import { MurriService } from 'src/app/shared/services/murri.service';
 import { NotesComponent } from './notes/notes.component';
 import { NoteRouting } from './notes-routing';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note/full-note.component';
 import { PrivatesComponent } from './privates/privates.component';
 import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
-import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { MyHammerConfig } from 'src/app/shared/hammer.config';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { SelectionDirective } from './directives/selection.directive';
 import { SelectionService } from './selection.service';
@@ -51,16 +51,17 @@ import { SmallNoteComponent } from './small-note/small-note.component';
     PhotoComponent,
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
-    SmallNoteComponent
+    SmallNoteComponent,
   ],
-  imports: [
-    CommonModule,
-    NoteRouting,
-    SharedModule
+  imports: [CommonModule, NoteRouting, SharedModule],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerConfig,
+    },
+    MurriService,
+    SelectionService,
+    MenuSelectionService,
   ],
-  providers: [{
-    provide: HAMMER_GESTURE_CONFIG,
-    useClass: MyHammerConfig
-  }, MurriService, SelectionService, MenuSelectionService],
 })
-export class NotesModule { }
+export class NotesModule {}

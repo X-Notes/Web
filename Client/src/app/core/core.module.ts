@@ -1,9 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import {TranslateLoader, TranslateModule, MissingTranslationHandler, MissingTranslationHandlerParams} from '@ngx-translate/core';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
-import { HttpClient } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import {
+  TranslateLoader,
+  TranslateModule,
+  MissingTranslationHandler,
+  MissingTranslationHandlerParams,
+} from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // Auth
 import { AngularFireModule } from '@angular/fire';
@@ -37,17 +41,27 @@ export class MissingTranslationService implements MissingTranslationHandler {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
-      missingTranslationHandler: { provide: MissingTranslationHandler, useClass: MissingTranslationService },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: MissingTranslationService,
+      },
       useDefaultLang: false,
     }),
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFireAuthModule
+    AngularFireAuthModule,
   ],
-  providers: [AuthService, UserAPIService,
+  providers: [
+    AuthService,
+    UserAPIService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
-      multi: true
-    }, ApiServiceLabels, ApiServiceNotes, ApiFoldersService, AppServiceAPI]
+      multi: true,
+    },
+    ApiServiceLabels,
+    ApiServiceNotes,
+    ApiFoldersService,
+    AppServiceAPI,
+  ],
 })
-export class CoreModule { }
+export class CoreModule {}

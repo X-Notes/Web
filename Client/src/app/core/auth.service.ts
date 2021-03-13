@@ -2,22 +2,21 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Store } from '@ngxs/store';
 import { UserAPIService } from './user-api.service';
 import { User } from './models/user';
-import { Store } from '@ngxs/store';
 import { Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateApp/app-action';
 
-
 @Injectable()
 export class AuthService {
-
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
     private store: Store,
-    private api: UserAPIService) {
+    private api: UserAPIService,
+  ) {
     this.afAuth.authState.subscribe(async (firebaseUser) => {
       await this.configureAuthState(firebaseUser);
     });
@@ -26,6 +25,12 @@ export class AuthService {
   GoogleAuth() {
     return this.AuthLogin(new firebase.default.auth.GoogleAuthProvider());
   }
+
+  logout = async () => {
+    await this.store.dispatch(new Logout()).toPromise();
+    await this.afAuth.signOut();
+    await this.router.navigate(['/about']);
+  };
 
   private async configureAuthState(firebaseUser: firebase.default.User) {
     if (firebaseUser) {
@@ -40,10 +45,12 @@ export class AuthService {
         } catch (e) {
           console.log(e);
         } finally {
-          this.store.dispatch(new Login(token, user)).subscribe(x => this.router.navigate(['/notes']));
+          this.store
+            .dispatch(new Login(token, user))
+            .subscribe(() => this.router.navigate(['/notes']));
         }
       }
-      setInterval(async () => await this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
+      setInterval(async () => this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL
     } else {
       await this.logout();
     }
@@ -55,25 +62,21 @@ export class AuthService {
     this.store.dispatch(new SetToken(token));
   }
 
-  private getUser(user: firebase.default.User) {
+  private getUser = (user: firebase.default.User) => {
     const temp: User = {
       name: user.displayName,
-      photo: null
+      photo: null,
     };
     return temp;
-  }
+  };
 
   private AuthLogin(provider: firebase.default.auth.GoogleAuthProvider) {
-    return this.afAuth.signInWithRedirect(provider)
-      .then(result => { })
-      .catch(error => {
+    return this.afAuth
+      .signInWithRedirect(provider)
+      .then(() => {})
+      .catch((error) => {
+        // eslint-disable-next-line no-alert
         window.alert(error);
       });
-  }
-
-  async logout() {
-    await this.store.dispatch(new Logout()).toPromise();
-    await this.afAuth.signOut();
-    await this.router.navigate(['/about']);
   }
 }

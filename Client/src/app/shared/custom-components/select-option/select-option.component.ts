@@ -1,17 +1,19 @@
 import { Highlightable } from '@angular/cdk/a11y';
-import { Component, ElementRef, HostBinding, HostListener, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, HostListener, Input, OnInit } from '@angular/core';
 import { SelectService } from '../../services/select.service';
 import { SelectComponent } from '../select/select.component';
 
 @Component({
   selector: 'app-select-option',
   templateUrl: './select-option.component.html',
-  styleUrls: ['./select-option.component.scss']
+  styleUrls: ['./select-option.component.scss'],
 })
 export class SelectOptionComponent implements OnInit, Highlightable {
-
   @Input()
   public value: string;
+
+  @HostBinding('class.active')
+  public active = false;
 
   private select: SelectComponent;
 
@@ -20,11 +22,16 @@ export class SelectOptionComponent implements OnInit, Highlightable {
     return this.select.selectedOption === this;
   }
 
-  @HostBinding('class.active')
-  public active = false;
-
   constructor(private selectService: SelectService) {
     this.select = this.selectService.getSelect();
+  }
+
+  @HostListener('click', ['$event'])
+  public onClick(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.select.selectOption(this);
   }
 
   public setActiveStyles(): void {
@@ -42,13 +49,4 @@ export class SelectOptionComponent implements OnInit, Highlightable {
   ngOnInit(): void {
     this.value.toLowerCase();
   }
-
-  @HostListener('click', ['$event'])
-  public onClick(event: UIEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.select.selectOption(this);
-  }
-
 }

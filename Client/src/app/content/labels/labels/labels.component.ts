@@ -1,23 +1,22 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Theme } from 'src/app/shared/models/Theme';
-import { PersonalizationService, sideBarCloseOpen } from 'src/app/shared/services/personalization.service';
+import {
+  PersonalizationService,
+  sideBarCloseOpen,
+} from 'src/app/shared/services/personalization.service';
 import { Select } from '@ngxs/store';
-import { LabelStore } from '../state/labels-state';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-
-
+import { LabelStore } from '../state/labels-state';
 
 @Component({
   selector: 'app-labels',
   templateUrl: './labels.component.html',
   styleUrls: ['./labels.component.scss'],
-  animations: [ sideBarCloseOpen ],
+  animations: [sideBarCloseOpen],
 })
 export class LabelsComponent implements OnInit {
-
-
   @Select(LabelStore.countAll)
   countAll$: Observable<number>;
 
@@ -30,10 +29,9 @@ export class LabelsComponent implements OnInit {
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<ShortUser>;
 
-
   public photoError = false;
-  constructor(
-    public pService: PersonalizationService) {}
+
+  constructor(public pService: PersonalizationService) {}
 
   async ngOnInit() {
     this.pService.onResize();
