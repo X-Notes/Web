@@ -1,22 +1,41 @@
-<div class="main-container" 
-    (mouseover)="mouseEnter($event)" 
-    (mouseleave)="mouseOut($event)" 
-    (click)="setFocus($event)"
-    >
-    <p #contentHtml class="block-generic default-text-size" (input)="onInput($event)" contenteditable="true" [textContent]="textService.contentStr"></p>
-    <div *ngIf="isActive" class="no-content">
-        <p>Text</p>
-        <div class="buttons" (mousedown)="preventClick($event)">
-            <i (mousedown)="transformContent($event, contentType.CHECKLIST)" class="icon-list-checked"></i>
-            <i (mousedown)="transformContent($event, contentType.DOTLIST)" class="icon-list-dot"></i>
-            <i (mousedown)="transformContent($event, contentType.NUMBERLIST)" class="icon-list"></i>
-            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)" class="icon-h1"></i>
-            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)" class="icon-h2"></i>
-            <i (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)" class="icon-h3"></i>
-            <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-image"></i>
-            <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-file"></i>
-            <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-video-inner"></i>
-            <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-plus"></i>
-        </div>
+<div
+  class="main-container"
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseOut($event)"
+  (click)="setFocus($event)"
+>
+  <p
+    #contentHtml
+    class="block-generic default-text-size"
+    (input)="onInput($event)"
+    contenteditable="true"
+    [textContent]="textService.contentStr"
+  ></p>
+  <div *ngIf="isActive" class="no-content">
+    <p>Text</p>
+    <div class="buttons" (mousedown)="preventClick($event)">
+      <i
+        (mousedown)="transformContent($event, contentType.CHECKLIST)"
+        class="icon-list-checked"
+      ></i>
+      <i (mousedown)="transformContent($event, contentType.DOTLIST)" class="icon-list-dot"></i>
+      <i (mousedown)="transformContent($event, contentType.NUMBERLIST)" class="icon-list"></i>
+      <i
+        (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)"
+        class="icon-h1"
+      ></i>
+      <i
+        (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)"
+        class="icon-h2"
+      ></i>
+      <i
+        (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)"
+        class="icon-h3"
+      ></i>
+      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-image"></i>
+      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-file"></i>
+      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-video-inner"></i>
+      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-plus"></i>
     </div>
+  </div>
 </div>

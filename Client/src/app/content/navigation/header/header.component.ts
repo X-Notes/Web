@@ -1,40 +1,30 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PersonalizationService, showMenuLeftRight, notification } from 'src/app/shared/services/personalization.service';
+import {
+  PersonalizationService,
+  showMenuLeftRight,
+  notification,
+} from 'src/app/shared/services/personalization.service';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { ShortUser } from 'src/app/core/models/short-user';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FullNote } from '../../notes/models/fullNote';
-import { ShortUser } from 'src/app/core/models/short-user';
-import { ConnectionPositionPair } from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [showMenuLeftRight, notification]
+  animations: [showMenuLeftRight, notification],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-
-  destroy = new Subject<void>();
-
-  newButtonActive = false;
-  isOpenNotification = false;
-
-  public positions = [
-    new ConnectionPositionPair({
-      originX: 'start',
-      originY: 'top'},
-      {overlayX: 'start',
-      overlayY: 'top'},
-      0, 1)
-  ];
   // Upper Menu
 
   @Select(FolderStore.activeMenu)
@@ -46,18 +36,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNewButtonActive)
   public newButtonActive$: Observable<boolean>;
 
-
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
+  destroy = new Subject<void>();
+
+  newButtonActive = false;
+
+  isOpenNotification = false;
+
+  public positions = [
+    new ConnectionPositionPair(
+      {
+        originX: 'start',
+        originY: 'top',
+      },
+      { overlayX: 'start', overlayY: 'top' },
+      0,
+      1,
+    ),
+  ];
+
   router: string;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              public menuButtonService: MenuButtonsService) { }
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    public menuButtonService: MenuButtonsService,
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -65,18 +74,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.select(AppStore.getNewButtonActive)
+    this.store
+      .select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
-      .subscribe(z => {
+      .subscribe((z) => {
         this.newButtonActive = z;
       });
 
-    this.store.select(AppStore.getRouting)
+    this.store
+      .select(AppStore.getRouting)
       .pipe(takeUntil(this.destroy))
-      .subscribe(async (x) => await this.routeChange(x));
-    this.store.select(NoteStore.oneFull)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (note) => await this.routeChangeFullNote(note));
+      .subscribe(async (x) => this.routeChange(x));
+    this.store
+      .select(NoteStore.oneFull)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (note) => this.routeChangeFullNote(note));
   }
 
   showUsers() {
@@ -116,12 +128,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
         break;
       }
+      default: {
+        throw new Error('error');
+      }
     }
     this.router = 'note-inner';
   }
 
   async routeChange(type: EntityType) {
-
     switch (type) {
       case EntityType.FolderPrivate: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
@@ -176,7 +190,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.router = 'label-delete';
         break;
       }
-
 
       case EntityType.Profile: {
         this.router = 'profile';

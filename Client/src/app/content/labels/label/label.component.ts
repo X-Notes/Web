@@ -1,49 +1,58 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter, Optional } from '@angular/core';
-import { changeColorLabel, PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Label } from '../models/label';
+import {
+  changeColorLabel,
+  PersonalizationService,
+} from 'src/app/shared/services/personalization.service';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { RestoreLabel } from '../state/labels-actions';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
-import { NoteStore } from '../../notes/state/notes-state';
-import { AddLabelOnNote, RemoveLabelFromNote, UpdateLabelFullNote } from '../../notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
+import {
+  AddLabelOnNote,
+  RemoveLabelFromNote,
+  UpdateLabelFullNote,
+} from '../../notes/state/notes-actions';
+import { NoteStore } from '../../notes/state/notes-state';
+import { RestoreLabel } from '../state/labels-actions';
+import { Label } from '../models/label';
 
 @Component({
   selector: 'app-label',
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.scss'],
-  animations: [changeColorLabel]
+  animations: [changeColorLabel],
 })
 export class LabelComponent implements OnInit, OnDestroy {
+  @Input() label: Label;
+
+  @Output() updateLabel = new EventEmitter<Label>();
+
+  @Output() deleteLabel = new EventEmitter<Label>();
+
+  @Output() restoreLabel = new EventEmitter<Label>();
+
+  @Input() selectedMode: boolean;
 
   destroy = new Subject<void>();
 
   fontSize = FontSizeENUM;
-  pallete = EnumUtil.getEnumValues(LabelsColor);
-  @Input() label: Label;
-  @Output() updateLabel = new EventEmitter<Label>();
-  @Output() deleteLabel = new EventEmitter<Label>();
-  @Output() restoreLabel = new EventEmitter<Label>();
 
-  @Input() selectedMode: boolean;
+  pallete = EnumUtil.getEnumValues(LabelsColor);
 
   isUpdate = false;
 
   nameChanged: Subject<string> = new Subject<string>();
 
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              @Optional() private murriService: MurriService) { }
-
-
-
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    @Optional() private murriService: MurriService,
+  ) {}
 
   ngOnDestroy(): void {
     this.nameChanged.next();
@@ -53,10 +62,9 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.nameChanged.pipe(
-      debounceTime(updateTitleEntitesDelay),
-      distinctUntilChanged())
-      .subscribe(name => {
+    this.nameChanged
+      .pipe(debounceTime(updateTitleEntitesDelay), distinctUntilChanged())
+      .subscribe((name) => {
         if (name) {
           this.label = { ...this.label, name };
           this.updateLabel.emit(this.label);
@@ -72,7 +80,9 @@ export class LabelComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateLabelFullNote(this.label, flag));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      const type = this.store
+        .selectSnapshot(AppStore.getNoteTypes)
+        .find((x) => x.name === noteType);
       if (!this.label.isSelected) {
         this.store.dispatch(new AddLabelOnNote(this.label, type, ids));
       } else {
@@ -91,9 +101,8 @@ export class LabelComponent implements OnInit, OnDestroy {
     this.restoreLabel.emit(this.label);
   }
 
-
   timeout(flag: boolean) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let count = 0;
       const timer = setInterval(() => {
         if (count === 60 && flag) {
@@ -106,7 +115,7 @@ export class LabelComponent implements OnInit, OnDestroy {
         if (this.murriService) {
           this.murriService.grid.refreshItems().layout();
         }
-        count++;
+        count += 1;
       }, 10);
     });
   }
@@ -125,6 +134,4 @@ export class LabelComponent implements OnInit, OnDestroy {
   changed(text: string) {
     this.nameChanged.next(text);
   }
-
-
 }

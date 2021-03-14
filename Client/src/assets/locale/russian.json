@@ -28,9 +28,9 @@
     "cancel": "Отмена"
   },
   "languages": {
-    "English": "Английский",
-    "Russian": "Русский",
-    "Ukraine": "Украинский"
+    "english": "Английский",
+    "russian": "Русский",
+    "ukraine": "Украинский"
   },
   "header": {
     "selected": "Выбрано",

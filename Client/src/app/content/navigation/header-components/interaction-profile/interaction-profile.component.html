@@ -1,10 +1,15 @@
 <div appTheme class="interactions">
-    <app-interaction-create appTheme></app-interaction-create>
-    <button (click)="setDefaultColorProfile()" name="Default" type="button"
-        class="generic generic-2" #default>
-        <div class="inner-content">
-            <p>{{ 'header.defaultColor' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
-    </button>
+  <app-interaction-create appTheme></app-interaction-create>
+  <button
+    (click)="setDefaultColorProfile()"
+    name="Default"
+    type="button"
+    class="generic generic-2"
+    #default
+  >
+    <div class="inner-content">
+      <p>{{ 'header.defaultColor' | translate }}</p>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
+  </button>
 </div>

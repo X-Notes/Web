@@ -1,105 +1,115 @@
 <div class="notification" appTheme>
-    <div class="notification-header">
-        <div class="title">
-            <p>Notification</p>
-        </div>
-        <div class="actions interactions">
-            <button name="Close notification"
-                type="button"
-                class="generic"
-                (click)="closeNotification()"
-                #close>
-                <div class="inner-content">
-                    <i style="transform: rotate(45deg);" class="icon-plus"></i>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="close"></div>
-            </button>
-        </div>
+  <div class="notification-header">
+    <div class="title">
+      <p>Notification</p>
     </div>
-    <ng-scrollbar
-        *ngIf="toggleMessage; else readMessage"
-        class="scroll-wrapper"
-        [visibility]="'hover'"
-        [appearance]="'compact'">
-
-        <div class="scroll-inner">
-            <div class="notification-action read-all interactions p-sticky">
-                <button name="read all notifications" type="button" class="generic" #readAll>
-                    <div class="inner-content">
-                        <p>Read all notifications</p>
-                    </div>
-                    <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
-                </button>
-            </div>
-            <div class="notification-message" *ngFor="let item of notification">
-                <div class="avatar">
-                    <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg">
-                </div>
-                <div class="message">
-                    <div class="info-message">
-                        <div class="info status-new">
-                            <p>New</p>
-                        </div>
-                        <div class="info date">
-                            <p>16 sep, 19:30</p>
-                        </div>
-                    </div>
-                    <div class="username">
-                        <p>Kashich Dmitryi</p>
-                    </div>
-                    <div class="user-message">
-                        <p>Shared with you note shared with you note</p>
-                    </div>
-                </div>
-            </div>
-            <div class="notification-action see-all interactions">
-                <button (click)="toggleMessage = false" name="see all notifications" type="button" class="generic" #seeAll>
-                    <div class="inner-content">
-                        <p>See all notifications</p>
-                    </div>
-                    <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
-                </button>
-            </div>
+    <div class="actions interactions">
+      <button
+        name="Close notification"
+        type="button"
+        class="generic"
+        (click)="closeNotification()"
+        #close
+      >
+        <div class="inner-content">
+          <i style="transform: rotate(45deg)" class="icon-plus"></i>
         </div>
-    </ng-scrollbar>
-    <ng-template #readMessage>
-        <ng-scrollbar
-            class="scroll-wrapper"
-            [visibility]="'hover'"
-            [appearance]="'compact'">
-
-            <div class="scroll-inner">
-                <div class="notification-action go-to interactions p-sticky">
-                    <button (click)="toggleMessage = true" name="see all notifications" type="button" class="generic" #seeAll>
-                        <div class="inner-content">
-                            <p>Go to new notifications</p>
-                        </div>
-                        <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
-                    </button>
-                </div>
-                <div class="notification-message" *ngFor="let item of notification">
-                    <div class="avatar">
-                        <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg">
-                    </div>
-                    <div class="message">
-                        <div class="info-message">
-                            <div class="info status-read">
-                                <p>Read message</p>
-                            </div>
-                            <div class="info date">
-                                <p>16 sep, 19:30</p>
-                            </div>
-                        </div>
-                        <div class="username">
-                            <p>Kashich Dmitryi</p>
-                        </div>
-                        <div class="user-message">
-                            <p>Shared with you note shared with you note</p>
-                        </div>
-                    </div>
-                </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="close"></div>
+      </button>
+    </div>
+  </div>
+  <ng-scrollbar
+    *ngIf="toggleMessage; else readMessage"
+    class="scroll-wrapper"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+  >
+    <div class="scroll-inner">
+      <div class="notification-action read-all interactions p-sticky">
+        <button name="read all notifications" type="button" class="generic" #readAll>
+          <div class="inner-content">
+            <p>Read all notifications</p>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
+        </button>
+      </div>
+      <div class="notification-message" *ngFor="let item of notification">
+        <div class="avatar">
+          <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg" />
+        </div>
+        <div class="message">
+          <div class="info-message">
+            <div class="info status-new">
+              <p>New</p>
             </div>
-        </ng-scrollbar>
-    </ng-template>
-    <!-- <app-spinner *ngIf="pService.spinnerActive"></app-spinner> -->
+            <div class="info date">
+              <p>16 sep, 19:30</p>
+            </div>
+          </div>
+          <div class="username">
+            <p>Kashich Dmitryi</p>
+          </div>
+          <div class="user-message">
+            <p>Shared with you note shared with you note</p>
+          </div>
+        </div>
+      </div>
+      <div class="notification-action see-all interactions">
+        <button
+          (click)="toggleMessage = false"
+          name="see all notifications"
+          type="button"
+          class="generic"
+          #seeAll
+        >
+          <div class="inner-content">
+            <p>See all notifications</p>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
+        </button>
+      </div>
+    </div>
+  </ng-scrollbar>
+  <ng-template #readMessage>
+    <ng-scrollbar class="scroll-wrapper" [visibility]="'hover'" [appearance]="'compact'">
+      <div class="scroll-inner">
+        <div class="notification-action go-to interactions p-sticky">
+          <button
+            (click)="toggleMessage = true"
+            name="see all notifications"
+            type="button"
+            class="generic"
+            #seeAll
+          >
+            <div class="inner-content">
+              <p>Go to new notifications</p>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
+          </button>
+        </div>
+        <div class="notification-message" *ngFor="let item of notification">
+          <div class="avatar">
+            <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg" />
+          </div>
+          <div class="message">
+            <div class="info-message">
+              <div class="info status-read">
+                <p>Read message</p>
+              </div>
+              <div class="info date">
+                <p>16 sep, 19:30</p>
+              </div>
+            </div>
+            <div class="username">
+              <p>Kashich Dmitryi</p>
+            </div>
+            <div class="user-message">
+              <p>Shared with you note shared with you note</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-scrollbar>
+  </ng-template>
+  <!-- <app-spinner *ngIf="pService.spinnerActive"></app-spinner> -->
 </div>

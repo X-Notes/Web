@@ -5,26 +5,25 @@ import { Background } from 'src/app/core/models/background';
 
 @Injectable()
 export class BackgroundService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   getBackgrounds() {
-     return this.httpClient.get<Background[]>(environment.writeAPI + '/api/backgrounds');
+    return this.httpClient.get<Background[]>(`${environment.writeAPI}/api/backgrounds`);
   }
 
   newBackground(photo: FormData) {
-    return this.httpClient.post<Background>(environment.writeAPI + '/api/backgrounds/new', photo);
+    return this.httpClient.post<Background>(`${environment.writeAPI}/api/backgrounds/new`, photo);
   }
 
   setBackground(id: string) {
-    return this.httpClient.get(environment.writeAPI + `/api/backgrounds/background/${id}`);
+    return this.httpClient.get(`${environment.writeAPI}/api/backgrounds/background/${id}`);
   }
 
   removeBackground(id: string) {
-    return this.httpClient.delete(environment.writeAPI + `/api/backgrounds/background/${id}`);
+    return this.httpClient.delete(`${environment.writeAPI}/api/backgrounds/background/${id}`);
   }
 
   defaultBackground() {
-    return this.httpClient.get(environment.writeAPI + '/api/backgrounds/background/default');
+    return this.httpClient.get(`${environment.writeAPI}/api/backgrounds/background/default`);
   }
 }

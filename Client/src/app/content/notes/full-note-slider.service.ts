@@ -4,23 +4,29 @@ import { animate, AnimationBuilder, style } from '@angular/animations';
 
 @Injectable()
 export class FullNoteSliderService {
-
   active = 0;
+
   mainWidth = 0;
+
   animFactory: any;
+
   animating = false;
+
   animMS = 700;
+
   player;
+
   pos: number;
+
   total = 2;
+
   perc: number;
+
   helper: Element;
+
   rend: Renderer2;
 
-  constructor(public pService: PersonalizationService,
-              public builder: AnimationBuilder) { }
-
-
+  constructor(public pService: PersonalizationService, public builder: AnimationBuilder) {}
 
   initWidthSlide() {
     if (!this.pService.check()) {
@@ -39,7 +45,7 @@ export class FullNoteSliderService {
       this.active = 0;
     }
     this.pos = -(100 / this.total) * this.active;
-    this.rend.setStyle(wrap.nativeElement, 'transform', 'translate3d( ' + this.pos + '%,0,0)');
+    this.rend.setStyle(wrap.nativeElement, 'transform', `translate3d( ${this.pos}%,0,0)`);
     this.player.destroy();
   }
 
@@ -49,7 +55,9 @@ export class FullNoteSliderService {
 
   buildAnim() {
     const arr = [];
-    arr.push(animate(this.animMS + 'ms ease', style({ transform: 'translate3d( ' + this.pos + '% ,0,0)' })) );
+    arr.push(
+      animate(`${this.animMS}ms ease`, style({ transform: `translate3d( ${this.pos}% ,0,0)` })),
+    );
     return arr;
   }
 
@@ -69,17 +77,17 @@ export class FullNoteSliderService {
     }
   }
 
-  panStart(e) {
+  panStart() {
     if (!this.pService.check()) {
       this.getSize();
     }
   }
 
   panMove(e, wrap: ElementRef) {
-    this.helper = document.getElementsByClassName('second-helper')[0];
+    this.helper = document.getElementsByClassName('second-helper').item(0);
     if (!this.pService.check()) {
-      this.perc = 100 / this.total * e.deltaX / (this.mainWidth * this.total);
-      this.pos = this.perc - 100 / this.total * this.active;
+      this.perc = ((100 / this.total) * e.deltaX) / (this.mainWidth * this.total);
+      this.pos = this.perc - (100 / this.total) * this.active;
       if (this.active === 0 && (this.pos > 2 || this.pos > 0)) {
         return;
       }
@@ -89,7 +97,7 @@ export class FullNoteSliderService {
       if (this.helper.hasChildNodes()) {
         return;
       }
-      this.rend.setStyle(wrap.nativeElement, 'transform', 'translate3d( ' +  this.pos + '%,0,0)');
+      this.rend.setStyle(wrap.nativeElement, 'transform', `translate3d( ${this.pos}%,0,0)`);
     }
   }
 
@@ -99,30 +107,27 @@ export class FullNoteSliderService {
         if (this.active === 0 && this.pos > 0) {
           this.goTo(this.active, wrap);
         }
-        this.animMS = this.animMS / e.velocityX;
+        this.animMS /= e.velocityX;
         this.goTo(this.active - 1, wrap);
       } else if (e.velocityX < -1) {
         if (this.active === 1 && this.pos < -50) {
           this.goTo(this.active, wrap);
         }
-        this.animMS = this.animMS / -e.velocityX;
+        this.animMS /= -e.velocityX;
         this.goTo(this.active + 1, wrap);
-      } else {
-        if (this.perc <= -(25 / this.total)) {
-          if (this.active === 1 && this.pos < -50) {
-            this.goTo(this.active, wrap);
-          }
-          this.goTo(this.active + 1, wrap);
-        } else if (this.perc >= (25 / this.total)) {
-          if (this.active === 0 && this.pos > 0) {
-            this.goTo(this.active, wrap);
-          }
-          this.goTo(this.active - 1, wrap);
-        } else {
+      } else if (this.perc <= -(25 / this.total)) {
+        if (this.active === 1 && this.pos < -50) {
           this.goTo(this.active, wrap);
         }
+        this.goTo(this.active + 1, wrap);
+      } else if (this.perc >= 25 / this.total) {
+        if (this.active === 0 && this.pos > 0) {
+          this.goTo(this.active, wrap);
+        }
+        this.goTo(this.active - 1, wrap);
+      } else {
+        this.goTo(this.active, wrap);
       }
     }
   }
-
 }

@@ -1,4 +1,4 @@
 export interface LabelsOnSelectedNotes {
-    id: string;
-    labelsIds: string[];
+  id: string;
+  labelsIds: string[];
 }

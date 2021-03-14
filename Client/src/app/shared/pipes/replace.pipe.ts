@@ -1,26 +1,26 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'replace'
+  name: 'replace',
 })
 export class ReplacePipe implements PipeTransform {
-
-  transform(value: string, type: string): string {
+  transform = (value: string, type: string) => {
     if (type === 'note') {
       return this.unknownReturn(value, type);
-    } else if (type === 'label') {
-      return this.unknownReturn(value, type);
-    } else if (type === 'folder') {
+    }
+    if (type === 'label') {
       return this.unknownReturn(value, type);
     }
-  }
+    if (type === 'folder') {
+      return this.unknownReturn(value, type);
+    }
+    throw new Error('error');
+  };
 
-  unknownReturn(value: string, type: string) {
+  unknownReturn = (value: string, type: string) => {
     if (value) {
       return value?.length === 0 ? `unknown ${type}` : value;
-    } else {
-      return `unknown ${type}`;
     }
-  }
-
+    return `unknown ${type}`;
+  };
 }

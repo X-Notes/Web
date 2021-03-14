@@ -8,9 +8,8 @@ describe('SmallNoteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SmallNoteComponent ]
-    })
-    .compileComponents();
+      declarations: [SmallNoteComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

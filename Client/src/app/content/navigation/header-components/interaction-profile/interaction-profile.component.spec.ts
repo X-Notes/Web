@@ -6,12 +6,13 @@ describe('InteractionProfileComponent', () => {
   let component: InteractionProfileComponent;
   let fixture: ComponentFixture<InteractionProfileComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InteractionProfileComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [InteractionProfileComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InteractionProfileComponent);

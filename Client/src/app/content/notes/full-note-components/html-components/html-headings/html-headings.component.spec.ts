@@ -8,9 +8,8 @@ describe('HtmlHeadingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HtmlHeadingsComponent ]
-    })
-    .compileComponents();
+      declarations: [HtmlHeadingsComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

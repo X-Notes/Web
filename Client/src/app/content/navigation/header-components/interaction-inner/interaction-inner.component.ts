@@ -1,10 +1,13 @@
-import { AfterViewInit, ElementRef, Renderer2, ViewChild } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
+
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/fullNote';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { PersonalizationService, showMenuLeftRight } from 'src/app/shared/services/personalization.service';
+import {
+  PersonalizationService,
+  showMenuLeftRight,
+} from 'src/app/shared/services/personalization.service';
 import { MenuButtonsService } from '../../menu-buttons.service';
 
 @Component({
@@ -13,25 +16,34 @@ import { MenuButtonsService } from '../../menu-buttons.service';
   styleUrls: ['./interaction-inner.component.scss'],
   animations: [showMenuLeftRight],
 })
-export class InteractionInnerComponent implements OnInit, AfterViewInit {
-
-  user: string[] = ['person', 'person', 'person', 'person', 'person', 'person', 'person', 'person', 'person'];
-
+export class InteractionInnerComponent implements AfterViewInit {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
   @ViewChild('heightPeople') heightPeople: ElementRef;
+
   @ViewChild('scrollbar') scrollbar: ElementRef;
 
-  constructor(public pService: PersonalizationService,
-              public renderer: Renderer2,
-              public buttonService: MenuButtonsService) { }
+  user: string[] = [
+    'person',
+    'person',
+    'person',
+    'person',
+    'person',
+    'person',
+    'person',
+    'person',
+    'person',
+  ];
+
+  constructor(
+    public pService: PersonalizationService,
+    public renderer: Renderer2,
+    public buttonService: MenuButtonsService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.setHeightScrollbar();
-  }
-
-  ngOnInit(): void {
   }
 
   closeMenu(): void {
@@ -51,9 +63,14 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
 
   setHeightScrollbar(): void {
     if (this.pService.users) {
-      this.pService.checkWidth() ?
-      this.renderer.setStyle(this.scrollbar.nativeElement, 'height', this.heightPeople.nativeElement.clientHeight + 'px') :
-      this.renderer.setStyle(this.scrollbar.nativeElement, 'height', '100%');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this.pService.checkWidth()
+        ? this.renderer.setStyle(
+            this.scrollbar.nativeElement,
+            'height',
+            `${this.heightPeople.nativeElement.clientHeight}px`,
+          )
+        : this.renderer.setStyle(this.scrollbar.nativeElement, 'height', '100%');
     }
   }
 
@@ -62,10 +79,10 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.setHeightScrollbar());
   }
 
+  // eslint-disable-next-line consistent-return
   disableTooltpUser(): boolean {
     if (this.pService.checkWidth()) {
       return true;
     }
   }
-
 }

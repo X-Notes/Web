@@ -1,5 +1,4 @@
-
-export enum LineBreakType{
-    PREV = "PREV",
-    NEXT = "NEXT",
+export enum LineBreakType {
+  PREV = 'PREV',
+  NEXT = 'NEXT',
 }

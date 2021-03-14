@@ -1,11 +1,12 @@
-<div #chip class="chip"
-    [ngStyle]="{'backgroundColor': color}"
-    [ngClass]="[tile ? 'tile' : '', dark ? 'dark' : '']">
-    <span> {{ text }}</span>
-    <div class="remove"
-        *ngIf="isRemovable"
-        (click)="remove.emit()">
-        <i class="icon-cancel"></i>
-    </div>
-    <div class="ripple-container" matRipple [matRippleTrigger]="chip"></div>
+<div
+  #chip
+  class="chip"
+  [ngStyle]="{'backgroundColor': color}"
+  [ngClass]="[tile ? 'tile' : '', dark ? 'dark' : '']"
+>
+  <span> {{ text }}</span>
+  <div class="remove" *ngIf="isRemovable" (click)="remove.emit()">
+    <i class="icon-cancel"></i>
+  </div>
+  <div class="ripple-container" matRipple [matRippleTrigger]="chip"></div>
 </div>

@@ -26,9 +26,9 @@
     "cancel": "Cancel"
   },
   "languages": {
-    "English": "English",
-    "Russian": "Russian",
-    "Ukraine": "Ukrainian"
+    "english": "English",
+    "russian": "Russian",
+    "ukraine": "Ukrainian"
   },
   "header": {
     "selected": "Selected",

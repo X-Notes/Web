@@ -1,6 +1,4 @@
-
-
 export interface User {
-    name: string;
-    photo: FormData;
+  name: string;
+  photo: FormData;
 }

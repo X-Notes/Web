@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, Renderer2, ViewChildren } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  Renderer2,
+  ViewChildren,
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -15,32 +24,37 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
   selector: 'app-open-inner-side',
   templateUrl: './open-inner-side.component.html',
   styleUrls: ['./open-inner-side.component.scss'],
-  animations: [ showDropdown ],
-  providers: [ MurriService ]
+  animations: [showDropdown],
+  providers: [MurriService],
 })
 export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   loaded = false;
-  fontSize = FontSizeENUM;
-  destroy = new Subject<void>();
-  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
-  selectedNotes = [];
-  notes = [];
-  firstInitedMurri = false;
-  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
 
-  constructor(private store: Store,
-              public murriService: MurriService,
-              public pService: PersonalizationService,
-              public dialogRef: MatDialogRef<OpenInnerSideComponent>,
-              public renderer: Renderer2) { }
+  fontSize = FontSizeENUM;
+
+  destroy = new Subject<void>();
+
+  selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
+
+  selectedNotes = [];
+
+  notes = [];
+
+  firstInitedMurri = false;
+
+  constructor(
+    private store: Store,
+    public murriService: MurriService,
+    public pService: PersonalizationService,
+    public dialogRef: MatDialogRef<OpenInnerSideComponent>,
+    public renderer: Renderer2,
+  ) {}
 
   async ngAfterViewInit(): Promise<void> {
-    this.refElements.changes
-    .pipe(takeUntil(this.destroy))
-    .subscribe(async (z) => {
-      if (z.length === this.notes.length && !this.firstInitedMurri)
-      {
+    this.refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
+      if (z.length === this.notes.length && !this.firstInitedMurri) {
         this.murriService.initMurriAllNote('.grid-modal-item');
         await this.murriService.setOpacityTrueAsync();
         this.firstInitedMurri = true;
@@ -48,21 +62,22 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-   ngOnInit() {
+  ngOnInit() {
     this.pService.setSpinnerState(true);
-    this.dialogRef.afterOpened().pipe(takeUntil(this.destroy))
-    .subscribe(async () => {
-      this.loadContent();
-    });
+    this.dialogRef
+      .afterOpened()
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async () => {
+        this.loadContent();
+      });
   }
 
   async loadContent() {
-    
     const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const type = types.find(x => x.name === NoteTypeENUM.Private);
+    const type = types.find((x) => x.name === NoteTypeENUM.Private);
     await this.store.dispatch(new LoadNotes(type.id, type)).toPromise();
 
-    const actions = types.filter(x => x.id !== type.id).map(t => new LoadNotes(t.id, t));
+    const actions = types.filter((x) => x.id !== type.id).map((t) => new LoadNotes(t.id, t));
     this.store.dispatch(actions);
 
     // TODO SELECT ALL NOTES
@@ -79,7 +94,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   unSelectNote(note) {
-    this.selectedNotes = this.selectedNotes.filter(x => x.id !== note.id);
+    this.selectedNotes = this.selectedNotes.filter((x) => x.id !== note.id);
   }
 
   ngOnDestroy(): void {
@@ -90,7 +105,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     this.store.dispatch(new UnSelectAllNote());
   }
 
-  selectItem(item) {
+  selectItem = (item) => {
     console.log(item);
-  }
+  };
 }

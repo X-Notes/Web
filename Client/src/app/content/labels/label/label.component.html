@@ -1,31 +1,47 @@
-<div class="field" [ngStyle]="{backgroundColor: label.color}"
-    [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : ''">
-    <div class="select" *ngIf="selectedMode" (click)="select()"
-        [ngStyle]="{'backgroundColor': label.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"></div>
-    <input type="text" [disabled]="label.isDeleted" placeholder="Label name" [ngModel]="label.name"
-        (ngModelChange)='changed($event)'>
-    <div class="options">
-        <button type="button" *ngIf="!label.isDeleted" (click)="openColors()">
-            <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
-                <i class="icon-select-label"></i>
-            </div>
-        </button>
+<div
+  class="field"
+  [ngStyle]="{backgroundColor: label.color}"
+  [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : ''"
+>
+  <div
+    class="select"
+    *ngIf="selectedMode"
+    (click)="select()"
+    [ngStyle]="{'backgroundColor': label.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
+  ></div>
+  <input
+    type="text"
+    [disabled]="label.isDeleted"
+    placeholder="Label name"
+    [ngModel]="label.name"
+    (ngModelChange)="changed($event)"
+  />
+  <div class="options">
+    <button type="button" *ngIf="!label.isDeleted" (click)="openColors()">
+      <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
+        <i class="icon-select-label"></i>
+      </div>
+    </button>
 
-        <button type="button" *ngIf="label.isDeleted" (click)="restore()">
-            <div class="icon">
-                <i class="icon-restore"></i>
-            </div>
-        </button>
+    <button type="button" *ngIf="label.isDeleted" (click)="restore()">
+      <div class="icon">
+        <i class="icon-restore"></i>
+      </div>
+    </button>
 
-        <div class="separator-buttons"></div>
-        <button type="button" (click)="delete()">
-            <div class="icon">
-                <i class="icon-cancel"></i>
-            </div>
-        </button>
-    </div>
+    <div class="separator-buttons"></div>
+    <button type="button" (click)="delete()">
+      <div class="icon">
+        <i class="icon-cancel"></i>
+      </div>
+    </button>
+  </div>
 </div>
 <ul class="colors" *ngIf="isUpdate" [@changeColorLabel]>
-    <li *ngFor="let item of pallete" class="color" [ngStyle]="{'backgroundColor': item}" (click)="changeColor(item)">
-    </li>
+  <li
+    *ngFor="let item of pallete"
+    class="color"
+    [ngStyle]="{'backgroundColor': item}"
+    (click)="changeColor(item)"
+  ></li>
 </ul>

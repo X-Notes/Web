@@ -1,70 +1,81 @@
 <header appTheme>
-    
-    <div class="profile-section"
-        cdk-overlay-origin
-        #origin="cdkOverlayOrigin">
-        <div class="profile" routerLink="/profile" #profile>
-            <div class="profile-data">
-                <div class="photo">
-                    <img alt="photo" [src]="(user$ | async).photoId | getImage">
-                </div>
-                <p>{{(user$ | async).name}}</p>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
+  <div class="profile-section" cdk-overlay-origin #origin="cdkOverlayOrigin">
+    <div class="profile" routerLink="/profile" #profile>
+      <div class="profile-data">
+        <div class="photo">
+          <img alt="photo" [src]="(user$ | async).photoId | getImage" />
         </div>
-        <button 
-            name="Notification"
-            type="button"
-            class="notification"
-            (click)="isOpenNotification = !isOpenNotification"
-            #notification>
-            <div class="notification-data">
-                <i class="icon-notification"></i>
-                <div class="push">10</div>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
-        </button>
-        <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin"
-            [cdkConnectedOverlayOpen]="isOpenNotification"
-            [cdkConnectedOverlayHasBackdrop]="true"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            [cdkConnectedOverlayPositions]="positions"
-            (backdropClick)="closeNotification()">
-            <app-notification [@notification]
-                (oncloseNotification)="closeNotification()"></app-notification>
-        </ng-template>
+        <p>{{(user$ | async).name}}</p>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
+    </div>
+    <button
+      name="Notification"
+      type="button"
+      class="notification"
+      (click)="isOpenNotification = !isOpenNotification"
+      #notification
+    >
+      <div class="notification-data">
+        <i class="icon-notification"></i>
+        <div class="push">10</div>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="notification"></div>
+    </button>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayOpen]="isOpenNotification"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="closeNotification()"
+    >
+      <app-notification
+        [@notification]
+        (oncloseNotification)="closeNotification()"
+      ></app-notification>
+    </ng-template>
+  </div>
+
+  <div
+    class="management-section"
+    [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''"
+    [ngSwitch]="router"
+  >
+    <div class="interactions">
+      <div class="generic hamburger" (click)="toggleSidebar()">
+        <span></span>
+      </div>
     </div>
 
-    <div class="management-section" [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''" [ngSwitch]="router">
+    <app-interaction-profile
+      class="interactions"
+      *ngSwitchCase="'profile'"
+    ></app-interaction-profile>
 
-        <div class="interactions">
-            <div class="generic hamburger" (click)="toggleSidebar()">
-                <span></span>
-            </div>
-        </div>
+    <app-interaction-items class="interactions" *ngSwitchCase="'items'"></app-interaction-items>
 
-        <app-interaction-profile
-            class="interactions"
-            *ngSwitchCase="'profile'"></app-interaction-profile>
+    <app-interaction-create class="interactions" *ngSwitchCase="'label'"></app-interaction-create>
 
-        <app-interaction-items
-            class="interactions"
-            *ngSwitchCase="'items'"></app-interaction-items>
+    <app-interaction-labels
+      class="interactions"
+      *ngSwitchCase="'label-delete'"
+    ></app-interaction-labels>
 
-        <app-interaction-create
-            class="interactions"
-            *ngSwitchCase="'label'"></app-interaction-create>
+    <app-interaction-inner
+      class="interactions inner-helper"
+      *ngSwitchCase="'note-inner'"
+    ></app-interaction-inner>
 
-        <app-interaction-labels class="interactions" *ngSwitchCase="'label-delete'"></app-interaction-labels>
-
-        <app-interaction-inner class="interactions inner-helper" *ngSwitchCase="'note-inner'"></app-interaction-inner>
-
-        <div class="interactions menu" *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
-            [@showMenuLeftRight]>
-            <app-menu class="menu-inner"></app-menu>
-        </div>
-
-        <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
-
+    <div
+      class="interactions menu"
+      *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+      [@showMenuLeftRight]
+    >
+      <app-menu class="menu-inner"></app-menu>
     </div>
+
+    <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
+  </div>
 </header>

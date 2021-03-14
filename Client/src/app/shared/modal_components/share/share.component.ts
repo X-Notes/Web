@@ -1,104 +1,53 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
 import { SmallFolder } from 'src/app/content/folders/models/folder';
-import { ChangeTypeFullFolder, GetInvitedUsersToFolder,
-  TransformTypeFolders, UpdateOneFolder } from 'src/app/content/folders/state/folders-actions';
+import {
+  ChangeTypeFullFolder,
+  GetInvitedUsersToFolder,
+  TransformTypeFolders,
+  UpdateOneFolder,
+} from 'src/app/content/folders/state/folders-actions';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
-import { ChangeTypeFullNote, GetInvitedUsersToNote, TransformTypeNotes, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
+import {
+  ChangeTypeFullNote,
+  GetInvitedUsersToNote,
+  TransformTypeNotes,
+  UpdateOneNote,
+} from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityType } from '../../enums/EntityTypes';
 import { FolderTypeENUM } from '../../enums/FolderTypesEnum';
 import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
 import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Theme } from '../../models/Theme';
-import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 
 export enum SharedType {
   Note,
-  Folder
+  Folder,
 }
 
 @Component({
   selector: 'app-share',
   templateUrl: './share.component.html',
   styleUrls: ['./share.component.scss'],
-  animations: [showDropdown]
+  animations: [showDropdown],
 })
 export class ShareComponent implements OnInit, OnDestroy {
-
-  windowType = SharedType;
-  currentWindowType: SharedType;
-
-  noteType = NoteTypeENUM;
-  folderType = FolderTypeENUM;
-  refType = RefTypeENUM;
-
-  notes: SmallNote[] = [];
-  currentNote: SmallNote;
-
-  folders: SmallFolder[] = [];
-  currentFolder: SmallFolder;
-
-  searchStr: string;
-  searchStrChanged: Subject<string> = new Subject<string>();
-  searchUsers: SearchUserForShareModal[] = [];
-  selectedUsers: SearchUserForShareModal[] = [
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    }
-  ];
-
   @ViewChild('tabs', { static: false }) tabs;
-
-  public usersOnPrivateNote$: any = [
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null
-    }
-  ];
 
   @Select(UserStore.getUserTheme)
   public theme$: Observable<Theme>;
@@ -106,21 +55,91 @@ export class ShareComponent implements OnInit, OnDestroy {
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 
+  windowType = SharedType;
+
+  currentWindowType: SharedType;
+
+  noteType = NoteTypeENUM;
+
+  folderType = FolderTypeENUM;
+
+  refType = RefTypeENUM;
+
+  notes: SmallNote[] = [];
+
+  currentNote: SmallNote;
+
+  folders: SmallFolder[] = [];
+
+  currentFolder: SmallFolder;
+
+  searchStr: string;
+
+  searchStrChanged: Subject<string> = new Subject<string>();
+
+  searchUsers: SearchUserForShareModal[] = [];
+
+  selectedUsers: SearchUserForShareModal[] = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+  ];
+
+  public usersOnPrivateNote$: any = [
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+    {
+      id: '1',
+      name: 'asdsadsad',
+      email: 'asdadsad',
+      photoId: null,
+    },
+  ];
+
   commandsForChange = new Map<string, any[]>();
 
   public positions = [
-    new ConnectionPositionPair({
+    new ConnectionPositionPair(
+      {
         originX: 'end',
-        originY: 'bottom'},
-        {overlayX: 'end',
-        overlayY: 'top'},
-        0,
-        1)
+        originY: 'bottom',
+      },
+      { overlayX: 'end', overlayY: 'top' },
+      0,
+      1,
+    ),
   ];
 
   // INVITES
   messageTextArea: string;
+
   isSendNotification: boolean;
+
   refTypeForInvite: RefTypeENUM = RefTypeENUM.viewer;
 
   constructor(
@@ -129,14 +148,14 @@ export class ShareComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private apiNote: ApiServiceNotes,
     private apiFolder: ApiFoldersService,
-    private apiBrowserFunctions: ApiBrowserTextService) {
-  }
+    private apiBrowserFunctions: ApiBrowserTextService,
+  ) {}
 
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
     const commands: any[] = [];
-    this.commandsForChange.forEach((value, key) => value.forEach(z => commands.push(z)));
+    this.commandsForChange.forEach((value) => value.forEach((z) => commands.push(z)));
     this.store.dispatch(commands);
   }
 
@@ -194,11 +213,13 @@ export class ShareComponent implements OnInit, OnDestroy {
         this.currentWindowType = SharedType.Folder;
         break;
       }
+      default: {
+        throw new Error('error');
+      }
     }
 
-    this.searchStrChanged.pipe(
-      debounceTime(searchDelay),
-      distinctUntilChanged())
+    this.searchStrChanged
+      .pipe(debounceTime(searchDelay), distinctUntilChanged())
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
           const users = await this.searchService.searchUsers(searchStr).toPromise();
@@ -209,16 +230,19 @@ export class ShareComponent implements OnInit, OnDestroy {
       });
   }
 
-  userFilters(users: SearchUserForShareModal[]) {
-    users = users.filter(user => !this.selectedUsers.some(z => z.id === user.id));
+  userFilters(items: SearchUserForShareModal[]) {
+    const users = items.filter((user) => !this.selectedUsers.some((z) => z.id === user.id));
     switch (this.currentWindowType) {
       case SharedType.Note: {
-        const noteUsers =  this.store.selectSnapshot(NoteStore.getUsersOnPrivateNote);
-        return users.filter(user => !noteUsers.some(z => z.id === user.id));
+        const noteUsers = this.store.selectSnapshot(NoteStore.getUsersOnPrivateNote);
+        return users.filter((user) => !noteUsers.some((z) => z.id === user.id));
       }
       case SharedType.Folder: {
-        const fodlerUsers =  this.store.selectSnapshot(FolderStore.getUsersOnPrivateFolder);
-        return users.filter(user => !fodlerUsers.some(z => z.id === user.id));
+        const fodlerUsers = this.store.selectSnapshot(FolderStore.getUsersOnPrivateFolder);
+        return users.filter((user) => !fodlerUsers.some((z) => z.id === user.id));
+      }
+      default: {
+        throw new Error('');
       }
     }
   }
@@ -227,16 +251,18 @@ export class ShareComponent implements OnInit, OnDestroy {
     const selectionIds = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const folders = this.store.selectSnapshot(FolderStore.getFolders);
-    const foldersWithType = folders.find(z => z.typeFolders === folderType);
-    this.folders = foldersWithType.folders.filter(z => selectionIds.some(x => x === z.id)).map(folder => {
-      return { ...folder };
-    });
+    const foldersWithType = folders.find((z) => z.typeFolders === folderType);
+    this.folders = foldersWithType.folders
+      .filter((z) => selectionIds.some((x) => x === z.id))
+      .map((folder) => {
+        return { ...folder };
+      });
     this.changeFolder(this.folders[0]);
   }
 
   getFullNote() {
     const fullNote = this.store.selectSnapshot(NoteStore.oneFull);
-    const smallNote = {...fullNote} as SmallNote;
+    const smallNote = { ...fullNote } as SmallNote;
     this.notes = [smallNote];
     this.changeNote(smallNote);
   }
@@ -245,16 +271,18 @@ export class ShareComponent implements OnInit, OnDestroy {
     const selectionIds = this.store.selectSnapshot(NoteStore.selectedIds);
     const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
     const notes = this.store.selectSnapshot(NoteStore.getNotes);
-    const notesWithType = notes.find(z => z.typeNotes === noteType);
-    this.notes = notesWithType.notes.filter(z => selectionIds.some(x => x === z.id)).map(note => {
-      return { ...note };
-    });
+    const notesWithType = notes.find((z) => z.typeNotes === noteType);
+    this.notes = notesWithType.notes
+      .filter((z) => selectionIds.some((x) => x === z.id))
+      .map((note) => {
+        return { ...note };
+      });
     this.changeNote(this.notes[0]);
   }
 
   getFullFolder() {
     const fullFolder = this.store.selectSnapshot(FolderStore.full);
-    const smallFolder = {...fullFolder} as SmallFolder;
+    const smallFolder = { ...fullFolder } as SmallFolder;
     this.folders = [smallFolder];
     this.changeFolder(smallFolder);
   }
@@ -271,25 +299,34 @@ export class ShareComponent implements OnInit, OnDestroy {
         input = document.getElementById('linkInputNote') as HTMLInputElement;
         break;
       }
+      default: {
+        throw new Error('error');
+      }
     }
     this.apiBrowserFunctions.copyInputLink(input);
   }
 
   async changeNoteType() {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
-      const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === RefTypeENUM.viewer);
+      const shareType = this.store
+        .selectSnapshot(AppStore.getNoteTypes)
+        .find((x) => x.name === NoteTypeENUM.Shared);
+      const viewer = this.store
+        .selectSnapshot(AppStore.getRefs)
+        .find((x) => x.name.toLowerCase() === RefTypeENUM.viewer);
       await this.apiNote.makePublic(viewer, this.currentNote.id).toPromise();
       this.currentNote.noteType = shareType;
-      this.notes.find(note => note.id === this.currentNote.id).noteType = shareType;
+      this.notes.find((note) => note.id === this.currentNote.id).noteType = shareType;
       const commands = this.factoryForCommandsShared([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
       this.store.dispatch(new ChangeTypeFullNote(shareType));
     } else {
-      const privateType = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === NoteTypeENUM.Private);
+      const privateType = this.store
+        .selectSnapshot(AppStore.getNoteTypes)
+        .find((x) => x.name === NoteTypeENUM.Private);
       await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
       this.currentNote.noteType = privateType;
-      this.notes.find(note => note.id === this.currentNote.id).noteType = privateType;
+      this.notes.find((note) => note.id === this.currentNote.id).noteType = privateType;
       const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
       this.commandsForChange.set(this.currentNote.id, commands);
       this.store.dispatch(new ChangeTypeFullNote(privateType));
@@ -298,35 +335,39 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   async changeFolderType() {
     if (this.currentFolder.folderType.name.toLowerCase() !== FolderTypeENUM.Shared) {
-      const shareType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x?.name.toLowerCase() === FolderTypeENUM.Shared);
-      const viewer = this.store.selectSnapshot(AppStore.getRefs).find(x => x?.name.toLowerCase() === RefTypeENUM.viewer);
+      const shareType = this.store
+        .selectSnapshot(AppStore.getFolderTypes)
+        .find((x) => x?.name.toLowerCase() === FolderTypeENUM.Shared);
+      const viewer = this.store
+        .selectSnapshot(AppStore.getRefs)
+        .find((x) => x?.name.toLowerCase() === RefTypeENUM.viewer);
       await this.apiFolder.makePublic(viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderType = shareType;
-      this.folders.find(note => note.id === this.currentFolder.id).folderType = shareType;
+      this.folders.find((note) => note.id === this.currentFolder.id).folderType = shareType;
       const commands = this.factoryForCommandsSharedFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
       this.store.dispatch(new ChangeTypeFullFolder(shareType));
     } else {
-      const privateType = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x?.name.toLowerCase() === FolderTypeENUM.Private);
+      const privateType = this.store
+        .selectSnapshot(AppStore.getFolderTypes)
+        .find((x) => x?.name.toLowerCase() === FolderTypeENUM.Private);
       await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
       this.currentFolder.folderType = privateType;
-      this.folders.find(folder => folder.id === this.currentFolder.id).folderType = privateType;
+      this.folders.find((folder) => folder.id === this.currentFolder.id).folderType = privateType;
       const commands = this.factoryForCommandsPrivateFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
       this.store.dispatch(new ChangeTypeFullFolder(privateType));
     }
   }
 
-
   factoryForCommandsShared(ids: string[]) {
     const commands: any[] = [];
     commands.push(new TransformTypeNotes(NoteTypeENUM.Archive, NoteTypeENUM.Shared, ids));
     commands.push(new TransformTypeNotes(NoteTypeENUM.Private, NoteTypeENUM.Shared, ids));
     commands.push(new TransformTypeNotes(NoteTypeENUM.Deleted, NoteTypeENUM.Shared, ids));
-    commands.push(new UpdateOneNote(this.currentNote,  NoteTypeENUM.Shared));
+    commands.push(new UpdateOneNote(this.currentNote, NoteTypeENUM.Shared));
     return commands;
   }
-
 
   factoryForCommandsPrivate(ids: string[]) {
     const commands: any[] = [];
@@ -342,10 +383,9 @@ export class ShareComponent implements OnInit, OnDestroy {
     commands.push(new TransformTypeFolders(FolderTypeENUM.Archive, FolderTypeENUM.Shared, ids));
     commands.push(new TransformTypeFolders(FolderTypeENUM.Private, FolderTypeENUM.Shared, ids));
     commands.push(new TransformTypeFolders(FolderTypeENUM.Deleted, FolderTypeENUM.Shared, ids));
-    commands.push(new UpdateOneFolder(this.currentFolder,  FolderTypeENUM.Shared));
+    commands.push(new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Shared));
     return commands;
   }
-
 
   factoryForCommandsPrivateFolders(ids: string[]) {
     const commands: any[] = [];
@@ -357,19 +397,25 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeNote(refTypeRoad: string) {
-    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === refTypeRoad);
+    const refType = this.store
+      .selectSnapshot(AppStore.getRefs)
+      .find((x) => x.name.toLowerCase() === refTypeRoad);
     await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
     this.currentNote.refType = refType;
-    this.notes.find(note => note.id === this.currentNote.id).refType = refType;
-    this.store.dispatch(new UpdateOneNote(this.currentNote,  this.currentNote.noteType.name));
+    this.notes.find((note) => note.id === this.currentNote.id).refType = refType;
+    this.store.dispatch(new UpdateOneNote(this.currentNote, this.currentNote.noteType.name));
   }
 
   async changeRefTypeFolder(refTypeRoad: string) {
-    const refType = this.store.selectSnapshot(AppStore.getRefs).find(x => x.name.toLowerCase() === refTypeRoad);
+    const refType = this.store
+      .selectSnapshot(AppStore.getRefs)
+      .find((x) => x.name.toLowerCase() === refTypeRoad);
     await this.apiFolder.makePublic(refType, this.currentFolder.id).toPromise();
     this.currentFolder.refType = refType;
-    this.folders.find(folder => folder.id === this.currentFolder.id).refType = refType;
-    this.store.dispatch(new UpdateOneFolder(this.currentFolder,  this.currentFolder.folderType.name));
+    this.folders.find((folder) => folder.id === this.currentFolder.id).refType = refType;
+    this.store.dispatch(
+      new UpdateOneFolder(this.currentFolder, this.currentFolder.folderType.name),
+    );
   }
 
   refTypeNotification(refType: RefTypeENUM): void {
@@ -379,18 +425,35 @@ export class ShareComponent implements OnInit, OnDestroy {
   async sendInvites() {
     switch (this.currentWindowType) {
       case SharedType.Folder: {
-        const userIds = this.selectedUsers.map(user => user.id);
-        await this.apiFolder.sendInvitesToFolder(userIds, this.currentFolder.id, this.refTypeForInvite,
-          this.isSendNotification, this.messageTextArea).toPromise();
+        const userIds = this.selectedUsers.map((user) => user.id);
+        await this.apiFolder
+          .sendInvitesToFolder(
+            userIds,
+            this.currentFolder.id,
+            this.refTypeForInvite,
+            this.isSendNotification,
+            this.messageTextArea,
+          )
+          .toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         break;
       }
       case SharedType.Note: {
-        const userIds = this.selectedUsers.map(user => user.id);
-        await this.apiNote.sendInvitesToNote(userIds, this.currentNote.id, this.refTypeForInvite,
-          this.isSendNotification, this.messageTextArea).toPromise();
+        const userIds = this.selectedUsers.map((user) => user.id);
+        await this.apiNote
+          .sendInvitesToNote(
+            userIds,
+            this.currentNote.id,
+            this.refTypeForInvite,
+            this.isSendNotification,
+            this.messageTextArea,
+          )
+          .toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;
+      }
+      default: {
+        throw new Error('error');
       }
     }
   }
@@ -416,9 +479,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   disableTooltipUser(): boolean {
     if (this.pService.isCollapseShared) {
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   changed(text: string) {
@@ -428,11 +490,11 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   addUserToInvite(user: SearchUserForShareModal) {
     this.selectedUsers.push(user);
-    this.searchUsers = this.searchUsers.filter(z => z.id !== user.id);
+    this.searchUsers = this.searchUsers.filter((z) => z.id !== user.id);
   }
 
   removeUserFromInvites(user: SearchUserForShareModal) {
-    this.selectedUsers = this.selectedUsers.filter(z => z.id !== user.id);
+    this.selectedUsers = this.selectedUsers.filter((z) => z.id !== user.id);
     this.searchUsers.unshift(user);
   }
 
@@ -448,6 +510,9 @@ export class ShareComponent implements OnInit, OnDestroy {
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;
       }
+      default: {
+        throw new Error('error');
+      }
     }
   }
 
@@ -462,6 +527,9 @@ export class ShareComponent implements OnInit, OnDestroy {
         await this.apiNote.changeUserPermission(this.currentNote.id, id, refType).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;
+      }
+      default: {
+        throw new Error('');
       }
     }
   }

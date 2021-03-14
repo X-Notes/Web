@@ -10,9 +10,9 @@ export const environment = {
     databaseURL: 'https://noots-storm.firebaseio.com',
     projectId: 'noots-storm',
     storageBucket: 'noots-storm.appspot.com',
-    messagingSenderId: '69998033878'
+    messagingSenderId: '69998033878',
   },
-  writeAPI: 'http://localhost:5000'
+  writeAPI: 'http://localhost:5000',
 };
 
 /*

@@ -1,35 +1,35 @@
 <nav appTheme>
-    <div class="module" routerLink="/notes" routerLinkActive="active" #triggerFirst>
-        <div class="item">
-            <div class="main-icon">
-                <i class="icon-notes"></i>
-            </div>
-            <p>{{ 'notes.name' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="triggerFirst"></div>
+  <div class="module" routerLink="/notes" routerLinkActive="active" #triggerFirst>
+    <div class="item">
+      <div class="main-icon">
+        <i class="icon-notes"></i>
+      </div>
+      <p>{{ 'notes.name' | translate }}</p>
     </div>
-    <div class="module" routerLink="/folders" routerLinkActive="active" #triggerSecond>
-        <div class="item">
-            <div class="main-icon">
-                <i class="icon-folders">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-            </div>
-            <p>{{ 'folders.name' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="triggerSecond"></div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerFirst"></div>
+  </div>
+  <div class="module" routerLink="/folders" routerLinkActive="active" #triggerSecond>
+    <div class="item">
+      <div class="main-icon">
+        <i class="icon-folders">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <p>{{ 'folders.name' | translate }}</p>
     </div>
-    <div class="module" routerLink="/labels" routerLinkActive="active" #triggerThird>
-        <div class="item">
-            <div class="main-icon">
-                <i class="icon-label"></i>
-            </div>
-            <p>{{ 'labels.name' | translate }}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="triggerThird"></div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerSecond"></div>
+  </div>
+  <div class="module" routerLink="/labels" routerLinkActive="active" #triggerThird>
+    <div class="item">
+      <div class="main-icon">
+        <i class="icon-label"></i>
+      </div>
+      <p>{{ 'labels.name' | translate }}</p>
     </div>
-    <div class="billing-field">
-        <div class="billing">B</div>
-    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerThird"></div>
+  </div>
+  <div class="billing-field">
+    <div class="billing">B</div>
+  </div>
 </nav>

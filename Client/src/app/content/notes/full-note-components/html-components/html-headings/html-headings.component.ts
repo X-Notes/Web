@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
@@ -12,10 +22,9 @@ import { HeadingService } from '../../html-business-logic/heading.service';
   selector: 'app-html-headings',
   templateUrl: './html-headings.component.html',
   styleUrls: ['./html-headings.component.scss'],
-  providers: [HeadingService]
+  providers: [HeadingService],
 })
 export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
-
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
 
@@ -31,23 +40,29 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
   hType = HeadingType;
 
   textChanged: Subject<string> = new Subject<string>();
+
   destroy = new Subject<void>();
 
-  @ViewChild('contentHtml') contentHtml: ElementRef;
-
-  constructor(public headingService: HeadingService) { }
+  constructor(public headingService: HeadingService) {}
 
   getContent() {
     return this.content;
   }
 
   ngAfterViewInit(): void {
-    this.headingService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.headingService.setHandlers(
+      this.content,
+      this.contentHtml,
+      this.enterEvent,
+      this.concatThisWithPrev,
+      this.deleteThis,
+    );
   }
-
 
   ngOnDestroy(): void {
     this.headingService.destroysListeners();
@@ -58,10 +73,9 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   ngOnInit(): void {
     this.headingService.contentStr = this.content?.content;
 
-    this.textChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
+    this.textChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
   }
 
   setFocus($event?) {
@@ -77,8 +91,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative()
-  {
+  getNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -90,13 +103,11 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.headingService.mouseOut($event, this.contentHtml);
   }
 
-  get isActive()
-  {
+  get isActive() {
     return this.headingService.isActive(this.contentHtml);
   }
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
-
 }

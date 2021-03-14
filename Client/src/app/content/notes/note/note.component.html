@@ -1,62 +1,86 @@
-<div #highlightNote class="highlighting-note" (click)="highlight(note)"
-    [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
-    [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-select' : ''">
-    <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
+<div
+  #highlightNote
+  class="highlighting-note"
+  (click)="highlight(note)"
+  [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
+  [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-select' : ''"
+>
+  <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
-<div (click)="toNote(note)" class="note-inner" [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
-    [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']">
-    <div class="labels">
-        <div class="label" *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
-            [ngStyle]="{backgroundColor: label.color}" CustomTooltip="{{ label.name }}" position="Top"
-            labelColor="{{ label.color }}">
-            <p>{{label.name}}</p>
-        </div>
+<div
+  (click)="toNote(note)"
+  class="note-inner"
+  [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
+  [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
+>
+  <div class="labels">
+    <div
+      class="label"
+      *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
+      [ngStyle]="{backgroundColor: label.color}"
+      CustomTooltip="{{ label.name }}"
+      position="Top"
+      labelColor="{{ label.color }}"
+    >
+      <p>{{label.name}}</p>
     </div>
-    <div class="header">
-        <h4 *ngIf="note.title; else notNamed">{{note.title}}</h4>
-        <ng-template #notNamed>
-            <h4 class="not-named">Add content to your note</h4>
-        </ng-template>
+  </div>
+  <div class="header">
+    <h4 *ngIf="note.title; else notNamed">{{note.title}}</h4>
+    <ng-template #notNamed>
+      <h4 class="not-named">Add content to your note</h4>
+    </ng-template>
+  </div>
+  <div class="description">
+    <p>
+      Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello
+      HelloHelloHelloHelloHelloHelloHelloHelloHelloHello Hello Hello Hello HelloHello Hello Hello
+      Hello HelloHello Hello Hello HelloHelloHello Hello Hello Hello Hello
+    </p>
+  </div>
+  <div class="photos">
+    <div class="photo">
+      <img
+        alt="note image"
+        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
+      />
     </div>
-    <div class="description">
-        <p>Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello
-            HelloHelloHelloHelloHelloHelloHelloHelloHelloHello Hello Hello Hello HelloHello Hello Hello Hello HelloHello
-            Hello Hello HelloHelloHello Hello Hello Hello Hello</p>
+    <div class="photo">
+      <img
+        alt="note image"
+        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
+      />
     </div>
-    <div class="photos">
-        <div class="photo">
-            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-        </div>
-        <div class="photo">
-            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-        </div>
-        <div class="photo">
-            <img alt="note image" src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg">
-        </div>
+    <div class="photo">
+      <img
+        alt="note image"
+        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
+      />
     </div>
-    <div class="footer">
-        <div class="date">
-            <p>02.09.1945</p>
-        </div>
-        <div class="help-icons">
-            <div class="icon">
-                <i class="icon-folders">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-            </div>
-            <div class="icon">
-                <i class="icon-folders">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-            </div>
-            <div class="icon">
-                <i class="icon-folders">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-            </div>
-        </div>
+  </div>
+  <div class="footer">
+    <div class="date">
+      <p>02.09.1945</p>
     </div>
+    <div class="help-icons">
+      <div class="icon">
+        <i class="icon-folders">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <div class="icon">
+        <i class="icon-folders">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+      <div class="icon">
+        <i class="icon-folders">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </div>
+    </div>
+  </div>
 </div>

@@ -4,17 +4,18 @@ import { environment } from 'src/environments/environment';
 import { SearchUserForShareModal } from '../models/shortUserForShareModal';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SearchService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   searchUsers(str: string) {
     const obj = {
-      searchString: str
+      searchString: str,
     };
-    return this.httpClient.post<SearchUserForShareModal[]>(environment.writeAPI + `/api/search/share/modal`, obj);
+    return this.httpClient.post<SearchUserForShareModal[]>(
+      `${environment.writeAPI}/api/search/share/modal`,
+      obj,
+    );
   }
-
 }

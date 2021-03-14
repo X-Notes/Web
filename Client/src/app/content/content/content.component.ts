@@ -9,17 +9,16 @@ import { LoadGeneralEntites } from 'src/app/core/stateApp/app-action';
 @Component({
   selector: 'app-content',
   templateUrl: './content.component.html',
-  styleUrls: ['./content.component.scss']
+  styleUrls: ['./content.component.scss'],
 })
 export class ContentComponent implements OnInit, OnDestroy {
-
   destroy = new Subject<void>();
 
   newButtonActive = false;
+
   newProfile = false;
 
-  constructor(public pService: PersonalizationService,
-              private store: Store) { }
+  constructor(public pService: PersonalizationService, private store: Store) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -27,27 +26,31 @@ export class ContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store.select(AppStore.isTokenUpdated)
+    this.store
+      .select(AppStore.isTokenUpdated)
       .pipe(takeUntil(this.destroy))
-      .subscribe(z => {
-        if (z)
-        {
+      .subscribe((z) => {
+        if (z) {
           this.store.dispatch(LoadGeneralEntites);
         }
       });
 
-    this.store.select(AppStore.getNewButtonActive)
+    this.store
+      .select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
-      .subscribe(z => {
-        setTimeout(() => this.newButtonActive = z);
+      .subscribe((z) => {
+        setTimeout(() => {
+          this.newButtonActive = z;
+        });
       });
 
-    this.store.select(AppStore.isProfile)
+    this.store
+      .select(AppStore.isProfile)
       .pipe(takeUntil(this.destroy))
-      .subscribe(z => {
-        setTimeout(() => this.newProfile = z);
+      .subscribe((z) => {
+        setTimeout(() => {
+          this.newProfile = z;
+        });
       });
-
-
   }
 }

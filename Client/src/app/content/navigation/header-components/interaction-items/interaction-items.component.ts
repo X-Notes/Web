@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -11,44 +11,45 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 @Component({
   selector: 'app-interaction-items',
   templateUrl: './interaction-items.component.html',
-  styleUrls: ['./interaction-items.component.scss']
+  styleUrls: ['./interaction-items.component.scss'],
 })
 export class InteractionItemsComponent implements OnInit {
-
-  public countSelected: number;
-
-  destroy = new Subject<void>();
-
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
-  constructor(private store: Store) { }
+  public countSelected: number;
+
+  destroy = new Subject<void>();
+
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.store.select(NoteStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
+    this.store
+      .select(NoteStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
 
-    this.store.select(FolderStore.selectedCount)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(x => {
-      if (x > 0) {
-        this.countSelected = x;
-      }
-    });
+    this.store
+      .select(FolderStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
   }
 
   // Modal Windows
-  settingsClick() {
+  settingsClick = () => {
     console.log('settings');
-  }
+  };
 
   // Selection
 
@@ -56,13 +57,17 @@ export class InteractionItemsComponent implements OnInit {
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const type = this.store.selectSnapshot(AppStore.getNoteTypes).find(x => x.name === noteType);
+      const type = this.store
+        .selectSnapshot(AppStore.getNoteTypes)
+        .find((x) => x.name === noteType);
       this.store.dispatch(new SelectAllNote(type));
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === folderType);
+      const type = this.store
+        .selectSnapshot(AppStore.getFolderTypes)
+        .find((x) => x.name === folderType);
       this.store.dispatch(new SelectAllFolder(type));
     }
   }
@@ -77,5 +82,4 @@ export class InteractionItemsComponent implements OnInit {
       this.store.dispatch(new UnSelectAllFolder());
     }
   }
-
 }

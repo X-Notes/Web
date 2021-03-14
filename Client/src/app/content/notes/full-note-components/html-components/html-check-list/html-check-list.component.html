@@ -1,11 +1,22 @@
-<div class="main-container" (click)="setFocus($event)" (mouseover)="mouseEnter($event)" (mouseout)="mouseOut($event)">
-    <div class="check-list">
-        <div class="checkbox-container" (click)="changeCheckBox()">
-            <input [(ngModel)]="content.checked" type="checkbox" checked>
-        </div>
-        <div class="text-container">
-            <p class="block-generic default-text-size" #contentHtml contenteditable="true" (input)="onInput($event)" [textContent]="checkListService.contentStr"></p>
-            <p class="no-content-list" *ngIf="isActive">Item</p>
-        </div>
+<div
+  class="main-container"
+  (click)="setFocus($event)"
+  (mouseover)="mouseEnter($event)"
+  (mouseout)="mouseOut($event)"
+>
+  <div class="check-list">
+    <div class="checkbox-container" (click)="changeCheckBox()">
+      <input [(ngModel)]="content.checked" type="checkbox" checked />
     </div>
+    <div class="text-container">
+      <p
+        class="block-generic default-text-size"
+        #contentHtml
+        contenteditable="true"
+        (input)="onInput($event)"
+        [textContent]="checkListService.contentStr"
+      ></p>
+      <p class="no-content-list" *ngIf="isActive">Item</p>
+    </div>
+  </div>
 </div>

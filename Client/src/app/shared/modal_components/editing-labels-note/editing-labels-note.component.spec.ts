@@ -6,12 +6,13 @@ describe('EditingLabelsNoteComponent', () => {
   let component: EditingLabelsNoteComponent;
   let fixture: ComponentFixture<EditingLabelsNoteComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ EditingLabelsNoteComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [EditingLabelsNoteComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditingLabelsNoteComponent);

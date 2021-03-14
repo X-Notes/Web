@@ -6,31 +6,27 @@ import { UserStore } from '../../core/stateUser/user-state';
 import { ThemeENUM } from '../enums/ThemeEnum';
 
 @Directive({
-  selector: '[appTheme]'
+  selector: '[appTheme]',
 })
 export class ThemeDirective implements OnDestroy {
-
   destroy = new Subject<void>();
 
-  constructor(private el: ElementRef,
-              private renderer: Renderer2,
-              private store: Store) {
-    this.store.select(UserStore.getUserTheme)
-    .pipe(takeUntil(this.destroy))
-    .subscribe(theme => {
-      if (!theme)
-      {
-        return;
-      }
-      if (theme.name === ThemeENUM.Dark)
-      {
-        this.renderer.addClass(this.el.nativeElement, 'dark');
-        this.renderer.removeClass(this.el.nativeElement, 'light');
-      }else{
-        this.renderer.removeClass(this.el.nativeElement, 'dark');
-        this.renderer.addClass(this.el.nativeElement, 'light');
-      }
-    });
+  constructor(private el: ElementRef, private renderer: Renderer2, private store: Store) {
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (!theme) {
+          return;
+        }
+        if (theme.name === ThemeENUM.Dark) {
+          this.renderer.addClass(this.el.nativeElement, 'dark');
+          this.renderer.removeClass(this.el.nativeElement, 'light');
+        } else {
+          this.renderer.removeClass(this.el.nativeElement, 'dark');
+          this.renderer.addClass(this.el.nativeElement, 'light');
+        }
+      });
   }
 
   ngOnDestroy(): void {

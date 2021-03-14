@@ -1,35 +1,30 @@
-import { Directive, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 
 @Directive({
-  selector: '[appChangeSizeAlbumWidth]'
+  selector: '[appChangeSizeAlbumWidth]',
 })
 export class ChangeSizeAlbumWidthDirective implements OnInit, OnDestroy {
-
-  listeners = [];
-
   @Output()
   mouseClick = new EventEmitter();
-
 
   @Output()
   changeWeight = new EventEmitter<number>();
 
+  listeners = [];
+
   startX: number;
+
   isChangeSizeMode = false;
 
-  constructor(private renderer: Renderer2) { }
-
-  ngOnDestroy(): void {
-    for (const destroyFunc of this.listeners) {
-      destroyFunc();
-    }
-  }
-
-  ngOnInit(): void {
-    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => this.mouseupHandler(e));
-    const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) => this.mousemoveHandler(e));
-    this.listeners.push(mouseMoveListener, mouseUpListener);
-  }
+  constructor(private renderer: Renderer2) {}
 
   @HostListener('mousedown', ['$event'])
   mousedownHandler(event: MouseEvent) {
@@ -38,17 +33,31 @@ export class ChangeSizeAlbumWidthDirective implements OnInit, OnDestroy {
     this.mouseClick.emit();
   }
 
+  ngOnDestroy(): void {
+    for (const destroyFunc of this.listeners) {
+      destroyFunc();
+    }
+  }
+
+  ngOnInit(): void {
+    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) =>
+      this.mouseupHandler(e),
+    );
+    const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) =>
+      this.mousemoveHandler(e),
+    );
+    this.listeners.push(mouseMoveListener, mouseUpListener);
+  }
 
   mouseupHandler(event: MouseEvent) {
+    console.log(event);
     this.isChangeSizeMode = false;
     this.mouseClick.emit();
   }
 
   mousemoveHandler(event: MouseEvent) {
-    if (this.isChangeSizeMode)
-    {
+    if (this.isChangeSizeMode) {
       this.changeWeight.emit(event.clientX - this.startX);
     }
   }
-
 }

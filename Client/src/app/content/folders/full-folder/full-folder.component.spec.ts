@@ -6,12 +6,13 @@ describe('FullFolderComponent', () => {
   let component: FullFolderComponent;
   let fixture: ComponentFixture<FullFolderComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ FullFolderComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [FullFolderComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FullFolderComponent);

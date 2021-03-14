@@ -8,9 +8,8 @@ describe('OpenInnerSideComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OpenInnerSideComponent ]
-    })
-    .compileComponents();
+      declarations: [OpenInnerSideComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -3,12 +3,8 @@ import { CommonModule } from '@angular/common';
 import { PageComponent } from './page/page.component';
 import { ErrorRouting } from './error-routing';
 
-
-
 @NgModule({
   declarations: [PageComponent],
-  imports: [
-    CommonModule, ErrorRouting
-  ]
+  imports: [CommonModule, ErrorRouting],
 })
-export class ErrorFourModule { }
+export class ErrorFourModule {}

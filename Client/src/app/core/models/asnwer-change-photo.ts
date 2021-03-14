@@ -1,4 +1,4 @@
-export interface AnswerChangePhoto{
-    success: boolean;
-    id: string;
+export interface AnswerChangePhoto {
+  success: boolean;
+  id: string;
 }

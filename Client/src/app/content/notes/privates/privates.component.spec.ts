@@ -6,12 +6,13 @@ describe('PrivatesComponent', () => {
   let component: PrivatesComponent;
   let fixture: ComponentFixture<PrivatesComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ PrivatesComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [PrivatesComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PrivatesComponent);

@@ -1,4 +1,15 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
@@ -13,10 +24,10 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
   selector: 'app-html-number-list',
   templateUrl: './html-number-list.component.html',
   styleUrls: ['./html-number-list.component.scss'],
-  providers: [NumberListService]
+  providers: [NumberListService],
 })
-export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
-
+export class HtmlNumberListComponent
+  implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
 
@@ -41,23 +52,30 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
   @Input()
   content: BaseText;
 
-  textChanged: Subject<string> = new Subject<string>();
-  destroy = new Subject<void>();
-
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  constructor(public numberService: NumberListService) { }
+  textChanged: Subject<string> = new Subject<string>();
+
+  destroy = new Subject<void>();
+
+  constructor(public numberService: NumberListService) {}
 
   getContent() {
     return this.content;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.setNumber();
   }
 
   ngAfterViewInit(): void {
-    this.numberService.setHandlers(this.content, this.contentHtml, this.enterEvent, this.concatThisWithPrev, this.deleteThis);
+    this.numberService.setHandlers(
+      this.content,
+      this.contentHtml,
+      this.enterEvent,
+      this.concatThisWithPrev,
+      this.deleteThis,
+    );
   }
 
   ngOnDestroy(): void {
@@ -70,10 +88,9 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
     this.numberService.contentStr = this.content?.content;
     this.numberService.transformTo = this.transformTo;
 
-    this.textChanged.pipe(
-      takeUntil(this.destroy),
-      debounceTime(updateNoteContentDelay))
-      .subscribe(str => this.updateText.emit({content: str, contentId: this.content.id}));
+    this.textChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
   }
 
   setNumber() {
@@ -97,8 +114,7 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative()
-  {
+  getNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -110,14 +126,11 @@ export class HtmlNumberListComponent implements OnInit, OnDestroy, AfterViewInit
     this.numberService.mouseOut($event, this.contentHtml);
   }
 
-  get isActive()
-  {
+  get isActive() {
     return this.numberService.isActive(this.contentHtml);
   }
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
-
-
 }

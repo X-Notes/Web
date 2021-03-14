@@ -1,36 +1,47 @@
-import { Component, OnInit, OnDestroy, ViewChildren, ElementRef, QueryList, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChildren,
+  ElementRef,
+  QueryList,
+  AfterViewInit,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
-import { FolderStore } from '../state/folders-state';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { FolderService } from '../folder.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FolderService } from '../folder.service';
+import { FolderStore } from '../state/folders-state';
+import { UnSelectAllFolder } from '../state/folders-actions';
 
 @Component({
   selector: 'app-archive',
   templateUrl: './archive.component.html',
   styleUrls: ['./archive.component.scss'],
-  providers: [FolderService]
+  providers: [FolderService],
 })
 export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   fontSize = FontSizeENUM;
+
   destroy = new Subject<void>();
+
   loaded = false;
 
-  @ViewChildren('item', { read: ElementRef,  }) refElements: QueryList<ElementRef>;
-
-  constructor(public pService: PersonalizationService,
-              private store: Store,
-              public murriService: MurriService,
-              public folderService: FolderService) { }
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    public murriService: MurriService,
+    public folderService: FolderService,
+  ) {}
 
   ngAfterViewInit(): void {
     this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Archive);
@@ -47,18 +58,20 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderArchive)).toPromise();
     this.pService.setSpinnerState(true);
-    this.store.select(AppStore.appLoaded)
+    this.store
+      .select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
         }
-      }
-      );
+      });
   }
 
   async loadContent() {
-    const type = this.store.selectSnapshot(AppStore.getFolderTypes).find(x => x.name === FolderTypeENUM.Archive);
+    const type = this.store
+      .selectSnapshot(AppStore.getFolderTypes)
+      .find((x) => x.name === FolderTypeENUM.Archive);
     await this.folderService.loadFolders(type);
 
     let folders = this.store.selectSnapshot(FolderStore.archiveFolders);
@@ -69,6 +82,4 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
   }
-
-
 }

@@ -26,9 +26,9 @@
     "cancel": "Скасувати"
   },
   "languages": {
-    "English": "Англійська",
-    "Russian": "Російська",
-    "Ukraine": "Українська"
+    "english": "Англійська",
+    "russian": "Російська",
+    "ukraine": "Українська"
   },
   "header": {
     "selected": "Вибрано",
