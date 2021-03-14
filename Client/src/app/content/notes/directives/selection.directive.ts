@@ -45,6 +45,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private selectionService: SelectionService,
   ) {}
 
+  @HostListener('mousedown', ['$event'])
+  onClick() {
+    this.isFullNote = true;
+  }
+
   ngOnInit(): void {
     this.init();
   }
@@ -88,11 +93,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  @HostListener('mousedown', ['$event'])
-  onClick(event) {
-    this.isFullNote = true;
-  }
-
   mouseDown(evt: MouseEvent) {
     if ((evt.target as HTMLElement).tagName === 'I') {
       return;
@@ -116,6 +116,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseUp(evt) {
+    console.log(evt);
     this.isFullNote = false;
     this.selectionService.ismousedown = false;
     this.startTop = 0;
@@ -171,6 +172,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   scrollEvent(e: ScrollEvent) {
+    console.log(e);
     if (this.selectionService.ismousedown && this.isFullNote) {
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {

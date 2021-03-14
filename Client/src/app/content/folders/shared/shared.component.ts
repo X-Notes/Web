@@ -18,7 +18,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { FolderService } from '../folder.service';
-import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
+import { UnSelectAllFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 
 @Component({
@@ -28,13 +28,13 @@ import { FolderStore } from '../state/folders-state';
   providers: [FolderService],
 })
 export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   loaded = false;
-
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   constructor(
     public pService: PersonalizationService,

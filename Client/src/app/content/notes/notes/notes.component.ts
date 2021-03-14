@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Theme } from 'src/app/shared/models/Theme';
 import {
   PersonalizationService,
@@ -23,18 +23,6 @@ import { NoteStore } from '../state/notes-state';
   animations: [sideBarCloseOpen],
 })
 export class NotesComponent implements OnInit, OnDestroy {
-  destroy = new Subject<void>();
-
-  loaded = false;
-
-  theme = Theme;
-
-  public photoError = false;
-
-  labelsActive = false;
-
-  public labelsFilters: LabelsForFiltersNotes[] = [];
-
   @Select(NoteStore.privateCount)
   public countPrivate: Observable<number>;
 
@@ -52,6 +40,18 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
+
+  destroy = new Subject<void>();
+
+  loaded = false;
+
+  theme = Theme;
+
+  public photoError = false;
+
+  labelsActive = false;
+
+  public labelsFilters: LabelsForFiltersNotes[] = [];
 
   constructor(
     public pService: PersonalizationService,
@@ -90,7 +90,7 @@ export class NotesComponent implements OnInit, OnDestroy {
           this.loaded = true;
         }
       });
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe((x) => this.newNote());
+    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newNote());
 
     this.pService.onResize();
   }
@@ -103,7 +103,10 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   cancelLabel() {
     this.labelsActive = false;
-    this.labelsFilters.forEach((z) => (z.selected = false));
+    this.labelsFilters.forEach((z) => {
+      const label = { ...z };
+      label.selected = false;
+    });
     this.store.dispatch(new CancelAllSelectedLabels(true));
   }
 
@@ -124,7 +127,7 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.store.dispatch(new CancelAllSelectedLabels(false));
   }
 
-  changeSource(event) {
+  changeSource() {
     this.photoError = true;
   }
 }

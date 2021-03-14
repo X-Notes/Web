@@ -95,18 +95,15 @@ export class FolderService implements OnDestroy {
     this.store.dispatch(actions);
   }
 
-  transformFolders(folders: SmallFolder[]) {
-    folders = [...folders];
+  transformFolders = (items: SmallFolder[]) => {
+    const folders = [...items];
     return folders.map((note) => {
       return { ...note, isSelected: false, lockRedirect: false };
     });
-  }
+  };
 
   firstInit(folders: SmallFolder[]) {
-    this.allFolders = [...folders].map((note) => {
-      note = { ...note };
-      return note;
-    });
+    this.allFolders = [...folders].map((note) => ({ ...note }));
     this.folders = this.allFolders;
   }
 
@@ -127,18 +124,10 @@ export class FolderService implements OnDestroy {
 
   addToDom(folders: SmallFolder[]) {
     if (folders.length > 0) {
-      this.folders = [
-        ...folders
-          .map((folder) => {
-            folder = { ...folder };
-            return folder;
-          })
-          .reverse(),
-        ...this.folders,
-      ];
+      this.folders = [...folders.map((folder) => ({ ...folder })).reverse(), ...this.folders];
       setTimeout(() => {
         const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < folders.length; i++) {
+        for (let i = 0; i < folders.length; i += 1) {
           const el = DOMnodes[i];
           this.murriService.grid.add(el, { index: 0, layout: true });
         }

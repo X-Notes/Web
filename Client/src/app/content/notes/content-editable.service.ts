@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ApiBrowserTextService } from './api-browser-text.service';
 import { LineBreakType } from './html-models';
 
@@ -47,6 +47,7 @@ export class ContentEditableService {
     return { typeBreakLine, nextText, nextContent };
   }
 
+  // eslint-disable-next-line consistent-return
   isStart(element) {
     const sel = this.apiBrowserService.getSelection();
     if (sel.rangeCount) {

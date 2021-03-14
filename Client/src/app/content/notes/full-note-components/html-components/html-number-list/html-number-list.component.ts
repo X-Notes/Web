@@ -8,7 +8,6 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -53,11 +52,11 @@ export class HtmlNumberListComponent
   @Input()
   content: BaseText;
 
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
-
-  @ViewChild('contentHtml') contentHtml: ElementRef;
 
   constructor(public numberService: NumberListService) {}
 
@@ -65,7 +64,7 @@ export class HtmlNumberListComponent
     return this.content;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.setNumber();
   }
 

@@ -20,13 +20,13 @@ export class TextEditMenuDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const scrollEventListener = this.renderer.listen(this.elementRef.nativeElement, 'scroll', (e) =>
-      this.changeMenuPosition(e),
+    const scrollEventListener = this.renderer.listen(this.elementRef.nativeElement, 'scroll', () =>
+      this.changeMenuPosition(),
     );
     this.listeners.push(scrollEventListener);
   }
 
-  changeMenuPosition(e) {
+  changeMenuPosition() {
     this.menuSelectionService.currentScroll = this.elementRef.nativeElement.scrollTop;
   }
 }

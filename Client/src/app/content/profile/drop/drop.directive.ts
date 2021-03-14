@@ -4,8 +4,6 @@ import { Directive, HostBinding, HostListener } from '@angular/core';
   selector: '[appDrop]',
 })
 export class DropDirective {
-  constructor() {}
-
   @HostBinding('class.new-photo') fileOver: boolean;
 
   @HostListener('dragover', ['$event']) onDragOver(evt) {

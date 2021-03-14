@@ -7,8 +7,6 @@ export class LoadLabels {
 
 export class AddLabel {
   static type = '[Labels] Add Label';
-
-  constructor() {}
 }
 
 export class SetDeleteLabel {
@@ -49,6 +47,4 @@ export class RestoreLabel {
 
 export class DeleteAllFromBin {
   static type = '[Labels] Delete all from bin';
-
-  constructor() {}
 }

@@ -258,50 +258,8 @@ export class NoteStore {
     );
   }
 
-  // FUNCTION UPPER MENU
-
-  // Color change
-  @Action(ChangeColorNote)
-  async changeColor(
-    { patchState, getState, dispatch }: StateContext<NoteState>,
-    { color, typeNote, selectedIds }: ChangeColorNote,
-  ) {
-    await this.api.changeColor(selectedIds, color).toPromise();
-
-    const notes = this.getNotesByType(getState, typeNote.name);
-
-    const newNotes = notes.map((note) => {
-      note = { ...note };
-      if (selectedIds.some((z) => z === note.id)) {
-        note.color = color;
-      }
-      return note;
-    });
-
-    const notesForUpdate = notes
-      .filter((x) => selectedIds.some((z) => z === x.id))
-      .map((note) => {
-        note = { ...note, color };
-        return note;
-      });
-    const updateColor = notesForUpdate.map((note) => this.mapFromNoteToUpdateColor(note));
-    patchState({ updateColorEvent: updateColor });
-    dispatch([
-      new UpdateNotes(new Notes(typeNote.name, newNotes), typeNote.name),
-      UnSelectAllNote,
-      ClearColorNotes,
-    ]);
-  }
-
-  mapFromNoteToUpdateColor(note: SmallNote) {
-    const obj: UpdateColor = {
-      id: note.id,
-      color: note.color,
-    };
-    return obj;
-  }
-
   @Action(ClearColorNotes)
+  // eslint-disable-next-line class-methods-use-this
   clearColorNotes({ patchState }: StateContext<NoteState>) {
     patchState({ updateColorEvent: [] });
   }
@@ -309,7 +267,7 @@ export class NoteStore {
   // Set deleting
   @Action(SetDeleteNotes)
   async deleteNotes(
-    { getState, dispatch, patchState }: StateContext<NoteState>,
+    { dispatch }: StateContext<NoteState>,
     { typeNote, selectedIds }: SetDeleteNotes,
   ) {
     await this.api.setDeleteNotes(selectedIds).toPromise();
@@ -320,7 +278,7 @@ export class NoteStore {
   @Action(DeleteNotesPermanently)
   async deleteNotesPermanently(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { selectedIds, typeNote }: DeleteNotesPermanently,
+    { selectedIds }: DeleteNotesPermanently,
   ) {
     await this.api.deleteNotes(selectedIds).toPromise();
 
@@ -332,29 +290,6 @@ export class NoteStore {
       removeFromMurriEvent: [...selectedIds],
     });
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
-  }
-
-  // Archive
-  @Action(ArchiveNotes)
-  async archiveNotes(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: ArchiveNotes,
-  ) {
-    await this.api.archiveNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Archive, selectedIds));
-  }
-
-  @Action(MakePrivateNotes)
-  async makePrivateNotes(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: MakePrivateNotes,
-  ) {
-    await this.api.makePrivateNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Private, selectedIds));
-  }
-
-  getNotesByType(getState: () => NoteState, type: NoteTypeENUM): SmallNote[] {
-    return getState().notes.find((z) => z.typeNotes === type).notes;
   }
 
   @Action(TransformTypeNotes)
@@ -377,7 +312,11 @@ export class NoteStore {
         return newNote;
       }),
     ];
-    notesAdded.forEach((note) => (note.noteType.name = typeTo));
+    notesAdded = notesAdded.map((x) => {
+      const note = { ...x };
+      note.noteType.name = typeTo;
+      return note;
+    });
     const newNotesTo = [...notesAdded, ...notesTo];
     dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
 
@@ -387,12 +326,55 @@ export class NoteStore {
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
   }
 
-  itemNoFromFilterArray(ids: string[], note: SmallNote) {
-    return ids.indexOf(note.id) === -1;
+  @Action(ArchiveNotes)
+  async archiveNotes(
+    { dispatch }: StateContext<NoteState>,
+    { typeNote, selectedIds }: ArchiveNotes,
+  ) {
+    await this.api.archiveNotes(selectedIds).toPromise();
+    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Archive, selectedIds));
   }
 
-  itemsFromFilterArray(ids: string[], note: SmallNote) {
-    return ids.indexOf(note.id) !== -1;
+  @Action(MakePrivateNotes)
+  async makePrivateNotes(
+    { dispatch }: StateContext<NoteState>,
+    { typeNote, selectedIds }: MakePrivateNotes,
+  ) {
+    await this.api.makePrivateNotes(selectedIds).toPromise();
+    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Private, selectedIds));
+  }
+
+  // Color change
+  @Action(ChangeColorNote)
+  async changeColor(
+    { patchState, getState, dispatch }: StateContext<NoteState>,
+    { color, typeNote, selectedIds }: ChangeColorNote,
+  ) {
+    await this.api.changeColor(selectedIds, color).toPromise();
+
+    const notes = this.getNotesByType(getState, typeNote.name);
+
+    const newNotes = notes.map((x) => {
+      const note = { ...x };
+      if (selectedIds.some((z) => z === note.id)) {
+        note.color = color;
+      }
+      return note;
+    });
+
+    const notesForUpdate = notes
+      .filter((x) => selectedIds.some((z) => z === x.id))
+      .map((x) => {
+        const note = { ...x, color };
+        return note;
+      });
+    const updateColor = notesForUpdate.map((note) => this.mapFromNoteToUpdateColor(note));
+    patchState({ updateColorEvent: updateColor });
+    dispatch([
+      new UpdateNotes(new Notes(typeNote.name, newNotes), typeNote.name),
+      UnSelectAllNote,
+      ClearColorNotes,
+    ]);
   }
 
   @Action(CopyNotes)
@@ -419,41 +401,11 @@ export class NoteStore {
   }
 
   @Action(ClearUpdatelabelEvent)
+  // eslint-disable-next-line class-methods-use-this
   clearUpdateEventLabel({ patchState }: StateContext<NoteState>) {
     patchState({
       updateLabelsOnNoteEvent: [],
     });
-  }
-
-  // LABELS ADD
-  addLabelOnNote(
-    notes: SmallNote[],
-    label: Label,
-    patchState: (val: Partial<NoteState>) => NoteState,
-  ) {
-    const labelUpdate: UpdateLabelEvent[] = [];
-    const labelsArray: LabelsOnSelectedNotes[] = [];
-    notes.forEach((x) => {
-      if (!x.labels.some((z) => z.id === label.id)) {
-        x.labels = [
-          ...x.labels,
-          {
-            id: label.id,
-            color: label.color,
-            name: label.name,
-            isDeleted: label.isDeleted,
-            countNotes: 0,
-          },
-        ];
-        labelUpdate.push({ id: x.id, labels: x.labels });
-      }
-      labelsArray.push({
-        labelsIds: [...x.labels.map((z) => z.id)],
-        id: x.id,
-      });
-    });
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
-    return labelsArray;
   }
 
   @Action(AddLabelOnNote)
@@ -467,14 +419,13 @@ export class NoteStore {
     const notesForUpdate = notes
       .filter((x) => this.itemsFromFilterArray(selectedIds, x))
       .map((note) => {
-        note = { ...note };
-        return note;
+        return { ...note };
       });
     const labelsArray = this.addLabelOnNote(notesForUpdate, label, patchState);
     patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
 
-    const notesForStore = notes.map((note) => {
-      note = { ...note };
+    const notesForStore = notes.map((x) => {
+      const note = { ...x };
       if (selectedIds.indexOf(note.id) !== -1) {
         if (!note.labels.some((z) => z.id === label.id)) {
           note.labels = [
@@ -495,25 +446,6 @@ export class NoteStore {
     dispatch(new UpdateLabelCount(label));
   }
 
-  removeLabelFromNote(
-    notes: SmallNote[],
-    label: Label,
-    patchState: (val: Partial<NoteState>) => NoteState,
-  ) {
-    const labelUpdate: UpdateLabelEvent[] = [];
-    const labelsArray: LabelsOnSelectedNotes[] = [];
-    notes.forEach((x) => (x.labels = x.labels.filter((z) => z.id !== label.id)));
-    notes.forEach((x) => {
-      labelsArray.push({
-        labelsIds: [...x.labels.map((z) => z.id)],
-        id: x.id,
-      });
-      labelUpdate.push({ id: x.id, labels: x.labels });
-    });
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
-    return labelsArray;
-  }
-
   @Action(RemoveLabelFromNote)
   async removeLabel(
     { getState, dispatch, patchState }: StateContext<NoteState>,
@@ -525,15 +457,12 @@ export class NoteStore {
 
     const notesForUpdate = notes
       .filter((x) => this.itemsFromFilterArray(selectedIds, x))
-      .map((note) => {
-        note = { ...note };
-        return note;
-      });
+      .map((note) => ({ ...note }));
     const labelsArray = this.removeLabelFromNote(notesForUpdate, label, patchState);
     patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
 
-    const notesForStore = notes.map((note) => {
-      note = { ...note };
+    const notesForStore = notes.map((x) => {
+      const note = { ...x };
       if (selectedIds.indexOf(note.id) !== -1) {
         note.labels = note.labels.filter((z) => z.id !== label.id);
       }
@@ -550,7 +479,9 @@ export class NoteStore {
   ) {
     let labelUpdate: UpdateLabelEvent[] = [];
     for (const notes of getState().notes) {
-      const notesUpdate = notes.notes.map((note) => {
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      const notesUpdate = notes.notes.map((x) => {
+        let note = { ...x };
         if (note.labels.some((z) => z.id === label.id)) {
           note = this.updateLabel(note, label);
           labelUpdate = [{ id: note.id, labels: note.labels }, ...labelUpdate];
@@ -571,23 +502,8 @@ export class NoteStore {
     patchState({ updateLabelsOnNoteEvent: labelUpdate });
   }
 
-  updateLabel(note: SmallNote, label: Label): SmallNote {
-    const noteLabels = [...note.labels];
-    const index = noteLabels.findIndex((x) => x.id === label.id);
-    noteLabels[index] = { ...label };
-    const updateNote: SmallNote = { ...note, labels: noteLabels };
-    return updateNote;
-  }
-
-  updateFullNoteLabel(note: FullNote, label: Label): FullNote {
-    const noteLabels = [...note.labels];
-    const index = noteLabels.findIndex((x) => x.id === label.id);
-    noteLabels[index] = { ...label };
-    const newNote: FullNote = { ...note, labels: noteLabels };
-    return newNote;
-  }
-
   @Action(RemoveFromDomMurri)
+  // eslint-disable-next-line class-methods-use-this
   removeFromDomMurri({ patchState }: StateContext<NoteState>) {
     patchState({
       removeFromMurriEvent: [],
@@ -595,6 +511,7 @@ export class NoteStore {
   }
 
   @Action(ClearAddedPrivateNotes)
+  // eslint-disable-next-line class-methods-use-this
   clearAddedPrivateNotesEvent({ patchState }: StateContext<NoteState>) {
     patchState({
       notesAddingPrivate: [],
@@ -623,7 +540,8 @@ export class NoteStore {
     { note, typeNote }: UpdateOneNote,
   ) {
     let notes = this.getNotesByType(getState, typeNote);
-    notes = notes.map((nt) => {
+    notes = notes.map((x) => {
+      let nt = { ...x };
       if (nt.id === note.id) {
         nt = { ...note };
       }
@@ -632,13 +550,8 @@ export class NoteStore {
     dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
   }
 
-  // FULL NOTE
-
   @Action(LoadFullNote)
-  async loadFull(
-    { setState, getState, patchState }: StateContext<NoteState>,
-    { id }: LoadFullNote,
-  ) {
+  async loadFull({ patchState }: StateContext<NoteState>, { id }: LoadFullNote) {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullNoteState: {
@@ -650,7 +563,8 @@ export class NoteStore {
   }
 
   @Action(DeleteCurrentNote)
-  deleteCurrentNote({ setState, getState, patchState }: StateContext<NoteState>) {
+  // eslint-disable-next-line class-methods-use-this
+  deleteCurrentNote({ patchState }: StateContext<NoteState>) {
     patchState({ fullNoteState: null });
   }
 
@@ -702,8 +616,9 @@ export class NoteStore {
   }
 
   @Action(ChangeTypeFullNote)
+  // eslint-disable-next-line class-methods-use-this
   async changeTypeFullNote(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
+    { getState, patchState }: StateContext<NoteState>,
     { type }: ChangeTypeFullNote,
   ) {
     const note = getState().fullNoteState?.note;
@@ -713,11 +628,9 @@ export class NoteStore {
     }
   }
 
-  // SHARING
-
   @Action(GetInvitedUsersToNote)
   async getInvitedUsersToNote(
-    { getState, patchState, dispatch }: StateContext<NoteState>,
+    { patchState }: StateContext<NoteState>,
     { noteId }: GetInvitedUsersToNote,
   ) {
     const users = await this.api.getUsersOnPrivateNote(noteId).toPromise();
@@ -741,6 +654,7 @@ export class NoteStore {
   // NOTES SELECTION
 
   @Action(SelectIdNote)
+  // eslint-disable-next-line class-methods-use-this
   select({ patchState, getState }: StateContext<NoteState>, { id, labelIds }: SelectIdNote) {
     const ids = getState().selectedIds;
     const select: LabelsOnSelectedNotes = {
@@ -754,6 +668,7 @@ export class NoteStore {
   }
 
   @Action(UnSelectIdNote)
+  // eslint-disable-next-line class-methods-use-this
   unSelect({ getState, patchState }: StateContext<NoteState>, { id }: UnSelectIdNote) {
     let ids = getState().selectedIds;
     ids = ids.filter((x) => x !== id);
@@ -762,7 +677,8 @@ export class NoteStore {
   }
 
   @Action(UnSelectAllNote)
-  unselectAll({ patchState, getState }: StateContext<NoteState>) {
+  // eslint-disable-next-line class-methods-use-this
+  unselectAll({ patchState }: StateContext<NoteState>) {
     patchState({ selectedIds: [], labelsIdsFromSelectedIds: [] });
   }
 
@@ -781,14 +697,16 @@ export class NoteStore {
   }
 
   @Action(CancelAllSelectedLabels)
+  // eslint-disable-next-line class-methods-use-this
   cancelAllSelectedLabels(
-    { patchState, getState }: StateContext<NoteState>,
+    { patchState }: StateContext<NoteState>,
     { isCanceled }: CancelAllSelectedLabels,
   ) {
     patchState({ selectedLabelsFilter: [], isCanceled });
   }
 
   @Action(UpdateSelectLabel)
+  // eslint-disable-next-line class-methods-use-this
   updateSelectLabel(
     { patchState, getState, dispatch }: StateContext<NoteState>,
     { id }: UpdateSelectLabel,
@@ -807,13 +725,100 @@ export class NoteStore {
   }
 
   @Action(UploadImagesToNote)
-  async uploadImagesToNote(
-    { patchState, getState, dispatch }: StateContext<NoteState>,
-    { data }: UploadImagesToNote,
-  ) {
+  async uploadImagesToNote({ getState }: StateContext<NoteState>, { data }: UploadImagesToNote) {
     const { id } = getState().fullNoteState.note;
     if (id) {
-      const resp = await this.api.uploadImagesToNote(data, id).toPromise();
+      await this.api.uploadImagesToNote(data, id).toPromise();
     }
   }
+
+  mapFromNoteToUpdateColor = (note: SmallNote) => {
+    const obj: UpdateColor = {
+      id: note.id,
+      color: note.color,
+    };
+    return obj;
+  };
+
+  getNotesByType = (getState: () => NoteState, type: NoteTypeENUM) => {
+    return getState().notes.find((z) => z.typeNotes === type).notes;
+  };
+
+  itemNoFromFilterArray = (ids: string[], note: SmallNote) => {
+    return ids.indexOf(note.id) === -1;
+  };
+
+  itemsFromFilterArray = (ids: string[], note: SmallNote) => {
+    return ids.indexOf(note.id) !== -1;
+  };
+
+  // eslint-disable-next-line class-methods-use-this
+  addLabelOnNote(
+    notes: SmallNote[],
+    label: Label,
+    patchState: (val: Partial<NoteState>) => NoteState,
+  ) {
+    const labelUpdate: UpdateLabelEvent[] = [];
+    const labelsArray: LabelsOnSelectedNotes[] = [];
+    notes.forEach((x) => {
+      const note = { ...x };
+      if (!note.labels.some((z) => z.id === label.id)) {
+        note.labels = [
+          ...note.labels,
+          {
+            id: label.id,
+            color: label.color,
+            name: label.name,
+            isDeleted: label.isDeleted,
+            countNotes: 0,
+          },
+        ];
+        labelUpdate.push({ id: note.id, labels: note.labels });
+      }
+      labelsArray.push({
+        labelsIds: [...note.labels.map((z) => z.id)],
+        id: note.id,
+      });
+    });
+    patchState({ updateLabelsOnNoteEvent: labelUpdate });
+    return labelsArray;
+  }
+
+  removeLabelFromNote = (
+    notes: SmallNote[],
+    label: Label,
+    patchState: (val: Partial<NoteState>) => NoteState,
+  ) => {
+    const labelUpdate: UpdateLabelEvent[] = [];
+    const labelsArray: LabelsOnSelectedNotes[] = [];
+    notes.forEach((x) => {
+      const note = { ...x };
+      note.labels = x.labels.filter((z) => z.id !== label.id);
+    });
+    notes.forEach((x) => {
+      labelsArray.push({
+        labelsIds: [...x.labels.map((z) => z.id)],
+        id: x.id,
+      });
+      labelUpdate.push({ id: x.id, labels: x.labels });
+    });
+    patchState({ updateLabelsOnNoteEvent: labelUpdate });
+    return labelsArray;
+  };
+
+  updateLabel = (note: SmallNote, label: Label) => {
+    const noteLabels = [...note.labels];
+    const index = noteLabels.findIndex((x) => x.id === label.id);
+    noteLabels[index] = { ...label };
+    const updateNote: SmallNote = { ...note, labels: noteLabels };
+    return updateNote;
+  };
+
+  updateFullNoteLabel = (note: FullNote, label: Label) => {
+    const noteLabels = [...note.labels];
+    const index = noteLabels.findIndex((x) => x.id === label.id);
+    noteLabels[index] = { ...label };
+    const newNote: FullNote = { ...note, labels: noteLabels };
+    return newNote;
+  };
 }

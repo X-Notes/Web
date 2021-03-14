@@ -19,7 +19,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
-import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
+import { UnSelectAllFolder } from '../state/folders-actions';
 
 @Component({
   selector: 'app-deleted',
@@ -28,13 +28,13 @@ import { LoadFolders, UnSelectAllFolder } from '../state/folders-actions';
   providers: [FolderService],
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   loaded = false;
-
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   constructor(
     public pService: PersonalizationService,

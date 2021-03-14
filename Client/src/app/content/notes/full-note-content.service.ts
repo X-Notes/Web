@@ -15,47 +15,47 @@ export class FullNoteContentService implements OnDestroy {
     this.destroy.complete();
   }
 
-  getTextElement(str = '') {
+  getTextElement = (str = '') => {
     const contentDefault = new BaseText();
     contentDefault.type = ContentType.DEFAULT;
     contentDefault.id = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.content = str;
     return contentDefault;
-  }
+  };
 
-  getDotList(str = '') {
+  getDotList = (str = '') => {
     const contentDefault = new BaseText();
     contentDefault.type = ContentType.DOTLIST;
     contentDefault.id = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.content = str;
     return contentDefault;
-  }
+  };
 
-  getNumberList(str = '') {
+  getNumberList = (str = '') => {
     const contentDefault = new BaseText();
     contentDefault.type = ContentType.NUMBERLIST;
     contentDefault.id = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.content = str;
     return contentDefault;
-  }
+  };
 
-  getCheckList(str = '') {
+  getCheckList = (str = '') => {
     const contentDefault = new BaseText();
     contentDefault.type = ContentType.CHECKLIST;
     contentDefault.id = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.content = str;
     contentDefault.checked = false;
     return contentDefault;
-  }
+  };
 
-  getHeadingElement(str = '', headingType = HeadingType.H1) {
+  getHeadingElement = (str = '', headingType = HeadingType.H1) => {
     const contentDefault = new BaseText();
     contentDefault.type = ContentType.HEADING;
     contentDefault.headingType = headingType;
     contentDefault.id = (Math.random() * (100000 - 1) + 1).toString();
     contentDefault.content = str;
     return contentDefault;
-  }
+  };
 
   getPhotoELEMENT() {
     const max = 20;
@@ -104,6 +104,9 @@ export class FullNoteContentService implements OnDestroy {
       case ContentType.ALBUM: {
         return this.getPhotoELEMENT();
       }
+      default: {
+        throw new Error('error');
+      }
     }
   }
 
@@ -123,6 +126,9 @@ export class FullNoteContentService implements OnDestroy {
       }
       case ContentType.NUMBERLIST: {
         return this.getNumberList();
+      }
+      default: {
+        throw new Error('error');
       }
     }
   }

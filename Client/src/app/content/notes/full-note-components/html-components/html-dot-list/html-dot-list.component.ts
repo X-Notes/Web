@@ -12,7 +12,7 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, ContentModel } from '../../../models/ContentMode';
+import { BaseText } from '../../../models/ContentMode';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -28,10 +28,6 @@ import { DotListService } from '../../html-business-logic/dotList.service';
 export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
-
-  textChanged: Subject<string> = new Subject<string>();
-
-  destroy = new Subject<void>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -49,6 +45,10 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   content: BaseText;
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
+
+  textChanged: Subject<string> = new Subject<string>();
+
+  destroy = new Subject<void>();
 
   constructor(public dotListService: DotListService) {}
 

@@ -1,7 +1,6 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { FolderType } from 'src/app/shared/models/folderType';
-import { NoteType } from 'src/app/shared/models/noteType';
 import { Folders } from '../models/Folders';
 import { SmallFolder } from '../models/folder';
 
@@ -31,8 +30,6 @@ export class ChangeColorFolder {
 
 export class ClearColorFolders {
   static type = '[Folders] Clear color folder';
-
-  constructor() {}
 }
 
 export class UpdateFolders {
@@ -55,8 +52,6 @@ export class DeleteFoldersPermanently {
 
 export class ClearAddedPrivateFolders {
   static type = '[Folders] ClearAddedPrivate folders';
-
-  constructor() {}
 }
 
 export class CopyFolders {
@@ -80,8 +75,6 @@ export class PositionFolder {
 // Muuri remove from dom
 export class RemoveFromDomMurri {
   static type = '[Folders] MurriRemove folders';
-
-  constructor() {}
 }
 
 // SELECTION
@@ -99,8 +92,6 @@ export class UnSelectIdFolder {
 
 export class UnSelectAllFolder {
   static type = '[Folders] Unselect all';
-
-  constructor() {}
 }
 
 export class SelectAllFolder {

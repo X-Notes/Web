@@ -6,8 +6,6 @@ export class PhotoService {
 
   left: number;
 
-  constructor() {}
-
   setPosition(top: number, left: number) {
     this.top = top;
     this.left = left;

@@ -13,28 +13,33 @@ export class HeadingService extends HtmlService {
     this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
   }
 
-  onInput(content: BaseText, contentHtml: ElementRef) {
+  onInput(base: BaseText, contentHtml: ElementRef) {
+    const content = { ...base };
     content.content = this.getNativeElement(contentHtml).innerText;
   }
 
-  onBlur(e: any) {
+  onBlur = (e: any) => {
+    console.log(e);
     // BLUR HANDLER
-  }
+  };
 
-  pasteCommandHandler(e: any) {
+  pasteCommandHandler = (e: any) => {
+    console.log(e);
     throw new Error('Method not implemented.');
-  }
+  };
 
-  onSelectStart(e: any) {
+  onSelectStart = (e: any) => {
+    console.log(e);
     // SELECTIION
-  }
+  };
 
   enter(
     $event: any,
-    content: BaseText,
+    base: BaseText,
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
+    const content = base;
     $event.preventDefault();
     const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
     content.content = this.getNativeElement(contentHtml).innerText;
@@ -52,5 +57,7 @@ export class HeadingService extends HtmlService {
     super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
-  backUp(e: any) {}
+  backUp = (e: any) => {
+    console.log(e);
+  };
 }

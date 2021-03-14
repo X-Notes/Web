@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -9,7 +9,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   templateUrl: './interaction-create.component.html',
   styleUrls: ['./interaction-create.component.scss'],
 })
-export class InteractionCreateComponent implements OnInit {
+export class InteractionCreateComponent {
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
@@ -17,8 +17,6 @@ export class InteractionCreateComponent implements OnInit {
   public isProfile$: Observable<boolean>;
 
   constructor(public pService: PersonalizationService) {}
-
-  ngOnInit(): void {}
 
   newButton() {
     this.pService.subject.next(true);

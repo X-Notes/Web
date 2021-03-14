@@ -12,19 +12,26 @@ import {
   selector: '[appChangeSizeAlbumWidth]',
 })
 export class ChangeSizeAlbumWidthDirective implements OnInit, OnDestroy {
-  listeners = [];
-
   @Output()
   mouseClick = new EventEmitter();
 
   @Output()
   changeWeight = new EventEmitter<number>();
 
+  listeners = [];
+
   startX: number;
 
   isChangeSizeMode = false;
 
   constructor(private renderer: Renderer2) {}
+
+  @HostListener('mousedown', ['$event'])
+  mousedownHandler(event: MouseEvent) {
+    this.startX = event.clientX;
+    this.isChangeSizeMode = true;
+    this.mouseClick.emit();
+  }
 
   ngOnDestroy(): void {
     for (const destroyFunc of this.listeners) {
@@ -42,14 +49,8 @@ export class ChangeSizeAlbumWidthDirective implements OnInit, OnDestroy {
     this.listeners.push(mouseMoveListener, mouseUpListener);
   }
 
-  @HostListener('mousedown', ['$event'])
-  mousedownHandler(event: MouseEvent) {
-    this.startX = event.clientX;
-    this.isChangeSizeMode = true;
-    this.mouseClick.emit();
-  }
-
   mouseupHandler(event: MouseEvent) {
+    console.log(event);
     this.isChangeSizeMode = false;
     this.mouseClick.emit();
   }

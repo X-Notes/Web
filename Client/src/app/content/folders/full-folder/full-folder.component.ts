@@ -17,14 +17,14 @@ import { FullFolder } from '../models/FullFolder';
   styleUrls: ['./full-folder.component.scss'],
 })
 export class FullFolderComponent implements OnInit, OnDestroy {
+  @Select(FolderStore.full)
+  folder$: Observable<FullFolder>;
+
   destroy = new Subject<void>();
 
   private routeSubscription: Subscription;
 
   private id: string;
-
-  @Select(FolderStore.full)
-  folder$: Observable<FullFolder>;
 
   constructor(
     private store: Store,

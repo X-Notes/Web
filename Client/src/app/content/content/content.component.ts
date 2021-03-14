@@ -39,14 +39,18 @@ export class ContentComponent implements OnInit, OnDestroy {
       .select(AppStore.getNewButtonActive)
       .pipe(takeUntil(this.destroy))
       .subscribe((z) => {
-        setTimeout(() => (this.newButtonActive = z));
+        setTimeout(() => {
+          this.newButtonActive = z;
+        });
       });
 
     this.store
       .select(AppStore.isProfile)
       .pipe(takeUntil(this.destroy))
       .subscribe((z) => {
-        setTimeout(() => (this.newProfile = z));
+        setTimeout(() => {
+          this.newProfile = z;
+        });
       });
   }
 }

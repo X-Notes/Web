@@ -54,7 +54,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.pService.onResize();
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe((x) => this.newFolder());
+    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newFolder());
   }
 
   async newFolder() {
@@ -65,7 +65,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
       .subscribe((x) => this.router.navigate([`folders/${x[0].id}`]));
   }
 
-  changeSource(event) {
+  changeSource() {
     this.photoError = true;
   }
 }

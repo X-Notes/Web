@@ -17,13 +17,13 @@ import { SmallFolder } from '../models/folder';
   styleUrls: ['./folder.component.scss'],
 })
 export class FolderComponent implements OnInit, OnDestroy {
+  @Input() folder: SmallFolder;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
-
-  @Input() folder: SmallFolder;
 
   constructor(
     private store: Store,
@@ -73,7 +73,7 @@ export class FolderComponent implements OnInit, OnDestroy {
     }
   }
 
-  shadeColor(color, percent) {
+  shadeColor = (color, percent) => {
     let R = parseInt(color.substring(1, 3), 16);
     let G = parseInt(color.substring(3, 5), 16);
     let B = parseInt(color.substring(5, 7), 16);
@@ -91,7 +91,7 @@ export class FolderComponent implements OnInit, OnDestroy {
     const BB = B.toString(16).length === 1 ? `0${B.toString(16)}` : B.toString(16);
 
     return `#${RR}${GG}${BB}`;
-  }
+  };
 
   changed(text) {
     this.nameChanged.next(text);

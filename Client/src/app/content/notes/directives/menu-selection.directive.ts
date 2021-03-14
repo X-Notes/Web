@@ -17,9 +17,9 @@ import { SelectionService } from '../selection.service';
   selector: '[appMenuSelection]',
 })
 export class MenuSelectionDirective implements OnDestroy, OnInit {
-  listeners = [];
-
   @Input() appMenuSelection: QueryList<ParentInteraction>;
+
+  listeners = [];
 
   constructor(
     private elementRef: ElementRef,
@@ -30,13 +30,13 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
   ) {}
 
   ngOnInit(): void {
-    const mouseupListener = this.renderer.listen(this.elementRef.nativeElement, 'mouseup', (e) =>
-      this.mouseUp(e),
+    const mouseupListener = this.renderer.listen(this.elementRef.nativeElement, 'mouseup', () =>
+      this.mouseUp(),
     );
     this.listeners.push(mouseupListener);
   }
 
-  mouseUp($event: MouseEvent) {
+  mouseUp() {
     const selection = this.apiBrowserService.getSelection();
     if (selection.toString() !== '') {
       const coords = selection.getRangeAt(0).getBoundingClientRect();

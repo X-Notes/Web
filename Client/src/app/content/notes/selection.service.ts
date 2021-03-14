@@ -22,7 +22,7 @@ export class SelectionService {
     const itemsSelect: HTMLElement[] = [];
     const itemsNoSelect: HTMLElement[] = [];
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i += 1) {
       const html = refElementsArray[i].nativeElement as HTMLElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
@@ -35,7 +35,8 @@ export class SelectionService {
     this.makeNoSelect(itemsNoSelect);
   }
 
-  makeSelect(refElements: HTMLElement[]) {
+  makeSelect(items: HTMLElement[]) {
+    const refElements = [...items];
     if (this.isSelectionInside) {
       if (refElements.length === 1) {
         refElements[0].style.backgroundColor = null;
@@ -49,17 +50,17 @@ export class SelectionService {
     }
   }
 
-  makeNoSelect(refElements: HTMLElement[]) {
+  makeNoSelect = (refElements: HTMLElement[]) => {
     for (const elem of refElements) {
       elem.style.backgroundColor = null;
       elem.removeAttribute('selectedByUser');
     }
-  }
+  };
 
   isSelectionInZone(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
     const refElementsArray = refElements.toArray();
     const length = refElementsArray.length - 1;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i += 1) {
       const html = refElementsArray[i].nativeElement as HTMLElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
@@ -69,12 +70,12 @@ export class SelectionService {
     return false;
   }
 
-  isRectToRect(firstRect: DOMRect, secondRect: DOMRect) {
+  isRectToRect = (firstRect: DOMRect, secondRect: DOMRect) => {
     return (
       firstRect.x < secondRect.x + secondRect.width &&
       secondRect.x < firstRect.x + firstRect.width &&
       firstRect.y < secondRect.y + secondRect.height &&
       secondRect.y < firstRect.y + firstRect.height
     );
-  }
+  };
 }

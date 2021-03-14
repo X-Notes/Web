@@ -71,7 +71,8 @@ export class LabelStore {
   }
 
   @Action(LoadLabels)
-  loadContent({ setState, getState, patchState }: StateContext<LabelState>) {
+  // eslint-disable-next-line consistent-return
+  loadContent({ getState, patchState }: StateContext<LabelState>) {
     if (!getState().loaded) {
       return this.api.getAll().pipe(
         tap((content) => {
@@ -88,7 +89,7 @@ export class LabelStore {
   }
 
   @Action(AddLabel)
-  async newLabel({ setState, getState, patchState }: StateContext<LabelState>) {
+  async newLabel({ getState, patchState }: StateContext<LabelState>) {
     const id = await this.api.new().toPromise();
     patchState({
       labelsAll: [
@@ -101,7 +102,7 @@ export class LabelStore {
 
   @Action(SetDeleteLabel)
   async setDeletedLabel(
-    { setState, getState, patchState }: StateContext<LabelState>,
+    { getState, patchState }: StateContext<LabelState>,
     { label }: SetDeleteLabel,
   ) {
     await this.api.setDeleted(label.id).toPromise();
@@ -119,10 +120,7 @@ export class LabelStore {
   }
 
   @Action(DeleteLabel)
-  async DeleteLabel(
-    { setState, getState, patchState }: StateContext<LabelState>,
-    { label }: DeleteLabel,
-  ) {
+  async DeleteLabel({ getState, patchState }: StateContext<LabelState>, { label }: DeleteLabel) {
     await this.api.delete(label.id).toPromise();
     let { labelsDeleted } = getState();
     labelsDeleted = labelsDeleted.filter((x) => x.id !== label.id);
@@ -177,7 +175,7 @@ export class LabelStore {
 
   @Action(PositionLabel)
   async positionLabel(
-    { setState, getState, patchState }: StateContext<LabelState>,
+    { getState, patchState }: StateContext<LabelState>,
     { deleted, id, order }: PositionLabel,
   ) {
     if (deleted) {
@@ -206,10 +204,7 @@ export class LabelStore {
   }
 
   @Action(RestoreLabel)
-  async restoreLabel(
-    { setState, getState, patchState }: StateContext<LabelState>,
-    { label }: RestoreLabel,
-  ) {
+  async restoreLabel({ getState, patchState }: StateContext<LabelState>, { label }: RestoreLabel) {
     await this.api.restore(label.id).toPromise();
     let deletedLables = getState().labelsDeleted;
     let restoreLabel = deletedLables.find((x) => x.id === label.id);
@@ -225,7 +220,7 @@ export class LabelStore {
   }
 
   @Action(DeleteAllFromBin)
-  async deleteAllFromBin({ setState, getState, patchState }: StateContext<LabelState>) {
+  async deleteAllFromBin({ patchState }: StateContext<LabelState>) {
     await this.api.removeAll().toPromise();
     patchState({ labelsDeleted: [], CountDeleted: 0 });
   }

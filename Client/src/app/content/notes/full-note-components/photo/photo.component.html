@@ -2,7 +2,7 @@
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
     [src]="photo.url"
-    (load)="onLoadImage($event)"
+    (load)="onLoadImage()"
   />
   <app-spinner *ngIf="!photo.loaded"></app-spinner>
   <div
@@ -20,7 +20,7 @@
   [cdkConnectedOverlayOpen]="isOpened"
   [cdkConnectedOverlayHasBackdrop]="true"
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  (backdropClick)="closeMenu($event)"
+  (backdropClick)="closeMenu()"
 >
   <app-popup-full-note>
     <div class="menu-items">

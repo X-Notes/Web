@@ -1,5 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Theme } from 'src/app/shared/models/Theme';
+import { Component, OnInit } from '@angular/core';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -37,7 +36,7 @@ export class LabelsComponent implements OnInit {
     this.pService.onResize();
   }
 
-  changeSource(event) {
+  changeSource() {
     this.photoError = true;
   }
 }

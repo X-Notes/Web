@@ -1,4 +1,3 @@
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { EntityRef } from 'src/app/shared/models/entityRef';
 import { NoteType } from 'src/app/shared/models/noteType';
 import { Label } from '../../labels/models/label';

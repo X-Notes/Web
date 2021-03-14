@@ -13,9 +13,9 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
   selector: '[appCopy]',
 })
 export class CopyDirective implements OnDestroy, OnInit {
-  copyListener;
-
   @Input() appCopy: QueryList<ElementRef>;
+
+  copyListener;
 
   constructor(private renderer: Renderer2, private apiBrowserFunctions: ApiBrowserTextService) {}
 
@@ -24,6 +24,7 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   customCopy(e) {
+    console.log(e);
     let items = this.appCopy
       .toArray()
       .map((item) => (item.nativeElement as HTMLElement).firstChild as HTMLElement);

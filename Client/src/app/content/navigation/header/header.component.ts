@@ -25,6 +25,23 @@ import { FullNote } from '../../notes/models/fullNote';
   animations: [showMenuLeftRight, notification],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  // Upper Menu
+
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
+
+  @Select(AppStore.getNewButtonActive)
+  public newButtonActive$: Observable<boolean>;
+
+  @Select(AppStore.isNoteInner)
+  public isNoteInner$: Observable<boolean>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
+
   destroy = new Subject<void>();
 
   newButtonActive = false;
@@ -42,22 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       1,
     ),
   ];
-  // Upper Menu
-
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
-  @Select(AppStore.getNewButtonActive)
-  public newButtonActive$: Observable<boolean>;
-
-  @Select(AppStore.isNoteInner)
-  public isNoteInner$: Observable<boolean>;
-
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
 
   router: string;
 
@@ -126,6 +127,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       case NoteTypeENUM.Archive: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
         break;
+      }
+      default: {
+        throw new Error('error');
       }
     }
     this.router = 'note-inner';

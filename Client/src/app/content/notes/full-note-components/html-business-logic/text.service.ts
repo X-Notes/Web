@@ -5,24 +5,27 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class TextService extends HtmlService {
-  onBlur(e: any) {
+  onBlur = (e: any) => {
+    console.log(e);
     // BLUR HANDLER
-  }
+  };
 
   pasteCommandHandler(e: any) {
     super.pasteCommandHandler(e);
   }
 
-  onSelectStart(e: any) {
+  onSelectStart = (e: any) => {
+    console.log(e);
     // SELECTIION
-  }
+  };
 
   enter(
     $event: any,
-    content: BaseText,
+    base: BaseText,
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
+    const content = base;
     $event.preventDefault();
     const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
     content.content = this.getNativeElement(contentHtml).innerText;
@@ -40,7 +43,9 @@ export class TextService extends HtmlService {
     super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
-  backUp(e: any) {}
+  backUp = (e: any) => {
+    console.log(e);
+  };
 
   setFocus($event, contentHtml: ElementRef) {
     this.getNativeElement(contentHtml).focus();

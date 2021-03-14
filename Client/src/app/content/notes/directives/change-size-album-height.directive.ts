@@ -12,8 +12,6 @@ import {
   selector: '[appChangeSizeAlbumHeight]',
 })
 export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
-  listeners = [];
-
   @Output()
   mouseClick = new EventEmitter<boolean>();
   // true = down
@@ -22,11 +20,20 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
   @Output()
   changeHeight = new EventEmitter<number>();
 
+  listeners = [];
+
   startY: number;
 
   isChangeSizeMode = false;
 
   constructor(private renderer: Renderer2) {}
+
+  @HostListener('mousedown', ['$event'])
+  mousedownHandler(event: MouseEvent) {
+    this.startY = event.clientY;
+    this.isChangeSizeMode = true;
+    this.mouseClick.emit(true);
+  }
 
   ngOnDestroy(): void {
     for (const destroyFunc of this.listeners) {
@@ -36,7 +43,7 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) =>
-      this.mouseupHandler(e),
+      this.mouseupHandler(),
     );
     const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) =>
       this.mousemoveHandler(e),
@@ -44,14 +51,7 @@ export class ChangeSizeAlbumHeightDirective implements OnInit, OnDestroy {
     this.listeners.push(mouseMoveListener, mouseUpListener);
   }
 
-  @HostListener('mousedown', ['$event'])
-  mousedownHandler(event: MouseEvent) {
-    this.startY = event.clientY;
-    this.isChangeSizeMode = true;
-    this.mouseClick.emit(true);
-  }
-
-  mouseupHandler(event: MouseEvent) {
+  mouseupHandler() {
     this.isChangeSizeMode = false;
     this.mouseClick.emit(false);
   }

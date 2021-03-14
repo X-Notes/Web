@@ -77,14 +77,14 @@ export class FullNoteSliderService {
     }
   }
 
-  panStart(e) {
+  panStart() {
     if (!this.pService.check()) {
       this.getSize();
     }
   }
 
   panMove(e, wrap: ElementRef) {
-    this.helper = document.getElementsByClassName('second-helper')[0];
+    this.helper = document.getElementsByClassName('second-helper').item(0);
     if (!this.pService.check()) {
       this.perc = ((100 / this.total) * e.deltaX) / (this.mainWidth * this.total);
       this.pos = this.perc - (100 / this.total) * this.active;

@@ -21,13 +21,13 @@ import { ApiServiceNotes } from '../content/notes/api-notes.service';
 import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { AppServiceAPI } from './app.service';
 
-export function HttpLoaderFactory(http: HttpClient): TranslateLoader {
+export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
-}
+};
 export class MissingTranslationService implements MissingTranslationHandler {
-  handle(params: MissingTranslationHandlerParams) {
+  handle = (params: MissingTranslationHandlerParams) => {
     return `WARN: '${params.key}' is missing in '${params.translateService.currentLang}' locale`;
-  }
+  };
 }
 
 @NgModule({

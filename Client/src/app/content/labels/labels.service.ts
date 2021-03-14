@@ -33,10 +33,7 @@ export class LabelsService implements OnDestroy {
   }
 
   firstInit(labels: Label[]) {
-    this.allLabels = [...labels].map((label) => {
-      label = { ...label };
-      return label;
-    });
+    this.allLabels = [...labels].map((label) => ({ ...label }));
     this.labels = this.allLabels;
   }
 }

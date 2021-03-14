@@ -31,13 +31,13 @@ import { Label } from '../models/label';
   providers: [LabelsService],
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   loaded = false;
-
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   constructor(
     public pService: PersonalizationService,
@@ -111,6 +111,8 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       case LanguagesENUM.ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
         break;
+      default:
+        throw new Error('error');
     }
     snackbarRef.afterDismissed().subscribe((x) => {
       if (x.dismissedByAction) {
@@ -135,7 +137,14 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       case LanguagesENUM.ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлык удален безповоротно`, null);
         break;
+      default:
+        throw new Error('error');
     }
+    snackbarRef.afterDismissed().subscribe((x) => {
+      if (x.dismissedByAction) {
+        this.store.dispatch(new SetDeleteLabel(label));
+      }
+    });
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 }

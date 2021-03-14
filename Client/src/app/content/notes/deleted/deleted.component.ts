@@ -28,13 +28,13 @@ import { UnSelectAllNote } from '../state/notes-actions';
   providers: [NotesService],
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   loaded = false;
-
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   constructor(
     public pService: PersonalizationService,

@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Renderer2, ViewChild, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -16,7 +16,14 @@ import { MenuButtonsService } from '../../menu-buttons.service';
   styleUrls: ['./interaction-inner.component.scss'],
   animations: [showMenuLeftRight],
 })
-export class InteractionInnerComponent implements OnInit, AfterViewInit {
+export class InteractionInnerComponent implements AfterViewInit {
+  @Select(NoteStore.oneFull)
+  note$: Observable<FullNote>;
+
+  @ViewChild('heightPeople') heightPeople: ElementRef;
+
+  @ViewChild('scrollbar') scrollbar: ElementRef;
+
   user: string[] = [
     'person',
     'person',
@@ -29,13 +36,6 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
     'person',
   ];
 
-  @Select(NoteStore.oneFull)
-  note$: Observable<FullNote>;
-
-  @ViewChild('heightPeople') heightPeople: ElementRef;
-
-  @ViewChild('scrollbar') scrollbar: ElementRef;
-
   constructor(
     public pService: PersonalizationService,
     public renderer: Renderer2,
@@ -45,8 +45,6 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.setHeightScrollbar();
   }
-
-  ngOnInit(): void {}
 
   closeMenu(): void {
     console.log(this.pService.checkWidth());
@@ -65,6 +63,7 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
 
   setHeightScrollbar(): void {
     if (this.pService.users) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.pService.checkWidth()
         ? this.renderer.setStyle(
             this.scrollbar.nativeElement,
@@ -80,6 +79,7 @@ export class InteractionInnerComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.setHeightScrollbar());
   }
 
+  // eslint-disable-next-line consistent-return
   disableTooltpUser(): boolean {
     if (this.pService.checkWidth()) {
       return true;

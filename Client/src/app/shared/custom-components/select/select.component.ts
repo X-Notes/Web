@@ -7,7 +7,6 @@ import {
   EventEmitter,
   forwardRef,
   Input,
-  OnInit,
   Optional,
   Output,
   QueryList,
@@ -33,7 +32,7 @@ import { SelectOptionComponent } from '../select-option/select-option.component'
     SelectService,
   ],
 })
-export class SelectComponent implements OnInit, AfterViewInit {
+export class SelectComponent implements AfterViewInit {
   @ContentChildren(SelectOptionComponent)
   public options: QueryList<SelectOptionComponent>;
 
@@ -74,17 +73,14 @@ export class SelectComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
+    console.log(this.options);
     setTimeout(() => {
       this.selectedOption = this.options
         .toArray()
-        .find((option) => option.value === this.selectValue);
+        .find((option) => option.value.toLowerCase() === this.selectValue);
       this.selected = this.selectedOption ? this.selectedOption.value : '';
       this.keyManager.setActiveItem(this.options.toArray().indexOf(this.selectedOption));
     });
-  }
-
-  ngOnInit(): void {
-    this.selectValue = this.selectValue ? this.selectValue.toLowerCase() : undefined;
   }
 
   onKeydown(event) {

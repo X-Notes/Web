@@ -9,7 +9,6 @@ import { Store } from '@ngxs/store';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
@@ -29,12 +28,6 @@ import { Label } from '../models/label';
   animations: [changeColorLabel],
 })
 export class LabelComponent implements OnInit, OnDestroy {
-  destroy = new Subject<void>();
-
-  fontSize = FontSizeENUM;
-
-  pallete = EnumUtil.getEnumValues(LabelsColor);
-
   @Input() label: Label;
 
   @Output() updateLabel = new EventEmitter<Label>();
@@ -44,6 +37,12 @@ export class LabelComponent implements OnInit, OnDestroy {
   @Output() restoreLabel = new EventEmitter<Label>();
 
   @Input() selectedMode: boolean;
+
+  destroy = new Subject<void>();
+
+  fontSize = FontSizeENUM;
+
+  pallete = EnumUtil.getEnumValues(LabelsColor);
 
   isUpdate = false;
 
@@ -103,7 +102,7 @@ export class LabelComponent implements OnInit, OnDestroy {
   }
 
   timeout(flag: boolean) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let count = 0;
       const timer = setInterval(() => {
         if (count === 60 && flag) {
@@ -116,7 +115,7 @@ export class LabelComponent implements OnInit, OnDestroy {
         if (this.murriService) {
           this.murriService.grid.refreshItems().layout();
         }
-        count++;
+        count += 1;
       }, 10);
     });
   }

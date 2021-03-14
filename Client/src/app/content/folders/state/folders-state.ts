@@ -67,6 +67,176 @@ interface FolderState {
 export class FolderStore {
   constructor(private api: ApiFoldersService, private orderService: OrderService) {}
 
+  static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
+    return state.folders.find((x) => x.typeFolders === type);
+  }
+
+  @Action(ClearColorFolders)
+  // eslint-disable-next-line class-methods-use-this
+  clearColorNotes({ patchState }: StateContext<FolderState>) {
+    patchState({ updateColorEvent: [] });
+  }
+
+  @Action(SetDeleteFolders)
+  async setDeleteFolders(
+    { dispatch }: StateContext<FolderState>,
+    { typeFolder, selectedIds }: SetDeleteFolders,
+  ) {
+    await this.api.setDeleteFolder(selectedIds).toPromise();
+    dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Deleted, selectedIds));
+  }
+
+  @Action(CopyFolders)
+  async copyFolders(
+    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { typeFolder, selectedIds }: CopyFolders,
+  ) {
+    const newFolders = await this.api.copyFolders(selectedIds).toPromise();
+
+    const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
+    dispatch(
+      new UpdateFolders(
+        new Folders(FolderTypeENUM.Private, [...newFolders, ...privateFolders]),
+        FolderTypeENUM.Private,
+      ),
+    );
+    dispatch([UnSelectAllFolder]);
+
+    if (typeFolder.name === FolderTypeENUM.Private) {
+      patchState({
+        foldersAddingPrivate: [...newFolders],
+      });
+      dispatch(ClearAddedPrivateFolders);
+    }
+  }
+
+  @Action(ClearAddedPrivateFolders)
+  // eslint-disable-next-line class-methods-use-this
+  clearAddedPrivateFoldersEvent({ patchState }: StateContext<FolderState>) {
+    patchState({
+      foldersAddingPrivate: [],
+    });
+  }
+
+  @Action(DeleteFoldersPermanently)
+  async deleteFoldersPermanently(
+    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { selectedIds }: DeleteFoldersPermanently,
+  ) {
+    await this.api.deleteFolders(selectedIds).toPromise();
+
+    const foldersFrom = this.getFoldersByType(getState, FolderTypeENUM.Deleted);
+    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
+    dispatch(
+      new UpdateFolders(
+        new Folders(FolderTypeENUM.Deleted, foldersFromNew),
+        FolderTypeENUM.Deleted,
+      ),
+    );
+
+    patchState({
+      removeFromMurriEvent: [...selectedIds],
+    });
+    dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+  }
+
+  @Action(MakePrivateFolders)
+  async MakePrivateFolder(
+    { dispatch }: StateContext<FolderState>,
+    { typeFolder, selectedIds }: MakePrivateFolders,
+  ) {
+    await this.api.makePrivateFolders(selectedIds).toPromise();
+    dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Private, selectedIds));
+  }
+
+  @Action(PositionFolder)
+  async changePosition(
+    { getState, dispatch }: StateContext<FolderState>,
+    { order, typeFolder }: PositionFolder,
+  ) {
+    let folders = this.getFoldersByType(getState, typeFolder.name);
+    const changedFolder = folders.find((x) => x.id === order.entityId);
+    const flag = folders.indexOf(changedFolder);
+    if (flag + 1 !== order.position) {
+      await this.orderService.changeOrder(order).toPromise();
+      folders = folders.filter((x) => x.id !== order.entityId);
+      folders.splice(order.position - 1, 0, changedFolder);
+      dispatch(new UpdateFolders(new Folders(typeFolder.name, [...folders]), typeFolder.name));
+    }
+  }
+
+  @Action(TransformTypeFolders)
+  tranformFromTo(
+    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { typeFrom, typeTo, selectedIds }: TransformTypeFolders,
+  ) {
+    const foldersFrom = this.getFoldersByType(getState, typeFrom);
+    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
+
+    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
+    dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
+
+    foldersAdded = [
+      ...foldersAdded.map((folder) => {
+        const newFolder = { ...folder };
+        newFolder.folderType = { ...newFolder.folderType };
+        return newFolder;
+      }),
+    ];
+    foldersAdded.forEach((x) => {
+      const folder = { ...x };
+      folder.folderType.name = typeTo;
+    });
+
+    const foldersTo = this.getFoldersByType(getState, typeTo);
+    const newFoldersTo = [...foldersAdded, ...foldersTo];
+    dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo));
+
+    patchState({
+      removeFromMurriEvent: [...selectedIds],
+    });
+    dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+  }
+
+  // Murri
+
+  @Action(RemoveFromDomMurri)
+  // eslint-disable-next-line class-methods-use-this
+  removeFromDomMurri({ patchState }: StateContext<FolderState>) {
+    patchState({
+      removeFromMurriEvent: [],
+    });
+  }
+
+  // SELECTIONS
+
+  @Action(SelectIdFolder)
+  // eslint-disable-next-line class-methods-use-this
+  select({ patchState }: StateContext<FolderState>, { id, selectedIds }: SelectIdFolder) {
+    patchState({ selectedIds: [id, ...selectedIds] });
+  }
+
+  @Action(UnSelectIdFolder)
+  // eslint-disable-next-line class-methods-use-this
+  unSelect({ patchState }: StateContext<FolderState>, { id, selectedIds }: UnSelectIdFolder) {
+    const ids = selectedIds.filter((x) => x !== id);
+    patchState({ selectedIds: [...ids] });
+  }
+
+  @Action(UnSelectAllFolder)
+  // eslint-disable-next-line class-methods-use-this
+  unselectAll({ patchState }: StateContext<FolderState>) {
+    patchState({ selectedIds: [] });
+  }
+
+  @Action(SelectAllFolder)
+  selectAll({ patchState, getState }: StateContext<FolderState>, { typeFolder }: SelectAllFolder) {
+    const folders = this.getFoldersByType(getState, typeFolder.name);
+    const ids = folders.map((z) => z.id);
+
+    patchState({ selectedIds: [...ids] });
+  }
+
   @Selector()
   static getUsersOnPrivateFolder(state: FolderState): InvitedUsersToNoteOrFolder[] {
     return state.InvitedUsersToNote;
@@ -157,10 +327,6 @@ export class FolderStore {
     return state.foldersAddingPrivate;
   }
 
-  static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
-    return state.folders.find((x) => x.typeFolders === type);
-  }
-
   // LOAD CONTENT
   @Action(LoadFolders)
   async loadPrivateFolders(
@@ -176,6 +342,7 @@ export class FolderStore {
   }
 
   @Action(UpdateFolders)
+  // eslint-disable-next-line class-methods-use-this
   async updateFolders(
     { setState }: StateContext<FolderState>,
     { folders, typeFolder }: UpdateFolders,
@@ -198,7 +365,7 @@ export class FolderStore {
 
   @Action(ArchiveFolders)
   async archiveFolders(
-    { getState, patchState, dispatch }: StateContext<FolderState>,
+    { dispatch }: StateContext<FolderState>,
     { typeFolder, selectedIds }: ArchiveFolders,
   ) {
     await this.api.archiveFolder(selectedIds).toPromise();
@@ -213,8 +380,8 @@ export class FolderStore {
     await this.api.changeColor(selectedIds, color).toPromise();
 
     const folders = this.getFoldersByType(getState, typeFolder.name);
-    const newFolders = folders.map((folder) => {
-      folder = { ...folder };
+    const newFolders = folders.map((x) => {
+      const folder = { ...x };
       if (selectedIds.some((z) => z === folder.id)) {
         folder.color = color;
       }
@@ -223,10 +390,7 @@ export class FolderStore {
 
     const foldersForUpdate = folders
       .filter((x) => selectedIds.some((z) => z === x.id))
-      .map((folder) => {
-        folder = { ...folder, color };
-        return folder;
-      });
+      .map((folder) => ({ ...folder, color }));
 
     const updateColor = foldersForUpdate.map((folder) => this.mapFromFolderToUpdateColor(folder));
     patchState({ updateColorEvent: updateColor });
@@ -237,193 +401,14 @@ export class FolderStore {
     ]);
   }
 
-  mapFromFolderToUpdateColor(folder: SmallFolder) {
-    const obj: UpdateColor = {
-      id: folder.id,
-      color: folder.color,
-    };
-    return obj;
-  }
-
-  @Action(ClearColorFolders)
-  clearColorNotes({ patchState }: StateContext<FolderState>) {
-    patchState({ updateColorEvent: [] });
-  }
-
-  @Action(SetDeleteFolders)
-  async setDeleteFolders(
-    { patchState, getState, dispatch }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: SetDeleteFolders,
-  ) {
-    await this.api.setDeleteFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Deleted, selectedIds));
-  }
-
-  @Action(CopyFolders)
-  async copyFolders(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: CopyFolders,
-  ) {
-    const newFolders = await this.api.copyFolders(selectedIds).toPromise();
-
-    const privateFolders = this.getFoldersByType(getState, FolderTypeENUM.Private);
-    dispatch(
-      new UpdateFolders(
-        new Folders(FolderTypeENUM.Private, [...newFolders, ...privateFolders]),
-        FolderTypeENUM.Private,
-      ),
-    );
-    dispatch([UnSelectAllFolder]);
-
-    if (typeFolder.name === FolderTypeENUM.Private) {
-      patchState({
-        foldersAddingPrivate: [...newFolders],
-      });
-      dispatch(ClearAddedPrivateFolders);
-    }
-  }
-
-  @Action(ClearAddedPrivateFolders)
-  clearAddedPrivateFoldersEvent({ patchState }: StateContext<FolderState>) {
-    patchState({
-      foldersAddingPrivate: [],
-    });
-  }
-
-  @Action(DeleteFoldersPermanently)
-  async deleteFoldersPermanently(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
-    { selectedIds, typeNote }: DeleteFoldersPermanently,
-  ) {
-    await this.api.deleteFolders(selectedIds).toPromise();
-
-    const foldersFrom = this.getFoldersByType(getState, FolderTypeENUM.Deleted);
-    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-    dispatch(
-      new UpdateFolders(
-        new Folders(FolderTypeENUM.Deleted, foldersFromNew),
-        FolderTypeENUM.Deleted,
-      ),
-    );
-
-    patchState({
-      removeFromMurriEvent: [...selectedIds],
-    });
-    dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
-  }
-
-  @Action(MakePrivateFolders)
-  async MakePrivateFolder(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: MakePrivateFolders,
-  ) {
-    await this.api.makePrivateFolders(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(typeFolder.name, FolderTypeENUM.Private, selectedIds));
-  }
-
-  @Action(PositionFolder)
-  async changePosition(
-    { getState, dispatch }: StateContext<FolderState>,
-    { order, typeFolder }: PositionFolder,
-  ) {
-    let folders = this.getFoldersByType(getState, typeFolder.name);
-    const changedFolder = folders.find((x) => x.id === order.entityId);
-    const flag = folders.indexOf(changedFolder);
-    if (flag + 1 !== order.position) {
-      await this.orderService.changeOrder(order).toPromise();
-      folders = folders.filter((x) => x.id !== order.entityId);
-      folders.splice(order.position - 1, 0, changedFolder);
-      dispatch(new UpdateFolders(new Folders(typeFolder.name, [...folders]), typeFolder.name));
-    }
-  }
-
-  @Action(TransformTypeFolders)
-  tranformFromTo(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
-    { typeFrom, typeTo, selectedIds }: TransformTypeFolders,
-  ) {
-    const foldersFrom = this.getFoldersByType(getState, typeFrom);
-    const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
-
-    let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
-    dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
-
-    foldersAdded = [
-      ...foldersAdded.map((folder) => {
-        const newFolder = { ...folder };
-        newFolder.folderType = { ...newFolder.folderType };
-        return newFolder;
-      }),
-    ];
-    foldersAdded.forEach((folder) => (folder.folderType.name = typeTo));
-
-    const foldersTo = this.getFoldersByType(getState, typeTo);
-    const newFoldersTo = [...foldersAdded, ...foldersTo];
-    dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo));
-
-    patchState({
-      removeFromMurriEvent: [...selectedIds],
-    });
-    dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
-  }
-
-  // Murri
-
-  @Action(RemoveFromDomMurri)
-  removeFromDomMurri({ patchState }: StateContext<FolderState>) {
-    patchState({
-      removeFromMurriEvent: [],
-    });
-  }
-
-  // SELECTIONS
-
-  @Action(SelectIdFolder)
-  select({ patchState, getState }: StateContext<FolderState>, { id, selectedIds }: SelectIdFolder) {
-    patchState({ selectedIds: [id, ...selectedIds] });
-  }
-
-  @Action(UnSelectIdFolder)
-  unSelect(
-    { getState, patchState }: StateContext<FolderState>,
-    { id, selectedIds }: UnSelectIdFolder,
-  ) {
-    const ids = selectedIds.filter((x) => x !== id);
-    patchState({ selectedIds: [...ids] });
-  }
-
-  @Action(UnSelectAllFolder)
-  unselectAll({ patchState, getState }: StateContext<FolderState>) {
-    patchState({ selectedIds: [] });
-  }
-
-  @Action(SelectAllFolder)
-  selectAll({ patchState, getState }: StateContext<FolderState>, { typeFolder }: SelectAllFolder) {
-    const folders = this.getFoldersByType(getState, typeFolder.name);
-    const ids = folders.map((z) => z.id);
-
-    patchState({ selectedIds: [...ids] });
-  }
-
-  getFoldersByType(getState: () => FolderState, type: FolderTypeENUM): SmallFolder[] {
-    return getState().folders.find((z) => z.typeFolders === type).folders;
-  }
-
-  itemNoFromFilterArray(ids: string[], folder: SmallFolder) {
-    return ids.indexOf(folder.id) === -1;
-  }
-
-  itemsFromFilterArray(ids: string[], folder: SmallFolder) {
-    return ids.indexOf(folder.id) !== -1;
-  }
-
   @Action(UpdateOneFolder)
   updateOneFolder(
     { dispatch, getState }: StateContext<FolderState>,
     { folder, typeFolder }: UpdateOneFolder,
   ) {
     let folders = this.getFoldersByType(getState, typeFolder);
-    folders = folders.map((nt) => {
+    folders = folders.map((x) => {
+      let nt = { ...x };
       if (nt.id === folder.id) {
         nt = { ...folder };
       }
@@ -444,10 +429,7 @@ export class FolderStore {
   }
 
   @Action(LoadFullFolder)
-  async loadFull(
-    { setState, getState, patchState }: StateContext<FolderState>,
-    { id }: LoadFullFolder,
-  ) {
+  async loadFull({ patchState }: StateContext<FolderState>, { id }: LoadFullFolder) {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullFolderState: {
@@ -459,8 +441,9 @@ export class FolderStore {
   }
 
   @Action(ChangeTypeFullFolder)
+  // eslint-disable-next-line class-methods-use-this
   async changeTypeFullFolder(
-    { getState, patchState, dispatch }: StateContext<FolderState>,
+    { getState, patchState }: StateContext<FolderState>,
     { type }: ChangeTypeFullFolder,
   ) {
     const folder = getState().fullFolderState?.folder;
@@ -472,7 +455,7 @@ export class FolderStore {
 
   @Action(GetInvitedUsersToFolder)
   async getInvitedUsersToNote(
-    { getState, patchState, dispatch }: StateContext<FolderState>,
+    { patchState }: StateContext<FolderState>,
     { folderId }: GetInvitedUsersToFolder,
   ) {
     const users = await this.api.getUsersOnPrivateFolder(folderId).toPromise();
@@ -480,4 +463,24 @@ export class FolderStore {
       InvitedUsersToNote: users,
     });
   }
+
+  mapFromFolderToUpdateColor = (folder: SmallFolder) => {
+    const obj: UpdateColor = {
+      id: folder.id,
+      color: folder.color,
+    };
+    return obj;
+  };
+
+  getFoldersByType = (getState: () => FolderState, type: FolderTypeENUM) => {
+    return getState().folders.find((z) => z.typeFolders === type).folders;
+  };
+
+  itemNoFromFilterArray = (ids: string[], folder: SmallFolder) => {
+    return ids.indexOf(folder.id) === -1;
+  };
+
+  itemsFromFilterArray = (ids: string[], folder: SmallFolder) => {
+    return ids.indexOf(folder.id) !== -1;
+  };
 }

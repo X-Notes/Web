@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public backgrounds$: Observable<Background[]>;
 
   @Select(AppStore.getLanguages)
-  languages$: Observable<LanguageDTO[]>;
+  public languages$: Observable<LanguageDTO[]>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
@@ -115,6 +115,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   setLanguage(item: LanguageDTO): void {
+    console.log(item);
     this.store.dispatch(new ChangeLanguage(item));
     this.isOpen = false;
     setTimeout(() => {

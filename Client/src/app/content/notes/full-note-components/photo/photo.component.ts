@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Photo } from '../../models/ContentMode';
 import { PhotoService } from '../photos-business-logic/photo.service';
 
@@ -27,7 +27,7 @@ import { PhotoService } from '../photos-business-logic/photo.service';
   ],
   providers: [PhotoService],
 })
-export class PhotoComponent implements OnInit {
+export class PhotoComponent {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -38,9 +38,7 @@ export class PhotoComponent implements OnInit {
 
   constructor(private photoService: PhotoService) {}
 
-  ngOnInit(): void {}
-
-  onLoadImage($event) {
+  onLoadImage() {
     this.photo.loaded = true;
   }
 
@@ -49,7 +47,7 @@ export class PhotoComponent implements OnInit {
     this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
   }
 
-  closeMenu($event: MouseEvent) {
+  closeMenu() {
     this.isOpened = false;
   }
 

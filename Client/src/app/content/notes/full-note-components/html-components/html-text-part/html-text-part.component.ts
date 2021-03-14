@@ -4,11 +4,9 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
@@ -39,6 +37,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Output()
   updateText = new EventEmitter<EditTextEventModel>();
 
+  @Output()
+  deleteThis = new EventEmitter<string>();
+
+  @Output()
+  concatThisWithPrev = new EventEmitter<string>();
+
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
   @Input()
   content: BaseText;
 
@@ -49,14 +55,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
-
-  @Output()
-  deleteThis = new EventEmitter<string>();
-
-  @Output()
-  concatThisWithPrev = new EventEmitter<string>();
-
-  @ViewChild('contentHtml') contentHtml: ElementRef;
 
   constructor(
     public textService: TextService,
@@ -96,9 +94,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.transformTo.emit({ contentType, headingType: heading, id: this.content.id });
   }
 
-  preventClick($event) {
+  preventClick = ($event) => {
     $event.preventDefault();
-  }
+  };
 
   mouseEnter($event) {
     $event.preventDefault();

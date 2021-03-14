@@ -4,14 +4,12 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
   Renderer2,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { ContentModel, Photo, Album } from '../../models/ContentMode';
+import { Photo, Album } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { SelectionService } from '../../selection.service';
 import { PhotoService } from '../photos-business-logic/photo.service';
@@ -23,11 +21,17 @@ import { PhotoService } from '../photos-business-logic/photo.service';
   providers: [PhotoService],
 })
 export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction {
+  @ViewChild('album') albumChild: ElementRef;
+
+  @Output()
+  deleteEvent = new EventEmitter<string>();
+
+  @Input()
+  content: Album;
+
   startWidth;
 
   startHeight;
-
-  @ViewChild('album') albumChild: ElementRef;
 
   panelOpenState = false;
 
@@ -38,12 +42,6 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   lastBlock: Photo[] = [];
 
   countItemsInMainBlock = 2;
-
-  @Output()
-  deleteEvent = new EventEmitter<string>();
-
-  @Input()
-  content: Album;
 
   mainContainer;
 
@@ -79,6 +77,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
       this.renderer.setStyle(this.albumChild.nativeElement, 'width', `${procent}%`);
     }
     if (newWidth >= mainContainerWidth - wrapperWidth) {
+      // eslint-disable-next-line no-useless-concat
       this.renderer.setStyle(this.albumChild.nativeElement, 'width', 'calc(100% - 40px)' + '%');
     }
   }
@@ -101,7 +100,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
   }
 
-  closeMenu($event: MouseEvent) {
+  closeMenu() {
     this.isOpened = false;
     this.panelOpenState = false;
   }
@@ -117,9 +116,15 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
 
   setFalseLoadedForAllPhotos() {
     for (const mainBlock of this.mainBlocks) {
-      mainBlock.forEach((z) => (z.loaded = false));
+      mainBlock.forEach((z) => {
+        const item = { ...z };
+        item.loaded = false;
+      });
     }
-    this.lastBlock.forEach((z) => (z.loaded = false));
+    this.lastBlock.forEach((z) => {
+      const item = { ...z };
+      item.loaded = false;
+    });
   }
 
   initPhotos() {
@@ -149,7 +154,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     this.initPhotos();
   }
 
-  getStyle(numb: number) {
+  getStyle = (numb: number) => {
     switch (numb) {
       case 1: {
         return 'one-child';
@@ -163,34 +168,41 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
       case 4: {
         return 'fouth-child';
       }
+      default: {
+        throw new Error('error');
+      }
     }
-  }
+  };
 
-  setFocus($event?: any) {
+  setFocus = ($event?: any) => {
+    console.log($event);
     throw new Error('Method not implemented.');
-  }
+  };
 
-  setFocusToEnd() {
+  setFocusToEnd = () => {
     throw new Error('Method not implemented.');
-  }
+  };
 
-  updateHTML(content: string) {
+  updateHTML = (content: string) => {
+    console.log(content);
     throw new Error('Method not implemented.');
-  }
+  };
 
-  getNative() {
+  getNative = () => {
     throw new Error('Method not implemented.');
-  }
+  };
 
   getContent() {
     return this.content;
   }
 
-  mouseEnter($event: any) {
+  mouseEnter = ($event: any) => {
+    console.log($event);
     throw new Error('Method not implemented.');
-  }
+  };
 
-  mouseOut($event: any) {
+  mouseOut = ($event: any) => {
+    console.log($event);
     throw new Error('Method not implemented.');
-  }
+  };
 }

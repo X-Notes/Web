@@ -1,5 +1,5 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
@@ -19,7 +19,19 @@ import {
   styleUrls: ['./interaction-tools.component.scss'],
   animations: [notification],
 })
-export class InteractionToolsComponent implements OnInit {
+export class InteractionToolsComponent {
+  @Select(AppStore.isNoteInner)
+  public isNoteInner$: Observable<boolean>;
+
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
+
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
+
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
+
   isOpenNotification = false;
 
   public positions = [
@@ -34,21 +46,7 @@ export class InteractionToolsComponent implements OnInit {
     ),
   ];
 
-  @Select(AppStore.isNoteInner)
-  public isNoteInner$: Observable<boolean>;
-
-  @Select(AppStore.isProfile)
-  public isProfile$: Observable<boolean>;
-
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
   constructor(public pService: PersonalizationService, private store: Store) {}
-
-  ngOnInit(): void {}
 
   closeNotification() {
     this.isOpenNotification = false;

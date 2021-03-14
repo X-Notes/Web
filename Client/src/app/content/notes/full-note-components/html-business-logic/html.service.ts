@@ -26,38 +26,6 @@ export abstract class HtmlService {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  eventEventFactory(
-    id: string,
-    breakModel: BreakEnterModel,
-    nextItemType: ContentType,
-    contentId: string,
-  ): EnterEvent {
-    const eventModel: EnterEvent = {
-      id,
-      breakModel,
-      nextItemType,
-      contentId,
-    };
-    return eventModel;
-  }
-
-  abstract onBlur(e);
-
-  abstract onSelectStart(e);
-
-  abstract enter(
-    e,
-    content: BaseText,
-    contentHtml: ElementRef,
-    enterEvent: EventEmitter<EnterEvent>,
-  );
-
-  abstract backUp(e);
-
-  abstract setFocus($event, contentHtml: ElementRef);
-
-  abstract setFocusToEnd(contentHtml: ElementRef);
-
   backDown(
     $event,
     content: BaseText,
@@ -139,11 +107,46 @@ export abstract class HtmlService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter($event, contentHtml: ElementRef) {
     this.preFocus = !this.selectionService.ismousedown;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseOut($event, contentHtml: ElementRef) {
     this.preFocus = false;
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  eventEventFactory(
+    id: string,
+    breakModel: BreakEnterModel,
+    nextItemType: ContentType,
+    contentId: string,
+  ): EnterEvent {
+    const eventModel: EnterEvent = {
+      id,
+      breakModel,
+      nextItemType,
+      contentId,
+    };
+    return eventModel;
+  }
+
+  abstract onBlur(e);
+
+  abstract onSelectStart(e);
+
+  abstract enter(
+    e,
+    content: BaseText,
+    contentHtml: ElementRef,
+    enterEvent: EventEmitter<EnterEvent>,
+  );
+
+  abstract backUp(e);
+
+  abstract setFocus($event, contentHtml: ElementRef);
+
+  abstract setFocusToEnd(contentHtml: ElementRef);
 }

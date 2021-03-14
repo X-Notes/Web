@@ -41,7 +41,7 @@
     *ngIf="(canView$ | async) && loaded"
     class="wrapper-note"
     #fullWrap
-    (panstart)="sliderService.panStart($event)"
+    (panstart)="sliderService.panStart()"
     (panmove)="panMove($event)"
     (panend)="panEnd($event)"
   >

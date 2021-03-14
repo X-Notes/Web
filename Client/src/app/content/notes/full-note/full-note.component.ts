@@ -9,14 +9,13 @@ import {
   AfterViewInit,
   QueryList,
   ViewChildren,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
-import { catchError, debounceTime, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -72,12 +71,6 @@ import { EditTextEventModel } from '../models/EditTextEventModel';
   ],
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
-  loaded = false;
-
-  contentType = ContentType;
-
-  destroy = new Subject<void>();
-
   @ViewChild('fullWrap') wrap: ElementRef;
 
   @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
@@ -87,6 +80,20 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+
+  @Select(NoteStore.canView)
+  public canView$: Observable<boolean>;
+
+  @Select(NoteStore.canNoView)
+  public canNoView$: Observable<boolean>;
+
+  public notesLink: SmallNote[];
+
+  loaded = false;
+
+  contentType = ContentType;
+
+  destroy = new Subject<void>();
 
   note: FullNote;
 
@@ -103,14 +110,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   private routeSubscription: Subscription;
 
   private id: string;
-
-  @Select(NoteStore.canView)
-  public canView$: Observable<boolean>;
-
-  @Select(NoteStore.canNoView)
-  public canNoView$: Observable<boolean>;
-
-  public notesLink: SmallNote[];
 
   constructor(
     private signal: SignalRService,
@@ -142,6 +141,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  @HostListener('window:resize', ['$event'])
+  sizeChange() {
+    if (!this.pService.check()) {
+      this.sliderService.getSize();
+    } else {
+      this.sliderService.mainWidth = null;
+      this.rend.setStyle(this.wrap.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
+      this.sliderService.active = 0;
+    }
+  }
+
   ngAfterViewInit(): void {
     const note = this.store.selectSnapshot(NoteStore.oneFull);
     if (note) {
@@ -165,7 +175,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
-      .subscribe((note) => (this.note = note));
+      .subscribe((note) => {
+        this.note = note;
+      });
 
     this.loaded = true;
   }
@@ -190,7 +202,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.newLine
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(async (event) => {
+      .subscribe(async () => {
         const resp = await this.api.newLine(this.note.id).toPromise();
         if (resp.success) {
           this.contents.push(resp.data);
@@ -210,9 +222,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loaded = true;
   }
 
-  removeAlbumHandler(id: string) {
-    console.log('TODO');
-  }
+  removeAlbumHandler = (id: string) => {
+    console.log('TODO', id);
+  };
 
   placeHolderClick($event) {
     $event.preventDefault();
@@ -248,7 +260,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     let index = this.contents.indexOf(elementCurrent);
 
     if (breakLineType === LineBreakType.NEXT) {
-      index++;
+      index += 1;
     }
 
     this.contents.splice(index, 0, newElement.data);
@@ -348,6 +360,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         this.uploadPhoto.nativeElement.click();
         break;
       }
+      default: {
+        throw new Error('error');
+      }
     }
     this.checkAddLastTextContent(indexOf);
   }
@@ -374,28 +389,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.dispatch(new UploadImagesToNote(data));
   }
 
-  checkAddLastTextContent(index: number) {
+  checkAddLastTextContent = (index: number) => {
     /*
     if (index === this.contents.length - 1)
     {
       this.addNewElementToEnd();
     }
     */
-  }
+    console.log(index);
+  };
 
   addNewElementToEnd() {
     this.newLine.next();
-  }
-
-  @HostListener('window:resize', ['$event'])
-  sizeChange() {
-    if (!this.pService.check()) {
-      this.sliderService.getSize();
-    } else {
-      this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
-      this.sliderService.active = 0;
-    }
   }
 
   panMove(e) {
@@ -414,16 +419,17 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         clearInterval(interval);
       }
       this.murriService.grid.refreshItems().layout();
-      counter++;
+      counter += 1;
     }, 10);
   }
 
-  updateDoc(str: string) {
+  updateDoc = (str: string) => {
     // TODO
     // const note = { ...this.note };
     // note.title = str;
     // this.store.dispatch(new UpdateFullNote(note));
-  }
+    console.log(str);
+  };
 
   setSideBarNotes(noteType: NoteTypeENUM) {
     let notes: SmallNote[];
@@ -443,6 +449,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       case NoteTypeENUM.Archive: {
         notes = this.store.selectSnapshot(NoteStore.archiveNotes);
         break;
+      }
+      default: {
+        throw new Error('error');
       }
     }
     this.notesLink = notes.filter((z) => z.id !== this.id);

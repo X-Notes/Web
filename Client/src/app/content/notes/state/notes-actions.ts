@@ -31,8 +31,6 @@ export class ChangeColorNote {
 
 export class ClearColorNotes {
   static type = '[Notes] Clear color note';
-
-  constructor() {}
 }
 
 export class CopyNotes {
@@ -43,8 +41,6 @@ export class CopyNotes {
 
 export class ClearAddedPrivateNotes {
   static type = '[Notes] ClearAddedPrivate notes';
-
-  constructor() {}
 }
 
 // CHANGE STATE
@@ -100,14 +96,10 @@ export class RemoveLabelFromNote {
 
 export class ClearUpdatelabelEvent {
   static type = '[Notes] Clear labels';
-
-  constructor() {}
 }
 
 export class RemoveFromDomMurri {
   static type = '[Notes] MurriRemove notes';
-
-  constructor() {}
 }
 
 export class PositionNote {
@@ -139,8 +131,6 @@ export class UnSelectIdNote {
 
 export class UnSelectAllNote {
   static type = '[Notes] Unselect all';
-
-  constructor() {}
 }
 
 export class SelectAllNote {
@@ -178,8 +168,6 @@ export class LoadFullNote {
 
 export class DeleteCurrentNote {
   static type = '[Notes] delete full note';
-
-  constructor() {}
 }
 
 export class UpdateTitle {

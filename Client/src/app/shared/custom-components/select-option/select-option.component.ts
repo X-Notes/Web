@@ -1,5 +1,5 @@
 import { Highlightable } from '@angular/cdk/a11y';
-import { Component, HostBinding, HostListener, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, HostListener, Input } from '@angular/core';
 import { SelectService } from '../../services/select.service';
 import { SelectComponent } from '../select/select.component';
 
@@ -8,7 +8,7 @@ import { SelectComponent } from '../select/select.component';
   templateUrl: './select-option.component.html',
   styleUrls: ['./select-option.component.scss'],
 })
-export class SelectOptionComponent implements OnInit, Highlightable {
+export class SelectOptionComponent implements Highlightable {
   @Input()
   public value: string;
 
@@ -44,9 +44,5 @@ export class SelectOptionComponent implements OnInit, Highlightable {
 
   public getLabel(): string {
     return this.value;
-  }
-
-  ngOnInit(): void {
-    this.value.toLowerCase();
   }
 }

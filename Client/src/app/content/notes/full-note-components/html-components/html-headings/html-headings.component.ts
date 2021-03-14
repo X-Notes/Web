@@ -40,13 +40,13 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+
   hType = HeadingType;
 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
-
-  @ViewChild('contentHtml') contentHtml: ElementRef;
 
   constructor(public headingService: HeadingService) {}
 

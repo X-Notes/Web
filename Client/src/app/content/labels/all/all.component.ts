@@ -10,10 +10,9 @@ import {
 import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
@@ -29,13 +28,13 @@ import { Label } from '../models/label';
   providers: [LabelsService],
 })
 export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
   fontSize = FontSizeENUM;
 
   destroy = new Subject<void>();
 
   loaded = false;
-
-  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   constructor(
     public pService: PersonalizationService,
@@ -72,7 +71,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe((x) => this.newLabel());
+    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
   }
 
   async update(label: Label) {

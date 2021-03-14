@@ -15,8 +15,6 @@ export class MenuSelectionService {
 
   public left = 0;
 
-  constructor() {}
-
   get getTop() {
     const positionNumber = this.startTop + this.startScroll - this.currentScroll;
     /*

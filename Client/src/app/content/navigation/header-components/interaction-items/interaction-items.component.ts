@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -14,15 +14,15 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
   styleUrls: ['./interaction-items.component.scss'],
 })
 export class InteractionItemsComponent implements OnInit {
-  public countSelected: number;
-
-  destroy = new Subject<void>();
-
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
+
+  public countSelected: number;
+
+  destroy = new Subject<void>();
 
   constructor(private store: Store) {}
 
@@ -47,9 +47,9 @@ export class InteractionItemsComponent implements OnInit {
   }
 
   // Modal Windows
-  settingsClick() {
+  settingsClick = () => {
     console.log('settings');
-  }
+  };
 
   // Selection
 

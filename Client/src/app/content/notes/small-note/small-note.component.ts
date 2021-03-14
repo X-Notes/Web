@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   templateUrl: './small-note.component.html',
   styleUrls: ['./small-note.component.scss'],
 })
-export class SmallNoteComponent implements OnInit {
+export class SmallNoteComponent {
   @Input() note;
 
   @Output() deleteNote = new EventEmitter<number>();
@@ -14,8 +14,6 @@ export class SmallNoteComponent implements OnInit {
   turnUpNote = false;
 
   constructor(public murriService: MurriService) {}
-
-  ngOnInit(): void {}
 
   turnUpSmallNote() {
     this.turnUpNote = !this.turnUpNote;
