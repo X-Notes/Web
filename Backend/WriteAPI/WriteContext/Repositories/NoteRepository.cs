@@ -204,31 +204,5 @@ namespace WriteContext.Repositories
             return await context.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
-        public async Task<bool> AddAlbum(List<AppFile> files, Note note)
-        {
-            var success = true;
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    await context.Files.AddRangeAsync(files);
-                    await context.SaveChangesAsync();
-
-                    var albumNote = new AlbumNote() { Photos = files, Note = note };
-
-                    await context.AlbumNotes.AddAsync(albumNote);
-                    await context.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    success = false;
-                }
-            }
-            return success;
-        }
     }
 }

@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.noteInner
 {
-    public class NewLineTextContentNoteCommand : BaseCommandEntity, IRequest<TextOperationResult<TextNoteDTO>>
+    public class NewLineTextContentNoteCommand : BaseCommandEntity, IRequest<OperationResult<TextNoteDTO>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

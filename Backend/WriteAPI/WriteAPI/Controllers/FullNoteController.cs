@@ -36,16 +36,16 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [HttpPost("images/{id}")]
-        public async Task UploadImages(List<IFormFile> photos, Guid id)
+        [HttpPost("images/{id}/{contentId}")]
+        public async Task<OperationResult<AlbumNoteDTO>> UploadImages(List<IFormFile> photos, Guid id, Guid contentId)
         {
-            var command = new UploadImageToNoteCommand() { NoteId = id, Photos = photos };
+            var command = new UploadImageToNoteCommand(photos, id, contentId);
             command.Email = this.GetUserEmail();
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
         [HttpPatch("text/type")]
-        public async Task<TextOperationResult<Unit>> UpdateType(TransformTextTypeCommand command)
+        public async Task<OperationResult<Unit>> UpdateType(TransformTextTypeCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
@@ -59,7 +59,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("content/concat")]
-        public async Task<TextOperationResult<TextNoteDTO>> ConcatLine(ConcatWithPreviousCommand command)
+        public async Task<OperationResult<TextNoteDTO>> ConcatLine(ConcatWithPreviousCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
@@ -67,21 +67,21 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("content/remove")]
-        public async Task<TextOperationResult<Unit>> RemoveLine(RemoveContentCommand command)
+        public async Task<OperationResult<Unit>> RemoveLine(RemoveContentCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("content/insert")]
-        public async Task<TextOperationResult<TextNoteDTO>> InsertLine(InsertLineCommand command)
+        public async Task<OperationResult<TextNoteDTO>> InsertLine(InsertLineCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
 
         [HttpPost("content/new")]
-        public async Task<TextOperationResult<TextNoteDTO>> NewLine(NewLineTextContentNoteCommand command)
+        public async Task<OperationResult<TextNoteDTO>> NewLine(NewLineTextContentNoteCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

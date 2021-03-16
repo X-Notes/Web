@@ -149,8 +149,11 @@ export class ApiServiceNotes {
     return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/title`, obj);
   }
 
-  uploadImagesToNote(data: FormData, id: string) {
-    return this.httpClient.post(`${environment.writeAPI}/api/fullnote/images/${id}`, data);
+  uploadImagesToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post(
+      `${environment.writeAPI}/api/fullnote/images/${id}/${contentId}`,
+      data,
+    );
   }
 
   newLine(noteId: string) {

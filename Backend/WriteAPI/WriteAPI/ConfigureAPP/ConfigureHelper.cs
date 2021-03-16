@@ -112,13 +112,13 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UploadImageToNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadImageToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, TextOperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

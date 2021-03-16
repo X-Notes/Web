@@ -53,6 +53,7 @@ export abstract class HtmlService {
     return this.getNativeElement(contentHtml)?.textContent.length === 0;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getNativeElement(contentHtml: ElementRef) {
     return contentHtml?.nativeElement;
   }

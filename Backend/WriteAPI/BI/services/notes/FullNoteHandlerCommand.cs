@@ -3,6 +3,7 @@ using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DTO.notes.FullNoteContent;
+using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Domain.Commands.noteInner;
 using Domain.Queries.permissions;
 using MediatR;
@@ -18,13 +19,13 @@ namespace BI.services.notes
 {
     public class FullNoteHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, Unit>,
-        IRequestHandler<UploadImageToNoteCommand, Unit>,
+        IRequestHandler<UploadImageToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<UpdateTextNoteCommand, Unit>,
-        IRequestHandler<TransformTextTypeCommand, TextOperationResult<Unit>>,
-        IRequestHandler<NewLineTextContentNoteCommand, TextOperationResult<TextNoteDTO>>,
-        IRequestHandler<InsertLineCommand, TextOperationResult<TextNoteDTO>>,
-        IRequestHandler<RemoveContentCommand, TextOperationResult<Unit>>,
-        IRequestHandler<ConcatWithPreviousCommand, TextOperationResult<TextNoteDTO>>
+        IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
+        IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>,
+        IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>,
+        IRequestHandler<RemoveContentCommand, OperationResult<Unit>>,
+        IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>
     {
         private readonly NoteRepository noteRepository;
         private readonly PhotoHelpers photoHelpers;
@@ -33,6 +34,7 @@ namespace BI.services.notes
         private readonly TextNotesRepository textNotesRepository;
         private readonly AlbumNoteRepository albumNoteRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
+        private readonly FileRepository fileRepository;
         public FullNoteHandlerCommand(
                                         NoteRepository noteRepository,
                                         PhotoHelpers photoHelpers,
@@ -40,7 +42,8 @@ namespace BI.services.notes
                                         IMediator _mediator,
                                         TextNotesRepository textNotesRepository,
                                         AlbumNoteRepository albumNoteRepository,
-                                        BaseNoteContentRepository baseNoteContentRepository)
+                                        BaseNoteContentRepository baseNoteContentRepository,
+                                        FileRepository fileRepository)
         {
             this.noteRepository = noteRepository;
             this.photoHelpers = photoHelpers;
@@ -49,6 +52,7 @@ namespace BI.services.notes
             this.textNotesRepository = textNotesRepository;
             this.albumNoteRepository = albumNoteRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -67,14 +71,22 @@ namespace BI.services.notes
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(UploadImageToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<AlbumNoteDTO>> Handle(UploadImageToNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var note = permissions.Note;
+                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
+
+                var contentPrev = contents.FirstOrDefault(x => x.Id == contentForRemove.PrevId);
+                var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
+
+                // FILES LOGIC
                 var fileList = new List<AppFile>();
                 foreach (var file in request.Photos)
                 {
@@ -85,10 +97,49 @@ namespace BI.services.notes
                     fileList.Add(fileDB);
                 }
 
-                var success = await noteRepository.AddAlbum(fileList, note);
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
-                if (!success)
+                try
                 {
+                    await baseNoteContentRepository.Remove(contentForRemove);
+
+                    await fileRepository.AddRange(fileList);
+
+                    var albumNote = new AlbumNote()
+                    {
+                        Photos = fileList,
+                        Note = note,
+                        PrevId = contentForRemove.PrevId,
+                        NextId = contentForRemove.NextId
+                    };
+
+                    await albumNoteRepository.Add(albumNote);
+
+                    var updateList = new List<BaseNoteContent>();
+                    if (contentNext != null)
+                    {
+                        contentNext.PrevId = albumNote.Id;
+                        updateList.Add(contentNext);
+                    }
+                    if(contentPrev != null)
+                    {
+                        contentPrev.NextId = albumNote.Id;
+                        updateList.Add(contentPrev);
+                    }
+
+                    await baseNoteContentRepository.UpdateRange(updateList);
+
+                    await transaction.CommitAsync();
+
+                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
+                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
+                    var result = new AlbumNoteDTO(resultPhotos, albumNote.Id, type, albumNote.NextId, albumNote.PrevId);
+                    return new OperationResult<AlbumNoteDTO>(Success: true, result);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
                     foreach (var file in fileList)
                     {
                         filesStorage.RemoveFile(file.Path);
@@ -97,7 +148,7 @@ namespace BI.services.notes
             }
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return Unit.Value;
+            return new OperationResult<AlbumNoteDTO>(Success: false, null);
         }
 
         public async Task<Unit> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
@@ -111,7 +162,7 @@ namespace BI.services.notes
                 if (content != null)
                 {
                     content.Content = request.Content;
-                    if(request.Checked.HasValue)
+                    if (request.Checked.HasValue)
                     {
                         content.Checked = request.Checked.Value;
                     }
@@ -124,7 +175,7 @@ namespace BI.services.notes
             return Unit.Value;
         }
 
-        public async Task<TextOperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -153,7 +204,7 @@ namespace BI.services.notes
                     var textResult = new TextNoteDTO(text.Content, text.Id, text.TextType, text.HeadingType, text.Checked,
                                 text.NextId, text.PrevId);
 
-                    return new TextOperationResult<TextNoteDTO>(Success: true, textResult);
+                    return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
                 catch (Exception e)
                 {
@@ -163,10 +214,10 @@ namespace BI.services.notes
             }
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new TextOperationResult<TextNoteDTO>(Success: false, null);
+            return new OperationResult<TextNoteDTO>(Success: false, null);
         }
 
-        public async Task<TextOperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -198,7 +249,7 @@ namespace BI.services.notes
                                 var updateList = new List<BaseNoteContent>();
                                 if (contentNext != null)
                                 {
-                                    contentNext.PrevId = newText.Id;                                   
+                                    contentNext.PrevId = newText.Id;
                                     updateList.Add(contentNext);
                                 }
 
@@ -210,7 +261,7 @@ namespace BI.services.notes
                                                                     newText.NextId, newText.PrevId);
 
                                 await transaction.CommitAsync();
-                                return new TextOperationResult<TextNoteDTO>(Success: true, textResult);
+                                return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
                             catch (Exception e)
                             {
@@ -224,7 +275,7 @@ namespace BI.services.notes
                             var contentPrev = contents.FirstOrDefault(x => x.Id == content.PrevId);
 
                             var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                            var newText = new TextNote(NoteId: note.Id, PrevId: contentPrev?.Id, NextId: content?.Id, 
+                            var newText = new TextNote(NoteId: note.Id, PrevId: contentPrev?.Id, NextId: content?.Id,
                                                         textType, Content: request.NextText);
 
 
@@ -247,14 +298,14 @@ namespace BI.services.notes
                                     content.PrevId = newText.Id;
                                     updateList.Add(content);
                                 }
-  
+
                                 await baseNoteContentRepository.UpdateRange(updateList);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked,
                                                                     newText.NextId, newText.PrevId);
 
                                 await transaction.CommitAsync();
-                                return new TextOperationResult<TextNoteDTO>(Success: true, textResult);
+                                return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
                             catch (Exception e)
                             {
@@ -269,10 +320,10 @@ namespace BI.services.notes
                         }
                 }
             }
-            return new TextOperationResult<TextNoteDTO>(Success: false, null);
+            return new OperationResult<TextNoteDTO>(Success: false, null);
         }
 
-        public async Task<TextOperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -286,7 +337,7 @@ namespace BI.services.notes
 
                 if (contentForRemove == null || contentForRemove.PrevId == null)
                 {
-                    return new TextOperationResult<Unit>(Success: false, Unit.Value);
+                    return new OperationResult<Unit>(Success: false, Unit.Value);
                 }
 
                 var contentPrev = contents.First(x => x.Id == contentForRemove.PrevId);
@@ -300,7 +351,8 @@ namespace BI.services.notes
                     contentPrev.NextId = contentNext.Id;
                     updateList.Add(contentNext);
                 }
-                else {
+                else
+                {
                     contentPrev.NextId = null;
                 }
 
@@ -313,7 +365,7 @@ namespace BI.services.notes
                     await baseNoteContentRepository.Remove(contentForRemove);
                     await baseNoteContentRepository.UpdateRange(updateList);
                     await transaction.CommitAsync();
-                    return new TextOperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -321,28 +373,28 @@ namespace BI.services.notes
                     Console.WriteLine(e);
                 }
             }
-            return new TextOperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>(Success: false, Unit.Value);
         }
 
-        public async Task<TextOperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             var typeIsExist = TextNoteTypesDictionary.IsExistValue(request.Type);
 
-            if(request.HeadingType != null)
+            if (request.HeadingType != null)
             {
                 var headingIsExist = HeadingNoteTypesDictionary.IsExistValue(request.HeadingType);
                 if (!headingIsExist)
                 {
-                    return new TextOperationResult<Unit>(Success: false, Unit.Value);
+                    return new OperationResult<Unit>(Success: false, Unit.Value);
                 }
             }
 
             if (!typeIsExist)
             {
-                return new TextOperationResult<Unit>(Success: false, Unit.Value);
+                return new OperationResult<Unit>(Success: false, Unit.Value);
             }
 
             if (permissions.CanWrite)
@@ -354,27 +406,27 @@ namespace BI.services.notes
                     content.HeadingType = request.HeadingType;
                     await textNotesRepository.Update(content);
                     // TODO DEADLOCK
-                    return new TextOperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
             }
 
-            return new TextOperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>(Success: false, Unit.Value);
         }
 
-        public async Task<TextOperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
-            if(permissions.CanWrite)
+            if (permissions.CanWrite)
             {
                 var contents = await textNotesRepository.GetWhere(x => x.NoteId == note.Id);
                 var contentForConcat = contents.FirstOrDefault(x => x.Id == request.ContentId);
 
                 if (contentForConcat == null || contentForConcat.PrevId == null)
                 {
-                    return new TextOperationResult<TextNoteDTO>(Success: false,null);
+                    return new OperationResult<TextNoteDTO>(Success: false, null);
                 }
 
                 var contentPrev = contents.First(x => x.Id == contentForConcat.PrevId);
@@ -407,7 +459,7 @@ namespace BI.services.notes
                                     contentPrev.HeadingType, contentPrev.Checked,
                                     contentPrev.NextId, contentPrev.PrevId);
 
-                    return new TextOperationResult<TextNoteDTO>(Success: true, textResult);
+                    return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
                 catch (Exception e)
                 {
@@ -416,7 +468,7 @@ namespace BI.services.notes
                 }
             }
 
-            return new TextOperationResult<TextNoteDTO>(Success: false, null);
+            return new OperationResult<TextNoteDTO>(Success: false, null);
         }
     }
 }

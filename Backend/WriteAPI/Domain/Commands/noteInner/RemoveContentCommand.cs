@@ -5,7 +5,7 @@ using System;
 
 namespace Domain.Commands.noteInner
 {
-    public class RemoveContentCommand : BaseCommandEntity, IRequest<TextOperationResult<Unit>>
+    public class RemoveContentCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

@@ -32,10 +32,18 @@
         (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)"
         class="icon-h3"
       ></i>
-      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-image"></i>
-      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-file"></i>
-      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-video-inner"></i>
-      <i (mousedown)="transformContent($event, contentType.ALBUM)" class="icon-plus"></i>
+      <i (mousedown)="transformToPhotoHandler($event)" class="icon-image"></i>
+      <i (mousedown)="transformToPhotoHandler($event)" class="icon-file"></i>
+      <i (mousedown)="transformToPhotoHandler($event)" class="icon-video-inner"></i>
+      <i (mousedown)="transformToPhotoHandler($event)" class="icon-plus"></i>
     </div>
   </div>
 </div>
+<input
+  #uploadPhotos
+  type="file"
+  multiple
+  accept="image/jpeg,image/png"
+  hidden="true"
+  (change)="uploadImages($event)"
+/>

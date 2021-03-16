@@ -86,7 +86,8 @@
               (enterEvent)="enterHandler($event)"
               (deleteThis)="deleteHTMLHandler($event)"
               (concatThisWithPrev)="concatThisWithPrev($event)"
-              (transformTo)="transformToType($event)"
+              (transformTo)="transformToTypeText($event)"
+              (transformToPhoto)="transformToPhoto($event)"
               (updateText)="updateTextHandler($event, i === contents.length - 1)"
             ></app-html-text-part>
             <app-html-number-list
@@ -96,7 +97,7 @@
               [prevType]="contents[i - 1]?.type"
               [content]="item"
               (enterEvent)="enterHandler($event)"
-              (transformTo)="transformToType($event)"
+              (transformTo)="transformToTypeText($event)"
               (deleteThis)="deleteHTMLHandler($event)"
               (updateText)="updateTextHandler($event, i === contents.length - 1)"
               (concatThisWithPrev)="concatThisWithPrev($event)"
@@ -106,7 +107,7 @@
               *ngSwitchCase="contentType.DOTLIST"
               [content]="item"
               (enterEvent)="enterHandler($event)"
-              (transformTo)="transformToType($event)"
+              (transformTo)="transformToTypeText($event)"
               (deleteThis)="deleteHTMLHandler($event)"
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (updateText)="updateTextHandler($event, i === contents.length - 1)"
@@ -116,7 +117,7 @@
               *ngSwitchCase="contentType.CHECKLIST"
               [content]="item"
               (enterEvent)="enterHandler($event)"
-              (transformTo)="transformToType($event)"
+              (transformTo)="transformToTypeText($event)"
               (deleteThis)="deleteHTMLHandler($event)"
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (updateText)="updateTextHandler($event, i === contents.length - 1)"
@@ -183,11 +184,3 @@
   >
   </app-text-edit-menu>
 </div>
-<input
-  #uploadPhotos
-  type="file"
-  multiple
-  accept="image/jpeg,image/png"
-  hidden="true"
-  (change)="uploadImages($event)"
-/>

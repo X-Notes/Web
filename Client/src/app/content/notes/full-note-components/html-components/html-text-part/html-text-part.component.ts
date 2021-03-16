@@ -19,6 +19,7 @@ import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
+import { TransformContentPhoto } from '../../../models/transform-content-photo';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({
@@ -28,6 +29,9 @@ import { TextService } from '../../html-business-logic/text.service';
   providers: [TextService],
 })
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+  @Output()
+  transformToPhoto = new EventEmitter<TransformContentPhoto>();
+
   @Output()
   transformTo = new EventEmitter<TransformContent>();
 
@@ -44,6 +48,8 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   concatThisWithPrev = new EventEmitter<string>();
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
+
+  @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
   @Input()
   content: BaseText;
@@ -94,6 +100,11 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.transformTo.emit({ contentType, headingType: heading, id: this.content.id });
   }
 
+  transformToPhotoHandler($event) {
+    $event.preventDefault();
+    this.uploadPhoto.nativeElement.click();
+  }
+
   preventClick = ($event) => {
     $event.preventDefault();
   };
@@ -130,5 +141,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
+  }
+
+  async uploadImages(event) {
+    const data = new FormData();
+    const { files } = event.target;
+    for (const file of files) {
+      data.append('photos', file);
+    }
+    this.transformToPhoto.emit({ id: this.content.id, formData: data });
   }
 }

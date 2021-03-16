@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.noteInner
 {
-    public class TransformTextTypeCommand : BaseCommandEntity, IRequest<TextOperationResult<Unit>>
+    public class TransformTextTypeCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

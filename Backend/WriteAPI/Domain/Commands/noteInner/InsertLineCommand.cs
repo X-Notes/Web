@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.noteInner
 {
-    public class InsertLineCommand : BaseCommandEntity, IRequest<TextOperationResult<TextNoteDTO>>
+    public class InsertLineCommand : BaseCommandEntity, IRequest<OperationResult<TextNoteDTO>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

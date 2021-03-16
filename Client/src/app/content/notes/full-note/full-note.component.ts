@@ -29,13 +29,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import {
-  DeleteCurrentNote,
-  LoadFullNote,
-  LoadNotes,
-  UpdateTitle,
-  UploadImagesToNote,
-} from '../state/notes-actions';
+import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { SmallNote } from '../models/smallNote';
@@ -56,6 +50,7 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
+import { TransformContentPhoto } from '../models/transform-content-photo';
 
 @Component({
   selector: 'app-full-note',
@@ -325,7 +320,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  async transformToType(value: TransformContent) {
+  // eslint-disable-next-line class-methods-use-this
+  async transformToPhoto(event: TransformContentPhoto) {
+    await this.api.uploadImagesToNote(event.formData, this.note.id, event.id).toPromise();
+  }
+
+  async transformToTypeText(value: TransformContent) {
+    let indexOf;
+
     const resp = await this.api
       .updateContentType(this.note.id, value.id, value.contentType, value.headingType)
       .toPromise();
@@ -334,7 +336,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    let indexOf;
     switch (value.contentType) {
       case ContentType.DEFAULT: {
         indexOf = this.defaultTextFocusClick(value.id, value.contentType);
@@ -356,14 +357,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         indexOf = this.defaultTextFocusClick(value.id, value.contentType);
         break;
       }
-      case ContentType.ALBUM: {
-        this.uploadPhoto.nativeElement.click();
-        break;
-      }
       default: {
         throw new Error('error');
       }
     }
+
     this.checkAddLastTextContent(indexOf);
   }
 
@@ -378,15 +376,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.textElements?.toArray()[indexOf].setFocus();
     }, 0);
     return indexOf;
-  }
-
-  async uploadImages(event) {
-    const data = new FormData();
-    const { files } = event.target;
-    for (const file of files) {
-      data.append('photos', file);
-    }
-    this.store.dispatch(new UploadImagesToNote(data));
   }
 
   checkAddLastTextContent = (index: number) => {
