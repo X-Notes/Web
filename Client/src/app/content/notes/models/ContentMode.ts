@@ -20,16 +20,14 @@ export class BaseText extends ContentModel {
 
 export class Album extends ContentModel {
   photos: Photo[];
-}
-
-export class Photo {
-  id: string;
-
-  url: string;
 
   height: string;
 
   width: string;
+}
+
+export class Photo {
+  id: string;
 
   loaded: boolean;
 }

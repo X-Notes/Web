@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Photo } from '../../models/ContentMode';
 import { PhotoService } from '../photos-business-logic/photo.service';
 
@@ -27,7 +27,7 @@ import { PhotoService } from '../photos-business-logic/photo.service';
   ],
   providers: [PhotoService],
 })
-export class PhotoComponent {
+export class PhotoComponent implements OnInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -37,6 +37,9 @@ export class PhotoComponent {
   isOpened = false;
 
   constructor(private photoService: PhotoService) {}
+
+  // eslint-disable-next-line class-methods-use-this
+  ngOnInit(): void {}
 
   onLoadImage() {
     this.photo.loaded = true;

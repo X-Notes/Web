@@ -110,7 +110,7 @@ namespace BI.services.notes
                         Photos = fileList,
                         Note = note,
                         PrevId = contentForRemove.PrevId,
-                        NextId = contentForRemove.NextId
+                        NextId = contentForRemove.NextId,
                     };
 
                     await albumNoteRepository.Add(albumNote);
@@ -133,7 +133,7 @@ namespace BI.services.notes
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                     var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
-                    var result = new AlbumNoteDTO(resultPhotos, albumNote.Id, type, albumNote.NextId, albumNote.PrevId);
+                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.NextId, albumNote.PrevId);
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)

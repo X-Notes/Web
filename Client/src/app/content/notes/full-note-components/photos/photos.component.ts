@@ -92,6 +92,9 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   }
 
   ngOnInit(): void {
+    for (const photo of this.content.photos) {
+      photo.loaded = false;
+    }
     this.initPhotos();
   }
 
