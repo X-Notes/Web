@@ -36,13 +36,6 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
-        [HttpPost("images/{id}/{contentId}")]
-        public async Task<OperationResult<AlbumNoteDTO>> UploadImages(List<IFormFile> photos, Guid id, Guid contentId)
-        {
-            var command = new UploadImageToNoteCommand(photos, id, contentId);
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
 
         [HttpPatch("text/type")]
         public async Task<OperationResult<Unit>> UpdateType(TransformTextTypeCommand command)
@@ -58,13 +51,15 @@ namespace WriteAPI.Controllers
             await this._mediator.Send(command);
         }
 
+
+        // CONTENT
+        // TEXT
         [HttpPost("content/concat")]
         public async Task<OperationResult<TextNoteDTO>> ConcatLine(ConcatWithPreviousCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
-
 
         [HttpPost("content/remove")]
         public async Task<OperationResult<Unit>> RemoveLine(RemoveContentCommand command)
@@ -94,6 +89,33 @@ namespace WriteAPI.Controllers
             var command = new GetNoteContentsQuery(email, id);
             return await this._mediator.Send(command);
         }
+
+        // ALBUM
+
+        [HttpPost("album/{id}/{contentId}")]
+        public async Task<OperationResult<AlbumNoteDTO>> InsertAlbum(List<IFormFile> photos, Guid id, Guid contentId)
+        {
+            var command = new InsertAlbumToNoteCommand(photos, id, contentId);
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPost("album/remove")]
+        public async Task<OperationResult<Unit>> RemoveAlbum(RemoveAlbumCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("album/upload/{id}/{contentId}")]
+        public async Task<OperationResult<List<Guid>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
+        {
+            var command = new UploadPhotosToAlbum(id, contentId, photos);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+
 
     }
 

@@ -4,6 +4,7 @@ using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
+using Domain.Commands.files;
 using Domain.Commands.noteInner;
 using Domain.Queries.permissions;
 using MediatR;
@@ -19,17 +20,18 @@ namespace BI.services.notes
 {
     public class FullNoteHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, Unit>,
-        IRequestHandler<UploadImageToNoteCommand, OperationResult<AlbumNoteDTO>>,
+        IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<UpdateTextNoteCommand, Unit>,
         IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
         IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>,
         IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>,
         IRequestHandler<RemoveContentCommand, OperationResult<Unit>>,
-        IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>
+        IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>,
+        // ALBUM
+        IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>,
+        IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>
     {
         private readonly NoteRepository noteRepository;
-        private readonly PhotoHelpers photoHelpers;
-        private readonly IFilesStorage filesStorage;
         private readonly IMediator _mediator;
         private readonly TextNotesRepository textNotesRepository;
         private readonly AlbumNoteRepository albumNoteRepository;
@@ -37,8 +39,6 @@ namespace BI.services.notes
         private readonly FileRepository fileRepository;
         public FullNoteHandlerCommand(
                                         NoteRepository noteRepository,
-                                        PhotoHelpers photoHelpers,
-                                        IFilesStorage filesStorage,
                                         IMediator _mediator,
                                         TextNotesRepository textNotesRepository,
                                         AlbumNoteRepository albumNoteRepository,
@@ -46,8 +46,6 @@ namespace BI.services.notes
                                         FileRepository fileRepository)
         {
             this.noteRepository = noteRepository;
-            this.photoHelpers = photoHelpers;
-            this.filesStorage = filesStorage;
             this._mediator = _mediator;
             this.textNotesRepository = textNotesRepository;
             this.albumNoteRepository = albumNoteRepository;
@@ -71,7 +69,7 @@ namespace BI.services.notes
             return Unit.Value;
         }
 
-        public async Task<OperationResult<AlbumNoteDTO>> Handle(UploadImageToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<AlbumNoteDTO>> Handle(InsertAlbumToNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -87,15 +85,7 @@ namespace BI.services.notes
                 var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
 
                 // FILES LOGIC
-                var fileList = new List<AppFile>();
-                foreach (var file in request.Photos)
-                {
-                    var photoType = photoHelpers.GetPhotoType(file);
-                    var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
-                    var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, note.Id, getContentString, photoType);
-                    var fileDB = new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
-                    fileList.Add(fileDB);
-                }
+                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -111,6 +101,7 @@ namespace BI.services.notes
                         Note = note,
                         PrevId = contentForRemove.PrevId,
                         NextId = contentForRemove.NextId,
+                        CountInRow = 2
                     };
 
                     await albumNoteRepository.Add(albumNote);
@@ -133,17 +124,15 @@ namespace BI.services.notes
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                     var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
-                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.NextId, albumNote.PrevId);
+                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.NextId, albumNote.PrevId, albumNote.CountInRow);
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    foreach (var file in fileList)
-                    {
-                        filesStorage.RemoveFile(file.Path);
-                    }
+                    var pathes = fileList.Select(x => x.Path).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
                 }
             }
 
@@ -469,6 +458,112 @@ namespace BI.services.notes
             }
 
             return new OperationResult<TextNoteDTO>(Success: false, null);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(RemoveAlbumCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+
+                var contents = await baseNoteContentRepository.GetAllContentByNoteId(note.Id);
+                var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as AlbumNote;
+
+                if (contentForRemove == null)
+                {
+                    return new OperationResult<Unit>(Success: false, Unit.Value);
+                }
+
+                if(contentForRemove.PrevId == null)
+                {
+                    // TODO
+                }
+                else
+                {
+                    var contentPrev = contents.First(x => x.Id == contentForRemove.PrevId);
+                    var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
+
+                    var updateList = new List<BaseNoteContent>();
+
+                    if (contentNext != null)
+                    {
+                        contentNext.PrevId = contentPrev.Id;
+                        contentPrev.NextId = contentNext.Id;
+                        updateList.Add(contentNext);
+                    }
+                    else
+                    {
+                        contentPrev.NextId = null;
+                    }
+
+                    updateList.Add(contentPrev);
+
+                    var photosIds = contentForRemove.Photos.Select(x => x.Id);
+
+                    using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                    try
+                    {
+                        // TODO REMOVE PHOTOS
+                        await baseNoteContentRepository.Remove(contentForRemove);
+                        await baseNoteContentRepository.UpdateRange(updateList);
+                        await transaction.CommitAsync();
+
+                        var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
+                        await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+
+                        return new OperationResult<Unit>(Success: true, Unit.Value);
+                    }
+                    catch (Exception e)
+                    {
+                        await transaction.RollbackAsync();
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+            return new OperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public async Task<OperationResult<List<Guid>>> Handle(UploadPhotosToAlbum request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
+                var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
+                {
+
+                    await fileRepository.AddRange(fileList);
+
+                    album.Photos.AddRange(fileList);
+ 
+                    await albumNoteRepository.Update(album);
+
+                    await transaction.CommitAsync();
+
+                    var photosIds = fileList.Select(x => x.Id).ToList();
+                    return new OperationResult<List<Guid>>(Success: true, photosIds);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
+                    var pathes = fileList.Select(x => x.Path).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                }
+            }
+
+            return new OperationResult<List<Guid>>(Success: false, null);
         }
     }
 }

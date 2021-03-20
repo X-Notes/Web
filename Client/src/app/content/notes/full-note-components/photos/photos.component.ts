@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { Photo, Album } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { UploadPhotosToAlbum } from '../../models/uploadPhotosToAlbum';
 import { SelectionService } from '../../selection.service';
 import { PhotoService } from '../photos-business-logic/photo.service';
 
@@ -23,8 +24,13 @@ import { PhotoService } from '../photos-business-logic/photo.service';
 export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
+  @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+
   @Output()
   deleteEvent = new EventEmitter<string>();
+
+  @Output()
+  uploadEvent = new EventEmitter<UploadPhotosToAlbum>();
 
   @Input()
   content: Album;
@@ -40,8 +46,6 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   mainBlocks: Photo[][] = [];
 
   lastBlock: Photo[] = [];
-
-  countItemsInMainBlock = 2;
 
   mainContainer;
 
@@ -65,6 +69,19 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
 
   removeHandler() {
     this.deleteEvent.emit(this.content.id);
+  }
+
+  uploadHandler = () => {
+    this.uploadPhoto.nativeElement.click();
+  };
+
+  async uploadImages(event) {
+    const data = new FormData();
+    const { files } = event.target;
+    for (const file of files) {
+      data.append('photos', file);
+    }
+    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   changeWidth(diffrence: number) {
@@ -109,7 +126,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   }
 
   setPhotosInRow(count: number) {
-    this.countItemsInMainBlock = count;
+    this.content.countInRow = count;
     this.panelOpenState = false;
     this.isOpened = false;
     this.setFalseLoadedForAllPhotos();
@@ -136,8 +153,8 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
     const photoLength = this.content.photos.length;
     let j = 0;
     for (let i = 0; i < this.countOfBlocks; i += 1) {
-      this.mainBlocks.push(this.content.photos.slice(j, j + this.countItemsInMainBlock));
-      j += this.countItemsInMainBlock;
+      this.mainBlocks.push(this.content.photos.slice(j, j + this.content.countInRow));
+      j += this.content.countInRow;
     }
     if (this.countLastItems > 0) {
       this.lastBlock = this.content.photos.slice(photoLength - this.countLastItems, photoLength);
@@ -145,11 +162,11 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
   }
 
   get countOfBlocks() {
-    return Math.floor(this.content.photos.length / this.countItemsInMainBlock);
+    return Math.floor(this.content.photos.length / this.content.countInRow);
   }
 
   get countLastItems() {
-    return this.content.photos.length % this.countItemsInMainBlock;
+    return this.content.photos.length % this.content.countInRow;
   }
 
   removePhotoHandler(id: string) {
@@ -172,7 +189,7 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
         return 'fouth-child';
       }
       default: {
-        throw new Error('error');
+        console.log('not found');
       }
     }
   };
@@ -206,6 +223,5 @@ export class PhotosComponent implements OnInit, AfterViewInit, ParentInteraction
 
   mouseOut = ($event: any) => {
     console.log($event);
-    throw new Error('Method not implemented.');
   };
 }

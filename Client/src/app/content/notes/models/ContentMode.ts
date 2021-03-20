@@ -24,6 +24,8 @@ export class Album extends ContentModel {
   height: string;
 
   width: string;
+
+  countInRow: number;
 }
 
 export class Photo {

@@ -136,6 +136,7 @@
               *ngSwitchCase="contentType.ALBUM"
               [content]="item"
               (deleteEvent)="removeAlbumHandler($event)"
+              (uploadEvent)="uploadPhotoToAlbumHandler($event)"
             ></app-photos>
             <div *ngSwitchDefault>Default</div>
           </div>

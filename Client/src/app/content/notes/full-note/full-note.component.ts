@@ -38,7 +38,14 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
-import { BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
+import {
+  Album,
+  BaseText,
+  ContentModel,
+  ContentType,
+  HeadingType,
+  Photo,
+} from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -51,6 +58,7 @@ import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformContentPhoto } from '../models/transform-content-photo';
+import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
 
 @Component({
   selector: 'app-full-note',
@@ -217,8 +225,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loaded = true;
   }
 
-  removeAlbumHandler = (id: string) => {
-    console.log('TODO', id);
+  removeAlbumHandler = async (id: string) => {
+    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  uploadPhotoToAlbumHandler = async ($event: UploadPhotosToAlbum) => {
+    const resp = await this.api
+      .uploadPhotosToAlbum($event.formData, this.note.id, $event.id)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === $event.id);
+      const newPhotos = resp.data.map((x) => ({ id: x, loaded: false }));
+      const contentPhotos = (this.contents[index] as Album).photos;
+      const resultPhotos = [...contentPhotos, ...newPhotos];
+      const newAlbum = { ...this.contents[index], photos: resultPhotos };
+      this.contents[index] = newAlbum;
+    }
   };
 
   placeHolderClick($event) {
@@ -322,7 +347,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // eslint-disable-next-line class-methods-use-this
   async transformToPhoto(event: TransformContentPhoto) {
-    await this.api.uploadImagesToNote(event.formData, this.note.id, event.id).toPromise();
+    const resp = await this.api
+      .insertAlbumToNote(event.formData, this.note.id, event.id)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === event.id);
+      this.contents[index] = resp.data;
+    }
   }
 
   async transformToTypeText(value: TransformContent) {

@@ -13,5 +13,6 @@ namespace Common.DatabaseModels.models.NoteContent
         public List<AppFile> Photos { set; get; }
         public string Width { set; get; }
         public string Height { set; get; }
+        public int CountInRow { set; get; }
     }
 }

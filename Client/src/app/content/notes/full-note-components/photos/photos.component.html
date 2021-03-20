@@ -1,7 +1,7 @@
 <div class="container">
   <div #album class="content-photos">
     <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
-      <div class="block" [ngClass]="getStyle(countItemsInMainBlock)">
+      <div class="block" [ngClass]="getStyle(content.countInRow)">
         <app-photo
           *ngFor="let item of block"
           [photo]="item"
@@ -59,6 +59,11 @@
           <p>Delete</p>
           <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
         </div>
+        <div #itemUpload class="item" (click)="uploadHandler()">
+          <i class="icon-delete"></i>
+          <p>Upload new</p>
+          <div class="ripple-container" matRipple [matRippleTrigger]="itemUpload"></div>
+        </div>
         <mat-expansion-panel
           hideToggle
           class="expansion"
@@ -69,7 +74,7 @@
           <mat-expansion-panel-header class="expansion-header">
             <mat-panel-title class="expansion-title"> Photos in row </mat-panel-title>
             <mat-panel-description class="expansion-description">
-              {{countItemsInMainBlock}}
+              {{content.countInRow}}
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div
@@ -86,3 +91,11 @@
     </app-popup-full-note>
   </ng-template>
 </div>
+<input
+  #uploadPhotos
+  type="file"
+  multiple
+  accept="image/jpeg,image/png"
+  hidden="true"
+  (change)="uploadImages($event)"
+/>

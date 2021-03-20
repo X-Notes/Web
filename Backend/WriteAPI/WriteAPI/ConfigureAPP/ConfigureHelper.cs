@@ -9,6 +9,7 @@ using BI.services.permissions;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
+using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
 using Common.DTO.files;
@@ -20,6 +21,7 @@ using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.files;
 using Domain.Commands.folderInner;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
@@ -111,14 +113,18 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
             // FULL NOTE
-            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UploadImageToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();           
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+
+            // FULL NOTE ALBUM
+            services.AddScoped<IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
@@ -159,7 +165,8 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
-
+            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveFilesByPathesCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();

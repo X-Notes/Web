@@ -48,7 +48,7 @@ namespace BI.Mapping
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.NextId, aN.PrevId);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.NextId, aN.PrevId, aN.CountInRow);
                             resultList.Add(aNDTO);
                             break;
                         }

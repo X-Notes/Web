@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BI.Mapping;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.users;
