@@ -38,14 +38,7 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
-import {
-  Album,
-  BaseText,
-  ContentModel,
-  ContentType,
-  HeadingType,
-  Photo,
-} from '../models/ContentMode';
+import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -59,6 +52,7 @@ import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformContentPhoto } from '../models/transform-content-photo';
 import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
+import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
 
 @Component({
   selector: 'app-full-note',
@@ -245,6 +239,25 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contents[index] = newAlbum;
     }
   };
+
+  async removePhotoFromAlbumHandler(event: RemovePhotoFromAlbum) {
+    const resp = await this.api
+      .removePhotoFromAlbum(this.note.id, event.contentId, event.photoId)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === event.contentId);
+      const contentPhotos = (this.contents[index] as Album).photos;
+      if (contentPhotos.length === 1) {
+        this.contents = this.contents.filter((x) => x.id !== event.contentId);
+      } else {
+        const newAlbum = {
+          ...this.contents[index],
+          photos: contentPhotos.filter((x) => x.id !== event.photoId),
+        };
+        this.contents[index] = newAlbum;
+      }
+    }
+  }
 
   placeHolderClick($event) {
     $event.preventDefault();
