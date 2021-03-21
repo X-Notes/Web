@@ -37,7 +37,6 @@ import {
   TransformTypeNotes,
   UpdateLabelFullNote,
   ChangeTypeFullNote,
-  UploadImagesToNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
 import { SmallNote } from '../models/smallNote';
@@ -721,14 +720,6 @@ export class NoteStore {
       }
     } else {
       patchState({ selectedLabelsFilter: [...labels, id] });
-    }
-  }
-
-  @Action(UploadImagesToNote)
-  async uploadImagesToNote({ getState }: StateContext<NoteState>, { data }: UploadImagesToNote) {
-    const { id } = getState().fullNoteState.note;
-    if (id) {
-      await this.api.uploadImagesToNote(data, id).toPromise();
     }
   }
 

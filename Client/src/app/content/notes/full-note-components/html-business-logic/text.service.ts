@@ -5,8 +5,8 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class TextService extends HtmlService {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur = (e: any) => {
-    console.log(e);
     // BLUR HANDLER
   };
 
@@ -14,8 +14,8 @@ export class TextService extends HtmlService {
     super.pasteCommandHandler(e);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart = (e: any) => {
-    console.log(e);
     // SELECTIION
   };
 

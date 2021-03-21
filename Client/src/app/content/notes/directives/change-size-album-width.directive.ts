@@ -49,8 +49,8 @@ export class ChangeSizeAlbumWidthDirective implements OnInit, OnDestroy {
     this.listeners.push(mouseMoveListener, mouseUpListener);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseupHandler(event: MouseEvent) {
-    console.log(event);
     this.isChangeSizeMode = false;
     this.mouseClick.emit();
   }

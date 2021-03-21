@@ -6,7 +6,7 @@ using System;
 
 namespace Domain.Commands.noteInner
 {
-    public class ConcatWithPreviousCommand : BaseCommandEntity, IRequest<TextOperationResult<TextNoteDTO>>
+    public class ConcatWithPreviousCommand : BaseCommandEntity, IRequest<OperationResult<TextNoteDTO>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

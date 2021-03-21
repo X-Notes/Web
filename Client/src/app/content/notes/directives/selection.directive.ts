@@ -116,7 +116,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseUp(evt) {
-    console.log(evt);
+
     this.isFullNote = false;
     this.selectionService.ismousedown = false;
     this.startTop = 0;
@@ -171,8 +171,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return Math.abs(this.mainContent.scrollTop - this.startTop);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scrollEvent(e: ScrollEvent) {
-    console.log(e);
     if (this.selectionService.ismousedown && this.isFullNote) {
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {

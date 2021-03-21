@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210318191103_add-fileds")]
+    partial class addfileds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -554,9 +556,6 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
-
-                    b.Property<int>("CountInRow")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Height")
                         .HasColumnType("text");

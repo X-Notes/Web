@@ -8,7 +8,7 @@ import { SmallNote } from './models/smallNote';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
-import { BaseText, ContentModel } from './models/ContentMode';
+import { Album, BaseText, ContentModel } from './models/ContentMode';
 import { TextOperationResult } from './models/TextOperationResult';
 
 @Injectable()
@@ -149,10 +149,6 @@ export class ApiServiceNotes {
     return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/title`, obj);
   }
 
-  uploadImagesToNote(data: FormData, id: string) {
-    return this.httpClient.post(`${environment.writeAPI}/api/fullnote/images/${id}`, data);
-  }
-
   newLine(noteId: string) {
     const obj = {
       noteId,
@@ -224,6 +220,64 @@ export class ApiServiceNotes {
   getContents(noteId: string) {
     return this.httpClient.get<ContentModel[]>(
       `${environment.writeAPI}/api/fullnote/contents/${noteId}`,
+    );
+  }
+
+  // ALBUMS
+
+  insertAlbumToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<TextOperationResult<Album>>(
+      `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  removeAlbum(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/remove`,
+      obj,
+    );
+  }
+
+  uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<TextOperationResult<string[]>>(
+      `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
+    return this.httpClient.delete<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
+    );
+  }
+
+  updateCountInRow(noteId: string, contentId: string, count: number) {
+    const obj = {
+      noteId,
+      contentId,
+      count,
+    };
+    return this.httpClient.patch<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/row/count`,
+      obj,
+    );
+  }
+
+  updateAlbumSize(noteId: string, contentId: string, width: string, height: string) {
+    const obj = {
+      noteId,
+      contentId,
+      width,
+      height,
+    };
+    return this.httpClient.patch<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/size`,
+      obj,
     );
   }
 }

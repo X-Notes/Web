@@ -1,7 +1,7 @@
 <div class="photo">
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
-    [src]="photo.url"
+    [src]="photo.id | getImage"
     (load)="onLoadImage()"
   />
   <app-spinner *ngIf="!photo.loaded"></app-spinner>

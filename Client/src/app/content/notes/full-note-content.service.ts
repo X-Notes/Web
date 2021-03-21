@@ -74,9 +74,6 @@ export class FullNoteContentService implements OnDestroy {
         for (const item of z as any) {
           content3.photos.push({
             id: item.id,
-            url: item.download_url,
-            height: item.height,
-            width: item.width,
             loaded: false,
           });
         }

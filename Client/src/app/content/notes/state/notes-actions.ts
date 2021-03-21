@@ -176,11 +176,6 @@ export class UpdateTitle {
   constructor(public str: string) {}
 }
 
-export class UpdateTextContent {
-  static type = '[Notes] update textContent';
-
-  constructor(public str: string, public idContent: string) {}
-}
 
 export class UpdateLabelFullNote {
   static type = '[Notes] update label full note';
@@ -210,8 +205,3 @@ export class TransformTypeNotes {
   ) {}
 }
 
-export class UploadImagesToNote {
-  static type = '[Notes] upload image to note';
-
-  constructor(public data: FormData) {}
-}

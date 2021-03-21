@@ -22,6 +22,15 @@ namespace WriteContext.Repositories
                 .Include(x => (x as AlbumNote).Photos)
                 .Where(x => x.NoteId == id)
                 .ToListAsync();
+
+        }
+
+        public async Task<T> GetContentById<T>(Guid id) where T : BaseNoteContent
+        {
+            return await entities
+                .Include(x => (x as AlbumNote).Photos)
+                .Cast<T>()
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
