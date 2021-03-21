@@ -24,8 +24,15 @@ namespace BI.services.files
             var file = await fileRepository.FirstOrDefault(x => x.Id == request.Id);
             if (file != null)
             {
-                var bytes = System.IO.File.ReadAllBytes(file.Path);
-                return new FilesBytes(bytes, file.Type);
+                if(System.IO.File.Exists(file.Path))
+                {
+                    var bytes = System.IO.File.ReadAllBytes(file.Path);
+                    return new FilesBytes(bytes, file.Type);
+                }
+                else
+                {
+                    Console.WriteLine("File not Found");
+                }
             }
             return null;
         }

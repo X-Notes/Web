@@ -1,35 +1,43 @@
 <div class="container">
-  <div #album class="content-photos">
-    <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
-      <div class="block" [ngClass]="getStyle(content.countInRow)">
-        <app-photo
-          *ngFor="let item of block"
-          [photo]="item"
-          (deleteEvent)="removePhotoHandler($event)"
-        ></app-photo>
-      </div>
-    </div>
-    <div class="blocks" *ngIf="lastBlock.length > 0">
-      <div class="block" [ngClass]="getStyle(countLastItems)">
-        <app-photo
-          *ngFor="let item of lastBlock"
-          [photo]="item"
-          (deleteEvent)="removePhotoHandler($event)"
-        ></app-photo>
-      </div>
-    </div>
+  <div class="content-photos-wrapper">
     <div
-      appChangeSizeAlbumWidth
-      (mouseClick)="saveWidth()"
-      (changeWeight)="changeWidth($event)"
-      class="slider-right"
-    ></div>
-    <div
-      appChangeSizeAlbumHeight
-      (mouseClick)="saveHeight($event)"
-      (changeHeight)="changeHeight($event)"
-      class="slider-bottom"
-    ></div>
+      #album
+      [style.width]="content.width"
+      [style.height]="content.height"
+      class="content-photos"
+    >
+      <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
+        <div class="block" [ngClass]="getStyle(content.countInRow)">
+          <app-photo
+            *ngFor="let item of block"
+            [photo]="item"
+            (deleteEvent)="removePhotoHandler($event)"
+          ></app-photo>
+        </div>
+      </div>
+      <div class="blocks" *ngIf="lastBlock.length > 0">
+        <div class="block" [ngClass]="getStyle(countLastItems)">
+          <app-photo
+            *ngFor="let item of lastBlock"
+            [photo]="item"
+            (deleteEvent)="removePhotoHandler($event)"
+          >
+          </app-photo>
+        </div>
+      </div>
+      <div
+        appChangeSizeAlbumWidth
+        (mouseClick)="saveWidth()"
+        (changeWeight)="changeWidth($event)"
+        class="slider-right"
+      ></div>
+      <div
+        appChangeSizeAlbumHeight
+        (mouseClick)="saveHeight($event)"
+        (changeHeight)="changeHeight($event)"
+        class="slider-bottom"
+      ></div>
+    </div>
   </div>
   <div class="wrapper">
     <div class="menu-wrapper" #check>

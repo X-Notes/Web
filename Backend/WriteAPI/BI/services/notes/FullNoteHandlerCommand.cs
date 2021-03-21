@@ -29,7 +29,10 @@ namespace BI.services.notes
         IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>,
         // ALBUM
         IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>,
-        IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>
+        IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>,
+        IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>,
+        IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
+        IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>
     {
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
@@ -101,7 +104,9 @@ namespace BI.services.notes
                         Note = note,
                         PrevId = contentForRemove.PrevId,
                         NextId = contentForRemove.NextId,
-                        CountInRow = 2
+                        CountInRow = 2,
+                        Width = "100%",
+                        Height = "auto"
                     };
 
                     await albumNoteRepository.Add(albumNote);
@@ -112,7 +117,7 @@ namespace BI.services.notes
                         contentNext.PrevId = albumNote.Id;
                         updateList.Add(contentNext);
                     }
-                    if(contentPrev != null)
+                    if (contentPrev != null)
                     {
                         contentPrev.NextId = albumNote.Id;
                         updateList.Add(contentPrev);
@@ -477,9 +482,10 @@ namespace BI.services.notes
                     return new OperationResult<Unit>(Success: false, Unit.Value);
                 }
 
-                if(contentForRemove.PrevId == null)
+                if (contentForRemove.PrevId == null)
                 {
                     // TODO
+                    Console.WriteLine("TODO RemoveAlbumCommand PrevId == null");
                 }
                 else
                 {
@@ -507,9 +513,10 @@ namespace BI.services.notes
 
                     try
                     {
-                        // TODO REMOVE PHOTOS
                         await baseNoteContentRepository.Remove(contentForRemove);
                         await baseNoteContentRepository.UpdateRange(updateList);
+                        await fileRepository.RemoveRange(contentForRemove.Photos);
+
                         await transaction.CommitAsync();
 
                         var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
@@ -546,7 +553,7 @@ namespace BI.services.notes
                     await fileRepository.AddRange(fileList);
 
                     album.Photos.AddRange(fileList);
- 
+
                     await albumNoteRepository.Update(album);
 
                     await transaction.CommitAsync();
@@ -564,6 +571,81 @@ namespace BI.services.notes
             }
 
             return new OperationResult<List<Guid>>(Success: false, null);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(RemovePhotoFromAlbumCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
+                var photoForRemove = album.Photos.First(x => x.Id == request.PhotoId);
+                album.Photos.Remove(photoForRemove);
+
+                if (album.Photos.Count == 0)
+                {
+                    var resp = await _mediator.Send(new RemoveAlbumCommand(note.Id, album.Id, request.Email));
+                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                }
+                else
+                {
+                    using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                    try
+                    {
+                        await baseNoteContentRepository.Update(album);
+                        await fileRepository.Remove(photoForRemove);
+
+                        await transaction.CommitAsync();
+
+                        await _mediator.Send(new RemoveFilesByPathesCommand(new List<string> { photoForRemove.Path }));
+                        return new OperationResult<Unit>(Success: true, Unit.Value);
+                    }
+                    catch (Exception e)
+                    {
+                        await transaction.RollbackAsync();
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+
+            return new OperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(ChangeAlbumRowCountCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
+                album.CountInRow = request.Count;
+                await baseNoteContentRepository.Update(album);
+                return new OperationResult<Unit>(Success: true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public async Task<OperationResult<Unit>> Handle(ChangeAlbumSizeCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
+                album.Height = request.Height;
+                album.Width = request.Width;
+                await baseNoteContentRepository.Update(album);
+                return new OperationResult<Unit>(Success: true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>(Success: false, Unit.Value);
         }
     }
 }

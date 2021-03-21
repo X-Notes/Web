@@ -171,8 +171,8 @@ export class SelectionDirective implements OnDestroy, OnInit {
     return Math.abs(this.mainContent.scrollTop - this.startTop);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scrollEvent(e: ScrollEvent) {
-    console.log(e);
     if (this.selectionService.ismousedown && this.isFullNote) {
       let newValueY = 0;
       if (this.startTop !== this.mainContent.scrollTop) {

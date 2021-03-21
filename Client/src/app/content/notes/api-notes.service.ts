@@ -249,4 +249,35 @@ export class ApiServiceNotes {
       data,
     );
   }
+
+  removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
+    return this.httpClient.delete<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
+    );
+  }
+
+  updateCountInRow(noteId: string, contentId: string, count: number) {
+    const obj = {
+      noteId,
+      contentId,
+      count,
+    };
+    return this.httpClient.patch<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/row/count`,
+      obj,
+    );
+  }
+
+  updateAlbumSize(noteId: string, contentId: string, width: string, height: string) {
+    const obj = {
+      noteId,
+      contentId,
+      width,
+      height,
+    };
+    return this.httpClient.patch<TextOperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/album/size`,
+      obj,
+    );
+  }
 }

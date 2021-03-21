@@ -135,8 +135,10 @@
               #htmlComp
               *ngSwitchCase="contentType.ALBUM"
               [content]="item"
+              [noteId]="note.id"
               (deleteEvent)="removeAlbumHandler($event)"
               (uploadEvent)="uploadPhotoToAlbumHandler($event)"
+              (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
             ></app-photos>
             <div *ngSwitchDefault>Default</div>
           </div>

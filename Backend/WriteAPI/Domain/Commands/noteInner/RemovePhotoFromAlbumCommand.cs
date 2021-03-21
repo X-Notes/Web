@@ -9,18 +9,19 @@ using System.Threading.Tasks;
 
 namespace Domain.Commands.noteInner
 {
-    public class RemoveAlbumCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class RemovePhotoFromAlbumCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }
         [ValidationGuidAttribute]
         public Guid ContentId { set; get; }
-        public RemoveAlbumCommand(Guid NoteId, Guid ContentId, string Email)
+        [ValidationGuidAttribute]
+        public Guid PhotoId { set; get; }
+        public RemovePhotoFromAlbumCommand(Guid NoteId, Guid ContentId, Guid PhotoId)
         {
             this.NoteId = NoteId;
             this.ContentId = ContentId;
-            this.Email = Email;
-
+            this.PhotoId = PhotoId;
         }
     }
 }

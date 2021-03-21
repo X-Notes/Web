@@ -115,7 +115,27 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
+        [HttpDelete("album/photo/{noteId}/{contentId}/{photoId}")]
+        public async Task<OperationResult<Unit>> RemovePhotoFromAlbum(Guid noteId, Guid contentId, Guid photoId)
+        {
+            var command = new RemovePhotoFromAlbumCommand(noteId, contentId, photoId);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
 
+        [HttpPatch("album/row/count")]
+        public async Task<OperationResult<Unit>> ChangeAlbumCountRow(ChangeAlbumRowCountCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpPatch("album/size")]
+        public async Task<OperationResult<Unit>> ChangeAlbumSize(ChangeAlbumSizeCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
 
     }
 

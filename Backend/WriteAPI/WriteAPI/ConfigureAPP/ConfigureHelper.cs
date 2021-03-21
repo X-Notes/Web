@@ -123,6 +123,9 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE ALBUM
             services.AddScoped<IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
 
