@@ -22,7 +22,7 @@ namespace WriteContext.Repositories
             {
                 try
                 {
-                    var notes = await GetNotesByUserIdAndTypeId(note.UserId , TypeId);
+                    var notes = await context.Notes.Where(x => x.UserId == note.UserId && x.NoteTypeId == TypeId).ToListAsync();
 
                     if (notes.Count() > 0)
                     {
@@ -70,9 +70,11 @@ namespace WriteContext.Repositories
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
                 .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
+
         public async Task<List<Note>> GetNotesByUserId(Guid userId)
         {
             return await context.Notes

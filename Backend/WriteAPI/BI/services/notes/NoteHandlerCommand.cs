@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.Mapping;
 using Common;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
@@ -34,14 +35,17 @@ namespace BI.services.notes
         private readonly IMapper mapper;
         private readonly AppRepository appRepository;
         private readonly IFilesStorage filesStorage;
-        public NoteHandlerCommand(UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
-            AppRepository appRepository, IFilesStorage filesStorage)
+        private readonly NoteCustomMapper noteCustomMapper;
+        public NoteHandlerCommand(
+            UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
+            AppRepository appRepository, IFilesStorage filesStorage, NoteCustomMapper noteCustomMapper)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.mapper = mapper;
             this.appRepository = appRepository;
             this.filesStorage = filesStorage;
+            this.noteCustomMapper = noteCustomMapper;
         }
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
@@ -74,7 +78,7 @@ namespace BI.services.notes
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
 
-            return mapper.Map<SmallNote>(newNote);
+            return noteCustomMapper.TranformNoteToSmallNoteDTO(newNote);
         }
 
         public async Task<Unit> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)

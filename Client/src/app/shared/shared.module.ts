@@ -38,6 +38,8 @@ import { ChipComponent } from './custom-components/chip/chip.component';
 import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
 import { ButtonToggleComponent } from './custom-components/button-toggle/button-toggle.component';
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
+import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
+import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +68,8 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     SelectOptionComponent,
     ButtonToggleComponent,
     ToggleTextComponent,
+    NotePreviewTextComponent,
+    NotePreviewPhotosComponent,
   ],
   imports: [
     CommonModule,
@@ -111,6 +115,8 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     SelectOptionComponent,
     ButtonToggleComponent,
     ToggleTextComponent,
+    NotePreviewTextComponent,
+    NotePreviewPhotosComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

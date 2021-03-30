@@ -32,8 +32,8 @@ namespace BI.Mapping
         {
             var resultList = new List<BaseContentNoteDTO>();
 
-            var content = Contents.First(x => x.PrevId == null);
-
+            var content = Contents.FirstOrDefault(x => x.PrevId == null);
+            
             while(content != null)
             {
                 switch (content)
@@ -64,7 +64,6 @@ namespace BI.Mapping
             {
                 Console.WriteLine("Some Data is lost");
             }
-
             return resultList;
         }
 
@@ -96,6 +95,29 @@ namespace BI.Mapping
                 IsDeleted = lb.IsDeleted
             };
         }
+
+        public SmallNote TranformNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
+        {
+            return new SmallNote()
+            {
+                Id = note.Id,
+                Color = note.Color,
+                Title = note.Title,
+                Labels = TranformLabelsToLabelsDTO(note.LabelsNotes),
+                NoteType = TranformTypeToTypeDTO(note.NoteType),
+                RefType = TranformRefToRefDTO(note.RefType),
+                Contents = takeContentLength.HasValue ? 
+                TranformContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
+                TranformContentsToContentsDTO(note.Contents).ToList()
+            };
+        }
+
+
+        public List<SmallNote> TranformNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
+        {
+            return notes.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+        }
+
 
     }
 }

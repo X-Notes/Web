@@ -31,33 +31,16 @@
       <h4 class="not-named">Add content to your note</h4>
     </ng-template>
   </div>
-  <div class="description">
-    <p>
-      Hello Hello Hello Hello HelloHelloH Hello Hello Hello Hello
-      HelloHelloHelloHelloHelloHelloHelloHelloHelloHello Hello Hello Hello HelloHello Hello Hello
-      Hello HelloHello Hello Hello HelloHelloHello Hello Hello Hello Hello
-    </p>
-  </div>
-  <div class="photos">
-    <div class="photo">
-      <img
-        alt="note image"
-        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
-      />
-    </div>
-    <div class="photo">
-      <img
-        alt="note image"
-        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
-      />
-    </div>
-    <div class="photo">
-      <img
-        alt="note image"
-        src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
-      />
-    </div>
-  </div>
+  <ng-container *ngFor="let content of note.contents">
+    <ng-container [ngSwitch]="content.type">
+      <ng-container *ngSwitchCase="contentType.DEFAULT">
+        <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
+      </ng-container>
+      <ng-container *ngSwitchCase="contentType.ALBUM">
+        <app-note-preview-photos [album]="content"></app-note-preview-photos>
+      </ng-container>
+    </ng-container>
+  </ng-container>
   <div class="footer">
     <div class="date">
       <p>02.09.1945</p>
