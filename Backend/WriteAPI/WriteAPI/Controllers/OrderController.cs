@@ -25,7 +25,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task UpdateEntityOrder(UpdateOrderCommand command)
         {
             var email = this.GetUserEmail();

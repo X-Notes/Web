@@ -80,7 +80,7 @@ namespace BI.services.sharing
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var note = user.Notes.Where(x => request.Id == x.Id).FirstOrDefault();
-            var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
+            var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
             if (note != null)
             {
                 note.RefTypeId = request.RefTypeId;

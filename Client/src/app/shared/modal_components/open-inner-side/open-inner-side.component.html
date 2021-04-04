@@ -42,6 +42,7 @@
                   <app-note
                     [note]="item"
                     (highlightNote)="highlightNote($event)"
+                    (clickOnNote)="highlightNote($event)"
                     [ngStyle]="{'backgroundColor': item.color }"
                     class="note"
                   ></app-note>
@@ -54,7 +55,7 @@
               <app-chip
                 *ngFor="let item of selectedNotes"
                 [color]="item.color"
-                [text]="item.title"
+                [text]="item.title ? item.title : 'no-title'"
                 [isRemovable]="true"
                 (remove)="unSelectNote(item)"
               ></app-chip>
@@ -73,7 +74,7 @@
   </div>
   <div class="dialog-actions" mat-dialog-actions>
     <div class="actions">
-      <div class="save-button" #saveButton>
+      <div class="save-button" #saveButton [mat-dialog-close]="selectedNotes">
         <span>{{ 'modal.ColorModal.save' | translate }}</span>
         <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
       </div>

@@ -50,8 +50,8 @@ namespace WriteAPI
             services.AddAutoMapper(typeof(UserProfile).Assembly);
             services.AddScoped<NoteCustomMapper>();
 
-            services.AddScoped<ValidationFilter>();
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
+                .AddNewtonsoftJson();
 
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, IdProvider>();

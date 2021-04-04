@@ -163,6 +163,11 @@ export class AppStore {
       case EntityType.Profile: {
         return 'background';
       }
+
+      case EntityType.NoteInner: {
+        return 'inner-note';
+      }
+
       default: {
         throw new Error('error');
       }

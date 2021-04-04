@@ -16,7 +16,6 @@ namespace WriteAPI.Controllers
     public class AuthController : ControllerBase
     {
         [HttpPost("verify")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<IActionResult> VerifyToken(TokenVerifyRequest request)
         {
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;

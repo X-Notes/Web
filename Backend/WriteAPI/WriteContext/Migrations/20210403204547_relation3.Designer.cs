@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210403204547_relation3")]
+    partial class relation3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,23 +429,11 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("RelatedNoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsOpened")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("NextId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("PrevId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("NoteId", "RelatedNoteId");
 
                     b.HasIndex("RelatedNoteId");
 
-                    b.ToTable("ReletatedNoteToInnerNotes");
+                    b.ToTable("ReletatedNoteToInnerNote");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>

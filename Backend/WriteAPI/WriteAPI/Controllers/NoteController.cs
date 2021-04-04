@@ -38,7 +38,6 @@ namespace WriteAPI.Controllers
         // Commands
         
         [HttpPatch("color")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -48,7 +47,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("delete")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -58,7 +56,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("delete/permanently")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
         {
             var email = this.GetUserEmail();
@@ -68,7 +65,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("copy")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<SmallNote>> CopyNote([FromBody]CopyNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -78,7 +74,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("archive")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -88,7 +83,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("ref/private")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -98,7 +92,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("label/add")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
@@ -108,7 +101,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("label/remove")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();

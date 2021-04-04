@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -9,9 +10,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210403202158_ReletatedNoteToInnerNote")]
+    partial class ReletatedNoteToInnerNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,23 +429,14 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("RelatedNoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsOpened")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("NextId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("PrevId")
+                    b.Property<Guid?>("NoteId1")
                         .HasColumnType("uuid");
 
                     b.HasKey("NoteId", "RelatedNoteId");
 
-                    b.HasIndex("RelatedNoteId");
+                    b.HasIndex("NoteId1");
 
-                    b.ToTable("ReletatedNoteToInnerNotes");
+                    b.ToTable("ReletatedNoteToInnerNote");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
@@ -789,17 +782,15 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
-                        .WithMany("ReletatedNoteToInnerNotesFrom")
+                    b.HasOne("Common.DatabaseModels.models.Note", "RelatedNote")
+                        .WithMany("ReletatedNoteToInnerNotesTo")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Note", "RelatedNote")
-                        .WithMany("ReletatedNoteToInnerNotesTo")
-                        .HasForeignKey("RelatedNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                        .WithMany("ReletatedNoteToInnerNotesFrom")
+                        .HasForeignKey("NoteId1");
 
                     b.Navigation("Note");
 

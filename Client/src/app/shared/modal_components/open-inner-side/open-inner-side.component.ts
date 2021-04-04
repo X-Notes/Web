@@ -12,11 +12,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { LoadNotes, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { AppStore } from 'src/app/core/stateApp/app-state';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
+import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { FontSizeENUM } from '../../enums/FontSizeEnum';
-import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 
@@ -38,7 +37,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
 
-  selectedNotes = [];
+  selectedNotes: SmallNote[] = [];
 
   notes = [];
 
@@ -50,6 +49,7 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     public pService: PersonalizationService,
     public dialogRef: MatDialogRef<OpenInnerSideComponent>,
     public renderer: Renderer2,
+    private api: ApiServiceNotes,
   ) {}
 
   async ngAfterViewInit(): Promise<void> {
@@ -73,28 +73,26 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   async loadContent() {
-    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const type = types.find((x) => x.name === NoteTypeENUM.Private);
-    await this.store.dispatch(new LoadNotes(type.id, type)).toPromise();
-
-    const actions = types.filter((x) => x.id !== type.id).map((t) => new LoadNotes(t.id, t));
-    this.store.dispatch(actions);
-
-    // TODO SELECT ALL NOTES
-
-    this.notes = this.store.selectSnapshot(NoteStore.privateNotes);
-
+    this.notes = await this.api.getAll().toPromise();
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
   }
 
-  highlightNote(note) {
-    this.selectedNotes.push(note);
+  highlightNote(note: SmallNote) {
+    if (!this.selectedNotes.some((x) => x.id === note.id)) {
+      this.selectedNotes.push(note);
+      // eslint-disable-next-line no-param-reassign
+      note.isSelected = true;
+    } else {
+      this.selectedNotes = this.selectedNotes.filter((x) => x.id !== note.id);
+      // eslint-disable-next-line no-param-reassign
+      note.isSelected = false;
+    }
   }
 
-  unSelectNote(note) {
-    this.selectedNotes = this.selectedNotes.filter((x) => x.id !== note.id);
+  unSelectNote(note: SmallNote) {
+    this.selectedNotes = this.selectedNotes.filter((ч) => ч.id !== note.id);
   }
 
   ngOnDestroy(): void {

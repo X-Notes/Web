@@ -49,7 +49,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPut]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task Update(UpdateLabelCommand label)
         {
             var email = this.GetUserEmail();

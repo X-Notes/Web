@@ -27,7 +27,7 @@ namespace WriteContext
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
-
+        public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
         public DbSet<TextNote> TextNotes { set; get; }
         public DbSet<AlbumNote> AlbumNotes { set; get; }
@@ -97,6 +97,24 @@ namespace WriteContext
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.UserId);
+      
+            // RELATION NOTES
+
+            modelBuilder.Entity<ReletatedNoteToInnerNote>()
+                .HasKey(bc => new { bc.NoteId, bc.RelatedNoteId });
+
+            modelBuilder.Entity<ReletatedNoteToInnerNote>()
+                .HasOne(bc => bc.Note)
+                .WithMany(b => b.ReletatedNoteToInnerNotesFrom)
+                .HasForeignKey(bc => bc.NoteId);
+
+            modelBuilder.Entity<ReletatedNoteToInnerNote>()
+                .HasOne(bc => bc.RelatedNote)
+                .WithMany(b => b.ReletatedNoteToInnerNotesTo)
+                .HasForeignKey(bc => bc.RelatedNoteId);
+
+            //
+
 
             modelBuilder.Entity<Language>().HasData(
                 new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
