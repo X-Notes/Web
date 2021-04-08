@@ -26,7 +26,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("folders/share")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ToPublicEditShareFolders(ChangeRefTypeFolders command)
         {
             var email = this.GetUserEmail();
@@ -35,7 +34,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("folders/user/permission")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeUserPermissionOnFolder(PermissionUserOnPrivateFolders command)
         {
             var email = this.GetUserEmail();
@@ -44,7 +42,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("folders/user/remove")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RemoveUserFromFolder(RemoveUserFromPrivateFolders command)
         {
             var email = this.GetUserEmail();
@@ -53,7 +50,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("folders/user/invites")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task InvitesUsersToFolder(SendInvitesToUsersFolders command)
         {
             var email = this.GetUserEmail();
@@ -71,7 +67,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("notes/share")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ToPublicEditShareNotes(ChangeRefTypeNotes command)
         {
             var email = this.GetUserEmail();
@@ -81,7 +76,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("notes/user/permission")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeUserPermissionOnNote(PermissionUserOnPrivateNotes command)
         {
             var email = this.GetUserEmail();
@@ -90,7 +84,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("notes/user/remove")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task RemoveUserFromNote(RemoveUserFromPrivateNotes command)
         {
             var email = this.GetUserEmail();
@@ -99,7 +92,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("notes/user/invites")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task InvitesUsersToNotes(SendInvitesToUsersNotes command)
         {
             var email = this.GetUserEmail();

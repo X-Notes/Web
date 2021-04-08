@@ -809,7 +809,7 @@ export class MenuButtonsService {
       panelClass:
         theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
     };
-    this.dialogService.openDialog(OpenInnerSideComponent, config);
+    return this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
 
   // COPY

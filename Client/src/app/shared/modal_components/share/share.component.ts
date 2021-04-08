@@ -218,16 +218,14 @@ export class ShareComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.searchStrChanged
-      .pipe(debounceTime(searchDelay), distinctUntilChanged())
-      .subscribe(async (searchStr) => {
-        if (searchStr?.length > 2) {
-          const users = await this.searchService.searchUsers(searchStr).toPromise();
-          this.searchUsers = this.userFilters(users);
-        } else {
-          this.searchUsers = [];
-        }
-      });
+    this.searchStrChanged.pipe(debounceTime(searchDelay), distinctUntilChanged()).subscribe(async (searchStr) => {
+      if (searchStr?.length > 2) {
+        const users = await this.searchService.searchUsers(searchStr).toPromise();
+        this.searchUsers = this.userFilters(users);
+      } else {
+        this.searchUsers = [];
+      }
+    });
   }
 
   userFilters(items: SearchUserForShareModal[]) {
@@ -308,9 +306,8 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   async changeNoteType() {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
-      const shareType = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === NoteTypeENUM.Shared);
+      console.log('private');
+      const shareType = this.store.selectSnapshot(AppStore.getNoteTypes).find((x) => x.name === NoteTypeENUM.Shared);
       const viewer = this.store
         .selectSnapshot(AppStore.getRefs)
         .find((x) => x.name.toLowerCase() === RefTypeENUM.viewer);
@@ -321,9 +318,8 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.commandsForChange.set(this.currentNote.id, commands);
       this.store.dispatch(new ChangeTypeFullNote(shareType));
     } else {
-      const privateType = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === NoteTypeENUM.Private);
+      console.log('share');
+      const privateType = this.store.selectSnapshot(AppStore.getNoteTypes).find((x) => x.name === NoteTypeENUM.Private);
       await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
       this.currentNote.noteType = privateType;
       this.notes.find((note) => note.id === this.currentNote.id).noteType = privateType;
@@ -397,9 +393,7 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeNote(refTypeRoad: string) {
-    const refType = this.store
-      .selectSnapshot(AppStore.getRefs)
-      .find((x) => x.name.toLowerCase() === refTypeRoad);
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find((x) => x.name.toLowerCase() === refTypeRoad);
     await this.apiNote.makePublic(refType, this.currentNote.id).toPromise();
     this.currentNote.refType = refType;
     this.notes.find((note) => note.id === this.currentNote.id).refType = refType;
@@ -407,15 +401,11 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeRefTypeFolder(refTypeRoad: string) {
-    const refType = this.store
-      .selectSnapshot(AppStore.getRefs)
-      .find((x) => x.name.toLowerCase() === refTypeRoad);
+    const refType = this.store.selectSnapshot(AppStore.getRefs).find((x) => x.name.toLowerCase() === refTypeRoad);
     await this.apiFolder.makePublic(refType, this.currentFolder.id).toPromise();
     this.currentFolder.refType = refType;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refType = refType;
-    this.store.dispatch(
-      new UpdateOneFolder(this.currentFolder, this.currentFolder.folderType.name),
-    );
+    this.store.dispatch(new UpdateOneFolder(this.currentFolder, this.currentFolder.folderType.name));
   }
 
   refTypeNotification(refType: RefTypeENUM): void {

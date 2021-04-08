@@ -53,6 +53,7 @@ import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformContentPhoto } from '../models/transform-content-photo';
 import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
 import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
+import { ApiRelatedNotesService } from '../api-related-notes.service';
 
 @Component({
   selector: 'app-full-note',
@@ -98,15 +99,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   theme = Theme;
 
-  notes: number[] = [0, 1, 2, 3, 4, 5];
+  notes: SmallNote[] = [];
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   newLine: Subject<void> = new Subject();
 
-  private routeSubscription: Subscription;
+  id: string;
 
-  private id: string;
+  private routeSubscription: Subscription;
 
   constructor(
     private signal: SignalRService,
@@ -122,6 +123,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     public menuSelectionService: MenuSelectionService,
     public buttonService: MenuButtonsService,
     private api: ApiServiceNotes,
+    private apiRelatedNotes: ApiRelatedNotesService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -161,30 +163,32 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.signal.hubConnection.invoke('LeaveNote', this.id);
     }
     await this.LoadMain();
-    await this.LoadSecond();
+    await this.loadLeftMenuWithNotes();
+    await this.loadRightMenuWithNotes();
     this.connectToHub();
   }
 
   async LoadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     this.contents = await this.api.getContents(this.id).toPromise();
-
     this.store
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe((note) => {
         this.note = note;
+        this.loaded = true;
       });
-
-    this.loaded = true;
   }
 
-  async LoadSecond() {
+  async loadLeftMenuWithNotes() {
     const types = this.store.selectSnapshot(AppStore.getNoteTypes);
     const actions = types.map((x) => new LoadNotes(x.id, x));
     await this.store.dispatch(actions).toPromise();
-
     await this.setSideBarNotes(this.note.noteType.name);
+  }
+
+  async loadRightMenuWithNotes() {
+    this.notes = await this.apiRelatedNotes.getRelatedNotes(this.id).toPromise();
   }
 
   async ngOnInit() {
@@ -216,7 +220,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       3000,
     ); // CHANGE TODO
     setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
-    this.loaded = true;
   }
 
   removeAlbumHandler = async (id: string) => {
@@ -444,9 +447,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.panEnd(e, this.wrap);
   }
 
-  deleteSmallNote(item: any) {
+  async deleteSmallNote(item: string) {
     let counter = 0;
-    this.notes = this.notes.filter((x) => x !== this.notes[item]);
+    this.notes = this.notes.filter((x) => x.id !== item);
+    await this.apiRelatedNotes
+      .addToRelatedNotesNotes(
+        this.id,
+        this.notes.map((x) => x.id),
+      )
+      .toPromise();
     const interval = setInterval(() => {
       if (counter === 35) {
         clearInterval(interval);
@@ -507,6 +516,24 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pasteCommandHandler(e) {
     this.apiBrowserFunctions.pasteCommandHandler(e);
+  }
+
+  openSideModal(id: string) {
+    const instance = this.buttonService.openSideModal();
+    instance
+      .afterClosed()
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (notes: SmallNote[]) => {
+        if (notes) {
+          await this.apiRelatedNotes
+            .addToRelatedNotesNotes(
+              id,
+              notes.map((x) => x.id),
+            )
+            .toPromise();
+          this.loadRightMenuWithNotes();
+        }
+      });
   }
 
   ngOnDestroy(): void {

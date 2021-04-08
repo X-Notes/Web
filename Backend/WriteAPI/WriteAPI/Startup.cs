@@ -50,8 +50,8 @@ namespace WriteAPI
             services.AddAutoMapper(typeof(UserProfile).Assembly);
             services.AddScoped<NoteCustomMapper>();
 
-            services.AddScoped<ValidationFilter>();
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers(opt => opt.Filters.Add(new ValidationFilter()))
+                .AddNewtonsoftJson();
 
             services.AddSignalR();
             services.AddSingleton<IUserIdProvider, IdProvider>();
@@ -62,6 +62,7 @@ namespace WriteAPI
 
             services.AddHostedService<StartAppHosted>();
 
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

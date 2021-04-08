@@ -419,6 +419,33 @@ namespace WriteContext.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RelatedNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("NextId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PrevId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("NoteId", "RelatedNoteId");
+
+                    b.HasIndex("RelatedNoteId");
+
+                    b.ToTable("ReletatedNoteToInnerNotes");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
                 {
                     b.Property<Guid>("Id")
@@ -760,6 +787,25 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                        .WithMany("ReletatedNoteToInnerNotesFrom")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Note", "RelatedNote")
+                        .WithMany("ReletatedNoteToInnerNotesTo")
+                        .HasForeignKey("RelatedNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("RelatedNote");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.Backgrounds", "CurrentBackground")
@@ -934,6 +980,10 @@ namespace WriteContext.Migrations
                     b.Navigation("FoldersNotes");
 
                     b.Navigation("LabelsNotes");
+
+                    b.Navigation("ReletatedNoteToInnerNotesFrom");
+
+                    b.Navigation("ReletatedNoteToInnerNotesTo");
 
                     b.Navigation("UserOnNotesNow");
 

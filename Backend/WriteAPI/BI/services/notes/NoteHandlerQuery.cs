@@ -56,7 +56,7 @@ namespace BI.services.notes
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
-                return mapper.Map<List<SmallNote>>(notes);
+                return noteCustomMapper.TranformNotesToSmallNotesDTO(notes, takeContentLength: 2);
             }
             return new List<SmallNote>();
         }
@@ -127,7 +127,7 @@ namespace BI.services.notes
                 var notes = await noteRepository.GetNotesByUserId(user.Id);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
-                return mapper.Map<List<SmallNote>>(notes);
+                return noteCustomMapper.TranformNotesToSmallNotesDTO(notes);
             }
             return new List<SmallNote>();
         }

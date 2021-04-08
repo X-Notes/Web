@@ -1,0 +1,34 @@
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+
+  .photo {
+    display: flex;
+    flex: 1 1 calc((100% / 2) - (1.125rem / 2));
+    height: 80px;
+    border-radius: 10px;
+    margin-bottom: 1.125rem;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      object-fit: cover;
+    }
+
+    &:nth-child(2n) {
+      margin-left: 1.125rem;
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .photos {
+    .photo {
+      flex: 1 1 100%;
+
+      &:nth-child(2n) {
+        margin-left: 0;
+      }
+    }
+  }
+}
