@@ -117,7 +117,7 @@ export class NotesService implements OnDestroy {
 
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.notes.length && !this.firstInitedMurri) {
+      if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
         const type = this.store
           .selectSnapshot(AppStore.getNoteTypes)
           .find((x) => x.name === noteType);

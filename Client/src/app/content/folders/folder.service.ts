@@ -75,7 +75,7 @@ export class FolderService implements OnDestroy {
 
   murriInitialise(refElements: QueryList<ElementRef>, folderType: FolderTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.folders.length && !this.firstInitedMurri) {
+      if (z.length === this.folders.length && this.folders.length !== 0 && !this.firstInitedMurri) {
         const type = this.store
           .selectSnapshot(AppStore.getFolderTypes)
           .find((x) => x.name === folderType);

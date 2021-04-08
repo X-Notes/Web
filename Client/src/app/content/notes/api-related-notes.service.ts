@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { SmallNote } from './models/smallNote';
+import { RelatedNote } from './models/relatedNote';
 
 @Injectable()
 export class ApiRelatedNotesService {
@@ -16,6 +16,15 @@ export class ApiRelatedNotesService {
   }
 
   getRelatedNotes(noteId: string) {
-    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/relatedNotes/${noteId}`);
+    return this.httpClient.get<RelatedNote[]>(`${environment.writeAPI}/api/relatedNotes/${noteId}`);
+  }
+
+  updateState(noteId: string, relatedNoteId: string, isOpened: boolean) {
+    const obj = {
+      noteId,
+      relatedNoteId,
+      isOpened,
+    };
+    return this.httpClient.patch(`${environment.writeAPI}/api/relatedNotes/state`, obj);
   }
 }

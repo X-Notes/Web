@@ -13,7 +13,8 @@ using WriteContext.Repositories;
 namespace BI.services.relatedNotes
 {
     public class RelatedNotesHandlerCommand
-        : IRequestHandler<UpdateRelatedNotesToNoteCommand, Unit>
+        : IRequestHandler<UpdateRelatedNotesToNoteCommand, Unit>,
+          IRequestHandler<UpdateRelatedNoteStateCommand, Unit>
     {
         private readonly IMediator _mediator;
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
@@ -40,7 +41,7 @@ namespace BI.services.relatedNotes
                 foreach (var item in request.RelatedNoteIds)
                 {
                     var id = Guid.NewGuid();
-                    if(node == null)
+                    if (node == null)
                     {
                         node = new ReletatedNoteToInnerNote()
                         {
@@ -66,6 +67,22 @@ namespace BI.services.relatedNotes
                 }
                 await relatedRepository.AddRange(nodes);
             }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(UpdateRelatedNoteStateCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var relatedNote = await relatedRepository.FirstOrDefault(x => x.NoteId == note.Id && x.RelatedNoteId == request.RelatedNoteId);
+                relatedNote.IsOpened = request.IsOpened;
+                await relatedRepository.Update(relatedNote);
+            }
+
             return Unit.Value;
         }
     }

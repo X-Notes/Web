@@ -22,8 +22,17 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
+        [HttpGet("preview")]
+        public async Task<List<PreviewRelatedNote>> GetPreviewNotes()
+        {
+            var email = this.GetUserEmail();
+            var command = new GetNotesForPreviewWindowQuery(email);
+            return await this._mediator.Send(command);
+        }
+
+
         [HttpGet("{id}")]
-        public async Task<List<SmallNote>> GetRelatedNotes(Guid id)
+        public async Task<List<RelatedNote>> GetRelatedNotes(Guid id)
         {
             var email = this.GetUserEmail();
             var command = new GetRelatedNotesQuery(email, id);
@@ -31,7 +40,14 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<Unit> AddToRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        public async Task<Unit> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("state")]
+        public async Task<Unit> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

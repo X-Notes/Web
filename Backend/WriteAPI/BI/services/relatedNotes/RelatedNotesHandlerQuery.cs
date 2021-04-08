@@ -13,7 +13,8 @@ using WriteContext.Repositories;
 namespace BI.services.relatedNotes
 {
     public class RelatedNotesHandlerQuery
-        : IRequestHandler<GetRelatedNotesQuery, List<SmallNote>>
+        : IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>,
+          IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewRelatedNote>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
         private readonly NoteCustomMapper noteCustomMapper;
@@ -25,10 +26,15 @@ namespace BI.services.relatedNotes
             this.noteCustomMapper = noteCustomMapper;
         }
 
-        public async Task<List<SmallNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
+        public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
         {
             var notes = await relatedRepository.GetRelatedNotesFullContent(request.NoteId);
-            return noteCustomMapper.TranformRelatedNotesToSmallNotes(notes);
+            return noteCustomMapper.TranformNotesToRelatedNotes(notes);
+        }
+
+        public Task<List<PreviewRelatedNote>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

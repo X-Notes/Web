@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Queries.relatedNotes
 {
-    public class GetRelatedNotesQuery : BaseQueryEntity, IRequest<List<SmallNote>>
+    public class GetRelatedNotesQuery : BaseQueryEntity, IRequest<List<RelatedNote>>
     {
         public Guid NoteId { set; get; }
         public GetRelatedNotesQuery(string email, Guid id)

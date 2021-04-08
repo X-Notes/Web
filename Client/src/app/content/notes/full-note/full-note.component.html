@@ -152,7 +152,7 @@
       </div>
     </div>
     <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
-      <div class="open" #open (click)="openSideModal(id)">
+      <div class="open" #open (click)="sideBarService.openSideModal(id)">
         <i class="icon-plus"></i>
         <p>open note or file</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
@@ -167,10 +167,19 @@
           <div
             class="grid"
             *ngIf="loaded"
-            [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}"
+            [ngStyle]="{'opacity': sideBarService.murriService.flagForOpacity ? '1' : '0'}"
           >
-            <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
-              <app-small-note [note]="item" (deleteNote)="deleteSmallNote($event)"></app-small-note>
+            <div
+              #item
+              class="grid-item-small"
+              *ngFor="let item of sideBarService.notes"
+              [@deleteSmallNote]
+            >
+              <app-small-note
+                [note]="item"
+                (deleteNote)="sideBarService.deleteSmallNote($event, id)"
+                (changeState)="sideBarService.changeState($event, id)"
+              ></app-small-note>
             </div>
           </div>
         </div>

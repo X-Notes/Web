@@ -36,7 +36,6 @@ import { SmallNote } from '../models/smallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { FullNoteContentService } from '../full-note-content.service';
 import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
@@ -53,7 +52,7 @@ import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformContentPhoto } from '../models/transform-content-photo';
 import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
 import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
-import { ApiRelatedNotesService } from '../api-related-notes.service';
+import { SidebarNotesService } from '../sidebar-notes.service';
 
 @Component({
   selector: 'app-full-note',
@@ -66,6 +65,7 @@ import { ApiRelatedNotesService } from '../api-related-notes.service';
     ContentEditableService,
     FullNoteSliderService,
     MurriService,
+    SidebarNotesService,
   ],
 })
 export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -78,6 +78,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+
+  @ViewChildren('item', { read: ElementRef }) refSideBarElements: QueryList<ElementRef>;
 
   @Select(NoteStore.canView)
   public canView$: Observable<boolean>;
@@ -99,8 +101,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   theme = Theme;
 
-  notes: SmallNote[] = [];
-
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   newLine: Subject<void> = new Subject();
@@ -116,14 +116,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     public pService: PersonalizationService,
     private rend: Renderer2,
     public sliderService: FullNoteSliderService,
-    public murriService: MurriService,
     public contentService: FullNoteContentService,
     private selectionService: SelectionService,
     private apiBrowserFunctions: ApiBrowserTextService,
     public menuSelectionService: MenuSelectionService,
-    public buttonService: MenuButtonsService,
     private api: ApiServiceNotes,
-    private apiRelatedNotes: ApiRelatedNotesService,
+    public sideBarService: SidebarNotesService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -156,6 +154,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (note) {
       this.sliderService.goTo(this.sliderService.active, this.wrap);
     }
+    this.sideBarService.murriInitialise(this.refSideBarElements);
   }
 
   async initNote() {
@@ -164,7 +163,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     await this.LoadMain();
     await this.loadLeftMenuWithNotes();
-    await this.loadRightMenuWithNotes();
+    await this.sideBarService.loadNotes(this.id);
     this.connectToHub();
   }
 
@@ -187,10 +186,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.setSideBarNotes(this.note.noteType.name);
   }
 
-  async loadRightMenuWithNotes() {
-    this.notes = await this.apiRelatedNotes.getRelatedNotes(this.id).toPromise();
-  }
-
   async ngOnInit() {
     this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
     this.pService.onResize();
@@ -209,17 +204,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
           this.contents.push(resp.data);
         }
       });
-
-    setTimeout(
-      () =>
-        this.murriService.gridSettings(
-          '.grid-item-small',
-          document.querySelector('.grid') as HTMLElement,
-          true,
-        ),
-      3000,
-    ); // CHANGE TODO
-    setTimeout(async () => this.murriService.setOpacityTrueAsync(), 1500); // CHANGE TODO
   }
 
   removeAlbumHandler = async (id: string) => {
@@ -447,24 +431,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sliderService.panEnd(e, this.wrap);
   }
 
-  async deleteSmallNote(item: string) {
-    let counter = 0;
-    this.notes = this.notes.filter((x) => x.id !== item);
-    await this.apiRelatedNotes
-      .addToRelatedNotesNotes(
-        this.id,
-        this.notes.map((x) => x.id),
-      )
-      .toPromise();
-    const interval = setInterval(() => {
-      if (counter === 35) {
-        clearInterval(interval);
-      }
-      this.murriService.grid.refreshItems().layout();
-      counter += 1;
-    }, 10);
-  }
-
   updateDoc = (str: string) => {
     // TODO
     // const note = { ...this.note };
@@ -518,26 +484,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
-  openSideModal(id: string) {
-    const instance = this.buttonService.openSideModal();
-    instance
-      .afterClosed()
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (notes: SmallNote[]) => {
-        if (notes) {
-          await this.apiRelatedNotes
-            .addToRelatedNotesNotes(
-              id,
-              notes.map((x) => x.id),
-            )
-            .toPromise();
-          this.loadRightMenuWithNotes();
-        }
-      });
-  }
-
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
+    this.sideBarService.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new DeleteCurrentNote());

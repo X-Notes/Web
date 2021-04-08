@@ -9,7 +9,6 @@ namespace Domain.Commands.noteInner
 {
     public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
         public string Title { set; get; }
         [ValidationGuidAttribute]
         public Guid Id { set; get; }

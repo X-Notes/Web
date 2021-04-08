@@ -1,24 +1,28 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { SmallNote } from '../models/smallNote';
-
+import { ChangeStateRelatedNote } from '../models/changeStateRelatedNote';
+import { ContentType } from '../models/ContentMode';
+import { RelatedNote } from '../models/relatedNote';
 @Component({
   selector: 'app-small-note',
   templateUrl: './small-note.component.html',
   styleUrls: ['./small-note.component.scss'],
 })
 export class SmallNoteComponent {
-  @Input() note: SmallNote;
+  @Input() note: RelatedNote;
 
   @Output() deleteNote = new EventEmitter<string>();
 
-  turnUpNote = false;
+  @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();
+
+  contentType = ContentType;
 
   constructor(public murriService: MurriService) {}
 
   turnUpSmallNote() {
-    this.turnUpNote = !this.turnUpNote;
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+    this.changeState.emit({ isOpened: !this.note.isOpened, relatedNoteId: this.note.id });
+    this.note.isOpened = !this.note.isOpened;
+    setTimeout(() => this.murriService.grid.refreshItems().layout(), 100);
   }
 
   deleteSmallNote() {

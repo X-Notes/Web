@@ -1,105 +1,137 @@
 @import 'variables';
 
 :host {
-    display: flex;
-    height: 100%;
-    width: 100%;
+  display: flex;
+  height: 100%;
+  width: 100%;
 }
 
 .small-note {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: $light-inner-color;
+  border-radius: 5px;
+  transition: 0.2s ease;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 25px;
+    width: 100%;
+    padding: 0 0.625rem;
+    background-color: $header-small-note;
+    border-radius: 5px 5px 0px 0px;
+    transition: 0.2s ease;
+
+    button {
+      display: flex;
+      background-color: transparent;
+      border: 0;
+      padding: 0;
+      outline: none;
+      user-select: none;
+      cursor: pointer;
+
+      .icon {
+        display: flex;
+
+        i::before {
+          color: $header-small-note-icon;
+        }
+      }
+    }
+  }
+
+  .content-small-note {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
-    background-color: $light-inner-color;
-    border-radius: 5px;
-    transition: 0.2s ease;
+    padding: 0.875rem 1.5rem 1.25rem 1.5rem;
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 25px;
-        width: 100%;
-        padding: 0 0.625rem;
-        background-color: $header-small-note;
-        border-radius: 5px 5px 0px 0px;
-        transition: 0.2s ease;
-    
-        button {
-            display: flex;
-            background-color: transparent;
-            border: 0;
-            padding: 0;
-            outline: none;
-            user-select: none;
-            cursor: pointer;
-    
-            .icon {
-                display: flex;
-    
-                i::before {
-                color: $header-small-note-icon;
-                }
-            }
-        }
+    .note-color {
+      width: 22px;
+      height: 22px;
     }
-    
-    .content {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        padding: 0.875rem 1.5rem 1.25rem 1.5rem;
-    
-        .note-color {
-            width: 22px;
-            height: 22px;
-        }
 
-        .labels-section {
-            margin-bottom: 0.75rem;
-        }
-    
-        .title-section {
-            position: relative;
-            display: flex;
-            width: 100%;
-            margin-bottom: 0.75rem;
-    
-            p {
-                font-size: 1.25rem;
-                font-weight: 700;
-                padding-left: 0.625rem;
-            }
-        }
+    .labels-section {
+      margin-bottom: 0.75rem;
     }
-    
-    .turn-up-note > div:not(.title-section) {
-        display: none;
+
+    .title-section {
+      position: relative;
+      display: flex;
+      width: 100%;
+      margin-bottom: 0.75rem;
+      min-height: 22px;
+
+      p {
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding-left: 0.625rem;
+      }
     }
-    
-    .turn-up-note {
-        .title-section {
-            margin-bottom: 0;
+
+    .title:empty + .placeholder {
+      display: block;
+    }
+
+    .title:empty ~ .left-border {
+      width: 0;
+      background-color: #7b7b7b;
+    }
+
+    .placeholder {
+      display: none;
+      position: absolute;
+      top: 2px;
+      left: 10px;
+      pointer-events: none;
+      user-select: none;
+      color: #7b7b7b;
+    }
+
+    .content-note {
+      width: 100%;
+      .album {
+        img {
+          max-height: 150px;
+          width: 100%;
+          border-radius: 4px;
+          object-fit: cover;
         }
+      }
     }
+  }
+
+  .turn-up-note > div:not(.title-section) {
+    display: none;
+  }
+
+  .turn-up-note {
+    .title-section {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .light {
-    .small-note {
-        background-color: $light-color;
-        color: $text-color;
+  .small-note {
+    background-color: $light-color;
+    color: $text-color;
 
-        .header {
-            background-color: $header-small-note-light;
+    .header {
+      background-color: $header-small-note-light;
 
-            button {
-                .icon {
-                    i::before {
-                        color: $header-small-note-icon-light;
-                    }
-                }
-            }
+      button {
+        .icon {
+          i::before {
+            color: $header-small-note-icon-light;
+          }
         }
+      }
     }
+  }
 }

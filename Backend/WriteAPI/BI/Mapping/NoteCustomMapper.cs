@@ -97,6 +97,22 @@ namespace BI.Mapping
             };
         }
 
+        public RelatedNote TranformNoteToRelatedNoteDTO((Note note, bool isOpened) tuple, int? takeContentLength = null)
+        {
+            return new RelatedNote()
+            {
+                Id = tuple.note.Id,
+                Color = tuple.note.Color,
+                Title = tuple.note.Title,
+                IsOpened = tuple.isOpened,
+                Labels = TranformLabelsToLabelsDTO(tuple.note.LabelsNotes),
+                NoteType = tuple.note.NoteType != null ? TranformTypeToTypeDTO(tuple.note.NoteType) : null,
+                RefType = tuple.note.RefType != null ? TranformRefToRefDTO(tuple.note.RefType) : null,
+                Contents = takeContentLength.HasValue ? 
+                TranformContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
+                TranformContentsToContentsDTO(tuple.note.Contents).ToList()
+            };
+        }
         public SmallNote TranformNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
         {
             return new SmallNote()
@@ -107,11 +123,12 @@ namespace BI.Mapping
                 Labels = TranformLabelsToLabelsDTO(note.LabelsNotes),
                 NoteType = note.NoteType != null ? TranformTypeToTypeDTO(note.NoteType) : null,
                 RefType = note.RefType != null ? TranformRefToRefDTO(note.RefType) : null,
-                Contents = takeContentLength.HasValue ? 
+                Contents = takeContentLength.HasValue ?
                 TranformContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
                 TranformContentsToContentsDTO(note.Contents).ToList()
             };
         }
+
 
 
         public List<SmallNote> TranformNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
@@ -119,16 +136,16 @@ namespace BI.Mapping
             return notes.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
         }
 
-        public List<SmallNote> TranformRelatedNotesToSmallNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
+        public List<RelatedNote> TranformNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
         {
-            var resultList = new List<Note>();
+            var resultList = new List<(Note, bool)>();
 
             var note = notes.FirstOrDefault(x => x.PrevId == null);
 
             while (note != null)
             {
                 note.RelatedNote.LabelsNotes = note.RelatedNote.LabelsNotes.GetLabelUnDesc();
-                resultList.Add(note.RelatedNote);
+                resultList.Add((note.RelatedNote, note.IsOpened));
                 note = notes.FirstOrDefault(x => x.Id == note.NextId);
             }
 
@@ -137,7 +154,7 @@ namespace BI.Mapping
                 Console.WriteLine("Some Data is lost");
             }
 
-            return resultList.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+            return resultList.Select(tuple => TranformNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
         }
     }
 }
