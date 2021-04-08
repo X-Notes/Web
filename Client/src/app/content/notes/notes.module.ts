@@ -28,6 +28,7 @@ import { PhotoComponent } from './full-note-components/photo/photo.component';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
 import { SmallNoteComponent } from './small-note/small-note.component';
+import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { SmallNoteComponent } from './small-note/small-note.component';
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
     SmallNoteComponent,
+    HtmlLinkComponent,
   ],
   imports: [CommonModule, NoteRouting, SharedModule],
   providers: [
