@@ -17,6 +17,12 @@ namespace WriteContext.Repositories
 
         }
 
+        public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotes(Guid id)
+        {
+            return await context.ReletatedNoteToInnerNotes
+                .Where(x => x.NoteId == id).ToListAsync();
+        }
+
         public async Task<List<ReletatedNoteToInnerNote>> GetRelatedNotesFullContent(Guid id)
         {
             return await context.ReletatedNoteToInnerNotes

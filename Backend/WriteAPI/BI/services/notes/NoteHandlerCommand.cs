@@ -78,7 +78,7 @@ namespace BI.services.notes
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
 
-            return noteCustomMapper.TranformNoteToSmallNoteDTO(newNote);
+            return noteCustomMapper.MapNoteToSmallNoteDTO(newNote);
         }
 
         public async Task<Unit> Handle(ChangeColorNoteCommand request, CancellationToken cancellationToken)

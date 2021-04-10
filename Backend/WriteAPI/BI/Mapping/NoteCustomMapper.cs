@@ -15,21 +15,21 @@ namespace BI.Mapping
 {
     public class NoteCustomMapper
     {
-        public FullNote TranformNoteToFullNote(Note note)
+        public FullNote MapNoteToFullNote(Note note)
         {
             var _fullNote = new FullNote()
             {
                 Id = note.Id,
                 Color = note.Color,
-                NoteType = TranformTypeToTypeDTO(note.NoteType),
-                RefType = TranformRefToRefDTO(note.RefType),
+                NoteType = MapTypeToTypeDTO(note.NoteType),
+                RefType = MapRefToRefDTO(note.RefType),
                 Title = note.Title,
-                Labels = TranformLabelsToLabelsDTO(note.LabelsNotes)
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes)
             };
             return _fullNote;
         }
 
-        public List<BaseContentNoteDTO> TranformContentsToContentsDTO(List<BaseNoteContent> Contents)
+        public List<BaseContentNoteDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
             var resultList = new List<BaseContentNoteDTO>();
 
@@ -68,23 +68,23 @@ namespace BI.Mapping
             return resultList;
         }
 
-        public NoteTypeDTO TranformTypeToTypeDTO(NoteType type)
+        public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {
             return new NoteTypeDTO(type.Id, type.Name);
         }
 
-        public RefTypeDTO TranformRefToRefDTO(RefType type)
+        public RefTypeDTO MapRefToRefDTO(RefType type)
         {
             return new RefTypeDTO(type.Id, type.Name);
         }
 
-        public List<LabelDTO> TranformLabelsToLabelsDTO(List<LabelsNotes> labelsNotes)
+        public List<LabelDTO> MapLabelsToLabelsDTO(List<LabelsNotes> labelsNotes)
         {
             var count = labelsNotes.Count();
-            return labelsNotes.Select(x => TranformLabelToLabelDTO(x, count)).ToList();
+            return labelsNotes.Select(x => MapLabelToLabelDTO(x, count)).ToList();
         }
 
-        public LabelDTO TranformLabelToLabelDTO(LabelsNotes label, int count)
+        public LabelDTO MapLabelToLabelDTO(LabelsNotes label, int count)
         {
             var lb = label.Label;
             return new LabelDTO()
@@ -97,7 +97,7 @@ namespace BI.Mapping
             };
         }
 
-        public RelatedNote TranformNoteToRelatedNoteDTO((Note note, bool isOpened) tuple, int? takeContentLength = null)
+        public RelatedNote MapNoteToRelatedNoteDTO((Note note, bool isOpened) tuple, int? takeContentLength = null)
         {
             return new RelatedNote()
             {
@@ -105,38 +105,59 @@ namespace BI.Mapping
                 Color = tuple.note.Color,
                 Title = tuple.note.Title,
                 IsOpened = tuple.isOpened,
-                Labels = TranformLabelsToLabelsDTO(tuple.note.LabelsNotes),
-                NoteType = tuple.note.NoteType != null ? TranformTypeToTypeDTO(tuple.note.NoteType) : null,
-                RefType = tuple.note.RefType != null ? TranformRefToRefDTO(tuple.note.RefType) : null,
+                Labels = MapLabelsToLabelsDTO(tuple.note.LabelsNotes),
+                NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
+                RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
                 Contents = takeContentLength.HasValue ? 
-                TranformContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
-                TranformContentsToContentsDTO(tuple.note.Contents).ToList()
+                MapContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
+                MapContentsToContentsDTO(tuple.note.Contents).ToList()
             };
         }
-        public SmallNote TranformNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
+
+        public SmallNote MapNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
         {
             return new SmallNote()
             {
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Labels = TranformLabelsToLabelsDTO(note.LabelsNotes),
-                NoteType = note.NoteType != null ? TranformTypeToTypeDTO(note.NoteType) : null,
-                RefType = note.RefType != null ? TranformRefToRefDTO(note.RefType) : null,
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes),
+                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
+                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
                 Contents = takeContentLength.HasValue ?
-                TranformContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
-                TranformContentsToContentsDTO(note.Contents).ToList()
+                MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
+                MapContentsToContentsDTO(note.Contents).ToList()
             };
         }
 
-
-
-        public List<SmallNote> TranformNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
+        public PreviewRelatedNote MapNoteToPreviewNoteDTO(Note note, List<Guid> ids , int? takeContentLength = null)
         {
-            return notes.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+            return new PreviewRelatedNote()
+            {
+                Id = note.Id,
+                Color = note.Color,
+                Title = note.Title,
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes),
+                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
+                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
+                Contents = takeContentLength.HasValue ?
+                MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
+                MapContentsToContentsDTO(note.Contents).ToList(),
+                IsSelected = ids.Contains(note.Id)
+            };
         }
 
-        public List<RelatedNote> TranformNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
+        public List<PreviewRelatedNote> MapNotesToPreviewNotesDTO(List<Note> notes, List<Guid> ids, int? takeContentLength = null)
+        {
+            return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids, takeContentLength)).ToList();
+        }
+
+        public List<SmallNote> MapNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
+        {
+            return notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+        }
+
+        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
         {
             var resultList = new List<(Note, bool)>();
 
@@ -154,7 +175,7 @@ namespace BI.Mapping
                 Console.WriteLine("Some Data is lost");
             }
 
-            return resultList.Select(tuple => TranformNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
+            return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
         }
     }
 }

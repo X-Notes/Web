@@ -24,7 +24,7 @@ export class MurriService {
     });
   }
 
-  setOpacityTrueAsync(delayOpacity: number = 50, flag = true) {
+  setOpacityFlagAsync(delayOpacity: number = 50, flag = true) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
         this.flagForOpacity = flag;
@@ -79,7 +79,16 @@ export class MurriService {
     });
   }
 
-  initMurriAllNote(gridItem: string) {
+  initMurriPreviewDialogNoteAsync(gridItem: string) {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        this.initMurriPreviewDialogNote(gridItem);
+        resolve(true);
+      }),
+    );
+  }
+
+  initMurriPreviewDialogNote(gridItem: string) {
     const gridElement = document.querySelector('.grid-modal') as HTMLElement;
     if (!gridElement) {
       return;

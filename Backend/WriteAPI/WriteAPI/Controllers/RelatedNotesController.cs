@@ -22,11 +22,10 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-        [HttpGet("preview")]
-        public async Task<List<PreviewRelatedNote>> GetPreviewNotes()
+        [HttpPost("preview")]
+        public async Task<List<PreviewRelatedNote>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
         {
-            var email = this.GetUserEmail();
-            var command = new GetNotesForPreviewWindowQuery(email);
+            command.Email =  this.GetUserEmail();
             return await this._mediator.Send(command);
         }
 

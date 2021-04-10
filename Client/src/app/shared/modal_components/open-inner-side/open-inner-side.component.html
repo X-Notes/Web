@@ -12,8 +12,8 @@
             <app-select
               class="select"
               [translate]="'subMenu'"
-              [selectValue]="'shared'"
-              (changeItem)="selectItem($event)"
+              [selectValue]="'all'"
+              (selectValueChange)="selectItem($event)"
             >
               <app-select-option *ngFor="let item of selectTypes" [value]="item">
                 {{ ('subMenu.' + item) | translate }}
@@ -36,7 +36,7 @@
                   #item
                   class="grid-modal-item"
                   id="{{item.id}}"
-                  *ngFor="let item of notes"
+                  *ngFor="let item of viewNotes"
                   [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
                 >
                   <app-note
@@ -50,10 +50,10 @@
               </div>
             </div>
           </ng-scrollbar>
-          <div class="fixed-filters" [hidden]="!(selectedNotes.length > 0)">
+          <div class="fixed-filters" [hidden]="!(selectedNotesChips.length > 0)">
             <div class="wrapper-chips">
               <app-chip
-                *ngFor="let item of selectedNotes"
+                *ngFor="let item of selectedNotesChips"
                 [color]="item.color"
                 [text]="item.title ? item.title : 'no-title'"
                 [isRemovable]="true"
@@ -74,7 +74,7 @@
   </div>
   <div class="dialog-actions" mat-dialog-actions>
     <div class="actions">
-      <div class="save-button" #saveButton [mat-dialog-close]="selectedNotes">
+      <div class="save-button" #saveButton [mat-dialog-close]="selectedNotesChips">
         <span>{{ 'modal.ColorModal.save' | translate }}</span>
         <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
       </div>

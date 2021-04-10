@@ -80,7 +80,7 @@ export class FolderService implements OnDestroy {
           .selectSnapshot(AppStore.getFolderTypes)
           .find((x) => x.name === folderType);
         this.murriService.initMurriFolder(type);
-        await this.murriService.setOpacityTrueAsync();
+        await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });

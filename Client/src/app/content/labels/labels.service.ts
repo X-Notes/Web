@@ -26,7 +26,7 @@ export class LabelsService implements OnDestroy {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.labels.length && this.labels.length !== 0 && !this.firstInitedMurri) {
         this.murriService.initMurriLabel(isDeleted);
-        await this.murriService.setOpacityTrueAsync();
+        await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });

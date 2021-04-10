@@ -39,7 +39,7 @@ export class SidebarNotesService implements OnDestroy {
           document.querySelector('.grid') as HTMLElement,
           true,
         );
-        this.murriService.setOpacityTrueAsync();
+        this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });

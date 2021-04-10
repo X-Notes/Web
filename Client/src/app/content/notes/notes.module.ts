@@ -28,7 +28,6 @@ import { PhotoComponent } from './full-note-components/photo/photo.component';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
 import { SmallNoteComponent } from './small-note/small-note.component';
-import { ApiRelatedNotesService } from './api-related-notes.service';
 
 @NgModule({
   declarations: [
@@ -63,7 +62,6 @@ import { ApiRelatedNotesService } from './api-related-notes.service';
     MurriService,
     SelectionService,
     MenuSelectionService,
-    ApiRelatedNotesService,
   ],
 })
 export class NotesModule {}

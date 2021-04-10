@@ -10,9 +10,13 @@ namespace Domain.Queries.relatedNotes
 {
     public class GetNotesForPreviewWindowQuery : BaseQueryEntity, IRequest<List<PreviewRelatedNote>>
     {
-        public GetNotesForPreviewWindowQuery(string Email)
+        public Guid NoteId { set; get; }
+        public string Search { set; get; }
+        public GetNotesForPreviewWindowQuery(string Email, Guid NoteId, string Search)
         {
             this.Email = Email;
+            this.NoteId = NoteId;
+            this.Search = Search;
         }
     }
 }
