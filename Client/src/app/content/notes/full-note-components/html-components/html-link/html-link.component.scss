@@ -5,7 +5,6 @@
   width: 100%;
   border-radius: 5px;
   overflow: hidden;
-  background-color: $dark-color;
   border-radius: 5px;
 
   .image-preview {
@@ -52,14 +51,38 @@
 
     .card-action {
       display: flex;
+      align-items: center;
       padding: 0.5rem;
 
       button[type='button'] {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        padding: 0;
+        outline: none;
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        background-color: transparent;
         height: 35px;
         width: 35px;
         border-radius: 50%;
         margin-left: auto;
         transition: 0.2s ease;
+      }
+    }
+  }
+}
+
+.dark {
+  background-color: $dark-color;
+
+  .card-body {
+    .card-action {
+      button[type='button'] {
+        color: white;
 
         &:hover {
           background-color: $dark-button;
@@ -67,26 +90,22 @@
       }
     }
   }
-
-  button[type='button'] {
-    position: relative;
-    border: 0;
-    padding: 0;
-    outline: none;
-    overflow: hidden;
-    user-select: none;
-    cursor: pointer;
-    background-color: transparent;
-  }
 }
 
-.menu + * .cdk-overlay-pane > div.mat-menu-panel > div.mat-menu-content {
-  background-color: blueviolet;
-  button.mat-menu-item {
-    color: white;
-  }
-}
+.light {
+  background-color: #fafafa;
+  color: $text-color;
+  border: 0.8px solid #bababa;
 
-.mat-menu-inner {
-  background-color: black;
+  .card-body {
+    .card-action {
+      button[type='button'] {
+        color: $dark-button;
+
+        &:hover {
+          background-color: #cacaca;
+        }
+      }
+    }
+  }
 }

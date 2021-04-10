@@ -1,7 +1,11 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatMenu } from '@angular/material/menu';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { ApiServiceNotes } from '../../../api-notes.service';
@@ -10,10 +14,13 @@ import { ApiServiceNotes } from '../../../api-notes.service';
   selector: 'app-html-link',
   templateUrl: './html-link.component.html',
   styleUrls: ['./html-link.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
-export class HtmlLinkComponent implements OnInit {
+export class HtmlLinkComponent implements OnInit, OnDestroy {
   @Input() link: string;
+
+  @ViewChild(MatMenu) menu: MatMenu;
+
+  destroy = new Subject<void>();
 
   data = {
     title: null,
@@ -41,6 +48,18 @@ export class HtmlLinkComponent implements OnInit {
       }
     });
     this.data.title = this.data.title || parsedHtml.title;
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (theme) {
+          if (theme.name === ThemeENUM.Dark) {
+            this.menu.panelClass = 'dark-menu';
+          } else {
+            this.menu.panelClass = null;
+          }
+        }
+      });
   }
 
   openNewTab() {
@@ -52,16 +71,21 @@ export class HtmlLinkComponent implements OnInit {
     this.apiBrowserService.copyTest(this.link);
     switch (language.name) {
       case LanguagesENUM.english:
-        this.snackService.openSnackBar(`Link copied`, null, 'center');
+        this.snackService.openSnackBar(`Link copied`);
         break;
       case LanguagesENUM.russian:
-        this.snackService.openSnackBar(`Ссылка скопирована`, null, 'center');
+        this.snackService.openSnackBar(`Ссылка скопирована`);
         break;
       case LanguagesENUM.ukraine:
-        this.snackService.openSnackBar(`Посилання скопійоване`, 'center');
+        this.snackService.openSnackBar(`Посилання скопійоване`);
         break;
       default:
         throw new Error('error');
     }
   };
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 }
