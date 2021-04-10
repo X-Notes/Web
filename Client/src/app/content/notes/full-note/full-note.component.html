@@ -36,7 +36,11 @@
     [ngClass]="pService.stateSidebar ? 'visible' : ''"
   ></div>
 </div>
-<div appTheme class="content full-content">
+<div
+  appTheme
+  class="content full-content"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
   <div
     *ngIf="(canView$ | async) && loaded"
     class="wrapper-note"

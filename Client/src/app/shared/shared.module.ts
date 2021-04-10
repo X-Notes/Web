@@ -11,6 +11,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -84,6 +86,8 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     MatCheckboxModule,
     MatSnackBarModule,
     MatExpansionModule,
+    MatIconModule,
+    MatMenuModule,
   ],
   exports: [
     TranslateModule,
@@ -117,6 +121,8 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
+    MatIconModule,
+    MatMenuModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

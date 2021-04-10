@@ -140,11 +140,11 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   get isLink() {
-    const isLink = this.validURL(this.contentHtml?.nativeElement?.textContent);
-    if (isLink) {
-      return this.contentHtml?.nativeElement?.textContent;
-    }
-    return isLink;
+    return this.validURL(this.contentHtml?.nativeElement?.textContent);
+  }
+
+  get CurrentTextCotent() {
+    return this.contentHtml?.nativeElement?.textContent;
   }
 
   validURL = (str) => {

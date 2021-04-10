@@ -103,5 +103,11 @@
       "viewer": "Viewer",
       "send": "Send"
     }
+  },
+  "innerNote": {
+    "linkMenu": {
+      "copy": "Copy url",
+      "delete": "Delete"
+    }
   }
 }

@@ -1,1 +1,24 @@
-<p>{{ link }}</p>
+<div class="card" appTheme>
+  <div class="image-preview">
+    <img [src]="data.image" />
+  </div>
+  <div class="card-body">
+    <div class="card-info" (click)="openNewTab()">
+      <div class="title">{{ data.title }}</div>
+      <div class="link">{{ link }}</div>
+    </div>
+    <div class="card-action">
+      <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+        <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+      </button>
+      <mat-menu #menu="matMenu" class="mat-menu-inner" backdropClass="menu">
+        <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
+          {{ 'innerNote.linkMenu.copy' | translate }}
+        </button>
+        <button mat-menu-item type="button" name="options">
+          {{ 'innerNote.linkMenu.delete' | translate }}
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</div>
