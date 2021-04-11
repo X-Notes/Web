@@ -1,239 +1,191 @@
 @import 'variables';
 
 :host {
-    position: relative;
-    z-index: $sidebar;
+  position: relative;
+  z-index: $sidebar;
 }
- 
- nav {
-     display: flex;
-     flex-direction: column;
-     height: 100%;
-     width: 80px;
-     border-right: 1px solid;
-     transition: 0.2s ease;
 
-     .module {
-        position: relative;
+nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 80px;
+  border-right: 1px solid;
+  transition: 0.2s ease;
+
+  .module {
+    position: relative;
+    display: flex;
+    height: 80px;
+    width: 100%;
+    user-select: none;
+    outline: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    .item {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+
+      .main-icon {
         display: flex;
-        height: 80px;
-        width: 100%;
-        user-select: none;
-        outline: none;
-        cursor: pointer;
+        margin-bottom: 0.625rem;
+        height: 32px;
+        width: 32px;
         transition: 0.2s ease;
+      }
 
-        &:nth-child(2) {
-            .item {
-                .main-icon {
-                    background: none;
-                    -webkit-text-fill-color: initial;
-                    background-clip: initial;
-                }
-            }
-        }
-
-        .item {
-             position: relative;
-             z-index: 5;
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             justify-content: center;
-             height: 100%;
-             width: 100%;
-
-             .main-icon {
-                font-size: 2rem;
-                transition: 0.2s ease;
-
-                i {
-                    &::before {
-                        transition: 0.2s ease;
-                    }
-                    .path1::before, .path2::before {
-                        transition: 0.2s ease;
-                    }
-                }
-            }
-
-            p {
-                margin-top: 0.3125rem;
-                font-size: 0.875rem;
-                transition: 0.2s ease;
-            }
-        }
-    }
-
-     .billing-field {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 40px;
-        width: 100%;
-        margin-top: auto;
+      p {
+        font-size: 0.875rem;
         transition: 0.2s ease;
+      }
     }
+  }
+
+  .billing-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 100%;
+    margin-top: auto;
+    transition: 0.2s ease;
+  }
 }
 
 .light {
-    background-color: $light-color;
-    
-    .module {
-        &:hover:not(.active) {
-            background-color: $light-nav-backlight;
-        }
+  background-color: $light-color;
 
-        .item {
-            .main-icon, p {
-                background: linear-gradient(135deg, #404040 0%, #404040 100%);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-        }
-
-        &:nth-child(2) {
-            .item {
-                .main-icon {
-                    i {
-                        .path1::before {
-                            color: #D6D6D6;
-                        }
-                        .path2::before {
-                            color: $light-text-color;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    .active {
-        background-color: $light-text-color;
+  .module {
+    &:hover:not(.active) {
+      background-color: $light-nav-backlight;
     }
 
-    .billing-field {
-        background-color: $light-billing-field;
-        .billing {
-            background-color: $light-text-color;
-            color: #F6F6F6;
-        }
+    .item {
+      .main-icon,
+      p {
+        color: $light-text-color;
+      }
     }
+  }
+
+  .active {
+    background-color: $light-text-color;
+  }
+
+  .billing-field {
+    background-color: $light-billing-field;
+    .billing {
+      background-color: $light-text-color;
+      color: #f6f6f6;
+    }
+  }
 }
 
 .dark {
-    border-color: $light-separator;
-    background-color: $dark-color;
+  border-color: $light-separator;
+  background-color: $dark-color;
 
-    .active {
-        background-color: $dark-backlight;
+  .active {
+    background-color: $dark-backlight;
+  }
+
+  .module {
+    .item {
+      .main-icon,
+      p {
+        color: white;
+      }
     }
 
-    .module {
-        .item {
-            .main-icon, p {
-                background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
-                background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-        }
-
-        &:hover:not(.active) {
-            background-color: $dark-button;
-        }
+    &:hover:not(.active) {
+      background-color: $dark-button;
     }
+  }
 
-    .billing-field {
-        background-color: $dark-backlight;
-    }
+  .billing-field {
+    background-color: $dark-backlight;
+  }
 }
 
-.light, .dark {
-    .active {
-        .item {
-           .main-icon, p {
-               background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-               background-clip: text;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-        }
+.light,
+.dark {
+  .active {
+    .item {
+      p {
+        background: linear-gradient(112.11deg, #cdeeff -6.16%, #ffcdcd 104.11%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
-        &:nth-child(2) {
-            .item {
-                .main-icon {
-                    i {
-                        .path1::before {
-                            background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
-                            background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                        }
-            
-                        .path2::before {
-                            background: linear-gradient(112.11deg, #CDEEFF -6.16%, #FFCDCD 104.11%);
-                            background-clip: text;
-                            -webkit-background-clip: text;
-                            -webkit-text-fill-color: transparent;
-                        }
-                    }
-                }
-            }
+      .main-icon {
+        .mat-icon {
+          fill: url(#gradient);
         }
-   }
+      }
+    }
+  }
 }
 
 @media (max-width: 1024px) {
-    nav {
-        flex-direction: row;
-        height: 80px;
-        width: 100%;
-        border-right: 0;
-        border-top: 1px solid $light-separator;
+  nav {
+    flex-direction: row;
+    height: 80px;
+    width: 100%;
+    border-right: 0;
+    border-top: 1px solid $light-separator;
 
-        .module {
-            height: 100%;
-        }
-
-        .billing-field {
-            display: none;
-        }
+    .module {
+      height: 100%;
     }
+
+    .billing-field {
+      display: none;
+    }
+  }
 }
 @media (max-width: 600px) {
-    nav {
-        height: 70px;
+  nav {
+    height: 70px;
 
-        .module {
-            .item {
-                .main-icon {
-                    font-size: 1.75rem;
-                }
-
-                p {
-                    margin-top: 0.1875rem;
-                    font-size: 0.8125rem;
-                }
-            }
+    .module {
+      .item {
+        .main-icon {
+          height: 28px;
+          width: 28px;
+          margin-bottom: 0.5;
         }
+
+        p {
+          font-size: 0.8125rem;
+        }
+      }
     }
+  }
 }
 @media (max-width: 320px) {
-    nav {
-        height: 65px;
+  nav {
+    height: 65px;
 
-        .module {
-            .item {
-                .main-icon {
-                    font-size: 1.5rem;
-                }
-
-                p {
-                    margin-top: 0.1875rem;
-                    font-size: 0.75rem;
-                }
-            }
+    .module {
+      .item {
+        .main-icon {
+          height: 24px;
+          width: 24px;
+          margin-bottom: 0.375rem;
         }
+
+        p {
+          font-size: 0.75rem;
+        }
+      }
     }
+  }
 }

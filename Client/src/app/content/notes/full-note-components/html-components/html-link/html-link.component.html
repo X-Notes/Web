@@ -12,7 +12,7 @@
         <mat-icon>more_vert</mat-icon>
         <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
       </button>
-      <mat-menu #check #menu="matMenu">
+      <mat-menu #menu="matMenu">
         <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
           {{ 'innerNote.linkMenu.copy' | translate }}
         </button>

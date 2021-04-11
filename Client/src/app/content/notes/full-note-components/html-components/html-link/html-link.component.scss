@@ -1,5 +1,10 @@
 @import 'variables';
 
+:host {
+  display: flex;
+  padding: 0 0.5rem;
+}
+
 .card {
   display: flex;
   width: 100%;
