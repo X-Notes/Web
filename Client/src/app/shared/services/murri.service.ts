@@ -12,8 +12,6 @@ import { FolderType } from '../models/folderType';
 
 @Injectable()
 export class MurriService {
-  gridItemName = '.grid-item';
-
   grid;
 
   public flagForOpacity = false;
@@ -24,32 +22,32 @@ export class MurriService {
     });
   }
 
-  setOpacityFlagAsync(delayOpacity: number = 50, flag = true) {
-    return new Promise<boolean>((resolve) =>
-      setTimeout(() => {
-        this.flagForOpacity = flag;
-        resolve(true);
-      }, delayOpacity),
-    );
-  }
+  /// SIDE BAR
 
-  wait = (delay: number = 0) => {
+  initSidebarNotesAsync(delay = 0) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
+        this.initSidebarNotes();
         resolve(true);
       }, delay),
     );
-  };
-
-  refreshLayoutAsync() {
-    return new Promise<boolean>((resolve) =>
-      setTimeout(() => {
-        this.grid?.refreshItems().layout();
-        resolve(true);
-      }),
-    );
   }
 
+  initSidebarNotes() {
+    const gridItemName = '.grid-item-small';
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+
+    this.gridSettings(gridItemName, gridElement, true);
+    this.grid.on('dragEnd', async (item) => {
+      // eslint-disable-next-line no-underscore-dangle
+      console.log(item._element.id);
+    });
+  }
+
+  /// NOTE MURRI
   initMurriNoteAsync(type: NoteType, isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
@@ -60,12 +58,13 @@ export class MurriService {
   }
 
   initMurriNote(type: NoteType, isDragEnabled: boolean) {
+    const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
     }
 
-    this.gridSettings(this.gridItemName, gridElement, isDragEnabled);
+    this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item) => {
       // eslint-disable-next-line no-underscore-dangle
       console.log(item._element.id);
@@ -79,16 +78,20 @@ export class MurriService {
     });
   }
 
-  initMurriPreviewDialogNoteAsync(gridItem: string) {
+  /// ////////////////////////////////
+
+  // Preview Modal
+  initMurriPreviewDialogNoteAsync(delay = 0) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
-        this.initMurriPreviewDialogNote(gridItem);
+        this.initMurriPreviewDialogNote();
         resolve(true);
-      }),
+      }, delay),
     );
   }
 
-  initMurriPreviewDialogNote(gridItem: string) {
+  initMurriPreviewDialogNote() {
+    const gridItem = '.grid-modal-item';
     const gridElement = document.querySelector('.grid-modal') as HTMLElement;
     if (!gridElement) {
       return;
@@ -96,13 +99,17 @@ export class MurriService {
     this.gridSettings(gridItem, gridElement, false);
   }
 
+  /// ///////////////////////////////////
+
+  /// FOLDERS
   initMurriFolder(type: FolderType) {
+    const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
     }
 
-    this.gridSettings(this.gridItemName, gridElement, true);
+    this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item) => {
       console.log(item._element.id);
       const order: Order = {
@@ -113,14 +120,16 @@ export class MurriService {
       this.store.dispatch(new PositionFolder(order, type));
     });
   }
+  /// ////////////////////////////////
 
+  /// LABELS
   initMurriLabel(deleted: boolean) {
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
     }
-
-    this.gridSettings(this.gridItemName, gridElement, true);
+    const gridItemName = '.grid-item';
+    this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item) => {
       const order: Order = {
         orderEntity: OrderEntity.Label,
@@ -131,6 +140,9 @@ export class MurriService {
     });
   }
 
+  /// ////////////////////////////////
+
+  /// DEFAULT MURRI
   gridSettings(element: string, gridElement: HTMLElement, isDragEnabled: boolean) {
     const dragHelper = document.querySelector('.drag-helper') as HTMLElement;
     // eslint-disable-next-line new-cap
@@ -182,6 +194,32 @@ export class MurriService {
     this.grid.layout(() => {
       console.log('layout done!');
     });
+  }
+
+  setOpacityFlagAsync(delayOpacity: number = 50, flag = true) {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        this.flagForOpacity = flag;
+        resolve(true);
+      }, delayOpacity),
+    );
+  }
+
+  wait = (delay: number = 0) => {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        resolve(true);
+      }, delay),
+    );
+  };
+
+  refreshLayoutAsync() {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        this.grid?.refreshItems().layout();
+        resolve(true);
+      }),
+    );
   }
 
   muuriDestroy(flag: boolean = false) {

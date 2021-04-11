@@ -8,7 +8,7 @@
       <mat-tab label="Notes">
         <div class="tab-content">
           <div class="filter-row">
-            <app-search class="search"></app-search>
+            <app-search (changeOutput)="searchChanged.next($event)" class="search"></app-search>
             <app-select
               class="select"
               [translate]="'subMenu'"
@@ -58,7 +58,8 @@
                 [text]="item.title ? item.title : 'no-title'"
                 [isRemovable]="true"
                 (remove)="unSelectNote(item)"
-              ></app-chip>
+              >
+              </app-chip>
             </div>
           </div>
           <app-spinner *ngIf="pService.spinnerActive"></app-spinner>

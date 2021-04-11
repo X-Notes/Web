@@ -169,12 +169,7 @@
             *ngIf="loaded"
             [ngStyle]="{'opacity': sideBarService.murriService.flagForOpacity ? '1' : '0'}"
           >
-            <div
-              #item
-              class="grid-item-small"
-              *ngFor="let item of sideBarService.notes"
-              [@deleteSmallNote]
-            >
+            <div #item class="grid-item-small" *ngFor="let item of sideBarService.notes">
               <app-small-note
                 [note]="item"
                 (deleteNote)="sideBarService.deleteSmallNote($event, id)"

@@ -1,5 +1,5 @@
-@import "submenu";
-@import "variables";
+@import 'submenu';
+@import 'variables';
 
 .full-content {
   flex-direction: row;
@@ -73,11 +73,11 @@
           color: #7b7b7b;
         }
       }
-      .content-section{
+      .content-section {
         display: flex;
         flex-direction: column;
         margin-top: 35px;
-        .empty{
+        .empty {
           height: 400px;
         }
       }

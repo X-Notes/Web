@@ -28,18 +28,23 @@ export class SidebarNotesService implements OnDestroy {
   }
 
   async loadNotes(id: string) {
-    this.notes = await this.apiRelatedNotes.getRelatedNotes(id).toPromise();
+    if (!this.firstInitedMurri) {
+      this.notes = await this.apiRelatedNotes.getRelatedNotes(id).toPromise();
+    } else {
+      await this.murriService.setOpacityFlagAsync(0, false);
+      await this.murriService.wait(150);
+      this.murriService.grid.destroy();
+      this.notes = await this.apiRelatedNotes.getRelatedNotes(id).toPromise();
+      await this.murriService.initSidebarNotesAsync(); // FROM ANIMATION DELETE SMALL NOTES
+      await this.murriService.setOpacityFlagAsync();
+    }
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        this.murriService.gridSettings(
-          '.grid-item-small',
-          document.querySelector('.grid') as HTMLElement,
-          true,
-        );
-        this.murriService.setOpacityFlagAsync();
+        await this.murriService.initSidebarNotesAsync();
+        await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });
