@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { PreviewNote } from './models/previewNote';
 import { RelatedNote } from './models/relatedNote';
+import { OperationResult } from './models/TextOperationResult';
 
 @Injectable()
 export class ApiRelatedNotesService {
@@ -13,7 +14,10 @@ export class ApiRelatedNotesService {
       noteId,
       relatedNoteIds,
     };
-    return this.httpClient.post(`${environment.writeAPI}/api/relatedNotes`, obj);
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/relatedNotes`,
+      obj,
+    );
   }
 
   getRelatedNotes(noteId: string) {
@@ -37,6 +41,21 @@ export class ApiRelatedNotesService {
       relatedNoteId,
       isOpened,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/relatedNotes/state`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/relatedNotes/state`,
+      obj,
+    );
+  }
+
+  updateOrder(noteId: string, id: string, insertAfter: string) {
+    const obj = {
+      insertAfter,
+      id,
+      noteId,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/relatedNotes/order`,
+      obj,
+    );
   }
 }

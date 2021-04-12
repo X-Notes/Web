@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Domain.Commands.relatedNotes
 {
-    public class UpdateRelatedNoteStateCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class ChangeOrderRelatedNotesCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
+        public Guid? InsertAfter { set; get; }
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }
         [ValidationGuidAttribute]
-        public Guid RelatedNoteId { set; get; }
-        public bool IsOpened { set; get; }
+        public Guid Id { set; get; }
     }
 }

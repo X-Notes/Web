@@ -5,6 +5,7 @@ import { PositionNote } from 'src/app/content/notes/state/notes-actions';
 import { PositionFolder } from 'src/app/content/folders/state/folders-actions';
 import { PositionLabel } from 'src/app/content/labels/state/labels-actions';
 import * as Muuri from 'muuri';
+import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
 import { Order, OrderEntity } from './order.service';
 import { PersonalizationService } from './personalization.service';
 import { NoteType } from '../models/noteType';
@@ -24,16 +25,16 @@ export class MurriService {
 
   /// SIDE BAR
 
-  initSidebarNotesAsync(delay = 0) {
+  initSidebarNotesAsync(apiRelatedNotes: ApiRelatedNotesService, noteId: string, delay = 0) {
     return new Promise<boolean>((resolve) =>
-      setTimeout(() => {
-        this.initSidebarNotes();
+      setTimeout(async () => {
+        await this.initSidebarNotes(apiRelatedNotes, noteId);
         resolve(true);
       }, delay),
     );
   }
 
-  initSidebarNotes() {
+  async initSidebarNotes(apiRelatedNotes: ApiRelatedNotesService, noteId: string) {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -43,7 +44,13 @@ export class MurriService {
     this.gridSettings(gridItemName, gridElement, true);
     this.grid.on('dragEnd', async (item) => {
       // eslint-disable-next-line no-underscore-dangle
-      console.log(item._element.id);
+      const index = item.getGrid().getItems().indexOf(item);
+      if (index === 0) {
+        await apiRelatedNotes.updateOrder(noteId, item._element.id, null).toPromise();
+      } else {
+        const prevId = item.getGrid().getItem(index - 1)._element.id;
+        await apiRelatedNotes.updateOrder(noteId, item._element.id, prevId).toPromise();
+      }
     });
   }
 

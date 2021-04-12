@@ -154,7 +154,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (note) {
       this.sliderService.goTo(this.sliderService.active, this.wrap);
     }
-    this.sideBarService.murriInitialise(this.refSideBarElements);
+    this.sideBarService.murriInitialise(this.refSideBarElements, this.id);
   }
 
   async initNote() {

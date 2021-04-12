@@ -116,8 +116,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
             // RELATED NOTES
-            services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, Unit>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, Unit>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewRelatedNote>>, RelatedNotesHandlerQuery>();
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 

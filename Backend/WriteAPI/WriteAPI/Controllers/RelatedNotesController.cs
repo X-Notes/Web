@@ -1,4 +1,5 @@
 ﻿using Common.DTO.notes;
+using Common.DTO.notes.FullNoteContent;
 using Domain.Commands.relatedNotes;
 using Domain.Queries.relatedNotes;
 using MediatR;
@@ -39,14 +40,22 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<Unit> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        public async Task<OperationResult<Unit>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
 
         [HttpPatch("state")]
-        public async Task<Unit> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
+        public async Task<OperationResult<Unit>> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+
+        [HttpPatch("order")]
+        public async Task<OperationResult<Unit>> UpdateRelatedNoteOrder(ChangeOrderRelatedNotesCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

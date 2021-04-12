@@ -38,12 +38,12 @@ namespace BI.services.permissions
 
                 if(note == null)
                 {
-                    return new UserPermissionsForNote().GetNoteNotFounded();
+                    return new UserPermissionsForNote().SetNoteNotFounded();
                 }
 
                 if (note.UserId == user.Id)
                 {
-                    return new UserPermissionsForNote().GetFullAccess(user, note, isOwner: true);
+                    return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: true);
                 }
 
                 switch (note.NoteType.Name)
@@ -54,11 +54,11 @@ namespace BI.services.permissions
                             {
                                 case ModelsNaming.Editor:
                                     {
-                                        return new UserPermissionsForNote().GetFullAccess(user, note, isOwner: false);
+                                        return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                                     }
                                 case ModelsNaming.Viewer:
                                     {
-                                        return new UserPermissionsForNote().GetOnlyRead(user, note);
+                                        return new UserPermissionsForNote().SetOnlyRead(user, note);
                                     }
                             }
                             break;
@@ -68,17 +68,17 @@ namespace BI.services.permissions
                             var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
                             if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Editor)
                             {
-                                return new UserPermissionsForNote().GetFullAccess(user, note, isOwner: false);
+                                return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                             }
                             if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Viewer)
                             {
-                                return new UserPermissionsForNote().GetOnlyRead(user, note);
+                                return new UserPermissionsForNote().SetOnlyRead(user, note);
                             }
-                            return new UserPermissionsForNote().NoAccessRights(user, note);
+                            return new UserPermissionsForNote().SetNoAccessRights(user, note);
                         }
                 }
             }
-            return new UserPermissionsForNote().GetUserNotFounded();
+            return new UserPermissionsForNote().SetUserNotFounded();
         }
 
         public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolder request, CancellationToken cancellationToken)

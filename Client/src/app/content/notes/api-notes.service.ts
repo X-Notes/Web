@@ -9,7 +9,7 @@ import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
 import { Album, BaseText, ContentModel } from './models/ContentMode';
-import { TextOperationResult } from './models/TextOperationResult';
+import { OperationResult } from './models/TextOperationResult';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -153,7 +153,7 @@ export class ApiServiceNotes {
     const obj = {
       noteId,
     };
-    return this.httpClient.post<TextOperationResult<BaseText>>(
+    return this.httpClient.post<OperationResult<BaseText>>(
       `${environment.writeAPI}/api/fullnote/content/new`,
       obj,
     );
@@ -166,7 +166,7 @@ export class ApiServiceNotes {
       lineBreakType,
       nextText,
     };
-    return this.httpClient.post<TextOperationResult<BaseText>>(
+    return this.httpClient.post<OperationResult<BaseText>>(
       `${environment.writeAPI}/api/fullnote/content/insert`,
       obj,
     );
@@ -177,7 +177,7 @@ export class ApiServiceNotes {
       noteId,
       contentId,
     };
-    return this.httpClient.post<TextOperationResult<any>>(
+    return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/content/remove`,
       obj,
     );
@@ -198,7 +198,7 @@ export class ApiServiceNotes {
       contentId,
       noteId,
     };
-    return this.httpClient.post<TextOperationResult<BaseText>>(
+    return this.httpClient.post<OperationResult<BaseText>>(
       `${environment.writeAPI}/api/fullnote/content/concat`,
       obj,
     );
@@ -211,7 +211,7 @@ export class ApiServiceNotes {
       noteId,
       headingType,
     };
-    return this.httpClient.patch<TextOperationResult<any>>(
+    return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/text/type`,
       obj,
     );
@@ -226,7 +226,7 @@ export class ApiServiceNotes {
   // ALBUMS
 
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<TextOperationResult<Album>>(
+    return this.httpClient.post<OperationResult<Album>>(
       `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
       data,
     );
@@ -237,21 +237,21 @@ export class ApiServiceNotes {
       noteId,
       contentId,
     };
-    return this.httpClient.post<TextOperationResult<any>>(
+    return this.httpClient.post<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/album/remove`,
       obj,
     );
   }
 
   uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<TextOperationResult<string[]>>(
+    return this.httpClient.post<OperationResult<string[]>>(
       `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
       data,
     );
   }
 
   removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
-    return this.httpClient.delete<TextOperationResult<any>>(
+    return this.httpClient.delete<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
     );
   }
@@ -262,7 +262,7 @@ export class ApiServiceNotes {
       contentId,
       count,
     };
-    return this.httpClient.patch<TextOperationResult<any>>(
+    return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/album/row/count`,
       obj,
     );
@@ -275,7 +275,7 @@ export class ApiServiceNotes {
       width,
       height,
     };
-    return this.httpClient.patch<TextOperationResult<any>>(
+    return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/album/size`,
       obj,
     );

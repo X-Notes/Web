@@ -27,23 +27,23 @@ export class SidebarNotesService implements OnDestroy {
     this.destroy.complete();
   }
 
-  async loadNotes(id: string) {
+  async loadNotes(noteId: string) {
     if (!this.firstInitedMurri) {
-      this.notes = await this.apiRelatedNotes.getRelatedNotes(id).toPromise();
+      this.notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
     } else {
       await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
-      this.notes = await this.apiRelatedNotes.getRelatedNotes(id).toPromise();
-      await this.murriService.initSidebarNotesAsync(); // FROM ANIMATION DELETE SMALL NOTES
+      this.notes = await this.apiRelatedNotes.getRelatedNotes(noteId).toPromise();
+      await this.murriService.initSidebarNotesAsync(this.apiRelatedNotes, noteId);
       await this.murriService.setOpacityFlagAsync();
     }
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>) {
+  murriInitialise(refElements: QueryList<ElementRef>, noteId: string) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        await this.murriService.initSidebarNotesAsync();
+        await this.murriService.initSidebarNotesAsync(this.apiRelatedNotes, noteId);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }

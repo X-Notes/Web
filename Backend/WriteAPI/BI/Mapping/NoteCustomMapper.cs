@@ -24,7 +24,7 @@ namespace BI.Mapping
                 NoteType = MapTypeToTypeDTO(note.NoteType),
                 RefType = MapRefToRefDTO(note.RefType),
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes)
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc())
             };
             return _fullNote;
         }
@@ -63,7 +63,7 @@ namespace BI.Mapping
 
             if(resultList.Count != Contents.Count)
             {
-                Console.WriteLine("Some Data is lost");
+                Console.WriteLine("Some Data is lost in MapContentsToContentsDTO");
             }
             return resultList;
         }
@@ -105,7 +105,7 @@ namespace BI.Mapping
                 Color = tuple.note.Color,
                 Title = tuple.note.Title,
                 IsOpened = tuple.isOpened,
-                Labels = MapLabelsToLabelsDTO(tuple.note.LabelsNotes),
+                Labels = MapLabelsToLabelsDTO(tuple.note.LabelsNotes.GetLabelUnDesc()),
                 NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
                 RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
                 Contents = takeContentLength.HasValue ? 
@@ -121,7 +121,7 @@ namespace BI.Mapping
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes),
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
                 RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
                 Contents = takeContentLength.HasValue ?
@@ -137,7 +137,7 @@ namespace BI.Mapping
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes),
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
                 RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
                 Contents = takeContentLength.HasValue ?
@@ -160,21 +160,7 @@ namespace BI.Mapping
         public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
         {
             var resultList = new List<(Note, bool)>();
-
-            var note = notes.FirstOrDefault(x => x.PrevId == null);
-
-            while (note != null)
-            {
-                note.RelatedNote.LabelsNotes = note.RelatedNote.LabelsNotes.GetLabelUnDesc();
-                resultList.Add((note.RelatedNote, note.IsOpened));
-                note = notes.FirstOrDefault(x => x.Id == note.NextId);
-            }
-
-            if (resultList.Count != notes.Count)
-            {
-                Console.WriteLine("Some Data is lost");
-            }
-
+            notes.ForEach(note => resultList.Add((note.RelatedNote, note.IsOpened)));
             return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
         }
     }
