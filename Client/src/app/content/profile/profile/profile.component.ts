@@ -70,6 +70,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   fontSize = FontSizeENUM;
 
+  themes = ThemeENUM;
+
   userName;
 
   public photoError = false;
