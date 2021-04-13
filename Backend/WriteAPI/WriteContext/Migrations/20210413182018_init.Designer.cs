@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210403204547_relation3")]
-    partial class relation3
+    [Migration("20210413182018_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,15 +23,18 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("AlbumNoteAppFile", b =>
                 {
-                    b.Property<Guid>("AlbumNotesId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("PhotosId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AlbumNotesId", "PhotosId");
+                    b.Property<Guid>("AlbumNotesId")
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("PhotosId");
+                    b.Property<Guid>("AlbumNotesNoteId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PhotosId", "AlbumNotesId", "AlbumNotesNoteId");
+
+                    b.HasIndex("AlbumNotesId", "AlbumNotesNoteId");
 
                     b.ToTable("AlbumNoteAppFile");
                 });
@@ -319,25 +322,17 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("NextId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PrevId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("NextId");
+                    b.HasKey("Id", "NoteId");
 
                     b.HasIndex("NoteId");
-
-                    b.HasIndex("PrevId");
 
                     b.ToTable("BaseNoteContents");
                 });
@@ -429,11 +424,17 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("RelatedNoteId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.HasKey("NoteId", "RelatedNoteId");
 
                     b.HasIndex("RelatedNoteId");
 
-                    b.ToTable("ReletatedNoteToInnerNote");
+                    b.ToTable("ReletatedNoteToInnerNotes");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
@@ -606,15 +607,15 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("AlbumNoteAppFile", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", null)
-                        .WithMany()
-                        .HasForeignKey("AlbumNotesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Common.DatabaseModels.models.AppFile", null)
                         .WithMany()
                         .HasForeignKey("PhotosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", null)
+                        .WithMany()
+                        .HasForeignKey("AlbumNotesId", "AlbumNotesNoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -743,27 +744,13 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Next")
-                        .WithMany()
-                        .HasForeignKey("NextId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Prev")
-                        .WithMany()
-                        .HasForeignKey("PrevId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Next");
-
                     b.Navigation("Note");
-
-                    b.Navigation("Prev");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -912,7 +899,7 @@ namespace WriteContext.Migrations
                 {
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
                         .WithOne()
-                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AlbumNote", "Id")
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AlbumNote", "Id", "NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -921,7 +908,7 @@ namespace WriteContext.Migrations
                 {
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
                         .WithOne()
-                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.TextNote", "Id")
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.TextNote", "Id", "NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

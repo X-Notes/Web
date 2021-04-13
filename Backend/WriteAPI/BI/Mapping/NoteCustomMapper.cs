@@ -32,16 +32,14 @@ namespace BI.Mapping
         public List<BaseContentNoteDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
             var resultList = new List<BaseContentNoteDTO>();
-
-            var content = Contents?.FirstOrDefault(x => x.PrevId == null);
             
-            while(content != null)
+            foreach(var content in Contents)
             {
                 switch (content)
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.NextId, tN.PrevId);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked);
                             resultList.Add(tNDTO);
                             break;
                         }
@@ -49,7 +47,7 @@ namespace BI.Mapping
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.NextId, aN.PrevId, aN.CountInRow);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow);
                             resultList.Add(aNDTO);
                             break;
                         }
@@ -58,12 +56,6 @@ namespace BI.Mapping
                             throw new Exception("Incorrect type");
                         }
                 }
-                content = content.Next;
-            }
-
-            if(resultList.Count != Contents.Count)
-            {
-                Console.WriteLine("Some Data is lost in MapContentsToContentsDTO");
             }
             return resultList;
         }

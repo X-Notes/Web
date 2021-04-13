@@ -147,21 +147,6 @@ namespace WriteContext
                 new { Id = Guid.Parse("7c247026-36c6-4c17-b227-afb37e8ec7cd"), Name = ModelsNaming.Viewer },
                 new { Id = Guid.Parse("397821bf-74d5-4bdf-81e4-0698d5a92476"), Name = ModelsNaming.Editor });
 
-            modelBuilder.Entity<BaseNoteContent>()
-                .HasOne<BaseNoteContent>(x => x.Next)
-                .WithMany()
-                .HasPrincipalKey(x => x.Id)
-                .HasForeignKey(x => x.NextId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-
-            modelBuilder.Entity<BaseNoteContent>()
-                .HasOne<BaseNoteContent>(x => x.Prev)
-                .WithMany()
-                .HasPrincipalKey(x => x.Id)
-                .HasForeignKey(x => x.PrevId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
         }
     }
 }

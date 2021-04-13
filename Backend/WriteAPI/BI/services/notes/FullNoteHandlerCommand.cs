@@ -84,9 +84,6 @@ namespace BI.services.notes
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
-                var contentPrev = contents.FirstOrDefault(x => x.Id == contentForRemove.PrevId);
-                var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
-
                 // FILES LOGIC
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
 
@@ -102,8 +99,7 @@ namespace BI.services.notes
                     {
                         Photos = fileList,
                         Note = note,
-                        PrevId = contentForRemove.PrevId,
-                        NextId = contentForRemove.NextId,
+                        Order = contentForRemove.Order,
                         CountInRow = 2,
                         Width = "100%",
                         Height = "auto"
@@ -111,25 +107,11 @@ namespace BI.services.notes
 
                     await albumNoteRepository.Add(albumNote);
 
-                    var updateList = new List<BaseNoteContent>();
-                    if (contentNext != null)
-                    {
-                        contentNext.PrevId = albumNote.Id;
-                        updateList.Add(contentNext);
-                    }
-                    if (contentPrev != null)
-                    {
-                        contentPrev.NextId = albumNote.Id;
-                        updateList.Add(contentPrev);
-                    }
-
-                    await baseNoteContentRepository.UpdateRange(updateList);
-
                     await transaction.CommitAsync();
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                     var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
-                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.NextId, albumNote.PrevId, albumNote.CountInRow);
+                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.CountInRow);
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -178,33 +160,16 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
                 var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
-                var lastContent = contents.First(x => x.NextId == null);
+                var lastOrder = contents.Max(x => x.Order);
 
                 var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                var text = new TextNote(note.Id, lastContent.Id, null, textType);
+                var text = new TextNote(note.Id, textType, lastOrder + 1);
 
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
-                try
-                {
-                    await baseNoteContentRepository.Add(text);
+                await baseNoteContentRepository.Add(text);
 
-                    lastContent.NextId = text.Id;
-
-                    await baseNoteContentRepository.Update(lastContent);
-
-                    await transaction.CommitAsync();
-
-                    var textResult = new TextNoteDTO(text.Content, text.Id, text.TextType, text.HeadingType, text.Checked,
-                                text.NextId, text.PrevId);
-
-                    return new OperationResult<TextNoteDTO>(Success: true, textResult);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                }
+                var textResult = new TextNoteDTO(text.Content, text.Id, text.TextType, text.HeadingType, text.Checked);
+                return new OperationResult<TextNoteDTO>(Success: true, textResult);
             }
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
@@ -219,40 +184,33 @@ namespace BI.services.notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
-
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
                 var content = contents.First(x => x.Id == request.ContentId) as TextNote;
+                var insertIndex = contents.IndexOf(content);
 
                 switch (request.LineBreakType)
                 {
                     case "NEXT":
                         {
-                            var contentNext = contents.FirstOrDefault(x => x.Id == content.NextId);
-
                             var textType = TextNoteTypesDictionary.GetNextTypeForInserting(content.TextType);
-                            var newText = new TextNote(NoteId: note.Id, PrevId: content.Id, contentNext?.Id, textType, Content: request.NextText);
+
+                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1,
+                                                        Content: request.NextText);
+
+                            contents.Insert(insertIndex + 1, newText);
+
+                            var orders = Enumerable.Range(1, contents.Count);
+                            contents.Zip(orders, (content, order) => content.Order = order);
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                             try
                             {
                                 await textNotesRepository.Add(newText);
+                                await baseNoteContentRepository.UpdateRange(contents);
 
-                                content.NextId = newText.Id;
-
-                                var updateList = new List<BaseNoteContent>();
-                                if (contentNext != null)
-                                {
-                                    contentNext.PrevId = newText.Id;
-                                    updateList.Add(contentNext);
-                                }
-
-                                updateList.Add(content);
-
-                                await baseNoteContentRepository.UpdateRange(updateList);
-
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked,
-                                                                    newText.NextId, newText.PrevId);
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, 
+                                    newText.HeadingType, newText.Checked);
 
                                 await transaction.CommitAsync();
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
@@ -266,11 +224,13 @@ namespace BI.services.notes
                         }
                     case "PREV":
                         {
-                            var contentPrev = contents.FirstOrDefault(x => x.Id == content.PrevId);
-
                             var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                            var newText = new TextNote(NoteId: note.Id, PrevId: contentPrev?.Id, NextId: content?.Id,
-                                                        textType, Content: request.NextText);
+                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1, Content: request.NextText);
+
+                            contents.Insert(insertIndex, newText);
+
+                            var orders = Enumerable.Range(1, contents.Count);
+                            contents.Zip(orders, (content, order) => content.Order = order);
 
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -278,27 +238,12 @@ namespace BI.services.notes
                             try
                             {
                                 await textNotesRepository.Add(newText);
+                                await baseNoteContentRepository.UpdateRange(contents);
 
-                                var updateList = new List<BaseNoteContent>();
-                                if (contentPrev != null)
-                                {
-                                    content.PrevId = newText.Id;
-                                    contentPrev.NextId = newText.Id;
-                                    updateList.Add(content);
-                                    updateList.Add(contentPrev);
-                                }
-                                else
-                                {
-                                    content.PrevId = newText.Id;
-                                    updateList.Add(content);
-                                }
-
-                                await baseNoteContentRepository.UpdateRange(updateList);
-
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked,
-                                                                    newText.NextId, newText.PrevId);
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked);
 
                                 await transaction.CommitAsync();
+
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
                             catch (Exception e)
@@ -326,38 +271,25 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
 
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
                 var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId);
+                contents.Remove(contentForRemove);
 
-                if (contentForRemove == null || contentForRemove.PrevId == null)
+                if (contentForRemove == null || contentForRemove.Order <= 1)
                 {
                     return new OperationResult<Unit>(Success: false, Unit.Value);
                 }
 
-                var contentPrev = contents.First(x => x.Id == contentForRemove.PrevId);
-                var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
-
-                var updateList = new List<BaseNoteContent>();
-
-                if (contentNext != null)
-                {
-                    contentNext.PrevId = contentPrev.Id;
-                    contentPrev.NextId = contentNext.Id;
-                    updateList.Add(contentNext);
-                }
-                else
-                {
-                    contentPrev.NextId = null;
-                }
-
-                updateList.Add(contentPrev);
+                var orders = Enumerable.Range(1, contents.Count);
+                contents.Zip(orders, (content, order) => content.Order = order);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
                     await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(updateList);
+                    await baseNoteContentRepository.UpdateRange(contents);
+
                     await transaction.CommitAsync();
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
@@ -415,43 +347,32 @@ namespace BI.services.notes
 
             if (permissions.CanWrite)
             {
-                var contents = await textNotesRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await textNotesRepository.GetAllTextContentByNoteIdOrdered(note.Id);
                 var contentForConcat = contents.FirstOrDefault(x => x.Id == request.ContentId);
+                contents.Remove(contentForConcat);
 
-                if (contentForConcat == null || contentForConcat.PrevId == null)
+                if (contentForConcat == null || contentForConcat.Order <= 1)
                 {
                     return new OperationResult<TextNoteDTO>(Success: false, null);
                 }
 
-                var contentPrev = contents.First(x => x.Id == contentForConcat.PrevId);
-                var contentNext = contents.FirstOrDefault(x => x.Id == contentForConcat.NextId);
-
+                var contentPrev = contents.First(x => x.Order == contentForConcat.Order - 1);
                 contentPrev.Content += contentForConcat.Content;
 
-                var updateList = new List<BaseNoteContent>();
-                if (contentNext != null)
-                {
-                    contentPrev.NextId = contentNext.Id;
-                    contentNext.PrevId = contentPrev.Id;
-                    updateList.Add(contentPrev);
-                    updateList.Add(contentNext);
-                }
-                else
-                {
-                    contentPrev.NextId = null;
-                    updateList.Add(contentPrev);
-                }
+                var orders = Enumerable.Range(1, contents.Count);
+                contents.Zip(orders, (content, order) => content.Order = order);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
                     await baseNoteContentRepository.Remove(contentForConcat);
-                    await baseNoteContentRepository.UpdateRange(updateList);
+                    await textNotesRepository.UpdateRange(contents);
+
                     await transaction.CommitAsync();
+
                     var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
-                                    contentPrev.HeadingType, contentPrev.Checked,
-                                    contentPrev.NextId, contentPrev.PrevId);
+                                    contentPrev.HeadingType, contentPrev.Checked);
 
                     return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
@@ -474,61 +395,34 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
 
-                var contents = await baseNoteContentRepository.GetAllContentByNoteId(note.Id);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
                 var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as AlbumNote;
+                contents.Remove(contentForRemove);
 
-                if (contentForRemove == null)
+                var orders = Enumerable.Range(1, contents.Count);
+                contents.Zip(orders, (content, order) => content.Order = order);
+
+                var photosIds = contentForRemove.Photos.Select(x => x.Id);
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
                 {
-                    return new OperationResult<Unit>(Success: false, Unit.Value);
+                    await baseNoteContentRepository.Remove(contentForRemove);
+                    await baseNoteContentRepository.UpdateRange(contents);
+                    await fileRepository.RemoveRange(contentForRemove.Photos);
+
+                    await transaction.CommitAsync();
+
+                    var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+
+                    return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
-
-                if (contentForRemove.PrevId == null)
+                catch (Exception e)
                 {
-                    // TODO
-                    Console.WriteLine("TODO RemoveAlbumCommand PrevId == null");
-                }
-                else
-                {
-                    var contentPrev = contents.First(x => x.Id == contentForRemove.PrevId);
-                    var contentNext = contents.FirstOrDefault(x => x.Id == contentForRemove.NextId);
-
-                    var updateList = new List<BaseNoteContent>();
-
-                    if (contentNext != null)
-                    {
-                        contentNext.PrevId = contentPrev.Id;
-                        contentPrev.NextId = contentNext.Id;
-                        updateList.Add(contentNext);
-                    }
-                    else
-                    {
-                        contentPrev.NextId = null;
-                    }
-
-                    updateList.Add(contentPrev);
-
-                    var photosIds = contentForRemove.Photos.Select(x => x.Id);
-
-                    using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                    try
-                    {
-                        await baseNoteContentRepository.Remove(contentForRemove);
-                        await baseNoteContentRepository.UpdateRange(updateList);
-                        await fileRepository.RemoveRange(contentForRemove.Photos);
-
-                        await transaction.CommitAsync();
-
-                        var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
-                        await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
-
-                        return new OperationResult<Unit>(Success: true, Unit.Value);
-                    }
-                    catch (Exception e)
-                    {
-                        await transaction.RollbackAsync();
-                        Console.WriteLine(e);
-                    }
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
                 }
             }
             return new OperationResult<Unit>(Success: false, Unit.Value);
@@ -549,7 +443,6 @@ namespace BI.services.notes
 
                 try
                 {
-
                     await fileRepository.AddRange(fileList);
 
                     album.Photos.AddRange(fileList);

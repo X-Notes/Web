@@ -55,6 +55,7 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);
+                notes.ForEach(x => x.Contents = x.Contents.OrderBy(x => x.Order).ToList());
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes, takeContentLength: 2);
             }
@@ -111,8 +112,8 @@ namespace BI.services.notes
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteId(request.NoteId);
-                return new NoteCustomMapper().MapContentsToContentsDTO(contents);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(request.NoteId);
+                return noteCustomMapper.MapContentsToContentsDTO(contents);
             }
 
             // TODO WHEN NO ACCESS

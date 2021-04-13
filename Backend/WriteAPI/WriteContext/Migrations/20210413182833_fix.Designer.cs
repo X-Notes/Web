@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210403221349_relationOrder")]
-    partial class relationOrder
+    [Migration("20210413182833_fix")]
+    partial class fix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -322,22 +322,15 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("NextId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PrevId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NextId");
-
                     b.HasIndex("NoteId");
-
-                    b.HasIndex("PrevId");
 
                     b.ToTable("BaseNoteContents");
                 });
@@ -429,20 +422,13 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("RelatedNoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
 
-                    b.Property<Guid?>("NextId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("PrevId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.HasKey("NoteId", "RelatedNoteId");
-
-                    b.HasIndex("NextId");
-
-                    b.HasIndex("PrevId");
 
                     b.HasIndex("RelatedNoteId");
 
@@ -756,27 +742,13 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Next")
-                        .WithMany()
-                        .HasForeignKey("NextId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Prev")
-                        .WithMany()
-                        .HasForeignKey("PrevId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Next");
-
                     b.Navigation("Note");
-
-                    b.Navigation("Prev");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -792,23 +764,11 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.ReletatedNoteToInnerNote", "Next")
-                        .WithMany()
-                        .HasForeignKey("NextId")
-                        .HasPrincipalKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("ReletatedNoteToInnerNotesFrom")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.ReletatedNoteToInnerNote", "Prev")
-                        .WithMany()
-                        .HasForeignKey("PrevId")
-                        .HasPrincipalKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Common.DatabaseModels.models.Note", "RelatedNote")
                         .WithMany("ReletatedNoteToInnerNotesTo")
@@ -816,11 +776,7 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Next");
-
                     b.Navigation("Note");
-
-                    b.Navigation("Prev");
 
                     b.Navigation("RelatedNote");
                 });

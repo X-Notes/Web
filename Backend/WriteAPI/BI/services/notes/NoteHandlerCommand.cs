@@ -56,7 +56,7 @@ namespace BI.services.notes
             var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
             var _contents = new List<BaseNoteContent>();
 
-            var newText = new TextNote(null, null, textType);
+            var newText = new TextNote {  Id = Guid.NewGuid(), Order = 1, TextType = textType };
             _contents.Add(newText);
 
             var note = new Note()

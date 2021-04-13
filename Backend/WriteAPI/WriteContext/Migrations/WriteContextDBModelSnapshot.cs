@@ -320,22 +320,15 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("NextId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PrevId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NextId");
-
                     b.HasIndex("NoteId");
-
-                    b.HasIndex("PrevId");
 
                     b.ToTable("BaseNoteContents");
                 });
@@ -747,27 +740,13 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Next")
-                        .WithMany()
-                        .HasForeignKey("NextId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Common.DatabaseModels.models.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", "Prev")
-                        .WithMany()
-                        .HasForeignKey("PrevId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Next");
-
                     b.Navigation("Note");
-
-                    b.Navigation("Prev");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
