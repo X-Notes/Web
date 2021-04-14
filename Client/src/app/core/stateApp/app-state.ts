@@ -168,6 +168,10 @@ export class AppStore {
         return 'inner-note';
       }
 
+      case EntityType.FolderInner: {
+        return 'inner-folder';
+      }
+
       default: {
         throw new Error('error');
       }

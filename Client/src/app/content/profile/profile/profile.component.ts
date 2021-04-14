@@ -116,9 +116,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newBackground());
   }
 
-  setLanguage(item: LanguageDTO): void {
-    console.log(item);
-    this.store.dispatch(new ChangeLanguage(item));
+  setLanguage(item: string): void {
+    const language = this.store.selectSnapshot(AppStore.getLanguages).find((x) => x.name === item);
+    this.store.dispatch(new ChangeLanguage(language));
     this.isOpen = false;
     setTimeout(() => {
       this.cdkConnectedOverlay.overlayRef.updatePosition();

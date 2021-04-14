@@ -15,7 +15,8 @@
     "note": "New note",
     "folder": "New folder",
     "background": "New background",
-    "label": "New label"
+    "label": "New label",
+    "inner-folder": "Add notes"
   },
   "subMenu": {
     "all": "All",
