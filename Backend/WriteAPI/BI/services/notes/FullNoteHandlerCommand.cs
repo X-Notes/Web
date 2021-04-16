@@ -135,16 +135,13 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
                 var content = await textNotesRepository.GetById(request.ContentId);
-                if (content != null)
+                content.Content = request.Content;
+                if (request.Checked.HasValue)
                 {
-                    content.Content = request.Content;
-                    if (request.Checked.HasValue)
-                    {
-                        content.Checked = request.Checked.Value;
-                    }
-                    await textNotesRepository.Update(content);
-                    // TODO DEADLOCK
+                    content.Checked = request.Checked.Value;
                 }
+                await textNotesRepository.Update(content);
+                // TODO DEADLOCK
             }
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING

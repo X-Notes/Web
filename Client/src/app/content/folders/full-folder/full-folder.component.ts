@@ -1,4 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -14,29 +22,37 @@ import {
   sideBarCloseOpen,
 } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/FullFolder';
 import { SmallFolder } from '../models/folder';
+import { FullFolderNotesService } from './services/full-folder-notes.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
   animations: [sideBarCloseOpen],
+  providers: [FullFolderNotesService],
 })
-export class FullFolderComponent implements OnInit, OnDestroy {
-  folder: FullFolder;
+export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
   public photoError = false;
 
+  fontSize = FontSizeENUM;
+
   destroy = new Subject<void>();
 
   foldersLink: SmallFolder[] = [];
+
+  folder: FullFolder;
+
+  loaded = false;
 
   private routeSubscription: Subscription;
 
@@ -47,7 +63,12 @@ export class FullFolderComponent implements OnInit, OnDestroy {
     public murriService: MurriService,
     private route: ActivatedRoute,
     public pService: PersonalizationService,
+    public ffnService: FullFolderNotesService,
   ) {}
+
+  ngAfterViewInit(): void {
+    this.ffnService.murriInitialise(this.refElements);
+  }
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
@@ -57,6 +78,7 @@ export class FullFolderComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
     this.routeSubscription = this.route.params.subscribe(async (params) => {
@@ -67,15 +89,33 @@ export class FullFolderComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy))
         .subscribe(async (x: boolean) => {
           if (x) {
-            await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
-            this.folder = this.store.selectSnapshot(FolderStore.full);
-            const types = this.store.selectSnapshot(AppStore.getFolderTypes);
-            const actions = types.map((action) => new LoadFolders(action.id, action));
-            await this.store.dispatch(actions).toPromise();
-            await this.setSideBarNotes(this.folder.folderType.name);
+            await this.loadFolder();
+            await this.loadNotes();
+
+            await this.pService.waitPreloading();
+            this.pService.setSpinnerState(false);
+            this.loaded = true;
+
+            this.loadSideBar();
           }
         });
     });
+  }
+
+  async loadFolder() {
+    await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
+    this.folder = this.store.selectSnapshot(FolderStore.full);
+  }
+
+  async loadNotes() {
+    await this.ffnService.loadNotes(this.folder.id);
+  }
+
+  async loadSideBar() {
+    const types = this.store.selectSnapshot(AppStore.getFolderTypes);
+    const actions = types.map((action) => new LoadFolders(action.id, action));
+    await this.store.dispatch(actions).toPromise();
+    await this.setSideBarNotes(this.folder.folderType.name);
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {
@@ -102,7 +142,6 @@ export class FullFolderComponent implements OnInit, OnDestroy {
       }
     }
     this.foldersLink = folders.filter((z) => z.id !== this.id);
-    console.log(this.foldersLink);
   }
 
   changeSource() {

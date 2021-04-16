@@ -8,6 +8,7 @@ import {
   PersonalizationService,
   showMenuLeftRight,
 } from 'src/app/shared/services/personalization.service';
+import { DialogsManageService } from '../../dialogs-manage.service';
 import { MenuButtonsService } from '../../menu-buttons.service';
 
 @Component({
@@ -40,6 +41,7 @@ export class InteractionInnerComponent implements AfterViewInit {
     public pService: PersonalizationService,
     public renderer: Renderer2,
     public buttonService: MenuButtonsService,
+    public dialogsManageService: DialogsManageService,
   ) {}
 
   ngAfterViewInit(): void {

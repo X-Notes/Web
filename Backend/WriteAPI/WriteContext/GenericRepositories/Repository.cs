@@ -20,7 +20,7 @@ namespace WriteContext.GenericRepositories
         }
 
         public async Task<T> GetById(Guid id) => await entities.FirstOrDefaultAsync(z => z.Id == id);
-
+        public async Task<T> GetByIdNoCache(Guid id) => await entities.AsNoTracking().FirstOrDefaultAsync(z => z.Id == id);
         public async Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate)
             => await entities.FirstOrDefaultAsync(predicate);
 
@@ -52,19 +52,19 @@ namespace WriteContext.GenericRepositories
             return await entities.Where(predicate).ToListAsync();
         }
 
-        public async Task UpdateRange(List<T> ents)
+        public async Task UpdateRange(IEnumerable<T> ents)
         {
             this.entities.UpdateRange(ents);
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveRange(List<T> ents)
+        public async Task RemoveRange(IEnumerable<T> ents)
         {
             this.entities.RemoveRange(ents);
             await context.SaveChangesAsync();
         }
 
-        public async Task AddRange(List<T> ents)
+        public async Task AddRange(IEnumerable<T> ents)
         {
             await entities.AddRangeAsync(ents);
             await context.SaveChangesAsync();

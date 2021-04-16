@@ -22,6 +22,8 @@ export class AuthService {
     });
   }
 
+  init = () => null;
+
   GoogleAuth() {
     return this.AuthLogin(new firebase.default.auth.GoogleAuthProvider());
   }

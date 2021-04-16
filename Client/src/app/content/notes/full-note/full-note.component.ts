@@ -161,13 +161,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.signal.hubConnection.state === HubConnectionState.Connected) {
       this.signal.hubConnection.invoke('LeaveNote', this.id);
     }
-    await this.LoadMain();
+    await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.sideBarService.loadNotes(this.id);
     this.connectToHub();
   }
 
-  async LoadMain() {
+  async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     this.contents = await this.api.getContents(this.id).toPromise();
     this.store
@@ -322,6 +322,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
+    console.log(1);
     this.api
       .updateContentText(this.note.id, event.contentId, event.content, event.checked)
       .toPromise();

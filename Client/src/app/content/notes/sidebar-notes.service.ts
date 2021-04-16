@@ -2,6 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { MenuButtonsService } from '../navigation/menu-buttons.service';
 import { ApiRelatedNotesService } from './api-related-notes.service';
 import { ChangeStateRelatedNote } from './models/changeStateRelatedNote';
@@ -20,9 +21,11 @@ export class SidebarNotesService implements OnDestroy {
     private apiRelatedNotes: ApiRelatedNotesService,
     public murriService: MurriService,
     public buttonService: MenuButtonsService,
+    public dialogsManageService: DialogsManageService,
   ) {}
 
   ngOnDestroy(): void {
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -70,7 +73,7 @@ export class SidebarNotesService implements OnDestroy {
   }
 
   openSideModal(noteId: string) {
-    const instance = this.buttonService.openSideModal();
+    const instance = this.dialogsManageService.openRelatedNotesModal();
     instance
       .afterClosed()
       .pipe(takeUntil(this.destroy))

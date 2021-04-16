@@ -35,7 +35,9 @@ export class AppStore {
   constructor(
     authService: AuthService, // DONT DELETE THIS ROW
     public appService: AppServiceAPI,
-  ) {}
+  ) {
+    authService.init();
+  }
 
   @Selector()
   static getLanguages(state: AppState): LanguageDTO[] {

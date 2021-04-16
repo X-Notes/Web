@@ -144,7 +144,7 @@ namespace BI.Mapping
             return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids, takeContentLength)).ToList();
         }
 
-        public List<SmallNote> MapNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
+        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, int? takeContentLength = null)
         {
             return notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
         }

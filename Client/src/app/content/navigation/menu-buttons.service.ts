@@ -1,17 +1,10 @@
 import { Injectable } from '@angular/core';
-import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
-import { DialogService } from 'src/app/shared/modal_components/dialog.service';
-import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
-import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
-import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { FolderType } from 'src/app/shared/models/folderType';
 import { NoteType } from 'src/app/shared/models/noteType';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
@@ -33,6 +26,7 @@ import {
   ChangeTypeFullNote,
 } from '../notes/state/notes-actions';
 import { MenuItem } from './menu_item';
+import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -47,11 +41,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => this.changeLabels(),
+      operation: () => this.dialogsManageService.changeLabels(),
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -59,7 +53,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -86,11 +80,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => this.changeLabels(),
+      operation: () => this.dialogsManageService.changeLabels(),
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -98,7 +92,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -125,11 +119,11 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => this.changeLabels(),
+      operation: () => this.dialogsManageService.changeLabels(),
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -137,7 +131,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -168,7 +162,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'label',
-      operation: () => this.changeLabels(),
+      operation: () => this.dialogsManageService.changeLabels(),
     },
     {
       icon: 'private',
@@ -176,7 +170,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -184,7 +178,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -211,7 +205,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -219,7 +213,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -250,7 +244,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -258,7 +252,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -289,7 +283,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -297,7 +291,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -332,7 +326,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'shared',
-      operation: () => this.shareEntity(),
+      operation: () => this.dialogsManageService.shareEntity(),
     },
     {
       icon: 'copy',
@@ -340,7 +334,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'color',
-      operation: () => this.changeColor(),
+      operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
@@ -358,8 +352,8 @@ export class MenuButtonsService {
 
   constructor(
     private store: Store,
-    private dialogService: DialogService,
     private snackService: SnackbarService,
+    private dialogsManageService: DialogsManageService,
   ) {}
 
   snackbarMoveTo(type: NoteType, ids) {
@@ -750,66 +744,6 @@ export class MenuButtonsService {
   setItems(newItems: MenuItem[]) {
     this.saveItems = newItems;
     this.items = newItems;
-  }
-
-  // FUNCTIONS
-
-  // COLOR
-  changeColor() {
-    const config: MatDialogConfig = {
-      maxHeight: '100%',
-      maxWidth: '90vw',
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
-    };
-    this.dialogService.openDialog(ChangeColorComponent, config);
-  }
-
-  // LABELS
-  changeLabels() {
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? 'custom-dialog-class-light'
-          : 'custom-dialog-class-dark',
-    };
-    this.dialogService.openDialog(EditingLabelsNoteComponent, config);
-  }
-
-  // SHARING
-  shareEntity() {
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass:
-        this.getTheme() === ThemeENUM.Light
-          ? ['custom-dialog-class-light', 'sharing-modal']
-          : ['custom-dialog-class-dark', 'sharing-modal'],
-    };
-    this.dialogService.openDialog(ShareComponent, config);
-  }
-
-  getTheme() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    return theme.name;
-  }
-
-  openSideModal() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const config: MatDialogConfig = {
-      maxHeight: '90vh',
-      maxWidth: '90vw',
-      autoFocus: false,
-      panelClass:
-        theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
-    };
-    return this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
 
   // COPY

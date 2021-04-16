@@ -36,6 +36,7 @@ using Domain.Commands.users;
 using Domain.Queries.backgrounds;
 using Domain.Queries.files;
 using Domain.Queries.folders;
+using Domain.Queries.innerFolder;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.permissions;
@@ -154,7 +155,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
 
             // FULL-FOLDER
-            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateNotesInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<GetFolderNotesByFolderId, List<SmallNote>>, FullFolderHandlerQuery>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
@@ -205,6 +210,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
+            services.AddScoped<FoldersNotesRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)

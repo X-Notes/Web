@@ -40,6 +40,7 @@ import { ButtonToggleComponent } from './custom-components/button-toggle/button-
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
 import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
 import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
+import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
+    ManageNotesInFolderComponent,
   ],
   imports: [
     CommonModule,

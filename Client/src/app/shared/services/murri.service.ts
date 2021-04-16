@@ -13,6 +13,7 @@ import { FolderType } from '../models/folderType';
 
 @Injectable()
 export class MurriService {
+  // TODO REFACTOR SERVICE
   grid;
 
   public flagForOpacity = false;
@@ -21,6 +22,17 @@ export class MurriService {
     this.pService.changeOrientationSubject.subscribe(() => {
       setTimeout(() => this.grid.refreshItems().layout(), 0);
     });
+  }
+
+  /// FOLDER NOTES
+
+  async initFolderNotes() {
+    const gridItemName = '.grid-item';
+    const gridElement = document.querySelector('.grid') as HTMLElement;
+    if (!gridElement) {
+      return;
+    }
+    this.gridSettings(gridItemName, gridElement, true);
   }
 
   /// SIDE BAR
@@ -55,6 +67,7 @@ export class MurriService {
   }
 
   /// NOTE MURRI
+
   initMurriNoteAsync(type: NoteType, isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {

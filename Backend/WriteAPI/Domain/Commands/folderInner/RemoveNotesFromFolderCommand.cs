@@ -4,15 +4,17 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Domain.Commands.folderInner
 {
-    public class UpdateTitleFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class RemoveNotesFromFolderCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [Required]
-        public string Title { set; get; }
         [ValidationGuidAttribute]
-        public Guid Id { set; get; }
+        public Guid FolderId { set; get; }
+        [Required]
+        public List<Guid> NoteIds { set; get; }
     }
 }
