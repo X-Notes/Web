@@ -5,11 +5,16 @@
   (mouseout)="mouseOut($event)"
 >
   <div class="check-list">
-    <div class="checkbox-container" (click)="changeCheckBox()">
-      <input [(ngModel)]="content.checked" type="checkbox" checked />
+    <div class="checkbox-container">
+      <mat-checkbox
+        class="checkbox"
+        [(ngModel)]="content.checked"
+        (ngModelChange)="changeCheckBox()"
+      ></mat-checkbox>
     </div>
     <div class="text-container">
       <p
+        [ngClass]="{ 'checked-item': content.checked }"
         class="block-generic default-text-size"
         #contentHtml
         contenteditable="true"

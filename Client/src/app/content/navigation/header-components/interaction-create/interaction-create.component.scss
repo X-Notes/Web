@@ -1,32 +1,41 @@
 @import 'header-components';
 
 .interactions {
-    .generic {
-        background-color: #ffffff;
+  .generic {
+    background-color: #ffffff;
 
-        &:hover {
-          background-color: #ececec;
-        }
+    .icon {
+      height: 13px;
+      width: 13px;
+
+      .mat-icon {
+        display: flex;
+      }
     }
+
+    &:hover {
+      background-color: #ececec;
+    }
+  }
 }
 
 @media (max-width: 1024px) {
-    .interactions {
-        .generic {
-            display: none;
-        }
-
-        .generic-create {
-            display: block;
-            width: 54px;
-        }
+  .interactions {
+    .generic {
+      display: none;
     }
+
+    .generic-create {
+      display: block;
+      width: 54px;
+    }
+  }
 }
 
 @media (max-width: 600px) {
-    .interactions {
-        .generic-create {
-            width: 40px;
-        }
+  .interactions {
+    .generic-create {
+      width: 40px;
     }
+  }
 }

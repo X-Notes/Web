@@ -1,186 +1,191 @@
 @import 'variables';
 
 :host {
-    display: flex;
-    height: 30px;
-    border-radius: 5px;
-    border: 0.8px solid;
-    transition: 0.2s ease;
+  display: flex;
+  height: 30px;
+  border-radius: 5px;
+  border: 0.8px solid;
+  transition: 0.2s ease;
 }
 
 .wrap {
-    display: flex;
-    align-items: stretch;
+  display: flex;
+  align-items: stretch;
 
-    .icon {
+  .button-icon {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    height: inherit;
+    border-radius: 5px;
+    transition: 0.2s ease;
+
+    &:first-child {
+      display: none;
+    }
+
+    .inner {
+      display: flex;
+      align-items: center;
+      height: inherit;
+      cursor: pointer;
+
+      p,
+      .icon {
         position: relative;
         z-index: 5;
-        display: flex;
-        align-items: center;
-        height: inherit;
-        border-radius: 5px;
-        transition: 0.2s ease;
+      }
 
-        &:first-child {
-            display: none;
+      p {
+        display: none;
+        user-select: none;
+        &::first-letter {
+          text-transform: uppercase;
         }
-    
-        .inner {
-            display: flex;
-            align-items: center;
-            height: inherit;
-            cursor: pointer;
-    
-            p,i {
-                position: relative;
-                z-index: 5;
-            }
-    
-            p {
-                display: none;
-                user-select: none;
-                &::first-letter {
-                    text-transform: uppercase;
-                }
-            }
-    
-            i {
-                padding: 0 1.375rem;
-                &::before {
-                    transition: 0.2s ease;
-                }
-            }
-            .icon-restore::before{
-                color:white;
-            }
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        margin: 0 1.375rem;
+        transition: 0.2s ease;
+        .mat-icon {
+          display: flex;
         }
-    
-        &::after {
-            content: "";
-            display: block;
-            height: 18px;
-            width: 1px;
-        }
-    
-        &:last-child::after {
-            content: none;
-        }
+      }
     }
+
+    &::after {
+      content: '';
+      display: block;
+      height: 18px;
+      width: 1px;
+    }
+
+    &:last-child::after {
+      content: none;
+    }
+  }
 }
 
 .light {
-    .icon {
-        .inner {
-            i::before {
-                color: $light-text-color;
-            }
-            .icon-restore::before{
-                color:$light-text-color;
-            }
-        }
-
-        &::after {
-            background-color: $light-text-color;
-        }
-
-        &:hover {
-            background-color: $light-nav-backlight;
-        }
+  .button-icon {
+    .inner {
+      .icon {
+        color: $light-text-color;
+      }
     }
+
+    &::after {
+      background-color: $light-text-color;
+    }
+
+    &:hover {
+      background-color: $light-nav-backlight;
+    }
+  }
 }
 
 .dark {
-    .icon {
-        &::after {
-            background-color: white;
-        }
-    
-        &:hover {
-            background-color: #3d4049;
-        }
+  .button-icon {
+    .inner {
+      .icon {
+        color: white;
+      }
     }
+    &::after {
+      background-color: white;
+    }
+
+    &:hover {
+      background-color: #3d4049;
+    }
+  }
 }
 
 @media (max-width: 1024px) {
-    :host {
-        height: auto;
-    }
+  :host {
+    height: auto;
+  }
 
-    .wrap {
-        flex-direction: column;
+  .wrap {
+    flex-direction: column;
+
+    .button-icon {
+      &:first-child {
+        i {
+          display: none;
+        }
+      }
+
+      .inner {
+        width: 100%;
 
         .icon {
-            &:first-child {
-                i {
-                    display: none;
-                }
-            }
-
-            .inner {
-                width: 100%;
-    
-                i {
-                    padding: 1rem;
-                }
-    
-                p {
-                    display: block;
-                    padding: 1rem 1rem 1rem 0;
-                }
-            }
-    
-            &::after {
-                content: none;
-            }
+          margin: 1rem;
         }
-    }
 
-    .mobile-menu {
-        .icon {
-            &:first-child {
-                display: flex;
-                
-                .inner {
-                    justify-content: center;
-                    align-items: center;
-                    font-weight: 700;
-        
-                    p {
-                        letter-spacing: 3px;
-                        padding: 0.75rem 0;
-                    }
-                }   
-            }
-            &:nth-child(2) { // LABEL MODAL WINDOW
-                display: none;
-            }
-
-            &:nth-child(3) { // SHARED MODAL WINDOW
-                display: none;
-            }
+        p {
+          display: block;
+          margin: 1rem 1rem 1rem 0;
         }
+      }
+
+      &::after {
+        content: none;
+      }
     }
+  }
+
+  .mobile-menu {
+    .button-icon {
+      &:first-child {
+        display: flex;
+
+        .inner {
+          justify-content: center;
+          align-items: center;
+          font-weight: 700;
+
+          p {
+            letter-spacing: 3px;
+            margin: 0.75rem 0;
+          }
+        }
+      }
+      &:nth-child(2) {
+        // LABEL MODAL WINDOW
+        display: none;
+      }
+
+      &:nth-child(3) {
+        // SHARED MODAL WINDOW
+        display: none;
+      }
+    }
+  }
 }
 
 @media (max-width: 420px) {
-    .wrap {
+  .wrap {
+    .button-icon {
+      .inner {
+        width: 100%;
+
         .icon {
-            .inner {
-                width: 100%;
-    
-                i {
-                    padding: 0.75rem;
-                }
-    
-                p {
-                    display: block;
-                    padding: 0.75rem 0.75rem 0.75rem 0;
-                }
-            }
-    
-            &::after {
-                content: none;
-            }
+          margin: 0.75rem;
         }
+
+        p {
+          display: block;
+          margin: 0.75rem 0.75rem 0.75rem 0;
+        }
+      }
+
+      &::after {
+        content: none;
+      }
     }
+  }
 }

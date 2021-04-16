@@ -3,7 +3,7 @@ export enum Icons {
   audio = 'audio',
   bold = 'bold',
   cancel = 'cancel',
-  changeColor = 'changeColor',
+  color = 'color',
   copy = 'copy',
   delete = 'delete',
   download = 'download',
@@ -20,6 +20,7 @@ export enum Icons {
   label = 'label',
   listChecked = 'listChecked',
   listDot = 'listDot',
+  list = 'list',
   location = 'location',
   lock = 'lock',
   logout = 'logout',
@@ -41,4 +42,5 @@ export enum Icons {
   viewChange = 'viewChange',
   viewOnly = 'viewOnly',
   stickyNote = 'stickyNote',
+  cancelThin = 'cancelThin',
 }

@@ -6,7 +6,7 @@
   position: absolute;
   display: flex;
   justify-content: space-between;
-  color: #6B6B6B;
+  color: #6b6b6b;
   font-weight: 300;
 
   p {
@@ -19,10 +19,13 @@
     display: flex;
     align-items: center;
     font-size: 1rem;
-    i {
-      cursor: pointer;
-      margin-left: 10px;
-    }
 
+    .icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin-left: 0.625rem;
+      color: white;
+    }
   }
 }

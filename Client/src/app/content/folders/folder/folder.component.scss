@@ -1,181 +1,184 @@
 @import 'variables';
 
 :host {
-    position: relative;
-    display: flex;
-    width: 100%;
-    border-radius: 20px;
+  position: relative;
+  display: flex;
+  width: 100%;
+  border-radius: 20px;
 }
 
 .outer {
-    position: absolute;
-    z-index: 2;
-    width: calc(100% - 25px);
-    height: calc(100% - 25px);
-    top: 5px;
-    left: 25px;
-    border-radius: inherit;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    outline: none;
+  position: absolute;
+  z-index: 2;
+  width: calc(100% - 25px);
+  height: calc(100% - 25px);
+  top: 5px;
+  left: 25px;
+  border-radius: inherit;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  outline: none;
 }
 
 .folder {
-    margin-top: 20px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 5;
+  display: flex;
+  height: calc(100% - 0.75rem);
+  width: calc(100% - 15px);
+  border-radius: inherit;
+  transition: 0.2s ease;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .highligt {
     position: relative;
     z-index: 5;
     display: flex;
-    height: calc(100% - 0.75rem);
-    width: calc(100% - 15px);
-    border-radius: inherit;
-    transition: 0.2s ease;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 25px;
+    background-color: $unhighlighting-note;
+    transition: 0.3s ease;
+    border-radius: 20px 0 0 20px;
+    overflow: hidden;
+    cursor: pointer;
 
     &:hover {
-        box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15);
+      background-color: darken($unhighlighting-note, $amount: 20%);
+    }
+  }
+
+  .folder-inner {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 25px);
+    padding-left: 1rem;
+    padding-right: 1.5rem;
+
+    input[type='text'] {
+      background-color: transparent;
+      border: 0;
+      padding: 0;
+      outline: none;
+      user-select: none;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 0.625rem;
+      color: $text-color;
+      transition: 0.3s ease;
+
+      &:focus {
+        padding-left: 0.25rem;
+
+        &::placeholder {
+          color: inherit;
+        }
+      }
     }
 
-    .highligt {
-        position: relative;
-        z-index: 5;
+    .notes {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 0.625rem;
+      outline: none;
+
+      .note {
         display: flex;
-        width: 25px;
-        background-color: $unhighlighting-note;
-        transition: 0.3s ease;
-        border-radius: 20px 0 0 20px;
-        overflow: hidden;
-        cursor: pointer;
-    
-        &:hover {
-            background-color: darken($unhighlighting-note, $amount: 20%);
+        align-items: center;
+        width: 100%;
+        margin-top: 0.5rem;
+        color: $light-text-color;
+
+        .icon {
+          height: 15px;
+          width: 15px;
+
+          &::before {
+            color: $light-text-color;
+          }
         }
+
+        p {
+          @include text-overflow;
+          margin-left: 0.5rem;
+        }
+      }
     }
-
-    .folder-inner {
-        display: flex;
-        flex-direction: column;
-        width: calc(100% - 25px);
-        padding-left: 1rem;
-        padding-right: 1.5rem;
-
-        input[type="text"] {
-            background-color: transparent;
-            border: 0;
-            padding: 0;
-            outline: none;
-            user-select: none;
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 0.625rem;
-            color: $text-color;
-            transition: 0.3s ease;
-
-            &:focus {
-                padding-left: 0.25rem;
-    
-                &::placeholder {
-                    color: inherit;
-                }
-            }
-        }
-
-        .notes {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            margin-bottom: 0.625rem;
-            outline: none;
-
-            .note {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                margin-top: 0.5rem;
-                color: $light-text-color;
-
-                .icon-notes {
-                    font-size: 0.9375rem;
-                    &::before {
-                        color: $light-text-color;
-                    }
-                }
-
-                p {
-                    @include text-overflow;
-                    margin-left: 0.5rem;
-                }
-            }
-        }
-    }
+  }
 }
 
 .big-size {
-    .folder-inner {
-        input[type="text"] {
-            font-size: 1.5rem;
-        }
-
-        .notes {
-            .note {
-                font-size: 1.125rem;
-                margin-top: 0.625rem;
-
-                .icon-notes {
-                    font-size: 1.125rem;
-                }
-            }
-        }
+  .folder-inner {
+    input[type='text'] {
+      font-size: 1.5rem;
     }
+
+    .notes {
+      .note {
+        font-size: 1.125rem;
+        margin-top: 0.625rem;
+
+        .icon {
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 1024px) {
-    .outer {
-        width: calc(100% - 20px);
-    }
-    .folder {
-        .highligt {
-            width: 20px;
-        }
-        
-        .folder-inner {
-            width: calc(100% - 20px);
-
-            input[type="text"] {
-                font-size: 1.125rem;
-            }
-
-            .notes {
-                .note {
-                    p {
-                        font-size: 0.9375rem;
-                    }
-                }
-            }
-        }
+  .outer {
+    width: calc(100% - 20px);
+  }
+  .folder {
+    .highligt {
+      width: 20px;
     }
 
-    .big-size {
-        .highligt {
-            width: 25px;
-        }
+    .folder-inner {
+      width: calc(100% - 20px);
 
-        .folder-inner {
-            width: calc(100% - 25px);
+      input[type='text'] {
+        font-size: 1.125rem;
+      }
 
-            input[type="text"] {
-                font-size: 1.25rem;
-            }
-    
-            .notes {
-                .note {
-                    p {
-                        font-size: 1rem;
-                    }
-                }
-            }
+      .notes {
+        .note {
+          p {
+            font-size: 0.9375rem;
+          }
         }
+      }
+    }
+  }
+
+  .big-size {
+    .highligt {
+      width: 25px;
     }
 
-    .big-size + .outer {
-        width: calc(100% - 25px);
+    .folder-inner {
+      width: calc(100% - 25px);
+
+      input[type='text'] {
+        font-size: 1.25rem;
+      }
+
+      .notes {
+        .note {
+          p {
+            font-size: 1rem;
+          }
+        }
+      }
     }
-}   
+  }
+
+  .big-size + .outer {
+    width: calc(100% - 25px);
+  }
+}
