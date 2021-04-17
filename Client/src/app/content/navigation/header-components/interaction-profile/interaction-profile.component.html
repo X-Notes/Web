@@ -1,13 +1,11 @@
-<div appTheme class="interactions">
-  <app-general-header-button
-    (clickEvent)="newButton()"
-    [message]="'new.' + (route$ | async ) | translate"
-    [iconClass]="'icon-plus'"
-    [styleClasses]="'generic-unfixed profile-create'"
-  ></app-general-header-button>
-  <app-general-header-button
-    (clickEvent)="setDefaultColorProfile()"
-    [message]="('header.defaultColor' | translate)"
-    [styleClasses]="'generic-2 profile-default'"
-  ></app-general-header-button>
-</div>
+<app-general-header-button
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'icon-plus'"
+  [styleClasses]="'generic-unfixed profile-create'"
+></app-general-header-button>
+<app-general-header-button
+  (clickEvent)="setDefaultColorProfile()"
+  [message]="('header.defaultColor' | translate)"
+  [styleClasses]="'generic-2 profile-default'"
+></app-general-header-button>
