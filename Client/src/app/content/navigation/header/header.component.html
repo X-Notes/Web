@@ -49,32 +49,46 @@
       </div>
     </div>
 
+    <!-- PROFILE START -->
     <app-interaction-profile
       class="interactions"
       *ngSwitchCase="'profile'"
     ></app-interaction-profile>
+    <!-- PROFILE END -->
 
+    <!-- NOTE_FOLDER ITEMS START -->
     <app-interaction-items class="interactions" *ngSwitchCase="'items'"></app-interaction-items>
+    <!-- NOTE_FOLDER ITEMS END -->
 
+    <!-- LABEL DEFAULT START -->
     <app-general-header-button
       *ngSwitchCase="'label'"
       (clickEvent)="newButton()"
       [message]="'new.' + (route$ | async ) | translate"
       [iconClass]="'icon-plus'"
-      [styleClasses]="'generic-unfixed'"
+      [styleClasses]="'generic-unfixed generic-create'"
     ></app-general-header-button>
+    <!-- LABEL DEFAULT END -->
 
-    <app-interaction-labels
-      class="interactions"
+    <!-- LABEL DELETE START -->
+    <app-general-header-button
       *ngSwitchCase="'label-delete'"
-    ></app-interaction-labels>
+      [message]="('header.emptyTrash' | translate)"
+      [iconClass]="'icon-delete'"
+      [styleClasses]="'generic-2 generic-unfixed'"
+    ></app-general-header-button>
+    <!-- LABEL DELETE END -->
 
+    <!-- INNER NOTE START -->
     <app-interaction-inner-note
       class="interactions inner-helper"
       *ngSwitchCase="'note-inner'"
     ></app-interaction-inner-note>
+    <!-- INNER NOTE END -->
 
+    <!-- INNER FOLDER START -->
     <app-interaction-inner-folder *ngSwitchCase="'folder-inner'"></app-interaction-inner-folder>
+    <!-- INNER FOLDER END -->
 
     <div
       class="interactions menu"
