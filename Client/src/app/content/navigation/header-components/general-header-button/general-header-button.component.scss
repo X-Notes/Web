@@ -54,13 +54,18 @@
   .history {
     display: none;
   }
+
   .mobile-buttons {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .generic-create {
     display: none;
+  }
+
+  .profile-create {
     width: 54px;
   }
 }

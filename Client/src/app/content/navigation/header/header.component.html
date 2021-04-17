@@ -56,7 +56,13 @@
 
     <app-interaction-items class="interactions" *ngSwitchCase="'items'"></app-interaction-items>
    
-    <app-interaction-create class="interactions" *ngSwitchCase="'label'"></app-interaction-create>
+    <app-general-header-button
+      *ngSwitchCase="'label'"
+      (clickEvent)="newButton()"
+      [message]="'new.' + (route$ | async ) | translate"
+      [iconClass]="'icon-plus'"
+      [styleClasses]="'generic-unfixed'"
+    ></app-general-header-button>
 
     <app-interaction-labels
       class="interactions"

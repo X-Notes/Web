@@ -27,6 +27,12 @@ import { FullNote } from '../../notes/models/fullNote';
 export class HeaderComponent implements OnInit, OnDestroy {
   // Upper Menu
 
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
+
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
+
   @Select(AppStore.getMenuSwitch)
   public menuSwitch$: Observable<string>;
 
@@ -133,6 +139,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
+  }
+
+  newButton() {
+    this.pService.subject.next(true);
   }
 
   routeChange(type: EntityType) {

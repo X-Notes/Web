@@ -43,12 +43,12 @@
     </div>
   </ng-scrollbar>
 
-  <app-dark-general-header-button
+  <app-general-header-button
     [tooltipMessage]="'header.video' | translate"
     [tooltipPosition]="'Bottom'"
     [iconClass]="'icon-video'"
     [styleClasses]="'generic-2'"
-  ></app-dark-general-header-button>
+  ></app-general-header-button>
 
   <app-menu
     class="menu-inner"
@@ -57,35 +57,35 @@
     [@.disabled]="pService.AnimationInnerMenu"
   ></app-menu>
 
-  <app-dark-general-header-button
+  <app-general-header-button
     (clickEvent)="pService.toggleHistoryMethod()"
     [message]="('menu.history' | translate)"
     [styleClasses]="'generic-2 history'"
-  ></app-dark-general-header-button>
+  ></app-general-header-button>
 
-  <app-dark-general-header-button
+  <app-general-header-button
     (clickEvent)="dialogsManageService.changeLabels()"
     [tooltipMessage]="'menu.label' | translate"
     [tooltipPosition]="'Bottom'"
     [styleClasses]="'generic-2 mobile-buttons'"
     [iconClass]="'icon-label'"
-  ></app-dark-general-header-button>
+  ></app-general-header-button>
 
-  <app-dark-general-header-button
+  <app-general-header-button
     (clickEvent)="dialogsManageService.shareEntity()"
     [tooltipMessage]="'menu.shared' | translate"
     [tooltipPosition]="'Bottom'"
     [styleClasses]="'generic-2 mobile-buttons'"
     [iconClass]="'icon-shared'"
-  ></app-dark-general-header-button>
+  ></app-general-header-button>
 
-  <app-dark-general-header-button
+  <app-general-header-button
     (clickEvent)="hideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     [tooltipPosition]="'Bottom'"
     [styleClasses]="'generic-2 mobile-buttons'"
     [iconClass]="'icon-shared'"
-  ></app-dark-general-header-button>
+  ></app-general-header-button>
 
   <div class="overlay" (click)="closeMenu()"></div>
 </div>

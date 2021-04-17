@@ -10,10 +10,9 @@ import { InteractionProfileComponent } from './header-components/interaction-pro
 import { InteractionToolsComponent } from './header-components/interaction-tools/interaction-tools.component';
 import { InteractionItemsComponent } from './header-components/interaction-items/interaction-items.component';
 import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
-import { InteractionCreateComponent } from './header-components/interaction-create/interaction-create.component';
 import { NotificationComponent } from './header-components/notification/notification.component';
 import { InteractionInnerFolderComponent } from './header-components/interaction-inner-folder/interaction-inner-folder.component';
-import { DarkGeneralHeaderButtonComponent } from './header-components/buttons/dark-general-header-button/dark-general-header-button.component';
+import { GeneralHeaderButtonComponent } from './header-components/general-header-button/general-header-button.component';
 
 @NgModule({
   declarations: [
@@ -25,10 +24,9 @@ import { DarkGeneralHeaderButtonComponent } from './header-components/buttons/da
     InteractionToolsComponent,
     InteractionItemsComponent,
     InteractionInnerComponent,
-    InteractionCreateComponent,
     NotificationComponent,
     InteractionInnerFolderComponent,
-    DarkGeneralHeaderButtonComponent,
+    GeneralHeaderButtonComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
   exports: [SideBarComponent, HeaderComponent],
