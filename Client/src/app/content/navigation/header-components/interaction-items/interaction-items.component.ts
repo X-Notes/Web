@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -14,7 +14,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   templateUrl: './interaction-items.component.html',
   styleUrls: ['./interaction-items.component.scss'],
 })
-export class InteractionItemsComponent implements OnInit {
+export class InteractionItemsComponent implements OnInit, OnDestroy {
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
@@ -32,6 +32,11 @@ export class InteractionItemsComponent implements OnInit {
   destroy = new Subject<void>();
 
   constructor(private store: Store, public pService: PersonalizationService) {}
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   ngOnInit(): void {
     this.store

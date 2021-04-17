@@ -1,1 +1,36 @@
-<p>5</p>
+<app-general-header-button
+  (clickEvent)="manageNotesInFolderHandler()"
+  [message]="'Manage'"
+  [styleClasses]="'manage-notes'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="selectAll()"
+  [message]="('header.select' | translate)"
+  [iconClass]="'icon-select'"
+  [styleClasses]="'generic-2 generic-unfixed'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="settingsClick()"
+  [tooltipMessage]="('header.filter' | translate)"
+  [tooltipPosition]="'Bottom'"
+  [iconClass]="'icon-filter'"
+  [styleClasses]="'generic-2 filter'"
+></app-general-header-button>
+
+<app-general-header-button
+  *ngIf="!((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'icon-plus'"
+  [styleClasses]="'generic-2 generic-unfixed generic-create'"
+></app-general-header-button>
+
+<app-general-header-button
+  *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  (clickEvent)="unselectAll()"
+  [message]="('header.selected' | translate) + ' ' + countSelected"
+  [iconClass]="'icon-plus'"
+  [styleClasses]="'generic-2 generic-unfixed'"
+></app-general-header-button>

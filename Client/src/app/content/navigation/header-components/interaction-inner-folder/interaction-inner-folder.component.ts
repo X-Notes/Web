@@ -1,15 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Component({
   selector: 'app-interaction-inner-folder',
   templateUrl: './interaction-inner-folder.component.html',
-  styleUrls: ['./interaction-inner-folder.component.scss']
+  styleUrls: ['./interaction-inner-folder.component.scss'],
 })
-export class InteractionInnerFolderComponent implements OnInit {
+export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
+  @Select(FolderStore.activeMenu)
+  public menuActiveFolders$: Observable<boolean>;
 
-  constructor() { }
+  @Select(NoteStore.activeMenu)
+  public menuActiveNotes$: Observable<boolean>;
 
-  ngOnInit(): void {
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
+
+  public countSelected: number;
+
+  destroy = new Subject<void>();
+
+  constructor(private store: Store) {}
+
+  ngOnInit(): void {}
+
+  manageNotesInFolderHandler() {}
+
+  selectAll() {}
+
+  settingsClick() {}
+
+  newButton() {}
+
+  unselectAll() {}
+
+  initCountSelected() {
+    this.store
+      .select(NoteStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
+
+    this.store
+      .select(FolderStore.selectedCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x > 0) {
+          this.countSelected = x;
+        }
+      });
   }
 
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 }
