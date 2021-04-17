@@ -15,13 +15,13 @@
     <p>Text</p>
     <div class="buttons" (mousedown)="preventClick($event)">
       <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)">
-        <mat-icon svgIcon="h1"></mat-icon>
+        <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)">
-        <mat-icon svgIcon="h2"></mat-icon>
+        <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)">
-        <mat-icon svgIcon="h3"></mat-icon>
+        <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformContent($event, contentType.CHECKLIST)">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>

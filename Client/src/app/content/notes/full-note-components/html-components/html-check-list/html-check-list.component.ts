@@ -115,7 +115,6 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   changeCheckBox() {
-    this.content.checked = !this.content.checked;
     const str = this.textChanged.getValue();
     this.updateText.emit({
       content: str,

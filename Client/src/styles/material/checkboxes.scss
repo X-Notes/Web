@@ -1,0 +1,18 @@
+.dark {
+  .inner-box-list {
+    .mat-checkbox-frame {
+      border-color: #bdbdbd;
+    }
+
+    .mat-checkbox-checked.mat-accent .mat-ripple-element,
+    .mat-checkbox:active.mat-accent .mat-ripple-element {
+      background-color: #2997ff;
+    }
+    .mat-checkbox-checked
+      .mat-checkbox-layout
+      .mat-checkbox-inner-container
+      .mat-checkbox-background {
+      background-color: #2997ff;
+    }
+  }
+}

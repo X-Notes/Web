@@ -1,16 +1,13 @@
 <div
+  appTheme
   class="main-container"
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
   (mouseout)="mouseOut($event)"
 >
   <div class="check-list">
-    <div class="checkbox-container">
-      <mat-checkbox
-        class="checkbox"
-        [(ngModel)]="content.checked"
-        (ngModelChange)="changeCheckBox()"
-      ></mat-checkbox>
+    <div class="checkbox-container inner-box-list" (click)="changeCheckBox()">
+      <mat-checkbox [(ngModel)]="content.checked"></mat-checkbox>
     </div>
     <div class="text-container">
       <p
