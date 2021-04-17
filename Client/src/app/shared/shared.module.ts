@@ -41,6 +41,7 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
 import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
 import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
 import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
+import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
     ManageNotesInFolderComponent,
+    MemoryIndicatorComponent,
   ],
   imports: [
     CommonModule,
@@ -119,6 +121,7 @@ import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
+    MemoryIndicatorComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],
