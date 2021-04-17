@@ -4,10 +4,14 @@
   [ngClass]="[pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']"
 >
   <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
-    <div class="header">
-      <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
-      <i class="icon-plus" (click)="collapseToggle()"></i>
-    </div>
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.selectedNotes' | translate"
+      [autoClose]="false"
+      [isMessage]="pService.isCollapseShared"
+      (clickEvent)="collapseToggle()"
+    ></app-dialog-generic-header>
+
     <ng-scrollbar
       *ngIf="currentWindowType === windowType.Note"
       class="notes-sharing"
@@ -53,10 +57,11 @@
     </ng-scrollbar>
   </div>
   <div class="sharing">
-    <div class="header">
-      <span>{{ 'modal.ShareModal.Share' | translate }}</span>
-      <i class="icon-plus" mat-dialog-close></i>
-    </div>
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.Share' | translate"
+    ></app-dialog-generic-header>
+
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
       <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
         <div class="tab-content">

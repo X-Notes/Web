@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { DialogsManageService } from '../../dialogs-manage.service';
 
 @Component({
   selector: 'app-interaction-inner-folder',
@@ -25,11 +26,13 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private dialogsService: DialogsManageService) {}
 
   ngOnInit(): void {}
 
-  manageNotesInFolderHandler() {}
+  manageNotesInFolderHandler() {
+    this.dialogsService.openManageNotesInFolder();
+  }
 
   selectAll() {}
 

@@ -10,25 +10,6 @@
   flex-direction: column;
   width: 750px;
 
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.625rem 1.25rem 0 1.25rem;
-
-    span {
-      font-weight: 500;
-      font-size: 0.875rem;
-      white-space: nowrap;
-    }
-
-    i {
-      cursor: pointer;
-      transform: rotate(45deg);
-    }
-  }
-
   .dialog-content {
     display: flex;
     flex-direction: column;

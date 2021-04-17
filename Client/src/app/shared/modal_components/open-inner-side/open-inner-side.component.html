@@ -1,8 +1,8 @@
 <div class="wrapper" appTheme>
-  <div class="header">
-    <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <i class="icon-plus" mat-dialog-close></i>
-  </div>
+  <app-dialog-generic-header
+    [icon]="'icon-plus'"
+    [message]="'modal.labelModal.Labels' | translate"
+  ></app-dialog-generic-header>
   <div class="dialog-content" mat-dialog-content>
     <mat-tab-group class="tabs" mat-stretch-tabs>
       <mat-tab label="Notes">

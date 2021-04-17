@@ -1,7 +1,7 @@
-<div class="header">
-  <span>{{ 'modal.ColorModal.Colors' | translate }}</span>
-  <i class="icon-plus" mat-dialog-close></i>
-</div>
+<app-dialog-generic-header
+  [icon]="'icon-plus'"
+  [message]="'modal.ColorModal.Colors' | translate"
+></app-dialog-generic-header>
 <div class="preview-container">
   <div *ngIf="(isNote$ | async)" class="note" [ngStyle]="{'backgroundColor': current}">
     <div class="labels">

@@ -1,8 +1,9 @@
 <div appTheme class="outer">
-  <div class="header">
-    <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <i class="icon-plus" mat-dialog-close></i>
-  </div>
+  <app-dialog-generic-header
+    [icon]="'icon-plus'"
+    [message]="'modal.labelModal.Labels' | translate"
+  ></app-dialog-generic-header>
+
   <div class="search">
     <div class="search-content">
       <app-search (changeOutput)="changed($event)"></app-search>

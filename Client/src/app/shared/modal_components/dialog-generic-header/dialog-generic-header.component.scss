@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0 1rem;
+
+  i {
+    cursor: pointer;
+    transform: rotate(45deg);
+  }
+}
+
+.is-message {
+  justify-content: space-between;
+}
+
+.no-message {
+  justify-content: center;
+}

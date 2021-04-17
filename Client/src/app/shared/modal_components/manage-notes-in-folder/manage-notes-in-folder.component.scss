@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 750px;
+  .dialog-content {
+    display: flex;
+    flex-direction: column;
+    height: 550px;
+    width: 100%;
+  }
+}

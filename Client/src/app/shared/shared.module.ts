@@ -42,6 +42,7 @@ import { NotePreviewTextComponent } from '../content/notes/note/note-preview-tex
 import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
 import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
+import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.co
     NotePreviewPhotosComponent,
     ManageNotesInFolderComponent,
     MemoryIndicatorComponent,
+    DialogGenericHeaderComponent,
   ],
   imports: [
     CommonModule,

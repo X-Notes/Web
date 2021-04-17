@@ -1,0 +1,5 @@
+<div class="header" [ngClass]="basicStyles">
+  <span *ngIf="isMessage">{{message}}</span>
+  <i *ngIf="autoClose" class="{{icon}}" mat-dialog-close></i>
+  <i *ngIf="!autoClose" class="{{icon}}" (click)="clickHandler()"></i>
+</div>
