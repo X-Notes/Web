@@ -12,12 +12,12 @@ import { DialogsManageService } from '../../dialogs-manage.service';
 import { MenuButtonsService } from '../../menu-buttons.service';
 
 @Component({
-  selector: 'app-interaction-inner',
-  templateUrl: './interaction-inner.component.html',
-  styleUrls: ['./interaction-inner.component.scss'],
+  selector: 'app-interaction-inner-note',
+  templateUrl: './interaction-inner-note.component.html',
+  styleUrls: ['./interaction-inner-note.component.scss'],
   animations: [showMenuLeftRight],
 })
-export class InteractionInnerComponent implements AfterViewInit {
+export class InteractionInnerNoteComponent implements AfterViewInit {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 

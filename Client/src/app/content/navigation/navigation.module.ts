@@ -9,7 +9,7 @@ import { InteractionLabelsComponent } from './header-components/interaction-labe
 import { InteractionProfileComponent } from './header-components/interaction-profile/interaction-profile.component';
 import { InteractionToolsComponent } from './header-components/interaction-tools/interaction-tools.component';
 import { InteractionItemsComponent } from './header-components/interaction-items/interaction-items.component';
-import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
+import { InteractionInnerNoteComponent } from './header-components/interaction-inner-note/interaction-inner-note.component';
 import { NotificationComponent } from './header-components/notification/notification.component';
 import { InteractionInnerFolderComponent } from './header-components/interaction-inner-folder/interaction-inner-folder.component';
 import { GeneralHeaderButtonComponent } from './header-components/general-header-button/general-header-button.component';
@@ -23,7 +23,7 @@ import { GeneralHeaderButtonComponent } from './header-components/general-header
     InteractionProfileComponent,
     InteractionToolsComponent,
     InteractionItemsComponent,
-    InteractionInnerComponent,
+    InteractionInnerNoteComponent,
     NotificationComponent,
     InteractionInnerFolderComponent,
     GeneralHeaderButtonComponent,

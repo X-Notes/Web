@@ -55,7 +55,7 @@
     ></app-interaction-profile>
 
     <app-interaction-items class="interactions" *ngSwitchCase="'items'"></app-interaction-items>
-   
+
     <app-general-header-button
       *ngSwitchCase="'label'"
       (clickEvent)="newButton()"
@@ -69,10 +69,10 @@
       *ngSwitchCase="'label-delete'"
     ></app-interaction-labels>
 
-    <app-interaction-inner
+    <app-interaction-inner-note
       class="interactions inner-helper"
       *ngSwitchCase="'note-inner'"
-    ></app-interaction-inner>
+    ></app-interaction-inner-note>
 
     <app-interaction-inner-folder *ngSwitchCase="'folder-inner'"></app-interaction-inner-folder>
 
