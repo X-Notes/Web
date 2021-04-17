@@ -13,6 +13,7 @@ import { InteractionInnerComponent } from './header-components/interaction-inner
 import { InteractionCreateComponent } from './header-components/interaction-create/interaction-create.component';
 import { NotificationComponent } from './header-components/notification/notification.component';
 import { InteractionInnerFolderComponent } from './header-components/interaction-inner-folder/interaction-inner-folder.component';
+import { DarkGeneralHeaderButtonComponent } from './header-components/buttons/dark-general-header-button/dark-general-header-button.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { InteractionInnerFolderComponent } from './header-components/interaction
     InteractionCreateComponent,
     NotificationComponent,
     InteractionInnerFolderComponent,
+    DarkGeneralHeaderButtonComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
   exports: [SideBarComponent, HeaderComponent],

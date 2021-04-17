@@ -1,68 +1,68 @@
 @import 'variables';
 
 .interactions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.generic {
+  position: relative;
+  height: 30px;
+  border: 0.8px solid;
+  padding: 0;
+  outline: none;
+  overflow: hidden;
+  user-select: none;
+  margin-right: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.2s ease;
+
+  .inner-content {
+    position: relative;
+    z-index: 5;
     display: flex;
     align-items: center;
-    height: 100%;
-    
-    .generic {
-        position: relative;
-        height: 30px;
-        border: 0.8px solid;
-        padding: 0;
-        outline: none;
-        overflow: hidden;
-        user-select: none;
-        margin-right: 1rem;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: 0.2s ease;
-    
-        .inner-content {
-          position: relative;
-          z-index: 5;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 0.75rem;
-          font-size: 1rem;
-    
-          p {
-            padding-right: 1rem;
-            white-space: nowrap;
-          }
-    
-          i {
-            font-size: 0.75rem;
-    
-            &::before {
-              transition: 0.2s color ease;
-            }
-          }
-        }
+    justify-content: space-between;
+    padding: 0 0.75rem;
+    font-size: 1rem;
+
+    p {
+      padding-right: 1rem;
+      white-space: nowrap;
     }
 
-    .generic-unfixed {
-        min-width: 150px;
+    i {
+      font-size: 0.75rem;
+
+      &::before {
+        transition: 0.2s color ease;
+      }
     }
+  }
+}
+
+.generic-unfixed {
+  min-width: 150px;
 }
 
 .light {
-    .generic {
-        border-color: $light-button;
-        background-color: white;
+  .generic {
+    border-color: $light-button;
+    background-color: white;
+    color: $light-text-color;
+
+    .inner-content {
+      i::before {
         color: $light-text-color;
-
-        .inner-content {
-          i::before {
-            color: $light-text-color;
-          }
-        }
-
-        &:hover {
-          background-color: $light-nav-backlight;
-        }
+      }
     }
+
+    &:hover {
+      background-color: $light-nav-backlight;
+    }
+  }
 }
 
 .dark {
@@ -87,64 +87,58 @@
 }
 
 @media (max-width: 1320px) {
-  .interactions {
-    .generic-unfixed {
-        min-width: auto;
-    }
+  .generic-unfixed {
+    min-width: auto;
   }
 }
 
 @media (max-width: 1024px) {
-    .interactions {
-        .generic {
-            .inner-content {
-              padding: 0;
-              justify-content: center;
-  
-              i {
-                font-size: 1rem;
-              }
-  
-              p {
-                display: none;
-              }
-            }
-        }
+  .generic {
+    .inner-content {
+      padding: 0;
+      justify-content: center;
 
-        .generic-2 {
-            width: 54px;
-        }
+      i {
+        font-size: 1rem;
+      }
 
-        .generic-unfixed {
-            min-width: auto;
-        }
+      p {
+        display: none;
+      }
     }
+  }
+
+  .generic-2 {
+    width: 54px;
+  }
+
+  .generic-unfixed {
+    min-width: auto;
+  }
 }
 
 @media (max-width: 320px) {
-    .interactions {
-        .generic {
-            height: 26px;
-            width: 26px;
-            margin-right: 0.875rem;
-  
-            .inner-content {
-              i {
-                font-size: 0.875rem;
-              }
-            }
-  
-            &:last-child {
-              .inner-content {
-                i {
-                  font-size: 0.875rem;
-                }
-              }
-            }
-        }
+  .generic {
+    height: 26px;
+    width: 26px;
+    margin-right: 0.875rem;
 
-        .generic-2 {
-            width: 40px;
-        }
+    .inner-content {
+      i {
+        font-size: 0.875rem;
+      }
     }
+
+    &:last-child {
+      .inner-content {
+        i {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  .generic-2 {
+    width: 40px;
+  }
 }

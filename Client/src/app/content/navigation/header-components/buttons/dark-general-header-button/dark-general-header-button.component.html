@@ -1,0 +1,17 @@
+<div appTheme>
+  <button
+    type="button"
+    (click)="clickHandler()"
+    class="generic"
+    [ngClass]="styleClasses"
+    #buttonRipple
+    CustomTooltip="{{tooltipMessage}}"
+    position="{{tooltipPosition}}"
+  >
+    <div class="inner-content">
+      <p *ngIf="message?.length > 0">{{message}}</p>
+      <i *ngIf="iconClass" class="{{iconClass}}"></i>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="buttonRipple"></div>
+  </button>
+</div>

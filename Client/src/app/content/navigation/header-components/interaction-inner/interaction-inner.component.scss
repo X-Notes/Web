@@ -1,22 +1,8 @@
-@import "header-components";
+@import 'header-components';
 
 .interactions {
   justify-content: flex-start;
   width: 100%;
-
-  .history {
-    width: auto;
-    margin-right: 0;
-    margin-left: auto;
-    font-size: 1.125rem;
-    font-weight: 500;
-
-    .inner-content {
-      p {
-        padding-right: 0;
-      }
-    }
-  }
 
   .user-circle {
     position: relative;
@@ -39,46 +25,6 @@
     }
   }
 
-  .three-dots {
-    position: relative;
-    display: none;
-    align-items: center;
-    height: 30px;
-    border: 0.8px solid;
-    padding: 0 0.5rem;
-    user-select: none;
-    border-radius: 5px;
-    overflow: hidden;
-    cursor: pointer;
-
-    span {
-      position: relative;
-      z-index: 5;
-      display: block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-
-      &::after,
-      &::before {
-        content: "";
-        display: block;
-        position: relative;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-      }
-
-      &::after {
-        bottom: -3px;
-      }
-
-      &::before {
-        bottom: 8px;
-      }
-    }
-  }
-
   .wrapper-people {
     position: relative;
     display: flex;
@@ -89,7 +35,7 @@
 
     &::after,
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       z-index: 5;
@@ -142,10 +88,6 @@
     }
   }
 
-  .mobile-buttons {
-    display: none;
-  }
-
   .overlay {
     position: fixed;
     top: 0;
@@ -174,20 +116,6 @@
 
     &:hover {
       background-color: $light-nav-backlight;
-    }
-  }
-
-  .three-dots {
-    background-color: white;
-    border-color: $light-button;
-
-    span {
-      background-color: $text-color;
-
-      &::before,
-      &::after {
-        background-color: $text-color;
-      }
     }
   }
 
@@ -220,20 +148,6 @@
 
     &:hover {
       background-color: #3d4049;
-    }
-  }
-
-  .three-dots {
-    border-color: transparent;
-    background-color: $dark-button;
-
-    span {
-      background-color: white;
-
-      &::after,
-      &::before {
-        background-color: white;
-      }
     }
   }
 }
@@ -323,22 +237,10 @@
   }
 }
 
-@media (max-width: 1320px) {
-  .interactions {
-    .history {
-      margin-left: initial;
-    }
-  }
-}
-
 @media (max-width: 1024px) {
   .visible {
     button,
     .menu-inner,
-    .three-dots {
-      z-index: $header-visible-elements;
-    }
-
     .overlay {
       display: block;
     }
@@ -347,18 +249,6 @@
   .interactions {
     width: 100%;
     justify-content: flex-end;
-
-    .history {
-      width: auto;
-
-      .inner-content {
-        padding: 0 0.75rem;
-
-        p {
-          display: block;
-        }
-      }
-    }
 
     .menu-inner {
       position: absolute;
@@ -370,27 +260,6 @@
 
     .user-circle {
       display: none;
-    }
-
-    .three-dots {
-      display: flex;
-    }
-
-    .mobile-buttons {
-      display: flex;
-    }
-
-    .history {
-      display: none;
-    }
-
-    .generic {
-      width: 40px;
-
-      .inner-content {
-        height: 100%;
-        width: 100%;
-      }
     }
 
     .wrapper-people {
@@ -408,7 +277,7 @@
 
       &::after,
       &::before {
-        content: "";
+        content: '';
       }
 
       .people-editing {
@@ -448,41 +317,10 @@
   }
 }
 
-@media (max-width: 600px) {
-  .interactions {
-    .generic {
-      width: 30px;
-    }
-  }
-}
-
 @media (max-width: 320px) {
   .interactions {
-    .generic {
-      width: 30px;
-    }
-
     .menu-inner {
       top: 45px;
-    }
-
-    .three-dots {
-      height: 26px;
-
-      span {
-        height: 4px;
-        width: 4px;
-
-        &::after,
-        &::before {
-          height: 4px;
-          width: 4px;
-        }
-
-        &::before {
-          bottom: 7px;
-        }
-      }
     }
 
     .wrapper-people {
