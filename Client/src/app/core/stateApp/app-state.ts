@@ -181,6 +181,62 @@ export class AppStore {
   }
 
   @Selector()
+  static getMenuSwitch(state: AppState): string {
+    switch (state.routing) {
+      // FOLDERS
+      case EntityType.FolderPrivate: {
+        return 'items';
+      }
+      case EntityType.FolderShared: {
+        return 'items';
+      }
+      case EntityType.FolderArchive: {
+        return 'items';
+      }
+      case EntityType.FolderDeleted: {
+        return 'items';
+      }
+      case EntityType.FolderInner: {
+        return 'folder-inner';
+      }
+
+      // NOTES
+      case EntityType.NotePrivate: {
+        return 'items';
+      }
+      case EntityType.NoteShared: {
+        return 'items';
+      }
+      case EntityType.NoteArchive: {
+        return 'items';
+      }
+      case EntityType.NoteDeleted: {
+        return 'items';
+      }
+      case EntityType.NoteInner: {
+        return 'note-inner';
+      }
+
+      // LABELS
+      case EntityType.LabelPrivate: {
+        return 'label';
+      }
+      case EntityType.LabelDeleted: {
+        return 'label-delete';
+      }
+
+      // PROFILE
+      case EntityType.Profile: {
+        return 'profile';
+      }
+
+      default: {
+        throw new Error('error');
+      }
+    }
+  }
+
+  @Selector()
   static getRouting(state: AppState): EntityType {
     return state.routing;
   }

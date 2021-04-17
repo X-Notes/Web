@@ -322,7 +322,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    console.log(1);
     this.api
       .updateContentText(this.note.id, event.contentId, event.content, event.checked)
       .toPromise();

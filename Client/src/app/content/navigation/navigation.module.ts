@@ -12,6 +12,7 @@ import { InteractionItemsComponent } from './header-components/interaction-items
 import { InteractionInnerComponent } from './header-components/interaction-inner/interaction-inner.component';
 import { InteractionCreateComponent } from './header-components/interaction-create/interaction-create.component';
 import { NotificationComponent } from './header-components/notification/notification.component';
+import { InteractionInnerFolderComponent } from './header-components/interaction-inner-folder/interaction-inner-folder.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { NotificationComponent } from './header-components/notification/notifica
     InteractionInnerComponent,
     InteractionCreateComponent,
     NotificationComponent,
+    InteractionInnerFolderComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
   exports: [SideBarComponent, HeaderComponent],

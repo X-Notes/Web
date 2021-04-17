@@ -30,8 +30,6 @@ import { DialogsManageService } from './dialogs-manage.service';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
-  public saveItems: MenuItem[] = [];
-
   public items: MenuItem[] = [];
 
   public notesItemsPrivate: MenuItem[] = [
@@ -742,7 +740,6 @@ export class MenuButtonsService {
   }
 
   setItems(newItems: MenuItem[]) {
-    this.saveItems = newItems;
     this.items = newItems;
   }
 

@@ -41,7 +41,7 @@
   <div
     class="management-section"
     [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''"
-    [ngSwitch]="router"
+    [ngSwitch]="menuSwitch$ | async"
   >
     <div class="interactions">
       <div class="generic hamburger" (click)="toggleSidebar()">
@@ -67,6 +67,8 @@
       class="interactions inner-helper"
       *ngSwitchCase="'note-inner'"
     ></app-interaction-inner>
+
+    <app-interaction-inner-folder *ngSwitchCase="'folder-inner'"></app-interaction-inner-folder>
 
     <div
       class="interactions menu"
