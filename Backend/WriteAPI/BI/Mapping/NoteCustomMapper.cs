@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models;
+﻿using BI.services.notes;
+using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.app;
 using Common.DTO.labels;
@@ -32,8 +33,8 @@ namespace BI.Mapping
         {
             var resultList = new List<BaseContentNoteDTO>();
 
-            var content = Contents.First(x => x.PrevId == null);
-
+            var content = Contents?.FirstOrDefault(x => x.PrevId == null);
+            
             while(content != null)
             {
                 switch (content)
@@ -64,7 +65,6 @@ namespace BI.Mapping
             {
                 Console.WriteLine("Some Data is lost");
             }
-
             return resultList;
         }
 
@@ -97,5 +97,47 @@ namespace BI.Mapping
             };
         }
 
+        public SmallNote TranformNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
+        {
+            return new SmallNote()
+            {
+                Id = note.Id,
+                Color = note.Color,
+                Title = note.Title,
+                Labels = TranformLabelsToLabelsDTO(note.LabelsNotes),
+                NoteType = note.NoteType != null ? TranformTypeToTypeDTO(note.NoteType) : null,
+                RefType = note.RefType != null ? TranformRefToRefDTO(note.RefType) : null,
+                Contents = takeContentLength.HasValue ? 
+                TranformContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
+                TranformContentsToContentsDTO(note.Contents).ToList()
+            };
+        }
+
+
+        public List<SmallNote> TranformNotesToSmallNotesDTO(List<Note> notes, int? takeContentLength = null)
+        {
+            return notes.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+        }
+
+        public List<SmallNote> TranformRelatedNotesToSmallNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
+        {
+            var resultList = new List<Note>();
+
+            var note = notes.FirstOrDefault(x => x.PrevId == null);
+
+            while (note != null)
+            {
+                note.RelatedNote.LabelsNotes = note.RelatedNote.LabelsNotes.GetLabelUnDesc();
+                resultList.Add(note.RelatedNote);
+                note = notes.FirstOrDefault(x => x.Id == note.NextId);
+            }
+
+            if (resultList.Count != notes.Count)
+            {
+                Console.WriteLine("Some Data is lost");
+            }
+
+            return resultList.Select(note => TranformNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+        }
     }
 }

@@ -8,15 +8,11 @@ export class DialogService {
 
   openDialog<T>(component: ComponentType<T>, config: MatDialogConfig) {
     const dialogRef = this.dialog.open(component, config);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
-
     if (window.innerWidth > 600) {
       dialogRef.disableClose = false;
     } else {
       dialogRef.disableClose = true;
     }
+    return dialogRef;
   }
 }

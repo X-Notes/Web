@@ -8,6 +8,9 @@ export class GetImagePipe implements PipeTransform {
   // TODO MAKE THIS PIPE ASYNC // LONG LOAD SIDE BAR MENU
 
   transform = (url: string) => {
-    return `${environment.writeAPI}/api/Files/image/${url}`;
+    if (url) {
+      return `${environment.writeAPI}/api/Files/image/${url}`;
+    }
+    return null;
   };
 }

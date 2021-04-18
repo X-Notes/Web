@@ -6,6 +6,7 @@ using BI.services.folders;
 using BI.services.labels;
 using BI.services.notes;
 using BI.services.permissions;
+using BI.services.relatedNotes;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
@@ -28,6 +29,7 @@ using Domain.Commands.labels;
 using Domain.Commands.noteInner;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
+using Domain.Commands.relatedNotes;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Commands.users;
@@ -37,6 +39,7 @@ using Domain.Queries.folders;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.permissions;
+using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
@@ -112,6 +115,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
+            // RELATED NOTES
+            services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<SmallNote>>, RelatedNotesHandlerQuery>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, Unit>, RelatedNotesHandlerCommand>();
+
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();           
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
@@ -120,6 +127,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+
 
             // FULL NOTE ALBUM
             services.AddScoped<IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
@@ -193,6 +201,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<AlbumNoteRepository>();
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
+            services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)

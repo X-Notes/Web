@@ -1,57 +1,49 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { MatMenu } from '@angular/material/menu';
+import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../models/ContentMode';
-import { PhotoService } from '../photos-business-logic/photo.service';
 
 @Component({
   selector: 'app-photo',
   templateUrl: './photo.component.html',
   styleUrls: ['./photo.component.scss'],
-  animations: [
-    trigger('photoInit', [
-      state(
-        'noLoaded',
-        style({
-          opacity: 0,
-        }),
-      ),
-      state(
-        'loaded',
-        style({
-          opacity: 1,
-        }),
-      ),
-      transition('noLoaded => loaded', [animate('0.35s ease-out')]),
-      transition('loaded => noLoaded', [animate(0)]),
-    ]),
-  ],
-  providers: [PhotoService],
+  animations: [photoInit],
 })
-export class PhotoComponent implements OnInit {
+export class PhotoComponent implements AfterViewInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
+
+  @ViewChild(MatMenu) menu: MatMenu;
 
   @Input()
   photo: Photo;
 
-  isOpened = false;
+  destroy = new Subject<void>();
 
-  constructor(private photoService: PhotoService) {}
+  constructor(private store: Store) {}
 
-  // eslint-disable-next-line class-methods-use-this
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (theme) {
+          if (theme.name === ThemeENUM.Dark) {
+            this.menu.panelClass = 'dark-menu';
+          } else {
+            this.menu.panelClass = null;
+          }
+        }
+      });
+  }
 
   onLoadImage() {
     this.photo.loaded = true;
-  }
-
-  openMenu($event: MouseEvent) {
-    this.isOpened = true;
-    this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
-  }
-
-  closeMenu() {
-    this.isOpened = false;
   }
 
   deletePhoto() {

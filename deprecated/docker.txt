@@ -1,6 +1,0 @@
-docker build -t davydq/noots-web -f NootsWeb.Dockerfile . - web
-
-Elastic === docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.5.1
-Mongo === docker run -d -p 27017:27017 --name mongodb mongo
-NootsAPI === docker build -t davydq/noots-api . -f NootsAPI.Dockerfile
-Workers === docker build -t davydq/worker . -f Workers.Dockerfile

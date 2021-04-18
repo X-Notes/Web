@@ -1,9 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 /* You can add global styles to this file, and also import other style files */
-
-@import "fonts";
-@import "generic";
+@import 'generic';
 @import 'scroll';
+@import 'material/index';
 
 *,
 ::after,
@@ -51,7 +50,7 @@ video {
 
 body,
 html {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: white;
   margin: 0;
   padding: 0;
@@ -64,11 +63,13 @@ html {
   user-select: text;
 }
 
-[hidden] { display: none !important;}
+[hidden] {
+  display: none !important;
+}
 
 button,
 input {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -81,7 +82,7 @@ input {
   min-height: 90px;
 }
 
-.full-note-selection{
+.full-note-selection {
   opacity: 0;
   display: block;
   position: absolute;

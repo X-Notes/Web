@@ -25,7 +25,6 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("share/modal")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<List<ShortUserForShareModal>> GetByUsersForShareModal(GetUsersForSharingModalQuery command)
         {
             command.Email = this.GetUserEmail();

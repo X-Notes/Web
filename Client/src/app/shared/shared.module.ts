@@ -11,6 +11,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -28,7 +30,6 @@ import { ShareComponent } from './modal_components/share/share.component';
 import { ThemeDirective } from './directives/theme.directive';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
-import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.component';
 import { SearchComponent } from './modal_components/search/search.component';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
@@ -38,6 +39,8 @@ import { ChipComponent } from './custom-components/chip/chip.component';
 import { SelectOptionComponent } from './custom-components/select-option/select-option.component';
 import { ButtonToggleComponent } from './custom-components/button-toggle/button-toggle.component';
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
+import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
+import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +61,6 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     SearchComponent,
     OpenInnerSideComponent,
     NoteComponent,
-    PopupFullNoteComponent,
     SearchComponent,
     GetImagePipe,
     SelectComponent,
@@ -66,6 +68,8 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     SelectOptionComponent,
     ButtonToggleComponent,
     ToggleTextComponent,
+    NotePreviewTextComponent,
+    NotePreviewPhotosComponent,
   ],
   imports: [
     CommonModule,
@@ -80,6 +84,8 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     MatCheckboxModule,
     MatSnackBarModule,
     MatExpansionModule,
+    MatIconModule,
+    MatMenuModule,
   ],
   exports: [
     TranslateModule,
@@ -99,7 +105,6 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    PopupFullNoteComponent,
     MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,
@@ -111,6 +116,10 @@ import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text
     SelectOptionComponent,
     ButtonToggleComponent,
     ToggleTextComponent,
+    NotePreviewTextComponent,
+    NotePreviewPhotosComponent,
+    MatIconModule,
+    MatMenuModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

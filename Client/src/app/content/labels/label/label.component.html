@@ -19,20 +19,20 @@
   <div class="options">
     <button type="button" *ngIf="!label.isDeleted" (click)="openColors()">
       <div class="icon" [ngStyle]="{'transform': isUpdate == true ? 'rotate(180deg)' : '' }">
-        <i class="icon-select-label"></i>
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
       </div>
     </button>
 
     <button type="button" *ngIf="label.isDeleted" (click)="restore()">
       <div class="icon">
-        <i class="icon-restore"></i>
+        <mat-icon svgIcon="restore" [inline]="true"></mat-icon>
       </div>
     </button>
 
     <div class="separator-buttons"></div>
     <button type="button" (click)="delete()">
       <div class="icon">
-        <i class="icon-cancel"></i>
+        <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
       </div>
     </button>
   </div>

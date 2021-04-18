@@ -1,5 +1,4 @@
-@import "variables";
-
+@import 'variables';
 
 .custom-dialog-class-dark {
   mat-dialog-container {
@@ -39,7 +38,8 @@
   padding: 0 2.5rem;
 }
 
-.dark, .light {
+.dark,
+.light {
   .tabs {
     .mat-tab-label {
       font-size: 1.25rem;
@@ -65,14 +65,14 @@
     .mat-tab-label-active {
       color: #4a85df;
     }
-  
+
     .mat-ink-bar {
       background-color: #4a85df !important;
     }
   }
 
   ng-scrollbar {
-    --scrollbar-thumb-color: rgba(0,0,0, 0.3);
+    --scrollbar-thumb-color: rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -84,7 +84,7 @@
     .mat-tab-label-active {
       color: #ddffcd;
     }
-  
+
     .mat-ink-bar {
       background-color: #ddffcd !important;
     }
@@ -92,6 +92,10 @@
 
   ng-scrollbar {
     --scrollbar-thumb-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .mat-menu-inner {
+    background-color: $dark-button;
   }
 }
 
@@ -141,7 +145,8 @@
   }
 }
 
-.grid, .grid-modal {
+.grid,
+.grid-modal {
   opacity: 0;
   transition: 0.1s linear;
   position: relative;
@@ -161,7 +166,6 @@
   padding-bottom: 1rem;
   z-index: $grid-item;
 }
-
 
 .grid-modal-item {
   position: absolute;
@@ -326,11 +330,15 @@
 }
 
 .checkbox-notification {
-  .mat-checkbox-checked.mat-accent .mat-ripple-element, .mat-checkbox:active.mat-accent .mat-ripple-element {
+  .mat-checkbox-checked.mat-accent .mat-ripple-element,
+  .mat-checkbox:active.mat-accent .mat-ripple-element {
     background-color: #4a85df;
   }
-  .mat-checkbox-checked .mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-background {
-    background-color: #4a85df; 
+  .mat-checkbox-checked
+    .mat-checkbox-layout
+    .mat-checkbox-inner-container
+    .mat-checkbox-background {
+    background-color: #4a85df;
   }
 }
 
@@ -340,7 +348,7 @@
 
 .snackbar-dark {
   background-color: $dark-color;
-  
+
   .mat-simple-snackbar-action {
     color: #5e99cc;
   }
@@ -349,7 +357,7 @@
 .snackbar-light {
   background-color: white;
   color: $text-color;
-  
+
   .mat-simple-snackbar-action {
     color: #5e99cc;
   }
@@ -396,7 +404,8 @@
     }
   }
 
-  .grid-item, .grid-modal-item  {
+  .grid-item,
+  .grid-modal-item {
     width: 100%;
   }
 
@@ -420,7 +429,8 @@
 }
 
 @media (max-width: 450px) {
-  .light, .dark {
+  .light,
+  .dark {
     .tabs {
       .mat-tab-label {
         font-size: 1rem;

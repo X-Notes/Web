@@ -1,7 +1,7 @@
 import { ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import {
-  AfterViewInit,
+  AfterContentInit,
   Component,
   ContentChildren,
   EventEmitter,
@@ -32,7 +32,7 @@ import { SelectOptionComponent } from '../select-option/select-option.component'
     SelectService,
   ],
 })
-export class SelectComponent implements AfterViewInit {
+export class SelectComponent implements AfterContentInit {
   @ContentChildren(SelectOptionComponent)
   public options: QueryList<SelectOptionComponent>;
 
@@ -42,7 +42,11 @@ export class SelectComponent implements AfterViewInit {
 
   @Input()
   @Optional()
-  selectValue: string;
+  selectValue: any;
+
+  @Input()
+  @Optional()
+  selectObjectProperty: string;
 
   @Output()
   selectValueChange = new EventEmitter<string>();
@@ -71,14 +75,26 @@ export class SelectComponent implements AfterViewInit {
     this.selectService.register(this);
   }
 
-  ngAfterViewInit(): void {
-    this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
-    console.log(this.options);
+  ngAfterContentInit(): void {
     setTimeout(() => {
-      this.selectedOption = this.options
-        .toArray()
-        .find((option) => option.value.toLowerCase() === this.selectValue);
-      this.selected = this.selectedOption ? this.selectedOption.value : '';
+      this.keyManager = new ActiveDescendantKeyManager(this.options).withWrap();
+      if (typeof this.selectValue === 'object') {
+        this.selectedOption = this.options
+          .toArray()
+          .find(
+            (option) =>
+              option.value[this.selectObjectProperty] ===
+              this.selectValue[this.selectObjectProperty],
+          );
+        this.selected = this.selectedOption
+          ? this.selectedOption.value[this.selectObjectProperty]
+          : '';
+      } else {
+        this.selectedOption = this.options
+          .toArray()
+          .find((option) => option.value === this.selectValue);
+        this.selected = this.selectedOption ? this.selectedOption.value : '';
+      }
       this.keyManager.setActiveItem(this.options.toArray().indexOf(this.selectedOption));
     });
   }
@@ -95,8 +111,14 @@ export class SelectComponent implements AfterViewInit {
   public selectOption(option: SelectOptionComponent) {
     this.keyManager.setActiveItem(option);
     this.selectedOption = option;
-    this.selected = this.selectedOption ? this.selectedOption.value : '';
-    this.selectValueChange.emit(this.selected);
+    if (typeof this.selectedOption.value === 'object') {
+      this.selected = this.selectedOption
+        ? this.selectedOption.value[this.selectObjectProperty]
+        : '';
+    } else {
+      this.selected = this.selectedOption ? this.selectedOption.value : '';
+    }
+    this.selectValueChange.emit(this.selectedOption.value);
     this.closeDropdown();
   }
 

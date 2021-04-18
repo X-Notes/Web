@@ -14,6 +14,9 @@
   >
     <div class="inner-content">
       <p>{{ 'header.selected' | translate }} {{countSelected}}</p>
+      <div class="icon" style="transform: rotate(45deg)">
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
       <i class="icon-plus" style="transform: rotate(45deg)"></i>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
@@ -28,7 +31,9 @@
   >
     <div class="inner-content">
       <p>{{ 'header.select' | translate }}</p>
-      <i class="icon-select"></i>
+      <div class="icon">
+        <mat-icon svgIcon="select" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
   </button>
@@ -42,7 +47,9 @@
     #filter
   >
     <div class="inner-content">
-      <i class="icon-filter"></i>
+      <div class="icon">
+        <mat-icon svgIcon="filter" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
   </button>

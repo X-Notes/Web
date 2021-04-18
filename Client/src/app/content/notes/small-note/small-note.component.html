@@ -14,19 +14,13 @@
   <div class="content" [ngClass]="turnUpNote? 'turn-up-note' : ''">
     <div class="note-color"></div>
     <div class="labels-section">
-      <div class="label">
-        <p>Hello Hello Hello Hello Hello</p>
-      </div>
-      <div class="label">
-        <p>Hello Hello</p>
-      </div>
-      <div class="label">
-        <p>Hello Hello Hello Hello Hello Hello Hello</p>
+      <div class="label" *ngFor="let item of note.labels">
+        <p>{{item.name}}</p>
       </div>
     </div>
     <div class="title-section">
       <div class="left-border"></div>
-      <p>GIVE TITLE man GIVE TITLE man</p>
+      <p>{{note.title}}</p>
     </div>
     <div class="description">
       <p>Hello Hello Hello Hello</p>

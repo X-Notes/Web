@@ -36,7 +36,11 @@
     [ngClass]="pService.stateSidebar ? 'visible' : ''"
   ></div>
 </div>
-<div appTheme class="content full-content">
+<div
+  appTheme
+  class="content full-content"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
   <div
     *ngIf="(canView$ | async) && loaded"
     class="wrapper-note"
@@ -152,8 +156,10 @@
       </div>
     </div>
     <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
-      <div class="open" #open (click)="buttonService.openSideModal()">
-        <i class="icon-plus"></i>
+      <div class="open" #open (click)="openSideModal(id)">
+        <div class="icon">
+          <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        </div>
         <p>open note or file</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
       </div>

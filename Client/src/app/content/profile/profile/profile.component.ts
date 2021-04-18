@@ -31,7 +31,6 @@ import {
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { CdkConnectedOverlay, ConnectionPositionPair } from '@angular/cdk/overlay';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { Theme } from 'src/app/shared/models/Theme';
@@ -66,8 +65,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
-  @ViewChild(CdkConnectedOverlay) cdkConnectedOverlay: CdkConnectedOverlay;
-
   fontSize = FontSizeENUM;
 
   userName;
@@ -75,20 +72,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public photoError = false;
 
   destroy = new Subject<void>();
-
-  isOpen = false;
-
-  public positions = [
-    new ConnectionPositionPair(
-      {
-        originX: 'end',
-        originY: 'bottom',
-      },
-      { overlayX: 'end', overlayY: 'top' },
-      0,
-      1,
-    ),
-  ];
 
   constructor(
     public pService: PersonalizationService,
@@ -115,16 +98,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   setLanguage(item: LanguageDTO): void {
-    console.log(item);
     this.store.dispatch(new ChangeLanguage(item));
-    this.isOpen = false;
-    setTimeout(() => {
-      this.cdkConnectedOverlay.overlayRef.updatePosition();
-    }, 100);
-  }
-
-  closeDropdown() {
-    this.isOpen = false;
   }
 
   setCurrent(id: string) {

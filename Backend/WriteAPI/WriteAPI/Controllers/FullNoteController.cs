@@ -28,7 +28,6 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("title")]
-        [ServiceFilter(typeof(ValidationFilter))]
         public async Task ChangeColor([FromBody]UpdateTitleNoteCommand command)
         {
             var email = this.GetUserEmail();

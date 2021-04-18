@@ -1,103 +1,84 @@
-<div class="container">
-  <div class="content-photos-wrapper">
+<div class="container" appTheme>
+  <div #album [style.width]="content.width" [style.height]="content.height" class="content-photos">
     <div
-      #album
-      [style.width]="content.width"
-      [style.height]="content.height"
-      class="content-photos"
+      *ngFor="let block of mainBlocks;let i = index"
+      class="blocks"
+      [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
     >
-      <div *ngFor="let block of mainBlocks;let i = index" class="blocks">
-        <div class="block" [ngClass]="getStyle(content.countInRow)">
-          <app-photo
-            *ngFor="let item of block"
-            [photo]="item"
-            (deleteEvent)="removePhotoHandler($event)"
-          ></app-photo>
-        </div>
-      </div>
-      <div class="blocks" *ngIf="lastBlock.length > 0">
-        <div class="block" [ngClass]="getStyle(countLastItems)">
-          <app-photo
-            *ngFor="let item of lastBlock"
-            [photo]="item"
-            (deleteEvent)="removePhotoHandler($event)"
-          >
-          </app-photo>
-        </div>
-      </div>
-      <div
-        appChangeSizeAlbumWidth
-        (mouseClick)="saveWidth()"
-        (changeWeight)="changeWidth($event)"
-        class="slider-right"
-      ></div>
-      <div
-        appChangeSizeAlbumHeight
-        (mouseClick)="saveHeight($event)"
-        (changeHeight)="changeHeight($event)"
-        class="slider-bottom"
-      ></div>
-    </div>
-  </div>
-  <div class="wrapper">
-    <div class="menu-wrapper" #check>
-      <div class="menu" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="openMenu($event)">
-        <i class="icon-setting"></i>
-        <div class="ripple-container" matRipple [matRippleTrigger]="check"></div>
+      <div class="block" [ngClass]="getStyle(content.countInRow)">
+        <app-photo
+          *ngFor="let item of block"
+          [photo]="item"
+          (deleteEvent)="removePhotoHandler($event)"
+        ></app-photo>
       </div>
     </div>
-  </div>
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isOpened"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-    (backdropClick)="closeMenu()"
-  >
-    <app-popup-full-note>
-      <div class="menu-items">
-        <div #itemDownload class="item">
-          <i class="icon-download"></i>
-          <p>Download</p>
-          <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
-        </div>
-        <div #itemDelete class="item" (click)="removeHandler()">
-          <i class="icon-delete"></i>
-          <p>Delete</p>
-          <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
-        </div>
-        <div #itemUpload class="item" (click)="uploadHandler()">
-          <i class="icon-delete"></i>
-          <p>Upload new</p>
-          <div class="ripple-container" matRipple [matRippleTrigger]="itemUpload"></div>
-        </div>
-        <mat-expansion-panel
-          hideToggle
-          class="expansion"
-          [expanded]="panelOpenState"
-          (opened)="panelOpenState = true"
-          (closed)="panelOpenState = false"
+    <div
+      class="blocks"
+      *ngIf="lastBlock.length > 0"
+      [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+    >
+      <div class="block" [ngClass]="getStyle(countLastItems)">
+        <app-photo
+          *ngFor="let item of lastBlock"
+          [photo]="item"
+          (deleteEvent)="removePhotoHandler($event)"
         >
-          <mat-expansion-panel-header class="expansion-header">
-            <mat-panel-title class="expansion-title"> Photos in row </mat-panel-title>
-            <mat-panel-description class="expansion-description">
-              {{content.countInRow}}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <div
-            *ngFor="let item of [1,2,3,4]"
-            #firstItem
-            class="item"
-            (click)="setPhotosInRow(item)"
-          >
-            <p>{{item}}</p>
-            <div class="ripple-container" matRipple [matRippleTrigger]="firstItem"></div>
-          </div>
-        </mat-expansion-panel>
+        </app-photo>
       </div>
-    </app-popup-full-note>
-  </ng-template>
+    </div>
+    <div
+      appChangeSizeAlbumWidth
+      (mouseClick)="saveWidth()"
+      (changeWeight)="changeWidth($event)"
+      class="slider-right slider"
+    ></div>
+    <div
+      appChangeSizeAlbumHeight
+      (mouseClick)="saveHeight($event)"
+      (changeHeight)="changeHeight($event)"
+      class="slider-bottom slider"
+    ></div>
+  </div>
+  <div class="action">
+    <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+      <mat-icon [inline]="true">more_vert</mat-icon>
+      <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+    </button>
+  </div>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item type="button" name="Download">
+      <mat-icon>download</mat-icon>
+      <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    </button>
+    <button mat-menu-item type="button" name="Delete" (click)="removeHandler()">
+      <mat-icon>delete</mat-icon>
+      <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+    </button>
+    <button mat-menu-item type="button" name="Upload photo" (click)="uploadHandler()">
+      <mat-icon>add_photo_alternate</mat-icon>
+      <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
+    </button>
+    <button mat-menu-item type="button" name="Photo in row" [matMenuTriggerFor]="secondMenu">
+      <mat-icon>art_track</mat-icon>
+      <span> {{ 'innerNote.photoMenu.countRow' | translate }} </span>
+    </button>
+  </mat-menu>
+
+  <mat-menu #secondMenu="matMenu">
+    <button mat-menu-item type="button" name="One row" (click)="setPhotosInRow(1)">
+      {{ 'innerNote.photoMenu.oneRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Two row" (click)="setPhotosInRow(2)">
+      {{ 'innerNote.photoMenu.twoRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Three row" (click)="setPhotosInRow(3)">
+      {{ 'innerNote.photoMenu.threeRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Four row" (click)="setPhotosInRow(4)">
+      {{ 'innerNote.photoMenu.fourRow' | translate }}
+    </button>
+  </mat-menu>
 </div>
 <input
   #uploadPhotos

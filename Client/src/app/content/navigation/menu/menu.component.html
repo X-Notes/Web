@@ -1,6 +1,6 @@
 <div appTheme class="wrap" [ngClass]="[(isNoteInner$ | async) ? 'mobile-menu' : '']">
   <div
-    class="icon"
+    class="button-icon"
     *ngFor="let item of buttonService.items"
     #trigger
     (click)="item.operation()"
@@ -9,7 +9,9 @@
     flagDisable="{{ disableTooltpUser() }}"
   >
     <div class="inner">
-      <i class="icon-{{item.icon}}"></i>
+      <div class="icon" *ngIf="item.icon !== 'history'">
+        <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
+      </div>
       <p>{{ 'menu.' + item.icon | translate }}</p>
       <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
     </div>

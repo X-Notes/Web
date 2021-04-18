@@ -1,4 +1,4 @@
-@import "header-components";
+@import 'header-components';
 
 .interactions {
   justify-content: flex-start;
@@ -45,37 +45,18 @@
     align-items: center;
     height: 30px;
     border: 0.8px solid;
-    padding: 0 0.5rem;
+    padding: 0;
     user-select: none;
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
 
-    span {
+    .icon {
       position: relative;
       z-index: 5;
-      display: block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-
-      &::after,
-      &::before {
-        content: "";
-        display: block;
-        position: relative;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-      }
-
-      &::after {
-        bottom: -3px;
-      }
-
-      &::before {
-        bottom: 8px;
-      }
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
     }
   }
 
@@ -89,7 +70,7 @@
 
     &::after,
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       z-index: 5;
@@ -181,13 +162,8 @@
     background-color: white;
     border-color: $light-button;
 
-    span {
-      background-color: $text-color;
-
-      &::before,
-      &::after {
-        background-color: $text-color;
-      }
+    .icon {
+      color: $light-text-color;
     }
   }
 
@@ -227,13 +203,8 @@
     border-color: transparent;
     background-color: $dark-button;
 
-    span {
-      background-color: white;
-
-      &::after,
-      &::before {
-        background-color: white;
-      }
+    .icon {
+      color: white;
     }
   }
 }
@@ -408,7 +379,7 @@
 
       &::after,
       &::before {
-        content: "";
+        content: '';
       }
 
       .people-editing {
@@ -468,21 +439,6 @@
 
     .three-dots {
       height: 26px;
-
-      span {
-        height: 4px;
-        width: 4px;
-
-        &::after,
-        &::before {
-          height: 4px;
-          width: 4px;
-        }
-
-        &::before {
-          bottom: 7px;
-        }
-      }
     }
 
     .wrapper-people {

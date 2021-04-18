@@ -1,15 +1,17 @@
 <div
+  appTheme
   class="main-container"
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
   (mouseout)="mouseOut($event)"
 >
   <div class="check-list">
-    <div class="checkbox-container" (click)="changeCheckBox()">
-      <input [(ngModel)]="content.checked" type="checkbox" checked />
+    <div class="checkbox-container inner-box-list" (click)="changeCheckBox()">
+      <mat-checkbox [(ngModel)]="content.checked"></mat-checkbox>
     </div>
     <div class="text-container">
       <p
+        [ngClass]="{ 'checked-item': content.checked }"
         class="block-generic default-text-size"
         #contentHtml
         contenteditable="true"

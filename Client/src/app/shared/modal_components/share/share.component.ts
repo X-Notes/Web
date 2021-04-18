@@ -308,6 +308,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   async changeNoteType() {
     if (this.currentNote.noteType.name !== NoteTypeENUM.Shared) {
+      console.log('private');
       const shareType = this.store
         .selectSnapshot(AppStore.getNoteTypes)
         .find((x) => x.name === NoteTypeENUM.Shared);
@@ -321,6 +322,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       this.commandsForChange.set(this.currentNote.id, commands);
       this.store.dispatch(new ChangeTypeFullNote(shareType));
     } else {
+      console.log('share');
       const privateType = this.store
         .selectSnapshot(AppStore.getNoteTypes)
         .find((x) => x.name === NoteTypeENUM.Private);

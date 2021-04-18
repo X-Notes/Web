@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { SmallNote } from '../models/smallNote';
 
 @Component({
   selector: 'app-small-note',
@@ -7,9 +8,9 @@ import { MurriService } from 'src/app/shared/services/murri.service';
   styleUrls: ['./small-note.component.scss'],
 })
 export class SmallNoteComponent {
-  @Input() note;
+  @Input() note: SmallNote;
 
-  @Output() deleteNote = new EventEmitter<number>();
+  @Output() deleteNote = new EventEmitter<string>();
 
   turnUpNote = false;
 
@@ -21,6 +22,6 @@ export class SmallNoteComponent {
   }
 
   deleteSmallNote() {
-    this.deleteNote.emit(this.note);
+    this.deleteNote.emit(this.note.id);
   }
 }

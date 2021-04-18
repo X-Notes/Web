@@ -13,7 +13,9 @@
       >
         <img alt="background" [src]="item.path | getImage" (click)="setCurrent(item.id)" />
         <div class="thumbnail" (click)="removeBackground(item.id)">
-          <i class="icon-plus"></i>
+          <div class="icon">
+            <mat-icon svgIcon="cancelThin" [inline]="true"></mat-icon>
+          </div>
         </div>
       </div>
     </ng-scrollbar>
@@ -59,7 +61,9 @@
                 alt="User photo"
                 (error)="changeSource()"
               />
-              <i *ngIf="photoError" class="icon-people"></i>
+              <div *ngIf="photoError" class="photo-error">
+                <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+              </div>
               <input
                 type="file"
                 accept="image/jpeg,image/png"
@@ -69,7 +73,7 @@
               />
               <label for="upl" class="change-photo" #profilePhoto>
                 <div class="icon">
-                  <i class="icon-newphoto"></i>
+                  <mat-icon svgIcon="newphoto" [inline]="true"></mat-icon>
                 </div>
                 <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
               </label>
@@ -147,12 +151,14 @@
                 <p>{{ 'profile.language' | translate }}</p>
               </div>
               <app-select
+                *ngIf="(languages$ | async)"
                 class="dropdown-button"
                 [translate]="'languages'"
-                [selectValue]="(language$ | async).name"
+                [selectValue]="(language$ | async)"
+                [selectObjectProperty]="'name'"
                 (selectValueChange)="setLanguage($event)"
               >
-                <app-select-option *ngFor="let item of languages$ | async" [value]="item.name">
+                <app-select-option *ngFor="let item of languages$ | async" [value]="item">
                   {{ 'languages.' + item.name | translate }}
                 </app-select-option>
               </app-select>

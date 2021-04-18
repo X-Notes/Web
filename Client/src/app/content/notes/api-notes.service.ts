@@ -280,4 +280,11 @@ export class ApiServiceNotes {
       obj,
     );
   }
+
+  getMetaLink(url: string) {
+    const obj = {
+      url,
+    };
+    return this.httpClient.post<any>(`${environment.writeAPI}/api/AvoidProxy`, obj);
+  }
 }
