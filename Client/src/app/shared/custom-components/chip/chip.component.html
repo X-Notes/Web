@@ -6,7 +6,9 @@
 >
   <span> {{ text }}</span>
   <div class="remove" *ngIf="isRemovable" (click)="remove.emit()">
-    <i class="icon-cancel"></i>
+    <div class="icon">
+      <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
+    </div>
   </div>
   <div class="ripple-container" matRipple [matRippleTrigger]="chip"></div>
 </div>

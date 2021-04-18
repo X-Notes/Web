@@ -17,25 +17,27 @@ export class DialogsManageService {
   constructor(private dialogService: DialogService, private store: Store) {}
 
   openRelatedNotesModal() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass:
-        theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
+        this.getTheme() === ThemeENUM.Light
+          ? 'custom-dialog-class-light'
+          : 'custom-dialog-class-dark',
     };
     return this.dialogService.openDialog(OpenInnerSideComponent, config);
   }
 
   openManageNotesInFolder() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const config: MatDialogConfig = {
       maxHeight: '90vh',
       maxWidth: '90vw',
       autoFocus: false,
       panelClass:
-        theme.name === ThemeENUM.Light ? 'custom-dialog-class-light' : 'custom-dialog-class-dark',
+        this.getTheme() === ThemeENUM.Light
+          ? 'custom-dialog-class-light'
+          : 'custom-dialog-class-dark',
     };
     return this.dialogService.openDialog(ManageNotesInFolderComponent, config);
   }

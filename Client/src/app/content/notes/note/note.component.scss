@@ -98,34 +98,15 @@
       font-size: 1.125rem;
 
       .icon {
+        height: 18px;
+        width: 18px;
         display: flex;
         margin-left: 1.25rem;
-
-        .icon-folders {
-          .path1::before,
-          .path2::before {
-            transition: 0.3s ease;
-          }
-
-          .path1::before {
-            color: #dedede;
-          }
-          .path2::before {
-            color: #969696;
-          }
-        }
-
+        color: #969696;
+        transform: 0.2s ease;
         &:hover {
-          .icon-folders {
-            .path1::before {
-              color: darken(#dedede, 20%);
-            }
-            .path2::before {
-              color: darken(#969696, 20%);
-            }
-          }
+          color: darken(#969696, 20%);
         }
-
         &:first-child {
           margin-left: 0;
         }

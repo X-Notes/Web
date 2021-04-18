@@ -95,10 +95,7 @@
         .icon {
           height: 15px;
           width: 15px;
-
-          &::before {
-            color: $light-text-color;
-          }
+          color: $light-text-color;
         }
 
         p {

@@ -110,12 +110,11 @@
           margin-top: 0.5rem;
           color: $light-text-color;
 
-          .icon-notes {
-            font-size: 0.9375rem;
-
-            &::before {
-              color: $light-text-color;
-            }
+          .icon {
+            display: flex;
+            height: 0.9375rem;
+            width: 0.9375rem;
+            color: $light-text-color;
           }
 
           p {

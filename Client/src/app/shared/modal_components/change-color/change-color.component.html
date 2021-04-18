@@ -20,16 +20,10 @@
     <div class="inner" [ngStyle]="{'backgroundColor': current}">
       <p>Preview</p>
       <div class="notes-folder">
-        <div class="note-folder">
-          <i class="icon-notes"></i>
-          <p>Hello Hello Hello Hello</p>
-        </div>
-        <div class="note-folder">
-          <i class="icon-notes"></i>
-          <p>Hello Hello Hello Hello</p>
-        </div>
-        <div class="note-folder">
-          <i class="icon-notes"></i>
+        <div *ngFor="let item of [1,2,3]" class="note-folder">
+          <div class="icon">
+            <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+          </div>
           <p>Hello Hello Hello Hello</p>
         </div>
       </div>

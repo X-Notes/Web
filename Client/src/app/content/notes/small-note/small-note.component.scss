@@ -36,10 +36,9 @@
 
       .icon {
         display: flex;
-
-        i::before {
-          color: $header-small-note-icon;
-        }
+        color: $header-small-note-icon;
+        height: 12px;
+        width: 12px;
       }
     }
   }
@@ -127,9 +126,7 @@
 
       button {
         .icon {
-          i::before {
-            color: $header-small-note-icon-light;
-          }
+          color: $header-small-note-icon-light;
         }
       }
     }

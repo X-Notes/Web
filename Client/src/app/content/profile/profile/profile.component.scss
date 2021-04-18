@@ -217,6 +217,8 @@
 
             .icon {
               display: flex;
+              height: 16px;
+              width: 16px;
               margin-right: 0.75rem;
             }
           }
@@ -350,7 +352,7 @@
             color: $text-color;
           }
 
-          .icon-logout::before {
+          .icon {
             color: #414141;
           }
         }

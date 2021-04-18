@@ -46,23 +46,8 @@
       <p>02.09.1945</p>
     </div>
     <div class="help-icons">
-      <div class="icon">
-        <i class="icon-folders">
-          <span class="path1"></span>
-          <span class="path2"></span>
-        </i>
-      </div>
-      <div class="icon">
-        <i class="icon-folders">
-          <span class="path1"></span>
-          <span class="path2"></span>
-        </i>
-      </div>
-      <div class="icon">
-        <i class="icon-folders">
-          <span class="path1"></span>
-          <span class="path2"></span>
-        </i>
+      <div *ngFor="let item of [1,2,3]" class="icon">
+        <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
       </div>
     </div>
   </div>

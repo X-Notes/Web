@@ -2,12 +2,12 @@
   <div class="header">
     <button type="button" (click)="turnUpSmallNote()">
       <div class="icon" [ngStyle]="{'transform': note.isOpened == true ? '' : 'rotate(180deg)' }">
-        <i class="icon-select-label"></i>
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
       </div>
     </button>
     <button type="button" (click)="deleteSmallNote()">
       <div class="icon">
-        <i class="icon-cancel"></i>
+        <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
       </div>
     </button>
   </div>
