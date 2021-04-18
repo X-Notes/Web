@@ -113,7 +113,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newBackground());
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.newBackground());
   }
 
   setLanguage(item: string): void {

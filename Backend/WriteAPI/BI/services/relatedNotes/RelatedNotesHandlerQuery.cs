@@ -1,4 +1,5 @@
-﻿using BI.Mapping;
+﻿using BI.helpers;
+using BI.Mapping;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes;
 using Domain.Queries.permissions;
@@ -16,7 +17,7 @@ namespace BI.services.relatedNotes
 {
     public class RelatedNotesHandlerQuery
         : IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>,
-          IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewRelatedNote>>
+          IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
         private readonly NoteCustomMapper noteCustomMapper;
@@ -24,13 +25,16 @@ namespace BI.services.relatedNotes
         private readonly UserRepository userRepository;
         private readonly NoteCustomMapper noteMapper;
         private readonly IMediator _mediator;
+        private readonly SearchHelper searchHelper;
+
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
             NoteCustomMapper noteCustomMapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
             NoteCustomMapper noteMapper,
-            IMediator _mediator)
+            IMediator _mediator,
+            SearchHelper searchHelper)
         {
             this.relatedRepository = relatedRepository;
             this.noteCustomMapper = noteCustomMapper;
@@ -38,6 +42,7 @@ namespace BI.services.relatedNotes
             this.userRepository = userRepository;
             this.noteMapper = noteMapper;
             this._mediator = _mediator;
+            this.searchHelper = searchHelper;
         }
 
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
@@ -46,7 +51,7 @@ namespace BI.services.relatedNotes
             return noteCustomMapper.MapNotesToRelatedNotes(notes);
         }
 
-        public async Task<List<PreviewRelatedNote>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
+        public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -55,30 +60,19 @@ namespace BI.services.relatedNotes
             {
                 var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId, request.Search);
+                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId);
                 if(string.IsNullOrEmpty(request.Search))
                 {
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
                 }
                 else
                 {
-                    allNotes = allNotes.Where(x => IsMatch(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => IsMatch(x.Content, request.Search))).ToList();
+                    allNotes = allNotes.Where(x => searchHelper.IsMatchContent(x.Title, request.Search)
+                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.Search))).ToList();
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);
                 }
             }
-            return null;
+            return new List<PreviewNoteForSelection>();
         }
-
-        public bool IsMatch(string Content, string search)
-        { 
-            if(!string.IsNullOrEmpty(Content) && Content.Contains(search))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
     }
 }

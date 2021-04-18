@@ -1,13 +1,6 @@
 @import 'submenu';
 
-.full-content {
-  display: flex;
-  flex-direction: column;
-  .folder-sub-header {
-    height: 45px;
-    background-color: #202125;
-  }
-  .notes-in-folder-container {
-    height: calc(100% - 45px);
-  }
+.folder-sub-header {
+  height: 45px;
+  background-color: #202125;
 }

@@ -92,7 +92,9 @@ export class PersonalizationService {
 
   timeForSpinnerLoading = 150;
 
-  subject = new Subject();
+  newButtonSubject = new Subject();
+
+  manageNotesInFolderSubject = new Subject();
 
   stateSidebar = true;
 

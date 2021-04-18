@@ -62,7 +62,7 @@ namespace BI.services.folders
                 newFoldersNotes.Zip(orders, (folderNotes, order) => folderNotes.Order = order);
 
                 await foldersNotesRepository.RemoveRange(foldersNotes);
-                await foldersNotesRepository.AddRange(foldersNotes);
+                await foldersNotesRepository.AddRange(newFoldersNotes);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

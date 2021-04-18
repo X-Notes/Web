@@ -64,15 +64,15 @@ export class InteractionInnerNoteComponent implements AfterViewInit {
   }
 
   setHeightScrollbar(): void {
-    if (this.pService.users) {
+    if (this.pService.users && this.scrollbar) {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.pService.checkWidth()
         ? this.renderer.setStyle(
-            this.scrollbar.nativeElement,
+            this.scrollbar?.nativeElement,
             'height',
-            `${this.heightPeople.nativeElement.clientHeight}px`,
+            `${this.heightPeople?.nativeElement?.clientHeight}px`,
           )
-        : this.renderer.setStyle(this.scrollbar.nativeElement, 'height', '100%');
+        : this.renderer.setStyle(this.scrollbar?.nativeElement, 'height', '100%');
     }
   }
 

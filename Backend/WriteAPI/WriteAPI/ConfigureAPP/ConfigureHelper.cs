@@ -120,7 +120,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
-            services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewRelatedNote>>, RelatedNotesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE
@@ -160,6 +160,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetFolderNotesByFolderId, List<SmallNote>>, FullFolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
@@ -249,6 +250,7 @@ namespace WriteAPI.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<PhotoHelpers>();
+            services.AddScoped<SearchHelper>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }

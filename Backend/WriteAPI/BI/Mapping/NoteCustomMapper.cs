@@ -122,9 +122,9 @@ namespace BI.Mapping
             };
         }
 
-        public PreviewRelatedNote MapNoteToPreviewNoteDTO(Note note, List<Guid> ids , int? takeContentLength = null)
+        public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids , int? takeContentLength = null)
         {
-            return new PreviewRelatedNote()
+            return new PreviewNoteForSelection()
             {
                 Id = note.Id,
                 Color = note.Color,
@@ -139,7 +139,7 @@ namespace BI.Mapping
             };
         }
 
-        public List<PreviewRelatedNote> MapNotesToPreviewNotesDTO(List<Note> notes, List<Guid> ids, int? takeContentLength = null)
+        public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids, int? takeContentLength = null)
         {
             return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids, takeContentLength)).ToList();
         }

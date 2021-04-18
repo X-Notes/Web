@@ -6,7 +6,6 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
-  Renderer2,
   ViewChildren,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -56,7 +55,6 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
     public murriService: MurriService,
     public pService: PersonalizationService,
     public dialogRef: MatDialogRef<OpenInnerSideComponent>,
-    public renderer: Renderer2,
     private apiRelatedNotes: ApiRelatedNotesService,
   ) {}
 

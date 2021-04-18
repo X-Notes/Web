@@ -2,7 +2,7 @@
 
 namespace Common.DTO.notes
 {
-    public class PreviewRelatedNote : SmallNote
+    public class PreviewNoteForSelection : SmallNote
     {
         public bool IsSelected { set; get; }
     }

@@ -28,6 +28,8 @@ import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/FullFolder';
 import { SmallFolder } from '../models/folder';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
+import { DialogsManageService } from '../../navigation/dialogs-manage.service';
+import { ApiFullFolderService } from './services/api-full-folder.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -38,6 +40,9 @@ import { FullFolderNotesService } from './services/full-folder-notes.service';
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -64,6 +69,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     public pService: PersonalizationService,
     public ffnService: FullFolderNotesService,
+    private dialogsService: DialogsManageService,
+    private apiFullFolder: ApiFullFolderService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -95,10 +102,19 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             await this.pService.waitPreloading();
             this.pService.setSpinnerState(false);
             this.loaded = true;
-
             this.loadSideBar();
+            this.initManageButtonSubscribe();
           }
         });
+    });
+  }
+
+  async initManageButtonSubscribe() {
+    this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(async () => {
+      const instanse = this.dialogsService.openManageNotesInFolder();
+      const resp = await instanse.afterClosed().toPromise();
+      const ids = resp.map((x) => x.id);
+      await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
     });
   }
 

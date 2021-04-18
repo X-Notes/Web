@@ -44,22 +44,30 @@
     [ngClass]="pService.stateSidebar ? 'visible' : ''"
   ></div>
 </div>
-<div appTheme class="content-generic-project full-content">
+<div
+  class="content-generic-project"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
   <div class="folder-sub-header"></div>
-  <div
-    class="notes-in-folder-container grid"
-    [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}"
-  >
-    <div
-      #item
-      class="grid-item"
-      id="{{item.id}}"
-      *ngFor="let item of ffnService.notes"
-      [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
-    >
-      <app-note [note]="item" [ngStyle]="{'backgroundColor': item.color }" class="note"></app-note>
+  <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
+    <div class="content-inner">
+      <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+        <div
+          #item
+          class="grid-item"
+          id="{{item.id}}"
+          *ngFor="let item of ffnService.notes"
+          [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
+        >
+          <app-note
+            [note]="item"
+            [ngStyle]="{'backgroundColor': item.color }"
+            class="note"
+          ></app-note>
+        </div>
+      </div>
     </div>
-  </div>
-  <app-spinner *ngIf="!loaded"></app-spinner>
+  </ng-scrollbar>
+  <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
 </div>
 <div class="drag-helper main-helper"></div>

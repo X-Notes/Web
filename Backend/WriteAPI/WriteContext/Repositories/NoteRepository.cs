@@ -87,7 +87,7 @@ namespace WriteContext.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, string search)
+        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId)
         {
             return await context.Notes
                 .Include(x => x.RefType)

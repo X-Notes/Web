@@ -34,6 +34,13 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+        [HttpPost("preview")]
+        public async Task<List<PreviewNoteForSelection>> GetNotesPreviewByFolderId(GetPreviewSelectedNotesForFolderQuery command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
         [HttpPatch("title")]
         public async Task<OperationResult<Unit>> ChangeColor([FromBody]UpdateTitleFolderCommand command)
         {

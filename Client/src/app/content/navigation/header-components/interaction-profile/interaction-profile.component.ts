@@ -24,6 +24,6 @@ export class InteractionProfileComponent {
   }
 
   newButton() {
-    this.pService.subject.next(true);
+    this.pService.newButtonSubject.next(true);
   }
 }

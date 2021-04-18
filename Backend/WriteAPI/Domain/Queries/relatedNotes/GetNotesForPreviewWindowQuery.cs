@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Queries.relatedNotes
 {
-    public class GetNotesForPreviewWindowQuery : BaseQueryEntity, IRequest<List<PreviewRelatedNote>>
+    public class GetNotesForPreviewWindowQuery : BaseQueryEntity, IRequest<List<PreviewNoteForSelection>>
     {
         public Guid NoteId { set; get; }
         public string Search { set; get; }

@@ -142,7 +142,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   newButton() {
-    this.pService.subject.next(true);
+    this.pService.newButtonSubject.next(true);
   }
 
   routeChange(type: EntityType) {

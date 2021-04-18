@@ -13,7 +13,7 @@ export class FullFolderNotesService implements OnDestroy {
 
   destroy = new Subject<void>();
 
-  constructor(public murriService: MurriService, private apiFullNote: ApiFullFolderService) {}
+  constructor(public murriService: MurriService, private apiFullFolder: ApiFullFolderService) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -21,7 +21,7 @@ export class FullFolderNotesService implements OnDestroy {
   }
 
   async loadNotes(folderId: string) {
-    this.notes = await this.apiFullNote.getFolderNotes(folderId).toPromise();
+    this.notes = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {

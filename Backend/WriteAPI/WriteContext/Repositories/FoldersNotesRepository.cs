@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.NoteContent;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,13 @@ namespace WriteContext.Repositories
         {
             return await entities.Where(x => x.FolderId == folderId)
                 .Include(x => x.Note)
+                .ThenInclude(x => x.RefType)
+                .Include(x => x.Note)
+                .ThenInclude(x => x.NoteType)
+                .Include(x => x.Note)
+                .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Note)
+                .ThenInclude(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
                 .OrderBy(x => x.Order).ToListAsync();
         }
 

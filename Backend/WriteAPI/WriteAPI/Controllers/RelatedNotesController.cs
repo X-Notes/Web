@@ -24,7 +24,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("preview")]
-        public async Task<List<PreviewRelatedNote>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
+        public async Task<List<PreviewNoteForSelection>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
         {
             command.Email =  this.GetUserEmail();
             return await this._mediator.Send(command);

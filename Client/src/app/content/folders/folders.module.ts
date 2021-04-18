@@ -10,7 +10,6 @@ import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
-import { ApiFullFolderService } from './full-folder/services/api-full-folder.service';
 
 @NgModule({
   declarations: [
@@ -23,6 +22,6 @@ import { ApiFullFolderService } from './full-folder/services/api-full-folder.ser
     FullFolderComponent,
   ],
   imports: [CommonModule, FoldersRouting, SharedModule],
-  providers: [MurriService, ApiFullFolderService],
+  providers: [MurriService],
 })
 export class FoldersModule {}
