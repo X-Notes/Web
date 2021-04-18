@@ -12,7 +12,9 @@
         #close
       >
         <div class="inner-content">
-          <i style="transform: rotate(45deg)" class="icon-plus"></i>
+          <div class="icon">
+            <mat-icon fontSet="material-icons-round" [inline]="true">close</mat-icon>
+          </div>
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="close"></div>
       </button>
