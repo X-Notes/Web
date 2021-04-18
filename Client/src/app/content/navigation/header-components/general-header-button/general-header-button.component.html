@@ -10,7 +10,9 @@
   >
     <div class="inner-content">
       <p *ngIf="message?.length > 0">{{message}}</p>
-      <i *ngIf="iconClass" class="{{iconClass}}"></i>
+      <div *ngIf="iconClass" class="icon">
+        <mat-icon [svgIcon]="iconClass" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="buttonRipple"></div>
   </button>

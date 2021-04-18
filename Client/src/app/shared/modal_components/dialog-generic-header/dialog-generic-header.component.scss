@@ -6,9 +6,11 @@
   font-size: 0.875rem;
   padding: 0 1rem;
 
-  i {
+  .icon {
+    display: flex;
+    height: 16px;
+    width: 16px;
     cursor: pointer;
-    transform: rotate(45deg);
   }
 }
 

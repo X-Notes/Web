@@ -70,7 +70,7 @@
       *ngSwitchCase="'label'"
       (clickEvent)="newButton()"
       [message]="'new.' + (route$ | async ) | translate"
-      [iconClass]="'icon-plus'"
+      [iconClass]="'plus'"
       [styleClasses]="'generic-unfixed generic-create'"
     ></app-general-header-button>
     <!-- LABEL DEFAULT END -->
@@ -79,7 +79,7 @@
     <app-general-header-button
       *ngSwitchCase="'label-delete'"
       [message]="('header.emptyTrash' | translate)"
-      [iconClass]="'icon-delete'"
+      [iconClass]="'delete'"
       [styleClasses]="'generic-2 generic-unfixed'"
     ></app-general-header-button>
     <!-- LABEL DELETE END -->
