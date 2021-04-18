@@ -1,6 +1,8 @@
 <div class="header">
   <span>{{ 'modal.ColorModal.Colors' | translate }}</span>
-  <i class="icon-plus" mat-dialog-close></i>
+  <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
+    <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+  </div>
 </div>
 <div class="preview-container">
   <div *ngIf="(isNote$ | async)" class="note" [ngStyle]="{'backgroundColor': current}">

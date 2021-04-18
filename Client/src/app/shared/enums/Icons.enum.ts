@@ -39,6 +39,7 @@ export enum Icons {
   shared = 'shared',
   themeLight = 'themeLight',
   videoInner = 'videoInner',
+  video = 'video',
   viewChange = 'viewChange',
   viewOnly = 'viewOnly',
   stickyNote = 'stickyNote',

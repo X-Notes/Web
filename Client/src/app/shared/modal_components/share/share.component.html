@@ -55,7 +55,9 @@
   <div class="sharing">
     <div class="header">
       <span>{{ 'modal.ShareModal.Share' | translate }}</span>
-      <i class="icon-plus" mat-dialog-close></i>
+      <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
     </div>
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
       <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
@@ -108,7 +110,9 @@
               </div>
               <div class="copy" #copy (click)="copyInputLink()">
                 <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
-                <i class="icon-copy"></i>
+                <div class="icon">
+                  <mat-icon svgIcon="copy"></mat-icon>
+                </div>
               </div>
             </div>
             <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
@@ -199,7 +203,7 @@
                       class="icon"
                       [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''"
                     >
-                      <i class="icon-cancel"></i>
+                      <mat-icon [inline]="true">visibility</mat-icon>
                     </div>
                   </button>
                   <div class="separator-buttons"></div>
@@ -212,13 +216,13 @@
                       class="icon"
                       [ngClass]="(user.accessType === refType.editor) ? 'black' : ''"
                     >
-                      <i class="icon-cancel"></i>
+                      <mat-icon [inline]="true">edit</mat-icon>
                     </div>
                   </button>
                   <div class="separator-buttons"></div>
                   <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
                     <div class="icon black">
-                      <i class="icon-cancel"></i>
+                      <mat-icon [inline]="true">close</mat-icon>
                     </div>
                   </button>
                 </div>
@@ -251,7 +255,7 @@
                   (click)="changeUserPermission(refType.viewer, user.id)"
                 >
                   <div class="icon" [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''">
-                    <i class="icon-cancel"></i>
+                    <mat-icon [inline]="true">visibility</mat-icon>
                   </div>
                 </button>
                 <div class="separator-buttons"></div>
@@ -261,13 +265,13 @@
                   (click)="changeUserPermission(refType.editor, user.id)"
                 >
                   <div class="icon" [ngClass]="(user.accessType === refType.editor) ? 'black' : ''">
-                    <i class="icon-cancel"></i>
+                    <mat-icon [inline]="true">edit</mat-icon>
                   </div>
                 </button>
                 <div class="separator-buttons"></div>
                 <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
                   <div class="icon black">
-                    <i class="icon-cancel"></i>
+                    <mat-icon [inline]="true">close</mat-icon>
                   </div>
                 </button>
               </div>
@@ -288,7 +292,7 @@
                 <div *ngFor="let user of selectedUsers" class="user-mail">
                   <p>{{user.email}}</p>
                   <div class="icon" (click)="removeUserFromInvites(user)">
-                    <i class="icon-plus"></i>
+                    <mat-icon [inline]="true">close</mat-icon>
                   </div>
                 </div>
               </div>
@@ -342,7 +346,7 @@
                 <div class="user-access-func">
                   <button type="button" name="Share user note" (click)="addUserToInvite(user)">
                     <div class="icon">
-                      <i class="icon-plus"></i>
+                      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
                     </div>
                   </button>
                 </div>

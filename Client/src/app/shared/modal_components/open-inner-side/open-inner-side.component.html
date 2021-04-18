@@ -1,7 +1,9 @@
 <div class="wrapper" appTheme>
   <div class="header">
     <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <i class="icon-plus" mat-dialog-close></i>
+    <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
+      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+    </div>
   </div>
   <div class="dialog-content" mat-dialog-content>
     <mat-tab-group class="tabs" mat-stretch-tabs>

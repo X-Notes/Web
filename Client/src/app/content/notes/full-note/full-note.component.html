@@ -157,7 +157,9 @@
     </div>
     <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
       <div class="open" #open (click)="openSideModal(id)">
-        <i class="icon-plus"></i>
+        <div class="icon">
+          <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        </div>
         <p>open note or file</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
       </div>

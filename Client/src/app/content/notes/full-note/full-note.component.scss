@@ -108,7 +108,7 @@
         transition: 0.2s ease;
 
         p,
-        i {
+        .icon {
           position: relative;
           z-index: 5;
           user-select: none;
@@ -118,6 +118,12 @@
           font-weight: 200;
           letter-spacing: 0.18em;
           margin-left: 1rem;
+        }
+
+        .icon {
+          display: flex;
+          width: 20px;
+          height: 20px;
         }
       }
 

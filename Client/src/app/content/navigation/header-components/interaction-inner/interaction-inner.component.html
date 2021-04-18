@@ -52,7 +52,9 @@
     #video
   >
     <div class="inner-content">
-      <i class="icon-video"></i>
+      <div class="icon">
+        <mat-icon svgIcon="video" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="video"></div>
   </button>
@@ -86,7 +88,9 @@
     #label
   >
     <div class="inner-content">
-      <i class="icon-label"></i>
+      <div class="icon">
+        <mat-icon svgIcon="label" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="label"></div>
   </button>
@@ -100,7 +104,9 @@
     #shared
   >
     <div class="inner-content">
-      <i class="icon-shared"></i>
+      <div class="icon">
+        <mat-icon svgIcon="shared" [inline]="true"></mat-icon>
+      </div>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="shared"></div>
   </button>
@@ -111,7 +117,9 @@
     (click)="hideMenu()"
     #dots
   >
-    <span></span>
+    <div class="icon">
+      <mat-icon [inline]="true">more_vert</mat-icon>
+    </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="dots"></div>
   </div>
   <div class="overlay" (click)="closeMenu()"></div>

@@ -46,8 +46,11 @@
     [ngSwitch]="router"
   >
     <div class="interactions">
-      <div class="generic hamburger" (click)="toggleSidebar()">
-        <span></span>
+      <div class="generic hamburger" (click)="toggleSidebar()" #hamburger>
+        <div class="icon">
+          <mat-icon [inline]="true">menu</mat-icon>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="hamburger"></div>
       </div>
     </div>
 

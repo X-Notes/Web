@@ -4,7 +4,7 @@
     [src]="photo.id | getImage"
     (load)="onLoadImage()"
   />
-  <app-spinner *ngIf="!photo.loaded"></app-spinner>
+  <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>
   <div class="action">
     <button type="button" name="options" #action [matMenuTriggerFor]="menu">
       <mat-icon [inline]="true">more_horiz</mat-icon>

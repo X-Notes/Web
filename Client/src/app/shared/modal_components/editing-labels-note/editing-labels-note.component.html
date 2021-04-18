@@ -1,7 +1,9 @@
 <div appTheme class="outer">
   <div class="header">
     <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <i class="icon-plus" mat-dialog-close></i>
+    <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
+      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+    </div>
   </div>
   <div class="search">
     <div class="search-content">
@@ -9,7 +11,9 @@
     </div>
     <button name="create label" type="button" class="button-plus" #createLabel (click)="newLabel()">
       <div class="inner-content">
-        <i class="icon-plus"></i>
+        <div class="icon">
+          <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        </div>
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="createLabel"></div>
     </button>

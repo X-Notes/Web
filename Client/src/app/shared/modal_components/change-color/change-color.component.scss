@@ -13,9 +13,11 @@
   font-weight: 500;
   font-size: 0.875rem;
 
-  i {
+  .icon {
+    display: flex;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
-    transform: rotate(45deg);
   }
 }
 
@@ -44,7 +46,7 @@
         height: 20px;
         max-width: 110px;
         border-radius: 40px;
-        background-color: #FFE0B2;
+        background-color: #ffe0b2;
         color: #606060;
         font-size: 0.875rem;
         padding: 0 0.625rem;
@@ -63,13 +65,14 @@
     }
 
     .date {
-      color: #A1A1A1;
+      color: #a1a1a1;
       font-size: 0.875rem;
       margin-bottom: 0.75rem;
     }
   }
 
-  .note > div,span:not(:last-child) {
+  .note > div,
+  span:not(:last-child) {
     margin-bottom: 0.5rem;
   }
 
@@ -137,11 +140,10 @@
         }
       }
 
-      .notes-folder>.notes-folder {
+      .notes-folder > .notes-folder {
         margin-top: 0.5rem;
         width: 100%;
       }
-
     }
   }
 }
@@ -206,7 +208,7 @@
 
 .light {
   .save-button {
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
     color: #808080;
 
     &:hover {
@@ -218,7 +220,7 @@
 
 .dark {
   .save-button {
-    background-color: #34373E;
+    background-color: #34373e;
 
     &:hover {
       background-color: #3a3e46;

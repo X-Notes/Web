@@ -12,7 +12,6 @@
       <div class="icon" *ngIf="item.icon !== 'history'">
         <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
       </div>
-      <i class="icon-{{item.icon}}"></i>
       <p>{{ 'menu.' + item.icon | translate }}</p>
       <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
     </div>

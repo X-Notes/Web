@@ -122,29 +122,11 @@ header {
         justify-content: center;
         align-items: center;
         width: 30px;
+        overflow: hidden;
 
-        span,
-        span::after,
-        span::before {
-          position: absolute;
-          display: block;
-          width: 22px;
-          height: 2px;
-          border-radius: 2px;
-          transition: 0.2s ease;
-          transition-property: background-color;
-        }
-
-        span {
-          &::after {
-            content: '';
-            top: 8px;
-          }
-
-          &::before {
-            content: '';
-            top: -8px;
-          }
+        .icon {
+          display: flex;
+          font-size: 1.5rem;
         }
       }
     }
@@ -203,11 +185,6 @@ header {
 
       .hamburger {
         border-color: transparent;
-        span,
-        span::before,
-        span::after {
-          background-color: $dark-color;
-        }
       }
     }
   }
@@ -238,14 +215,6 @@ header {
     }
 
     .interactions {
-      .hamburger {
-        span,
-        span::after,
-        span::before {
-          background-color: white;
-        }
-      }
-
       .menu-inner {
         border-color: transparent;
         background-color: $dark-button;

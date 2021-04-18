@@ -5,8 +5,9 @@
   [ngModel]="searchStr"
   (ngModelChange)="changed($event)"
 />
-<button type="button">
+<button type="button" #search>
   <div class="icon">
-    <i class="icon-search"></i>
+    <mat-icon svgIcon="search" [inline]="true"></mat-icon>
   </div>
+  <div class="ripple-container" matRipple [matRippleTrigger]="search"></div>
 </button>
