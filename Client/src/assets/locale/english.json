@@ -108,6 +108,16 @@
       "linkMenu": {
         "copy": "Copy url",
         "delete": "Delete"
+      },
+      "photoMenu": {
+        "download": "Download",
+        "delete": "Delete",
+        "upload": "Upload new",
+        "countRow": "Photo in row",
+        "oneRow": "One in row",
+        "twoRow": "Two in row",
+        "threeRow": "Three in row",
+        "fourRow": "Four in row"
       }
     }
   }

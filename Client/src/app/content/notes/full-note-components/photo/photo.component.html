@@ -1,39 +1,24 @@
-<div class="photo">
+<div class="photo" appTheme>
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
     [src]="photo.id | getImage"
     (load)="onLoadImage()"
   />
   <app-spinner *ngIf="!photo.loaded"></app-spinner>
-  <div
-    class="three-buttons"
-    cdkOverlayOrigin
-    #trigger="cdkOverlayOrigin"
-    (click)="openMenu($event)"
-  >
-    <i class="icon-setting"></i>
+  <div class="action">
+    <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+      <mat-icon [inline]="true">more_horiz</mat-icon>
+      <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+    </button>
   </div>
 </div>
-<ng-template
-  cdkConnectedOverlay
-  [cdkConnectedOverlayOrigin]="trigger"
-  [cdkConnectedOverlayOpen]="isOpened"
-  [cdkConnectedOverlayHasBackdrop]="true"
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  (backdropClick)="closeMenu()"
->
-  <app-popup-full-note>
-    <div class="menu-items">
-      <div #itemDownload class="item">
-        <i class="icon-download"></i>
-        <p>Download</p>
-        <div class="ripple-container" matRipple [matRippleTrigger]="itemDownload"></div>
-      </div>
-      <div #itemDelete class="item" (click)="deletePhoto()">
-        <i class="icon-delete"></i>
-        <p>Delete</p>
-        <div class="ripple-container" matRipple [matRippleTrigger]="itemDelete"></div>
-      </div>
-    </div>
-  </app-popup-full-note>
-</ng-template>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item type="button" name="Download">
+    <mat-icon>download</mat-icon>
+    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+  </button>
+  <button mat-menu-item (click)="deletePhoto()" type="button" name="Delete">
+    <mat-icon>delete</mat-icon>
+    <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+  </button>
+</mat-menu>

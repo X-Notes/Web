@@ -30,7 +30,6 @@ import { ShareComponent } from './modal_components/share/share.component';
 import { ThemeDirective } from './directives/theme.directive';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
-import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.component';
 import { SearchComponent } from './modal_components/search/search.component';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
@@ -62,7 +61,6 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     SearchComponent,
     OpenInnerSideComponent,
     NoteComponent,
-    PopupFullNoteComponent,
     SearchComponent,
     GetImagePipe,
     SelectComponent,
@@ -107,7 +105,6 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    PopupFullNoteComponent,
     MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,

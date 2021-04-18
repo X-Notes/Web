@@ -1,0 +1,14 @@
+.dark-menu {
+  background: $dark-button;
+  .mat-menu-item {
+    color: white;
+
+    &::after {
+      color: white;
+    }
+
+    .mat-icon {
+      color: white;
+    }
+  }
+}
