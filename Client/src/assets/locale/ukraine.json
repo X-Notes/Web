@@ -1,109 +1,124 @@
-﻿{
-  "notes": {
-    "name": "Нотатки"
-  },
-  "folders": {
-    "name": "Папки"
-  },
-  "labels": {
-    "name": "Ярлики"
-  },
-  "people": {
-    "name": "Люди"
-  },
-  "new": {
-    "note": "Новий нотаток",
-    "folder": "Нова папка",
-    "background": "Новий фон",
-    "label": "Новий ярлик",
-    "inner-folder": "Новий нотаток"
-  },
-  "subMenu": {
-    "all": "Всі",
-    "personal": "Особисті",
-    "shared": "Спільні",
-    "archive": "Архив",
-    "bin": "Кошик",
-    "cancel": "Скасувати"
-  },
-  "languages": {
-    "english": "Англійська",
-    "russian": "Російська",
-    "ukraine": "Українська"
-  },
-  "header": {
-    "selected": "Вибрано",
-    "new": "Нова",
-    "select": "Вибрати все",
-    "filter": "Фільтер",
-    "theme": "Тема",
-    "search": "Пошук...",
-    "questions": "Питання",
-    "notification": "Повідомлення",
-    "orientation": "Режим перегляду",
-    "back": "Повернутися",
-    "video": "Відео",
-    "countUsers": "Кілікість користувачів",
-    "label": "Ярлик",
-    "shared": "Спільні",
-    "menu": "Меню",
-    "defaultColor": "Звичайний",
-    "emptyTrash": "Очистити кошик"
-  },
-  "menu": {
-    "label": "Ярлик",
-    "shared": "Спільні",
-    "copy": "Копіювати",
-    "color": "Колір",
-    "download": "Завантажити",
-    "lock": "Пароль",
-    "archive": "Архів",
-    "delete": "Видалити",
-    "history": "Історія"
-  },
-  "profile": {
-    "sectionProfile": "Профіль",
-    "sectionGeneral": "Загальні",
-    "sectionAccount": "Аккаунт",
-    "sectionPersonalization": "Персоналізація",
-    "nameUser": "Ім'я",
-    "email": "Электронна адреса",
-    "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
-    "logOut": "Вийти",
-    "update": "Оновити",
-    "language": "Мова",
-    "personalKey": "Секретний ключ",
-    "changeKey": "Змінити",
-    "resetKey": "Скинути",
-    "theme": "Тема",
-    "themeLight": "Світла",
-    "themeDark": "Темна",
-    "genericTooltip": "Подивіться, як будуть виглядати нотатки в",
-    "genericPreview": "попередньому перегляді",
-    "noteSize": "Розмір нотатки",
-    "noteDefault": "Звичайний",
-    "noteBig": "Великий"
-  },
-  "modal": {
-    "labelModal": {
-      "Labels": "Ярлики",
-      "search": "Назва ярлика..."
+{
+    "notes": {
+      "name": "Нотатки"
     },
-    "ColorModal": {
-      "Colors": "Кольора",
-      "save": "Зберегти"
+    "folders": {
+      "name": "Папки"
     },
-    "ShareModal": {
-      "Share": "Поділитися",
-      "access": "Доступ",
+    "labels": {
+      "name": "Ярлики"
+    },
+    "people": {
+      "name": "Люди"
+    },
+    "new": {
+      "note": "Нова замітка",
+      "folder": "Нова папка",
+      "background": "Новий фон",
+      "label": "Новий ярлик"
+    },
+    "subMenu": {
+      "all": "Всі",
       "personal": "Особисті",
       "shared": "Спільні",
-      "selectedNotes": "Вибрані нотатки",
+      "archive": "Архив",
+      "bin": "Кошик",
+      "cancel": "Скасувати"
+    },
+    "languages": {
+      "english": "Англійська",
+      "russian": "Російська",
+      "ukraine": "Українська"
+    },
+    "header": {
+      "selected": "Вибрано",
+      "new": "Нова",
+      "select": "Вибрати все",
+      "filter": "Фільтер",
+      "theme": "Тема",
       "search": "Пошук...",
-      "alert": "Надіслати повідомлення",
-      "editor": "Редактор ",
-      "viewer": "Глядач",
-      "send": "Надіслати"
+      "questions": "Питання",
+      "notification": "Повідомлення",
+      "orientation": "Режим перегляду",
+      "back": "Повернутися",
+      "video": "Відео",
+      "countUsers": "Кілікість користувачів",
+      "label": "Ярлик",
+      "shared": "Спільні",
+      "menu": "Меню",
+      "defaultColor": "Звичайний",
+      "emptyTrash": "Очистити кошик"
+    },
+    "menu": {
+      "label": "Ярлик",
+      "shared": "Спільні",
+      "copy": "Копіювати",
+      "color": "Колір",
+      "download": "Завантажити",
+      "lock": "Пароль",
+      "archive": "Архів",
+      "delete": "Видалити",
+      "history": "Історія"
+    },
+    "profile": {
+      "sectionProfile": "Профіль",
+      "sectionGeneral": "Загальні",
+      "sectionAccount": "Аккаунт",
+      "sectionPersonalization": "Персоналізація",
+      "nameUser": "Ім'я",
+      "email": "Электронна адреса",
+      "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
+      "logOut": "Вийти",
+      "update": "Оновити",
+      "language": "Мова",
+      "personalKey": "Секретний ключ",
+      "changeKey": "Змінити",
+      "resetKey": "Скинути",
+      "theme": "Тема",
+      "themeLight": "Світла",
+      "themeDark": "Темна",
+      "genericTooltip": "Подивіться, як будуть виглядати нотатки в",
+      "genericPreview": "попередньому перегляді",
+      "noteSize": "Розмір нотатки",
+      "noteDefault": "Звичайний",
+      "noteBig": "Великий"
+    },
+    "modal": {
+      "labelModal": {
+        "Labels": "Ярлики",
+        "search": "Назва ярлика..."
+      },
+      "ColorModal": {
+        "Colors": "Кольора",
+        "save": "Зберегти"
+      },
+      "ShareModal": {
+        "Share": "Поділитися",
+        "access": "Доступ",
+        "personal": "Особисті",
+        "shared": "Спільні",
+        "selectedNotes": "Вибрані нотатки",
+        "search": "Пошук...",
+        "alert": "Надіслати повідомлення",
+        "editor": "Редактор ",
+        "viewer": "Глядач",
+        "send": "Надіслати"
+      }
+    },
+    "innerNote": {
+      "linkMenu": {
+        "copy": "Копіювати посилання",
+        "delete": "Видалити"
+      },
+      "photoMenu": {
+        "download": "Завантажити",
+        "delete": "Видалити",
+        "upload": "Завантажити нову",
+        "countRow": "Фотографій в ряд",
+        "oneRow": "Одна в ряд",
+        "twoRow": "Дві в ряд",
+        "threeRow": "Три в ряд",
+        "fourRow": "Чотири в ряд"
+      }
     }
   }
-}

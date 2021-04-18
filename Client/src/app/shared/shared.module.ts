@@ -11,6 +11,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -28,7 +30,6 @@ import { ShareComponent } from './modal_components/share/share.component';
 import { ThemeDirective } from './directives/theme.directive';
 import { SharingLinkPipe } from './pipes/sharing-note-link.pipe';
 import { ScrollControlDirective } from './directives/scroll-control.directive';
-import { PopupFullNoteComponent } from './popup/popup-full-note/popup-full-note.component';
 import { SearchComponent } from './modal_components/search/search.component';
 import { OpenInnerSideComponent } from './modal_components/open-inner-side/open-inner-side.component';
 import { NoteComponent } from '../content/notes/note/note.component';
@@ -63,7 +64,6 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     SearchComponent,
     OpenInnerSideComponent,
     NoteComponent,
-    PopupFullNoteComponent,
     SearchComponent,
     GetImagePipe,
     SelectComponent,
@@ -90,6 +90,8 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     MatCheckboxModule,
     MatSnackBarModule,
     MatExpansionModule,
+    MatIconModule,
+    MatMenuModule,
   ],
   exports: [
     TranslateModule,
@@ -109,7 +111,6 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     ThemeDirective,
     SharingLinkPipe,
     ScrollControlDirective,
-    PopupFullNoteComponent,
     MatExpansionModule,
     NgScrollbarModule,
     SearchComponent,
@@ -124,6 +125,8 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
     MemoryIndicatorComponent,
+    MatIconModule,
+    MatMenuModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

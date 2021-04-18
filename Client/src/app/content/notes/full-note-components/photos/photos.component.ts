@@ -10,26 +10,31 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { MatMenu } from '@angular/material/menu';
+import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { ApiServiceNotes } from '../../api-notes.service';
 import { Photo, Album } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemovePhotoFromAlbum } from '../../models/removePhotoFromAlbum';
 import { UploadPhotosToAlbum } from '../../models/uploadPhotosToAlbum';
 import { SelectionService } from '../../selection.service';
-import { PhotoService } from '../photos-business-logic/photo.service';
-
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
-  providers: [PhotoService],
 })
 export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+
+  @ViewChild('menu') mainMenu: MatMenu;
+
+  @ViewChild('secondMenu') secondMenu: MatMenu;
 
   @Input()
   noteId: string;
@@ -50,10 +55,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   startHeight;
 
-  panelOpenState = false;
-
-  isOpened = false;
-
   mainBlocks: Photo[][] = [];
 
   lastBlock: Photo[] = [];
@@ -69,11 +70,11 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   changeSizeAlbumHalder = combineLatest([this.changeWidthSubject, this.changeHeightSubject]);
 
   constructor(
-    private photoService: PhotoService,
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
     private api: ApiServiceNotes,
+    private store: Store,
   ) {}
 
   ngOnDestroy(): void {
@@ -83,6 +84,20 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   ngAfterViewInit(): void {
     this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement;
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (theme) {
+          if (theme.name === ThemeENUM.Dark) {
+            this.mainMenu.panelClass = 'dark-menu';
+            this.secondMenu.panelClass = 'dark-menu';
+          } else {
+            this.mainMenu.panelClass = null;
+            this.secondMenu.panelClass = null;
+          }
+        }
+      });
   }
 
   removeHandler() {
@@ -112,7 +127,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       this.changeWidthSubject.next(`${procent}%`);
     }
     if (newWidth >= mainContainerWidth) {
-      // eslint-disable-next-line no-useless-concat
       this.renderer.setStyle(this.albumChild.nativeElement, 'width', '100%');
       this.changeWidthSubject.next('100%');
     }
@@ -141,7 +155,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     }
 
     this.changeSizeAlbumHalder
-      .pipe(takeUntil(this.destroy), debounceTime(500))
+      .pipe(takeUntil(this.destroy), debounceTime(500)) // TODO export const
       .subscribe(async (values) => {
         const [width, height] = values;
         if (width && height && (this.content.height !== height || this.content.width !== width)) {
@@ -155,22 +169,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     this.initPhotos();
   }
 
-  openMenu($event: MouseEvent) {
-    this.isOpened = true;
-    this.photoService.setPosition($event.clientY - 20, $event.clientX - 180);
-  }
-
-  closeMenu() {
-    this.isOpened = false;
-    this.panelOpenState = false;
-  }
-
   async setPhotosInRow(count: number) {
     const resp = await this.api.updateCountInRow(this.noteId, this.content.id, count).toPromise();
     if (resp.success) {
       this.content.countInRow = count;
-      this.panelOpenState = false;
-      this.isOpened = false;
       this.setFalseLoadedForAllPhotos();
       this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
       this.changeHeightSubject.next(`height`);
@@ -213,6 +215,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return this.content.photos.length % this.content.countInRow;
   }
 
+  get totalRows() {
+    return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
+  }
+
   removePhotoHandler(photoId: string) {
     this.deletePhotoFromAlbum.emit({ photoId, contentId: this.content.id });
   }
@@ -232,7 +238,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
         return 'fouth-child';
       }
       default: {
-        return null;
+        throw new Error('Style not found');
       }
     }
   };

@@ -54,6 +54,12 @@
         justify-content: center;
         cursor: pointer;
         font-size: 1.25rem;
+
+        .icon {
+          display: flex;
+          width: 20px;
+          height: 20px;
+        }
       }
     }
   }

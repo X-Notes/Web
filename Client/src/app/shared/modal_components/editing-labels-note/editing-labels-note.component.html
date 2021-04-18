@@ -3,14 +3,15 @@
     [icon]="'icon-plus'"
     [message]="'modal.labelModal.Labels' | translate"
   ></app-dialog-generic-header>
-
   <div class="search">
     <div class="search-content">
       <app-search (changeOutput)="changed($event)"></app-search>
     </div>
     <button name="create label" type="button" class="button-plus" #createLabel (click)="newLabel()">
       <div class="inner-content">
-        <i class="icon-plus"></i>
+        <div class="icon">
+          <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        </div>
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="createLabel"></div>
     </button>

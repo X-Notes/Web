@@ -81,6 +81,11 @@ export const notification = trigger('notification', [
   transition(':leave', [animate(100, style({ opacity: 0 }))]),
 ]);
 
+export const photoInit = trigger('photoInit', [
+  state('noLoaded', style({ opacity: 0 })),
+  transition('* => loaded', [animate('0.3s ease-out')]),
+]);
+
 @Injectable({
   providedIn: 'root',
 })

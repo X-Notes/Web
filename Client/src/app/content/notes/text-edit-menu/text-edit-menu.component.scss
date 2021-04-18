@@ -1,26 +1,24 @@
 @import 'variables';
 
 .container {
+  display: flex;
   background-color: $dark-button;
-  height: 38px;
-  padding: 5px;
   border-radius: 5px;
 
-  display: flex;
-  align-items: center;
-
-  i {
+  .button {
+    display: flex;
     cursor: pointer;
-    margin-left: 7px;
-    margin-right: 7px;
+    padding: 0.5rem 0.438rem;
+    color: white;
+    cursor: pointer;
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
   }
 
-  i::before {
-    font-size: 1.25rem;
+  .active {
+    color: #2997ff;
   }
-
 }
-
-.active {
-    color: #2997ff !important;
-  }

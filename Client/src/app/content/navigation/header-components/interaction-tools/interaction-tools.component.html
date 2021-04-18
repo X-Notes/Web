@@ -12,7 +12,7 @@
     />
     <label for="searchField">
       <div class="icon">
-        <i class="icon-search"></i>
+        <mat-icon svgIcon="search" [inline]="true"></mat-icon>
       </div>
     </label>
   </div>
@@ -25,7 +25,9 @@
     *ngIf="pService.check()"
     #themeApp
   >
-    <i class="icon-theme-light"></i>
+    <div class="icon">
+      <mat-icon svgIcon="themeLight" [inline]="true"></mat-icon>
+    </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="themeApp"></div>
   </div>
 
@@ -36,7 +38,9 @@
     *ngIf="pService.check()"
     #question
   >
-    <i class="icon-question"></i>
+    <div class="icon">
+      <mat-icon svgIcon="question" [inline]="true"></mat-icon>
+    </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="question"></div>
   </div>
 
@@ -50,7 +54,9 @@
     cdk-overlay-origin
     #origin="cdkOverlayOrigin"
   >
-    <i class="icon-notification"></i>
+    <div class="icon">
+      <mat-icon svgIcon="notification" [inline]="true"></mat-icon>
+    </div>
     <div class="push">1</div>
     <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
 
@@ -78,7 +84,9 @@
     *ngIf="(isProfile$ | async) === false && !pService.check()"
     #orientationNote
   >
-    <i class="icon-view-change"></i>
+    <div class="icon">
+      <mat-icon svgIcon="viewChange" [inline]="true"></mat-icon>
+    </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="orientationNote"></div>
   </div>
 </div>

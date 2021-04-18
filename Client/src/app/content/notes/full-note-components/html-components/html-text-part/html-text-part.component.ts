@@ -9,11 +9,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { ApiServiceNotes } from '../../../api-notes.service';
 import { BaseText, ContentType, HeadingType } from '../../../models/ContentMode';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
@@ -62,17 +60,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   destroy = new Subject<void>();
 
-  constructor(
-    public textService: TextService,
-    private store: Store,
-    private api: ApiServiceNotes,
-  ) {}
+  constructor(public textService: TextService) {}
 
   getContent() {
     return this.content;
   }
 
   ngAfterViewInit(): void {
+    console.log(this.contentHtml, this.contentHtml.nativeElement.textContent);
     this.textService.setHandlers(
       this.content,
       this.contentHtml,
@@ -138,6 +133,24 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   get isActive() {
     return this.textService.isActive(this.contentHtml);
   }
+
+  get isLink() {
+    return this.validURL(this.contentHtml?.nativeElement?.textContent);
+  }
+
+  get CurrentTextCotent() {
+    return this.contentHtml?.nativeElement?.textContent;
+  }
+
+  validURL = (str) => {
+    let url;
+    try {
+      url = new URL(str);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  };
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);

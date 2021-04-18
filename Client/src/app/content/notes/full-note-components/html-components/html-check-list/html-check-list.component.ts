@@ -115,12 +115,13 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   async changeCheckBox() {
-    this.content.checked = !this.content.checked;
-    const str = await this.textChanged.pipe(take(1)).toPromise();
-    this.updateText.emit({
-      content: str,
-      contentId: this.content.id,
-      checked: this.content.checked,
-    });
+    // TODO BUG
+    this.textChanged.pipe(take(1)).subscribe((str) =>
+      this.updateText.emit({
+        content: str,
+        contentId: this.content.id,
+        checked: !this.content.checked,
+      }),
+    );
   }
 }

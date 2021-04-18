@@ -32,13 +32,13 @@
       padding-right: 1rem;
       white-space: nowrap;
     }
+  }
 
-    i {
-      font-size: 0.75rem;
+  i {
+    font-size: 0.75rem;
 
-      &::before {
-        transition: 0.2s color ease;
-      }
+    &::before {
+      transition: 0.2s color ease;
     }
   }
 }
@@ -75,7 +75,7 @@
     color: white;
 
     .inner-content {
-      i::before {
+      .icon {
         color: white;
       }
     }

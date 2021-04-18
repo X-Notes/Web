@@ -31,6 +31,7 @@ export class TextService extends HtmlService {
     content.content = this.getNativeElement(contentHtml).innerText;
     const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
     enterEvent.emit(event);
+    console.log(event);
   }
 
   backDown(

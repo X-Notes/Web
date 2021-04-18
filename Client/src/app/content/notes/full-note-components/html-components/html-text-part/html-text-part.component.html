@@ -1,4 +1,5 @@
 <div
+  appTheme
   class="main-container"
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseOut($event)"
@@ -14,28 +15,36 @@
   <div *ngIf="isActive" class="no-content">
     <p>Text</p>
     <div class="buttons" (mousedown)="preventClick($event)">
-      <i
-        (mousedown)="transformContent($event, contentType.CHECKLIST)"
-        class="icon-list-checked"
-      ></i>
-      <i (mousedown)="transformContent($event, contentType.DOTLIST)" class="icon-list-dot"></i>
-      <i (mousedown)="transformContent($event, contentType.NUMBERLIST)" class="icon-list"></i>
-      <i
-        (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)"
-        class="icon-h1"
-      ></i>
-      <i
-        (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)"
-        class="icon-h2"
-      ></i>
-      <i
-        (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)"
-        class="icon-h3"
-      ></i>
-      <i (mousedown)="transformToPhotoHandler($event)" class="icon-image"></i>
-      <i (mousedown)="transformToPhotoHandler($event)" class="icon-file"></i>
-      <i (mousedown)="transformToPhotoHandler($event)" class="icon-video-inner"></i>
-      <i (mousedown)="transformToPhotoHandler($event)" class="icon-plus"></i>
+      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)">
+        <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)">
+        <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)">
+        <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, contentType.CHECKLIST)">
+        <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, contentType.DOTLIST)">
+        <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, contentType.NUMBERLIST)">
+        <mat-icon svgIcon="list" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+        <mat-icon svgIcon="image" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+        <mat-icon svgIcon="file" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+        <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
     </div>
   </div>
 </div>
@@ -47,3 +56,4 @@
   hidden="true"
   (change)="uploadImages($event)"
 />
+<app-html-link *ngIf="isLink" [link]="CurrentTextCotent"></app-html-link>

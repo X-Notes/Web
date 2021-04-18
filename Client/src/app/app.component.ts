@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from './core/stateUser/user-state';
+import { IconsService } from './shared/services/icons.service';
 
 @Component({
   selector: 'app-root',
@@ -13,9 +14,14 @@ import { UserStore } from './core/stateUser/user-state';
 export class AppComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
-  constructor(private translateService: TranslateService, private store: Store) {}
+  constructor(
+    private translateService: TranslateService,
+    private store: Store,
+    private iconsService: IconsService,
+  ) {}
 
   ngOnInit() {
+    this.iconsService.registerIcons();
     this.store
       .select(UserStore.getUserLanguage)
       .pipe(takeUntil(this.destroy))

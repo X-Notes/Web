@@ -29,6 +29,8 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ShortUser } from 'src/app/core/models/short-user';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
@@ -86,6 +88,12 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
+
+  @Select(UserStore.getUserBackground)
+  public userBackground$: Observable<ShortUser>;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   public notesLink: SmallNote[];
 
