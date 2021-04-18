@@ -1,56 +1,30 @@
-<div appTheme class="interactions">
-  <app-interaction-create
-    appTheme
-    *ngIf="!((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
-  ></app-interaction-create>
-  <button
-    *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
-    name="Selected"
-    type="button"
-    (click)="unselectAll()"
-    class="generic generic-2 generic-unfixed selected"
-    [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''"
-    #selectedAll
-  >
-    <div class="inner-content">
-      <p>{{ 'header.selected' | translate }} {{countSelected}}</p>
-      <div class="icon" style="transform: rotate(45deg)">
-        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-      </div>
-      <i class="icon-plus" style="transform: rotate(45deg)"></i>
-    </div>
-    <div class="ripple-container" matRipple [matRippleTrigger]="selectedAll"></div>
-  </button>
-  <button
-    name="Select"
-    type="button"
-    (click)="selectAll()"
-    class="generic generic-2 generic-unfixed"
-    [ngClass]="((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'select-all' : ''"
-    #select
-  >
-    <div class="inner-content">
-      <p>{{ 'header.select' | translate }}</p>
-      <div class="icon">
-        <mat-icon svgIcon="select" [inline]="true"></mat-icon>
-      </div>
-    </div>
-    <div class="ripple-container" matRipple [matRippleTrigger]="select"></div>
-  </button>
-  <button
-    CustomTooltip="{{ 'header.filter' | translate }}"
-    position="Bottom"
-    (click)="settingsClick()"
-    name="Filter"
-    type="button"
-    class="generic generic-2 filter"
-    #filter
-  >
-    <div class="inner-content">
-      <div class="icon">
-        <mat-icon svgIcon="filter" [inline]="true"></mat-icon>
-      </div>
-    </div>
-    <div class="ripple-container" matRipple [matRippleTrigger]="filter"></div>
-  </button>
-</div>
+<app-general-header-button
+  *ngIf="!((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-unfixed generic-create'"
+></app-general-header-button>
+
+<app-general-header-button
+  *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  (clickEvent)="unselectAll()"
+  [message]="('header.selected' | translate) + ' ' + countSelected"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-2 generic-unfixed rotate'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="selectAll()"
+  [message]="('header.select' | translate)"
+  [iconClass]="'select'"
+  [styleClasses]="'generic-2 generic-unfixed'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="settingsClick()"
+  [tooltipMessage]="('header.filter' | translate)"
+  [tooltipPosition]="'Bottom'"
+  [iconClass]="'filter'"
+  [styleClasses]="'generic-2 filter'"
+></app-general-header-button>

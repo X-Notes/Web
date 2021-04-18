@@ -67,6 +67,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   fontSize = FontSizeENUM;
 
+  themes = ThemeENUM;
+
   userName;
 
   public photoError = false;
@@ -94,7 +96,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newBackground());
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.newBackground());
   }
 
   setLanguage(item: LanguageDTO): void {

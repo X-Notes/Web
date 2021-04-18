@@ -43,7 +43,7 @@
   <div
     class="management-section"
     [ngClass]="(isNoteInner$ | async) ? 'inner-menu' : ''"
-    [ngSwitch]="router"
+    [ngSwitch]="menuSwitch$ | async"
   >
     <div class="interactions">
       <div class="generic hamburger" (click)="toggleSidebar()" #hamburger>
@@ -54,24 +54,49 @@
       </div>
     </div>
 
+    <!-- PROFILE START -->
     <app-interaction-profile
       class="interactions"
       *ngSwitchCase="'profile'"
     ></app-interaction-profile>
+    <!-- PROFILE END -->
 
+    <!-- NOTE_FOLDER ITEMS START -->
     <app-interaction-items class="interactions" *ngSwitchCase="'items'"></app-interaction-items>
+    <!-- NOTE_FOLDER ITEMS END -->
 
-    <app-interaction-create class="interactions" *ngSwitchCase="'label'"></app-interaction-create>
+    <!-- LABEL DEFAULT START -->
+    <app-general-header-button
+      *ngSwitchCase="'label'"
+      (clickEvent)="newButton()"
+      [message]="'new.' + (route$ | async ) | translate"
+      [iconClass]="'plus'"
+      [styleClasses]="'generic-unfixed generic-create'"
+    ></app-general-header-button>
+    <!-- LABEL DEFAULT END -->
 
-    <app-interaction-labels
-      class="interactions"
+    <!-- LABEL DELETE START -->
+    <app-general-header-button
       *ngSwitchCase="'label-delete'"
-    ></app-interaction-labels>
+      [message]="('header.emptyTrash' | translate)"
+      [iconClass]="'delete'"
+      [styleClasses]="'generic-2 generic-unfixed'"
+    ></app-general-header-button>
+    <!-- LABEL DELETE END -->
 
-    <app-interaction-inner
+    <!-- INNER NOTE START -->
+    <app-interaction-inner-note
       class="interactions inner-helper"
       *ngSwitchCase="'note-inner'"
-    ></app-interaction-inner>
+    ></app-interaction-inner-note>
+    <!-- INNER NOTE END -->
+
+    <!-- INNER FOLDER START -->
+    <app-interaction-inner-folder
+      class="interactions"
+      *ngSwitchCase="'folder-inner'"
+    ></app-interaction-inner-folder>
+    <!-- INNER FOLDER END -->
 
     <div
       class="interactions menu"

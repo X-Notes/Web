@@ -1,10 +1,8 @@
 <div appTheme class="outer">
-  <div class="header">
-    <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
-      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-    </div>
-  </div>
+  <app-dialog-generic-header
+    [icon]="'icon-plus'"
+    [message]="'modal.labelModal.Labels' | translate"
+  ></app-dialog-generic-header>
   <div class="search">
     <div class="search-content">
       <app-search (changeOutput)="changed($event)"></app-search>

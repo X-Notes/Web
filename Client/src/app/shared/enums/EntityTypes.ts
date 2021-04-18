@@ -1,5 +1,5 @@
 export enum EntityType {
-  FolderPrivate,
+  FolderPrivate = 1,
   FolderShared,
   FolderDeleted,
   FolderArchive,

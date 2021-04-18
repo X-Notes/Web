@@ -1,15 +1,11 @@
-<div appTheme class="interactions">
-  <app-interaction-create appTheme></app-interaction-create>
-  <button
-    (click)="setDefaultColorProfile()"
-    name="Default"
-    type="button"
-    class="generic generic-2"
-    #default
-  >
-    <div class="inner-content">
-      <p>{{ 'header.defaultColor' | translate }}</p>
-    </div>
-    <div class="ripple-container" matRipple [matRippleTrigger]="default"></div>
-  </button>
-</div>
+<app-general-header-button
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-unfixed profile-create'"
+></app-general-header-button>
+<app-general-header-button
+  (clickEvent)="setDefaultColorProfile()"
+  [message]="('header.defaultColor' | translate)"
+  [styleClasses]="'generic-2 profile-default'"
+></app-general-header-button>

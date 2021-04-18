@@ -1,0 +1,91 @@
+<div
+  *ngIf="note$ | async"
+  appTheme
+  class="interactions"
+  [ngClass]="[pService.hideInnerMenu ? 'visible' : '', pService.users ? 'visible-people' : '']"
+>
+  <div
+    CustomTooltip="{{ 'header.countUsers' | translate }}"
+    position="Bottom"
+    class="user-circle"
+    (click)="showUsers()"
+    #userCircle
+  >
+    <p>8</p>
+    <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
+  </div>
+  <ng-scrollbar
+    class="wrapper-people"
+    #scrollbar
+    *ngIf="pService.users"
+    [@showMenuLeftRight]
+    [@.disabled]="pService.AnimationInnerUsers"
+    [visibility]="'hover'"
+    [track]="'all'"
+    [appearance]="'compact'"
+  >
+    <div class="people-editing" #heightPeople>
+      <div
+        class="person"
+        *ngFor="let item of user"
+        CustomTooltip="{{item}}"
+        position="Bottom"
+        flagDisable="{{ disableTooltpUser() }}"
+      >
+        <div class="inner-person">
+          <img
+            src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
+            alt="contributor"
+          />
+        </div>
+        <p>12321321321333333333333333333333333333333333333333333333333</p>
+      </div>
+    </div>
+  </ng-scrollbar>
+
+  <app-general-header-button
+    [tooltipMessage]="'header.video' | translate"
+    [tooltipPosition]="'Bottom'"
+    [iconClass]="'video'"
+    [styleClasses]="'generic-2'"
+  ></app-general-header-button>
+
+  <app-menu
+    class="menu-inner"
+    *ngIf="pService.hideInnerMenu"
+    [@showMenuLeftRight]
+    [@.disabled]="pService.AnimationInnerMenu"
+  ></app-menu>
+
+  <app-general-header-button
+    (clickEvent)="pService.toggleHistoryMethod()"
+    [message]="('menu.history' | translate)"
+    [styleClasses]="'generic-2 history'"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    (clickEvent)="dialogsManageService.changeLabels()"
+    [tooltipMessage]="'menu.label' | translate"
+    [tooltipPosition]="'Bottom'"
+    [styleClasses]="'generic-2 mobile-buttons'"
+    [iconClass]="'label'"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    (clickEvent)="dialogsManageService.shareEntity()"
+    [tooltipMessage]="'menu.shared' | translate"
+    [tooltipPosition]="'Bottom'"
+    [styleClasses]="'generic-2 mobile-buttons'"
+    [iconClass]="'shared'"
+  ></app-general-header-button>
+
+  <app-general-header-button
+    (clickEvent)="hideMenu()"
+    [tooltipMessage]="'header.menu' | translate"
+    [tooltipPosition]="'Bottom'"
+    [styleClasses]="'generic-2 mobile-buttons'"
+    [iconClass]="'shared'"
+  ></app-general-header-button>
+
+  <div class="overlay" (click)="closeMenu()"></div>
+</div>

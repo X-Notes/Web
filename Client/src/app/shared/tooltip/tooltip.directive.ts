@@ -32,6 +32,9 @@ export class TooltipDirective implements OnDestroy {
     if (this.disable === 'true') {
       return;
     }
+    if (!this.text) {
+      return;
+    }
     if (this.labelColor !== '') {
       if (this.text.length < 1) {
         return;

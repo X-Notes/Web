@@ -9,9 +9,8 @@ namespace Common.DTO.notes.FullNoteContent
         public string Width { set; get; }
         public string Height { set; get; }
         public int CountInRow { set; get; }
-        public AlbumNoteDTO(List<AlbumPhotoDTO> Files, string Width, string Height, Guid Id, string Type,
-                            Guid? NextId, Guid? PrevId, int CountInRow)
-            : base(Id, Type, NextId, PrevId)
+        public AlbumNoteDTO(List<AlbumPhotoDTO> Files, string Width, string Height, Guid Id, string Type, int CountInRow)
+            : base(Id, Type)
         {
             this.Photos = Files;
             this.Height = Height;

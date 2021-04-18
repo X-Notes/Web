@@ -14,13 +14,13 @@ namespace WriteContext.GenericRepositories
         Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate);
 
         Task Add(T entity);
-        Task AddRange(List<T> ents);
+        Task AddRange(IEnumerable<T> ents);
 
         Task Update(T entity);
-        Task UpdateRange(List<T> entities);
+        Task UpdateRange(IEnumerable<T> entities);
 
         Task Remove(T entity);
-        Task RemoveRange(List<T> entities);
+        Task RemoveRange(IEnumerable<T> entities);
 
         Task<List<T>> GetAll();
         Task<List<T>> GetWhere(Expression<Func<T, bool>> predicate);

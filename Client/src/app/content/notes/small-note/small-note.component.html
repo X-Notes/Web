@@ -1,7 +1,7 @@
 <div class="small-note" appTheme>
   <div class="header">
     <button type="button" (click)="turnUpSmallNote()">
-      <div class="icon">
+      <div class="icon" [ngStyle]="{'transform': note.isOpened == true ? '' : 'rotate(180deg)' }">
         <i class="icon-select-label"></i>
       </div>
     </button>
@@ -11,7 +11,7 @@
       </div>
     </button>
   </div>
-  <div class="content" [ngClass]="turnUpNote? 'turn-up-note' : ''">
+  <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
     <div class="note-color"></div>
     <div class="labels-section">
       <div class="label" *ngFor="let item of note.labels">
@@ -20,10 +20,35 @@
     </div>
     <div class="title-section">
       <div class="left-border"></div>
-      <p>{{note.title}}</p>
+      <p class="title">{{note.title}}</p>
+      <div class="placeholder">Title</div>
     </div>
-    <div class="description">
-      <p>Hello Hello Hello Hello</p>
+    <div class="content-note">
+      <ng-container *ngFor="let content of note.contents">
+        <div [ngSwitch]="content.type">
+          <div *ngSwitchCase="contentType.DEFAULT" class="text">
+            <p>{{content.content}}</p>
+          </div>
+          <div *ngSwitchCase="contentType.DOTLIST" class="dotlist">
+            <p>{{content.content}}</p>
+          </div>
+          <div *ngSwitchCase="contentType.NUMBERLIST" class="numberList">
+            <p>{{content.content}}</p>
+          </div>
+          <div *ngSwitchCase="contentType.CHECKLIST" class="checkList">
+            <p>{{content.content}}</p>
+          </div>
+          <div *ngSwitchCase="contentType.HEADING" class="numberList">
+            <p>{{content.content}}</p>
+          </div>
+          <div *ngSwitchCase="contentType.ALBUM" class="album">
+            <ng-container *ngFor="let item of content.photos">
+              <img [src]="item.id | getImage" />
+            </ng-container>
+          </div>
+          <div *ngSwitchDefault>Default</div>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>

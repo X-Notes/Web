@@ -115,7 +115,7 @@
   border-radius: 50%;
 }
 
-.content {
+.content-generic-project {
   position: relative;
   width: calc(100% - 190px);
   height: 100%;
@@ -376,7 +376,7 @@
 }
 
 @media (max-width: 1024px) {
-  .content {
+  .content-generic-project {
     width: 100%;
   }
 
@@ -398,7 +398,7 @@
 }
 
 @media (max-width: 600px) {
-  .content {
+  .content-generic-project {
     .content-inner {
       padding: 2.5rem 3.125vw 0 3.125vw;
     }

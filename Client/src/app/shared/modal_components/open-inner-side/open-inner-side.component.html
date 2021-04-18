@@ -1,21 +1,19 @@
 <div class="wrapper" appTheme>
-  <div class="header">
-    <span>{{ 'modal.labelModal.Labels' | translate }}</span>
-    <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
-      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-    </div>
-  </div>
+  <app-dialog-generic-header
+    [icon]="'icon-plus'"
+    [message]="'modal.labelModal.Labels' | translate"
+  ></app-dialog-generic-header>
   <div class="dialog-content" mat-dialog-content>
     <mat-tab-group class="tabs" mat-stretch-tabs>
       <mat-tab label="Notes">
         <div class="tab-content">
           <div class="filter-row">
-            <app-search class="search"></app-search>
+            <app-search (changeOutput)="searchChanged.next($event)" class="search"></app-search>
             <app-select
               class="select"
               [translate]="'subMenu'"
-              [selectValue]="'shared'"
-              (changeItem)="selectItem($event)"
+              [selectValue]="'all'"
+              (selectValueChange)="selectItem($event)"
             >
               <app-select-option *ngFor="let item of selectTypes" [value]="item">
                 {{ ('subMenu.' + item) | translate }}
@@ -38,7 +36,7 @@
                   #item
                   class="grid-modal-item"
                   id="{{item.id}}"
-                  *ngFor="let item of notes"
+                  *ngFor="let item of viewNotes"
                   [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
                 >
                   <app-note
@@ -52,15 +50,16 @@
               </div>
             </div>
           </ng-scrollbar>
-          <div class="fixed-filters" [hidden]="!(selectedNotes.length > 0)">
+          <div class="fixed-filters" [hidden]="!(selectedNotesChips.length > 0)">
             <div class="wrapper-chips">
               <app-chip
-                *ngFor="let item of selectedNotes"
+                *ngFor="let item of selectedNotesChips"
                 [color]="item.color"
                 [text]="item.title ? item.title : 'no-title'"
                 [isRemovable]="true"
                 (remove)="unSelectNote(item)"
-              ></app-chip>
+              >
+              </app-chip>
             </div>
           </div>
           <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
@@ -76,7 +75,7 @@
   </div>
   <div class="dialog-actions" mat-dialog-actions>
     <div class="actions">
-      <div class="save-button" #saveButton [mat-dialog-close]="selectedNotes">
+      <div class="save-button" #saveButton [mat-dialog-close]="selectedNotesChips">
         <span>{{ 'modal.ColorModal.save' | translate }}</span>
         <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
       </div>

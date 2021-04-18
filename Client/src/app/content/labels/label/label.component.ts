@@ -4,7 +4,7 @@ import {
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
@@ -63,7 +63,7 @@ export class LabelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.nameChanged
-      .pipe(debounceTime(updateTitleEntitesDelay), distinctUntilChanged())
+      .pipe(debounceTime(updateTitleEntitesDelay), distinctUntilChanged(), takeUntil(this.destroy))
       .subscribe((name) => {
         if (name) {
           this.label = { ...this.label, name };

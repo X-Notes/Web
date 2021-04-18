@@ -16,11 +16,12 @@ namespace WriteContext.Repositories
 
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentByNoteId(Guid id)
+        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrdered(Guid id)
         {
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
                 .Where(x => x.NoteId == id)
+                .OrderBy(x => x.Order)
                 .ToListAsync();
 
         }

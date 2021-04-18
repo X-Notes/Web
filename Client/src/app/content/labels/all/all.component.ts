@@ -71,7 +71,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pService.setSpinnerState(false);
     this.loaded = true;
 
-    this.pService.subject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
+    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
   }
 
   async update(label: Label) {

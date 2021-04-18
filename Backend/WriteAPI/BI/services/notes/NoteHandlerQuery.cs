@@ -55,8 +55,9 @@ namespace BI.services.notes
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);
+                notes.ForEach(x => x.Contents = x.Contents.OrderBy(x => x.Order).ToList());
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
-                return noteCustomMapper.TranformNotesToSmallNotesDTO(notes, takeContentLength: 2);
+                return noteCustomMapper.MapNotesToSmallNotesDTO(notes, takeContentLength: 2);
             }
             return new List<SmallNote>();
         }
@@ -74,7 +75,7 @@ namespace BI.services.notes
                 {
                     CanView = true,
                     CanEdit = true,
-                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
+                    FullNote = noteCustomMapper.MapNoteToFullNote(note)
                 };
             }
 
@@ -86,7 +87,7 @@ namespace BI.services.notes
                 {
                     CanView = true,
                     CanEdit = false,
-                    FullNote = noteCustomMapper.TranformNoteToFullNote(note)
+                    FullNote = noteCustomMapper.MapNoteToFullNote(note)
                 };
             }
 
@@ -111,8 +112,8 @@ namespace BI.services.notes
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteId(request.NoteId);
-                return new NoteCustomMapper().TranformContentsToContentsDTO(contents);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(request.NoteId);
+                return noteCustomMapper.MapContentsToContentsDTO(contents);
             }
 
             // TODO WHEN NO ACCESS
@@ -127,7 +128,7 @@ namespace BI.services.notes
                 var notes = await noteRepository.GetNotesByUserId(user.Id);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
-                return noteCustomMapper.TranformNotesToSmallNotesDTO(notes);
+                return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
             return new List<SmallNote>();
         }

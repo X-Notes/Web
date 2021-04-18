@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DTO.notes.FullNoteContent;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Commands.relatedNotes
 {
-    public class UpdateRelatedNotesToNoteCommand : BaseCommandEntity, IRequest<Unit>
+    public class UpdateRelatedNotesToNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }

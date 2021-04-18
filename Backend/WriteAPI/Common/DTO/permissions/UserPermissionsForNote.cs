@@ -12,7 +12,8 @@ namespace Common.DTO.permissions
         public bool UserNotFound { set; get; }
         public bool NoteNotFound { set; get; }
         public bool IsOwner { set; get; }
-        public UserPermissionsForNote GetFullAccess(User user, Note note, bool isOwner)
+
+        public UserPermissionsForNote SetFullAccess(User user, Note note, bool isOwner)
         {
             User = user;
             Note = note;
@@ -21,7 +22,8 @@ namespace Common.DTO.permissions
             IsOwner = isOwner;
             return this;
         }
-        public UserPermissionsForNote GetOnlyRead(User user, Note note)
+
+        public UserPermissionsForNote SetOnlyRead(User user, Note note)
         {
             User = user;
             Note = note;
@@ -30,7 +32,7 @@ namespace Common.DTO.permissions
             return this;
         }
 
-        public UserPermissionsForNote NoAccessRights(User user, Note note)
+        public UserPermissionsForNote SetNoAccessRights(User user, Note note)
         {
             User = user;
             Note = note;
@@ -39,13 +41,13 @@ namespace Common.DTO.permissions
             return this;
         }
 
-        public UserPermissionsForNote GetUserNotFounded()
+        public UserPermissionsForNote SetUserNotFounded()
         {
             UserNotFound = true;
             return this;
         }
 
-        public UserPermissionsForNote GetNoteNotFounded()
+        public UserPermissionsForNote SetNoteNotFounded()
         {
             NoteNotFound = true;
             return this;

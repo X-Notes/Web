@@ -20,6 +20,8 @@ import { ApiServiceLabels } from '../content/labels/api-labels.service';
 import { ApiServiceNotes } from '../content/notes/api-notes.service';
 import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { AppServiceAPI } from './app.service';
+import { ApiRelatedNotesService } from '../content/notes/api-related-notes.service';
+import { ApiFullFolderService } from '../content/folders/full-folder/services/api-full-folder.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -62,6 +64,8 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiServiceNotes,
     ApiFoldersService,
     AppServiceAPI,
+    ApiRelatedNotesService,
+    ApiFullFolderService,
   ],
 })
 export class CoreModule {}

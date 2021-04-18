@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ThemeENUM } from '../../enums/ThemeEnum';
 
 @Component({
   selector: 'app-chip',
@@ -17,4 +18,6 @@ export class ChipComponent {
   @Input() isRemovable: boolean;
 
   @Output() remove = new EventEmitter<void>();
+
+  themes = ThemeENUM;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -7,13 +7,20 @@ import { SelectAllFolder, UnSelectAllFolder } from 'src/app/content/folders/stat
 import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-interaction-items',
   templateUrl: './interaction-items.component.html',
   styleUrls: ['./interaction-items.component.scss'],
 })
-export class InteractionItemsComponent implements OnInit {
+export class InteractionItemsComponent implements OnInit, OnDestroy {
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
+
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
+
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
@@ -24,7 +31,12 @@ export class InteractionItemsComponent implements OnInit {
 
   destroy = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, public pService: PersonalizationService) {}
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
+  }
 
   ngOnInit(): void {
     this.store
@@ -81,5 +93,9 @@ export class InteractionItemsComponent implements OnInit {
     if (routePath) {
       this.store.dispatch(new UnSelectAllFolder());
     }
+  }
+
+  newButton() {
+    this.pService.newButtonSubject.next(true);
   }
 }

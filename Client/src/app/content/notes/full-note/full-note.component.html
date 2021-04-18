@@ -17,17 +17,7 @@
     </ng-scrollbar>
     <div class="information">
       <div class="separator"></div>
-      <div class="progress-section">
-        <div class="billing">B</div>
-        <div class="progress-bar-section">
-          <div class="text">
-            <p>50mb of 100MB</p>
-          </div>
-          <div class="progress-bar">
-            <div class="indicator"></div>
-          </div>
-        </div>
-      </div>
+      <app-memory-indicator></app-memory-indicator>
     </div>
   </div>
   <div
@@ -38,7 +28,7 @@
 </div>
 <div
   appTheme
-  class="content full-content"
+  class="content-generic-project full-content"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div
@@ -156,7 +146,7 @@
       </div>
     </div>
     <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
-      <div class="open" #open (click)="openSideModal(id)">
+      <div class="open" #open (click)="sideBarService.openSideModal(id)">
         <div class="icon">
           <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
         </div>
@@ -173,10 +163,19 @@
           <div
             class="grid"
             *ngIf="loaded"
-            [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}"
+            [ngStyle]="{'opacity': sideBarService.murriService.flagForOpacity ? '1' : '0'}"
           >
-            <div class="grid-item-small" *ngFor="let item of notes" [@deleteSmallNote]>
-              <app-small-note [note]="item" (deleteNote)="deleteSmallNote($event)"></app-small-note>
+            <div
+              #item
+              id="{{item.id}}"
+              class="grid-item-small"
+              *ngFor="let item of sideBarService.notes"
+            >
+              <app-small-note
+                [note]="item"
+                (deleteNote)="sideBarService.deleteSmallNote($event, id)"
+                (changeState)="sideBarService.changeState($event, id)"
+              ></app-small-note>
             </div>
           </div>
         </div>

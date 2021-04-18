@@ -21,17 +21,7 @@
     </ng-scrollbar>
     <div class="information">
       <div class="separator"></div>
-      <div class="progress-section">
-        <div class="billing">B</div>
-        <div class="progress-bar-section">
-          <div class="text">
-            <p>50mb of 100MB</p>
-          </div>
-          <div class="progress-bar">
-            <div class="indicator"></div>
-          </div>
-        </div>
-      </div>
+      <app-memory-indicator></app-memory-indicator>
     </div>
   </div>
   <div
@@ -43,7 +33,7 @@
 
 <div
   appTheme
-  class="content"
+  class="content-generic-project"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <ng-scrollbar [visibility]="'hover'" [appearance]="'compact'">
@@ -198,7 +188,7 @@
                   </div>
                   <app-button-toggle
                     class="toggle"
-                    [value]="(theme$ | async).name === 'dark' ? false : true"
+                    [value]="(theme$ | async).name === themes.Dark ? false : true"
                     [style]="'primary'"
                     (valueChange)="changeTheme($event)"
                   >
@@ -229,13 +219,13 @@
                   >
                     <app-toggle-text
                       on
-                      [color]="(theme$ | async).name === 'light' && (fontSize$ | async).name === 'medium' ? 'white' : (theme$ | async).name === 'dark' ? 'white' : 'black'"
+                      [color]="(theme$ | async).name === themes.Light && (fontSize$ | async).name === 'medium' ? 'white' : (theme$ | async).name === themes.Dark ? 'white' : 'black'"
                     >
                       {{ 'profile.noteDefault' | translate }}</app-toggle-text
                     >
                     <app-toggle-text
                       off
-                      [color]="(theme$ | async).name === 'light' && (fontSize$ | async).name === 'medium' ? 'black' : 'white'"
+                      [color]="(theme$ | async).name === themes.Light && (fontSize$ | async).name === 'medium' ? 'black' : 'white'"
                     >
                       {{ 'profile.noteBig' | translate }}</app-toggle-text
                     >

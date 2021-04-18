@@ -97,17 +97,7 @@
     </div>
     <div class="information">
       <div class="separator"></div>
-      <div class="progress-section">
-        <div class="billing">B</div>
-        <div class="progress-bar-section">
-          <div class="text">
-            <p>50mb of 100MB</p>
-          </div>
-          <div class="progress-bar">
-            <div class="indicator"></div>
-          </div>
-        </div>
-      </div>
+      <app-memory-indicator></app-memory-indicator>
     </div>
   </div>
   <div
@@ -117,7 +107,7 @@
   ></div>
 </div>
 <div
-  class="content"
+  class="content-generic-project"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">

@@ -34,6 +34,7 @@ import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { Theme } from '../../models/Theme';
+import { ThemeENUM } from '../../enums/ThemeEnum';
 
 export enum SharedType {
   Note,
@@ -60,6 +61,8 @@ export class ShareComponent implements OnInit, OnDestroy {
   currentWindowType: SharedType;
 
   noteType = NoteTypeENUM;
+
+  themes = ThemeENUM;
 
   folderType = FolderTypeENUM;
 
@@ -161,7 +164,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.pService.onResize();
-    const routing = this.store.selectSnapshot(AppStore.getRouting);
+    const routing = this.store.selectSnapshot(AppStore.getRouting); // TODO REMOVE CHANGE ON INPUT
     switch (routing) {
       case EntityType.NoteArchive: {
         this.getNotes();
@@ -458,6 +461,34 @@ export class ShareComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
+  }
+
+  get isPrivateButtonActive() {
+    if (this.currentWindowType === SharedType.Note) {
+      return (
+        this.currentNote?.noteType.name === this.noteType.Private ||
+        this.currentNote?.noteType.name === this.noteType.Archive ||
+        this.currentNote?.noteType.name === this.noteType.Deleted
+      );
+    }
+    if (this.currentWindowType === SharedType.Folder) {
+      return (
+        this.currentFolder?.folderType.name === this.folderType.Private ||
+        this.currentFolder?.folderType.name === this.folderType.Archive ||
+        this.currentFolder?.folderType.name === this.folderType.Deleted
+      );
+    }
+    throw new Error('Incorrect type');
+  }
+
+  get isSharedButtonActive() {
+    if (this.currentWindowType === SharedType.Note) {
+      return this.currentNote?.noteType.name === this.noteType.Shared;
+    }
+    if (this.currentWindowType === SharedType.Folder) {
+      return this.currentFolder?.folderType.name === this.folderType.Shared;
+    }
+    throw new Error('Incorrect type');
   }
 
   changeNote(note: SmallNote) {

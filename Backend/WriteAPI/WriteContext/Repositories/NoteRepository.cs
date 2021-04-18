@@ -87,6 +87,17 @@ namespace WriteContext.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId)
+        {
+            return await context.Notes
+                .Include(x => x.RefType)
+                .Include(x => x.NoteType)
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Where(x => x.UserId == userId && x.Id != noteId)
+                .OrderBy(x => x.CreatedAt)
+                .ToListAsync();
+        }
 
 
         public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)

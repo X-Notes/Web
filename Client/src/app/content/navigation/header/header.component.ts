@@ -27,6 +27,15 @@ import { FullNote } from '../../notes/models/fullNote';
 export class HeaderComponent implements OnInit, OnDestroy {
   // Upper Menu
 
+  @Select(AppStore.getName)
+  public route$: Observable<string>;
+
+  @Select(AppStore.isProfile)
+  public isProfile$: Observable<boolean>;
+
+  @Select(AppStore.getMenuSwitch)
+  public menuSwitch$: Observable<string>;
+
   @Select(FolderStore.activeMenu)
   public menuActiveFolders$: Observable<boolean>;
 
@@ -59,8 +68,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       1,
     ),
   ];
-
-  router: string;
 
   constructor(
     public pService: PersonalizationService,
@@ -107,7 +114,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.stateSidebar = !this.pService.stateSidebar;
   }
 
-  async routeChangeFullNote(note: FullNote) {
+  routeChangeFullNote(note: FullNote) {
     if (!note) {
       return;
     }
@@ -132,72 +139,74 @@ export class HeaderComponent implements OnInit, OnDestroy {
         throw new Error('error');
       }
     }
-    this.router = 'note-inner';
   }
 
-  async routeChange(type: EntityType) {
+  newButton() {
+    this.pService.newButtonSubject.next(true);
+  }
+
+  routeChange(type: EntityType) {
+    if (!type) {
+      return;
+    }
     switch (type) {
+      // FOLDER
       case EntityType.FolderPrivate: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
-        this.router = 'items';
         break;
       }
       case EntityType.FolderShared: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
-        this.router = 'items';
         break;
       }
       case EntityType.FolderArchive: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
-        this.router = 'items';
         break;
       }
       case EntityType.FolderDeleted: {
         this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
-        this.router = 'items';
         break;
       }
+      case EntityType.FolderInner: {
+        break;
+      }
+
+      // NOTES
       case EntityType.NotePrivate: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
-        this.router = 'items';
         break;
       }
       case EntityType.NoteShared: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
-        this.router = 'items';
         break;
       }
       case EntityType.NoteArchive: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
-        this.router = 'items';
         break;
       }
       case EntityType.NoteDeleted: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
-        this.router = 'items';
         break;
       }
       case EntityType.NoteInner: {
-        this.router = 'note-inner';
         break;
       }
 
+      // LABELS
       case EntityType.LabelPrivate: {
-        this.router = 'label';
         break;
       }
       case EntityType.LabelDeleted: {
-        this.router = 'label-delete';
         break;
       }
 
+      // PROFILE
       case EntityType.Profile: {
-        this.router = 'profile';
         break;
       }
 
       default: {
-        console.log('default');
+        throw new Error('error');
       }
     }
   }

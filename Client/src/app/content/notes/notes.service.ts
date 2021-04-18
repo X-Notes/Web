@@ -54,7 +54,7 @@ export class NotesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x === true) {
-          await this.murriService.setOpacityTrueAsync(0, false);
+          await this.murriService.setOpacityFlagAsync(0, false);
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
           this.notes = this.allNotes;
@@ -63,7 +63,7 @@ export class NotesService implements OnDestroy {
             .selectSnapshot(AppStore.getNoteTypes)
             .find((z) => z.name === roadType);
           await this.murriService.initMurriNoteAsync(type, true);
-          await this.murriService.setOpacityTrueAsync(0);
+          await this.murriService.setOpacityFlagAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
       });
@@ -117,12 +117,12 @@ export class NotesService implements OnDestroy {
 
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.notes.length && !this.firstInitedMurri) {
+      if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
         const type = this.store
           .selectSnapshot(AppStore.getNoteTypes)
           .find((x) => x.name === noteType);
         this.murriService.initMurriNote(type, !this.isFiltedMode());
-        await this.murriService.setOpacityTrueAsync();
+        await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });
@@ -208,10 +208,8 @@ export class NotesService implements OnDestroy {
   }
 
   async UpdateLabelSelected(ids: string[]) {
-    console.log('ids labels');
     if (ids.length !== 0 && this.firstInitFlag) {
-      console.log('in');
-      await this.murriService.setOpacityTrueAsync(0, false);
+      await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
       this.notes = this.allNotes.filter((x) =>
@@ -222,7 +220,7 @@ export class NotesService implements OnDestroy {
         .selectSnapshot(AppStore.getNoteTypes)
         .find((x) => x.name === roadType);
       await this.murriService.initMurriNoteAsync(type, false);
-      await this.murriService.setOpacityTrueAsync(0);
+      await this.murriService.setOpacityFlagAsync(0);
     }
   }
 

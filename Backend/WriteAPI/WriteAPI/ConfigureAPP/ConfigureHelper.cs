@@ -36,6 +36,7 @@ using Domain.Commands.users;
 using Domain.Queries.backgrounds;
 using Domain.Queries.files;
 using Domain.Queries.folders;
+using Domain.Queries.innerFolder;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.permissions;
@@ -116,8 +117,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
             // RELATED NOTES
-            services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<SmallNote>>, RelatedNotesHandlerQuery>();
-            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, Unit>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateRelatedNotesToNoteCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeOrderRelatedNotesCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
+            services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();           
@@ -151,7 +155,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
 
             // FULL-FOLDER
-            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, Unit>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateNotesInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
+
+            services.AddScoped<IRequestHandler<GetFolderNotesByFolderId, List<SmallNote>>, FullFolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
@@ -202,6 +211,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
+            services.AddScoped<FoldersNotesRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -240,6 +250,7 @@ namespace WriteAPI.ConfigureAPP
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<PhotoHelpers>();
+            services.AddScoped<SearchHelper>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }

@@ -41,6 +41,9 @@ import { ButtonToggleComponent } from './custom-components/button-toggle/button-
 import { ToggleTextComponent } from './custom-components/toggle-text/toggle-text.component';
 import { NotePreviewTextComponent } from '../content/notes/note/note-preview-text/note-preview-text.component';
 import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-photos/note-preview-photos.component';
+import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
+import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
+import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +73,9 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
+    ManageNotesInFolderComponent,
+    MemoryIndicatorComponent,
+    DialogGenericHeaderComponent,
   ],
   imports: [
     CommonModule,
@@ -118,6 +124,7 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
     ToggleTextComponent,
     NotePreviewTextComponent,
     NotePreviewPhotosComponent,
+    MemoryIndicatorComponent,
     MatIconModule,
     MatMenuModule,
   ],

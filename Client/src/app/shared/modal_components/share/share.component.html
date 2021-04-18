@@ -4,10 +4,14 @@
   [ngClass]="[pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']"
 >
   <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
-    <div class="header">
-      <span>{{ 'modal.ShareModal.selectedNotes' | translate }}</span>
-      <i class="icon-plus" (click)="collapseToggle()"></i>
-    </div>
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.selectedNotes' | translate"
+      [autoClose]="false"
+      [isMessage]="pService.isCollapseShared"
+      (clickEvent)="collapseToggle()"
+    ></app-dialog-generic-header>
+
     <ng-scrollbar
       *ngIf="currentWindowType === windowType.Note"
       class="notes-sharing"
@@ -53,12 +57,11 @@
     </ng-scrollbar>
   </div>
   <div class="sharing">
-    <div class="header">
-      <span>{{ 'modal.ShareModal.Share' | translate }}</span>
-      <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
-        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-      </div>
-    </div>
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.Share' | translate"
+    ></app-dialog-generic-header>
+
     <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
       <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
         <div class="tab-content">
@@ -118,19 +121,19 @@
             <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
               <app-button-toggle
                 class="toggle"
-                [value]="currentNote?.noteType.name === 'private' ?  false : true"
+                [value]="isPrivateButtonActive ?  false : true"
                 [style]="'classic'"
                 (valueChange)="changeNoteType()"
               >
                 <app-toggle-text
                   on
-                  [color]="(theme$ | async).name === 'dark' && currentNote?.noteType.name === 'private' ? '#202020' : ''"
+                  [color]="(theme$ | async).name === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
                 >
                 <app-toggle-text
                   off
-                  [color]="(theme$ | async).name === 'dark' && currentNote?.noteType.name === 'shared' ? '#202020' : ''"
+                  [color]="(theme$ | async).name === themes.Dark && isSharedButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
                 >
@@ -147,19 +150,19 @@
             <div *ngIf="currentWindowType === windowType.Folder" class="toggle-field">
               <app-button-toggle
                 class="toggle"
-                [value]="currentFolder?.folderType.name === 'Private' ?  false : true"
+                [value]="isPrivateButtonActive ?  false : true"
                 [style]="'classic'"
                 (valueChange)="changeFolderType()"
               >
                 <app-toggle-text
                   on
-                  [color]="(theme$ | async).name === 'Dark' && currentFolder?.folderType.name === 'Private' ? '#202020' : ''"
+                  [color]="(theme$ | async).name === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
                 >
                 <app-toggle-text
                   off
-                  [color]="(theme$ | async).name === 'Dark' && currentFolder?.folderType.name === 'Shared' ? '#202020' : ''"
+                  [color]="(theme$ | async).name === themes.Dark && isSharedButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
                 >

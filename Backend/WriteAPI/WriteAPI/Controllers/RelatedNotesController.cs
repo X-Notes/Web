@@ -1,4 +1,5 @@
 ﻿using Common.DTO.notes;
+using Common.DTO.notes.FullNoteContent;
 using Domain.Commands.relatedNotes;
 using Domain.Queries.relatedNotes;
 using MediatR;
@@ -22,8 +23,16 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
+        [HttpPost("preview")]
+        public async Task<List<PreviewNoteForSelection>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
+        {
+            command.Email =  this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+
         [HttpGet("{id}")]
-        public async Task<List<SmallNote>> GetRelatedNotes(Guid id)
+        public async Task<List<RelatedNote>> GetRelatedNotes(Guid id)
         {
             var email = this.GetUserEmail();
             var command = new GetRelatedNotesQuery(email, id);
@@ -31,7 +40,22 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<Unit> AddToRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        public async Task<OperationResult<Unit>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+        [HttpPatch("state")]
+        public async Task<OperationResult<Unit>> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
+
+        [HttpPatch("order")]
+        public async Task<OperationResult<Unit>> UpdateRelatedNoteOrder(ChangeOrderRelatedNotesCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

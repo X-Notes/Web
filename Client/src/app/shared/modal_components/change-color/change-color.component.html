@@ -1,9 +1,7 @@
-<div class="header">
-  <span>{{ 'modal.ColorModal.Colors' | translate }}</span>
-  <div class="icon" style="transform: rotate(45deg)" mat-dialog-close>
-    <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
-  </div>
-</div>
+<app-dialog-generic-header
+  [icon]="'icon-plus'"
+  [message]="'modal.ColorModal.Colors' | translate"
+></app-dialog-generic-header>
 <div class="preview-container">
   <div *ngIf="(isNote$ | async)" class="note" [ngStyle]="{'backgroundColor': current}">
     <div class="labels">

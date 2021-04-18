@@ -1,0 +1,88 @@
+@import 'header-components';
+
+.filter {
+  width: 30px;
+
+  .inner-content {
+    justify-content: center;
+    padding: 0;
+
+    .icon {
+      display: flex;
+    }
+  }
+}
+
+.history {
+  width: auto;
+  margin-right: 0;
+  margin-left: auto;
+  font-size: 1.125rem;
+  font-weight: 500;
+
+  .inner-content {
+    p {
+      padding-right: 0;
+    }
+  }
+}
+
+.manage-notes {
+  .inner-content {
+    padding: 0 0.75rem;
+    p {
+      padding-right: 0;
+      display: block;
+    }
+  }
+}
+
+.profile-default {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .inner-content {
+    p {
+      padding-right: 0;
+      display: block;
+    }
+  }
+}
+
+.rotate {
+  // TODO CHANGE
+  .icon {
+    transform: rotate(45deg);
+  }
+}
+
+.mobile-buttons {
+  display: none;
+}
+
+@media (max-width: 1320px) {
+  .history {
+    margin-left: initial;
+  }
+}
+
+@media (max-width: 1024px) {
+  .history {
+    display: none;
+  }
+
+  .mobile-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .generic-create {
+    display: none;
+  }
+
+  .profile-create {
+    width: 54px;
+  }
+}

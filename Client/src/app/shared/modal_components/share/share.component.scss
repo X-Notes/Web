@@ -10,27 +10,6 @@
   display: flex;
   width: 650px;
 
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.625rem 1.25rem 0 1.25rem;
-
-    span {
-      font-weight: 500;
-      font-size: 0.875rem;
-      white-space: nowrap;
-    }
-
-    .icon {
-      display: flex;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-  }
-
   .sharing {
     display: flex;
     flex-direction: column;
@@ -464,14 +443,6 @@
     transition: 0.2s ease;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 
-    .header {
-      justify-content: center;
-
-      span {
-        display: none;
-      }
-    }
-
     .notes-sharing {
       position: relative;
       display: flex;
@@ -515,13 +486,6 @@
 .half-helper {
   .few-notes {
     flex: 0 1 40%;
-
-    .header {
-      justify-content: space-between;
-      span {
-        display: block;
-      }
-    }
 
     .notes-sharing {
       .note {
@@ -722,14 +686,6 @@
       transition: none;
 
       $color-helper: #26282d;
-
-      .header {
-        justify-content: space-between;
-
-        span {
-          display: block;
-        }
-      }
 
       .notes-sharing {
         align-content: baseline;
@@ -989,10 +945,6 @@
     .few-notes {
       width: 100%;
       height: 100%;
-
-      .header {
-        padding: 0.625rem 1.25rem 0 1.25rem;
-      }
 
       .notes-sharing {
         .note {
