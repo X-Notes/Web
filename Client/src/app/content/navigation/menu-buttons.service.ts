@@ -81,6 +81,10 @@ export class MenuButtonsService {
       operation: () => this.dialogsManageService.changeLabels(),
     },
     {
+      icon: 'private',
+      operation: () => this.makePrivateNotes(),
+    },
+    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -198,10 +202,6 @@ export class MenuButtonsService {
       operation: () => 5,
     },
     {
-      icon: 'label',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -237,12 +237,12 @@ export class MenuButtonsService {
       operation: () => 5,
     },
     {
-      icon: 'label',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+    },
+    {
+      icon: 'privateFolder',
+      operation: () => this.makePrivateFolders(),
     },
     {
       icon: 'copy',
@@ -276,10 +276,6 @@ export class MenuButtonsService {
       operation: () => 5,
     },
     {
-      icon: 'label',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -309,7 +305,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'restore',
-      operation: () => this.restoreFolders(),
+      operation: () => this.makePrivateFolders(),
     },
   ];
 
@@ -319,12 +315,12 @@ export class MenuButtonsService {
       operation: () => 5,
     },
     {
-      icon: 'label',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+    },
+    {
+      icon: 'privateFolder',
+      operation: () => this.makePrivateFolders(),
     },
     {
       icon: 'copy',
@@ -866,7 +862,7 @@ export class MenuButtonsService {
     }
   }
 
-  private restoreFolders() {
+  private makePrivateFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const type = this.store

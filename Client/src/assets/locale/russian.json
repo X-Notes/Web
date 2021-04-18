@@ -59,7 +59,9 @@
       "lock": "Пароль",
       "archive": "Архив",
       "delete": "Удалить",
-      "history": "История"
+      "history": "История",
+      "private": "Личные",
+      "privateFolder": "Личные"
     },
     "profile": {
       "sectionProfile": "Профиль",

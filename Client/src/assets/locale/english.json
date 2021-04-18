@@ -57,7 +57,9 @@
       "lock": "locked",
       "archive": "archive",
       "delete": "delete",
-      "history": "History"
+      "history": "History",
+      "private": "Personal",
+      "privateFolder": "Personal"
     },
     "profile": {
       "sectionProfile": "Profile",
