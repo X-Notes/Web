@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.Mapping;
 using Common;
 using Common.DatabaseModels.models;
 using Common.DTO.folders;
@@ -24,17 +25,17 @@ namespace BI.services.folders
         IRequestHandler<DeleteFoldersCommand, Unit>,
         IRequestHandler<MakePrivateFolderCommand, Unit>
     {
-        private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
         private readonly UserRepository userRepository;
         private readonly AppRepository appRepository;
-        public FolderHandlerCommand(IMapper mapper, FolderRepository folderRepository, UserRepository userRepository,
-            AppRepository appRepository)
+        private readonly AppCustomMapper appCustomMapper;
+        public FolderHandlerCommand(FolderRepository folderRepository, UserRepository userRepository,
+            AppRepository appRepository, AppCustomMapper appCustomMapper)
         {
-            this.mapper = mapper;
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this.appRepository = appRepository;
+            this.appCustomMapper = appCustomMapper;
         }
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
@@ -60,7 +61,7 @@ namespace BI.services.folders
 
             var newFolder = await folderRepository.GetOneById(folder.Id);
 
-            return mapper.Map<SmallFolder>(newFolder);
+            return appCustomMapper.MapFolderToSmallFolder(newFolder);
         }
 
         public async Task<Unit> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
@@ -147,7 +148,7 @@ namespace BI.services.folders
             if (folders.Count == request.Ids.Count)
             {
                 var dbnotes = await folderRepository.CopyFolders(folders, user.Folders, folder.FolderTypeId, type.Id);
-                return mapper.Map<List<SmallFolder>>(dbnotes);
+                return appCustomMapper.MapFoldersToSmallFolders(dbnotes);
             }
             else
             {

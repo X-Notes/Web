@@ -2,6 +2,7 @@
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.app;
+using Common.DTO.folders;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
@@ -66,6 +67,11 @@ namespace BI.Mapping
         public NoteTypeDTO MapTypeToTypeDTO(NoteType type)
         {
             return new NoteTypeDTO(type.Id, type.Name);
+        }
+
+        public FolderTypeDTO MapTypeToTypeDTO(FolderType type)
+        {
+            return new FolderTypeDTO(type.Id, type.Name);
         }
 
         public RefTypeDTO MapRefToRefDTO(RefType type)
@@ -194,5 +200,46 @@ namespace BI.Mapping
             notes.ForEach(note => resultList.Add((note.RelatedNote, note.IsOpened)));
             return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
         }
+
+        public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders)
+        {
+            return folders.Select(folder => MapFolderToSmallFolder(folder)).ToList();
+        }
+
+        public SmallFolder MapFolderToSmallFolder(Folder folder)
+        {
+            return new SmallFolder()
+            {
+                Id = folder.Id,
+                Color = folder.Color,
+                CreatedAt = folder.CreatedAt,
+                DeletedAt = folder.DeletedAt,
+                UpdatedAt = folder.UpdatedAt,
+                Title = folder.Title,
+                FolderType = MapTypeToTypeDTO(folder.FolderType),
+                RefType = MapRefToRefDTO(folder.RefType)
+            };
+        }
+
+        public IEnumerable<FullFolder> MapFoldersToFullFolders(IEnumerable<Folder> folders)
+        {
+            return folders.Select(folder => MapFolderToFullFolder(folder));
+        }
+
+        public FullFolder MapFolderToFullFolder(Folder folder)
+        {
+            return new FullFolder()
+            {
+                Id = folder.Id,
+                Color = folder.Color,
+                CreatedAt = folder.CreatedAt,
+                DeletedAt = folder.DeletedAt,
+                UpdatedAt = folder.UpdatedAt,
+                Title = folder.Title,
+                FolderType = MapTypeToTypeDTO(folder.FolderType),
+                RefType = MapRefToRefDTO(folder.RefType)
+            };
+        }
+
     }
 }
