@@ -52,7 +52,11 @@ namespace WriteContext.Repositories
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCasting.Count());
                     await UpdateRange(foldersTo);
 
-                    foldersForCasting.ForEach(x => x.FolderTypeId = ToId);
+                    foldersForCasting.ForEach(x => {
+                        x.FolderTypeId = ToId;
+                        x.UpdatedAt = DateTimeOffset.Now;
+                     });
+
                     ChangeOrderHelper(foldersForCasting);
                     await UpdateRange(foldersForCasting);
 
@@ -120,6 +124,7 @@ namespace WriteContext.Repositories
                     {
                         Color = x.Color,
                         CreatedAt = DateTimeOffset.Now,
+                        UpdatedAt = DateTimeOffset.Now,
                         FolderTypeId = ToId,
                         Title = x.Title,
                         UserId = x.UserId,

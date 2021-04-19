@@ -29,7 +29,7 @@ namespace BI.services.notes
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
-        private readonly NoteCustomMapper noteCustomMapper;
+        private readonly AppCustomMapper noteCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         public NoteHandlerQuery(
@@ -37,7 +37,7 @@ namespace BI.services.notes
             NoteRepository noteRepository, 
             UserRepository userRepository, 
             UserOnNoteRepository userOnNoteRepository,
-            NoteCustomMapper noteCustomMapper,
+            AppCustomMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository)
         {

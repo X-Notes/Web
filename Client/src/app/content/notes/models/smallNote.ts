@@ -13,4 +13,7 @@ export interface SmallNote {
   contents: ContentModel[];
   isSelected?: boolean;
   lockRedirect?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }

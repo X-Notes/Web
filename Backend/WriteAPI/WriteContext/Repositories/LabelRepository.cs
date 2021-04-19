@@ -101,6 +101,7 @@ namespace WriteContext.Repositories
                     labelDeleted.Order = 1;
                     labelDeleted.IsDeleted = true;
                     labelDeleted.DeletedAt = DateTimeOffset.Now;
+                    labelDeleted.UpdatedAt = DateTimeOffset.Now;
                     await Update(labelDeleted);
 
                     await transaction.CommitAsync();
@@ -129,6 +130,7 @@ namespace WriteContext.Repositories
                     allLabels.ForEach(x => x.Order = x.Order + 1);
                     label.Order = 1;
                     label.IsDeleted = false;
+                    label.UpdatedAt = DateTimeOffset.Now;
                     allLabels.Add(label);
                     await UpdateRange(allLabels);
 

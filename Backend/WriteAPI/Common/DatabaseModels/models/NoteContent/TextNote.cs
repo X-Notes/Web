@@ -25,6 +25,7 @@ namespace Common.DatabaseModels.models.NoteContent
             this.NoteId = NoteId;
             this.Content = Content;
             this.Order = Order;
+            this.UpdatedAt = DateTimeOffset.Now;
         }
 
         public TextNote(string TextType, string Content = null)

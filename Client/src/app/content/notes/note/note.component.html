@@ -43,7 +43,7 @@
   </ng-container>
   <div class="footer">
     <div class="date">
-      <p>02.09.1945</p>
+      <p>{{note.updatedAt | date: 'medium' }}</p>
     </div>
     <div class="help-icons">
       <div *ngFor="let item of [1,2,3]" class="icon">

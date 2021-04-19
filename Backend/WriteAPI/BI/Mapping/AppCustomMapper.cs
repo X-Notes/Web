@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace BI.Mapping
 {
-    public class NoteCustomMapper
+    public class AppCustomMapper
     {
         public FullNote MapNoteToFullNote(Note note)
         {
@@ -24,7 +24,10 @@ namespace BI.Mapping
                 NoteType = MapTypeToTypeDTO(note.NoteType),
                 RefType = MapRefToRefDTO(note.RefType),
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc())
+                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
+                DeletedAt = note.DeletedAt,
+                CreatedAt = note.CreatedAt,
+                UpdatedAt = note.UpdatedAt
             };
             return _fullNote;
         }
@@ -39,7 +42,7 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }
@@ -47,7 +50,7 @@ namespace BI.Mapping
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
@@ -76,6 +79,11 @@ namespace BI.Mapping
             return labelsNotes.Select(x => MapLabelToLabelDTO(x, count)).ToList();
         }
 
+        public List<LabelDTO> MapLabelsToLabelsDTO(List<Label> labels)
+        {
+            return labels.Select(x => MapLabelToLabelDTO(x)).ToList();
+        }
+
         public LabelDTO MapLabelToLabelDTO(LabelsNotes label, int count)
         {
             var lb = label.Label;
@@ -85,7 +93,25 @@ namespace BI.Mapping
                 Name = lb.Name,
                 Color = lb.Color,
                 CountNotes = count,
-                IsDeleted = lb.IsDeleted
+                IsDeleted = lb.IsDeleted,
+                DeletedAt = lb.DeletedAt,
+                CreatedAt = lb.CreatedAt,
+                UpdatedAt = lb.UpdatedAt
+            };
+        }
+
+        public LabelDTO MapLabelToLabelDTO(Label label)
+        {
+            return new LabelDTO()
+            {
+                Id = label.Id,
+                Name = label.Name,
+                Color = label.Color,
+                CountNotes = label.LabelsNotes.Count,
+                IsDeleted = label.IsDeleted,
+                DeletedAt = label.DeletedAt,
+                CreatedAt = label.CreatedAt,
+                UpdatedAt = label.UpdatedAt
             };
         }
 
@@ -102,7 +128,10 @@ namespace BI.Mapping
                 RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
                 Contents = takeContentLength.HasValue ? 
                 MapContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(tuple.note.Contents).ToList()
+                MapContentsToContentsDTO(tuple.note.Contents).ToList(),
+                DeletedAt = tuple.note.DeletedAt,
+                CreatedAt = tuple.note.CreatedAt,
+                UpdatedAt = tuple.note.UpdatedAt
             };
         }
 
@@ -118,13 +147,16 @@ namespace BI.Mapping
                 RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
                 Contents = takeContentLength.HasValue ?
                 MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(note.Contents).ToList()
+                MapContentsToContentsDTO(note.Contents).ToList(),
+                DeletedAt = note.DeletedAt,
+                CreatedAt = note.CreatedAt,
+                UpdatedAt = note.UpdatedAt
             };
         }
 
         public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids , int? takeContentLength = null)
         {
-            return new PreviewNoteForSelection()
+            var result =  new PreviewNoteForSelection()
             {
                 Id = note.Id,
                 Color = note.Color,
@@ -135,8 +167,15 @@ namespace BI.Mapping
                 Contents = takeContentLength.HasValue ?
                 MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
                 MapContentsToContentsDTO(note.Contents).ToList(),
-                IsSelected = ids.Contains(note.Id)
+                IsSelected = ids.Contains(note.Id),
+                DeletedAt = note.DeletedAt,
+                CreatedAt = note.CreatedAt,
+                UpdatedAt = note.UpdatedAt
             };
+            var dates = result.Contents.Select(x => x.UpdatedAt);
+            dates.Append(result.UpdatedAt);
+            result.UpdatedAt = dates.Max();
+            return result;
         }
 
         public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids, int? takeContentLength = null)

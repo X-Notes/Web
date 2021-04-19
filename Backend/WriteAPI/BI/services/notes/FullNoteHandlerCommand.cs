@@ -65,6 +65,7 @@ namespace BI.services.notes
             {
                 var note = permissions.Note;
                 note.Title = request.Title;
+                note.UpdatedAt = DateTimeOffset.Now;
                 await noteRepository.Update(note);
             }
 
@@ -102,7 +103,8 @@ namespace BI.services.notes
                         Order = contentForRemove.Order,
                         CountInRow = 2,
                         Width = "100%",
-                        Height = "auto"
+                        Height = "auto",
+                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await albumNoteRepository.Add(albumNote);
@@ -111,7 +113,9 @@ namespace BI.services.notes
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                     var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
-                    var result = new AlbumNoteDTO(resultPhotos, null, null, albumNote.Id, type, albumNote.CountInRow);
+                    var result = new AlbumNoteDTO(resultPhotos, null, null, 
+                        albumNote.Id, type, albumNote.CountInRow, albumNote.UpdatedAt);
+
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -140,6 +144,7 @@ namespace BI.services.notes
                 {
                     content.Checked = request.Checked.Value;
                 }
+                content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.Update(content);
                 // TODO DEADLOCK
             }
@@ -165,7 +170,9 @@ namespace BI.services.notes
 
                 await baseNoteContentRepository.Add(text);
 
-                var textResult = new TextNoteDTO(text.Content, text.Id, text.TextType, text.HeadingType, text.Checked);
+                var textResult = new TextNoteDTO(text.Content, text.Id, 
+                    text.TextType, text.HeadingType, text.Checked, text.UpdatedAt);
+
                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
             }
 
@@ -207,7 +214,7 @@ namespace BI.services.notes
                                 await baseNoteContentRepository.UpdateRange(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, 
-                                    newText.HeadingType, newText.Checked);
+                                    newText.HeadingType, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
@@ -237,7 +244,8 @@ namespace BI.services.notes
                                 await textNotesRepository.Add(newText);
                                 await baseNoteContentRepository.UpdateRange(contents);
 
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, newText.HeadingType, newText.Checked);
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, 
+                                    newText.TextType, newText.HeadingType, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -278,7 +286,11 @@ namespace BI.services.notes
                 }
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => content.Order = order);
+                contents.Zip(orders, (content, order) => {
+                    content.Order = order;
+                    content.UpdatedAt = DateTimeOffset.Now;
+                    return (content, order);
+                 });
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -327,6 +339,7 @@ namespace BI.services.notes
                 {
                     content.TextType = request.Type;
                     content.HeadingType = request.HeadingType;
+                    content.UpdatedAt = DateTimeOffset.Now;
                     await textNotesRepository.Update(content);
                     // TODO DEADLOCK
                     return new OperationResult<Unit>(Success: true, Unit.Value);
@@ -357,7 +370,11 @@ namespace BI.services.notes
                 contentPrev.Content += contentForConcat.Content;
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => content.Order = order);
+                contents.Zip(orders, (content, order) => {
+                    content.Order = order;
+                    content.UpdatedAt = DateTimeOffset.Now;
+                    return (content, order);
+                    });
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -369,7 +386,7 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
-                                    contentPrev.HeadingType, contentPrev.Checked);
+                                    contentPrev.HeadingType, contentPrev.Checked, contentPrev.UpdatedAt);
 
                     return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
@@ -397,7 +414,11 @@ namespace BI.services.notes
                 contents.Remove(contentForRemove);
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => content.Order = order);
+                contents.Zip(orders, (content, order) => {
+                    content.Order = order;
+                    content.UpdatedAt = DateTimeOffset.Now;
+                    return (content, order);
+                });
 
                 var photosIds = contentForRemove.Photos.Select(x => x.Id);
 
@@ -443,6 +464,7 @@ namespace BI.services.notes
                     await fileRepository.AddRange(fileList);
 
                     album.Photos.AddRange(fileList);
+                    album.UpdatedAt = DateTimeOffset.Now;
 
                     await albumNoteRepository.Update(album);
 
@@ -474,6 +496,7 @@ namespace BI.services.notes
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 var photoForRemove = album.Photos.First(x => x.Id == request.PhotoId);
                 album.Photos.Remove(photoForRemove);
+                album.UpdatedAt = DateTimeOffset.Now;
 
                 if (album.Photos.Count == 0)
                 {
@@ -514,6 +537,7 @@ namespace BI.services.notes
             {
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 album.CountInRow = request.Count;
+                album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
@@ -531,6 +555,7 @@ namespace BI.services.notes
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 album.Height = request.Height;
                 album.Width = request.Width;
+                album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }

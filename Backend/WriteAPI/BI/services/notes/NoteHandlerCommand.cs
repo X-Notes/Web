@@ -35,10 +35,10 @@ namespace BI.services.notes
         private readonly IMapper mapper;
         private readonly AppRepository appRepository;
         private readonly IFilesStorage filesStorage;
-        private readonly NoteCustomMapper noteCustomMapper;
+        private readonly AppCustomMapper noteCustomMapper;
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
-            AppRepository appRepository, IFilesStorage filesStorage, NoteCustomMapper noteCustomMapper)
+            AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -68,6 +68,7 @@ namespace BI.services.notes
                 NoteTypeId = type.Id,
                 RefTypeId = refType.Id,
                 CreatedAt = DateTimeOffset.Now,
+                UpdatedAt = DateTimeOffset.Now,
                 Contents = _contents
             };
 
@@ -88,7 +89,10 @@ namespace BI.services.notes
 
             if (notes.Any())
             {
-                notes.ForEach(x => x.Color = request.Color);
+                notes.ForEach(x => { 
+                    x.Color = request.Color;
+                    x.UpdatedAt = DateTimeOffset.Now;
+                });
                 await noteRepository.UpdateRange(notes);
             }
             else
@@ -178,6 +182,7 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
+            // TODO PERMISSIONS
             var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var user = await userRepository.GetUserWithNotes(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
@@ -203,6 +208,7 @@ namespace BI.services.notes
             var noteWithLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId == request.LabelId)).ToList();
 
             noteWithLabels.ForEach(x => x.LabelsNotes = x.LabelsNotes.Where(x => x.LabelId != request.LabelId).ToList());
+            noteWithLabels.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
 
             await noteRepository.UpdateRange(noteWithLabels);
 
@@ -219,6 +225,7 @@ namespace BI.services.notes
             var noteWithoutLabels = selectedNotes.Where(x => x.LabelsNotes.Any(z => z.LabelId != request.LabelId) || x.LabelsNotes.Count == 0).ToList();
 
             noteWithoutLabels.ForEach(x => x.LabelsNotes.Add(new LabelsNotes() { LabelId = request.LabelId, NoteId = x.Id, AddedAt = DateTimeOffset.Now }));;
+            noteWithoutLabels.ForEach(x => x.UpdatedAt = DateTimeOffset.Now);
 
             await noteRepository.UpdateRange(noteWithoutLabels);
 

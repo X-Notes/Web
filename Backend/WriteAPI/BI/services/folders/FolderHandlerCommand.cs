@@ -52,7 +52,8 @@ namespace BI.services.folders
                 Color = FolderColorPallete.Green,
                 FolderTypeId = privateType.Id,
                 RefTypeId = refType.Id,
-                CreatedAt = DateTimeOffset.Now
+                CreatedAt = DateTimeOffset.Now,
+                UpdatedAt = DateTimeOffset.Now
             };
 
             await folderRepository.Add(folder, privateType.Id);
@@ -87,7 +88,11 @@ namespace BI.services.folders
 
             if (folders.Any())
             {
-                folders.ForEach(x => x.Color = request.Color);
+                folders.ForEach(x => {
+                    x.Color = request.Color;
+                    x.UpdatedAt = DateTimeOffset.Now;
+                });
+
                 await folderRepository.UpdateRange(folders);
             }
             else

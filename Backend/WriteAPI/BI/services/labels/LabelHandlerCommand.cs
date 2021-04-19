@@ -23,12 +23,10 @@ namespace BI.services.labels
     {
         private readonly LabelRepository labelRepository;
         private readonly UserRepository userRepository;
-        private readonly IMapper mapper;
-        public LabelHandlerCommand(LabelRepository labelRepository, UserRepository userRepository, IMapper mapper)
+        public LabelHandlerCommand(LabelRepository labelRepository, UserRepository userRepository)
         {
             this.labelRepository = labelRepository;
             this.userRepository = userRepository;
-            this.mapper = mapper;
         }
 
 
@@ -51,6 +49,7 @@ namespace BI.services.labels
             {
                 label.Color = request.Color;
                 label.Name = request.Name;
+                label.UpdatedAt = DateTimeOffset.Now;
                 await labelRepository.Update(label);
             }
             return Unit.Value;
@@ -65,6 +64,7 @@ namespace BI.services.labels
             label.Order = 1;
             label.Color = LabelsColorPallete.Red;
             label.CreatedAt = DateTimeOffset.Now;
+            label.UpdatedAt = DateTimeOffset.Now;
 
             await labelRepository.NewLabel(label);
             return label.Id;

@@ -3,9 +3,7 @@ export class ContentModel {
 
   id: string;
 
-  nextId: string;
-
-  prevId: string;
+  updatedAt: Date;
 }
 
 export class BaseText extends ContentModel {

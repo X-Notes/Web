@@ -147,7 +147,11 @@ namespace WriteContext.Repositories
                     notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
                     await UpdateRange(notesTo);
 
-                    notesForCasting.ForEach(x => x.NoteTypeId = ToId);
+                    notesForCasting.ForEach(x => {
+                        x.NoteTypeId = ToId;
+                        x.UpdatedAt = DateTimeOffset.Now;
+                    });
+
                     ChangeOrderHelper(notesForCasting);
                     await UpdateRange(notesForCasting);
 
@@ -177,6 +181,7 @@ namespace WriteContext.Repositories
                     var newNotes = notesForCopy.Select(x => new Note() { 
                         Color = x.Color,
                         CreatedAt = DateTimeOffset.Now,
+                        UpdatedAt = DateTimeOffset.Now,
                         NoteTypeId = ToId,
                         Title = x.Title,
                         UserId = x.UserId,

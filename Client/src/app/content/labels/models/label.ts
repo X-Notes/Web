@@ -5,4 +5,7 @@ export interface Label {
   color: string;
   countNotes: number;
   isSelected?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }

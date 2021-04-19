@@ -9,4 +9,7 @@ export interface SmallFolder {
   folderType: FolderType;
   isSelected?: boolean;
   lockRedirect?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }

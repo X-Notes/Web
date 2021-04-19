@@ -20,19 +20,19 @@ namespace BI.services.relatedNotes
           IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>
     {
         private readonly ReletatedNoteToInnerNoteRepository relatedRepository;
-        private readonly NoteCustomMapper noteCustomMapper;
+        private readonly AppCustomMapper noteCustomMapper;
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
-        private readonly NoteCustomMapper noteMapper;
+        private readonly AppCustomMapper noteMapper;
         private readonly IMediator _mediator;
         private readonly SearchHelper searchHelper;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
-            NoteCustomMapper noteCustomMapper,
+            AppCustomMapper noteCustomMapper,
             NoteRepository noteRepository,
             UserRepository userRepository,
-            NoteCustomMapper noteMapper,
+            AppCustomMapper noteMapper,
             IMediator _mediator,
             SearchHelper searchHelper)
         {
