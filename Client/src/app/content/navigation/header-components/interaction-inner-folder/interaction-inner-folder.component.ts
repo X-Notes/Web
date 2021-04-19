@@ -3,6 +3,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -14,9 +15,6 @@ import { DialogsManageService } from '../../dialogs-manage.service';
   styleUrls: ['./interaction-inner-folder.component.scss'],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
@@ -27,13 +25,11 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  constructor(
-    private store: Store,
-    private dialogsService: DialogsManageService,
-    private pService: PersonalizationService,
-  ) {}
+  constructor(private store: Store, private pService: PersonalizationService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initCountSelected();
+  }
 
   manageNotesInFolderHandler() {
     this.pService.manageNotesInFolderSubject.next(true);
@@ -45,7 +41,9 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
 
   newButton() {}
 
-  unselectAll() {}
+  unselectAll() {
+    this.store.dispatch(new UnSelectAllNote());
+  }
 
   initCountSelected() {
     this.store
@@ -54,6 +52,7 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
       .subscribe((x) => {
         if (x > 0) {
           this.countSelected = x;
+          console.log(this.countSelected);
         }
       });
 
@@ -63,6 +62,7 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
       .subscribe((x) => {
         if (x > 0) {
           this.countSelected = x;
+          console.log(this.countSelected);
         }
       });
   }

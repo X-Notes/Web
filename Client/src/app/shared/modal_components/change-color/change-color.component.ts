@@ -26,6 +26,9 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   @Select(AppStore.isFolder)
   public isFolder$: Observable<boolean>;
 
+  @Select(AppStore.isFolderInner)
+  public isFolderInner$: Observable<boolean>;
+
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
 
   current;
@@ -62,12 +65,17 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
-      const type = this.store
-        .selectSnapshot(AppStore.getFolderTypes)
-        .find((x) => x.name === typeRoad);
-      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
+      const isInner = this.store.selectSnapshot(AppStore.isFolderInner);
+      if (isInner) {
+        console.log('change');
+      } else {
+        const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
+        const type = this.store
+          .selectSnapshot(AppStore.getFolderTypes)
+          .find((x) => x.name === typeRoad);
+        const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+        await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
+      }
     }
     this.dialogRef.close();
   }

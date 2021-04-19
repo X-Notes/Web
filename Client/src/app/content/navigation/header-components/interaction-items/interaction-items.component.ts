@@ -15,6 +15,7 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   styleUrls: ['./interaction-items.component.scss'],
 })
 export class InteractionItemsComponent implements OnInit, OnDestroy {
+  // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   @Select(AppStore.getName)
   public route$: Observable<string>;
 

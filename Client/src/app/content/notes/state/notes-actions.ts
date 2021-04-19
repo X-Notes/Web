@@ -176,7 +176,6 @@ export class UpdateTitle {
   constructor(public str: string) {}
 }
 
-
 export class UpdateLabelFullNote {
   static type = '[Notes] update label full note';
 
@@ -204,4 +203,3 @@ export class TransformTypeNotes {
     public selectedIds: string[],
   ) {}
 }
-

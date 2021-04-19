@@ -168,6 +168,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsInner);
         break;
       }
 

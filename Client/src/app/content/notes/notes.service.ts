@@ -21,6 +21,7 @@ import { UpdateColor } from './state/updateColor';
 
 @Injectable()
 export class NotesService implements OnDestroy {
+  // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   labelsIds: Subscription;
 
   destroy = new Subject<void>();

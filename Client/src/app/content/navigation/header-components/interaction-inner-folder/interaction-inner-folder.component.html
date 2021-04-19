@@ -5,7 +5,7 @@
 ></app-general-header-button>
 
 <app-general-header-button
-  *ngIf="!((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  *ngIf="(menuActiveNotes$ | async) === false"
   (clickEvent)="newButton()"
   [message]="'new.' + (route$ | async ) | translate"
   [iconClass]="'plus'"
@@ -29,7 +29,7 @@
 
 
 <app-general-header-button
-  *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+  *ngIf="(menuActiveNotes$ | async) === true"
   (clickEvent)="unselectAll()"
   [message]="('header.selected' | translate) + ' ' + countSelected"
   [iconClass]="'plus'"

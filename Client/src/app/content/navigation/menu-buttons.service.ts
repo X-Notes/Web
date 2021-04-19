@@ -344,6 +344,21 @@ export class MenuButtonsService {
     },
   ];
 
+  public foldersItemsInner: MenuItem[] = [
+    {
+      icon: 'history',
+      operation: () => 5,
+    },
+    {
+      icon: 'copy',
+      operation: () => this.copyFolders(),
+    },
+    {
+      icon: 'color',
+      operation: () => this.dialogsManageService.changeColor(),
+    },
+  ];
+
   constructor(
     private store: Store,
     private snackService: SnackbarService,
