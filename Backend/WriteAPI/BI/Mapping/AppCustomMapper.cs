@@ -208,6 +208,7 @@ namespace BI.Mapping
 
         public SmallFolder MapFolderToSmallFolder(Folder folder)
         {
+            var notes = folder.FoldersNotes?.Select(x => x.Note);
             return new SmallFolder()
             {
                 Id = folder.Id,
@@ -217,7 +218,21 @@ namespace BI.Mapping
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
                 FolderType = MapTypeToTypeDTO(folder.FolderType),
-                RefType = MapRefToRefDTO(folder.RefType)
+                RefType = MapRefToRefDTO(folder.RefType),
+                PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
+            };
+        }
+
+        public List<NotePreviewInFolder> MapNotesToNotesPreviewInFolder(IEnumerable<Note> notes)
+        {
+            return notes?.Select(x => MapNoteToNotePreviewInFolder(x)).ToList();
+        }
+
+        public NotePreviewInFolder MapNoteToNotePreviewInFolder(Note note)
+        {
+            return new NotePreviewInFolder()
+            { 
+                Title = note.Title
             };
         }
 

@@ -1,5 +1,6 @@
 ﻿using Common.DTO.app;
 using System;
+using System.Collections.Generic;
 
 namespace Common.DTO.folders
 {
@@ -13,5 +14,6 @@ namespace Common.DTO.folders
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
+        public List<NotePreviewInFolder> PreviewNotes { set; get; }
     }
 }

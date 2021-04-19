@@ -179,6 +179,16 @@ namespace WriteContext.Repositories
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, Guid typeId)
+        {
+            return await context.Folders
+                .Include(x => x.RefType)
+                .Include(x => x.FolderType)
+                .Include(x => x.FoldersNotes)
+                .ThenInclude(x => x.Note)
+                .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
+        }
+
         public async Task<Folder> GetOneById(Guid folderId)
         {
             return await context.Folders.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == folderId);
