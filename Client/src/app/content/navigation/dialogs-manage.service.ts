@@ -52,7 +52,7 @@ export class DialogsManageService {
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
     };
-    this.dialogService.openDialog(EditingLabelsNoteComponent, config);
+    return this.dialogService.openDialog(EditingLabelsNoteComponent, config);
   }
 
   changeColor() {
@@ -64,7 +64,7 @@ export class DialogsManageService {
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
     };
-    this.dialogService.openDialog(ChangeColorComponent, config);
+    return this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
   shareEntity() {
@@ -77,7 +77,7 @@ export class DialogsManageService {
           ? ['custom-dialog-class-light', 'sharing-modal']
           : ['custom-dialog-class-dark', 'sharing-modal'],
     };
-    this.dialogService.openDialog(ShareComponent, config);
+    return this.dialogService.openDialog(ShareComponent, config);
   }
 
   getTheme() {

@@ -731,10 +731,6 @@ export class MenuButtonsService {
     this.store.dispatch(new DeleteFoldersPermanently(ids, type));
   }
 
-  filterItems(newItems: MenuItem[]) {
-    this.items = newItems;
-  }
-
   setItems(newItems: MenuItem[]) {
     this.items = newItems;
   }

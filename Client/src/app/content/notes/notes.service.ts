@@ -159,7 +159,7 @@ export class NotesService implements OnDestroy {
     console.log('note destroy');
     this.destroy.next();
     this.destroy.complete();
-    this.labelsIds.unsubscribe();
+    this.labelsIds?.unsubscribe();
   }
 
   transformNotes = (items: SmallNote[]) => {

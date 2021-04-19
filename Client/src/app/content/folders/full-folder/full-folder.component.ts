@@ -30,13 +30,14 @@ import { SmallFolder } from '../models/folder';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
+import { NotesService } from '../../notes/notes.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
   animations: [sideBarCloseOpen],
-  providers: [FullFolderNotesService],
+  providers: [FullFolderNotesService, NotesService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -71,6 +72,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public ffnService: FullFolderNotesService,
     private dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
+    public noteService: NotesService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -79,6 +81,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
     this.routeSubscription.unsubscribe();
@@ -90,41 +93,44 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.routeSubscription = this.route.params.subscribe(async (params) => {
       this.id = params.id;
-
       this.store
         .select(AppStore.appLoaded)
         .pipe(takeUntil(this.destroy))
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.loadFolder();
-            await this.loadNotes();
+            await this.ffnService.loadNotes(this.folder.id);
 
             await this.pService.waitPreloading();
             this.pService.setSpinnerState(false);
             this.loaded = true;
             this.loadSideBar();
-            this.initManageButtonSubscribe();
           }
         });
     });
+
+    this.initManageButtonSubscribe();
   }
 
   async initManageButtonSubscribe() {
-    this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(async () => {
+    this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
       const instanse = this.dialogsService.openManageNotesInFolder();
-      const resp = await instanse.afterClosed().toPromise();
-      const ids = resp.map((x) => x.id);
-      await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+      instanse
+        .afterClosed()
+        .pipe(takeUntil(this.destroy))
+        .subscribe(async (resp) => {
+          if (resp) {
+            const ids = resp.map((x) => x.id);
+            await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+            await this.ffnService.loadNotes(this.folder.id);
+          }
+        });
     });
   }
 
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
     this.folder = this.store.selectSnapshot(FolderStore.full);
-  }
-
-  async loadNotes() {
-    await this.ffnService.loadNotes(this.folder.id);
   }
 
   async loadSideBar() {
