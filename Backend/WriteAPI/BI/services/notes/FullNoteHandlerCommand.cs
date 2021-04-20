@@ -204,7 +204,10 @@ namespace BI.services.notes
                             contents.Insert(insertIndex + 1, newText);
 
                             var orders = Enumerable.Range(1, contents.Count);
-                            contents.Zip(orders, (content, order) => content.Order = order);
+                            contents = contents.Zip(orders, (content, order) => {
+                                content.Order = order;
+                                return content;
+                            }).ToList();
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -234,7 +237,10 @@ namespace BI.services.notes
                             contents.Insert(insertIndex, newText);
 
                             var orders = Enumerable.Range(1, contents.Count);
-                            contents.Zip(orders, (content, order) => content.Order = order);
+                            contents = contents.Zip(orders, (content, order) => {
+                                content.Order = order;
+                                return content;
+                            }).ToList();
 
 
                             using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
@@ -286,11 +292,12 @@ namespace BI.services.notes
                 }
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => {
+
+                contents = contents.Zip(orders, (content, order) => {
                     content.Order = order;
                     content.UpdatedAt = DateTimeOffset.Now;
-                    return (content, order);
-                 });
+                    return content;
+                 }).ToList();
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -370,11 +377,12 @@ namespace BI.services.notes
                 contentPrev.Content += contentForConcat.Content;
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => {
+
+                contents = contents.Zip(orders, (content, order) => {
                     content.Order = order;
                     content.UpdatedAt = DateTimeOffset.Now;
-                    return (content, order);
-                    });
+                    return content;
+                    }).ToList();
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -414,11 +422,11 @@ namespace BI.services.notes
                 contents.Remove(contentForRemove);
 
                 var orders = Enumerable.Range(1, contents.Count);
-                contents.Zip(orders, (content, order) => {
+                contents = contents.Zip(orders, (content, order) => {
                     content.Order = order;
                     content.UpdatedAt = DateTimeOffset.Now;
-                    return (content, order);
-                });
+                    return content;
+                }).ToList();
 
                 var photosIds = contentForRemove.Photos.Select(x => x.Id);
 

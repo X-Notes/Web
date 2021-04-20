@@ -347,33 +347,33 @@ export class NoteStore {
   @Action(ChangeColorNote)
   async changeColor(
     { patchState, getState, dispatch }: StateContext<NoteState>,
-    { color, typeNote, selectedIds }: ChangeColorNote,
+    { color, selectedIds }: ChangeColorNote,
   ) {
     await this.api.changeColor(selectedIds, color).toPromise();
 
-    const notes = this.getNotesByType(getState, typeNote.name);
-
-    const newNotes = notes.map((x) => {
-      const note = { ...x };
-      if (selectedIds.some((z) => z === note.id)) {
-        note.color = color;
-      }
-      return note;
-    });
-
-    const notesForUpdate = notes
-      .filter((x) => selectedIds.some((z) => z === x.id))
-      .map((x) => {
-        const note = { ...x, color };
+    for (const notes of getState().notes) {
+      const newNotes = notes.notes.map((x) => {
+        const note = { ...x };
+        if (selectedIds.some((z) => z === note.id)) {
+          note.color = color;
+        }
         return note;
       });
-    const updateColor = notesForUpdate.map((note) => this.mapFromNoteToUpdateColor(note));
-    patchState({ updateColorEvent: updateColor });
-    dispatch([
-      new UpdateNotes(new Notes(typeNote.name, newNotes), typeNote.name),
-      UnSelectAllNote,
-      ClearColorNotes,
-    ]);
+
+      const notesForUpdate = notes.notes
+        .filter((x) => selectedIds.some((z) => z === x.id))
+        .map((x) => {
+          const note = { ...x, color };
+          return note;
+        });
+      const updateColor = notesForUpdate.map((note) => this.mapFromNoteToUpdateColor(note));
+      patchState({ updateColorEvent: updateColor });
+      dispatch([
+        new UpdateNotes(new Notes(notes.typeNotes, newNotes), notes.typeNotes),
+        UnSelectAllNote,
+        ClearColorNotes,
+      ]);
+    }
   }
 
   @Action(CopyNotes)

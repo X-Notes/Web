@@ -97,6 +97,8 @@ export class PersonalizationService {
 
   timeForSpinnerLoading = 150;
 
+  selectAllButton = new Subject();
+
   newButtonSubject = new Subject();
 
   manageNotesInFolderSubject = new Subject();

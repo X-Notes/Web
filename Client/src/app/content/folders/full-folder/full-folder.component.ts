@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import {
   AfterViewInit,
   Component,
@@ -31,6 +32,8 @@ import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
 import { NotesService } from '../../notes/notes.service';
+import { ApiServiceNotes } from '../../notes/api-notes.service';
+import { LoadNotes, SelectIdNote } from '../../notes/state/notes-actions';
 
 @Component({
   selector: 'app-full-folder',
@@ -73,6 +76,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
     public noteService: NotesService,
+    public noteApiService: ApiServiceNotes,
   ) {}
 
   ngAfterViewInit(): void {
@@ -105,14 +109,46 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pService.setSpinnerState(false);
             this.loaded = true;
             this.loadSideBar();
+
+            const types = this.store.selectSnapshot(AppStore.getNoteTypes);
+            const actions = types.map((t) => new LoadNotes(t.id, t));
+            this.store.dispatch(actions);
           }
         });
     });
 
     this.initManageButtonSubscribe();
+    this.initHeaderButtonSubscribe();
   }
 
-  async initManageButtonSubscribe() {
+  initHeaderButtonSubscribe() {
+    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
+      if (flag) {
+        const newNote = await this.noteApiService.new().toPromise();
+        const ids = [newNote.id, ...this.noteService.notes.map((z) => z.id)];
+        await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+        this.noteService.addToDom([newNote]);
+      }
+    });
+
+    this.pService.selectAllButton.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
+      if (flag) {
+        const { notes } = this.noteService;
+        // eslint-disable-next-line no-param-reassign
+        notes.forEach((x) => (x.isSelected = true));
+        const actions = notes.map(
+          (x) =>
+            new SelectIdNote(
+              x.id,
+              x.labels.map((z) => z.id),
+            ),
+        );
+        this.store.dispatch(actions);
+      }
+    });
+  }
+
+  initManageButtonSubscribe() {
     this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
       const instanse = this.dialogsService.openManageNotesInFolder();
       instanse

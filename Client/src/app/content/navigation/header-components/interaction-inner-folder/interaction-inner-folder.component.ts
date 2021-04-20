@@ -7,7 +7,6 @@ import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { DialogsManageService } from '../../dialogs-manage.service';
 
 @Component({
   selector: 'app-interaction-inner-folder',
@@ -35,11 +34,15 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
     this.pService.manageNotesInFolderSubject.next(true);
   }
 
-  selectAll() {}
+  selectAll() {
+    this.pService.selectAllButton.next(true);
+  }
 
   settingsClick() {}
 
-  newButton() {}
+  newButton() {
+    this.pService.newButtonSubject.next(true);
+  }
 
   unselectAll() {
     this.store.dispatch(new UnSelectAllNote());

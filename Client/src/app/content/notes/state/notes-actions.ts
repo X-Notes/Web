@@ -26,7 +26,7 @@ export class UpdateNotes {
 export class ChangeColorNote {
   static type = '[Notes] Change color note';
 
-  constructor(public color: string, public typeNote: NoteType, public selectedIds: string[]) {}
+  constructor(public color: string, public selectedIds: string[]) {}
 }
 
 export class ClearColorNotes {

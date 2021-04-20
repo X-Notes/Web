@@ -27,7 +27,6 @@
   [styleClasses]="'generic-2 filter'"
 ></app-general-header-button>
 
-
 <app-general-header-button
   *ngIf="(menuActiveNotes$ | async) === true"
   (clickEvent)="unselectAll()"
