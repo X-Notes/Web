@@ -133,7 +133,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.pService.selectAllButton.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
       if (flag) {
-        const { notes } = this.noteService;
+        const notes = this.noteService.notes.filter(
+          (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
+        );
         // eslint-disable-next-line no-param-reassign
         notes.forEach((x) => (x.isSelected = true));
         const actions = notes.map(

@@ -3,6 +3,7 @@ import { NoteType } from 'src/app/shared/models/noteType';
 import { Label } from '../../labels/models/label';
 import { ContentModel } from './ContentMode';
 
+// TODO MAKE CLASS
 export interface SmallNote {
   id: string;
   title: string;
