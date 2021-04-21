@@ -126,6 +126,11 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
     });
+
+    this.store
+      .select(FolderStore.full)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (folder) => this.routeChangeFullFolder(folder));
   }
 
   async initManageButtonSubscribe() {
@@ -167,8 +172,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
     this.folder = this.store.selectSnapshot(FolderStore.full);
-    this.routeChangeFullFolder(this.folder);
-    console.log(this.folder);
   }
 
   async loadNotes() {

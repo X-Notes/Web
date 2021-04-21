@@ -1,4 +1,7 @@
 import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { ApiBrowserTextService } from './api-browser-text.service';
 
 @Injectable()
@@ -13,7 +16,7 @@ export class SelectionService {
 
   isSelectionInside;
 
-  constructor(private apiBrowserService: ApiBrowserTextService) {}
+  constructor(private apiBrowserService: ApiBrowserTextService, private store: Store) {}
 
   selectionHandler(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
     const refElementsArray = refElements.toArray();
@@ -36,6 +39,7 @@ export class SelectionService {
   }
 
   makeSelect(items: HTMLElement[]) {
+    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const refElements = [...items];
     if (this.isSelectionInside) {
       if (refElements.length === 1) {
@@ -45,7 +49,11 @@ export class SelectionService {
       this.apiBrowserService.getSelection().empty();
     }
     for (const elem of refElements) {
-      elem.style.backgroundColor = '#2a2d32';
+      if (theme.name === ThemeENUM.Dark) {
+        elem.style.backgroundColor = '#2a2d32';
+      } else {
+        elem.style.backgroundColor = '#f3f3f3';
+      }
       elem.setAttribute('selectedByUser', 'true');
     }
   }

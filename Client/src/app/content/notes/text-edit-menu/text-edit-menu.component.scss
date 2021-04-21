@@ -2,14 +2,13 @@
 
 .container {
   display: flex;
-  background-color: $dark-button;
   border-radius: 5px;
+  box-shadow: 0 0 0 2px rgb(236, 236, 236);
 
   .button {
     display: flex;
     cursor: pointer;
     padding: 0.5rem 0.438rem;
-    color: white;
     cursor: pointer;
 
     .icon {
@@ -20,5 +19,29 @@
 
   .active {
     color: #2997ff;
+  }
+}
+
+.dark {
+  background-color: $dark-button;
+
+  .button {
+    color: #e6e6e6;
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.light {
+  background-color: #eee;
+
+  .button {
+    color: #4e4e4e;
+
+    &:hover {
+      color: $text-color;
+    }
   }
 }

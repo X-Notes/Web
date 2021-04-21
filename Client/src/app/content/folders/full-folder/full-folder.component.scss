@@ -163,3 +163,26 @@
     }
   }
 }
+
+@media (max-width: 1024px) {
+  .folder-sub-header {
+    .folder-color {
+      width: 35px;
+      height: 35px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .folder-sub-header {
+    .folder-color {
+      display: none;
+    }
+
+    .container {
+      .side-button:first-child {
+        display: none;
+      }
+    }
+  }
+}
