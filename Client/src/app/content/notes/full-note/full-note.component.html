@@ -153,7 +153,68 @@
         <p>open note or file</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
       </div>
-      <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
+      <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
+        <div class="history-records">
+          <div class="record">
+            <div class="date">
+              <p>Edited at 16 sep, 19.30</p>
+            </div>
+            <div class="users">
+              <div
+                *ngFor="let user of [1,2,3]"
+                class="user"
+                CustomTooltip="Cat photo"
+                position="Bottom"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/VAN_CAT.png/1200px-VAN_CAT.png"
+                />
+              </div>
+              <button
+                type="button"
+                name="expand more"
+                #expand
+                (click)="seeAllUsers = !seeAllUsers"
+                cdk-overlay-origin
+                #origin="cdkOverlayOrigin"
+              >
+                <div class="icon">
+                  <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
+                </div>
+                <div class="ripple-container" matRipple [matRippleTrigger]="expand"></div>
+              </button>
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayOrigin]="origin"
+                [cdkConnectedOverlayOpen]="seeAllUsers"
+                [cdkConnectedOverlayHasBackdrop]="true"
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                [cdkConnectedOverlayPositions]="positions"
+                (backdropClick)="seeAllUsers = false"
+              >
+                <div class="all-users-popup" appTheme [@showDropdown]>
+                  <div class="users-popup">
+                    <div *ngFor="let user of [1,2,3]" class="user">
+                      <div class="user-image">
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/VAN_CAT.png/1200px-VAN_CAT.png"
+                        />
+                      </div>
+                      <p>Cat photo</p>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+            <a class="redirect" target="_blank" #redirect>
+              <div class="icon">
+                <mat-icon fontSet="material-icons-round" [inline]="true">history</mat-icon>
+              </div>
+              <div class="ripple-container" matRipple [matRippleTrigger]="redirect"></div>
+            </a>
+          </div>
+        </div>
+      </div>
       <ng-scrollbar
         class="scroll-helper small-notes"
         [visibility]="'hover'"
