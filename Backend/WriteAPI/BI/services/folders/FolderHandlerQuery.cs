@@ -42,7 +42,7 @@ namespace BI.services.folders
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
-                var folders = (await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, request.TypeId)).OrderBy(x => x.Order);
+                var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, request.TypeId);
                 return appCustomMapper.MapFoldersToSmallFolders(folders);
             }
             return new List<SmallFolder>();

@@ -110,46 +110,6 @@ namespace WriteContext.Repositories
             }
         }
 
-        public async Task<List<Folder>> CopyFolders(List<Folder> foldersForCopy, List<Folder> allUserFolders, Guid FromId, Guid ToId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
-                    foldersTo.ForEach(x => x.Order = x.Order + foldersForCopy.Count());
-                    await UpdateRange(foldersTo);
-
-                    var newFolders = foldersForCopy.Select(x => new Folder()
-                    {
-                        Color = x.Color,
-                        CreatedAt = DateTimeOffset.Now,
-                        UpdatedAt = DateTimeOffset.Now,
-                        FolderTypeId = ToId,
-                        Title = x.Title,
-                        UserId = x.UserId,
-                        RefTypeId = x.RefTypeId
-                    }).ToList();
-                    ChangeOrderHelper(newFolders);
-                    await AddRange(newFolders);
-
-                    var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(oldFolders);
-                    await UpdateRange(oldFolders);
-
-                    await transaction.CommitAsync();
-
-                    return newFolders.OrderBy(x => x.Order).ToList();
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    throw new Exception();
-                }
-
-            }
-        }
-
 
         public async Task<Folder> GetForUpdateTitle(Guid id)
         {
@@ -179,6 +139,13 @@ namespace WriteContext.Repositories
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
+        public async Task<Folder> GetFolderByIdForCopy(Guid id)
+        {
+            return await context.Folders
+                .Include(x => x.FoldersNotes)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, Guid typeId)
         {
             return await context.Folders
@@ -186,6 +153,7 @@ namespace WriteContext.Repositories
                 .Include(x => x.FolderType)
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
+                .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
