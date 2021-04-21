@@ -116,7 +116,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseUp(evt) {
-
     this.isFullNote = false;
     this.selectionService.ismousedown = false;
     this.startTop = 0;

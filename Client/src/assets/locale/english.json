@@ -49,14 +49,14 @@
       "emptyTrash": "Empty Trash"
     },
     "menu": {
-      "label": "label",
-      "shared": "shared",
-      "copy": "copy",
-      "color": "color",
-      "download": "download",
-      "lock": "locked",
-      "archive": "archive",
-      "delete": "delete",
+      "label": "Label",
+      "shared": "Shared",
+      "copy": "Copy",
+      "color": "Color",
+      "download": "Download",
+      "lock": "Locked",
+      "archive": "Archive",
+      "delete": "Delete",
       "history": "History"
     },
     "profile": {
@@ -103,6 +103,9 @@
         "editor": "Editor",
         "viewer": "Viewer",
         "send": "Send"
+      },
+      "folderManage": {
+        "notes": "Add notes to folder"
       }
     },
     "innerNote": {

@@ -44,6 +44,7 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
 import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
+import { FolderTypePipe } from './pipes/folder-type.pipe';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     ManageNotesInFolderComponent,
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
+    FolderTypePipe,
   ],
   imports: [
     CommonModule,
@@ -127,6 +129,7 @@ import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-
     MemoryIndicatorComponent,
     MatIconModule,
     MatMenuModule,
+    FolderTypePipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

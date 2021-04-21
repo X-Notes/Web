@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
@@ -23,6 +24,8 @@ import {
 } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { MatMenu } from '@angular/material/menu';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/FullFolder';
@@ -30,6 +33,7 @@ import { SmallFolder } from '../models/folder';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
+import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -40,6 +44,8 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @ViewChild(MatMenu) menu: MatMenu;
 
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<ShortUser>;
@@ -55,7 +61,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   foldersLink: SmallFolder[] = [];
 
-  folder: FullFolder;
+  public folder: FullFolder;
 
   loaded = false;
 
@@ -69,12 +75,25 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     public pService: PersonalizationService,
     public ffnService: FullFolderNotesService,
-    private dialogsService: DialogsManageService,
+    public dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
+    public menuButtonService: MenuButtonsService,
   ) {}
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialise(this.refElements);
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (theme) {
+          if (theme.name === ThemeENUM.Dark) {
+            this.menu.panelClass = 'dark-menu';
+          } else {
+            this.menu.panelClass = null;
+          }
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -118,9 +137,38 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  routeChangeFullFolder(folder: FullFolder) {
+    if (!folder) {
+      return;
+    }
+    switch (folder.folderType.name) {
+      case FolderTypeENUM.Private: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
+        break;
+      }
+      case FolderTypeENUM.Shared: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
+        break;
+      }
+      case FolderTypeENUM.Deleted: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
+        break;
+      }
+      case FolderTypeENUM.Archive: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
+        break;
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
+  }
+
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
     this.folder = this.store.selectSnapshot(FolderStore.full);
+    this.routeChangeFullFolder(this.folder);
+    console.log(this.folder);
   }
 
   async loadNotes() {
