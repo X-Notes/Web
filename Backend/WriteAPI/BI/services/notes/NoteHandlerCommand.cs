@@ -4,9 +4,13 @@ using Common;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.NoteContent.NoteDict;
+using Common.DTO.files;
 using Common.DTO.notes;
 using Common.Naming;
+using Domain.Commands.files;
 using Domain.Commands.notes;
+using Domain.Queries.files;
+using Domain.Queries.permissions;
 using MediatR;
 using Storage;
 using System;
@@ -32,20 +36,28 @@ namespace BI.services.notes
 
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
-        private readonly IMapper mapper;
+        private readonly LabelRepository labelRepository;
         private readonly AppRepository appRepository;
         private readonly IFilesStorage filesStorage;
         private readonly AppCustomMapper noteCustomMapper;
+        private readonly LabelsNotesRepository labelsNotesRepository;
+        private readonly BaseNoteContentRepository baseNoteContentRepository;
+        private readonly IMediator _mediator;
         public NoteHandlerCommand(
-            UserRepository userRepository, NoteRepository noteRepository, IMapper mapper,
-            AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper)
+            UserRepository userRepository, NoteRepository noteRepository,
+            AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper,
+            IMediator _mediator, LabelRepository labelRepository, LabelsNotesRepository labelsNotesRepository,
+            BaseNoteContentRepository baseNoteContentRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
-            this.mapper = mapper;
             this.appRepository = appRepository;
             this.filesStorage = filesStorage;
             this.noteCustomMapper = noteCustomMapper;
+            this._mediator = _mediator;
+            this.labelRepository = labelRepository;
+            this.labelsNotesRepository = labelsNotesRepository;
+            this.baseNoteContentRepository = baseNoteContentRepository;
         }
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
@@ -182,20 +194,90 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
-            // TODO PERMISSIONS
             var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
-            var user = await userRepository.GetUserWithNotes(request.Email);
-            var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var note = notes.FirstOrDefault();
-            if (notes.Count == request.Ids.Count)
+            var resultIds = new List<Guid>();
+            var order = -1;
+            foreach (var id in request.Ids)
             {
-                var dbnotes = await noteRepository.CopyNotes(notes, user.Notes, note.NoteTypeId, type.Id);
-                return mapper.Map<List<SmallNote>>(dbnotes);
+                var command = new GetUserPermissionsForNote(id, request.Email);
+                var permissions = await _mediator.Send(command);
+
+                if (permissions.CanWrite)
+                {
+                    var noteForCopy = await noteRepository.GetNoteByUserIdAndTypeIdForCopy(id);
+                    var newNote = new Note()
+                    {
+                        Title = noteForCopy.Title,
+                        Color = noteForCopy.Color,
+                        CreatedAt = DateTimeOffset.Now,
+                        UpdatedAt = DateTimeOffset.Now,
+                        NoteTypeId = type.Id,
+                        RefTypeId = noteForCopy.RefTypeId,
+                        Order = order--,
+                        UserId = permissions.User.Id,
+                    };
+                    var dbNote = await noteRepository.Add(newNote);
+                    resultIds.Add(dbNote.Entity.Id);
+                    var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
+                    {
+                        NoteId = dbNote.Entity.Id,
+                        LabelId = label.LabelId,
+                        AddedAt = DateTimeOffset.Now
+                    });
+
+                    filesStorage.CreateNoteFolders(dbNote.Entity.Id);
+
+                    await labelsNotesRepository.AddRange(labels);
+
+                    var contents = new List<BaseNoteContent>();
+
+                    foreach(var contentForCopy in noteForCopy.Contents)
+                    {
+                        switch(contentForCopy)
+                        {
+                            case TextNote textNote:
+                                {
+                                    contents.Add(new TextNote(textNote, dbNote.Entity.Id));
+                                    continue;
+                                }
+                            case AlbumNote album:
+                                {
+                                    var files = new List<FilesBytes>();
+                                    foreach(var photo in album.Photos)
+                                    {
+                                        var file = await _mediator.Send(new GetPhotoById(photo.Id));
+                                        files.Add(file);
+                                    }
+                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
+
+                                    contents.Add(new AlbumNote(album, fileList, dbNote.Entity.Id));
+                                    continue;
+                                }
+                            default:
+                                {
+                                    throw new Exception("Incorrect type");
+                                }
+                        }
+                    }
+                    await baseNoteContentRepository.AddRange(contents);
+                }
             }
-            else
-            {
-                throw new Exception();
-            }
+
+            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, type.Id);
+
+            var orders = Enumerable.Range(1, dbNotes.Count);
+            dbNotes = dbNotes.Zip(orders, (note, order) => {
+                note.Order = order;
+                return note;
+            }).ToList();
+
+            await noteRepository.UpdateRange(dbNotes);
+
+            var resultNotes = dbNotes.Where(dbNote => resultIds.Contains(dbNote.Id)).ToList();
+
+            resultNotes.ForEach(note => note.Contents = note.Contents.OrderBy(x => x.Order).ToList());
+            return noteCustomMapper.MapNotesToSmallNotesDTO(resultNotes, takeContentLength: 2);
         }
 
         public async Task<Unit> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)

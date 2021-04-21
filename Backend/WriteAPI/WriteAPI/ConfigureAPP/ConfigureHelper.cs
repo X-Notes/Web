@@ -212,6 +212,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<BaseNoteContentRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped<FoldersNotesRepository>();
+            services.AddScoped<LabelsNotesRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)

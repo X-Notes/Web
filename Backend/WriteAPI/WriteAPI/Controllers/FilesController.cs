@@ -26,7 +26,7 @@ namespace WriteAPI.Controllers
             var bytes = await _mediator.Send(new GetPhotoById(id));
             if (bytes != null)
             {
-                return File(bytes.Bytes, bytes.Type);
+                return File(bytes.Bytes, bytes.ContentType);
             }
             else
             {

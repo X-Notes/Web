@@ -15,10 +15,12 @@ namespace BI.services.files
         IRequestHandler<GetPhotoById, FilesBytes>
     {
         private readonly FileRepository fileRepository;
+
         public FilesHandlerQuery(FileRepository fileRepository)
         {
             this.fileRepository = fileRepository;
         }
+
         public async Task<FilesBytes> Handle(GetPhotoById request, CancellationToken cancellationToken)
         {
             var file = await fileRepository.FirstOrDefault(x => x.Id == request.Id);

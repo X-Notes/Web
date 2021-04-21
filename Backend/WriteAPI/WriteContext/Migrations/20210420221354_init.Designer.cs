@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210413182833_fix")]
-    partial class fix
+    [Migration("20210420221354_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,21 @@ namespace WriteContext.Migrations
                     b.HasIndex("PhotosId");
 
                     b.ToTable("AlbumNoteAppFile");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
+                {
+                    b.Property<Guid>("AlbumNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AlbumNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("AlbumNoteAppFiles");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
@@ -101,6 +116,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -159,6 +177,9 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("FolderId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.HasKey("NoteId", "FolderId");
 
                     b.HasIndex("FolderId");
@@ -215,6 +236,9 @@ namespace WriteContext.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -302,6 +326,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -327,6 +354,9 @@ namespace WriteContext.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -616,6 +646,25 @@ namespace WriteContext.Migrations
                         .HasForeignKey("PhotosId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", "AlbumNote")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AlbumNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AlbumNote");
+
+                    b.Navigation("AppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
@@ -913,6 +962,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
                 {
+                    b.Navigation("AlbumNoteAppFiles");
+
                     b.Navigation("User");
                 });
 
@@ -1003,6 +1054,11 @@ namespace WriteContext.Migrations
                     b.Navigation("UserOnPrivateNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
+                {
+                    b.Navigation("AlbumNoteAppFiles");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,19 +19,19 @@ namespace WriteContext.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
                 {
-                    b.Property<Guid>("AlbumNotesId")
+                    b.Property<Guid>("AlbumNoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PhotosId")
+                    b.Property<Guid>("AppFileId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AlbumNotesId", "PhotosId");
+                    b.HasKey("AlbumNoteId", "AppFileId");
 
-                    b.HasIndex("PhotosId");
+                    b.HasIndex("AppFileId");
 
-                    b.ToTable("AlbumNoteAppFile");
+                    b.ToTable("AlbumNoteAppFiles");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
@@ -616,19 +616,23 @@ namespace WriteContext.Migrations
                     b.ToTable("TextNote");
                 });
 
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", null)
-                        .WithMany()
-                        .HasForeignKey("AlbumNotesId")
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", "AlbumNote")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AlbumNoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.AppFile", null)
-                        .WithMany()
-                        .HasForeignKey("PhotosId")
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AlbumNote");
+
+                    b.Navigation("AppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
@@ -926,6 +930,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
                 {
+                    b.Navigation("AlbumNoteAppFiles");
+
                     b.Navigation("User");
                 });
 
@@ -1016,6 +1022,11 @@ namespace WriteContext.Migrations
                     b.Navigation("UserOnPrivateNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
+                {
+                    b.Navigation("AlbumNoteAppFiles");
                 });
 #pragma warning restore 612, 618
         }

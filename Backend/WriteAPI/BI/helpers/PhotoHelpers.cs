@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common.DTO.files;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,9 +44,9 @@ namespace BI.helpers
             return base64;
         }
 
-        public string GetPhotoType(IFormFile file)
+        public string GetPhotoType(string contentType)
         {
-            switch (file.ContentType.ToString())
+            switch (contentType)
             {
                 case "image/png":
                     {

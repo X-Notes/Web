@@ -96,16 +96,33 @@ namespace WriteContext.Migrations
                 name: "AlbumNoteAppFile",
                 columns: table => new
                 {
-                    PhotosId = table.Column<Guid>(type: "uuid", nullable: false),
                     AlbumNotesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AlbumNotesNoteId = table.Column<Guid>(type: "uuid", nullable: false)
+                    PhotosId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AlbumNoteAppFile", x => new { x.PhotosId, x.AlbumNotesId, x.AlbumNotesNoteId });
+                    table.PrimaryKey("PK_AlbumNoteAppFile", x => new { x.AlbumNotesId, x.PhotosId });
                     table.ForeignKey(
                         name: "FK_AlbumNoteAppFile_Files_PhotosId",
                         column: x => x.PhotosId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AlbumNoteAppFiles",
+                columns: table => new
+                {
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AlbumNoteId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlbumNoteAppFiles", x => new { x.AlbumNoteId, x.AppFileId });
+                    table.ForeignKey(
+                        name: "FK_AlbumNoteAppFiles_Files_AppFileId",
+                        column: x => x.AppFileId,
                         principalTable: "Files",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -191,6 +208,7 @@ namespace WriteContext.Migrations
                     Order = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -227,6 +245,7 @@ namespace WriteContext.Migrations
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -252,6 +271,7 @@ namespace WriteContext.Migrations
                     Order = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -332,11 +352,12 @@ namespace WriteContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false)
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BaseNoteContents", x => new { x.Id, x.NoteId });
+                    table.PrimaryKey("PK_BaseNoteContents", x => x.Id);
                     table.ForeignKey(
                         name: "FK_BaseNoteContents_Notes_NoteId",
                         column: x => x.NoteId,
@@ -350,7 +371,8 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     FolderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    NoteId = table.Column<Guid>(type: "uuid", nullable: false)
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -480,24 +502,17 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
                     Width = table.Column<string>(type: "text", nullable: true),
                     Height = table.Column<string>(type: "text", nullable: true),
                     CountInRow = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AlbumNote", x => new { x.Id, x.NoteId });
+                    table.PrimaryKey("PK_AlbumNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AlbumNote_BaseNoteContents_Id_NoteId",
-                        columns: x => new { x.Id, x.NoteId },
+                        name: "FK_AlbumNote_BaseNoteContents_Id",
+                        column: x => x.Id,
                         principalTable: "BaseNoteContents",
-                        principalColumns: new[] { "Id", "NoteId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AlbumNote_Notes_NoteId",
-                        column: x => x.NoteId,
-                        principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -507,7 +522,6 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: true),
                     TextType = table.Column<string>(type: "text", nullable: false),
                     HeadingType = table.Column<string>(type: "text", nullable: true),
@@ -515,17 +529,11 @@ namespace WriteContext.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TextNote", x => new { x.Id, x.NoteId });
+                    table.PrimaryKey("PK_TextNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TextNote_BaseNoteContents_Id_NoteId",
-                        columns: x => new { x.Id, x.NoteId },
+                        name: "FK_TextNote_BaseNoteContents_Id",
+                        column: x => x.Id,
                         principalTable: "BaseNoteContents",
-                        principalColumns: new[] { "Id", "NoteId" },
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TextNote_Notes_NoteId",
-                        column: x => x.NoteId,
-                        principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -590,14 +598,14 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AlbumNote_NoteId",
-                table: "AlbumNote",
-                column: "NoteId");
+                name: "IX_AlbumNoteAppFile_PhotosId",
+                table: "AlbumNoteAppFile",
+                column: "PhotosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AlbumNoteAppFile_AlbumNotesId_AlbumNotesNoteId",
-                table: "AlbumNoteAppFile",
-                columns: new[] { "AlbumNotesId", "AlbumNotesNoteId" });
+                name: "IX_AlbumNoteAppFiles_AppFileId",
+                table: "AlbumNoteAppFiles",
+                column: "AppFileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Backgrounds_FileId",
@@ -671,11 +679,6 @@ namespace WriteContext.Migrations
                 column: "RelatedNoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TextNote_NoteId",
-                table: "TextNote",
-                column: "NoteId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserOnNoteNow_NoteId",
                 table: "UserOnNoteNow",
                 column: "NoteId");
@@ -734,11 +737,19 @@ namespace WriteContext.Migrations
                 column: "UserId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AlbumNoteAppFile_AlbumNote_AlbumNotesId_AlbumNotesNoteId",
+                name: "FK_AlbumNoteAppFile_AlbumNote_AlbumNotesId",
                 table: "AlbumNoteAppFile",
-                columns: new[] { "AlbumNotesId", "AlbumNotesNoteId" },
+                column: "AlbumNotesId",
                 principalTable: "AlbumNote",
-                principalColumns: new[] { "Id", "NoteId" },
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AlbumNoteAppFiles_AlbumNote_AlbumNoteId",
+                table: "AlbumNoteAppFiles",
+                column: "AlbumNoteId",
+                principalTable: "AlbumNote",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
@@ -766,6 +777,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "AlbumNoteAppFile");
+
+            migrationBuilder.DropTable(
+                name: "AlbumNoteAppFiles");
 
             migrationBuilder.DropTable(
                 name: "FoldersNotes");

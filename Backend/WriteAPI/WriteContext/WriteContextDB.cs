@@ -3,6 +3,7 @@ using Common.DatabaseModels.models.NoteContent;
 using Common.Naming;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 
 namespace WriteContext
 {
@@ -18,6 +19,7 @@ namespace WriteContext
         public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
         public DbSet<AppFile> Files { set; get; }
+        public DbSet<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
         public DbSet<Language> Languages { set; get; }
         public DbSet<Theme> Themes { set; get; }
         public DbSet<FolderType> FoldersTypes { set; get; }
@@ -113,8 +115,23 @@ namespace WriteContext
                 .WithMany(b => b.ReletatedNoteToInnerNotesTo)
                 .HasForeignKey(bc => bc.RelatedNoteId);
 
-            //
 
+            modelBuilder.Entity<AlbumNote>()
+                .HasMany(p => p.Photos)
+                .WithMany(p => p.AlbumNotes)
+                .UsingEntity<AlbumNoteAppFile>(
+                    j => j
+                        .HasOne(pt => pt.AppFile)
+                        .WithMany(t => t.AlbumNoteAppFiles)
+                        .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                        .HasOne(pt => pt.AlbumNote)
+                        .WithMany(p => p.AlbumNoteAppFiles)
+                        .HasForeignKey(pt => pt.AlbumNoteId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.AlbumNoteId, bc.AppFileId });
+                    });
 
             modelBuilder.Entity<Language>().HasData(
                 new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
