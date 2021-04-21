@@ -38,7 +38,6 @@ import { SmallNote } from '../models/smallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { FullNoteContentService } from '../full-note-content.service';
 import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
@@ -63,7 +62,6 @@ import { SidebarNotesService } from '../sidebar-notes.service';
   animations: [sideBarCloseOpen, deleteSmallNote, showHistory],
   providers: [
     NotesService,
-    FullNoteContentService,
     ContentEditableService,
     FullNoteSliderService,
     MurriService,
@@ -124,7 +122,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     public pService: PersonalizationService,
     private rend: Renderer2,
     public sliderService: FullNoteSliderService,
-    public contentService: FullNoteContentService,
     private selectionService: SelectionService,
     private apiBrowserFunctions: ApiBrowserTextService,
     public menuSelectionService: MenuSelectionService,
@@ -330,7 +327,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    console.log('update text handler');
     this.api
       .updateContentText(this.note.id, event.contentId, event.content, event.checked)
       .toPromise();
@@ -413,7 +409,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       item.headingType = headingType;
     }
     setTimeout(() => {
-      this.textElements?.toArray()[indexOf].setFocus();
+      this.textElements?.toArray()[indexOf].setFocusToEnd();
     }, 0);
     return indexOf;
   }

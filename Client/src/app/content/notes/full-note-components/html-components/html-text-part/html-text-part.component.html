@@ -10,7 +10,7 @@
     class="block-generic default-text-size"
     (input)="onInput($event)"
     contenteditable="true"
-    [textContent]="textService.contentStr"
+    [textContent]="content?.content"
   ></p>
   <div *ngIf="isActive" class="no-content">
     <p>Text</p>

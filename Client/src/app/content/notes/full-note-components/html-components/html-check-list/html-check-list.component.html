@@ -16,7 +16,7 @@
         #contentHtml
         contenteditable="true"
         (input)="onInput($event)"
-        [textContent]="checkListService.contentStr"
+        [textContent]="content?.content"
       ></p>
       <p class="no-content-list" *ngIf="isActive">Item</p>
     </div>

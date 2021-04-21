@@ -73,12 +73,14 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   ngOnInit(): void {
-    this.checkListService.contentStr = this.content?.content;
     this.checkListService.transformTo = this.transformTo;
 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
+      .subscribe((str) => {
+        this.content.content = str;
+        this.updateText.emit({ content: str, contentId: this.content.id });
+      });
   }
 
   setFocus($event?) {

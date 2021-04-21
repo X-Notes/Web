@@ -11,7 +11,7 @@
     class="block-generic"
     contenteditable="true"
     (input)="onInput($event)"
-    [textContent]="headingService.contentStr"
+    [textContent]="content?.content"
   ></p>
   <p class="no-content" *ngIf="isActive">Heading</p>
 </div>

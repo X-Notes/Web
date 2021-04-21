@@ -189,6 +189,7 @@
     [style.top.px]="menuSelectionService.getTop"
     [style.left.px]="menuSelectionService.left"
     [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'"
+    (eventTransform)="transformToTypeText($event)"
   >
   </app-text-edit-menu>
 </div>

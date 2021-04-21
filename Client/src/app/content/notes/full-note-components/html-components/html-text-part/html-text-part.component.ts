@@ -67,7 +67,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngAfterViewInit(): void {
-    console.log(this.contentHtml, this.contentHtml.nativeElement.textContent);
     this.textService.setHandlers(
       this.content,
       this.contentHtml,
@@ -84,15 +83,22 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    this.textService.contentStr = this.content?.content;
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
+      .subscribe((str) => {
+        this.content.content = str;
+        this.updateText.emit({ content: str, contentId: this.content.id });
+      });
   }
 
   transformContent($event, contentType: ContentType, heading?: HeadingType) {
     $event.preventDefault();
-    this.transformTo.emit({ contentType, headingType: heading, id: this.content.id });
+    this.transformTo.emit({
+      contentType,
+      headingType: heading,
+      id: this.content.id,
+      setFocusToEnd: true,
+    });
   }
 
   transformToPhotoHandler($event) {
