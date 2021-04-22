@@ -6,6 +6,10 @@ using Common.DTO.notes.FullNoteContent;
 using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Domain.Commands.files;
 using Domain.Commands.noteInner;
+using Domain.Commands.noteInner.fileContent.albums;
+using Domain.Commands.noteInner.fileContent.audios;
+using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Queries.permissions;
 using MediatR;
 using Storage;
@@ -20,7 +24,6 @@ namespace BI.services.notes
 {
     public class FullNoteHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, Unit>,
-        IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<UpdateTextNoteCommand, Unit>,
         IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
         IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>,
@@ -28,11 +31,18 @@ namespace BI.services.notes
         IRequestHandler<RemoveContentCommand, OperationResult<Unit>>,
         IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>,
         // ALBUM
+        IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>,
         IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>,
         IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
-        IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>
+        IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>,
+        // AUDIOS
+        IRequestHandler<InsertAudiosToNoteCommand, OperationResult<Unit>>,
+        // VIDEOS
+        IRequestHandler<InsertVideosToNoteCommand, OperationResult<Unit>>,
+        // FILES
+        IRequestHandler<InsertFilesToNoteCommand, OperationResult<Unit>>
     {
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
@@ -569,6 +579,21 @@ namespace BI.services.notes
             }
 
             return new OperationResult<Unit>(Success: false, Unit.Value);
+        }
+
+        public Task<OperationResult<Unit>> Handle(InsertAudiosToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<OperationResult<Unit>> Handle(InsertVideosToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<OperationResult<Unit>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

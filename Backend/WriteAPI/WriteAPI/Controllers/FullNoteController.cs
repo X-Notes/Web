@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes.FullNoteContent;
 using Domain.Commands.noteInner;
+using Domain.Commands.noteInner.fileContent.albums;
+using Domain.Commands.noteInner.fileContent.audios;
+using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Queries.notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -94,9 +98,13 @@ namespace WriteAPI.Controllers
         [HttpPost("album/{id}/{contentId}")]
         public async Task<OperationResult<AlbumNoteDTO>> InsertAlbum(List<IFormFile> photos, Guid id, Guid contentId)
         {
-            var command = new InsertAlbumToNoteCommand(photos, id, contentId);
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            if (photos.Count > 0)
+            {
+                var command = new InsertAlbumToNoteCommand(photos, id, contentId);
+                command.Email = this.GetUserEmail();
+                return await this._mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
         }
 
         [HttpPost("album/remove")]
@@ -109,9 +117,13 @@ namespace WriteAPI.Controllers
         [HttpPost("album/upload/{id}/{contentId}")]
         public async Task<OperationResult<List<Guid>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
         {
-            var command = new UploadPhotosToAlbum(id, contentId, photos);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
+            if (photos.Count > 0)
+            {
+                var command = new UploadPhotosToAlbum(id, contentId, photos);
+                command.Email = this.GetUserEmail();
+                return await _mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
         }
 
         [HttpDelete("album/photo/{noteId}/{contentId}/{photoId}")]
@@ -135,6 +147,47 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
+
+
+        // AUDIO
+
+        [HttpPost("audios/{id}/{contentId}")]
+        public async Task<OperationResult<Unit>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
+        {
+            if(audios.Count > 0)
+            {
+                var command = new InsertAudiosToNoteCommand(audios, id, contentId);
+                command.Email = this.GetUserEmail();
+                return await this._mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
+        }
+
+        [HttpPost("videos/{id}/{contentId}")]
+        public async Task<OperationResult<Unit>> InsertVideos(List<IFormFile> videos, Guid id, Guid contentId)
+        {
+            if (videos.Count > 0)
+            {
+                var command = new InsertVideosToNoteCommand(videos, id, contentId);
+                command.Email = this.GetUserEmail();
+                return await this._mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
+        }
+
+        [HttpPost("files/{id}/{contentId}")]
+        public async Task<OperationResult<Unit>> InsertFiles(List<IFormFile> files, Guid id, Guid contentId)
+        {
+            if (files.Count > 0)
+            {
+                Console.WriteLine(files);
+                var command = new InsertFilesToNoteCommand(files, id, contentId);
+                command.Email = this.GetUserEmail();
+                return await this._mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
+        }
+
 
     }
 

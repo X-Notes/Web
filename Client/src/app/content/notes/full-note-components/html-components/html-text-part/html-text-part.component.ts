@@ -17,7 +17,9 @@ import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/enterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
-import { TransformContentPhoto } from '../../../models/transform-content-photo';
+import { TransformToFileContent } from '../../../models/transform-file-content';
+import { TypeUploadFile } from '../../../models/type-upload-file.enum';
+import { TypeUploadFormats } from '../../../models/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({
@@ -28,7 +30,7 @@ import { TextService } from '../../html-business-logic/text.service';
 })
 export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
-  transformToPhoto = new EventEmitter<TransformContentPhoto>();
+  transformToFile = new EventEmitter<TransformToFileContent>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -47,7 +49,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+  @ViewChild('uploadFile') uploadFile: ElementRef;
 
   @Input()
   content: BaseText;
@@ -59,6 +61,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
+
+  typeUpload = TypeUploadFile;
+
+  formats: string;
 
   constructor(public textService: TextService) {}
 
@@ -101,9 +107,11 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     });
   }
 
-  transformToPhotoHandler($event) {
+  transformToFileHandler($event, type: TypeUploadFile) {
     $event.preventDefault();
-    this.uploadPhoto.nativeElement.click();
+    this.uploadFile.nativeElement.uploadType = type;
+    this.formats = TypeUploadFormats[TypeUploadFile[type]];
+    setTimeout(() => this.uploadFile.nativeElement.click());
   }
 
   preventClick = ($event) => {
@@ -162,12 +170,40 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textChanged.next($event.target.innerText);
   }
 
-  async uploadImages(event) {
-    const data = new FormData();
+  async uploadFiles(event) {
+    const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
     const { files } = event.target;
-    for (const file of files) {
-      data.append('photos', file);
+    let data;
+    switch (type) {
+      case TypeUploadFile.PHOTOS: {
+        data = this.generateFormData(files, 'photos');
+        break;
+      }
+      case TypeUploadFile.VIDEOS: {
+        data = this.generateFormData(files, 'videos');
+        break;
+      }
+      case TypeUploadFile.AUDIOS: {
+        data = this.generateFormData(files, 'audios');
+        break;
+      }
+      case TypeUploadFile.FILES: {
+        data = this.generateFormData(files, 'files');
+        break;
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
     }
-    this.transformToPhoto.emit({ id: this.content.id, formData: data });
+    this.transformToFile.emit({ id: this.content.id, formData: data, typeFile: type });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  generateFormData(files: File[], type: string) {
+    const data = new FormData();
+    for (const file of files) {
+      data.append(type, file);
+    }
+    return data;
   }
 }

@@ -27,6 +27,10 @@ using Domain.Commands.folderInner;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.noteInner;
+using Domain.Commands.noteInner.fileContent.albums;
+using Domain.Commands.noteInner.fileContent.audios;
+using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
 using Domain.Commands.relatedNotes;
@@ -140,6 +144,14 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
+
+            // FULL NOTE AUDIOS
+            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            // FULL NOTE VIDEOS
+            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            // FULL NOTE FILES
+            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

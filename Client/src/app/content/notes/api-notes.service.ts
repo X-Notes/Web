@@ -232,6 +232,33 @@ export class ApiServiceNotes {
     );
   }
 
+  // AUDIOS
+
+  insertAudiosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<any>(
+      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // VIDEOS
+
+  insertVideosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<any>(
+      `${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // FILES
+
+  insertFilesToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<any>(
+      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
+      data,
+    );
+  }
+
   removeAlbum(noteId: string, contentId: string) {
     const obj = {
       noteId,

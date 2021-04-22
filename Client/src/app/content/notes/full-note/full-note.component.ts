@@ -50,10 +50,11 @@ import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
-import { TransformContentPhoto } from '../models/transform-content-photo';
+import { TransformToFileContent } from '../models/transform-file-content';
 import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
 import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
+import { TypeUploadFile } from '../models/type-upload-file.enum';
 
 @Component({
   selector: 'app-full-note',
@@ -351,10 +352,33 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async transformToPhoto(event: TransformContentPhoto) {
-    const resp = await this.api
-      .insertAlbumToNote(event.formData, this.note.id, event.id)
-      .toPromise();
+  async transformToFileType(event: TransformToFileContent) {
+    let resp;
+    switch (event.typeFile) {
+      case TypeUploadFile.PHOTOS: {
+        resp = await this.api.insertAlbumToNote(event.formData, this.note.id, event.id).toPromise();
+        break;
+      }
+      case TypeUploadFile.AUDIOS: {
+        resp = await this.api
+          .insertAudiosToNote(event.formData, this.note.id, event.id)
+          .toPromise();
+        break;
+      }
+      case TypeUploadFile.FILES: {
+        resp = await this.api.insertFilesToNote(event.formData, this.note.id, event.id).toPromise();
+        break;
+      }
+      case TypeUploadFile.VIDEOS: {
+        resp = await this.api
+          .insertVideosToNote(event.formData, this.note.id, event.id)
+          .toPromise();
+        break;
+      }
+      default: {
+        throw new Error('incorrect type');
+      }
+    }
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;

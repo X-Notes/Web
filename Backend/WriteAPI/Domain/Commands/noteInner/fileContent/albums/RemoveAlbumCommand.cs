@@ -2,18 +2,14 @@
 using Common.DTO.notes.FullNoteContent;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.Commands.noteInner
+namespace Domain.Commands.noteInner.fileContent.albums
 {
     public class RemoveAlbumCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
-        [ValidationGuidAttribute]
+        [ValidationGuid]
         public Guid NoteId { set; get; }
-        [ValidationGuidAttribute]
+        [ValidationGuid]
         public Guid ContentId { set; get; }
         public RemoveAlbumCommand(Guid NoteId, Guid ContentId, string Email)
         {

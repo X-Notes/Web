@@ -6,20 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-
-namespace Domain.Commands.noteInner
+namespace Domain.Commands.noteInner.fileContent.audios
 {
-    public class InsertAlbumToNoteCommand : BaseCommandEntity, IRequest<OperationResult<AlbumNoteDTO>>
+    public class InsertAudiosToNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [Required]
-        public List<IFormFile> Photos { set; get; }
-        [ValidationGuidAttribute]
+        public List<IFormFile> Audios { set; get; }
+        [ValidationGuid]
         public Guid NoteId { set; get; }
-        [ValidationGuidAttribute]
+        [ValidationGuid]
         public Guid ContentId { set; get; }
-        public InsertAlbumToNoteCommand(List<IFormFile> Photos, Guid NoteId, Guid ContentId)
+        public InsertAudiosToNoteCommand(List<IFormFile> Audios, Guid NoteId, Guid ContentId)
         {
-            this.Photos = Photos;
+            this.Audios = Audios;
             this.NoteId = NoteId;
             this.ContentId = ContentId;
         }
