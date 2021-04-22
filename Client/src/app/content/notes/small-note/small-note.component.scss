@@ -10,7 +10,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: $light-inner-color;
   border-radius: 5px;
   transition: 0.2s ease;
 
@@ -21,7 +20,6 @@
     height: 25px;
     width: 100%;
     padding: 0 0.625rem;
-    background-color: $header-small-note;
     border-radius: 5px 5px 0px 0px;
     transition: 0.2s ease;
 
@@ -36,9 +34,9 @@
 
       .icon {
         display: flex;
-        color: $header-small-note-icon;
         height: 12px;
         width: 12px;
+        transition: 0.2s ease;
       }
     }
   }
@@ -102,6 +100,10 @@
           object-fit: cover;
         }
       }
+
+      .text {
+        word-break: break-word;
+      }
     }
   }
 
@@ -116,18 +118,30 @@
   }
 }
 
+.dark {
+  background-color: $light-inner-color;
+
+  .header {
+    background-color: $header-small-note;
+
+    button {
+      .icon {
+        color: $header-small-note-icon;
+      }
+    }
+  }
+}
+
 .light {
-  .small-note {
-    background-color: $light-color;
-    color: $text-color;
+  background-color: $light-color;
+  color: $text-color;
 
-    .header {
-      background-color: $header-small-note-light;
+  .header {
+    background-color: $header-small-note-light;
 
-      button {
-        .icon {
-          color: $header-small-note-icon-light;
-        }
+    button {
+      .icon {
+        color: $header-small-note-icon-light;
       }
     }
   }

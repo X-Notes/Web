@@ -98,7 +98,7 @@
         justify-content: space-evenly;
         width: calc(100% - 4vw);
         height: 55px;
-        margin: 0 2vw 1rem 2vw;
+        margin: 0 2vw 0.5rem 2vw;
         padding: 0 2rem;
         border-radius: 5px;
         background-color: $light-inner-color;
@@ -149,8 +149,10 @@
       }
 
       .small-notes {
+        display: flex;
+        flex: 1;
         width: 100%;
-        height: calc(100% - 71px);
+        margin-top: 0.5rem;
 
         .content-inner-small {
           width: 100%;
