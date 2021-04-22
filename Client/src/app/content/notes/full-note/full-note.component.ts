@@ -21,7 +21,6 @@ import {
   sideBarCloseOpen,
   deleteSmallNote,
   showHistory,
-  showDropdown,
 } from 'src/app/shared/services/personalization.service';
 import { Theme } from 'src/app/shared/models/Theme';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
@@ -32,7 +31,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
@@ -62,7 +60,7 @@ import { SidebarNotesService } from '../sidebar-notes.service';
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
-  animations: [sideBarCloseOpen, deleteSmallNote, showHistory, showDropdown],
+  animations: [sideBarCloseOpen, deleteSmallNote, showHistory],
   providers: [
     NotesService,
     FullNoteContentService,
@@ -98,20 +96,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   public user$: Observable<ShortUser>;
 
   public notesLink: SmallNote[];
-
-  public positions = [
-    new ConnectionPositionPair(
-      {
-        originX: 'end',
-        originY: 'bottom',
-      },
-      { overlayX: 'end', overlayY: 'top' },
-      0,
-      1,
-    ),
-  ];
-
-  seeAllUsers = false;
 
   loaded = false;
 

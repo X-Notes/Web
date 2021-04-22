@@ -1,15 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { showDropdown } from 'src/app/shared/services/personalization.service';
 
 @Component({
   selector: 'app-history-record',
   templateUrl: './history-record.component.html',
-  styleUrls: ['./history-record.component.scss']
+  styleUrls: ['./history-record.component.scss'],
+  animations: [showDropdown],
 })
 export class HistoryRecordComponent implements OnInit {
+  @ViewChild('userHeight') userHeight: ElementRef;
 
-  constructor() { }
+  @ViewChild('scrollbar') scrollbar: ElementRef;
 
-  ngOnInit(): void {
+  public positions = [
+    new ConnectionPositionPair(
+      {
+        originX: 'end',
+        originY: 'bottom',
+      },
+      { overlayX: 'end', overlayY: 'top' },
+      0,
+      5,
+    ),
+  ];
+
+  seeAllUsers = false;
+
+  constructor(public renderer: Renderer2) {}
+
+  // eslint-disable-next-line class-methods-use-this
+  ngOnInit(): void {}
+
+  toggle() {
+    this.seeAllUsers = !this.seeAllUsers;
+    setTimeout(() => {
+      this.renderer.setStyle(
+        this.scrollbar?.nativeElement,
+        'height',
+        `${this.userHeight?.nativeElement?.clientHeight}px`,
+      );
+    });
   }
-
 }
