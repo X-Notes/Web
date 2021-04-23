@@ -10,6 +10,7 @@ namespace Common.DatabaseModels.models.NoteContent
     [Table("DocumentNote")]
     public class DocumentNote : BaseNoteContent
     {
+        public string Name { set; get; }
         public Guid AppFileId { get; set; }
         public AppFile AppFile { get; set; }
     }

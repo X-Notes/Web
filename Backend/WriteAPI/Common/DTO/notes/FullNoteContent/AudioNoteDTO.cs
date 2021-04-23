@@ -13,8 +13,8 @@ namespace Common.DTO.notes.FullNoteContent
         public AudioNoteDTO(string Name, Guid fileId, Guid Id, string Type, DateTimeOffset UpdatedAt)
             : base(Id, Type, UpdatedAt)
         {
-            this.Name = Name;
             this.FileId = fileId;
+            this.Name = Name;
         }
     }
 }
