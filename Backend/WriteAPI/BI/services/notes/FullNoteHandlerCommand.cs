@@ -38,16 +38,19 @@ namespace BI.services.notes
         IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>,
         // AUDIOS
-        IRequestHandler<InsertAudiosToNoteCommand, OperationResult<Unit>>,
+        IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudioNoteDTO>>,
         // VIDEOS
-        IRequestHandler<InsertVideosToNoteCommand, OperationResult<Unit>>,
+        IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>,
         // FILES
-        IRequestHandler<InsertFilesToNoteCommand, OperationResult<Unit>>
+        IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>
     {
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
         private readonly TextNotesRepository textNotesRepository;
         private readonly AlbumNoteRepository albumNoteRepository;
+        private readonly DocumentNoteRepository documentNoteRepository;
+        private readonly VideoNoteRepository videoNoteRepository;
+        private readonly AudioNoteRepository audioNoteRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FileRepository fileRepository;
         public FullNoteHandlerCommand(
@@ -56,7 +59,10 @@ namespace BI.services.notes
                                         TextNotesRepository textNotesRepository,
                                         AlbumNoteRepository albumNoteRepository,
                                         BaseNoteContentRepository baseNoteContentRepository,
-                                        FileRepository fileRepository)
+                                        FileRepository fileRepository,
+                                        DocumentNoteRepository documentNoteRepository,
+                                        VideoNoteRepository videoNoteRepository,
+                                        AudioNoteRepository audioNoteRepository)
         {
             this.noteRepository = noteRepository;
             this._mediator = _mediator;
@@ -64,6 +70,9 @@ namespace BI.services.notes
             this.albumNoteRepository = albumNoteRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.fileRepository = fileRepository;
+            this.documentNoteRepository = documentNoteRepository;
+            this.videoNoteRepository = videoNoteRepository;
+            this.audioNoteRepository = audioNoteRepository;
         }
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -581,17 +590,68 @@ namespace BI.services.notes
             return new OperationResult<Unit>(Success: false, Unit.Value);
         }
 
-        public Task<OperationResult<Unit>> Handle(InsertAudiosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<AudioNoteDTO>> Handle(InsertAudiosToNoteCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
+
+                // FILES LOGIC
+                var file = await _mediator.Send(new SaveAudiosToNoteCommand(request.Audio, note.Id));
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    await baseNoteContentRepository.Remove(contentForRemove);
+
+                    await fileRepository.Add(file);
+
+                    var audioNote = new AudioNote()
+                    {
+                        AppFileId = file.Id,
+                        Note = note,
+                        Order = contentForRemove.Order,
+                        UpdatedAt = DateTimeOffset.Now
+                    };
+
+                    await audioNoteRepository.Add(audioNote);
+
+                    await transaction.CommitAsync();
+
+                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
+                    var result = new AudioNoteDTO(
+                        audioNote.Name, audioNote.AppFileId, audioNote.Id, 
+                        type, audioNote.UpdatedAt);
+
+                    return new OperationResult<AudioNoteDTO>(Success: true, result);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
+                    var pathes = new List<string> { file.Path };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                }
+            }
+
+            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
+            return new OperationResult<AudioNoteDTO>(Success: false, null);
+            throw new NotImplementedException();
+        }
+
+        public Task<OperationResult<VideoNoteDTO>> Handle(InsertVideosToNoteCommand request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<OperationResult<Unit>> Handle(InsertVideosToNoteCommand request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OperationResult<Unit>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
+        public Task<OperationResult<DocumentNoteDTO>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

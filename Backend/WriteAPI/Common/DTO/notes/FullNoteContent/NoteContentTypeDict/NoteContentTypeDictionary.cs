@@ -12,7 +12,10 @@ namespace Common.DTO.notes.FullNoteContent.NoteContentTypeDict
         {
             types = new Dictionary<NoteContentType, string>()
             {
-                {  NoteContentType.ALBUM, ModelsNaming.Album }
+                {  NoteContentType.ALBUM, ModelsNaming.Album },
+                {  NoteContentType.AUDIO, ModelsNaming.Audio },
+                {  NoteContentType.VIDEO, ModelsNaming.Video },
+                {  NoteContentType.DOCUMENT, ModelsNaming.Document },
             };
         }
 

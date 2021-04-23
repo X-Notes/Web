@@ -14,6 +14,9 @@ namespace BI.services.files
 {
     public class FileHandlerCommand :
         IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,
+        IRequestHandler<SaveDocumentsToNoteCommand, AppFile>,
+        IRequestHandler<SaveVideosToNoteCommand, AppFile>,
+        IRequestHandler<SaveAudiosToNoteCommand, AppFile>,
         IRequestHandler<RemoveFilesByPathesCommand, Unit>
     {
         private readonly PhotoHelpers photoHelpers;
@@ -69,6 +72,21 @@ namespace BI.services.files
                 filesStorage.RemoveFile(path);
             }
             return Task.FromResult(Unit.Value);
+        }
+
+        public Task<AppFile> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AppFile> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AppFile> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

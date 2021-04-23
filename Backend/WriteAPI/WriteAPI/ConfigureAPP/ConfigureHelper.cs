@@ -146,11 +146,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
 
             // FULL NOTE AUDIOS
-            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudioNoteDTO>>, FullNoteHandlerCommand>();
             // FULL NOTE VIDEOS
-            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteHandlerCommand>();
             // FULL NOTE FILES
-            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteHandlerCommand>();
 
 
             //FOLDERS
@@ -198,6 +198,9 @@ namespace WriteAPI.ConfigureAPP
             //Files
             services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesByPathesCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
@@ -220,6 +223,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FileRepository>();
             services.AddScoped<AppRepository>();
             services.AddScoped<AlbumNoteRepository>();
+            services.AddScoped<AudioNoteRepository>();
+            services.AddScoped<VideoNoteRepository>();
+            services.AddScoped<DocumentNoteRepository>();
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();

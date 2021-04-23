@@ -10,17 +10,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.noteInner.fileContent.files
 {
-    public class InsertFilesToNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class InsertFilesToNoteCommand : BaseCommandEntity, IRequest<OperationResult<DocumentNoteDTO>>
     {
         [Required]
-        public List<IFormFile> Files { set; get; }
+        public IFormFile File { set; get; }
         [ValidationGuid]
         public Guid NoteId { set; get; }
         [ValidationGuid]
         public Guid ContentId { set; get; }
-        public InsertFilesToNoteCommand(List<IFormFile> Files, Guid NoteId, Guid ContentId)
+        public InsertFilesToNoteCommand(IFormFile File, Guid NoteId, Guid ContentId)
         {
-            this.Files = Files;
+            this.File = File;
             this.NoteId = NoteId;
             this.ContentId = ContentId;
         }

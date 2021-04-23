@@ -152,40 +152,28 @@ namespace WriteAPI.Controllers
         // AUDIO
 
         [HttpPost("audios/{id}/{contentId}")]
-        public async Task<OperationResult<Unit>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
+        public async Task<OperationResult<AudioNoteDTO>> InsertAudios(IFormFile audio, Guid id, Guid contentId)
         {
-            if(audios.Count > 0)
-            {
-                var command = new InsertAudiosToNoteCommand(audios, id, contentId);
-                command.Email = this.GetUserEmail();
-                return await this._mediator.Send(command);
-            }
-            throw new Exception("Files can`t be empty");
+            var command = new InsertAudiosToNoteCommand(audio, id, contentId);
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("videos/{id}/{contentId}")]
-        public async Task<OperationResult<Unit>> InsertVideos(List<IFormFile> videos, Guid id, Guid contentId)
+        public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId)
         {
-            if (videos.Count > 0)
-            {
-                var command = new InsertVideosToNoteCommand(videos, id, contentId);
-                command.Email = this.GetUserEmail();
-                return await this._mediator.Send(command);
-            }
-            throw new Exception("Files can`t be empty");
+            var command = new InsertVideosToNoteCommand(video, id, contentId);
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("files/{id}/{contentId}")]
-        public async Task<OperationResult<Unit>> InsertFiles(List<IFormFile> files, Guid id, Guid contentId)
+        public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
         {
-            if (files.Count > 0)
-            {
-                Console.WriteLine(files);
-                var command = new InsertFilesToNoteCommand(files, id, contentId);
-                command.Email = this.GetUserEmail();
-                return await this._mediator.Send(command);
-            }
-            throw new Exception("Files can`t be empty");
+            Console.WriteLine(file);
+            var command = new InsertFilesToNoteCommand(file, id, contentId);
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
 
 
