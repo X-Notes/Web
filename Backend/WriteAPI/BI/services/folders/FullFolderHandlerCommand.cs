@@ -21,7 +21,7 @@ namespace BI.services.folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly IMediator _mediator;
         public FullFolderHandlerCommand(
-            FolderRepository folderRepository, 
+            FolderRepository folderRepository,
             IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository)
         {
@@ -36,7 +36,7 @@ namespace BI.services.folders
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 
-            if(permissions.CanWrite)
+            if (permissions.CanWrite)
             {
                 folder.Title = request.Title;
                 await folderRepository.Update(folder);
@@ -56,10 +56,15 @@ namespace BI.services.folders
             {
                 var foldersNotes = await foldersNotesRepository.GetOrderedByFolderId(request.FolderId);
 
-                var newFoldersNotes = request.NoteIds.Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id});
+                var newFoldersNotes = request.NoteIds.Select((id) => new FoldersNotes() { FolderId = request.FolderId, NoteId = id });
 
                 var orders = Enumerable.Range(1, newFoldersNotes.Count());
-                newFoldersNotes.Zip(orders, (folderNotes, order) => folderNotes.Order = order);
+
+                newFoldersNotes = newFoldersNotes.Zip(orders, (folderNote, order) =>
+                {
+                    folderNote.Order = order;
+                    return folderNote;
+                });
 
                 await foldersNotesRepository.RemoveRange(foldersNotes);
                 await foldersNotesRepository.AddRange(newFoldersNotes);
@@ -83,7 +88,13 @@ namespace BI.services.folders
                 var folderNotesForUpdating = foldersNotes.Except(notesForDelete);
 
                 var orders = Enumerable.Range(1, folderNotesForUpdating.Count());
-                folderNotesForUpdating.Zip(orders, (folderNotes, order) => folderNotes.Order = order);
+
+                folderNotesForUpdating = folderNotesForUpdating
+                    .Zip(orders, (folderNote, order) =>
+                    {
+                        folderNote.Order = order;
+                        return folderNote;
+                    });
 
                 await foldersNotesRepository.RemoveRange(notesForDelete);
                 await foldersNotesRepository.UpdateRange(folderNotesForUpdating);

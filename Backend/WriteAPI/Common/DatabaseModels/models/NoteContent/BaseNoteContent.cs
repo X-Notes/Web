@@ -9,5 +9,6 @@ namespace Common.DatabaseModels.models.NoteContent
         public Note Note { set; get; }
         [Range(1, int.MaxValue)]
         public int Order { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
     }
 }

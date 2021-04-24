@@ -6,10 +6,12 @@ namespace Common.DTO.notes.FullNoteContent
     {
         public Guid Id { set; get; }
         public string Type { set; get; }
-        public BaseContentNoteDTO(Guid Id, string Type)
+        public DateTimeOffset UpdatedAt { set; get; }
+        public BaseContentNoteDTO(Guid Id, string Type, DateTimeOffset UpdatedAt)
         {
             this.Id = Id;
             this.Type = Type;
+            this.UpdatedAt = UpdatedAt;
         }
     }
 }

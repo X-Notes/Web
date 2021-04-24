@@ -10,7 +10,7 @@
     class="block-generic default-text-size"
     (input)="onInput($event)"
     contenteditable="true"
-    [textContent]="textService.contentStr"
+    [textContent]="content?.content"
   ></p>
   <div *ngIf="isActive" class="no-content">
     <p>Text</p>
@@ -33,27 +33,27 @@
       <div class="icon" (mousedown)="transformContent($event, contentType.NUMBERLIST)">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.PHOTOS)">
         <mat-icon svgIcon="image" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.FILES)">
         <mat-icon svgIcon="file" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.VIDEOS)">
         <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToPhotoHandler($event)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.AUDIOS)">
         <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
       </div>
     </div>
   </div>
 </div>
 <input
-  #uploadPhotos
+  #uploadFile
   type="file"
   multiple
-  accept="image/jpeg,image/png"
+  [accept]="formats"
   hidden="true"
-  (change)="uploadImages($event)"
+  (change)="uploadFiles($event)"
 />
 <app-html-link *ngIf="isLink" [link]="CurrentTextCotent"></app-html-link>

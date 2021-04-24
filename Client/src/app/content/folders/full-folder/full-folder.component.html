@@ -49,18 +49,24 @@
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div class="folder-sub-header"></div>
-  <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
+  <ng-scrollbar
+    class="scroll-helper sub-header-helper"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+  >
     <div class="content-inner">
       <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
         <div
           #item
           class="grid-item"
           id="{{item.id}}"
-          *ngFor="let item of ffnService.notes"
+          *ngFor="let item of ffnService.noteService.notes"
           [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
         >
           <app-note
             [note]="item"
+            (highlightNote)="noteService.highlightNote($event)"
+            (clickOnNote)="noteService.toNote($event)"
             [ngStyle]="{'backgroundColor': item.color }"
             class="note"
           ></app-note>

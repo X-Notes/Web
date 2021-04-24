@@ -13,6 +13,7 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
@@ -26,6 +27,9 @@ import { FullNote } from '../../notes/models/fullNote';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   // Upper Menu
+
+  @Select(AppStore.getNotificationsCount)
+  public notificationCount$: Observable<number>;
 
   @Select(AppStore.getName)
   public route$: Observable<string>;
@@ -96,6 +100,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (note) => this.routeChangeFullNote(note));
+
+    this.store
+      .select(AppStore.appLoaded)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          this.store.dispatch(LoadNotifications);
+        }
+      });
   }
 
   showUsers() {
@@ -168,6 +181,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
+        this.menuButtonService.setItems(this.menuButtonService.foldersItemsInner);
         break;
       }
 

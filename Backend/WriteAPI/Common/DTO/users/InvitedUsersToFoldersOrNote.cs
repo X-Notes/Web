@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DTO.app;
 using System;
 
 namespace Common.DTO.users
@@ -9,6 +10,7 @@ namespace Common.DTO.users
         public Guid PhotoId { set; get; }
         public string Name { set; get; }
         public string Email { set; get; }
-        public RefType AccessType { set; get; }
+        public Guid AccessTypeId { set; get; }
+        public RefTypeDTO AccessType { set; get; }
     }
 }

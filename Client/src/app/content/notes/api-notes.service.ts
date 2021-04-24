@@ -8,7 +8,14 @@ import { SmallNote } from './models/smallNote';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
 import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
-import { Album, BaseText, ContentModel } from './models/ContentMode';
+import {
+  Album,
+  AudioModel,
+  BaseText,
+  ContentModel,
+  DocumentModel,
+  VideoModel,
+} from './models/ContentMode';
 import { OperationResult } from './models/TextOperationResult';
 
 @Injectable()
@@ -228,6 +235,33 @@ export class ApiServiceNotes {
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<Album>>(
       `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // AUDIOS
+
+  insertAudiosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<AudioModel>>(
+      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // VIDEOS
+
+  insertVideosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<VideoModel>>(
+      `${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // FILES
+
+  insertFilesToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<DocumentModel>>(
+      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
       data,
     );
   }

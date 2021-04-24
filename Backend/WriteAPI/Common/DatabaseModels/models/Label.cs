@@ -14,6 +14,7 @@ namespace Common.DatabaseModels.models
         public User User { set; get; }
         public List<LabelsNotes> LabelsNotes { get; set; }
         public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
     }
 }

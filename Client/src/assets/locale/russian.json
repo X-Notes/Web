@@ -37,7 +37,7 @@
       "selected": "Выбрано",
       "new": "Новая",
       "select": "Выбрать все",
-      "filter": "Фильтер",
+      "filter": "Фильтр",
       "theme": "Тема",
       "search": "Поиск...",
       "questions": "Вопросы",
@@ -59,7 +59,9 @@
       "lock": "Пароль",
       "archive": "Архив",
       "delete": "Удалить",
-      "history": "История"
+      "history": "История",
+      "private": "Личные",
+      "privateFolder": "Личные"
     },
     "profile": {
       "sectionProfile": "Профиль",

@@ -19,3 +19,17 @@ export class TokenSetNoUpdate {
 export class LoadGeneralEntites {
   static type = '[App] Load General Entities';
 }
+
+export class LoadNotifications {
+  static type = '[App] Load Notifications';
+}
+
+export class ReadAllNotifications {
+  static type = '[App] Read all Notifications';
+}
+
+export class ReadNotification {
+  static type = '[App] Read Notification';
+
+  constructor(public id: string) {}
+}

@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace WriteContext.GenericRepositories
         Task<T> GetById(Guid id);
         Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate);
 
-        Task Add(T entity);
+        Task<EntityEntry<T>> Add(T entity);
         Task AddRange(IEnumerable<T> ents);
 
         Task Update(T entity);

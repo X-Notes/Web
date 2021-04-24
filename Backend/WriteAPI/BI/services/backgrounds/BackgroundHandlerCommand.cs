@@ -70,7 +70,7 @@ namespace BI.services.backgrounds
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
-            var photoType = photoHelpers.GetPhotoType(request.File);
+            var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
             var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
             var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, getContentString, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };

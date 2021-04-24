@@ -26,6 +26,9 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
   @Select(AppStore.isFolder)
   public isFolder$: Observable<boolean>;
 
+  @Select(AppStore.isFolderInner)
+  public isFolderInner$: Observable<boolean>;
+
   pallete = EnumUtil.getEnumValues(NoteColorPallete);
 
   current;
@@ -53,21 +56,23 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
         await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
       } else {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        const typeRoad = this.store.selectSnapshot(AppStore.getTypeNote);
-        const type = this.store
-          .selectSnapshot(AppStore.getNoteTypes)
-          .find((x) => x.name === typeRoad);
-        await this.store.dispatch(new ChangeColorNote(this.current, type, ids)).toPromise();
+        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
       }
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
-      const type = this.store
-        .selectSnapshot(AppStore.getFolderTypes)
-        .find((x) => x.name === typeRoad);
-      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
+      const isInner = this.store.selectSnapshot(AppStore.isFolderInner);
+      if (isInner) {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
+      } else {
+        const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
+        const type = this.store
+          .selectSnapshot(AppStore.getFolderTypes)
+          .find((x) => x.name === typeRoad);
+        const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+        await this.store.dispatch(new ChangeColorFolder(this.current, type, ids)).toPromise();
+      }
     }
     this.dialogRef.close();
   }

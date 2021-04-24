@@ -19,19 +19,19 @@ namespace WriteContext.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
                 {
-                    b.Property<Guid>("AlbumNotesId")
+                    b.Property<Guid>("AlbumNoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PhotosId")
+                    b.Property<Guid>("AppFileId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AlbumNotesId", "PhotosId");
+                    b.HasKey("AlbumNoteId", "AppFileId");
 
-                    b.HasIndex("PhotosId");
+                    b.HasIndex("AppFileId");
 
-                    b.ToTable("AlbumNoteAppFile");
+                    b.ToTable("AlbumNoteAppFiles");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
@@ -98,6 +98,9 @@ namespace WriteContext.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -217,6 +220,9 @@ namespace WriteContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -303,6 +309,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -328,6 +337,9 @@ namespace WriteContext.Migrations
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -370,6 +382,39 @@ namespace WriteContext.Migrations
                             Id = new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"),
                             Name = "archive"
                         });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSystemMessage")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserFromId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserToId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserFromId");
+
+                    b.HasIndex("UserToId");
+
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -584,6 +629,36 @@ namespace WriteContext.Migrations
                     b.ToTable("AlbumNote");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudioNote", b =>
+                {
+                    b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("AudioNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.DocumentNote", b =>
+                {
+                    b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("DocumentNote");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.TextNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
@@ -604,19 +679,38 @@ namespace WriteContext.Migrations
                     b.ToTable("TextNote");
                 });
 
-            modelBuilder.Entity("AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.VideoNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", null)
-                        .WithMany()
-                        .HasForeignKey("AlbumNotesId")
+                    b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("VideoNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", "AlbumNote")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AlbumNoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.AppFile", null)
-                        .WithMany()
-                        .HasForeignKey("PhotosId")
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("AlbumNoteAppFiles")
+                        .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AlbumNote");
+
+                    b.Navigation("AppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
@@ -750,6 +844,24 @@ namespace WriteContext.Migrations
                         .IsRequired();
 
                     b.Navigation("Note");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.User", "UserFrom")
+                        .WithMany("NotificationsFrom")
+                        .HasForeignKey("UserFromId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Common.DatabaseModels.models.User", "UserTo")
+                        .WithMany("NotificationsTo")
+                        .HasForeignKey("UserToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserFrom");
+
+                    b.Navigation("UserTo");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -903,6 +1015,40 @@ namespace WriteContext.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudioNote", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("AudioNotes")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
+                        .WithOne()
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AudioNote", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.DocumentNote", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("DocumentNotes")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
+                        .WithOne()
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.DocumentNote", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.TextNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
@@ -912,9 +1058,34 @@ namespace WriteContext.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.VideoNote", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                        .WithMany("VideoNotes")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
+                        .WithOne()
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.VideoNote", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
                 {
+                    b.Navigation("AlbumNoteAppFiles");
+
+                    b.Navigation("AudioNotes");
+
+                    b.Navigation("DocumentNotes");
+
                     b.Navigation("User");
+
+                    b.Navigation("VideoNotes");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
@@ -999,11 +1170,20 @@ namespace WriteContext.Migrations
 
                     b.Navigation("NotificationSettings");
 
+                    b.Navigation("NotificationsFrom");
+
+                    b.Navigation("NotificationsTo");
+
                     b.Navigation("UserOnNotes");
 
                     b.Navigation("UserOnPrivateNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
+                {
+                    b.Navigation("AlbumNoteAppFiles");
                 });
 #pragma warning restore 612, 618
         }

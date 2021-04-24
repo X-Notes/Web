@@ -24,13 +24,13 @@ namespace BI.services.folders
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
-        private readonly NoteCustomMapper noteMapper;
+        private readonly AppCustomMapper noteMapper;
         private readonly SearchHelper searchHelper;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
-            NoteCustomMapper noteMapper,
+            AppCustomMapper noteMapper,
             NoteRepository noteRepository,
             SearchHelper searchHelper
             )
@@ -78,8 +78,10 @@ namespace BI.services.folders
                 else
                 {
                     allNotes = allNotes.Where(x => searchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.Search))).ToList();
-
+                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.Search))
+                    || folderdNotesIds.Contains(x.Id)
+                    ).ToList();
+                    return noteMapper.MapNotesToPreviewNotesDTO(allNotes, folderdNotesIds);
                 }
             }
 

@@ -38,5 +38,7 @@ namespace Common.DatabaseModels.models
         public List<UserOnNoteNow> UserOnNotes { set; get; }
         public List<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
         public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+        public List<Notification> NotificationsFrom { set; get; }
+        public List<Notification> NotificationsTo { set; get; }
     }
 }

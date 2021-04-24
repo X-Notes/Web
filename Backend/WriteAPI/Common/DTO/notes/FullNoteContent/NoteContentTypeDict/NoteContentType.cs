@@ -2,6 +2,9 @@
 {
     public enum NoteContentType
     {
-        ALBUM
+        ALBUM,
+        DOCUMENT,
+        AUDIO,
+        VIDEO
     }
 }

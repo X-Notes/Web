@@ -10,5 +10,10 @@ namespace Common.DTO.app
     {
         public Guid Id { set; get; }
         public string Name { set; get; }
+        public FolderTypeDTO(Guid Id, string Name)
+        {
+            this.Id = Id;
+            this.Name = Name;
+        }
     }
 }
