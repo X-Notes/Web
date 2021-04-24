@@ -170,7 +170,6 @@ namespace WriteAPI.Controllers
         [HttpPost("files/{id}/{contentId}")]
         public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
         {
-            Console.WriteLine(file);
             var command = new InsertFilesToNoteCommand(file, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

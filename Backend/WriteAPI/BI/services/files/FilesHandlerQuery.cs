@@ -12,7 +12,7 @@ using WriteContext.Repositories;
 namespace BI.services.files
 {
     public class FilesHandlerQuery :
-        IRequestHandler<GetPhotoById, FilesBytes>
+        IRequestHandler<GetFileById, FilesBytes>
     {
         private readonly FileRepository fileRepository;
 
@@ -21,7 +21,7 @@ namespace BI.services.files
             this.fileRepository = fileRepository;
         }
 
-        public async Task<FilesBytes> Handle(GetPhotoById request, CancellationToken cancellationToken)
+        public async Task<FilesBytes> Handle(GetFileById request, CancellationToken cancellationToken)
         {
             var file = await fileRepository.FirstOrDefault(x => x.Id == request.Id);
             if (file != null)

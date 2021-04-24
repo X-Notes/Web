@@ -74,19 +74,31 @@ namespace BI.services.files
             return Task.FromResult(Unit.Value);
         }
 
-        public Task<AppFile> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<AppFile> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var file = request.Document;
+            var audioType = photoHelpers.GetDocumentType(file.ContentType);
+            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Files);
+            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, audioType);
+            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
         }
 
-        public Task<AppFile> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<AppFile> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var file = request.Video;
+            var videoType = photoHelpers.GetVideoType(file.ContentType);
+            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Videos);
+            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, videoType);
+            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
         }
 
-        public Task<AppFile> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<AppFile> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var file = request.Audio;
+            var audioType = photoHelpers.GetAudioType(file.ContentType);
+            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Audios);
+            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, audioType);
+            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
         }
     }
 }

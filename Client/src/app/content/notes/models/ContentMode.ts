@@ -26,6 +26,24 @@ export class Album extends ContentModel {
   countInRow: number;
 }
 
+export class AudioModel extends ContentModel {
+  name: string;
+
+  fileId: string;
+}
+
+export class VideoModel extends ContentModel {
+  name: string;
+
+  fileId: string;
+}
+
+export class DocumentModel extends ContentModel {
+  name: string;
+
+  fileId: string;
+}
+
 export class Photo {
   id: string;
 
@@ -45,4 +63,7 @@ export enum ContentType {
   NUMBERLIST = 'numberlist',
   CHECKLIST = 'checklist',
   ALBUM = 'album',
+  AUDIO = 'audio',
+  VIDEO = 'video',
+  DOCUMENT = 'document',
 }

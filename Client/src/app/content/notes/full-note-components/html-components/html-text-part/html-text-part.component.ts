@@ -180,15 +180,15 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
         break;
       }
       case TypeUploadFile.VIDEOS: {
-        data = this.generateFormData(files, 'videos');
+        data = this.generateFormData(files, 'video');
         break;
       }
       case TypeUploadFile.AUDIOS: {
-        data = this.generateFormData(files, 'audios');
+        data = this.generateFormData(files, 'audio');
         break;
       }
       case TypeUploadFile.FILES: {
-        data = this.generateFormData(files, 'files');
+        data = this.generateFormData(files, 'file');
         break;
       }
       default: {

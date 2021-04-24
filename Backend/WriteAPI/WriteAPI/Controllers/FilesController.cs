@@ -21,12 +21,59 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet("image/{id}")]
-        public async Task<IActionResult> GetPhotoByUrl(Guid id)
+        public async Task<IActionResult> GetPhotoById(Guid id)
         {
-            var bytes = await _mediator.Send(new GetPhotoById(id));
+            var bytes = await _mediator.Send(new GetFileById(id));
             if (bytes != null)
             {
                 return File(bytes.Bytes, bytes.ContentType);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("audio/{id}")]
+        public async Task<IActionResult> GetAudioById(Guid id)
+        {
+            var bytes = await _mediator.Send(new GetFileById(id));
+            if (bytes != null)
+            {
+                var resp =  File(bytes.Bytes, bytes.ContentType);
+                resp.EnableRangeProcessing = true;
+                return resp;
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("video/{id}")]
+        public async Task<IActionResult> GetVideoById(Guid id)
+        {
+            var bytes = await _mediator.Send(new GetFileById(id));
+            if (bytes != null)
+            {
+                var resp = File(bytes.Bytes, bytes.ContentType);
+                resp.EnableRangeProcessing = true;
+                return resp;
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("document/{id}")]
+        public async Task<IActionResult> GetDocumentById(Guid id)
+        {
+            var bytes = await _mediator.Send(new GetFileById(id));
+            if (bytes != null)
+            {
+                var resp = File(bytes.Bytes, bytes.ContentType);
+                return resp;
             }
             else
             {

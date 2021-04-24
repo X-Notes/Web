@@ -55,6 +55,27 @@ namespace BI.Mapping
                             resultList.Add(aNDTO);
                             break;
                         }
+                    case AudioNote audioNote:
+                        {
+                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
+                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.Id, type , audioNote.UpdatedAt);
+                            resultList.Add(audioNoteDTO);
+                            break;
+                        }
+                    case VideoNote videoNote:
+                        {
+                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id, type, videoNote.UpdatedAt);
+                            resultList.Add(videoNoteDTO);
+                            break;
+                        }
+                    case DocumentNote documentNote:
+                        {
+                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id, type, documentNote.UpdatedAt);
+                            resultList.Add(documentNoteDTO);
+                            break;
+                        }
                     default:
                         {
                             throw new Exception("Incorrect type");

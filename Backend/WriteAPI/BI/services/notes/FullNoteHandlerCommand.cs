@@ -616,6 +616,7 @@ namespace BI.services.notes
                     var audioNote = new AudioNote()
                     {
                         AppFileId = file.Id,
+                        Name = request.Audio.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
                         UpdatedAt = DateTimeOffset.Now
@@ -643,17 +644,116 @@ namespace BI.services.notes
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
             return new OperationResult<AudioNoteDTO>(Success: false, null);
-            throw new NotImplementedException();
         }
 
-        public Task<OperationResult<VideoNoteDTO>> Handle(InsertVideosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<VideoNoteDTO>> Handle(InsertVideosToNoteCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
+
+                // FILES LOGIC
+                var file = await _mediator.Send(new SaveVideosToNoteCommand(request.Video, note.Id));
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    await baseNoteContentRepository.Remove(contentForRemove);
+
+                    await fileRepository.Add(file);
+
+                    var videoNote = new VideoNote()
+                    {
+                        AppFileId = file.Id,
+                        Name = request.Video.FileName,
+                        Note = note,
+                        Order = contentForRemove.Order,
+                        UpdatedAt = DateTimeOffset.Now
+                    };
+
+                    await videoNoteRepository.Add(videoNote);
+
+                    await transaction.CommitAsync();
+
+                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
+                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id,
+                                type, videoNote.UpdatedAt);
+
+                    return new OperationResult<VideoNoteDTO>(Success: true, result);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
+                    var pathes = new List<string> { file.Path };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                }
+            }
+
+            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
+            return new OperationResult<VideoNoteDTO>(Success: false, null);
         }
 
-        public Task<OperationResult<DocumentNoteDTO>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<DocumentNoteDTO>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
+
+            if (permissions.CanWrite)
+            {
+                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
+
+                // FILES LOGIC
+                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(request.File, note.Id));
+
+                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+
+                try
+                {
+                    await baseNoteContentRepository.Remove(contentForRemove);
+
+                    await fileRepository.Add(file);
+
+                    var documentNote = new DocumentNote()
+                    {
+                        AppFileId = file.Id,
+                        Name = request.File.FileName,
+                        Note = note,
+                        Order = contentForRemove.Order,
+                        UpdatedAt = DateTimeOffset.Now
+                    };
+
+                    await documentNoteRepository.Add(documentNote);
+
+                    await transaction.CommitAsync();
+
+                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
+                    var result = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id,
+                                type, documentNote.UpdatedAt);
+
+                    return new OperationResult<DocumentNoteDTO>(Success: true, result);
+                }
+                catch (Exception e)
+                {
+                    await transaction.RollbackAsync();
+                    Console.WriteLine(e);
+                    var pathes = new List<string> { file.Path };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                }
+            }
+
+            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
+            return new OperationResult<DocumentNoteDTO>(Success: false, null);
         }
     }
 }

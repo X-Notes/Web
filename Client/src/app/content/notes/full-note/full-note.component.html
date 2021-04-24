@@ -134,6 +134,21 @@
               (uploadEvent)="uploadPhotoToAlbumHandler($event)"
               (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
             ></app-photos>
+            <app-audio-note
+              #htmlComp
+              *ngSwitchCase="contentType.AUDIO"
+              [content]="item"
+            ></app-audio-note>
+            <app-video-note
+              #htmlComp
+              *ngSwitchCase="contentType.VIDEO"
+              [content]="item"
+            ></app-video-note>
+            <app-document-note
+              #htmlComp
+              *ngSwitchCase="contentType.DOCUMENT"
+              [content]="item"
+            ></app-document-note>
             <div *ngSwitchDefault>Default</div>
           </div>
         </div>

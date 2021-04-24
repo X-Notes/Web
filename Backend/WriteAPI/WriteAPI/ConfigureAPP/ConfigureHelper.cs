@@ -196,7 +196,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
 
             //Files
-            services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();

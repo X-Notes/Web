@@ -245,7 +245,7 @@ namespace BI.services.notes
                                     var files = new List<FilesBytes>();
                                     foreach(var photo in album.Photos)
                                     {
-                                        var file = await _mediator.Send(new GetPhotoById(photo.Id));
+                                        var file = await _mediator.Send(new GetFileById(photo.Id));
                                         files.Add(file);
                                     }
                                     var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
