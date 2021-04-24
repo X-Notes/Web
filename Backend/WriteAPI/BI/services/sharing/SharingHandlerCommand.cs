@@ -30,6 +30,7 @@ namespace BI.services.sharing
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
         private readonly IMediator _mediator;
         private readonly AppRepository appRepository;
+        private readonly NotificationRepository notificationRepository;
         public SharingHandlerCommand(
             FolderRepository folderRepository, 
             UserRepository userRepository, 
@@ -37,6 +38,7 @@ namespace BI.services.sharing
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
             AppRepository appRepository,
+            NotificationRepository notificationRepository,
             IMediator _mediator)
         {
             this.folderRepository = folderRepository;
@@ -45,6 +47,7 @@ namespace BI.services.sharing
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
             this.appRepository = appRepository;
+            this.notificationRepository = notificationRepository;
             this._mediator = _mediator;
         }
 
@@ -124,6 +127,15 @@ namespace BI.services.sharing
                         UserId = request.UserId
                     };
                     await this.usersOnPrivateFoldersRepository.Add(perm);
+
+                    var notification = new Notification()
+                    {
+                        UserFromId = permissions.User.Id,
+                        UserToId = request.UserId,
+                        Message = "notification.ChangeUserPermissionFolder"
+                    };
+
+                    await this.notificationRepository.Add(notification);
                 }
             }
 
@@ -152,6 +164,15 @@ namespace BI.services.sharing
                         UserId = request.UserId
                     };
                     await this.usersOnPrivateFoldersRepository.Add(perm);
+
+                    var notification = new Notification()
+                    {
+                        UserFromId = permissions.User.Id,
+                        UserToId = request.UserId,
+                        Message = "notification.ChangeUserPermissionNote"
+                    };
+
+                    await this.notificationRepository.Add(notification);
                 }
             }
             return Unit.Value;
@@ -168,6 +189,15 @@ namespace BI.services.sharing
                 if (access != null)
                 {
                     await this.usersOnPrivateFoldersRepository.Remove(access);
+
+                    var notification = new Notification()
+                    {
+                        UserFromId = permissions.User.Id,
+                        UserToId = request.UserId,
+                        Message = "notification.RemoveUserFromFolder"
+                    };
+
+                    await this.notificationRepository.Add(notification);
                 }
             }
             return Unit.Value;
@@ -184,6 +214,15 @@ namespace BI.services.sharing
                 if (access != null)
                 {
                     await this.usersOnPrivateNotesRepository.Remove(access);
+
+                    var notification = new Notification()
+                    {
+                        UserFromId = permissions.User.Id,
+                        UserToId = request.UserId,
+                        Message = "notification.RemoveUserFromNote"
+                    };
+
+                    await this.notificationRepository.Add(notification);
                 }
             }
             return Unit.Value;
@@ -204,6 +243,15 @@ namespace BI.services.sharing
                 }).ToList();
 
                 await this.usersOnPrivateFoldersRepository.AddRange(permissionsRequests);
+
+                var notifications = request.UserIds.Select(userId => new Notification()
+                {
+                    UserFromId = permissions.User.Id,
+                    UserToId = userId,
+                    Message = $"notification.SentInvitesToFolder | message: {request.Message}"
+                });
+
+                await this.notificationRepository.AddRange(notifications);
             }
 
             return Unit.Value;
@@ -223,6 +271,15 @@ namespace BI.services.sharing
                 }).ToList();
 
                 await this.usersOnPrivateNotesRepository.AddRange(permissionsRequests);
+
+                var notifications = request.UserIds.Select(userId => new Notification()
+                {
+                    UserFromId = permissions.User.Id,
+                    UserToId = userId,
+                    Message = $"notification.SentInvitesToNote | message: {request.Message}"
+                });
+
+                await this.notificationRepository.AddRange(notifications);
             }
 
             return Unit.Value;

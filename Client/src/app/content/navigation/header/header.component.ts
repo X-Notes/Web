@@ -17,6 +17,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
+import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-header',
@@ -96,6 +97,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (note) => this.routeChangeFullNote(note));
+
+    this.store
+      .select(AppStore.appLoaded)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (x: boolean) => {
+        if (x) {
+          this.store.dispatch(LoadNotifications);
+        }
+      });
   }
 
   showUsers() {

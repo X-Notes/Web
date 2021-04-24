@@ -48,6 +48,7 @@ using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
+using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -213,6 +214,7 @@ namespace WriteAPI.ConfigureAPP
             Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
             services.AddScoped<LabelRepository>();
+            services.AddScoped<NotificationRepository>();
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
             services.AddScoped<NoteRepository>();
@@ -270,6 +272,9 @@ namespace WriteAPI.ConfigureAPP
         {
             services.AddScoped<PhotoHelpers>();
             services.AddScoped<SearchHelper>();
+
+            services.AddScoped<UserGenerator>();
+            services.AddScoped<DatabaseFakeDataBridge>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }

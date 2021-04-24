@@ -19,3 +19,7 @@ export class TokenSetNoUpdate {
 export class LoadGeneralEntites {
   static type = '[App] Load General Entities';
 }
+
+export class LoadNotifications {
+  static type = '[App] Load Notifications';
+}

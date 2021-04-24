@@ -35,6 +35,7 @@ namespace BI.Mapping
                 .ForMember(p => p.Name, dest => dest.MapFrom(d => d.User.Name))
                 .ForMember(p => p.PhotoId, dest => dest.MapFrom(d => d.User.PhotoId))
                 .ForMember(p => p.Email, dest => dest.MapFrom(d => d.User.Email))
+                .ForMember(p => p.AccessTypeId, dest => dest.MapFrom(d => d.AccessTypeId))
                 .ForMember(p => p.AccessType, dest => dest.MapFrom(d => d.AccessType));
 
 
@@ -43,6 +44,7 @@ namespace BI.Mapping
                 .ForMember(p => p.Name, dest => dest.MapFrom(d => d.User.Name))
                 .ForMember(p => p.PhotoId, dest => dest.MapFrom(d => d.User.PhotoId))
                 .ForMember(p => p.Email, dest => dest.MapFrom(d => d.User.Email))
+                .ForMember(p => p.AccessTypeId, dest => dest.MapFrom(d => d.AccessTypeId))
                 .ForMember(p => p.AccessType, dest => dest.MapFrom(d => d.AccessType));
         }
     }

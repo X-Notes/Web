@@ -133,6 +133,21 @@ namespace WriteContext
                         j.HasKey(bc => new { bc.AlbumNoteId, bc.AppFileId });
                     });
 
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(m => m.UserFrom)
+                .WithMany(t => t.NotificationsFrom)
+                .HasForeignKey(m => m.UserFromId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(m => m.UserTo)
+                .WithMany(t => t.NotificationsTo)
+                .HasForeignKey(m => m.UserToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
             modelBuilder.Entity<Language>().HasData(
                 new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
                 new { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = ModelsNaming.Russian },

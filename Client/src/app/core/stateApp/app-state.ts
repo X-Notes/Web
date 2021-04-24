@@ -12,13 +12,21 @@ import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { AuthService } from '../auth.service';
 import { AppServiceAPI } from '../app.service';
-import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadGeneralEntites } from './app-action';
+import {
+  UpdateRoute,
+  SetToken,
+  TokenSetNoUpdate,
+  LoadGeneralEntites,
+  LoadNotifications,
+} from './app-action';
+import { NotificationServiceAPI } from '../notification.api.service';
 
 interface AppState {
   routing: EntityType;
   token: string;
   tokenUpdated: boolean;
   generalApp: GeneralApp;
+  notifications: Notification[];
 }
 
 @State<AppState>({
@@ -28,6 +36,7 @@ interface AppState {
     token: null,
     tokenUpdated: false,
     generalApp: null,
+    notifications: [],
   },
 })
 @Injectable()
@@ -35,6 +44,7 @@ export class AppStore {
   constructor(
     authService: AuthService, // DONT DELETE THIS ROW
     public appService: AppServiceAPI,
+    public notificationService: NotificationServiceAPI,
   ) {
     authService.init();
   }
@@ -42,6 +52,11 @@ export class AppStore {
   @Selector()
   static getLanguages(state: AppState): LanguageDTO[] {
     return state.generalApp.languages;
+  }
+
+  @Selector()
+  static getNotifications(state: AppState): Notification[] {
+    return state.notifications;
   }
 
   @Selector()
@@ -317,5 +332,11 @@ export class AppStore {
   async loadGeneralEntites({ patchState }: StateContext<AppState>) {
     const general = await this.appService.getLoadGeneral().toPromise();
     patchState({ generalApp: general });
+  }
+
+  @Action(LoadNotifications)
+  async loadNotifications({ patchState }: StateContext<AppState>) {
+    const notifications = await this.notificationService.getNotifications().toPromise();
+    patchState({ notifications });
   }
 }
