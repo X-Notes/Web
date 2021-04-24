@@ -183,6 +183,10 @@ export class PersonalizationService {
     return !!(window.innerWidth > 1024 && window.innerWidth <= 1440);
   };
 
+  isWidth600 = () => {
+    return window.innerWidth >= 600;
+  };
+
   waitPreloading() {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => resolve(false), this.timeForSpinnerLoading),

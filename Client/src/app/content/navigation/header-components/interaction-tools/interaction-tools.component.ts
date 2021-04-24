@@ -46,6 +46,8 @@ export class InteractionToolsComponent {
     ),
   ];
 
+  isInputFocus = true;
+
   constructor(public pService: PersonalizationService, private store: Store) {}
 
   closeNotification() {
