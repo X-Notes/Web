@@ -28,13 +28,42 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IEnumerable<NotificationDTO>> GetNotifications(Guid userId)
+        public async Task<IEnumerable<NotificationDTO>> GetNotifications()
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
             if(user != null)
             {
-                var notifs = await this.notificationRepository.GetWhere(x => x.UserToId == user.Id);
+                var notifs = await this.notificationRepository.GetByUserOrdered(user.Id);
                 return notifs.Select(t => new NotificationDTO(t));
+            }
+            throw new Exception("User not found");
+        }
+
+        [HttpGet("read/all")]
+        public async Task<IActionResult> ReadAllNotifications()
+        {
+            var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
+            if (user != null)
+            {
+                var notifs = await this.notificationRepository
+                    .GetWhere(x => x.UserToId == user.Id && x.IsRead == false);
+                notifs.ForEach(x => x.IsRead = true);
+                await notificationRepository.UpdateRange(notifs);
+                return Ok();
+            }
+            throw new Exception("User not found");
+        }
+
+        [HttpGet("read/{id}")]
+        public async Task<IActionResult> ReadAllNotifications(Guid id)
+        {
+            var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
+            if (user != null)
+            {
+                var notif = await notificationRepository.FirstOrDefault(x => x.UserToId == user.Id && x.Id == id);
+                notif.IsRead = true;
+                await notificationRepository.Update(notif);
+                return Ok();
             }
             throw new Exception("User not found");
         }

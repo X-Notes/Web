@@ -15,5 +15,6 @@ namespace Common.DatabaseModels.models
         public bool IsSystemMessage { set; get; }
         public bool IsRead { set; get; }
         public string Message { set; get; }
+        public DateTimeOffset Date { set; get; }
     }
 }

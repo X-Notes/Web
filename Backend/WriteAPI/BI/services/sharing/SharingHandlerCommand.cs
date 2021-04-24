@@ -128,15 +128,17 @@ namespace BI.services.sharing
                     };
                     await this.usersOnPrivateFoldersRepository.Add(perm);
 
-                    var notification = new Notification()
-                    {
-                        UserFromId = permissions.User.Id,
-                        UserToId = request.UserId,
-                        Message = "notification.ChangeUserPermissionFolder"
-                    };
-
-                    await this.notificationRepository.Add(notification);
                 }
+
+                var notification = new Notification() // TODO MOVE TO SERVICE
+                {
+                    UserFromId = permissions.User.Id,
+                    UserToId = request.UserId,
+                    Message = "notification.ChangeUserPermissionFolder",
+                    Date = DateTimeOffset.Now
+                };
+
+                await this.notificationRepository.Add(notification);
             }
 
             return Unit.Value;
@@ -164,16 +166,19 @@ namespace BI.services.sharing
                         UserId = request.UserId
                     };
                     await this.usersOnPrivateFoldersRepository.Add(perm);
-
-                    var notification = new Notification()
-                    {
-                        UserFromId = permissions.User.Id,
-                        UserToId = request.UserId,
-                        Message = "notification.ChangeUserPermissionNote"
-                    };
-
-                    await this.notificationRepository.Add(notification);
                 }
+
+
+                var notification = new Notification()
+                {
+                    UserFromId = permissions.User.Id,
+                    UserToId = request.UserId,
+                    Message = "notification.ChangeUserPermissionNote",
+                    Date = DateTimeOffset.Now
+                };
+
+                await this.notificationRepository.Add(notification);
+
             }
             return Unit.Value;
         }
@@ -194,7 +199,8 @@ namespace BI.services.sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromFolder"
+                        Message = "notification.RemoveUserFromFolder",
+                        Date = DateTimeOffset.Now
                     };
 
                     await this.notificationRepository.Add(notification);
@@ -219,7 +225,8 @@ namespace BI.services.sharing
                     {
                         UserFromId = permissions.User.Id,
                         UserToId = request.UserId,
-                        Message = "notification.RemoveUserFromNote"
+                        Message = "notification.RemoveUserFromNote",
+                        Date = DateTimeOffset.Now
                     };
 
                     await this.notificationRepository.Add(notification);
@@ -248,7 +255,8 @@ namespace BI.services.sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToFolder | message: {request.Message}"
+                    Message = $"notification.SentInvitesToFolder | message: {request.Message}",
+                    Date = DateTimeOffset.Now
                 });
 
                 await this.notificationRepository.AddRange(notifications);
@@ -276,7 +284,8 @@ namespace BI.services.sharing
                 {
                     UserFromId = permissions.User.Id,
                     UserToId = userId,
-                    Message = $"notification.SentInvitesToNote | message: {request.Message}"
+                    Message = $"notification.SentInvitesToNote | message: {request.Message}",
+                    Date = DateTimeOffset.Now
                 });
 
                 await this.notificationRepository.AddRange(notifications);

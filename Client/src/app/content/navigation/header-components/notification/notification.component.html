@@ -30,14 +30,18 @@
       <div class="notification-action read-all interactions p-sticky">
         <button name="read all notifications" type="button" class="generic" #readAll>
           <div class="inner-content">
-            <p>Read all notifications</p>
+            <p (click)="readAllMessages()">Read all notifications</p>
           </div>
           <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
         </button>
       </div>
-      <div class="notification-message" *ngFor="let item of notification">
+      <div
+        (click)="read(item.id)"
+        class="notification-message"
+        *ngFor="let item of notifications$ | async"
+      >
         <div class="avatar">
-          <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg" />
+          <img alt="user image" [src]="item.userFromPhotoId | getImage" />
         </div>
         <div class="message">
           <div class="info-message">
@@ -45,14 +49,14 @@
               <p>New</p>
             </div>
             <div class="info date">
-              <p>16 sep, 19:30</p>
+              <p>{{ item.date | date : 'd MMM, h:mm' }}</p>
             </div>
           </div>
           <div class="username">
-            <p>Kashich Dmitryi</p>
+            <p>{{item.userFromName}}</p>
           </div>
           <div class="user-message">
-            <p>Shared with you note shared with you note</p>
+            <p>{{item.message}}</p>
           </div>
         </div>
       </div>
@@ -89,9 +93,13 @@
             <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
           </button>
         </div>
-        <div class="notification-message" *ngFor="let item of notification">
+        <div
+          (click)="read(item.id)"
+          class="notification-message"
+          *ngFor="let item of notifications$ | async"
+        >
           <div class="avatar">
-            <img alt="user image" src="https://i.ytimg.com/vi/1Ne1hqOXKKI/maxresdefault.jpg" />
+            <img alt="user image" [src]="item.userFromPhotoId | getImage" />
           </div>
           <div class="message">
             <div class="info-message">
@@ -99,14 +107,14 @@
                 <p>Read message</p>
               </div>
               <div class="info date">
-                <p>16 sep, 19:30</p>
+                <p>{{ item.date | date : 'd MMM, h:mm' }}</p>
               </div>
             </div>
             <div class="username">
-              <p>Kashich Dmitryi</p>
+              <p>{{item.userFromName}}</p>
             </div>
             <div class="user-message">
-              <p>Shared with you note shared with you note</p>
+              <p>{{item.message}}</p>
             </div>
           </div>
         </div>

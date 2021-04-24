@@ -13,11 +13,11 @@ import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
-import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +27,9 @@ import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   // Upper Menu
+
+  @Select(AppStore.getNotificationsCount)
+  public notificationCount$: Observable<number>;
 
   @Select(AppStore.getName)
   public route$: Observable<string>;
