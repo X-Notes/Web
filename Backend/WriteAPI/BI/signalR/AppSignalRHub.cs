@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DTO.notifications;
 using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -9,11 +10,11 @@ using WriteContext.Repositories;
 
 namespace BI.signalR
 {
-    public class DocumentHub : Hub
+    public class AppSignalRHub : Hub
     {
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
-        public DocumentHub(UserRepository userRepository, UserOnNoteRepository userOnNoteRepository)
+        public AppSignalRHub(UserRepository userRepository, UserOnNoteRepository userOnNoteRepository)
         {
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
@@ -57,6 +58,11 @@ namespace BI.signalR
             */
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId.ToString());
+        }
+
+        public override Task OnConnectedAsync()
+        {
+            return base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)

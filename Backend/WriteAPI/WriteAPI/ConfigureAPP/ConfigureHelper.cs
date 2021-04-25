@@ -10,6 +10,7 @@ using BI.services.relatedNotes;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
+using BI.signalR;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
@@ -275,6 +276,8 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
+
+            services.AddScoped<AppSignalRService>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }

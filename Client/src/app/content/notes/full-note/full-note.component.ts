@@ -10,8 +10,6 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { SignalRService } from 'src/app/core/signal-r.service';
-import { HubConnectionState } from '@aspnet/signalr';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
@@ -117,7 +115,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   private routeSubscription: Subscription;
 
   constructor(
-    private signal: SignalRService,
     private route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
@@ -164,13 +161,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async initNote() {
-    if (this.signal.hubConnection.state === HubConnectionState.Connected) {
-      this.signal.hubConnection.invoke('LeaveNote', this.id);
-    }
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.sideBarService.loadNotes(this.id);
-    this.connectToHub();
   }
 
   async loadMain() {
@@ -494,15 +487,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.notesLink = notes.filter((z) => z.id !== this.id);
   }
 
-  connectToHub() {
-    if (this.signal.hubConnection.state === HubConnectionState.Connected) {
-      this.signal.hubConnection.invoke('JoinNote', this.id);
-      this.signal.hubConnection.on('updateDoc', (str) => this.updateDoc(str));
-    } else {
-      setTimeout(() => this.connectToHub(), 100);
-    }
-  }
-
   // EDITING DOCUMENT
 
   onInput($event) {
@@ -519,6 +503,5 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy.complete();
     this.store.dispatch(new DeleteCurrentNote());
     this.routeSubscription.unsubscribe();
-    this.signal.hubConnection.invoke('LeaveNote', this.id);
   }
 }
