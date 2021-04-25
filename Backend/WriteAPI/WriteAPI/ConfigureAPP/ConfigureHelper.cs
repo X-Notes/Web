@@ -49,6 +49,7 @@ using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
+using FacadeML;
 using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -278,6 +279,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<DatabaseFakeDataBridge>();
 
             services.AddScoped<AppSignalRService>();
+            services.AddScoped<OcrService>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }
