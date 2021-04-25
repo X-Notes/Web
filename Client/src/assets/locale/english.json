@@ -46,7 +46,12 @@
       "countUsers": "Number of users",
       "menu": "Menu",
       "defaultColor": "Default color",
-      "emptyTrash": "Empty Trash"
+      "emptyTrash": "Empty Trash",
+      "filterMenu": {
+        "dateAsc": "Sort by ascdending date",
+        "dateDesc": "Sort by descending date",
+        "order": "Custom order"
+      }
     },
     "menu": {
       "label": "Label",

@@ -45,6 +45,7 @@ import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
+import { LazyThemeDirective } from './directives/lazy-theme.directive';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { FolderTypePipe } from './pipes/folder-type.pipe';
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,
+    LazyThemeDirective,
   ],
   imports: [
     CommonModule,
@@ -130,6 +132,7 @@ import { FolderTypePipe } from './pipes/folder-type.pipe';
     MatIconModule,
     MatMenuModule,
     FolderTypePipe,
+    LazyThemeDirective,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

@@ -46,7 +46,7 @@ export class InteractionToolsComponent {
     ),
   ];
 
-  isInputFocus = true;
+  isInputFocus = false;
 
   constructor(public pService: PersonalizationService, private store: Store) {}
 

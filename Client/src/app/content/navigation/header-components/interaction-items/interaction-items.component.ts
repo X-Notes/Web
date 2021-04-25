@@ -58,11 +58,6 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Modal Windows
-  settingsClick = () => {
-    console.log('settings');
-  };
-
   // Selection
 
   selectAll() {

@@ -21,7 +21,7 @@
     </div>
     <div class="search-suggestion" *ngIf="isInputFocus">
       <div class="type-search">
-        <div *ngFor="let item of [1,2]" class="result">
+        <div *ngFor="let item of [1,2, 1,2, 1]" class="result">
           <button class="notes" type="button" name="notes">
             <div class="icon">
               <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="type-search">
-        <div *ngFor="let item of [1,2]" class="result">
+        <div *ngFor="let item of [1,2, 1,2, 1]" class="result">
           <button class="folders" type="button" name="folders">
             <div class="icon">
               <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="type-search">
-        <div *ngFor="let item of [1,2]" class="result">
+        <div *ngFor="let item of []" class="result">
           <button class="history" type="button" name="history">
             <div class="icon">
               <mat-icon fontSet="material-icons-round" [inline]="true">history</mat-icon>
