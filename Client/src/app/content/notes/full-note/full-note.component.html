@@ -81,7 +81,7 @@
               (deleteThis)="deleteHTMLHandler($event)"
               (concatThisWithPrev)="concatThisWithPrev($event)"
               (transformTo)="transformToTypeText($event)"
-              (transformToPhoto)="transformToPhoto($event)"
+              (transformToFile)="transformToFileType($event)"
               (updateText)="updateTextHandler($event, i === contents.length - 1)"
             ></app-html-text-part>
             <app-html-number-list
@@ -134,6 +134,21 @@
               (uploadEvent)="uploadPhotoToAlbumHandler($event)"
               (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
             ></app-photos>
+            <app-audio-note
+              #htmlComp
+              *ngSwitchCase="contentType.AUDIO"
+              [content]="item"
+            ></app-audio-note>
+            <app-video-note
+              #htmlComp
+              *ngSwitchCase="contentType.VIDEO"
+              [content]="item"
+            ></app-video-note>
+            <app-document-note
+              #htmlComp
+              *ngSwitchCase="contentType.DOCUMENT"
+              [content]="item"
+            ></app-document-note>
             <div *ngSwitchDefault>Default</div>
           </div>
         </div>
@@ -194,6 +209,7 @@
     [style.top.px]="menuSelectionService.getTop"
     [style.left.px]="menuSelectionService.left"
     [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'"
+    (eventTransform)="transformToTypeText($event)"
   >
   </app-text-edit-menu>
 </div>

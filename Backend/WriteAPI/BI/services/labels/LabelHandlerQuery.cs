@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
 using System.Linq;
+using BI.Mapping;
 
 namespace BI.services.labels
 {
@@ -18,12 +19,13 @@ namespace BI.services.labels
     {
         private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
-        private readonly IMapper mapper;
-        public LabelHandlerQuery(IMapper mapper, LabelRepository labelRepository, UserRepository userRepository)
+        private AppCustomMapper appCustomMapper;
+        public LabelHandlerQuery(IMapper mapper, LabelRepository labelRepository, UserRepository userRepository,
+            AppCustomMapper appCustomMapper)
         {
-            this.mapper = mapper;
             this.labelRepository = labelRepository;
             this.userRepository = userRepository;
+            this.appCustomMapper = appCustomMapper;
         }
 
         public async Task<LabelsDTO> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
@@ -38,8 +40,8 @@ namespace BI.services.labels
 
                 return new LabelsDTO()
                 {
-                    LabelsAll = mapper.Map<List<LabelDTO>>(labelsAll),
-                    LabelsDeleted = mapper.Map<List<LabelDTO>>(labelsDeleted)
+                    LabelsAll = appCustomMapper.MapLabelsToLabelsDTO(labelsAll),
+                    LabelsDeleted = appCustomMapper.MapLabelsToLabelsDTO(labelsDeleted)
                 };
             }
             throw new Exception("User not found");

@@ -19,12 +19,25 @@ namespace Common.DatabaseModels.models.NoteContent
 
         }
 
+        public TextNote(TextNote text, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+            this.Order = text.Order;
+            this.UpdatedAt = DateTimeOffset.Now;
+
+            this.Content = text.Content;
+            this.TextType = text.TextType;
+            this.HeadingType = text.HeadingType;
+            this.Checked = text.Checked;
+        }
+
         public TextNote(Guid NoteId, string TextType, int Order, string Content = null)
         {
             this.TextType = TextType;
             this.NoteId = NoteId;
             this.Content = Content;
             this.Order = Order;
+            this.UpdatedAt = DateTimeOffset.Now;
         }
 
         public TextNote(string TextType, string Content = null)

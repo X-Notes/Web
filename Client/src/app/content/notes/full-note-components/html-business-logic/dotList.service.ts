@@ -45,7 +45,11 @@ export class DotListService extends HtmlService {
     const content = base;
     $event.preventDefault();
     if (this.isContentEmpty(contentHtml)) {
-      this.transformTo.emit({ id: content.id, contentType: ContentType.DEFAULT });
+      this.transformTo.emit({
+        id: content.id,
+        contentType: ContentType.DEFAULT,
+        setFocusToEnd: true,
+      });
     } else {
       const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
       content.content = this.getNativeElement(contentHtml).innerText;

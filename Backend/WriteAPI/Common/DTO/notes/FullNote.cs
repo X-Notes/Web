@@ -13,6 +13,9 @@ namespace Common.DTO.notes
         public List<LabelDTO> Labels { set; get; }
         public RefTypeDTO RefType { set; get; }
         public NoteTypeDTO NoteType { set; get; }
-        
+
+        public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
+        public DateTimeOffset CreatedAt { set; get; }
     }
 }

@@ -37,6 +37,7 @@ namespace WriteContext.Repositories
         {
             return await this.contextDB.UserOnPrivateNotes
                 .Include(x => x.User)
+                .Include(x => x.AccessType)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
 

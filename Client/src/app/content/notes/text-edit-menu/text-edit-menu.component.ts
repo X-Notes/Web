@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ContentType, HeadingType } from '../models/ContentMode';
+import { TransformContent } from '../models/transform-content';
 import { NoteStore } from '../state/notes-state';
 
 @Component({
@@ -12,6 +13,9 @@ import { NoteStore } from '../state/notes-state';
   styleUrls: ['./text-edit-menu.component.scss'],
 })
 export class TextEditMenuComponent {
+  @Output()
+  eventTransform = new EventEmitter<TransformContent>();
+
   contentType = ContentType;
 
   headingType = HeadingType;
@@ -19,8 +23,6 @@ export class TextEditMenuComponent {
   constructor(
     public menuSelectionService: MenuSelectionService,
     private apiBrowserService: ApiBrowserTextService,
-    private api: ApiServiceNotes,
-    private store: Store,
   ) {}
 
   preventUnSelection = (e) => {
@@ -31,14 +33,19 @@ export class TextEditMenuComponent {
 
   async transformContent(e, type: ContentType, heading?: HeadingType) {
     const item = this.menuSelectionService.currentItem;
-    const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
     if (item.type === type && item.headingType === heading) {
-      await this.api.updateContentType(noteId, item.id, ContentType.DEFAULT, null).toPromise();
-      item.type = ContentType.DEFAULT;
+      this.eventTransform.emit({
+        id: item.id,
+        contentType: ContentType.DEFAULT,
+        setFocusToEnd: true,
+      });
     } else {
-      await this.api.updateContentType(noteId, item.id, type, heading).toPromise();
-      item.type = type;
-      item.headingType = heading;
+      this.eventTransform.emit({
+        id: item.id,
+        contentType: type,
+        headingType: heading,
+        setFocusToEnd: true,
+      });
     }
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();

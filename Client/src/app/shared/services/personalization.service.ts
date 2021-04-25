@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../models/FontSize';
@@ -96,6 +96,8 @@ export class PersonalizationService {
   spinnerActive = false;
 
   timeForSpinnerLoading = 150;
+
+  selectAllButton = new Subject();
 
   newButtonSubject = new Subject();
 

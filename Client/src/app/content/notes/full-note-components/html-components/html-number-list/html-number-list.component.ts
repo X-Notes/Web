@@ -85,12 +85,14 @@ export class HtmlNumberListComponent
   }
 
   ngOnInit(): void {
-    this.numberService.contentStr = this.content?.content;
     this.numberService.transformTo = this.transformTo;
 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
+      .subscribe((str) => {
+        this.content.content = str;
+        this.updateText.emit({ content: str, contentId: this.content.id });
+      });
   }
 
   setNumber() {

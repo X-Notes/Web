@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.Mapping;
 using Common.DatabaseModels.models;
 using Common.DTO.folders;
 using Common.Naming;
@@ -19,19 +20,20 @@ namespace BI.services.folders
         IRequestHandler<GetFullFolderQuery, FullFolderAnswer>
     {
 
-        private readonly IMapper mapper;
         private readonly FolderRepository folderRepository;
         private readonly IMediator _mediator;
         private readonly UserRepository userRepository;
-        public FolderHandlerQuery(IMapper mapper, 
+        private readonly AppCustomMapper appCustomMapper;
+        public FolderHandlerQuery(
             FolderRepository folderRepository, 
             UserRepository userRepository,
-            IMediator _mediator)
+            IMediator _mediator,
+            AppCustomMapper appCustomMapper)
         {
-            this.mapper = mapper;
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this._mediator = _mediator;
+            this.appCustomMapper = appCustomMapper;
         }
 
 
@@ -40,8 +42,8 @@ namespace BI.services.folders
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
-                var folders = (await folderRepository.GetFoldersByUserIdAndTypeId(user.Id, request.TypeId)).OrderBy(x => x.Order);
-                return mapper.Map<List<SmallFolder>>(folders);
+                var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, request.TypeId);
+                return appCustomMapper.MapFoldersToSmallFolders(folders);
             }
             return new List<SmallFolder>();
         }
@@ -59,7 +61,7 @@ namespace BI.services.folders
                 {
                     CanView = true,
                     CanEdit = true,
-                    FullFolder = mapper.Map<FullFolder>(folder)
+                    FullFolder = appCustomMapper.MapFolderToFullFolder(folder)
                 };
             }
 
@@ -69,7 +71,7 @@ namespace BI.services.folders
                 {
                     CanView = true,
                     CanEdit = false,
-                    FullFolder = mapper.Map<FullFolder>(folder)
+                    FullFolder = appCustomMapper.MapFolderToFullFolder(folder)
                 };
             }
 

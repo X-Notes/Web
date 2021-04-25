@@ -10,8 +10,6 @@ import { SelectionService } from '../../selection.service';
 export abstract class HtmlService {
   preFocus = false;
 
-  contentStr = '';
-
   listeners = [];
 
   constructor(

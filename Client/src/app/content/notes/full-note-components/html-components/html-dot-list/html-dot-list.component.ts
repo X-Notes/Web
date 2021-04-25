@@ -73,12 +73,14 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   ngOnInit(): void {
-    this.dotListService.contentStr = this.content?.content;
     this.dotListService.transformTo = this.transformTo;
 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
+      .subscribe((str) => {
+        this.content.content = str;
+        this.updateText.emit({ content: str, contentId: this.content.id });
+      });
   }
 
   setFocus($event?) {

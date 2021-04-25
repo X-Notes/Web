@@ -34,6 +34,9 @@ namespace Common.Naming
         public const string NoteTextCheckList = "checklist";
 
         public const string Album = "album";
+        public const string Audio = "audio";
+        public const string Video = "video";
+        public const string Document = "document";
 
         public const string H1 = "h1";
         public const string H2 = "h2";

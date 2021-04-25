@@ -75,6 +75,23 @@ namespace WriteContext.Repositories
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
 
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, Guid typeId)
+        {
+            return await context.Notes
+                .OrderBy(x => x.Order)
+                .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
+        }
+
+
+        public async Task<Note> GetNoteByUserIdAndTypeIdForCopy(Guid noteId)
+        {
+            return await context.Notes
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .FirstOrDefaultAsync(x => x.Id == noteId);
+        }
+
+
         public async Task<List<Note>> GetNotesByUserId(Guid userId)
         {
             return await context.Notes
@@ -147,7 +164,11 @@ namespace WriteContext.Repositories
                     notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
                     await UpdateRange(notesTo);
 
-                    notesForCasting.ForEach(x => x.NoteTypeId = ToId);
+                    notesForCasting.ForEach(x => {
+                        x.NoteTypeId = ToId;
+                        x.UpdatedAt = DateTimeOffset.Now;
+                    });
+
                     ChangeOrderHelper(notesForCasting);
                     await UpdateRange(notesForCasting);
 
@@ -161,45 +182,6 @@ namespace WriteContext.Repositories
                 {
                     await transaction.RollbackAsync();
                 }
-            }
-        }
-
-        public async Task<List<Note>> CopyNotes(List<Note> notesForCopy, List<Note> allUserNotes, Guid FromId, Guid ToId)
-        {
-            using (var transaction = await context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
-                    notesTo.ForEach(x => x.Order = x.Order + notesForCopy.Count());
-                    await UpdateRange(notesTo);
-
-                    var newNotes = notesForCopy.Select(x => new Note() { 
-                        Color = x.Color,
-                        CreatedAt = DateTimeOffset.Now,
-                        NoteTypeId = ToId,
-                        Title = x.Title,
-                        UserId = x.UserId,
-                        LabelsNotes = x.LabelsNotes,
-                        RefTypeId = x.RefTypeId,
-                    }).ToList();
-                    ChangeOrderHelper(newNotes);
-                    await AddRange(newNotes);
-
-                    var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
-                    ChangeOrderHelper(oldNotes);
-                    await UpdateRange(oldNotes);
-
-                    await transaction.CommitAsync();
-
-                    return newNotes.OrderBy(x => x.Order).ToList();
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    throw new Exception();
-                }
-                
             }
         }
 

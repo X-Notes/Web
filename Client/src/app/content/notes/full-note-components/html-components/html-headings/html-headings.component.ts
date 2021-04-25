@@ -71,11 +71,12 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   ngOnInit(): void {
-    this.headingService.contentStr = this.content?.content;
-
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((str) => this.updateText.emit({ content: str, contentId: this.content.id }));
+      .subscribe((str) => {
+        this.content.content = str;
+        this.updateText.emit({ content: str, contentId: this.content.id });
+      });
   }
 
   setFocus($event?) {

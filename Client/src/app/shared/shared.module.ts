@@ -45,6 +45,9 @@ import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
+import { GetAudioPipe } from './pipes/get-audio.pipe';
+import { GetVideoPipe } from './pipes/get-video.pipe';
+import { GetDocumentPipe } from './pipes/get-document.pipe';
 
 @NgModule({
   declarations: [
@@ -78,6 +81,9 @@ import { FolderTypePipe } from './pipes/folder-type.pipe';
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
     FolderTypePipe,
+    GetAudioPipe,
+    GetVideoPipe,
+    GetDocumentPipe,
   ],
   imports: [
     CommonModule,
@@ -130,6 +136,9 @@ import { FolderTypePipe } from './pipes/folder-type.pipe';
     MatIconModule,
     MatMenuModule,
     FolderTypePipe,
+    GetAudioPipe,
+    GetVideoPipe,
+    GetDocumentPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

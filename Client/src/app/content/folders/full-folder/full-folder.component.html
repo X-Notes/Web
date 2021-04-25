@@ -129,11 +129,13 @@
           #item
           class="grid-item"
           id="{{item.id}}"
-          *ngFor="let item of ffnService.notes"
+          *ngFor="let item of ffnService.noteService.notes"
           [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
         >
           <app-note
             [note]="item"
+            (highlightNote)="noteService.highlightNote($event)"
+            (clickOnNote)="noteService.toNote($event)"
             [ngStyle]="{'backgroundColor': item.color }"
             class="note"
           ></app-note>

@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,11 @@ namespace WriteContext.GenericRepositories
         public async Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate)
             => await entities.FirstOrDefaultAsync(predicate);
 
-        public async Task Add(T entity)
+        public async Task<EntityEntry<T>> Add(T entity)
         {
-            await entities.AddAsync(entity);
+            var ent = await entities.AddAsync(entity);
             await context.SaveChangesAsync();
+            return ent;
         }
 
         public async Task Update(T entity)

@@ -184,7 +184,7 @@
             [appearance]="'compact'"
           >
             <div class="content-inner">
-              <div *ngFor="let user of usersOnPrivateNote$" class="user">
+              <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
                 <div class="photo">
                   <img alt="user image" [src]="user.photoId | getImage" />
                 </div>
@@ -204,7 +204,7 @@
                   >
                     <div
                       class="icon"
-                      [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''"
+                      [ngClass]="(user.accessType.name === refType.viewer) ? 'black' : ''"
                     >
                       <mat-icon [inline]="true">visibility</mat-icon>
                     </div>
@@ -217,7 +217,7 @@
                   >
                     <div
                       class="icon"
-                      [ngClass]="(user.accessType === refType.editor) ? 'black' : ''"
+                      [ngClass]="(user.accessType.name === refType.editor) ? 'black' : ''"
                     >
                       <mat-icon [inline]="true">edit</mat-icon>
                     </div>
@@ -339,7 +339,7 @@
               </div>
             </div>
             <div class="user-suggestions">
-              <div *ngFor="let user of usersOnPrivateNote$" class="user">
+              <div *ngFor="let user of searchUsers" class="user">
                 <div class="photo">
                   <img alt="user image" [src]="user.photoId | getImage" />
                 </div>
