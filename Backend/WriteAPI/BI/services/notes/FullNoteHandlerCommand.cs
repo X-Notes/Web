@@ -104,8 +104,11 @@ namespace BI.services.notes
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
-                // FILES LOGIC
+                // FILES LOGIC 
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+
+                // MOVE THIS TO WORKER
+                // fileList.ForEach(file => file.TextFromPhoto = ironTesseractService.GetText(file.Path));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
