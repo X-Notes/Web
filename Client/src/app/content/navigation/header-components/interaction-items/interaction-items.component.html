@@ -29,7 +29,13 @@
   [styleClasses]="'generic-2 filter'"
 ></app-general-header-button>
 
-<mat-menu #menu="matMenu" appLazyTheme="dsds">
+<mat-menu
+  #menu="matMenu"
+  appLazyTheme
+  themeClass="menu"
+  attributeName="panelClass"
+  [element]="menu"
+>
   <button mat-menu-item type="button" [name]="'header.filterMenu.dateAsc' | translate">
     <mat-icon>north</mat-icon>
     <span> {{ 'header.filterMenu.dateAsc' | translate }} </span>
