@@ -43,6 +43,9 @@ namespace WriteContext.Migrations
                     b.Property<string>("Path")
                         .HasColumnType("text");
 
+                    b.Property<string>("RecognizeObject")
+                        .HasColumnType("text");
+
                     b.Property<string>("TextFromPhoto")
                         .HasColumnType("text");
 

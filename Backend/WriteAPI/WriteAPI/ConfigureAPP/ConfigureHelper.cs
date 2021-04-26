@@ -279,8 +279,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<DatabaseFakeDataBridge>();
 
             services.AddScoped<AppSignalRService>();
-            services.AddScoped<OcrService>();
 
+            services.AddScoped<OcrService>();
+            services.AddSingleton<ObjectRecognizeService>();
+            
             services.AddScoped<IFilesStorage, FilesStorage>();
         }
     }

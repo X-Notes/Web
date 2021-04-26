@@ -12,6 +12,7 @@ namespace Common.DatabaseModels.models
         public string Path { set; get; }
         public string Type { set; get; }
         public string TextFromPhoto { set; get; }
+        public string RecognizeObject { set; get; }
         public User User { get; set; } // TODO ADD USER
         public List<AlbumNote> AlbumNotes { set; get; }
         public List<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
