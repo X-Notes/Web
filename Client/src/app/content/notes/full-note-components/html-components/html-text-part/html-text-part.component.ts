@@ -66,6 +66,8 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   formats: string;
 
+  isMulptiply = false;
+
   constructor(public textService: TextService) {}
 
   getContent() {
@@ -107,8 +109,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     });
   }
 
-  transformToFileHandler($event, type: TypeUploadFile) {
+  transformToFileHandler($event, type: TypeUploadFile, isMulptiply: boolean) {
     $event.preventDefault();
+    this.isMulptiply = isMulptiply;
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());
