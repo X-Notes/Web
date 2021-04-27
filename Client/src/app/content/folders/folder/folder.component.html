@@ -29,23 +29,11 @@
       (click)="toFolder()"
       [ngStyle]="{'cursor': folder.lockRedirect ? 'pointer' : ''}"
     >
-      <div class="note">
+      <div *ngFor="let note of folder.previewNotes" class="note">
         <div class="icon">
           <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
         </div>
-        <p>Hello Hello Hello Hello</p>
-      </div>
-      <div class="note">
-        <div class="icon">
-          <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
-        </div>
-        <p>Hello Hello Hello Hello</p>
-      </div>
-      <div class="note">
-        <div class="icon">
-          <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
-        </div>
-        <p>Hello Hello Hello Hello</p>
+        <p>{{note.title}}</p>
       </div>
     </div>
   </div>

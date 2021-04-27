@@ -9,4 +9,7 @@ export interface FullNote {
   labels: Label[];
   refType: EntityRef;
   noteType: NoteType;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }

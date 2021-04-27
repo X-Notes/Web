@@ -21,6 +21,7 @@ import { UpdateColor } from './state/updateColor';
 
 @Injectable()
 export class NotesService implements OnDestroy {
+  // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   labelsIds: Subscription;
 
   destroy = new Subject<void>();
@@ -159,7 +160,7 @@ export class NotesService implements OnDestroy {
     console.log('note destroy');
     this.destroy.next();
     this.destroy.complete();
-    this.labelsIds.unsubscribe();
+    this.labelsIds?.unsubscribe();
   }
 
   transformNotes = (items: SmallNote[]) => {

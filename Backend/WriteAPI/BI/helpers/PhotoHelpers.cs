@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common.DTO.files;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,9 +44,9 @@ namespace BI.helpers
             return base64;
         }
 
-        public string GetPhotoType(IFormFile file)
+        public string GetPhotoType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
         {
-            switch (file.ContentType.ToString())
+            switch (contentType)
             {
                 case "image/png":
                     {
@@ -61,5 +62,64 @@ namespace BI.helpers
                     }
             }
         }
+
+        public string GetAudioType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        {
+            switch (contentType)
+            {
+                case "audio/mpeg":
+                    {
+                        return ".mp3";
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect audio type");
+                    }
+            }
+        }
+
+
+        public string GetVideoType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        {
+            switch (contentType)
+            {
+                case "video/mp4":
+                    {
+                        return ".mp4";
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect audio type");
+                    }
+            }
+        }
+
+        public string GetDocumentType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        {
+            switch (contentType)
+            {
+                case "application/pdf":
+                    {
+                        return ".pdf";
+                    }
+                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                    {
+                        return ".pptx";
+                    }
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                    {
+                        return ".docx";
+                    }
+                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                    {
+                        return ".xlsx";
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect document type");
+                    }
+            }
+        }
+
     }
 }

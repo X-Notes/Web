@@ -9,11 +9,11 @@ namespace Common.DTO.files
     public class FilesBytes
     {
         public byte[] Bytes { set; get; }
-        public string Type { set; get; }
+        public string ContentType { set; get; }
         public FilesBytes(byte[] Bytes, string Type)
         {
             this.Bytes = Bytes;
-            this.Type = Type;
+            this.ContentType = Type;
         }
     }
 }

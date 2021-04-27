@@ -71,7 +71,7 @@
     <div class="icon">
       <mat-icon svgIcon="notification" [inline]="true"></mat-icon>
     </div>
-    <div class="push">1</div>
+    <div *ngIf="(notificationCount$ | async) > 0" class="push">{{notificationCount$ | async}}</div>
     <div class="ripple-container" matRipple [matRippleTrigger]="notificationHeader"></div>
 
     <ng-template

@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models.NoteContent;
+﻿
+using Common.DatabaseModels.models.NoteContent;
 using System;
 using System.Collections.Generic;
 
@@ -20,6 +21,7 @@ namespace Common.DatabaseModels.models
         public User User { set; get; }
 
         public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
 
         public List<UserOnNoteNow> UserOnNotesNow { set; get; }

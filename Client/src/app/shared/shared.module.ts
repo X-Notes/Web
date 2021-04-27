@@ -46,6 +46,9 @@ import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.co
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
 import { FolderTypePipe } from './pipes/folder-type.pipe';
 import { LazyThemeDirective } from './directives/lazy-theme.directive';
+import { GetAudioPipe } from './pipes/get-audio.pipe';
+import { GetVideoPipe } from './pipes/get-video.pipe';
+import { GetDocumentPipe } from './pipes/get-document.pipe';
 
 @NgModule({
   declarations: [
@@ -80,6 +83,9 @@ import { LazyThemeDirective } from './directives/lazy-theme.directive';
     DialogGenericHeaderComponent,
     FolderTypePipe,
     LazyThemeDirective,
+    GetAudioPipe,
+    GetVideoPipe,
+    GetDocumentPipe,
   ],
   imports: [
     CommonModule,
@@ -133,6 +139,9 @@ import { LazyThemeDirective } from './directives/lazy-theme.directive';
     MatMenuModule,
     FolderTypePipe,
     LazyThemeDirective,
+    GetAudioPipe,
+    GetVideoPipe,
+    GetDocumentPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

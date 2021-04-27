@@ -64,7 +64,9 @@
       "lock": "Пароль",
       "archive": "Архів",
       "delete": "Видалити",
-      "history": "Історія"
+      "history": "Історія",
+      "private": "Особисті",
+      "privateFolder": "Особисті"
     },
     "profile": {
       "sectionProfile": "Профіль",

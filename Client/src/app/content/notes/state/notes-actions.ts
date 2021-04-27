@@ -26,7 +26,7 @@ export class UpdateNotes {
 export class ChangeColorNote {
   static type = '[Notes] Change color note';
 
-  constructor(public color: string, public typeNote: NoteType, public selectedIds: string[]) {}
+  constructor(public color: string, public selectedIds: string[]) {}
 }
 
 export class ClearColorNotes {
@@ -176,7 +176,6 @@ export class UpdateTitle {
   constructor(public str: string) {}
 }
 
-
 export class UpdateLabelFullNote {
   static type = '[Notes] update label full note';
 
@@ -204,4 +203,3 @@ export class TransformTypeNotes {
     public selectedIds: string[],
   ) {}
 }
-

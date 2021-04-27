@@ -81,6 +81,10 @@ export class MenuButtonsService {
       operation: () => this.dialogsManageService.changeLabels(),
     },
     {
+      icon: 'private',
+      operation: () => this.makePrivateNotes(),
+    },
+    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -229,6 +233,10 @@ export class MenuButtonsService {
       operation: () => this.dialogsManageService.shareEntity(),
     },
     {
+      icon: 'privateFolder',
+      operation: () => this.makePrivateFolders(),
+    },
+    {
       icon: 'copy',
       operation: () => this.copyFolders(),
     },
@@ -285,7 +293,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'restore',
-      operation: () => this.restoreFolders(),
+      operation: () => this.makePrivateFolders(),
     },
   ];
 
@@ -293,6 +301,10 @@ export class MenuButtonsService {
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+    },
+    {
+      icon: 'privateFolder',
+      operation: () => this.makePrivateFolders(),
     },
     {
       icon: 'copy',
@@ -313,6 +325,17 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => this.setDeleteFolders(),
+    },
+  ];
+
+  public foldersItemsInner: MenuItem[] = [
+    {
+      icon: 'copy',
+      operation: () => this.copyFolders(),
+    },
+    {
+      icon: 'color',
+      operation: () => this.dialogsManageService.changeColor(),
     },
   ];
 
@@ -703,10 +726,6 @@ export class MenuButtonsService {
     this.store.dispatch(new DeleteFoldersPermanently(ids, type));
   }
 
-  filterItems(newItems: MenuItem[]) {
-    this.items = newItems;
-  }
-
   setItems(newItems: MenuItem[]) {
     this.items = newItems;
   }
@@ -834,7 +853,7 @@ export class MenuButtonsService {
     }
   }
 
-  private restoreFolders() {
+  private makePrivateFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const type = this.store

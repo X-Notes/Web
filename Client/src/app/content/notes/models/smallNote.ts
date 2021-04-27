@@ -3,6 +3,7 @@ import { NoteType } from 'src/app/shared/models/noteType';
 import { Label } from '../../labels/models/label';
 import { ContentModel } from './ContentMode';
 
+// TODO MAKE CLASS
 export interface SmallNote {
   id: string;
   title: string;
@@ -13,4 +14,7 @@ export interface SmallNote {
   contents: ContentModel[];
   isSelected?: boolean;
   lockRedirect?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date;
 }

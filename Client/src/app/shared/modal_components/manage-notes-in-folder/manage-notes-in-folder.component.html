@@ -9,7 +9,7 @@
       <app-select
         class="select"
         [translate]="'subMenu'"
-        [selectValue]="'all'"
+        [selectValue]="selectValue"
         (selectValueChange)="selectItem($event)"
       >
         <app-select-option *ngFor="let item of selectTypes" [value]="item">

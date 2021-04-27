@@ -56,6 +56,9 @@ export class ShareComponent implements OnInit, OnDestroy {
   @Select(FolderStore.getUsersOnPrivateFolder)
   public usersOnPrivateFolder$: Observable<InvitedUsersToNoteOrFolder[]>;
 
+  @Select(NoteStore.getUsersOnPrivateNote)
+  public usersOnPrivateNote$: Observable<InvitedUsersToNoteOrFolder[]>;
+
   windowType = SharedType;
 
   currentWindowType: SharedType;
@@ -82,47 +85,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   searchUsers: SearchUserForShareModal[] = [];
 
-  selectedUsers: SearchUserForShareModal[] = [
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-  ];
-
-  public usersOnPrivateNote$: any = [
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-    {
-      id: '1',
-      name: 'asdsadsad',
-      email: 'asdadsad',
-      photoId: null,
-    },
-  ];
+  selectedUsers: SearchUserForShareModal[] = [];
 
   commandsForChange = new Map<string, any[]>();
 
@@ -226,6 +189,7 @@ export class ShareComponent implements OnInit, OnDestroy {
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
           const users = await this.searchService.searchUsers(searchStr).toPromise();
+          users.forEach((user) => (user.photoId = 'ce30aed7-2426-4e4e-bae4-30cd1a286792')); // TODO CHANGE
           this.searchUsers = this.userFilters(users);
         } else {
           this.searchUsers = [];
@@ -428,6 +392,10 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async sendInvites() {
+    const inviteId = this.store
+      .selectSnapshot(AppStore.getRefs)
+      .find((x) => x.name.toLowerCase() === this.refTypeForInvite);
+
     switch (this.currentWindowType) {
       case SharedType.Folder: {
         const userIds = this.selectedUsers.map((user) => user.id);
@@ -435,7 +403,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           .sendInvitesToFolder(
             userIds,
             this.currentFolder.id,
-            this.refTypeForInvite,
+            inviteId.id,
             this.isSendNotification,
             this.messageTextArea,
           )
@@ -449,7 +417,7 @@ export class ShareComponent implements OnInit, OnDestroy {
           .sendInvitesToNote(
             userIds,
             this.currentNote.id,
-            this.refTypeForInvite,
+            inviteId.id,
             this.isSendNotification,
             this.messageTextArea,
           )
@@ -493,7 +461,6 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   changeNote(note: SmallNote) {
     this.currentNote = { ...note };
-    console.log(this.currentNote);
     this.store.dispatch(new GetInvitedUsersToNote(note.id));
   }
 
@@ -550,14 +517,17 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeUserPermission(refType: RefTypeENUM, id: string) {
+    const ref = this.store
+      .selectSnapshot(AppStore.getRefs)
+      .find((x) => x.name.toLowerCase() === refType);
     switch (this.currentWindowType) {
       case SharedType.Folder: {
-        await this.apiFolder.changeUserPermission(this.currentFolder.id, id, refType).toPromise();
+        await this.apiFolder.changeUserPermission(this.currentFolder.id, id, ref.id).toPromise();
         this.store.dispatch(new GetInvitedUsersToFolder(this.currentFolder.id));
         break;
       }
       case SharedType.Note: {
-        await this.apiNote.changeUserPermission(this.currentNote.id, id, refType).toPromise();
+        await this.apiNote.changeUserPermission(this.currentNote.id, id, ref.id).toPromise();
         this.store.dispatch(new GetInvitedUsersToNote(this.currentNote.id));
         break;
       }

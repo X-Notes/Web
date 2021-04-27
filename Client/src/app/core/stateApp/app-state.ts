@@ -12,13 +12,25 @@ import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { AuthService } from '../auth.service';
 import { AppServiceAPI } from '../app.service';
-import { UpdateRoute, SetToken, TokenSetNoUpdate, LoadGeneralEntites } from './app-action';
+import {
+  UpdateRoute,
+  SetToken,
+  TokenSetNoUpdate,
+  LoadGeneralEntites,
+  LoadNotifications,
+  ReadAllNotifications,
+  ReadNotification,
+} from './app-action';
+import { NotificationServiceAPI } from '../notification.api.service';
+import { AppNotification } from '../models/app-notification';
+import { patch, updateItem } from '@ngxs/store/operators';
 
 interface AppState {
   routing: EntityType;
   token: string;
   tokenUpdated: boolean;
   generalApp: GeneralApp;
+  notifications: AppNotification[];
 }
 
 @State<AppState>({
@@ -28,6 +40,7 @@ interface AppState {
     token: null,
     tokenUpdated: false,
     generalApp: null,
+    notifications: [],
   },
 })
 @Injectable()
@@ -35,6 +48,7 @@ export class AppStore {
   constructor(
     authService: AuthService, // DONT DELETE THIS ROW
     public appService: AppServiceAPI,
+    public notificationService: NotificationServiceAPI,
   ) {
     authService.init();
   }
@@ -42,6 +56,16 @@ export class AppStore {
   @Selector()
   static getLanguages(state: AppState): LanguageDTO[] {
     return state.generalApp.languages;
+  }
+
+  @Selector()
+  static getNotifications(state: AppState): AppNotification[] {
+    return state.notifications;
+  }
+
+  @Selector()
+  static getNotificationsCount(state: AppState): number {
+    return state.notifications.filter((z) => z.isRead === false).length;
   }
 
   @Selector()
@@ -317,5 +341,34 @@ export class AppStore {
   async loadGeneralEntites({ patchState }: StateContext<AppState>) {
     const general = await this.appService.getLoadGeneral().toPromise();
     patchState({ generalApp: general });
+  }
+
+  @Action(LoadNotifications)
+  async loadNotifications({ patchState }: StateContext<AppState>) {
+    const notifications = await this.notificationService.getNotifications().toPromise();
+    patchState({ notifications });
+  }
+
+  @Action(ReadAllNotifications)
+  async readAllNotifications({ patchState, getState }: StateContext<AppState>) {
+    await this.notificationService.readAllNotifications().toPromise();
+    let { notifications } = getState();
+    notifications = [...notifications].map((not) => {
+      return { ...not, isRead: true };
+    });
+    patchState({ notifications });
+  }
+
+  @Action(ReadNotification)
+  async readNotification({ setState }: StateContext<AppState>, { id }: ReadNotification) {
+    await this.notificationService.readNotification(id).toPromise();
+    setState(
+      patch({
+        notifications: updateItem<AppNotification>(
+          (notification) => notification.id === id,
+          patch({ isRead: true }),
+        ),
+      }),
+    );
   }
 }

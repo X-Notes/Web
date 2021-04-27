@@ -20,6 +20,9 @@ import {
   animations: [notification],
 })
 export class InteractionToolsComponent {
+  @Select(AppStore.getNotificationsCount)
+  public notificationCount$: Observable<number>;
+
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 

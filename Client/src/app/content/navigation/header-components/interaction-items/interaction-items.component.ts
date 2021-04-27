@@ -16,6 +16,7 @@ import { MatMenu } from '@angular/material/menu';
   styleUrls: ['./interaction-items.component.scss'],
 })
 export class InteractionItemsComponent implements OnInit, OnDestroy {
+  // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   @Select(AppStore.getName)
   public route$: Observable<string>;
 

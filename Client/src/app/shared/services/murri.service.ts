@@ -26,7 +26,16 @@ export class MurriService {
 
   /// FOLDER NOTES
 
-  async initFolderNotes() {
+  initFolderNotesAsync(delay = 0) {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(async () => {
+        this.initFolderNotes();
+        resolve(true);
+      }, delay),
+    );
+  }
+
+  initFolderNotes() {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -40,13 +49,13 @@ export class MurriService {
   initSidebarNotesAsync(apiRelatedNotes: ApiRelatedNotesService, noteId: string, delay = 0) {
     return new Promise<boolean>((resolve) =>
       setTimeout(async () => {
-        await this.initSidebarNotes(apiRelatedNotes, noteId);
+        this.initSidebarNotes(apiRelatedNotes, noteId);
         resolve(true);
       }, delay),
     );
   }
 
-  async initSidebarNotes(apiRelatedNotes: ApiRelatedNotesService, noteId: string) {
+  initSidebarNotes(apiRelatedNotes: ApiRelatedNotesService, noteId: string) {
     const gridItemName = '.grid-item-small';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {

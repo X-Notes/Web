@@ -38,6 +38,8 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
 
   selectTypes = ['all', 'personal', 'shared', 'archive', 'bin'];
 
+  selectValue = 'all';
+
   fontSize = FontSizeENUM;
 
   notes: SmallNote[] = [];
@@ -66,10 +68,19 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
   }
 
   initSearch() {
+    const folderId = this.store.selectSnapshot(FolderStore.full).id;
     this.searchChanged
       .pipe(debounceTime(searchDelay), distinctUntilChanged(), takeUntil(this.destroy))
       .subscribe(async (str) => {
-        console.log(str);
+        this.pService.setSpinnerState(true);
+        await this.murriService.setOpacityFlagAsync(0, false);
+        await this.murriService.wait(150);
+        this.murriService.grid.destroy();
+        this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str).toPromise();
+        this.viewNotes = [...this.notes];
+        this.pService.setSpinnerState(false);
+        await this.murriService.initMurriPreviewDialogNoteAsync();
+        await this.murriService.setOpacityFlagAsync(0);
       });
   }
 
@@ -142,6 +153,7 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
   unSelectNote = (note: SmallNote) => (note.isSelected = false);
 
   ngOnDestroy(): void {
+    this.murriService.muuriDestroy();
     this.destroy.next();
     this.destroy.complete();
   }

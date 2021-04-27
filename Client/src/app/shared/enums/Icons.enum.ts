@@ -44,4 +44,5 @@ export enum Icons {
   viewOnly = 'viewOnly',
   stickyNote = 'stickyNote',
   cancelThin = 'cancelThin',
+  privateFolder = 'privateFolder',
 }

@@ -27,6 +27,10 @@ using Domain.Commands.folderInner;
 using Domain.Commands.folders;
 using Domain.Commands.labels;
 using Domain.Commands.noteInner;
+using Domain.Commands.noteInner.fileContent.albums;
+using Domain.Commands.noteInner.fileContent.audios;
+using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
 using Domain.Commands.relatedNotes;
@@ -44,6 +48,7 @@ using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
+using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -141,6 +146,14 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
 
+            // FULL NOTE AUDIOS
+            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudioNoteDTO>>, FullNoteHandlerCommand>();
+            // FULL NOTE VIDEOS
+            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteHandlerCommand>();
+            // FULL NOTE FILES
+            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteHandlerCommand>();
+
+
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveFolderCommand, Unit>, FolderHandlerCommand>();
@@ -184,8 +197,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
 
             //Files
-            services.AddScoped<IRequestHandler<GetPhotoById, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesByPathesCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
@@ -198,6 +214,7 @@ namespace WriteAPI.ConfigureAPP
             Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
             services.AddScoped<LabelRepository>();
+            services.AddScoped<NotificationRepository>();
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
             services.AddScoped<NoteRepository>();
@@ -208,10 +225,14 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<FileRepository>();
             services.AddScoped<AppRepository>();
             services.AddScoped<AlbumNoteRepository>();
+            services.AddScoped<AudioNoteRepository>();
+            services.AddScoped<VideoNoteRepository>();
+            services.AddScoped<DocumentNoteRepository>();
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped<FoldersNotesRepository>();
+            services.AddScoped<LabelsNotesRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -251,6 +272,9 @@ namespace WriteAPI.ConfigureAPP
         {
             services.AddScoped<PhotoHelpers>();
             services.AddScoped<SearchHelper>();
+
+            services.AddScoped<UserGenerator>();
+            services.AddScoped<DatabaseFakeDataBridge>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();
         }

@@ -94,7 +94,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
   }
 
   mouseDown(evt: MouseEvent) {
-    if ((evt.target as HTMLElement).tagName === 'I') {
+    if (
+      (evt.target as HTMLElement).classList.contains('icon') ||
+      (evt.target as HTMLElement).tagName === 'svg' ||
+      (evt.target as HTMLElement).tagName === 'path'
+    ) {
       return;
     }
 
