@@ -11,11 +11,14 @@ using Domain.Commands.noteInner.fileContent.audios;
 using Domain.Commands.noteInner.fileContent.files;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Queries.permissions;
+using FacadeML;
+using FacadeML.models;
 using MediatR;
 using Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
@@ -53,6 +56,8 @@ namespace BI.services.notes
         private readonly AudioNoteRepository audioNoteRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FileRepository fileRepository;
+        private readonly OcrService ocrService;
+        private readonly ObjectRecognizeService objectRecognizeService;
         public FullNoteHandlerCommand(
                                         NoteRepository noteRepository,
                                         IMediator _mediator,
@@ -62,7 +67,9 @@ namespace BI.services.notes
                                         FileRepository fileRepository,
                                         DocumentNoteRepository documentNoteRepository,
                                         VideoNoteRepository videoNoteRepository,
-                                        AudioNoteRepository audioNoteRepository)
+                                        AudioNoteRepository audioNoteRepository,
+                                        OcrService ocrService,
+                                        ObjectRecognizeService objectRecognizeService)
         {
             this.noteRepository = noteRepository;
             this._mediator = _mediator;
@@ -73,6 +80,8 @@ namespace BI.services.notes
             this.documentNoteRepository = documentNoteRepository;
             this.videoNoteRepository = videoNoteRepository;
             this.audioNoteRepository = audioNoteRepository;
+            this.ocrService = ocrService;
+            this.objectRecognizeService = objectRecognizeService;
         }
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -92,6 +101,9 @@ namespace BI.services.notes
             return Unit.Value;
         }
 
+        public string RemoveSpecialCharacters(string str) => Regex.Replace(str, "[^a-zA-Z0-9_.]+", " ", RegexOptions.Compiled);
+
+
         public async Task<OperationResult<AlbumNoteDTO>> Handle(InsertAlbumToNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
@@ -104,8 +116,12 @@ namespace BI.services.notes
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
-                // FILES LOGIC
+                // FILES LOGIC 
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+
+                // MOVE THIS TO WORKER
+                fileList.ForEach(file => file.TextFromPhoto = RemoveSpecialCharacters(ocrService.GetText(file.Path)));
+                fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -483,6 +499,9 @@ namespace BI.services.notes
             {
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+
+                fileList.ForEach(file => file.TextFromPhoto = RemoveSpecialCharacters(ocrService.GetText(file.Path)));
+                fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

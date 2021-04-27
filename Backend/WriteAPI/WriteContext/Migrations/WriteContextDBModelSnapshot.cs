@@ -43,6 +43,12 @@ namespace WriteContext.Migrations
                     b.Property<string>("Path")
                         .HasColumnType("text");
 
+                    b.Property<string>("RecognizeObject")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TextFromPhoto")
+                        .HasColumnType("text");
+
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
@@ -297,11 +303,17 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("NoteTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("RefTypeId")
                         .HasColumnType("uuid");

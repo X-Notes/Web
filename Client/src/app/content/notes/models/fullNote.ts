@@ -9,6 +9,7 @@ export interface FullNote {
   labels: Label[];
   refType: EntityRef;
   noteType: NoteType;
+  isLocked: boolean;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;

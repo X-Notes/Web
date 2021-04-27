@@ -18,6 +18,7 @@ import { NoteStore } from '../../notes/state/notes-state';
 import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-header',
@@ -77,6 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private store: Store,
     public menuButtonService: MenuButtonsService,
+    private signalRService: SignalRService,
   ) {}
 
   ngOnDestroy(): void {
@@ -107,6 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(async (x: boolean) => {
         if (x) {
           this.store.dispatch(LoadNotifications);
+          this.signalRService.init();
         }
       });
   }

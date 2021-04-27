@@ -17,6 +17,9 @@ namespace Common.DatabaseModels.models
         public string Color { set; get; }
         public int Order { set; get; }
 
+        public bool IsLocked { set; get; }
+        public string Password { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
 

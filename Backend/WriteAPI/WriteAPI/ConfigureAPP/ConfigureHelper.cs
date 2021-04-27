@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using BI.services;
 using BI.services.backgrounds;
+using BI.services.encryption;
 using BI.services.files;
 using BI.services.folders;
 using BI.services.labels;
@@ -10,6 +11,7 @@ using BI.services.relatedNotes;
 using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
+using BI.signalR;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
@@ -22,6 +24,7 @@ using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.backgrounds;
+using Domain.Commands.encryption;
 using Domain.Commands.files;
 using Domain.Commands.folderInner;
 using Domain.Commands.folders;
@@ -38,6 +41,7 @@ using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Commands.users;
 using Domain.Queries.backgrounds;
+using Domain.Queries.encryption;
 using Domain.Queries.files;
 using Domain.Queries.folders;
 using Domain.Queries.innerFolder;
@@ -48,6 +52,7 @@ using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
 using Domain.Queries.users;
+using FacadeML;
 using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -193,6 +198,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveUserFromPrivateFolders, Unit>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<SendInvitesToUsersFolders, Unit>, SharingHandlerCommand>();
 
+            //LOCK
+            services.AddScoped<IRequestHandler<DecriptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
+            services.AddScoped<IRequestHandler<EncryptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
+            services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
+
+
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
 
@@ -276,6 +287,13 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
 
+            services.AddScoped<AppSignalRService>();
+
+            services.AddScoped<OcrService>();
+            services.AddSingleton<ObjectRecognizeService>();
+
+            services.AddScoped<AppEncryptor>();
+            
             services.AddScoped<IFilesStorage, FilesStorage>();
         }
     }

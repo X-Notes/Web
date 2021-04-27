@@ -13,6 +13,7 @@ namespace Common.DTO.notes
         public List<LabelDTO> Labels { set; get; }
         public RefTypeDTO RefType { set; get; }
         public NoteTypeDTO NoteType { set; get; }
+        public bool IsLocked { set; get; }
 
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
