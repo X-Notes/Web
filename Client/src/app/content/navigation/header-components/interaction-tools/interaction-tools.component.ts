@@ -1,5 +1,5 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
@@ -31,6 +31,8 @@ export class InteractionToolsComponent {
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
+
+  @ViewChild('searchInput') searchInput: ElementRef;
 
   isOpenNotification = false;
 
@@ -70,4 +72,23 @@ export class InteractionToolsComponent {
       this.store.dispatch(new ChangeTheme(blackTheme));
     }
   }
+
+  searchData() {
+    if (!this.pService.isWidth600()) {
+      this.isInputFocus = !this.isInputFocus;
+      setTimeout(() => {
+        this.searchInput.nativeElement.focus();
+      });
+    }
+  }
+
+  unFocusSearch() {
+    setTimeout(() => {
+      this.isInputFocus = false;
+    }, 200);
+  }
+
+  check = (value) => {
+    console.log(value);
+  };
 }

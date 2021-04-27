@@ -6,13 +6,14 @@
   <div class="search-section" #search [ngClass]="isInputFocus ? 'active-search' : ''">
     <div class="search">
       <input
+        #searchInput
         (focus)="isInputFocus = true"
-        (blur)="isInputFocus = false"
+        (blur)="unFocusSearch()"
         type="search"
         placeholder="{{ 'header.search' | translate }}"
         aria-label="Search"
       />
-      <button type="button" name="search button" #searchButton>
+      <button type="button" name="search button" #searchButton (click)="searchData()">
         <div class="icon">
           <mat-icon svgIcon="search" [inline]="true"></mat-icon>
         </div>
@@ -20,48 +21,13 @@
       </button>
     </div>
     <div class="search-suggestion" *ngIf="isInputFocus">
-      <div class="type-search">
-        <div *ngFor="let item of [1,2, 1,2, 1]" class="result">
-          <button class="notes" type="button" name="notes">
-            <div class="icon">
-              <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
-            </div>
-          </button>
-          <div class="text">
-            <p>Last searched datadatadatadatadata</p>
-          </div>
-        </div>
-      </div>
-      <div class="type-search">
-        <div *ngFor="let item of [1,2, 1,2, 1]" class="result">
-          <button class="folders" type="button" name="folders">
-            <div class="icon">
-              <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
-            </div>
-          </button>
-          <div class="text">
-            <p>Last searched datadatadatadatadata</p>
-          </div>
-        </div>
-      </div>
-      <div class="type-search">
-        <div *ngFor="let item of []" class="result">
-          <button class="history" type="button" name="history">
-            <div class="icon">
-              <mat-icon fontSet="material-icons-round" [inline]="true">history</mat-icon>
-            </div>
-          </button>
-          <div class="text">
-            <p>Last searched datadatadatadatadata</p>
-          </div>
-          <button class="cancel" type="button" name="cancel" #cancelSearch>
-            <div class="icon">
-              <mat-icon fontSet="material-icons-round" [inline]="true">close</mat-icon>
-            </div>
-            <div class="ripple-container" matRipple [matRippleTrigger]="cancelSearch"></div>
-          </button>
-        </div>
-      </div>
+      <app-search-result
+        #searchResult
+        [type]="'notes'"
+        [results]="[1, 2, 3]"
+        (click)="check(searchResult)"
+      ></app-search-result>
+      <app-search-result [type]="'folders'" [results]="[1, 2, 3]"></app-search-result>
     </div>
   </div>
 

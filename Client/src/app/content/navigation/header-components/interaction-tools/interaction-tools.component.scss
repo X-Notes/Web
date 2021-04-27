@@ -39,7 +39,6 @@
       z-index: $header-search;
       display: flex;
       height: 30px;
-      width: 200px;
       border-radius: 5px;
       transition: 0.2s ease;
 
@@ -49,7 +48,7 @@
 
       input[type='search'] {
         height: 100%;
-        width: calc(100% - 35px);
+        width: 165px;
         border-radius: 5px 0 0 5px;
         padding: 0;
         padding-left: 0.625rem;
@@ -60,6 +59,10 @@
         border: 1px solid;
         color: #a8a8a8;
         transition: 0.2s ease;
+
+        &:focus {
+          width: 200px;
+        }
       }
 
       button[type='button'] {
@@ -99,62 +102,6 @@
       flex-direction: column;
       border-radius: 5px;
       padding: 2.5rem 0 0.25rem 0;
-
-      .type-search {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        padding: 0 0.25rem;
-
-        .result {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          font-size: 0.875rem;
-          border-radius: 5px;
-          margin: 0.125rem 0;
-          transition: 0.2s ease;
-          cursor: pointer;
-
-          .text {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-
-            p {
-              @include text-overflow;
-            }
-          }
-
-          .history {
-            margin-right: 0.5rem;
-          }
-
-          .cancel {
-            margin-left: auto;
-          }
-
-          button[type='button'] {
-            position: relative;
-            display: flex;
-            border: 0.8px solid transparent;
-            outline: none;
-            padding: 0;
-            background-color: transparent;
-            border-radius: 5px;
-            overflow: hidden;
-            transition: 0.2s ease;
-            padding: 0.25rem;
-
-            .icon {
-              display: flex;
-              width: 16px;
-              height: 16px;
-              font-size: 1rem;
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -278,26 +225,6 @@
     .search-suggestion {
       box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
       background-color: white;
-
-      .type-search {
-        .result {
-          &:hover {
-            background-color: #f5f5f5;
-          }
-
-          button[type='button'],
-          .text {
-            color: #7b7b7b;
-          }
-
-          .cancel {
-            &:hover {
-              background-color: #f1f1f1;
-              color: darken(#7b7b7b, 10%);
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -362,6 +289,10 @@
           max-width: 0;
           padding-left: 0;
           border: none;
+
+          &:focus {
+            width: calc(100% - 30px);
+          }
         }
 
         button[type='button'] {
