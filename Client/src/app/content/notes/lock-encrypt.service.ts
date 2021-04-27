@@ -25,7 +25,7 @@ export class LockEncryptService {
       password,
     };
     return this.httpClient.post<OperationResult<boolean>>(
-      `${environment.writeAPI}/api/lock/dencrypt`,
+      `${environment.writeAPI}/api/lock/decrypt`,
       obj,
     );
   }

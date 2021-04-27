@@ -26,6 +26,7 @@ namespace BI.Mapping
                 RefType = MapRefToRefDTO(note.RefType),
                 Title = note.Title,
                 Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
+                IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -156,6 +157,7 @@ namespace BI.Mapping
                 Contents = takeContentLength.HasValue ? 
                 MapContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
                 MapContentsToContentsDTO(tuple.note.Contents).ToList(),
+                IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
                 UpdatedAt = tuple.note.UpdatedAt
@@ -175,6 +177,7 @@ namespace BI.Mapping
                 Contents = takeContentLength.HasValue ?
                 MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
                 MapContentsToContentsDTO(note.Contents).ToList(),
+                IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -195,6 +198,7 @@ namespace BI.Mapping
                 MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
                 MapContentsToContentsDTO(note.Contents).ToList(),
                 IsSelected = ids.Contains(note.Id),
+                IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
@@ -212,6 +216,15 @@ namespace BI.Mapping
 
         public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, int? takeContentLength = null)
         {
+            var resultNotes = notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+            resultNotes.ForEach(note =>
+            {
+                if (note.IsLocked)
+                {
+                    note.Contents = new List<BaseContentNoteDTO>();
+                }
+            });
+
             return notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
         }
 

@@ -4,6 +4,7 @@ import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSize } from '../models/FontSize';
+import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -121,6 +122,8 @@ export class PersonalizationService {
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
+  constructor(public lockEncryptService: LockEncryptService) {}
+
   onResize(): void {
     if (this.check()) {
       if (!this.hideInnerMenu) {
@@ -173,7 +176,10 @@ export class PersonalizationService {
     this.stateSidebar = false;
   }
 
-  toggleHistoryMethod() {
+  async toggleHistoryMethod() {
+    await this.lockEncryptService
+      .dencryptNote('e29452f7-e248-4e74-b326-6c1bae23dec0', '22')
+      .toPromise();
     this.toggleHistory = !this.toggleHistory;
   }
 
