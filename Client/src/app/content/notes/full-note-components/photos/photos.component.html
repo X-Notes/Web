@@ -46,7 +46,13 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
     </button>
   </div>
-  <mat-menu #menu="matMenu">
+  <mat-menu
+    #menu="matMenu"
+    appLazyTheme
+    themeClass="menu"
+    attributeName="panelClass"
+    [element]="menu"
+  >
     <button mat-menu-item type="button" name="Download">
       <mat-icon>download</mat-icon>
       <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
@@ -65,7 +71,13 @@
     </button>
   </mat-menu>
 
-  <mat-menu #secondMenu="matMenu">
+  <mat-menu
+    #secondMenu="matMenu"
+    appLazyTheme
+    themeClass="menu"
+    attributeName="panelClass"
+    [element]="secondMenu"
+  >
     <button mat-menu-item type="button" name="One row" (click)="setPhotosInRow(1)">
       {{ 'innerNote.photoMenu.oneRow' | translate }}
     </button>

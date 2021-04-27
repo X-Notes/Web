@@ -10,12 +10,9 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
 import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { ApiServiceNotes } from '../../api-notes.service';
 import { Photo, Album } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
@@ -31,10 +28,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
-
-  @ViewChild('menu') mainMenu: MatMenu;
-
-  @ViewChild('secondMenu') secondMenu: MatMenu;
 
   @Input()
   noteId: string;
@@ -84,20 +77,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   ngAfterViewInit(): void {
     this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement;
-    this.store
-      .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((theme) => {
-        if (theme) {
-          if (theme.name === ThemeENUM.Dark) {
-            this.mainMenu.panelClass = 'dark-menu';
-            this.secondMenu.panelClass = 'dark-menu';
-          } else {
-            this.mainMenu.panelClass = null;
-            this.secondMenu.panelClass = null;
-          }
-        }
-      });
   }
 
   removeHandler() {
