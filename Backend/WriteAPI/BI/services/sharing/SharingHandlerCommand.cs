@@ -1,9 +1,12 @@
-﻿using Common.DatabaseModels.models;
+﻿using BI.signalR;
+using Common.DatabaseModels.models;
+using Common.DTO.notifications;
 using Common.Naming;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Queries.permissions;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +33,7 @@ namespace BI.services.sharing
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
         private readonly IMediator _mediator;
         private readonly AppRepository appRepository;
+        AppSignalRService appSignalRHub;
         private readonly NotificationRepository notificationRepository;
         public SharingHandlerCommand(
             FolderRepository folderRepository, 
@@ -39,7 +43,8 @@ namespace BI.services.sharing
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository,
             AppRepository appRepository,
             NotificationRepository notificationRepository,
-            IMediator _mediator)
+            IMediator _mediator,
+            AppSignalRService appSignalRHub)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
@@ -49,6 +54,7 @@ namespace BI.services.sharing
             this.appRepository = appRepository;
             this.notificationRepository = notificationRepository;
             this._mediator = _mediator;
+            this.appSignalRHub = appSignalRHub;
         }
 
 
@@ -139,6 +145,10 @@ namespace BI.services.sharing
                 };
 
                 await this.notificationRepository.Add(notification);
+
+                var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
+                var notificationDTO = new NotificationDTO(notification);
+                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
             }
 
             return Unit.Value;
@@ -179,6 +189,10 @@ namespace BI.services.sharing
 
                 await this.notificationRepository.Add(notification);
 
+                var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
+                var notificationDTO = new NotificationDTO(notification);
+                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+
             }
             return Unit.Value;
         }
@@ -204,6 +218,10 @@ namespace BI.services.sharing
                     };
 
                     await this.notificationRepository.Add(notification);
+
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
+                    var notificationDTO = new NotificationDTO(notification);
+                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
                 }
             }
             return Unit.Value;
@@ -230,6 +248,10 @@ namespace BI.services.sharing
                     };
 
                     await this.notificationRepository.Add(notification);
+
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
+                    var notificationDTO = new NotificationDTO(notification);
+                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
                 }
             }
             return Unit.Value;
@@ -260,6 +282,14 @@ namespace BI.services.sharing
                 });
 
                 await this.notificationRepository.AddRange(notifications);
+
+                notifications.ToList()
+                    .ForEach(async (not) =>
+                    {
+                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
+                        var notificationDTO = new NotificationDTO(not);
+                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    });
             }
 
             return Unit.Value;
@@ -289,6 +319,14 @@ namespace BI.services.sharing
                 });
 
                 await this.notificationRepository.AddRange(notifications);
+
+                notifications.ToList()
+                    .ForEach(async(not) =>
+                    {
+                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
+                        var notificationDTO = new NotificationDTO(not);
+                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    });
             }
 
             return Unit.Value;

@@ -20,6 +20,7 @@ import {
   LoadNotifications,
   ReadAllNotifications,
   ReadNotification,
+  NewNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/app-notification';
@@ -370,5 +371,16 @@ export class AppStore {
         ),
       }),
     );
+  }
+
+  @Action(NewNotification)
+  // eslint-disable-next-line class-methods-use-this
+  async newNotification(
+    { getState, patchState }: StateContext<AppState>,
+    { notification }: NewNotification,
+  ) {
+    patchState({
+      notifications: [notification, ...getState().notifications],
+    });
   }
 }

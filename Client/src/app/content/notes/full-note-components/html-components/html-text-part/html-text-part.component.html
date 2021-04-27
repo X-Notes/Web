@@ -33,16 +33,16 @@
       <div class="icon" (mousedown)="transformContent($event, contentType.NUMBERLIST)">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.PHOTOS)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.PHOTOS, true)">
         <mat-icon svgIcon="image" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.FILES)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.FILES, false)">
         <mat-icon svgIcon="file" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.VIDEOS)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.VIDEOS, false)">
         <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.AUDIOS)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.AUDIOS, false)">
         <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
       </div>
     </div>
@@ -51,7 +51,7 @@
 <input
   #uploadFile
   type="file"
-  multiple
+  [multiple]="isMulptiply"
   [accept]="formats"
   hidden="true"
   (change)="uploadFiles($event)"

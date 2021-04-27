@@ -15,6 +15,7 @@ namespace Common.DTO.notes
         public RefTypeDTO RefType { set; get; }
         public NoteTypeDTO NoteType { set; get; }
         public List<BaseContentNoteDTO> Contents { set; get; }
+        public bool IsLocked { set; get; }
 
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }

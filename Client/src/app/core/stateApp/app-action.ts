@@ -1,4 +1,5 @@
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { AppNotification } from '../models/app-notification';
 
 export class UpdateRoute {
   static type = '[App] Update route';
@@ -32,4 +33,10 @@ export class ReadNotification {
   static type = '[App] Read Notification';
 
   constructor(public id: string) {}
+}
+
+export class NewNotification {
+  static type = '[App] New Notification';
+
+  constructor(public notification: AppNotification) {}
 }

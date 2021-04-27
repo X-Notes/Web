@@ -94,7 +94,7 @@ namespace WriteAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<DocumentHub>("/hub");
+                endpoints.MapHub<AppSignalRHub>("/hub");
             });
         }
     }
