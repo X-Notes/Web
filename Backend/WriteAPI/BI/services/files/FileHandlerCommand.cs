@@ -1,5 +1,5 @@
 ﻿using BI.helpers;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Files;
 using Domain.Commands.files;
 using MediatR;
 using Storage;

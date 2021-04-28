@@ -62,6 +62,7 @@ namespace WriteAPI
             services.BI();
 
             services.AddHostedService<StartAppHosted>();
+            services.AddHostedService<HistoryHosted>();
 
             services.AddHttpClient();
         }

@@ -19,7 +19,7 @@ namespace WriteContext.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.2");
 
-            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AlbumNoteAppFile", b =>
                 {
                     b.Property<Guid>("AlbumNoteId")
                         .HasColumnType("uuid");
@@ -34,7 +34,7 @@ namespace WriteContext.Migrations
                     b.ToTable("AlbumNoteAppFiles");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AppFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,28 +57,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Files");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("FileId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FileId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Backgrounds");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,43 +101,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Folders");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.FolderType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FoldersTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"),
-                            Name = "private"
-                        },
-                        new
-                        {
-                            Id = new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"),
-                            Name = "shared"
-                        },
-                        new
-                        {
-                            Id = new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"),
-                            Name = "deleted"
-                        },
-                        new
-                        {
-                            Id = new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"),
-                            Name = "archive"
-                        });
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.FoldersNotes", b =>
                 {
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
@@ -176,33 +119,61 @@ namespace WriteContext.Migrations
                     b.ToTable("FoldersNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.FontSize", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.UsersOnPrivateFolders", b =>
+                {
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccessTypeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FolderId", "UserId");
+
+                    b.HasIndex("AccessTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.History.NoteHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("SnapshotTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("FontSizes");
+                    b.HasIndex("NoteId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"),
-                            Name = "medium"
-                        },
-                        new
-                        {
-                            Id = new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"),
-                            Name = "big"
-                        });
+                    b.ToTable("NoteHistories");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.History.UserNoteHistoryManyToMany", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("NoteHistoryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "NoteHistoryId");
+
+                    b.HasIndex("NoteHistoryId");
+
+                    b.ToTable("UserNoteHistoryManyToMany");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Labels.Label", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -239,7 +210,7 @@ namespace WriteContext.Migrations
                     b.ToTable("Labels");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.LabelsNotes", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Labels.LabelsNotes", b =>
                 {
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
@@ -257,38 +228,29 @@ namespace WriteContext.Migrations
                     b.ToTable("LabelsNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Language", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages");
+                    b.HasIndex("NoteId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"),
-                            Name = "ukraine"
-                        },
-                        new
-                        {
-                            Id = new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"),
-                            Name = "russian"
-                        },
-                        new
-                        {
-                            Id = new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"),
-                            Name = "english"
-                        });
+                    b.ToTable("BaseNoteContents");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -302,6 +264,9 @@ namespace WriteContext.Migrations
 
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsHistory")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsLocked")
                         .HasColumnType("boolean");
@@ -338,29 +303,156 @@ namespace WriteContext.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.ReletatedNoteToInnerNote", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RelatedNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsOpened")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("NoteId", "RelatedNoteId");
+
+                    b.HasIndex("RelatedNoteId");
+
+                    b.ToTable("ReletatedNoteToInnerNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.UserOnNoteNow", b =>
+                {
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "NoteId");
 
                     b.HasIndex("NoteId");
 
-                    b.ToTable("BaseNoteContents");
+                    b.ToTable("UserOnNoteNow");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.UserOnPrivateNotes", b =>
+                {
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccessTypeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("NoteId", "UserId");
+
+                    b.HasIndex("AccessTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOnPrivateNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoldersTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"),
+                            Name = "private"
+                        },
+                        new
+                        {
+                            Id = new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"),
+                            Name = "shared"
+                        },
+                        new
+                        {
+                            Id = new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"),
+                            Name = "deleted"
+                        },
+                        new
+                        {
+                            Id = new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"),
+                            Name = "archive"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FontSize", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FontSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"),
+                            Name = "medium"
+                        },
+                        new
+                        {
+                            Id = new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"),
+                            Name = "big"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.Language", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"),
+                            Name = "ukraine"
+                        },
+                        new
+                        {
+                            Id = new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"),
+                            Name = "russian"
+                        },
+                        new
+                        {
+                            Id = new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"),
+                            Name = "english"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.NoteType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,7 +488,80 @@ namespace WriteContext.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.RefType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"),
+                            Name = "viewer"
+                        },
+                        new
+                        {
+                            Id = new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"),
+                            Name = "editor"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.Theme", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Themes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"),
+                            Name = "light"
+                        },
+                        new
+                        {
+                            Id = new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"),
+                            Name = "dark"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.Backgrounds", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Backgrounds");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -426,10 +591,10 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("UserToId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.NotificationSetting", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -446,80 +611,7 @@ namespace WriteContext.Migrations
                     b.ToTable("NotificationSettings");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.RefType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RefTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"),
-                            Name = "viewer"
-                        },
-                        new
-                        {
-                            Id = new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"),
-                            Name = "editor"
-                        });
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
-                {
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RelatedNoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsOpened")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.HasKey("NoteId", "RelatedNoteId");
-
-                    b.HasIndex("RelatedNoteId");
-
-                    b.ToTable("ReletatedNoteToInnerNotes");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Themes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"),
-                            Name = "light"
-                        },
-                        new
-                        {
-                            Id = new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"),
-                            Name = "dark"
-                        });
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -568,61 +660,6 @@ namespace WriteContext.Migrations
                     b.HasIndex("ThemeId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "NoteId");
-
-                    b.HasIndex("NoteId");
-
-                    b.ToTable("UserOnNoteNow");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
-                {
-                    b.Property<Guid>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("NoteId", "UserId");
-
-                    b.HasIndex("AccessTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserOnPrivateNotes");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
-                {
-                    b.Property<Guid>("FolderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("FolderId", "UserId");
-
-                    b.HasIndex("AccessTypeId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UsersOnPrivateFolders");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
@@ -706,7 +743,7 @@ namespace WriteContext.Migrations
                     b.ToTable("VideoNote");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.AlbumNoteAppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AlbumNoteAppFile", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.NoteContent.AlbumNote", "AlbumNote")
                         .WithMany("AlbumNoteAppFiles")
@@ -714,7 +751,7 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
                         .WithMany("AlbumNoteAppFiles")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -725,40 +762,21 @@ namespace WriteContext.Migrations
                     b.Navigation("AppFile");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithMany("Backgrounds")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("File");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.FolderType", "FolderType")
+                    b.HasOne("Common.DatabaseModels.models.Systems.FolderType", "FolderType")
                         .WithMany("Folders")
                         .HasForeignKey("FolderTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.RefType", "RefType")
+                    b.HasOne("Common.DatabaseModels.models.Systems.RefType", "RefType")
                         .WithMany("Folders")
                         .HasForeignKey("RefTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
                         .WithMany("Folders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -771,15 +789,15 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.FoldersNotes", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.FoldersNotes", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Folder", "Folder")
+                    b.HasOne("Common.DatabaseModels.models.Folders.Folder", "Folder")
                         .WithMany("FoldersNotes")
                         .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
                         .WithMany("FoldersNotes")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -790,9 +808,66 @@ namespace WriteContext.Migrations
                     b.Navigation("Note");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.UsersOnPrivateFolders", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.Systems.RefType", "AccessType")
+                        .WithMany("UsersOnPrivateFolders")
+                        .HasForeignKey("AccessTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Folders.Folder", "Folder")
+                        .WithMany("UsersOnPrivateFolders")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("UsersOnPrivateFolders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AccessType");
+
+                    b.Navigation("Folder");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.History.NoteHistory", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
+                        .WithMany("NoteHistories")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.History.UserNoteHistoryManyToMany", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.History.NoteHistory", "NoteHistory")
+                        .WithMany("UserHistories")
+                        .HasForeignKey("NoteHistoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("UserHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NoteHistory");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Labels.Label", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
                         .WithMany("Labels")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -801,15 +876,15 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.LabelsNotes", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Labels.LabelsNotes", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Label", "Label")
+                    b.HasOne("Common.DatabaseModels.models.Labels.Label", "Label")
                         .WithMany("LabelsNotes")
                         .HasForeignKey("LabelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
                         .WithMany("LabelsNotes")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -820,21 +895,32 @@ namespace WriteContext.Migrations
                     b.Navigation("Note");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.NoteType", "NoteType")
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
+                        .WithMany("Contents")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Systems.NoteType", "NoteType")
                         .WithMany("Notes")
                         .HasForeignKey("NoteTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.RefType", "RefType")
+                    b.HasOne("Common.DatabaseModels.models.Systems.RefType", "RefType")
                         .WithMany("Notes")
                         .HasForeignKey("RefTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
                         .WithMany("Notes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -847,55 +933,15 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.ReletatedNoteToInnerNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
-                        .WithMany("Contents")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Note");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.User", "UserFrom")
-                        .WithMany("NotificationsFrom")
-                        .HasForeignKey("UserFromId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Common.DatabaseModels.models.User", "UserTo")
-                        .WithMany("NotificationsTo")
-                        .HasForeignKey("UserToId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("UserFrom");
-
-                    b.Navigation("UserTo");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithOne("NotificationSettings")
-                        .HasForeignKey("Common.DatabaseModels.models.NotificationSetting", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.ReletatedNoteToInnerNote", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
                         .WithMany("ReletatedNoteToInnerNotesFrom")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Note", "RelatedNote")
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "RelatedNote")
                         .WithMany("ReletatedNoteToInnerNotesTo")
                         .HasForeignKey("RelatedNoteId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -906,29 +952,123 @@ namespace WriteContext.Migrations
                     b.Navigation("RelatedNote");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.UserOnNoteNow", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Backgrounds", "CurrentBackground")
-                        .WithOne("CurrentUserBackground")
-                        .HasForeignKey("Common.DatabaseModels.models.User", "CurrentBackgroundId");
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
+                        .WithMany("UserOnNotesNow")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.FontSize", "FontSize")
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("UserOnNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.UserOnPrivateNotes", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Systems.RefType", "AccessType")
+                        .WithMany("UserOnPrivateNotes")
+                        .HasForeignKey("AccessTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
+                        .WithMany("UsersOnPrivateNotes")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("UserOnPrivateNotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AccessType");
+
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.Backgrounds", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("Backgrounds")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.Notification", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "UserFrom")
+                        .WithMany("NotificationsFrom")
+                        .HasForeignKey("UserFromId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "UserTo")
+                        .WithMany("NotificationsTo")
+                        .HasForeignKey("UserToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserFrom");
+
+                    b.Navigation("UserTo");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.NotificationSetting", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithOne("NotificationSettings")
+                        .HasForeignKey("Common.DatabaseModels.models.Users.NotificationSetting", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Users.Backgrounds", "CurrentBackground")
+                        .WithOne("CurrentUserBackground")
+                        .HasForeignKey("Common.DatabaseModels.models.Users.User", "CurrentBackgroundId");
+
+                    b.HasOne("Common.DatabaseModels.models.Systems.FontSize", "FontSize")
                         .WithMany("Users")
                         .HasForeignKey("FontSizeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Language", "Language")
+                    b.HasOne("Common.DatabaseModels.models.Systems.Language", "Language")
                         .WithMany("Users")
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "Photo")
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "Photo")
                         .WithOne("User")
-                        .HasForeignKey("Common.DatabaseModels.models.User", "PhotoId");
+                        .HasForeignKey("Common.DatabaseModels.models.Users.User", "PhotoId");
 
-                    b.HasOne("Common.DatabaseModels.models.Theme", "Theme")
+                    b.HasOne("Common.DatabaseModels.models.Systems.Theme", "Theme")
                         .WithMany("Users")
                         .HasForeignKey("ThemeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -945,79 +1085,6 @@ namespace WriteContext.Migrations
                     b.Navigation("Theme");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnNoteNow", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
-                        .WithMany("UserOnNotesNow")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithMany("UserOnNotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Note");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.UserOnPrivateNotes", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.RefType", "AccessType")
-                        .WithMany("UserOnPrivateNotes")
-                        .HasForeignKey("AccessTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.Note", "Note")
-                        .WithMany("UsersOnPrivateNotes")
-                        .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithMany("UserOnPrivateNotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AccessType");
-
-                    b.Navigation("Note");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.UsersOnPrivateFolders", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.models.RefType", "AccessType")
-                        .WithMany("UsersOnPrivateFolders")
-                        .HasForeignKey("AccessTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.Folder", "Folder")
-                        .WithMany("UsersOnPrivateFolders")
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.models.User", "User")
-                        .WithMany("UsersOnPrivateFolders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AccessType");
-
-                    b.Navigation("Folder");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
@@ -1029,7 +1096,7 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudioNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
                         .WithMany("AudioNotes")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1046,7 +1113,7 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.DocumentNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
                         .WithMany("DocumentNotes")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1072,7 +1139,7 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.VideoNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.AppFile", "AppFile")
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
                         .WithMany("VideoNotes")
                         .HasForeignKey("AppFileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1087,7 +1154,7 @@ namespace WriteContext.Migrations
                     b.Navigation("AppFile");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.AppFile", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AppFile", b =>
                 {
                     b.Navigation("AlbumNoteAppFiles");
 
@@ -1100,45 +1167,32 @@ namespace WriteContext.Migrations
                     b.Navigation("VideoNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Backgrounds", b =>
-                {
-                    b.Navigation("CurrentUserBackground");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Folder", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
                 {
                     b.Navigation("FoldersNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.FolderType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.History.NoteHistory", b =>
                 {
-                    b.Navigation("Folders");
+                    b.Navigation("UserHistories");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.FontSize", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Label", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Labels.Label", b =>
                 {
                     b.Navigation("LabelsNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Language", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Note", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
                 {
                     b.Navigation("Contents");
 
                     b.Navigation("FoldersNotes");
 
                     b.Navigation("LabelsNotes");
+
+                    b.Navigation("NoteHistories");
 
                     b.Navigation("ReletatedNoteToInnerNotesFrom");
 
@@ -1149,12 +1203,27 @@ namespace WriteContext.Migrations
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
+                {
+                    b.Navigation("Folders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FontSize", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.Language", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.NoteType", b =>
                 {
                     b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.RefType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.RefType", b =>
                 {
                     b.Navigation("Folders");
 
@@ -1165,12 +1234,17 @@ namespace WriteContext.Migrations
                     b.Navigation("UsersOnPrivateFolders");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Theme", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Systems.Theme", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.User", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.Backgrounds", b =>
+                {
+                    b.Navigation("CurrentUserBackground");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
                     b.Navigation("Backgrounds");
 
@@ -1185,6 +1259,8 @@ namespace WriteContext.Migrations
                     b.Navigation("NotificationsFrom");
 
                     b.Navigation("NotificationsTo");
+
+                    b.Navigation("UserHistories");
 
                     b.Navigation("UserOnNotes");
 

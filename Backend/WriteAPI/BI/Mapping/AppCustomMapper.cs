@@ -1,6 +1,9 @@
 ﻿using BI.services.notes;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.app;
 using Common.DTO.folders;
 using Common.DTO.labels;

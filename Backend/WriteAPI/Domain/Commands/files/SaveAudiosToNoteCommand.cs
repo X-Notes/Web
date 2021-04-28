@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models.Files;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;

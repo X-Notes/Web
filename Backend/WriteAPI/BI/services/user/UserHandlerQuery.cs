@@ -4,7 +4,7 @@ using Domain.Queries.users;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.user
 {

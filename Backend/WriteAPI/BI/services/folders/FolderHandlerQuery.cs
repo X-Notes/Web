@@ -11,7 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.folders
 {

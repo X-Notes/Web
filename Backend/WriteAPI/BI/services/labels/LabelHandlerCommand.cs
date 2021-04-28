@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Labels;
 using Domain.Commands.labels;
 using MediatR;
 using System;
@@ -9,7 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Labels;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.labels
 {

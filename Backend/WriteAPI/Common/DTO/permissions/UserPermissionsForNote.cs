@@ -1,5 +1,5 @@
-﻿using Common.DatabaseModels.models;
-
+﻿using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Users;
 
 namespace Common.DTO.permissions
 {

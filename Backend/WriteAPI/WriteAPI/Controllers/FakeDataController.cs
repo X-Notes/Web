@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models.Users;
 using FakeData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

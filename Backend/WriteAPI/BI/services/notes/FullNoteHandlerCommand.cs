@@ -22,6 +22,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
+using WriteContext.Repositories.NoteContent;
+using WriteContext.Repositories.Notes;
 
 namespace BI.services.notes
 {

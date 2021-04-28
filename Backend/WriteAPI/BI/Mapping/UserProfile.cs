@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.search;
 using Common.DTO.users;
 using Domain.Commands.users;

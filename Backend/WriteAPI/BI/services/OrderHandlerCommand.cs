@@ -4,8 +4,11 @@ using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
 using System.Linq;
+using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Labels;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.services
 {

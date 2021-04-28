@@ -8,7 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WriteAPI.ControllerConfig;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Notifications;
+using WriteContext.Repositories.Users;
 
 namespace WriteAPI.Controllers
 {

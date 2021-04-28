@@ -4,6 +4,7 @@ using BI.services.backgrounds;
 using BI.services.encryption;
 using BI.services.files;
 using BI.services.folders;
+using BI.services.history;
 using BI.services.labels;
 using BI.services.notes;
 using BI.services.permissions;
@@ -12,7 +13,7 @@ using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using BI.signalR;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Files;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
 using Common.DTO.files;
@@ -68,6 +69,13 @@ using System.Threading.Tasks;
 using WriteContext;
 using WriteContext.GenericRepositories;
 using WriteContext.Repositories;
+using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Histories;
+using WriteContext.Repositories.Labels;
+using WriteContext.Repositories.NoteContent;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Notifications;
+using WriteContext.Repositories.Users;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -224,26 +232,47 @@ namespace WriteAPI.ConfigureAPP
             string writeConnection = Configuration.GetSection("WriteDB").Value;
             Console.WriteLine(writeConnection);
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
-            services.AddScoped<LabelRepository>();
+
+            // NOTIFICATIONS 
             services.AddScoped<NotificationRepository>();
+
+            // USERS
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
-            services.AddScoped<NoteRepository>();
-            services.AddScoped<FolderRepository>();
-            services.AddScoped<UserOnNoteRepository>();
-            services.AddScoped<UsersOnPrivateNotesRepository>();
-            services.AddScoped<UsersOnPrivateFoldersRepository>();
+
+            // FILES
             services.AddScoped<FileRepository>();
             services.AddScoped<AppRepository>();
+
+
+            // NOTES
+            services.AddScoped<NoteRepository>();
+            services.AddScoped<UserOnNoteRepository>();
+            services.AddScoped<ReletatedNoteToInnerNoteRepository>();
+            services.AddScoped<UsersOnPrivateNotesRepository>();
+
+            //LABELS
+            services.AddScoped<LabelRepository>();
+            services.AddScoped<LabelsNotesRepository>();
+
+            // FOLDERS
+            services.AddScoped<FolderRepository>();
+            services.AddScoped<UsersOnPrivateFoldersRepository>();
+            services.AddScoped<FoldersNotesRepository>();
+
+            // Note Content 
             services.AddScoped<AlbumNoteRepository>();
             services.AddScoped<AudioNoteRepository>();
             services.AddScoped<VideoNoteRepository>();
             services.AddScoped<DocumentNoteRepository>();
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
-            services.AddScoped<ReletatedNoteToInnerNoteRepository>();
-            services.AddScoped<FoldersNotesRepository>();
-            services.AddScoped<LabelsNotesRepository>();
+
+            // History
+            services.AddScoped<NoteHistoryRepository>();
+            services.AddScoped<UserNoteHistoryManyToManyRepository>();
+
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
@@ -293,7 +322,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<ObjectRecognizeService>();
 
             services.AddScoped<AppEncryptor>();
-            
+
+            services.AddSingleton<HistoryService>();
+
             services.AddScoped<IFilesStorage, FilesStorage>();
         }
     }
