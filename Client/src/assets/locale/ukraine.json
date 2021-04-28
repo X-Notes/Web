@@ -106,6 +106,9 @@
         "editor": "Редактор ",
         "viewer": "Глядач",
         "send": "Надіслати"
+      },
+      "folderManage": {
+        "notes": "Додати нотаток в папку"
       }
     },
     "innerNote": {

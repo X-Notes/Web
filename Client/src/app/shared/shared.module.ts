@@ -44,6 +44,7 @@ import { NotePreviewPhotosComponent } from '../content/notes/note/note-preview-p
 import { ManageNotesInFolderComponent } from './modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { MemoryIndicatorComponent } from './memory-indicator/memory-indicator.component';
 import { DialogGenericHeaderComponent } from './modal_components/dialog-generic-header/dialog-generic-header.component';
+import { FolderTypePipe } from './pipes/folder-type.pipe';
 import { GetAudioPipe } from './pipes/get-audio.pipe';
 import { GetVideoPipe } from './pipes/get-video.pipe';
 import { GetDocumentPipe } from './pipes/get-document.pipe';
@@ -79,6 +80,7 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
     ManageNotesInFolderComponent,
     MemoryIndicatorComponent,
     DialogGenericHeaderComponent,
+    FolderTypePipe,
     GetAudioPipe,
     GetVideoPipe,
     GetDocumentPipe,
@@ -133,6 +135,7 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
     MemoryIndicatorComponent,
     MatIconModule,
     MatMenuModule,
+    FolderTypePipe,
     GetAudioPipe,
     GetVideoPipe,
     GetDocumentPipe,

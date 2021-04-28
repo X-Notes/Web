@@ -168,7 +168,12 @@
         <p>open note or file</p>
         <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
       </div>
-      <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]></div>
+      <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
+        <ng-scrollbar class="history-records" [visibility]="'hover'" [appearance]="'compact'">
+          <div class="content-inner-history">
+            <app-history-record *ngFor="let item of [1,2,3]"></app-history-record></div
+        ></ng-scrollbar>
+      </div>
       <ng-scrollbar
         class="scroll-helper small-notes"
         [visibility]="'hover'"

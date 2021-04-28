@@ -198,10 +198,6 @@ export class MenuButtonsService {
 
   public foldersItemsPrivate: MenuItem[] = [
     {
-      icon: 'history',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -232,10 +228,6 @@ export class MenuButtonsService {
   ];
 
   public foldersItemsShared: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-    },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
@@ -272,10 +264,6 @@ export class MenuButtonsService {
 
   public foldersItemsDeleted: MenuItem[] = [
     {
-      icon: 'history',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -311,10 +299,6 @@ export class MenuButtonsService {
 
   public foldersItemsArchive: MenuItem[] = [
     {
-      icon: 'history',
-      operation: () => 5,
-    },
-    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
     },
@@ -345,10 +329,6 @@ export class MenuButtonsService {
   ];
 
   public foldersItemsInner: MenuItem[] = [
-    {
-      icon: 'history',
-      operation: () => 5,
-    },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
