@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MatRippleModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { HammerModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -49,6 +49,7 @@ import { LazyThemeDirective } from './directives/lazy-theme.directive';
 import { GetAudioPipe } from './pipes/get-audio.pipe';
 import { GetVideoPipe } from './pipes/get-video.pipe';
 import { GetDocumentPipe } from './pipes/get-document.pipe';
+import { LockComponent } from './modal_components/lock/lock.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
     GetAudioPipe,
     GetVideoPipe,
     GetDocumentPipe,
+    LockComponent,
   ],
   imports: [
     CommonModule,
@@ -102,6 +104,7 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
     MatExpansionModule,
     MatIconModule,
     MatMenuModule,
+    ReactiveFormsModule,
   ],
   exports: [
     TranslateModule,
@@ -142,6 +145,7 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
     GetAudioPipe,
     GetVideoPipe,
     GetDocumentPipe,
+    ReactiveFormsModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

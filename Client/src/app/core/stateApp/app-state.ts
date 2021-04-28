@@ -10,6 +10,7 @@ import { GeneralApp } from 'src/app/shared/models/generalApp';
 import { EntityRef } from 'src/app/shared/models/entityRef';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { patch, updateItem } from '@ngxs/store/operators';
 import { AuthService } from '../auth.service';
 import { AppServiceAPI } from '../app.service';
 import {
@@ -24,7 +25,6 @@ import {
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/app-notification';
-import { patch, updateItem } from '@ngxs/store/operators';
 
 interface AppState {
   routing: EntityType;
@@ -62,6 +62,11 @@ export class AppStore {
   @Selector()
   static getNotifications(state: AppState): AppNotification[] {
     return state.notifications;
+  }
+
+  @Selector()
+  static getNotificationsLength(state: AppState): number {
+    return state.notifications.length;
   }
 
   @Selector()

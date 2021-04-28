@@ -1,0 +1,51 @@
+<app-dialog-generic-header
+  [icon]="'icon-plus'"
+  [message]="'modal.lockModal.lock' | translate"
+></app-dialog-generic-header>
+<form [formGroup]="form" class="container">
+  <div class="field">
+    <div class="label">{{ 'modal.lockModal.password' | translate }}</div>
+    <input
+      type="password"
+      aria-label="Type password"
+      formControlName="password"
+      placeholder="{{ 'modal.lockModal.placeholderPass' | translate }}"
+    />
+    <div class="details">
+      <span [@shake] *ngIf="form.get('password').hasError('required')"
+        >{{ 'modal.lockModal.required' | translate }}</span
+      >
+    </div>
+  </div>
+  <div class="field">
+    <div class="label">{{ 'modal.lockModal.confirm' | translate }}</div>
+    <input
+      type="password"
+      aria-label="confirm"
+      formControlName="confirmation"
+      placeholder="{{ 'modal.lockModal.placeholderConfirm' | translate }}"
+      [ngClass]="{'has-error': form.invalid}"
+    />
+    <div class="details">
+      <span [@shake] *ngIf="form.get('confirmation').hasError('required')"
+        >{{ 'modal.lockModal.required' | translate }}</span
+      >
+      <span
+        [@shake]
+        class="divider"
+        *ngIf="form.get('confirmation').hasError('required') && form.hasError('compare')"
+      >
+        |
+      </span>
+      <span [@shake] *ngIf="form.hasError('compare')"
+        >{{ 'modal.lockModal.passMatchError' | translate }}</span
+      >
+    </div>
+  </div>
+</form>
+<div appTheme class="button-container">
+  <button name="save" type="button" class="save-button" #saveButton (click)="save()">
+    <span>{{ 'modal.ColorModal.save' | translate }}</span>
+    <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
+  </button>
+</div>

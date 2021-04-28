@@ -48,8 +48,8 @@
       "defaultColor": "Default color",
       "emptyTrash": "Empty Trash",
       "filterMenu": {
-        "dateAsc": "Sort by ascdending date",
-        "dateDesc": "Sort by descending date",
+        "dateAsc": "Sort by asc",
+        "dateDesc": "Sort by desc",
         "order": "Custom order"
       }
     },
@@ -113,6 +113,15 @@
       },
       "folderManage": {
         "notes": "Add notes to folder"
+      },
+      "lockModal": {
+        "lock": "Lock note",
+        "password": "Password",
+        "confirm": "Confirm password",
+        "placeholderPass": "type password",
+        "placeholderConfirm": "confirm",
+        "passMatchError": "passwords does not match",
+        "required": "Required field"
       }
     },
     "innerNote": {

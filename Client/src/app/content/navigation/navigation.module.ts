@@ -13,6 +13,7 @@ import { NotificationComponent } from './header-components/notification/notifica
 import { InteractionInnerFolderComponent } from './header-components/interaction-inner-folder/interaction-inner-folder.component';
 import { GeneralHeaderButtonComponent } from './header-components/general-header-button/general-header-button.component';
 import { SearchResultComponent } from './header-components/interaction-tools/search-result/search-result.component';
+import { NotificationMessageComponent } from './header-components/notification/notification-message/notification-message.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SearchResultComponent } from './header-components/interaction-tools/sea
     InteractionInnerFolderComponent,
     GeneralHeaderButtonComponent,
     SearchResultComponent,
+    NotificationMessageComponent,
   ],
   imports: [CommonModule, RouterModule, SharedModule],
   exports: [SideBarComponent, HeaderComponent],

@@ -50,6 +50,10 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
     },
     {
+      icon: 'lock',
+      operation: () => this.dialogsManageService.lock(true),
+    },
+    {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
     },

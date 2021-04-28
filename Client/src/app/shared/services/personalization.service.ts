@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FontSize } from '../models/FontSize';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
+import { FontSize } from '../models/FontSize';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -85,6 +85,24 @@ export const notification = trigger('notification', [
 export const photoInit = trigger('photoInit', [
   state('noLoaded', style({ opacity: 0 })),
   transition('* => loaded', [animate('0.3s ease-out')]),
+]);
+
+export const shake = trigger('shake', [
+  transition(
+    ':enter',
+    animate(
+      '800ms ease',
+      keyframes([
+        style({ transform: 'translate3d(-1px, 0, 0)', offset: 0.1 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.2 }),
+        style({ transform: 'translate3d(-2px, 0, 0)', offset: 0.3 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.4 }),
+        style({ transform: 'translate3d(-2px, 0, 0)', offset: 0.7 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.8 }),
+        style({ transform: 'translate3d(-1px, 0, 0)', offset: 0.9 }),
+      ]),
+    ),
+  ),
 ]);
 
 @Injectable({

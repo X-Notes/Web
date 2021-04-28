@@ -50,8 +50,8 @@
       "defaultColor": "Звичайний",
       "emptyTrash": "Очистити кошик",
       "filterMenu": {
-        "dateAsc": "Сортувати за датою в порядку зростання",
-        "dateDesc": "Сортувати за датою в порядку спадання",
+        "dateAsc": "В порядку зростання",
+        "dateDesc": "В порядку спадання",
         "order": "Свій порядок"
       }
     },
@@ -114,6 +114,15 @@
       },
       "folderManage": {
         "notes": "Додати нотаток в папку"
+      },
+      "lockModal": {
+        "lock": "Заблокувати нотаток",
+        "password": "Пароль",
+        "confirm": "Підтвердити пароль",
+        "placeholderPass": "Пароль",
+        "placeholderConfirm": "підтвердження",
+        "passMatchError": "Паролі не співпадають",
+        "required": "Обов'язкове поле"
       }
     },
     "innerNote": {

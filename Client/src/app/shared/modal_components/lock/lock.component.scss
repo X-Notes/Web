@@ -1,0 +1,97 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 475px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 1.25rem 2.25rem 0 2.25rem;
+
+  .field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding-bottom: 1.125rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .label {
+      display: flex;
+      width: 100%;
+      color: white;
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+
+    .details {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      width: 100%;
+      color: #ff6b6b;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+
+      .divider {
+        margin: 0 0.25rem;
+      }
+    }
+
+    input[type='password'] {
+      height: 34px;
+      width: 100%;
+      border: 2px solid #f2f2f2;
+      border-radius: 5px;
+      padding: 0 0 0 0.625rem;
+      user-select: none;
+      outline: none;
+      font-size: 1.0625rem;
+      background-color: #f2f2f2;
+      color: #484848;
+      transition: 0.2s ease;
+    }
+
+    .ng-invalid {
+      border-color: #ff6b6b !important;
+    }
+
+    .has-error {
+      color: #ff6b6b !important;
+    }
+  }
+}
+
+.button-container {
+  margin: 1.5rem 2.25rem 1.25rem 2.25rem;
+  width: calc(100% - 4.5rem);
+  display: flex;
+  justify-content: flex-end;
+
+  .save-button {
+    position: relative;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 100px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease;
+    border: 0.8px solid transparent;
+    overflow: hidden;
+
+    span {
+      position: relative;
+      z-index: 5;
+    }
+  }
+}
