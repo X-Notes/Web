@@ -1,4 +1,5 @@
 ﻿using BI.helpers;
+using BI.services.history;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.NoteContent.NoteDict;
@@ -60,6 +61,7 @@ namespace BI.services.notes
         private readonly FileRepository fileRepository;
         private readonly OcrService ocrService;
         private readonly ObjectRecognizeService objectRecognizeService;
+        private readonly HistoryCacheService historyCacheService;
         public FullNoteHandlerCommand(
                                         NoteRepository noteRepository,
                                         IMediator _mediator,
@@ -71,7 +73,8 @@ namespace BI.services.notes
                                         VideoNoteRepository videoNoteRepository,
                                         AudioNoteRepository audioNoteRepository,
                                         OcrService ocrService,
-                                        ObjectRecognizeService objectRecognizeService)
+                                        ObjectRecognizeService objectRecognizeService,
+                                        HistoryCacheService historyCacheService)
         {
             this.noteRepository = noteRepository;
             this._mediator = _mediator;
@@ -84,6 +87,7 @@ namespace BI.services.notes
             this.audioNoteRepository = audioNoteRepository;
             this.ocrService = ocrService;
             this.objectRecognizeService = objectRecognizeService;
+            this.historyCacheService = historyCacheService;
         }
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
@@ -97,6 +101,7 @@ namespace BI.services.notes
                 note.Title = request.Title;
                 note.UpdatedAt = DateTimeOffset.Now;
                 await noteRepository.Update(note);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
             }
 
             // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
@@ -153,6 +158,8 @@ namespace BI.services.notes
                     var result = new AlbumNoteDTO(resultPhotos, null, null, 
                         albumNote.Id, type, albumNote.CountInRow, albumNote.UpdatedAt);
 
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -183,6 +190,8 @@ namespace BI.services.notes
                 }
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.Update(content);
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 // TODO DEADLOCK
             }
 
@@ -209,6 +218,8 @@ namespace BI.services.notes
 
                 var textResult = new TextNoteDTO(text.Content, text.Id, 
                     text.TextType, text.HeadingType, text.Checked, text.UpdatedAt);
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
             }
@@ -257,6 +268,9 @@ namespace BI.services.notes
                                     newText.HeadingType, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
+
+                                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
                             catch (Exception e)
@@ -291,6 +305,8 @@ namespace BI.services.notes
                                     newText.TextType, newText.HeadingType, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
+
+                                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
@@ -344,6 +360,9 @@ namespace BI.services.notes
                     await baseNoteContentRepository.UpdateRange(contents);
 
                     await transaction.CommitAsync();
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
@@ -385,6 +404,9 @@ namespace BI.services.notes
                     content.HeadingType = request.HeadingType;
                     content.UpdatedAt = DateTimeOffset.Now;
                     await textNotesRepository.Update(content);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     // TODO DEADLOCK
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
@@ -433,6 +455,8 @@ namespace BI.services.notes
                     var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
                                     contentPrev.HeadingType, contentPrev.Checked, contentPrev.UpdatedAt);
 
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
                 catch (Exception e)
@@ -480,6 +504,8 @@ namespace BI.services.notes
                     var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
                     await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
 
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
@@ -519,6 +545,9 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var photosIds = fileList.Select(x => x.Id).ToList();
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<List<Guid>>(Success: true, photosIds);
                 }
                 catch (Exception e)
@@ -549,6 +578,9 @@ namespace BI.services.notes
                 if (album.Photos.Count == 0)
                 {
                     var resp = await _mediator.Send(new RemoveAlbumCommand(note.Id, album.Id, request.Email));
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 else
@@ -563,6 +595,9 @@ namespace BI.services.notes
                         await transaction.CommitAsync();
 
                         await _mediator.Send(new RemoveFilesByPathesCommand(new List<string> { photoForRemove.Path }));
+
+                        historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                         return new OperationResult<Unit>(Success: true, Unit.Value);
                     }
                     catch (Exception e)
@@ -587,6 +622,7 @@ namespace BI.services.notes
                 album.CountInRow = request.Count;
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -605,6 +641,7 @@ namespace BI.services.notes
                 album.Width = request.Width;
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -651,6 +688,8 @@ namespace BI.services.notes
                     var result = new AudioNoteDTO(
                         audioNote.Name, audioNote.AppFileId, audioNote.Id, 
                         type, audioNote.UpdatedAt);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                     return new OperationResult<AudioNoteDTO>(Success: true, result);
                 }
@@ -707,6 +746,8 @@ namespace BI.services.notes
                     var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id,
                                 type, videoNote.UpdatedAt);
 
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
                     return new OperationResult<VideoNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -761,6 +802,8 @@ namespace BI.services.notes
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
                     var result = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id,
                                 type, documentNote.UpdatedAt);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                     return new OperationResult<DocumentNoteDTO>(Success: true, result);
                 }

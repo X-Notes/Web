@@ -1,4 +1,4 @@
-﻿using BI.services.history;
+﻿using FacadeML;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -9,36 +9,32 @@ using System.Threading.Tasks;
 
 namespace WriteAPI.Hosted
 {
-    public class HistoryHosted : IHostedService, IDisposable
+    public class MLHosted : IHostedService, IDisposable
     {
-        private Timer _timer;
-        private readonly HistoryService historyService;
         private readonly IServiceScopeFactory serviceScopeFactory;
-        public HistoryHosted(IServiceScopeFactory serviceScopeFactory, HistoryService historyService)
+
+        public MLHosted(IServiceScopeFactory serviceScopeFactory)
         {
             this.serviceScopeFactory = serviceScopeFactory;
-            this.historyService = historyService;
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
+
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
+            using (var scope = serviceScopeFactory.CreateScope())
+            {
+                var ORS = scope.ServiceProvider.GetService<ObjectRecognizeService>();
+                ORS.Init();
+            }
             return Task.CompletedTask;
-        }
-
-        private void DoWork(object state)
-        {
-            historyService.DoWork();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
     }

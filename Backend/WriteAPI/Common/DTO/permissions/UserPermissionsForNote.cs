@@ -5,6 +5,7 @@ namespace Common.DTO.permissions
 {
     public class UserPermissionsForNote
     {
+        public User Author { set; get; }
         public User User { set; get; }
         public Note Note { set; get; }
         public bool CanRead { set; get; }
@@ -20,6 +21,7 @@ namespace Common.DTO.permissions
             CanRead = true;
             CanWrite = true;
             IsOwner = isOwner;
+            Author = note.User;
             return this;
         }
 

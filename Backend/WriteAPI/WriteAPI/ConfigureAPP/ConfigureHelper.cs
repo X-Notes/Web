@@ -323,6 +323,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<AppEncryptor>();
 
+            services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryService>();
 
             services.AddScoped<IFilesStorage, FilesStorage>();

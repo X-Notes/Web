@@ -18,11 +18,11 @@ namespace Domain.Commands.files
     public class SavePhotosToNoteCommand : IRequest<List<AppFile>>
     {
         public List<IFormFile> FormFilePhotos { set; get; }
-
         public List<FilesBytes> FilesBytes { set; get; }
 
 
         public SavePhotosType FileType { set; get; }
+
         public Guid NoteId { set; get; }
 
         public SavePhotosToNoteCommand(List<IFormFile> Photos, Guid NoteId)

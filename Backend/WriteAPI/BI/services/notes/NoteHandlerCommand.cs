@@ -221,6 +221,7 @@ namespace BI.services.notes
                         RefTypeId = noteForCopy.RefTypeId,
                         Order = order--,
                         UserId = permissions.User.Id,
+                        IsHistory = request.IsHistory
                     };
                     var dbNote = await noteRepository.Add(newNote);
                     resultIds.Add(dbNote.Entity.Id);
@@ -257,6 +258,30 @@ namespace BI.services.notes
                                     var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
 
                                     contents.Add(new AlbumNote(album, fileList, dbNote.Entity.Id));
+                                    continue;
+                                }
+                            case VideoNote videoNote:
+                                {
+                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId));
+                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(file, dbNote.Entity.Id));
+
+                                    contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
+                                    continue;
+                                }
+                            case AudioNote audioNote:
+                                {
+                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId));
+                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(file, dbNote.Entity.Id));
+
+                                    contents.Add(new AudioNote(audioNote, newfile, dbNote.Entity.Id));
+                                    continue;
+                                }
+                            case DocumentNote documentNote:
+                                {
+                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId));
+                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(file, dbNote.Entity.Id));
+
+                                    contents.Add(new DocumentNote(documentNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
                             default:

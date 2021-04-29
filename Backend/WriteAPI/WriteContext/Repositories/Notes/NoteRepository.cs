@@ -49,6 +49,7 @@ namespace WriteContext.Repositories.Notes
             return await context.Notes
                 .Include(x => x.NoteType)
                 .Include(x => x.RefType)
+                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
