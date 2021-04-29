@@ -122,7 +122,8 @@
         "placeholderPass": "Пароль",
         "placeholderConfirm": "підтвердження",
         "passMatchError": "Паролі не співпадають",
-        "required": "Обов'язкове поле"
+        "required": "Обов'язкове поле",
+        "minLength": "Пароль должен состоять не менее чем из 6 символов"
       }
     },
     "innerNote": {

@@ -4,40 +4,37 @@
 ></app-dialog-generic-header>
 <form [formGroup]="form" class="container">
   <div class="field">
-    <div class="label">{{ 'modal.lockModal.password' | translate }}</div>
+    <label>{{ 'modal.lockModal.password' | translate }}</label>
     <input
       type="password"
       aria-label="Type password"
       formControlName="password"
       placeholder="{{ 'modal.lockModal.placeholderPass' | translate }}"
+      [ngClass]="{'has-error': isSubmit && field.password.errors}"
     />
-    <div class="details">
-      <span [@shake] *ngIf="form.get('password').hasError('required')"
+    <div class="details" *ngIf="isSubmit && field.password.errors">
+      <span [@shake] *ngIf="field.password.errors.required"
         >{{ 'modal.lockModal.required' | translate }}</span
+      >
+      <span [@shake] *ngIf="field.password.errors.minlength"
+        >{{ 'modal.lockModal.minLength' | translate }}</span
       >
     </div>
   </div>
   <div class="field">
-    <div class="label">{{ 'modal.lockModal.confirm' | translate }}</div>
+    <label>{{ 'modal.lockModal.confirm' | translate }}</label>
     <input
       type="password"
       aria-label="confirm"
       formControlName="confirmation"
       placeholder="{{ 'modal.lockModal.placeholderConfirm' | translate }}"
-      [ngClass]="{'has-error': form.invalid}"
+      [ngClass]="{'has-error': isSubmit && field.confirmation.errors}"
     />
-    <div class="details">
-      <span [@shake] *ngIf="form.get('confirmation').hasError('required')"
+    <div class="details" *ngIf="isSubmit && field.confirmation.errors">
+      <span [@shake] *ngIf="field.confirmation.errors.required"
         >{{ 'modal.lockModal.required' | translate }}</span
       >
-      <span
-        [@shake]
-        class="divider"
-        *ngIf="form.get('confirmation').hasError('required') && form.hasError('compare')"
-      >
-        |
-      </span>
-      <span [@shake] *ngIf="form.hasError('compare')"
+      <span [@shake] *ngIf="field.confirmation.errors.isMatch"
         >{{ 'modal.lockModal.passMatchError' | translate }}</span
       >
     </div>

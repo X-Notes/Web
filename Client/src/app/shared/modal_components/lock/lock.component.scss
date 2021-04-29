@@ -22,7 +22,7 @@
       margin-bottom: 0;
     }
 
-    .label {
+    label {
       display: flex;
       width: 100%;
       color: white;
@@ -60,12 +60,9 @@
       transition: 0.2s ease;
     }
 
-    .ng-invalid {
-      border-color: #ff6b6b !important;
-    }
-
     .has-error {
       color: #ff6b6b !important;
+      border-color: #ff6b6b !important;
     }
   }
 }
@@ -78,16 +75,23 @@
 
   .save-button {
     position: relative;
-    cursor: pointer;
-    border-radius: 10px;
-    width: 100px;
-    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: 0.2s ease;
     border: 0.8px solid transparent;
     overflow: hidden;
+    background-color: #34373e;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    outline: none;
+
+    &:hover {
+      background-color: #3a3e46;
+    }
 
     span {
       position: relative;

@@ -121,7 +121,8 @@
         "placeholderPass": "type password",
         "placeholderConfirm": "confirm",
         "passMatchError": "passwords does not match",
-        "required": "Required field"
+        "required": "Required field",
+        "minLength": "Password must be at least 6 characters"
       }
     },
     "innerNote": {
