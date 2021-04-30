@@ -68,7 +68,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(ChangeColorComponent, config);
   }
 
-  lock(type) {
+  lock(id?) {
     const config: MatDialogConfig = {
       maxHeight: '100%',
       maxWidth: '90vw',
@@ -76,8 +76,9 @@ export class DialogsManageService {
         this.getTheme() === ThemeENUM.Light
           ? 'custom-dialog-class-light'
           : 'custom-dialog-class-dark',
-      data: type,
+      data: { id },
     };
+    console.log(id);
     return this.dialogService.openDialog(LockComponent, config);
   }
 

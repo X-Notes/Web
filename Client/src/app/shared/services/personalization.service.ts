@@ -4,6 +4,8 @@ import { Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
+import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
 import { FontSize } from '../models/FontSize';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
@@ -140,7 +142,11 @@ export class PersonalizationService {
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
-  constructor(public lockEncryptService: LockEncryptService) {}
+  constructor(public lockEncryptService: LockEncryptService, private translate: TranslateService) {}
+
+  async getTranslateText(key) {
+    return this.translate.get(key).pipe(take(1)).toPromise();
+  }
 
   onResize(): void {
     if (this.check()) {

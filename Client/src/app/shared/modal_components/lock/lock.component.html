@@ -2,7 +2,8 @@
   [icon]="'icon-plus'"
   [message]="'modal.lockModal.lock' | translate"
 ></app-dialog-generic-header>
-<form [formGroup]="form" class="container">
+<!-- TODO move input to component -->
+<form [formGroup]="form" class="container" *ngIf="form">
   <div class="field">
     <label>{{ 'modal.lockModal.password' | translate }}</label>
     <input
@@ -21,7 +22,7 @@
       >
     </div>
   </div>
-  <div class="field">
+  <div class="field" *ngIf="!note.isLocked">
     <label>{{ 'modal.lockModal.confirm' | translate }}</label>
     <input
       type="password"

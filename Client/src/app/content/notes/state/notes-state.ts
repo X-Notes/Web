@@ -99,6 +99,14 @@ export class NoteStore {
   }
 
   @Selector()
+  static getNote(state: NoteState) {
+    return (id: string, type: NoteTypeENUM) => {
+      const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
+      return note;
+    };
+  }
+
+  @Selector()
   static selectedCount(state: NoteState): number {
     return state.selectedIds.length;
   }

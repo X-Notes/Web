@@ -51,7 +51,7 @@ export class MenuButtonsService {
     },
     {
       icon: 'lock',
-      operation: () => this.dialogsManageService.lock(true),
+      operation: () => this.dialogsManageService.lock(),
     },
     {
       icon: 'color',
