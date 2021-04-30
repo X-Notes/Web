@@ -212,7 +212,7 @@ namespace BI.Mapping
             };
             var dates = result.Contents.Select(x => x.UpdatedAt);
             dates.Append(result.UpdatedAt);
-            result.UpdatedAt = dates.Max();
+            result.UpdatedAt = dates.Count() > 0 ? dates.Max() : DateTimeOffset.MinValue; 
             return result;
         }
 
@@ -319,7 +319,8 @@ namespace BI.Mapping
             return new NoteHistoryDTO()
             {
                 SnapshotTime = historyDTO.SnapshotTime,
-                Users = MapUsersToUsersNoteHistory(historyDTO.Users)
+                Users = MapUsersToUsersNoteHistory(historyDTO.Users),
+                NoteVersionId = historyDTO.NoteVersionId
             };
         }
 

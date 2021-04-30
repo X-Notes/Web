@@ -21,7 +21,7 @@ namespace WriteContext.Repositories.Histories
         public async Task<List<NoteHistory>> GetNoteHistories(Guid noteId)
         {
             return await entities.Where(x => x.NoteId == noteId)
-                .Include(x => x.Users).OrderBy(x => x.SnapshotTime).ToListAsync();
+                .Include(x => x.Users).OrderByDescending(x => x.SnapshotTime).ToListAsync();
         }
 
     }

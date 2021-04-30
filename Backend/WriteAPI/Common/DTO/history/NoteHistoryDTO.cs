@@ -12,7 +12,7 @@ namespace Common.DTO.history
     {
         public DateTimeOffset SnapshotTime { set; get; }
         public List<UserNoteHistory> Users { set; get; }
-
+        public Guid NoteVersionId { set; get; }
         public NoteHistoryDTO()
         {
 
