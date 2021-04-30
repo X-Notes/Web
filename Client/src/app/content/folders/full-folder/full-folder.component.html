@@ -48,12 +48,81 @@
   class="content-generic-project"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
-  <div class="folder-sub-header"></div>
-  <ng-scrollbar
-    class="scroll-helper sub-header-helper"
-    [visibility]="'hover'"
-    [appearance]="'compact'"
-  >
+  <div class="folder-sub-header" appTheme>
+    <div class="container">
+      <div class="navigation">
+        <a [routerLink]="'/folders/' + (folder?.folderType?.name | folderType)?.route" class="link"
+          >{{ (folder?.folderType?.name | folderType)?.tranlate | translate }}</a
+        >
+        <span class="divider">/</span>
+        <a class="link">{{ folder?.title }}</a>
+      </div>
+      <div class="dot" [ngStyle]="{ backgroundColor: folder?.color }"></div>
+    </div>
+    <div class="container">
+      <button
+        class="side-button"
+        type="button"
+        name="Color"
+        #color
+        (click)="dialogsService.changeColor()"
+      >
+        <div class="inner-content">
+          <div class="icon">
+            <mat-icon svgIcon="color" [inline]="true"></mat-icon>
+          </div>
+          <p>Color</p>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="color"></div>
+      </button>
+      <button
+        class="side-button"
+        type="button"
+        name="share"
+        #share
+        (click)="dialogsService.shareEntity()"
+      >
+        <div class="inner-content">
+          <div class="icon">
+            <mat-icon svgIcon="shared" [inline]="true"></mat-icon>
+          </div>
+          <p>Share</p>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="share"></div>
+      </button>
+      <button
+        class="side-button icon-only"
+        type="button"
+        name="more"
+        #more
+        [matMenuTriggerFor]="menu"
+      >
+        <div class="inner-content">
+          <div class="icon">
+            <mat-icon [inline]="true">more_horiz</mat-icon>
+          </div>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button
+          *ngFor="let item of menuButtonService.items"
+          (click)="item.operation()"
+          mat-menu-item
+          type="button"
+          [name]="item.icon"
+        >
+          <mat-icon
+            [svgIcon]="item.icon"
+            style="width: 1rem; height: 1rem; font-size: 1rem"
+          ></mat-icon>
+          <span> {{ ('menu.' + item.icon) | translate }} </span>
+        </button>
+      </mat-menu>
+    </div>
+    <div class="folder-color" [ngStyle]="{ backgroundColor: folder?.color }"></div>
+  </div>
+  <ng-scrollbar class="scroll-helper content" [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">
       <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
         <div
