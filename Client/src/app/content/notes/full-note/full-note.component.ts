@@ -53,6 +53,8 @@ import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
 import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/type-upload-file.enum';
+import { ApiNoteHistoryService } from '../api-note-history.service';
+import { NoteHistory } from '../models/history/note-history';
 
 @Component({
   selector: 'app-full-note',
@@ -112,6 +114,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   id: string;
 
+  histories: NoteHistory[];
+
   private routeSubscription: Subscription;
 
   constructor(
@@ -125,6 +129,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     public sideBarService: SidebarNotesService,
+    private apiHistory: ApiNoteHistoryService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -164,6 +169,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.sideBarService.loadNotes(this.id);
+    this.histories = await this.apiHistory.getHistory(this.id).toPromise();
   }
 
   async loadMain() {

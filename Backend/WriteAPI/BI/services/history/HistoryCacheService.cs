@@ -59,9 +59,9 @@ namespace BI.services.history
         }
 
 
-        public List<CacheHistory> GetCacheHistoriesForSnapshotingByTime(int afterMinutes)
+        public List<CacheHistory> GetCacheHistoriesForSnapshotingByTime(int afterSeconds)
         {
-            return Ids.Where(x => x.Value.UpdatedAt.AddMinutes(afterMinutes) < DateTimeOffset.Now)
+            return Ids.Where(x => x.Value.UpdatedAt.AddSeconds(afterSeconds) < DateTimeOffset.Now)
                       .Select(x => x.Value).ToList();
         }
 

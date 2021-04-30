@@ -1,12 +1,15 @@
 <div class="record" appTheme>
   <div class="date">
-    <p>Edited at 16 sep, 19.30</p>
+    <p>{{ history.snapshotTime | date : 'd MMM, h:mm' }}</p>
   </div>
   <div class="users">
-    <div *ngFor="let user of [1,2,3]" class="user" CustomTooltip="Cat photo" position="Bottom">
-      <img
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/VAN_CAT.png/1200px-VAN_CAT.png"
-      />
+    <div
+      *ngFor="let user of history.users"
+      class="user"
+      CustomTooltip="{{user.name}}"
+      position="Bottom"
+    >
+      <img [src]="user.photoId | getImage" />
     </div>
     <button
       type="button"
@@ -38,13 +41,11 @@
           [appearance]="'compact'"
         >
           <div class="content-inner" #userHeight>
-            <div *ngFor="let user of [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]" class="user">
+            <div *ngFor="let user of history.users" class="user">
               <div class="user-image">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/VAN_CAT.png/1200px-VAN_CAT.png"
-                />
+                <img [src]="user.photoId | getImage" />
               </div>
-              <p>Cat photo</p>
+              <p>{{user.name}}</p>
             </div>
           </div>
         </ng-scrollbar>

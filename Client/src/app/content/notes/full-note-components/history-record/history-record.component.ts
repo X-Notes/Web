@@ -1,6 +1,7 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { showDropdown } from 'src/app/shared/services/personalization.service';
+import { NoteHistory } from '../../models/history/note-history';
 
 @Component({
   selector: 'app-history-record',
@@ -12,6 +13,8 @@ export class HistoryRecordComponent implements OnInit {
   @ViewChild('userHeight') userHeight: ElementRef;
 
   @ViewChild('scrollbar') scrollbar: ElementRef;
+
+  @Input() history: NoteHistory;
 
   public positions = [
     new ConnectionPositionPair(

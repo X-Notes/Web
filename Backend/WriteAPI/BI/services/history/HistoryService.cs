@@ -24,7 +24,7 @@ namespace BI.services.history
 
         public void DoWork()
         {
-            var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(2);
+            var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(10);
             MakeCopy(histories).Wait();
             historyCacheService.RemoveFromList(histories);
         }
