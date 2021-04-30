@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models.Systems;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;

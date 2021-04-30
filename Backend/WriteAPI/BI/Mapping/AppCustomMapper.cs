@@ -1,12 +1,19 @@
 ﻿using BI.services.notes;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.History;
+using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.app;
 using Common.DTO.folders;
+using Common.DTO.history;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
+using Common.DTO.users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -205,7 +212,7 @@ namespace BI.Mapping
             };
             var dates = result.Contents.Select(x => x.UpdatedAt);
             dates.Append(result.UpdatedAt);
-            result.UpdatedAt = dates.Max();
+            result.UpdatedAt = dates.Count() > 0 ? dates.Max() : DateTimeOffset.MinValue; 
             return result;
         }
 
@@ -288,6 +295,38 @@ namespace BI.Mapping
                 FolderType = MapTypeToTypeDTO(folder.FolderType),
                 RefType = MapRefToRefDTO(folder.RefType)
             };
+        }
+
+
+        public UserNoteHistory MapUserToUserNoteHistory(User user)
+        {
+            return new UserNoteHistory()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                PhotoId = user.PhotoId
+            };
+        }
+
+        public List<UserNoteHistory> MapUsersToUsersNoteHistory(IEnumerable<User> users)
+        {
+            return users.Select(x => MapUserToUserNoteHistory(x)).ToList();
+        }
+
+        public NoteHistoryDTO MapHistoryToHistoryDto(NoteHistory historyDTO)
+        {
+            return new NoteHistoryDTO()
+            {
+                SnapshotTime = historyDTO.SnapshotTime,
+                Users = MapUsersToUsersNoteHistory(historyDTO.Users),
+                NoteVersionId = historyDTO.NoteVersionId
+            };
+        }
+
+        public List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteHistory> histories)
+        {
+            return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
         }
 
     }

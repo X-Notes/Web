@@ -1,5 +1,11 @@
-﻿using Common.DatabaseModels.models;
+﻿using Common.DatabaseModels.models.Files;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.History;
+using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
+using Common.DatabaseModels.models.Users;
 using Common.Naming;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,30 +15,52 @@ namespace WriteContext
 {
     public class WriteContextDB : DbContext
     {
-
+        // USERS & NOTIFICATIONS
         public DbSet<User> Users { get; set; }
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
         public DbSet<Backgrounds> Backgrounds { set; get; }
+        public DbSet<Notification> Notifications { set; get; }
+
+        // FOLDERS
         public DbSet<Folder> Folders { set; get; }
+        public DbSet<FoldersNotes> FoldersNotes { set; get; }
+        public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+
+        // LABELS
         public DbSet<Label> Labels { set; get; }
-        public DbSet<Note> Notes { set; get; }
-        public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
+
+        // NOTES
+        public DbSet<Note> Notes { set; get; }
+        public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
+        public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
+        public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
+
+
+        // FILES
         public DbSet<AppFile> Files { set; get; }
         public DbSet<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
-        public DbSet<Language> Languages { set; get; }
-        public DbSet<Theme> Themes { set; get; }
-        public DbSet<FolderType> FoldersTypes { set; get; }
-        public DbSet<NoteType> NotesTypes { set; get; }
-        public DbSet<RefType> RefTypes { set; get; }
-        public DbSet<FontSize> FontSizes { set; get; }
-        public DbSet<FoldersNotes> FoldersNotes { set; get; }
-        public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
-        public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
-        public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
+
+        // NOTE CONTENT
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
         public DbSet<TextNote> TextNotes { set; get; }
         public DbSet<AlbumNote> AlbumNotes { set; get; }
+        public DbSet<AudioNote> AudiosNote { set; get; }
+        public DbSet<VideoNote> VideosNote { set; get; }
+        public DbSet<DocumentNote> DocumentsNote { set; get; }
+
+        // NOTE HISTORY
+        public DbSet<NoteHistory> NoteHistories { set; get; }
+        public DbSet<UserNoteHistoryManyToMany> UserNoteHistoryManyToMany { set; get; }
+
+        // SYSTEMS
+        public DbSet<Language> Languages { set; get; }
+        public DbSet<Theme> Themes { set; get; }
+        public DbSet<FontSize> FontSizes { set; get; }
+        public DbSet<RefType> RefTypes { set; get; }
+        public DbSet<FolderType> FoldersTypes { set; get; }
+        public DbSet<NoteType> NotesTypes { set; get; }
+
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
@@ -133,6 +161,26 @@ namespace WriteContext
                         j.HasKey(bc => new { bc.AlbumNoteId, bc.AppFileId });
                     });
 
+
+           
+            modelBuilder.Entity<User>()
+                .HasMany(p => p.NoteHistories)
+                .WithMany(p => p.Users)
+                .UsingEntity<UserNoteHistoryManyToMany>(
+                    j => j
+                        .HasOne(pt => pt.NoteHistory)
+                        .WithMany(t => t.UserHistories)
+                        .HasForeignKey(pt => pt.NoteHistoryId),
+                    j => j
+                        .HasOne(pt => pt.User)
+                        .WithMany(p => p.UserHistories)
+                        .HasForeignKey(pt => pt.UserId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.UserId, bc.NoteHistoryId });
+                    });
+
+            
 
             modelBuilder.Entity<Notification>()
                 .HasOne(m => m.UserFrom)

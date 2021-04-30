@@ -171,7 +171,10 @@
       <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
         <ng-scrollbar class="history-records" [visibility]="'hover'" [appearance]="'compact'">
           <div class="content-inner-history">
-            <app-history-record *ngFor="let item of [1,2,3]"></app-history-record></div
+            <app-history-record
+              [history]="item"
+              *ngFor="let item of histories"
+            ></app-history-record></div
         ></ng-scrollbar>
       </div>
       <ng-scrollbar

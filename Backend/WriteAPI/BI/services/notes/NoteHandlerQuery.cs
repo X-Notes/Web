@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BI.Mapping;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.NoteContent;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.notes
 {
