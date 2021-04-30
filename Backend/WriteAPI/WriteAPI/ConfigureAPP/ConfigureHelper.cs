@@ -18,6 +18,7 @@ using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
 using Common.DTO.files;
 using Common.DTO.folders;
+using Common.DTO.history;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
@@ -45,6 +46,7 @@ using Domain.Queries.backgrounds;
 using Domain.Queries.encryption;
 using Domain.Queries.files;
 using Domain.Queries.folders;
+using Domain.Queries.history;
 using Domain.Queries.innerFolder;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
@@ -211,6 +213,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<EncryptionNoteCommand, OperationResult<bool>>, EncryptionHandlerCommand>();
             services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
 
+            // HISTORY
+            services.AddScoped<IRequestHandler<GetNoteHistories, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();

@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models.History;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,13 @@ namespace WriteContext.Repositories.Histories
         {
 
         }
+
+
+        public async Task<List<NoteHistory>> GetNoteHistories(Guid noteId)
+        {
+            return await entities.Where(x => x.NoteId == noteId)
+                .Include(x => x.Users).OrderBy(x => x.SnapshotTime).ToListAsync();
+        }
+
     }
 }
