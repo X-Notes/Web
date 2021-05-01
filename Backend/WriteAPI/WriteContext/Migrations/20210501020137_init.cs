@@ -255,6 +255,7 @@ namespace WriteContext.Migrations
                     Order = table.Column<int>(type: "integer", nullable: false),
                     IsLocked = table.Column<bool>(type: "boolean", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: true),
+                    IsHistory = table.Column<bool>(type: "boolean", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -284,7 +285,7 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Notification",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -297,15 +298,15 @@ namespace WriteContext.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notification_Users_UserFromId",
+                        name: "FK_Notifications_Users_UserFromId",
                         column: x => x.UserFromId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Notification_Users_UserToId",
+                        name: "FK_Notifications_Users_UserToId",
                         column: x => x.UserToId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -425,6 +426,26 @@ namespace WriteContext.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_LabelsNotes_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteVersionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SnapshotTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NoteHistories_Notes_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Notes",
                         principalColumn: "Id",
@@ -628,6 +649,30 @@ namespace WriteContext.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserNoteHistoryManyToMany",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteHistoryId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserNoteHistoryManyToMany", x => new { x.UserId, x.NoteHistoryId });
+                    table.ForeignKey(
+                        name: "FK_UserNoteHistoryManyToMany_NoteHistories_NoteHistoryId",
+                        column: x => x.NoteHistoryId,
+                        principalTable: "NoteHistories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserNoteHistoryManyToMany_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "FoldersTypes",
                 columns: new[] { "Id", "Name" },
@@ -748,6 +793,11 @@ namespace WriteContext.Migrations
                 column: "LabelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NoteHistories_NoteId",
+                table: "NoteHistories",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notes_NoteTypeId",
                 table: "Notes",
                 column: "NoteTypeId");
@@ -763,13 +813,13 @@ namespace WriteContext.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notification_UserFromId",
-                table: "Notification",
+                name: "IX_Notifications_UserFromId",
+                table: "Notifications",
                 column: "UserFromId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notification_UserToId",
-                table: "Notification",
+                name: "IX_Notifications_UserToId",
+                table: "Notifications",
                 column: "UserToId");
 
             migrationBuilder.CreateIndex(
@@ -782,6 +832,11 @@ namespace WriteContext.Migrations
                 name: "IX_ReletatedNoteToInnerNotes_RelatedNoteId",
                 table: "ReletatedNoteToInnerNotes",
                 column: "RelatedNoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserNoteHistoryManyToMany_NoteHistoryId",
+                table: "UserNoteHistoryManyToMany",
+                column: "NoteHistoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserOnNoteNow_NoteId",
@@ -893,7 +948,7 @@ namespace WriteContext.Migrations
                 name: "LabelsNotes");
 
             migrationBuilder.DropTable(
-                name: "Notification");
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "NotificationSettings");
@@ -903,6 +958,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "TextNote");
+
+            migrationBuilder.DropTable(
+                name: "UserNoteHistoryManyToMany");
 
             migrationBuilder.DropTable(
                 name: "UserOnNoteNow");
@@ -921,6 +979,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "Labels");
+
+            migrationBuilder.DropTable(
+                name: "NoteHistories");
 
             migrationBuilder.DropTable(
                 name: "Folders");
