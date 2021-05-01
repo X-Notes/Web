@@ -1,5 +1,7 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
 using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.Notes;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
