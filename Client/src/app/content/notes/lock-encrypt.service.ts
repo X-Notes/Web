@@ -19,7 +19,7 @@ export class LockEncryptService {
     );
   }
 
-  dencryptNote(noteId: string, password: string) {
+  decryptNote(noteId: string, password: string) {
     const obj = {
       noteId,
       password,

@@ -201,9 +201,6 @@ export class PersonalizationService {
   }
 
   async toggleHistoryMethod() {
-    await this.lockEncryptService
-      .dencryptNote('e29452f7-e248-4e74-b326-6c1bae23dec0', '22')
-      .toPromise();
     this.toggleHistory = !this.toggleHistory;
   }
 

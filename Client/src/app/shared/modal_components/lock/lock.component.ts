@@ -52,7 +52,7 @@ export class LockComponent implements OnInit, OnDestroy {
     private snackService: SnackbarService,
     private pService: PersonalizationService,
     public dialogRef: MatDialogRef<LockComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id: string },
+    @Inject(MAT_DIALOG_DATA) public data: { id: string; isRemove: boolean },
   ) {}
 
   async ngOnInit() {
@@ -99,6 +99,19 @@ export class LockComponent implements OnInit, OnDestroy {
     }
     const isNote = this.store.selectSnapshot(AppStore.isNote);
     if (isNote) {
+      if (this.note.isLocked && this.data?.isRemove) {
+        const { data } = await this.lockEncryptService
+          .decryptNote(this.note.id, this.form.controls.password.value)
+          .toPromise();
+        if (data) {
+          this.router.navigate([`notes/${this.note.id}`]);
+          this.dialogRef.close();
+          return;
+        }
+        const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
+        this.snackService.openSnackBar(message, null, 'center');
+        return;
+      }
       if (this.note.isLocked) {
         const { data } = await this.lockEncryptService
           .tryUnlockNote(this.note.id, this.form.controls.password.value)
@@ -106,6 +119,7 @@ export class LockComponent implements OnInit, OnDestroy {
         if (data) {
           this.router.navigate([`notes/${this.note.id}`]);
           this.dialogRef.close();
+          return;
         }
         const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
         this.snackService.openSnackBar(message, null, 'center');

@@ -4,6 +4,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../menu-buttons.service';
+import { NoteStore } from '../../notes/state/notes-state';
 
 @Component({
   selector: 'app-menu',
@@ -13,6 +14,9 @@ import { MenuButtonsService } from '../menu-buttons.service';
 export class MenuComponent {
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
+
+  @Select(NoteStore.selectedCount)
+  public selectedCount$: Observable<number>;
 
   constructor(public pService: PersonalizationService, public buttonService: MenuButtonsService) {}
 
