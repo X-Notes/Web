@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,16 @@ namespace BI.helpers
 
             return false;
         }
+
+        public bool IsMatchPhoto(AppFile photo, string search)
+        {
+            if (photo.RecognizeObject.Contains(search) || photo.TextFromPhoto.Contains(search))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

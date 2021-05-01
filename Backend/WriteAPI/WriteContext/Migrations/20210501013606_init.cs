@@ -13,7 +13,9 @@ namespace WriteContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Path = table.Column<string>(type: "text", nullable: true),
-                    Type = table.Column<string>(type: "text", nullable: true)
+                    Type = table.Column<string>(type: "text", nullable: true),
+                    TextFromPhoto = table.Column<string>(type: "text", nullable: true),
+                    RecognizeObject = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,24 +92,6 @@ namespace WriteContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Themes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AlbumNoteAppFile",
-                columns: table => new
-                {
-                    AlbumNotesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PhotosId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AlbumNoteAppFile", x => new { x.AlbumNotesId, x.PhotosId });
-                    table.ForeignKey(
-                        name: "FK_AlbumNoteAppFile_Files_PhotosId",
-                        column: x => x.PhotosId,
-                        principalTable: "Files",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -269,6 +253,8 @@ namespace WriteContext.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
+                    IsLocked = table.Column<bool>(type: "boolean", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -295,6 +281,35 @@ namespace WriteContext.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notification",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserFromId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserToId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsSystemMessage = table.Column<bool>(type: "boolean", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    Date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notification_Users_UserFromId",
+                        column: x => x.UserFromId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Notification_Users_UserToId",
+                        column: x => x.UserToId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -518,6 +533,56 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AudioNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AudioNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AudioNote_BaseNoteContents_Id",
+                        column: x => x.Id,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AudioNote_Files_AppFileId",
+                        column: x => x.AppFileId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentNote_BaseNoteContents_Id",
+                        column: x => x.Id,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentNote_Files_AppFileId",
+                        column: x => x.AppFileId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TextNote",
                 columns: table => new
                 {
@@ -534,6 +599,31 @@ namespace WriteContext.Migrations
                         name: "FK_TextNote_BaseNoteContents_Id",
                         column: x => x.Id,
                         principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VideoNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VideoNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VideoNote_BaseNoteContents_Id",
+                        column: x => x.Id,
+                        principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VideoNote_Files_AppFileId",
+                        column: x => x.AppFileId,
+                        principalTable: "Files",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -598,13 +688,13 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AlbumNoteAppFile_PhotosId",
-                table: "AlbumNoteAppFile",
-                column: "PhotosId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AlbumNoteAppFiles_AppFileId",
                 table: "AlbumNoteAppFiles",
+                column: "AppFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AudioNote_AppFileId",
+                table: "AudioNote",
                 column: "AppFileId");
 
             migrationBuilder.CreateIndex(
@@ -621,6 +711,11 @@ namespace WriteContext.Migrations
                 name: "IX_BaseNoteContents_NoteId",
                 table: "BaseNoteContents",
                 column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentNote_AppFileId",
+                table: "DocumentNote",
+                column: "AppFileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Folders_FolderTypeId",
@@ -666,6 +761,16 @@ namespace WriteContext.Migrations
                 name: "IX_Notes_UserId",
                 table: "Notes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notification_UserFromId",
+                table: "Notification",
+                column: "UserFromId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notification_UserToId",
+                table: "Notification",
+                column: "UserToId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NotificationSettings_UserId",
@@ -736,13 +841,10 @@ namespace WriteContext.Migrations
                 table: "UsersOnPrivateFolders",
                 column: "UserId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AlbumNoteAppFile_AlbumNote_AlbumNotesId",
-                table: "AlbumNoteAppFile",
-                column: "AlbumNotesId",
-                principalTable: "AlbumNote",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_VideoNote_AppFileId",
+                table: "VideoNote",
+                column: "AppFileId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AlbumNoteAppFiles_AlbumNote_AlbumNoteId",
@@ -776,16 +878,22 @@ namespace WriteContext.Migrations
                 table: "Backgrounds");
 
             migrationBuilder.DropTable(
-                name: "AlbumNoteAppFile");
+                name: "AlbumNoteAppFiles");
 
             migrationBuilder.DropTable(
-                name: "AlbumNoteAppFiles");
+                name: "AudioNote");
+
+            migrationBuilder.DropTable(
+                name: "DocumentNote");
 
             migrationBuilder.DropTable(
                 name: "FoldersNotes");
 
             migrationBuilder.DropTable(
                 name: "LabelsNotes");
+
+            migrationBuilder.DropTable(
+                name: "Notification");
 
             migrationBuilder.DropTable(
                 name: "NotificationSettings");
@@ -804,6 +912,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "UsersOnPrivateFolders");
+
+            migrationBuilder.DropTable(
+                name: "VideoNote");
 
             migrationBuilder.DropTable(
                 name: "AlbumNote");

@@ -206,6 +206,8 @@ namespace WriteAPI.ConfigureAPP
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
+            services.AddScoped<IRequestHandler<GetNotesAndFolderForSearch, SearchNoteFolderResult>, SeachQueryHandler>();
+
 
             //Files
             services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
@@ -223,7 +225,9 @@ namespace WriteAPI.ConfigureAPP
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
             Console.WriteLine(writeConnection);
+
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
+
             services.AddScoped<LabelRepository>();
             services.AddScoped<NotificationRepository>();
             services.AddScoped<UserRepository>();
@@ -244,6 +248,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<ReletatedNoteToInnerNoteRepository>();
             services.AddScoped<FoldersNotesRepository>();
             services.AddScoped<LabelsNotesRepository>();
+            services.AddScoped<SearchRepository>();
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
