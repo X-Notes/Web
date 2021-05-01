@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Notes;
 using Common.DTO.notifications;
 using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
@@ -6,7 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.signalR
 {

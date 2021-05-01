@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
 using Common.DTO.notes.FullNoteContent;
 using Common.Naming;
 using Domain.Commands.folderInner;
@@ -8,7 +9,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Folders;
 
 namespace BI.services.folders
 {

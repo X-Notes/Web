@@ -2,6 +2,7 @@
 using BI.Mapping;
 using Common;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
 using Common.DTO.folders;
 using Common.Naming;
 using Domain.Commands.folders;
@@ -13,6 +14,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
+using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.folders
 {

@@ -408,6 +408,10 @@ export class MenuButtonsService {
 
   public foldersItemsInner: MenuItem[] = [
     {
+      icon: 'history',
+      operation: () => 5,
+    },
+    {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
@@ -416,6 +420,10 @@ export class MenuButtonsService {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+    },
+    {
+      icon: 'delete',
+      operation: () => console.log('TODO'),
     },
   ];
 
@@ -807,6 +815,7 @@ export class MenuButtonsService {
   }
 
   setItems(newItems: MenuItem[]) {
+    console.log('ITEMS: ', newItems);
     this.items = newItems;
   }
 

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.backgrounds;
 using System;
 using System.Collections.Generic;

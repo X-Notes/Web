@@ -1,7 +1,7 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -12,6 +12,7 @@ import {
   notification,
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
+import { SearchService } from 'src/app/shared/services/search.service';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -19,7 +20,7 @@ import {
   styleUrls: ['./interaction-tools.component.scss'],
   animations: [notification],
 })
-export class InteractionToolsComponent {
+export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNotificationsCount)
   public notificationCount$: Observable<number>;
 
@@ -39,6 +40,10 @@ export class InteractionToolsComponent {
 
   isOpenNotification = false;
 
+  isInputFocus = false;
+
+  destroy = new Subject<void>();
+
   public positions = [
     new ConnectionPositionPair(
       {
@@ -51,9 +56,18 @@ export class InteractionToolsComponent {
     ),
   ];
 
-  isInputFocus = false;
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    private searchService: SearchService,
+  ) {}
 
-  constructor(public pService: PersonalizationService, private store: Store) {}
+  ngOnDestroy() {
+    this.destroy.next();
+    this.destroy.complete();
+  }
+
+  ngOnInit = () => {};
 
   closeNotification() {
     this.isOpenNotification = false;

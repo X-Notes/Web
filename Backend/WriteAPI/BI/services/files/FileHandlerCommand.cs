@@ -1,5 +1,5 @@
 ﻿using BI.helpers;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Files;
 using Domain.Commands.files;
 using MediatR;
 using Storage;
@@ -76,29 +76,84 @@ namespace BI.services.files
 
         public async Task<AppFile> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {
-            var file = request.Document;
-            var audioType = photoHelpers.GetDocumentType(file.ContentType);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Files);
-            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, audioType);
-            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+            switch (request.FileType)
+            {
+                case SaveDocumentsType.FormFile:
+                    {
+                        var file = request.Document;
+                        var documentType = photoHelpers.GetDocumentType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Files);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, documentType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                case SaveDocumentsType.Bytes:
+                    {
+                        var file = request.FileBytes;
+                        var documentType = photoHelpers.GetDocumentType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Files);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, request.NoteId, getContentString, documentType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect type");
+                    }
+            }
         }
 
         public async Task<AppFile> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var file = request.Video;
-            var videoType = photoHelpers.GetVideoType(file.ContentType);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Videos);
-            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, videoType);
-            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+
+            switch (request.FileType)
+            {
+                case SaveVideosType.FormFile:
+                    {
+                        var file = request.Video;
+                        var videoType = photoHelpers.GetVideoType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Videos);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, videoType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                case SaveVideosType.Bytes:
+                    {
+                        var file = request.FileBytes;
+                        var videoType = photoHelpers.GetVideoType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Videos);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, request.NoteId, getContentString, videoType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect type");
+                    }
+            }
         }
 
         public async Task<AppFile> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var file = request.Audio;
-            var audioType = photoHelpers.GetAudioType(file.ContentType);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Audios);
-            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, audioType);
-            return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+            switch (request.FileType)
+            {
+                case SaveAudiosType.FormFile:
+                    {
+                        var file = request.Audio;
+                        var audioType = photoHelpers.GetAudioType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Audios);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, getContentString, audioType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                case SaveAudiosType.Bytes:
+                    {
+                        var file = request.FileBytes;
+                        var audioType = photoHelpers.GetAudioType(file.ContentType);
+                        var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Audios);
+                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, request.NoteId, getContentString, audioType);
+                        return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
+                    }
+                default:
+                    {
+                        throw new Exception("Incorrect type");
+                    }
+            }
         }
     }
 }

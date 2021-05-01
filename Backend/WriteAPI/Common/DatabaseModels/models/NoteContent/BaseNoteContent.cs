@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.models.Notes;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Common.DatabaseModels.models.NoteContent

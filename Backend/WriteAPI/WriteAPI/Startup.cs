@@ -61,7 +61,11 @@ namespace WriteAPI
             services.DataBase(Configuration);
             services.BI();
 
+            services.AddMemoryCache();
+
             services.AddHostedService<StartAppHosted>();
+            services.AddHostedService<HistoryHosted>();
+            services.AddHostedService<MLHosted>();
 
             services.AddHttpClient();
         }

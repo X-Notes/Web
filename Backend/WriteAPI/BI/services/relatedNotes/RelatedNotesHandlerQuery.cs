@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.relatedNotes
 {
