@@ -7,9 +7,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
 using System.Linq;
 using BI.Mapping;
+using WriteContext.Repositories.Labels;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.labels
 {

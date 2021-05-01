@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Notes;
 using Common.DTO.notes.FullNoteContent;
 using Domain.Commands.relatedNotes;
 using Domain.Queries.permissions;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Notes;
 
 namespace BI.services.relatedNotes
 {

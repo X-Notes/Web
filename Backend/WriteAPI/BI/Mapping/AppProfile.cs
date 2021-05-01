@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.app;
 
 namespace BI.Mapping

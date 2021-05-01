@@ -1,5 +1,8 @@
 ﻿using BI.signalR;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.notifications;
 using Common.Naming;
 using Domain.Commands.share.folders;
@@ -13,6 +16,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
+using WriteContext.Repositories.Folders;
+using WriteContext.Repositories.Notes;
+using WriteContext.Repositories.Notifications;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.sharing
 {

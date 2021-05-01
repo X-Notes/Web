@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BI.helpers;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Files;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.backgrounds;
 using Domain.Commands.backgrounds;
 using MediatR;
@@ -11,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.backgrounds
 {

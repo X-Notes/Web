@@ -33,6 +33,11 @@ namespace FacadeML
 
         public ObjectRecognizeService()
         {
+
+        }
+
+        public void Init()
+        {
             model = GenerateModel(context);
         }
 

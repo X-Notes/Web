@@ -1,5 +1,7 @@
 ﻿using BI.helpers;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Files;
+using Common.DatabaseModels.models.Users;
 using Common.DTO.users;
 using Common.Naming;
 using Domain.Commands.users;
@@ -8,6 +10,7 @@ using Storage;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories;
+using WriteContext.Repositories.Users;
 
 namespace BI.services.user
 {

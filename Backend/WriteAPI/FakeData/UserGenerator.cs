@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -23,6 +23,7 @@ import { AppServiceAPI } from './app.service';
 import { ApiRelatedNotesService } from '../content/notes/api-related-notes.service';
 import { ApiFullFolderService } from '../content/folders/full-folder/services/api-full-folder.service';
 import { LockEncryptService } from '../content/notes/lock-encrypt.service';
+import { ApiNoteHistoryService } from '../content/notes/api-note-history.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -68,6 +69,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiRelatedNotesService,
     ApiFullFolderService,
     LockEncryptService,
+    ApiNoteHistoryService,
   ],
 })
 export class CoreModule {}
