@@ -46,7 +46,12 @@
       "countUsers": "Number of users",
       "menu": "Menu",
       "defaultColor": "Default color",
-      "emptyTrash": "Empty Trash"
+      "emptyTrash": "Empty Trash",
+      "filterMenu": {
+        "dateAsc": "Sort by asc",
+        "dateDesc": "Sort by desc",
+        "order": "Custom order"
+      }
     },
     "menu": {
       "label": "Label",
@@ -108,6 +113,17 @@
       },
       "folderManage": {
         "notes": "Add notes to folder"
+      },
+      "lockModal": {
+        "lock": "Lock note",
+        "password": "Password",
+        "confirm": "Confirm password",
+        "placeholderPass": "type password",
+        "placeholderConfirm": "confirm",
+        "passMatchError": "passwords does not match",
+        "required": "Required field",
+        "minLength": "Password must be at least 6 characters",
+        "incorrect": "Incorrect password"
       }
     },
     "innerNote": {

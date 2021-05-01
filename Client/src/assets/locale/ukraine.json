@@ -48,7 +48,12 @@
       "shared": "Спільні",
       "menu": "Меню",
       "defaultColor": "Звичайний",
-      "emptyTrash": "Очистити кошик"
+      "emptyTrash": "Очистити кошик",
+      "filterMenu": {
+        "dateAsc": "В порядку зростання",
+        "dateDesc": "В порядку спадання",
+        "order": "Свій порядок"
+      }
     },
     "menu": {
       "label": "Ярлик",
@@ -109,6 +114,17 @@
       },
       "folderManage": {
         "notes": "Додати нотаток в папку"
+      },
+      "lockModal": {
+        "lock": "Заблокувати нотаток",
+        "password": "Пароль",
+        "confirm": "Підтвердити пароль",
+        "placeholderPass": "Пароль",
+        "placeholderConfirm": "підтвердження",
+        "passMatchError": "Паролі не співпадають",
+        "required": "Обов'язкове поле",
+        "minLength": "Пароль должен состоять не менее чем из 6 символов",
+        "incorrect": "Невірний пароль"
       }
     },
     "innerNote": {

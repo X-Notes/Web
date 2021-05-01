@@ -16,9 +16,12 @@ export class NotificationComponent {
   @Select(AppStore.getNotifications)
   public notifications$: Observable<AppNotification>;
 
-  constructor(private store: Store) {}
+  @Select(AppStore.getNotificationsLength)
+  public notificationsLen$: Observable<number>;
 
   toggleMessage = true;
+
+  constructor(private store: Store) {}
 
   closeNotification() {
     this.oncloseNotification.emit();

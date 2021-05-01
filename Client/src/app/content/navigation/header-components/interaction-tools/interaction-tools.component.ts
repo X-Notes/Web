@@ -1,8 +1,7 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -37,7 +36,11 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
 
+  @ViewChild('searchInput') searchInput: ElementRef;
+
   isOpenNotification = false;
+
+  isInputFocus = false;
 
   destroy = new Subject<void>();
 
@@ -64,7 +67,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  async ngOnInit() {}
+  ngOnInit = () => {};
 
   closeNotification() {
     this.isOpenNotification = false;
@@ -86,4 +89,23 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ChangeTheme(blackTheme));
     }
   }
+
+  searchData() {
+    if (!this.pService.isWidth600()) {
+      this.isInputFocus = !this.isInputFocus;
+      setTimeout(() => {
+        this.searchInput.nativeElement.focus();
+      });
+    }
+  }
+
+  unFocusSearch() {
+    setTimeout(() => {
+      this.isInputFocus = false;
+    }, 200);
+  }
+
+  check = (value) => {
+    console.log(value);
+  };
 }

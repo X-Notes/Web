@@ -8,6 +8,8 @@ import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { FolderType } from 'src/app/shared/models/folderType';
 import { NoteType } from 'src/app/shared/models/noteType';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { map } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { FolderStore } from '../folders/state/folders-state';
 import { NoteStore } from '../notes/state/notes-state';
 import {
@@ -36,22 +38,38 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
+      isVisible: of(true),
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
+      isVisible: of(true),
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
+      isVisible: of(true),
+    },
+    {
+      icon: 'lock',
+      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
+      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
+      operation: () => this.dialogsManageService.lock(),
+    },
+    {
+      icon: 'unlock',
+      isVisible: this.store.select(NoteStore.isRemoveLock),
+      operation: () => this.dialogsManageService.lock(null, true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -64,10 +82,12 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',
       operation: () => this.setdeleteNotes(),
+      isVisible: of(true),
     },
   ];
 
@@ -75,42 +95,57 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
+      isVisible: of(true),
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
+      isVisible: of(true),
     },
     {
       icon: 'private',
       operation: () => this.makePrivateNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
+      isVisible: of(true),
+    },
+    {
+      icon: 'lock',
+      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
+      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
+      operation: () => this.dialogsManageService.lock(),
+    },
+    {
+      icon: 'unlock',
+      isVisible: this.store.select(NoteStore.isRemoveLock),
+      operation: () => this.dialogsManageService.lock(null, true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
     //   operation: () => 5
     // },
-    // {
-    //   icon: 'lock',
-    //   operation: () => 5
-    // },
     {
       icon: 'archive',
       operation: () => this.archiveNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',
       operation: () => this.setdeleteNotes(),
+      isVisible: of(true),
     },
   ];
 
@@ -132,15 +167,22 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
     },
     {
+      icon: 'lock',
+      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
+      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
+      operation: () => this.dialogsManageService.lock(),
+    },
+    {
+      icon: 'unlock',
+      isVisible: this.store.select(NoteStore.isRemoveLock),
+      operation: () => this.dialogsManageService.lock(null, true),
+    },
+    {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -161,38 +203,52 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
+      isVisible: of(true),
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
+      isVisible: of(true),
     },
     {
       icon: 'private',
       operation: () => this.makePrivateNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
+      isVisible: of(true),
+    },
+    {
+      icon: 'lock',
+      isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
+      isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
+      operation: () => this.dialogsManageService.lock(),
+    },
+    {
+      icon: 'unlock',
+      isVisible: this.store.select(NoteStore.isRemoveLock),
+      operation: () => this.dialogsManageService.lock(null, true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
     //   operation: () => 5
     // },
-    // {
-    //   icon: 'lock',
-    //   operation: () => 5
-    // },
     {
       icon: 'delete',
       operation: () => this.setdeleteNotes(),
+      isVisible: of(true),
     },
   ];
 
@@ -200,14 +256,17 @@ export class MenuButtonsService {
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -220,10 +279,12 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',
       operation: () => this.setDeleteFolders(),
+      isVisible: of(true),
     },
   ];
 
@@ -231,18 +292,22 @@ export class MenuButtonsService {
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'privateFolder',
       operation: () => this.makePrivateFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -255,10 +320,12 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',
       operation: () => this.setDeleteFolders(),
+      isVisible: of(true),
     },
   ];
 
@@ -266,14 +333,17 @@ export class MenuButtonsService {
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -286,14 +356,17 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',
       operation: () => this.deleteFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'restore',
       operation: () => this.makePrivateFolders(),
+      isVisible: of(true),
     },
   ];
 
@@ -301,18 +374,22 @@ export class MenuButtonsService {
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'privateFolder',
       operation: () => this.makePrivateFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -325,6 +402,7 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => this.setDeleteFolders(),
+      isVisible: of(true),
     },
   ];
 
@@ -336,10 +414,12 @@ export class MenuButtonsService {
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
+      isVisible: of(true),
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     {
       icon: 'delete',

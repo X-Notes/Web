@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -8,6 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-interaction-items',
@@ -27,6 +28,8 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   @Select(NoteStore.activeMenu)
   public menuActiveNotes$: Observable<boolean>;
+
+  @ViewChild(MatMenu) menu: MatMenu;
 
   public countSelected: number;
 
@@ -58,11 +61,6 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
         }
       });
   }
-
-  // Modal Windows
-  settingsClick = () => {
-    console.log('settings');
-  };
 
   // Selection
 

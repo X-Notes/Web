@@ -6,6 +6,7 @@ import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';
+import { LockComponent } from 'src/app/shared/modal_components/lock/lock.component';
 import { ManageNotesInFolderComponent } from 'src/app/shared/modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
@@ -65,6 +66,19 @@ export class DialogsManageService {
           : 'custom-dialog-class-dark',
     };
     return this.dialogService.openDialog(ChangeColorComponent, config);
+  }
+
+  lock(id?: string, isRemove?: boolean) {
+    const config: MatDialogConfig = {
+      maxHeight: '100%',
+      maxWidth: '90vw',
+      panelClass:
+        this.getTheme() === ThemeENUM.Light
+          ? 'custom-dialog-class-light'
+          : 'custom-dialog-class-dark',
+      data: { id, isRemove },
+    };
+    return this.dialogService.openDialog(LockComponent, config);
   }
 
   shareEntity() {

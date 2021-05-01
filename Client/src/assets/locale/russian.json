@@ -48,7 +48,12 @@
       "countUsers": "Количество пользователей",
       "menu": "Меню",
       "defaultColor": "Обычный",
-      "emptyTrash": "Очистить корзину"
+      "emptyTrash": "Очистить корзину",
+      "filterMenu": {
+        "dateAsc": "В порядке возрастания",
+        "dateDesc": "В порядке убывания",
+        "order": "Свой порядок"
+      }
     },
     "menu": {
       "label": "Ярлик",
@@ -109,6 +114,17 @@
       },
       "folderManage": {
         "notes": "Добавить заметки в папку"
+      },
+      "lockModal": {
+        "lock": "Заблокировать заметку",
+        "password": "Пароль",
+        "confirm": "Подтвердите пароль",
+        "placeholderPass": "Пароль",
+        "placeholderConfirm": "Подтверждение",
+        "passMatchError": "Пароли не совпадают",
+        "required": "Обязательное поле",
+        "minLength": "Пароль должен состоять не менее чем из 6 символов",
+        "incorrect": "Неправильный пароль"
       }
     },
     "innerNote": {

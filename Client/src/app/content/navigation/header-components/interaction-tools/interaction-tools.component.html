@@ -3,18 +3,31 @@
   class="interactions"
   [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
 >
-  <div class="search">
-    <input
-      id="searchField"
-      type="search"
-      placeholder="{{ 'header.search' | translate }}"
-      aria-label="Search"
-    />
-    <label for="searchField">
-      <div class="icon">
-        <mat-icon svgIcon="search" [inline]="true"></mat-icon>
-      </div>
-    </label>
+  <div class="search-section" #search [ngClass]="isInputFocus ? 'active-search' : ''">
+    <div class="search">
+      <input
+        #searchInput
+        (focus)="isInputFocus = true"
+        (blur)="unFocusSearch()"
+        type="search"
+        placeholder="{{ 'header.search' | translate }}"
+        aria-label="Search"
+      />
+      <button type="button" name="search button" #searchButton (click)="searchData()">
+        <div class="icon">
+          <mat-icon svgIcon="search" [inline]="true"></mat-icon>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="searchButton"></div>
+      </button>
+    </div>
+    <div class="search-suggestion" *ngIf="isInputFocus">
+      <app-search-result
+        #searchResult
+        [type]="'notes'"
+        [results]="[]"
+        (click)="check(searchResult)"
+      ></app-search-result>
+    </div>
   </div>
 
   <div

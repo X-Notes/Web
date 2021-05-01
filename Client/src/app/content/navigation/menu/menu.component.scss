@@ -20,6 +20,16 @@
     height: inherit;
     border-radius: 5px;
     transition: 0.2s ease;
+    background: transparent;
+    border: none;
+    padding: 0;
+    outline: none;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: text;
+    }
 
     &:first-child {
       display: none;
@@ -29,7 +39,6 @@
       display: flex;
       align-items: center;
       height: inherit;
-      cursor: pointer;
 
       p,
       .icon {

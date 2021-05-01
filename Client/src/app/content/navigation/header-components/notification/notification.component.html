@@ -27,7 +27,10 @@
     [appearance]="'compact'"
   >
     <div class="scroll-inner">
-      <div class="notification-action read-all interactions p-sticky">
+      <div
+        class="notification-action read-all interactions p-sticky"
+        *ngIf="notificationsLen$ | async"
+      >
         <button name="read all notifications" type="button" class="generic" #readAll>
           <div class="inner-content">
             <p (click)="readAllMessages()">Read all notifications</p>
@@ -35,31 +38,11 @@
           <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
         </button>
       </div>
-      <div
+      <app-notification-message
         (click)="read(item.id)"
-        class="notification-message"
         *ngFor="let item of notifications$ | async"
-      >
-        <div class="avatar">
-          <img alt="user image" [src]="item.userFromPhotoId | getImage" />
-        </div>
-        <div class="message">
-          <div class="info-message">
-            <div class="info status-new">
-              <p>New</p>
-            </div>
-            <div class="info date">
-              <p>{{ item.date | date : 'd MMM, h:mm' }}</p>
-            </div>
-          </div>
-          <div class="username">
-            <p>{{item.userFromName}}</p>
-          </div>
-          <div class="user-message">
-            <p>{{item.message}}</p>
-          </div>
-        </div>
-      </div>
+        [message]="item"
+      ></app-notification-message>
       <div class="notification-action see-all interactions">
         <button
           (click)="toggleMessage = false"

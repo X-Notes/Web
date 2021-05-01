@@ -99,6 +99,27 @@ export class NoteStore {
   }
 
   @Selector()
+  static getNote(state: NoteState) {
+    return (id: string, type: NoteTypeENUM) => {
+      const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
+      return note;
+    };
+  }
+
+  @Selector()
+  static isRemoveLock(state: NoteState) {
+    if (state.selectedIds.length === 1) {
+      const { 0: id } = state.selectedIds;
+      const note = state.notes
+        .map((x) => x.notes)
+        .reduce((acc, val) => acc.concat(val), [])
+        .find((x) => x.id === id);
+      return note.isLocked;
+    }
+    return false;
+  }
+
+  @Selector()
   static selectedCount(state: NoteState): number {
     return state.selectedIds.length;
   }

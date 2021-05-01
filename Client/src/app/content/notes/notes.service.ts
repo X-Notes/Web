@@ -18,6 +18,7 @@ import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/smallNote';
 import { UpdateColor } from './state/updateColor';
+import { DialogsManageService } from '../navigation/dialogs-manage.service';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -39,6 +40,7 @@ export class NotesService implements OnDestroy {
     private store: Store,
     private murriService: MurriService,
     private router: Router,
+    private dialogsManageService: DialogsManageService,
   ) {
     this.store
       .select(NoteStore.updateColorEvent)
@@ -152,6 +154,10 @@ export class NotesService implements OnDestroy {
     if (isSelectedMode) {
       this.highlightNote(note);
     } else {
+      if (note.isLocked) {
+        this.dialogsManageService.lock(note.id);
+        return;
+      }
       this.router.navigate([`notes/${note.id}`]);
     }
   }

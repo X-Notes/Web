@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Subject, Observable, BehaviorSubject } from 'rxjs';
+import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { Subject, Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { FontSize } from '../models/FontSize';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
+import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs/operators';
+import { FontSize } from '../models/FontSize';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -87,6 +89,24 @@ export const photoInit = trigger('photoInit', [
   transition('* => loaded', [animate('0.3s ease-out')]),
 ]);
 
+export const shake = trigger('shake', [
+  transition(
+    ':enter',
+    animate(
+      '800ms ease',
+      keyframes([
+        style({ transform: 'translate3d(-1px, 0, 0)', offset: 0.1 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.2 }),
+        style({ transform: 'translate3d(-2px, 0, 0)', offset: 0.3 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.4 }),
+        style({ transform: 'translate3d(-2px, 0, 0)', offset: 0.7 }),
+        style({ transform: 'translate3d(2px, 0, 0)', offset: 0.8 }),
+        style({ transform: 'translate3d(-1px, 0, 0)', offset: 0.9 }),
+      ]),
+    ),
+  ),
+]);
+
 @Injectable({
   providedIn: 'root',
 })
@@ -122,7 +142,11 @@ export class PersonalizationService {
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
-  constructor(public lockEncryptService: LockEncryptService) {}
+  constructor(public lockEncryptService: LockEncryptService, private translate: TranslateService) {}
+
+  async getTranslateText(key) {
+    return this.translate.get(key).pipe(take(1)).toPromise();
+  }
 
   onResize(): void {
     if (this.check()) {
@@ -177,9 +201,6 @@ export class PersonalizationService {
   }
 
   async toggleHistoryMethod() {
-    await this.lockEncryptService
-      .dencryptNote('e29452f7-e248-4e74-b326-6c1bae23dec0', '22')
-      .toPromise();
     this.toggleHistory = !this.toggleHistory;
   }
 
@@ -189,6 +210,10 @@ export class PersonalizationService {
 
   checkWidth = () => {
     return !!(window.innerWidth > 1024 && window.innerWidth <= 1440);
+  };
+
+  isWidth600 = () => {
+    return window.innerWidth >= 600;
   };
 
   waitPreloading() {

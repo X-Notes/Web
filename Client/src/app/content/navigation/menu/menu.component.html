@@ -1,19 +1,22 @@
 <div appTheme class="wrap" [ngClass]="[(isNoteInner$ | async) ? 'mobile-menu' : '']">
-  <div
-    class="button-icon"
-    *ngFor="let item of buttonService.items"
-    #trigger
-    (click)="item.operation()"
-    CustomTooltip="{{ 'menu.' + item.icon | translate }}"
-    position="Bottom"
-    flagDisable="{{ disableTooltpUser() }}"
-  >
-    <div class="inner">
-      <div class="icon" *ngIf="item.icon !== 'history'">
-        <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
+  <ng-container *ngFor="let item of buttonService.items">
+    <button
+      class="button-icon"
+      #trigger
+      (click)="item.operation()"
+      CustomTooltip="{{ 'menu.' + item.icon | translate }}"
+      position="Bottom"
+      [disabled]="item?.isActive | async"
+      *ngIf="(item?.isVisible | async) === (true || undefined || null)"
+      flagDisable="{{ disableTooltpUser() }}"
+    >
+      <div class="inner">
+        <div class="icon" *ngIf="item.icon !== 'history'">
+          <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
+        </div>
+        <p>{{ 'menu.' + item.icon | translate }}</p>
+        <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
       </div>
-      <p>{{ 'menu.' + item.icon | translate }}</p>
-      <div class="ripple-container" matRipple [matRippleTrigger]="trigger"></div>
-    </div>
-  </div>
+    </button>
+  </ng-container>
 </div>
