@@ -218,6 +218,8 @@ namespace WriteAPI.ConfigureAPP
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
+            services.AddScoped<IRequestHandler<GetNotesAndFolderForSearch, SearchNoteFolderResult>, SeachQueryHandler>();
+
 
             //Files
             services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
@@ -235,6 +237,7 @@ namespace WriteAPI.ConfigureAPP
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
             Console.WriteLine(writeConnection);
+
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
 
             // NOTIFICATIONS 
@@ -271,6 +274,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<DocumentNoteRepository>();
             services.AddScoped<TextNotesRepository>();
             services.AddScoped<BaseNoteContentRepository>();
+            services.AddScoped<SearchRepository>();
 
             // History
             services.AddScoped<NoteHistoryRepository>();

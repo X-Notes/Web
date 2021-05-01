@@ -136,10 +136,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     });
 
-    this.store
-      .select(FolderStore.full)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (folder) => this.routeChangeFullFolder(folder));
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
   }
@@ -187,33 +183,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
     });
-  }
-
-  routeChangeFullFolder(folder: FullFolder) {
-    if (!folder) {
-      return;
-    }
-    switch (folder.folderType.name) {
-      case FolderTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
-        break;
-      }
-      case FolderTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
-        break;
-      }
-      case FolderTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
-        break;
-      }
-      case FolderTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
   }
 
   async loadFolder() {

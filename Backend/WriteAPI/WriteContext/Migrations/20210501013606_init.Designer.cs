@@ -10,8 +10,8 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210423221213_changeNameLocation")]
-    partial class changeNameLocation
+    [Migration("20210501013606_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,12 @@ namespace WriteContext.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Path")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecognizeObject")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TextFromPhoto")
                         .HasColumnType("text");
 
                     b.Property<string>("Type")
@@ -299,11 +305,17 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("NoteTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("RefTypeId")
                         .HasColumnType("uuid");
@@ -384,6 +396,39 @@ namespace WriteContext.Migrations
                             Id = new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"),
                             Name = "archive"
                         });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSystemMessage")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserFromId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserToId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserFromId");
+
+                    b.HasIndex("UserToId");
+
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
@@ -815,6 +860,24 @@ namespace WriteContext.Migrations
                     b.Navigation("Note");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Notification", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.User", "UserFrom")
+                        .WithMany("NotificationsFrom")
+                        .HasForeignKey("UserFromId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Common.DatabaseModels.models.User", "UserTo")
+                        .WithMany("NotificationsTo")
+                        .HasForeignKey("UserToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserFrom");
+
+                    b.Navigation("UserTo");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.NotificationSetting", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.User", "User")
@@ -1120,6 +1183,10 @@ namespace WriteContext.Migrations
                     b.Navigation("Notes");
 
                     b.Navigation("NotificationSettings");
+
+                    b.Navigation("NotificationsFrom");
+
+                    b.Navigation("NotificationsTo");
 
                     b.Navigation("UserOnNotes");
 

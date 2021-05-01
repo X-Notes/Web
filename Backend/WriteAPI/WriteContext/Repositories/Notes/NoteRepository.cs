@@ -76,13 +76,13 @@ namespace WriteContext.Repositories.Notes
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
 
+
         public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, Guid typeId)
         {
             return await context.Notes
                 .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
         }
-
 
         public async Task<Note> GetNoteByUserIdAndTypeIdForCopy(Guid noteId)
         {
