@@ -66,7 +66,9 @@ namespace BI.signalR
         public async Task JoinUserToNote(Guid parsedNoteId, Guid userId) // TODO MAKE THIS FOR FOLDER
         {
             var existUser = await usersOnPrivateNotesRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
-            if (existUser == null)
+            var note = await noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+            var isCanAdd = (note.UserId != userId) && existUser == null;
+            if (isCanAdd)
             {
                 var refTypeNote = await this.noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
                 var connectUser = new UserOnPrivateNotes()

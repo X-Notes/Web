@@ -155,8 +155,7 @@ namespace BI.services.sharing
                 await this.notificationRepository.Add(notification);
 
                 var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                var notificationDTO = new NotificationDTO(notification);
-                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                await appSignalRHub.SendNewNotification(receiver.Email, true);
             }
 
             return Unit.Value;
@@ -199,8 +198,7 @@ namespace BI.services.sharing
                 await this.notificationRepository.Add(notification);
 
                 var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                var notificationDTO = new NotificationDTO(notification);
-                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                await appSignalRHub.SendNewNotification(receiver.Email, true);
 
             }
             return Unit.Value;
@@ -230,8 +228,7 @@ namespace BI.services.sharing
                     await this.notificationRepository.Add(notification);
 
                     var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                    var notificationDTO = new NotificationDTO(notification);
-                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
             return Unit.Value;
@@ -261,8 +258,7 @@ namespace BI.services.sharing
                     await this.notificationRepository.Add(notification);
 
                     var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                    var notificationDTO = new NotificationDTO(notification);
-                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
             return Unit.Value;
@@ -294,13 +290,11 @@ namespace BI.services.sharing
 
                 await this.notificationRepository.AddRange(notifications);
 
-                notifications.ToList()
-                    .ForEach(async (not) =>
-                    {
-                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
-                        var notificationDTO = new NotificationDTO(not);
-                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
-                    });
+                foreach (var notification in notifications)
+                {
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == notification.UserToId);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                }
             }
 
             return Unit.Value;
@@ -331,13 +325,11 @@ namespace BI.services.sharing
 
                 await this.notificationRepository.AddRange(notifications);
 
-                notifications.ToList()
-                    .ForEach(async(not) =>
-                    {
-                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
-                        var notificationDTO = new NotificationDTO(not);
-                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
-                    });
+                foreach(var notification in notifications)
+                {
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == notification.UserToId);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                }
             }
 
             return Unit.Value;

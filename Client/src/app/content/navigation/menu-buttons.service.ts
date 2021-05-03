@@ -195,6 +195,11 @@ export class MenuButtonsService {
       isVisible: of(true),
     },
     {
+      icon: 'delete',
+      operation: () => this.deleteNotes(),
+      isVisible: of(true),
+    },
+    {
       icon: 'restore',
       operation: () => this.makePrivateNotes(),
       isVisible: of(true),
@@ -373,6 +378,11 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveFolders(),
+      isVisible: of(true),
+    },
+    {
+      icon: 'delete',
+      operation: () => this.deleteFolders(),
       isVisible: of(true),
     },
     {

@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
 import { AppNotification } from './models/app-notification';
-import { NewNotification } from './stateApp/app-action';
+import { LoadNotifications, NewNotification } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 
 @Injectable({
@@ -47,9 +47,7 @@ export class SignalRService {
       .then(() => console.log('Connection started'))
       .catch((err) => console.log(`Error while starting connection: ${err}`));
 
-    this.hubConnection.on('newNotification', (notifcationDTO: AppNotification) =>
-      this.store.dispatch(new NewNotification(notifcationDTO)),
-    );
+    this.hubConnection.on('newNotification', () => this.store.dispatch(LoadNotifications));
 
     this.hubConnection.on('updateOnlineUsers', (noteId: string) => {
       this.store.dispatch(new LoadOnlineUsersOnNote(noteId));

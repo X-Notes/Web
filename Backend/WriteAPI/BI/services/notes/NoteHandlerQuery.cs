@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.helpers;
 using BI.Mapping;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
@@ -72,7 +73,8 @@ namespace BI.services.notes
                     var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
                     var sharedNotes = await noteRepository.GetNotesByIdsWithContent(notesIds);
                     notes.AddRange(sharedNotes);
-                    notes = notes.OrderByDescending(x => x.UpdatedAt).ToList(); 
+                    notes = notes.DistinctBy(x => x.Id).ToList();
+                    notes = notes.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
                 notes.ForEach(x => x.Contents = x.Contents.OrderBy(x => x.Order).ToList());

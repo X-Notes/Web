@@ -16,9 +16,9 @@ namespace BI.signalR
             this.context = context;
         }
 
-        public async Task SendNewNotification(string receiverEmail, NotificationDTO notification)
+        public async Task SendNewNotification(string receiverEmail, bool flag)
         {
-            await context.Clients.User(receiverEmail).SendAsync("newNotification", notification);
+            await context.Clients.User(receiverEmail).SendAsync("newNotification", flag);
         }
     }
 }

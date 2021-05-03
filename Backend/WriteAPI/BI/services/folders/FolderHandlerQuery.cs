@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.helpers;
 using BI.Mapping;
 using Common.DatabaseModels.models;
 using Common.DTO.folders;
@@ -59,6 +60,7 @@ namespace BI.services.folders
                     var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);
                     var sharedFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(foldersIds);
                     folders.AddRange(sharedFolders);
+                    folders = folders.DistinctBy(x => x.Id).ToList();
                     folders = folders.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
