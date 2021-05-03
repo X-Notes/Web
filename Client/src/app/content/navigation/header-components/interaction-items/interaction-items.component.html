@@ -22,6 +22,7 @@
 ></app-general-header-button>
 
 <app-general-header-button
+  *ngIf="isActionFilterButton$ | async"
   [matMenuTriggerFor]="menu"
   [tooltipMessage]="('header.filter' | translate)"
   [tooltipPosition]="'Bottom'"
