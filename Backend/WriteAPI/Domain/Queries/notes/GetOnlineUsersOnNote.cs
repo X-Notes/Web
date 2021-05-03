@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Domain.Queries.notes
 {
-    public class GetOnlineUsersOnNote: IRequest<List<OnlineUserOnNote>>
+    public class GetOnlineUsersOnNote: BaseQueryEntity, IRequest<List<OnlineUserOnNote>>
     {
         public Guid Id { set; get; }
         public GetOnlineUsersOnNote(Guid id)

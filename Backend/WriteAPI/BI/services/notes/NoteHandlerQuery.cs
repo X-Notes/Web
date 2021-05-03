@@ -103,8 +103,14 @@ namespace BI.services.notes
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
         {
-            var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
-            return mapper.Map<List<OnlineUserOnNote>>(users);
+            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var permissions = await _mediator.Send(command);
+            if(permissions.CanRead)
+            {
+                var users = await userOnNoteRepository.GetUsersOnlineUserOnNote(request.Id);
+                return mapper.Map<List<OnlineUserOnNote>>(users);
+            }
+            return new List<OnlineUserOnNote>();
         }
 
         public async Task<List<BaseContentNoteDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)

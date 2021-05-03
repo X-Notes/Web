@@ -116,6 +116,12 @@ export class GetInvitedUsersToNote {
   constructor(public noteId: string) {}
 }
 
+export class LoadOnlineUsersOnNote {
+  static type = '[Notes] Get OnlineUsersOnNote';
+
+  constructor(public noteId: string) {}
+}
+
 // SELECTION
 export class SelectIdNote {
   static type = '[Notes] Select note';

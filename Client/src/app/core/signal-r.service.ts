@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
+import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
 import { AppNotification } from './models/app-notification';
 import { NewNotification } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
@@ -16,6 +17,22 @@ export class SignalRService {
 
   init() {
     this.startConnection();
+  }
+
+  async joinNote(noteId: string) {
+    try {
+      await this.hubConnection.invoke('JoinNote', noteId);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async leaveNote(noteId: string) {
+    try {
+      await this.hubConnection.invoke('LeaveNote', noteId);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   private startConnection = () => {
@@ -33,5 +50,9 @@ export class SignalRService {
     this.hubConnection.on('newNotification', (notifcationDTO: AppNotification) =>
       this.store.dispatch(new NewNotification(notifcationDTO)),
     );
+
+    this.hubConnection.on('updateOnlineUsers', (noteId: string) => {
+      this.store.dispatch(new LoadOnlineUsersOnNote(noteId));
+    });
   };
 }

@@ -31,35 +31,33 @@ namespace BI.signalR
         public async Task JoinNote(string noteId)
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
-            if (user != null && Guid.TryParse(noteId, out var guid))
+            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, guid);
+                var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, parsedNoteId);
                 if(existUser == null)
                 {
                     var connectUser = new UserOnNoteNow()
                     {
                         UserId = user.Id,
-                        NoteId = guid
+                        NoteId = parsedNoteId
                     };
                     await userOnNoteRepository.Add(connectUser);
                 }
+                await Groups.AddToGroupAsync(Context.ConnectionId, noteId);
+                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
             }
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, noteId.ToString());
         }
 
         public async Task LeaveNote(string noteId)
         {
-            /*
-            Console.WriteLine(new string('-', 30));
-            Console.WriteLine("Leave");           
-            Console.WriteLine(Context.ConnectionId);
-            Console.WriteLine(noteId);
-            Console.WriteLine(Context.UserIdentifier);
-            Console.WriteLine();
-            */
-
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId.ToString());
+            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
+            {
+                await userOnNoteRepository.RemoveFromOnline(user.Id);
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId);
+                Console.WriteLine("updateOnlineUsers LeaveNote");
+                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
+            }
         }
 
         public override Task OnConnectedAsync()
@@ -69,12 +67,6 @@ namespace BI.signalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
-            if (user != null)
-            {
-                await userOnNoteRepository.RemoveFromOnline(user.Id);
-            }
-
             await base.OnDisconnectedAsync(exception);
         }
     }

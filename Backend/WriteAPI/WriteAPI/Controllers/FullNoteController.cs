@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes.FullNoteContent;
+using Common.DTO.users;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
@@ -175,6 +176,13 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+        [HttpGet("users/{id}")]
+        public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
+        {
+            var query = new GetOnlineUsersOnNote(id);
+            query.Email = this.GetUserEmail();
+            return await _mediator.Send(query);
+        }
 
     }
 

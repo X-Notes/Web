@@ -24,9 +24,12 @@ namespace WriteContext.Repositories.Notes
 
         public async Task RemoveFromOnline(Guid userId)
         {
-            var connectionsds = await contextDB.UserOnNoteNow.Where(x => x.UserId == userId).ToListAsync();
-            contextDB.UserOnNoteNow.RemoveRange(connectionsds);
-            await contextDB.SaveChangesAsync();
+            var users = await contextDB.UserOnNoteNow.Where(x => x.UserId == userId).ToListAsync();
+            if(users.Any())
+            {
+                contextDB.UserOnNoteNow.RemoveRange(users);
+                await contextDB.SaveChangesAsync();
+            }
         }
 
         public async Task<List<User>> GetUsersOnlineUserOnNote(Guid noteId)

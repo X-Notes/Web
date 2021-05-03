@@ -11,7 +11,7 @@
     (click)="showUsers()"
     #userCircle
   >
-    <p>8</p>
+    <p>{{(onlineUsers$ | async).length}}</p>
     <div class="ripple-container" matRipple [matRippleTrigger]="userCircle"></div>
   </div>
   <ng-scrollbar
@@ -27,18 +27,15 @@
     <div class="people-editing" #heightPeople>
       <div
         class="person"
-        *ngFor="let item of user"
-        CustomTooltip="{{item}}"
+        *ngFor="let item of onlineUsers$ | async"
+        CustomTooltip="{{item.name}}"
         position="Bottom"
         flagDisable="{{ disableTooltpUser() }}"
       >
         <div class="inner-person">
-          <img
-            src="https://aif-s3.aif.ru/images/018/931/90c365f50b5b311c39ea69d3e4d84345.jpg"
-            alt="contributor"
-          />
+          <img [src]="item.photoId | getImage" alt="contributor" />
         </div>
-        <p>12321321321333333333333333333333333333333333333333333333333</p>
+        <p>{{item.name}}</p>
       </div>
     </div>
   </ng-scrollbar>
