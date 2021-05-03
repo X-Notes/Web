@@ -138,6 +138,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
+    this.pService.onResize();
   }
 
   initHeaderButtonSubscribe() {
