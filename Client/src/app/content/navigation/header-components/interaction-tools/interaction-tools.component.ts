@@ -1,9 +1,12 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -38,9 +41,15 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
 
   @ViewChild('searchInput') searchInput: ElementRef;
 
+  searchStrChanged: Subject<string> = new Subject<string>();
+
+  searchResult = [];
+
   isOpenNotification = false;
 
   isInputFocus = false;
+
+  searchStr: string;
 
   destroy = new Subject<void>();
 
@@ -59,6 +68,7 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
+    private router: Router,
     private searchService: SearchService,
   ) {}
 
@@ -67,7 +77,21 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  ngOnInit = () => {};
+  ngOnInit() {
+    this.searchStrChanged
+      .pipe(debounceTime(searchDelay), distinctUntilChanged())
+      .subscribe(async (searchStr) => {
+        if (searchStr?.length > 2) {
+          const items = await this.searchService.searchNotesAndFolder(searchStr).toPromise();
+          const notes = items.noteSearchs.map((x) => ({ ...x, type: 'notes' }));
+          const folders = items.folderSearchs.map((x) => ({ ...x, type: 'folders' }));
+          this.searchResult = [...notes, ...folders];
+          console.log(this.searchResult);
+        } else {
+          this.searchResult = [];
+        }
+      });
+  }
 
   closeNotification() {
     this.isOpenNotification = false;
@@ -105,7 +129,11 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
     }, 200);
   }
 
-  check = (value) => {
-    console.log(value);
-  };
+  goTo(id: string, type: string) {
+    if (type === 'notes') {
+      this.router.navigateByUrl(`notes/${id}`);
+      return;
+    }
+    this.router.navigateByUrl(`folders/${id}`);
+  }
 }

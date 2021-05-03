@@ -9,6 +9,8 @@
         #searchInput
         (focus)="isInputFocus = true"
         (blur)="unFocusSearch()"
+        (ngModelChange)="searchStrChanged.next($event)"
+        [ngModel]="searchStr"
         type="search"
         placeholder="{{ 'header.search' | translate }}"
         aria-label="Search"
@@ -21,12 +23,15 @@
       </button>
     </div>
     <div class="search-suggestion" *ngIf="isInputFocus">
-      <app-search-result
-        #searchResult
-        [type]="'notes'"
-        [results]="[]"
-        (click)="check(searchResult)"
-      ></app-search-result>
+      <div class="results">
+        <app-search-result
+          #searchResult
+          *ngFor="let item of searchResult"
+          [type]="item.type"
+          [name]="item.name"
+          (click)="goTo(item.id, item.type)"
+        ></app-search-result>
+      </div>
     </div>
   </div>
 

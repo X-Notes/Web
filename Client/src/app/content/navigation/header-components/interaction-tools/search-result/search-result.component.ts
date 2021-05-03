@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./search-result.component.scss'],
 })
 export class SearchResultComponent {
-  @Input() results: [];
+  @Input() name: string;
 
   @Input() type: string;
 }
