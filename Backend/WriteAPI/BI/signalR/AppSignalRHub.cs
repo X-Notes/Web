@@ -5,6 +5,7 @@ using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Notes;
@@ -33,7 +34,7 @@ namespace BI.signalR
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, parsedNoteId);
+                var existUser = await userOnNoteRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == user.Id);
                 if(existUser == null)
                 {
                     var connectUser = new UserOnNoteNow()
@@ -53,9 +54,12 @@ namespace BI.signalR
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                await userOnNoteRepository.RemoveFromOnline(user.Id);
+                var users = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                if(users.Any())
+                {
+                    await userOnNoteRepository.RemoveRange(users);
+                }
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId);
-                Console.WriteLine("updateOnlineUsers LeaveNote");
                 await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
             }
         }
@@ -67,6 +71,21 @@ namespace BI.signalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            if (user != null)
+            {
+                var connections = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                if(connections.Any())
+                {
+                    await userOnNoteRepository.RemoveRange(connections);
+                    foreach(var connection in connections)
+                    {
+                        var stringConnection = connection.NoteId.ToString();
+                        await Clients.Group(stringConnection).SendAsync("updateOnlineUsers", stringConnection);
+                    }
+                }
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
     }

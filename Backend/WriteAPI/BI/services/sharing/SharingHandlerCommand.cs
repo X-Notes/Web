@@ -125,7 +125,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                var access = await this.usersOnPrivateFoldersRepository
+                    .FirstOrDefault( x=> x.UserId == request.UserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
@@ -168,7 +169,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                var access = await this.usersOnPrivateNotesRepository
+                    .FirstOrDefault(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
@@ -211,7 +213,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                var access = await this.usersOnPrivateFoldersRepository
+                    .FirstOrDefault(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
                     await this.usersOnPrivateFoldersRepository.Remove(access);
@@ -241,7 +244,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                var access = await this.usersOnPrivateNotesRepository
+                    .FirstOrDefault(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
                 if (access != null)
                 {
                     await this.usersOnPrivateNotesRepository.Remove(access);
