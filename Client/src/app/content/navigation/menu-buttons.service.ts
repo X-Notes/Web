@@ -157,14 +157,17 @@ export class MenuButtonsService {
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
+      isVisible: of(true),
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
+      isVisible: of(true),
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'lock',
@@ -180,6 +183,7 @@ export class MenuButtonsService {
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
+      isVisible: of(true),
     },
     // {
     //   icon: 'download',
@@ -188,14 +192,12 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => this.archiveNotes(),
-    },
-    {
-      icon: 'delete',
-      operation: () => this.deleteNotes(),
+      isVisible: of(true),
     },
     {
       icon: 'restore',
       operation: () => this.makePrivateNotes(),
+      isVisible: of(true),
     },
   ];
 
@@ -254,6 +256,11 @@ export class MenuButtonsService {
 
   public foldersItemsPrivate: MenuItem[] = [
     {
+      icon: 'history',
+      operation: () => 5,
+      isVisible: of(true),
+    },
+    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
@@ -289,6 +296,11 @@ export class MenuButtonsService {
   ];
 
   public foldersItemsShared: MenuItem[] = [
+    {
+      icon: 'history',
+      operation: () => 5,
+      isVisible: of(true),
+    },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
@@ -331,6 +343,11 @@ export class MenuButtonsService {
 
   public foldersItemsDeleted: MenuItem[] = [
     {
+      icon: 'history',
+      operation: () => 5,
+      isVisible: of(true),
+    },
+    {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
@@ -359,11 +376,6 @@ export class MenuButtonsService {
       isVisible: of(true),
     },
     {
-      icon: 'delete',
-      operation: () => this.deleteFolders(),
-      isVisible: of(true),
-    },
-    {
       icon: 'restore',
       operation: () => this.makePrivateFolders(),
       isVisible: of(true),
@@ -371,6 +383,11 @@ export class MenuButtonsService {
   ];
 
   public foldersItemsArchive: MenuItem[] = [
+    {
+      icon: 'history',
+      operation: () => 5,
+      isVisible: of(true),
+    },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
@@ -408,10 +425,6 @@ export class MenuButtonsService {
 
   public foldersItemsInner: MenuItem[] = [
     {
-      icon: 'history',
-      operation: () => 5,
-    },
-    {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
@@ -424,6 +437,7 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => console.log('TODO'),
+      isVisible: of(false),
     },
   ];
 

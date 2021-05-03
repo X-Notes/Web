@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WriteContext.Repositories;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
@@ -31,9 +32,11 @@ namespace BI.services.notes
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
         private readonly AppCustomMapper noteCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
+        private readonly AppRepository appRepository;
         public NoteHandlerQuery(
             IMapper mapper, 
             NoteRepository noteRepository, 
@@ -41,7 +44,9 @@ namespace BI.services.notes
             UserOnNoteRepository userOnNoteRepository,
             AppCustomMapper noteCustomMapper,
             IMediator _mediator,
-            BaseNoteContentRepository baseNoteContentRepository)
+            BaseNoteContentRepository baseNoteContentRepository,
+            AppRepository appRepository,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
@@ -50,13 +55,26 @@ namespace BI.services.notes
             this.noteCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
+            this.appRepository = appRepository;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
-                var notes = await noteRepository.GetNotesByUserIdAndTypeId(user.Id, request.TypeId);
+                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId);
+                var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
+
+                if(type.Id == request.TypeId)
+                {
+                    var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhere(x => x.UserId == user.Id);
+                    var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
+                    var sharedNotes = await noteRepository.GetNotesByIdsWithContent(notesIds);
+                    notes.AddRange(sharedNotes);
+                    notes = notes.OrderByDescending(x => x.UpdatedAt).ToList(); 
+                }
+
                 notes.ForEach(x => x.Contents = x.Contents.OrderBy(x => x.Order).ToList());
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes, takeContentLength: 2);

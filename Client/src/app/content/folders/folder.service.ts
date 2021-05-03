@@ -73,13 +73,17 @@ export class FolderService implements OnDestroy {
     this.destroy.complete();
   }
 
-  murriInitialise(refElements: QueryList<ElementRef>, folderType: FolderTypeENUM) {
+  murriInitialise(
+    refElements: QueryList<ElementRef>,
+    folderType: FolderTypeENUM,
+    isDragEnabled: boolean = true,
+  ) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.folders.length && this.folders.length !== 0 && !this.firstInitedMurri) {
         const type = this.store
           .selectSnapshot(AppStore.getFolderTypes)
           .find((x) => x.name === folderType);
-        this.murriService.initMurriFolder(type);
+        this.murriService.initMurriFolder(type, isDragEnabled);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }

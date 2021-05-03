@@ -16,11 +16,19 @@ namespace BI.signalR
     public class AppSignalRHub : Hub
     {
         private readonly UserRepository userRepository;
+        private readonly NoteRepository noteRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
-        public AppSignalRHub(UserRepository userRepository, UserOnNoteRepository userOnNoteRepository)
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+        public AppSignalRHub(
+            UserRepository userRepository, 
+            UserOnNoteRepository userOnNoteRepository,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+            NoteRepository noteRepository)
         {
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;;
+            this.noteRepository = noteRepository;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -34,20 +42,43 @@ namespace BI.signalR
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                var existUser = await userOnNoteRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == user.Id);
-                if(existUser == null)
-                {
-                    var connectUser = new UserOnNoteNow()
-                    {
-                        UserId = user.Id,
-                        NoteId = parsedNoteId
-                    };
-                    await userOnNoteRepository.Add(connectUser);
-                }
+                await TryToSetAsOnline(parsedNoteId, user.Id);
+                await JoinUserToNote(parsedNoteId, user.Id);
                 await Groups.AddToGroupAsync(Context.ConnectionId, noteId);
                 await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
             }
         }
+
+        public async Task TryToSetAsOnline(Guid parsedNoteId, Guid userId)
+        {
+            var existUser = await userOnNoteRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            if (existUser == null)
+            {
+                var connectUser = new UserOnNoteNow()
+                {
+                    UserId = userId,
+                    NoteId = parsedNoteId
+                };
+                await userOnNoteRepository.Add(connectUser);
+            }
+        }
+
+        public async Task JoinUserToNote(Guid parsedNoteId, Guid userId) // TODO MAKE THIS FOR FOLDER
+        {
+            var existUser = await usersOnPrivateNotesRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            if (existUser == null)
+            {
+                var refTypeNote = await this.noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+                var connectUser = new UserOnPrivateNotes()
+                {
+                    UserId = userId,
+                    NoteId = parsedNoteId,
+                    AccessTypeId = refTypeNote.RefTypeId
+                };
+                await usersOnPrivateNotesRepository.Add(connectUser);
+            }
+        }
+
 
         public async Task LeaveNote(string noteId)
         {
