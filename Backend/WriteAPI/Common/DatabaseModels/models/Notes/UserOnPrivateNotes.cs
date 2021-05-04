@@ -1,11 +1,14 @@
 ﻿using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.models.Notes
 {
-    public class UserOnPrivateNotes
+    public class UserOnPrivateNotes : BaseEntity
     {
+        [NotMapped]
+        public override Guid Id { set; get; }
         public Guid UserId { set; get; }
         public User User { set; get; }
 

@@ -157,6 +157,11 @@ export class AppStore {
   }
 
   @Selector()
+  static isActionFilterButton(state: AppState): boolean {
+    return state.routing !== EntityType.NoteShared && state.routing !== EntityType.FolderShared;
+  }
+
+  @Selector()
   static getName(state: AppState): string {
     switch (state.routing) {
       case EntityType.FolderPrivate: {

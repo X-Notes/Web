@@ -189,8 +189,6 @@ export class ShareComponent implements OnInit, OnDestroy {
       .subscribe(async (searchStr) => {
         if (searchStr?.length > 2) {
           const users = await this.searchService.searchUsers(searchStr).toPromise();
-          // eslint-disable-next-line no-return-assign
-          users.forEach((user) => (user.photoId = 'ce30aed7-2426-4e4e-bae4-30cd1a286792')); // TODO CHANGE
           this.searchUsers = this.userFilters(users);
         } else {
           this.searchUsers = [];

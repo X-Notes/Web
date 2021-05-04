@@ -131,14 +131,14 @@ export class MurriService {
   /// ///////////////////////////////////
 
   /// FOLDERS
-  initMurriFolder(type: FolderType) {
+  initMurriFolder(type: FolderType, isDragEnabled: boolean = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;
     }
 
-    this.gridSettings(gridItemName, gridElement, true);
+    this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item) => {
       console.log(item._element.id);
       const order: Order = {

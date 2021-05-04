@@ -70,12 +70,12 @@ namespace BI.services.sharing
         {
             var user = await userRepository.GetUserWithFolders(request.Email);
             var folder = user.Folders.Where(x => request.Id == x.Id).FirstOrDefault();
-            var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
             if (folder != null)
             {
                 folder.RefTypeId = request.RefTypeId;
                 if (folder.FolderType.Name != ModelsNaming.SharedFolder)
                 {
+                    var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
                     var foldersList = new List<Folder>() { folder };
                     await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, type.Id);
                 }
@@ -96,12 +96,12 @@ namespace BI.services.sharing
         {
             var user = await userRepository.GetUserWithNotes(request.Email);
             var note = user.Notes.Where(x => request.Id == x.Id).FirstOrDefault();
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
             if (note != null)
             {
                 note.RefTypeId = request.RefTypeId;
                 if (note.NoteType.Name != ModelsNaming.SharedNote)
                 {
+                    var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
                     var notesList = new List<Note>() { note };
                     await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, type.Id);
                 }
@@ -125,7 +125,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                var access = await this.usersOnPrivateFoldersRepository
+                    .FirstOrDefault( x=> x.UserId == request.UserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
@@ -154,8 +155,7 @@ namespace BI.services.sharing
                 await this.notificationRepository.Add(notification);
 
                 var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                var notificationDTO = new NotificationDTO(notification);
-                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                await appSignalRHub.SendNewNotification(receiver.Email, true);
             }
 
             return Unit.Value;
@@ -168,7 +168,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                var access = await this.usersOnPrivateNotesRepository
+                    .FirstOrDefault(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
@@ -197,8 +198,7 @@ namespace BI.services.sharing
                 await this.notificationRepository.Add(notification);
 
                 var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                var notificationDTO = new NotificationDTO(notification);
-                await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                await appSignalRHub.SendNewNotification(receiver.Email, true);
 
             }
             return Unit.Value;
@@ -211,7 +211,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateFoldersRepository.GetById(request.UserId, request.FolderId);
+                var access = await this.usersOnPrivateFoldersRepository
+                    .FirstOrDefault(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
                     await this.usersOnPrivateFoldersRepository.Remove(access);
@@ -227,8 +228,7 @@ namespace BI.services.sharing
                     await this.notificationRepository.Add(notification);
 
                     var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                    var notificationDTO = new NotificationDTO(notification);
-                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
             return Unit.Value;
@@ -241,7 +241,8 @@ namespace BI.services.sharing
 
             if (permissions.IsOwner)
             {
-                var access = await this.usersOnPrivateNotesRepository.GetByUserIdAndNoteId(request.UserId, request.NoteId);
+                var access = await this.usersOnPrivateNotesRepository
+                    .FirstOrDefault(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
                 if (access != null)
                 {
                     await this.usersOnPrivateNotesRepository.Remove(access);
@@ -257,8 +258,7 @@ namespace BI.services.sharing
                     await this.notificationRepository.Add(notification);
 
                     var receiver = await userRepository.FirstOrDefault(x => x.Id == request.UserId);
-                    var notificationDTO = new NotificationDTO(notification);
-                    await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
                 }
             }
             return Unit.Value;
@@ -290,13 +290,11 @@ namespace BI.services.sharing
 
                 await this.notificationRepository.AddRange(notifications);
 
-                notifications.ToList()
-                    .ForEach(async (not) =>
-                    {
-                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
-                        var notificationDTO = new NotificationDTO(not);
-                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
-                    });
+                foreach (var notification in notifications)
+                {
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == notification.UserToId);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                }
             }
 
             return Unit.Value;
@@ -327,13 +325,11 @@ namespace BI.services.sharing
 
                 await this.notificationRepository.AddRange(notifications);
 
-                notifications.ToList()
-                    .ForEach(async(not) =>
-                    {
-                        var receiver = await userRepository.FirstOrDefault(x => x.Id == not.UserToId);
-                        var notificationDTO = new NotificationDTO(not);
-                        await appSignalRHub.SendNewNotification(receiver.Email, notificationDTO);
-                    });
+                foreach(var notification in notifications)
+                {
+                    var receiver = await userRepository.FirstOrDefault(x => x.Id == notification.UserToId);
+                    await appSignalRHub.SendNewNotification(receiver.Email, true);
+                }
             }
 
             return Unit.Value;

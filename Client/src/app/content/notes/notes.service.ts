@@ -124,7 +124,20 @@ export class NotesService implements OnDestroy {
         const type = this.store
           .selectSnapshot(AppStore.getNoteTypes)
           .find((x) => x.name === noteType);
-        this.murriService.initMurriNote(type, !this.isFiltedMode());
+        this.murriService.initMurriNote(type, !this.isFiltedMode);
+        await this.murriService.setOpacityFlagAsync();
+        this.firstInitedMurri = true;
+      }
+    });
+  }
+
+  murriInitialiseShared(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
+    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
+      if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
+        const type = this.store
+          .selectSnapshot(AppStore.getNoteTypes)
+          .find((x) => x.name === noteType);
+        this.murriService.initMurriNote(type, false);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
@@ -180,7 +193,7 @@ export class NotesService implements OnDestroy {
     this.allNotes = [...notes].map((x) => {
       return { ...x };
     });
-    if (!this.isFiltedMode()) {
+    if (!this.isFiltedMode) {
       this.notes = this.allNotes;
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
@@ -231,7 +244,7 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  isFiltedMode() {
+  get isFiltedMode() {
     const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
     return ids.length > 0;
   }

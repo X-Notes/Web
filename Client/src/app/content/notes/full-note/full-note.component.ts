@@ -29,7 +29,13 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
-import { DeleteCurrentNote, LoadFullNote, LoadNotes, UpdateTitle } from '../state/notes-actions';
+import {
+  DeleteCurrentNote,
+  LoadFullNote,
+  LoadNotes,
+  LoadOnlineUsersOnNote,
+  UpdateTitle,
+} from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/fullNote';
 import { SmallNote } from '../models/smallNote';
@@ -55,6 +61,7 @@ import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/note-history';
+import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-full-note',
@@ -130,6 +137,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     private api: ApiServiceNotes,
     public sideBarService: SidebarNotesService,
     private apiHistory: ApiNoteHistoryService,
+    private signalRService: SignalRService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -170,6 +178,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.loadLeftMenuWithNotes();
     await this.sideBarService.loadNotes(this.id);
     this.histories = await this.apiHistory.getHistory(this.id).toPromise();
+    await this.signalRService.joinNote(this.id);
+    this.store.dispatch(new LoadOnlineUsersOnNote(this.id));
   }
 
   async loadMain() {
@@ -503,7 +513,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.apiBrowserFunctions.pasteCommandHandler(e);
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy() {
+    await this.signalRService.leaveNote(this.id);
     this.sideBarService.murriService.flagForOpacity = false;
     this.destroy.next();
     this.destroy.complete();

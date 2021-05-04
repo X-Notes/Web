@@ -3,6 +3,7 @@ import { AfterViewInit, ElementRef, Renderer2, ViewChild, Component } from '@ang
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { FullNote } from 'src/app/content/notes/models/fullNote';
+import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import {
   PersonalizationService,
@@ -21,21 +22,12 @@ export class InteractionInnerNoteComponent implements AfterViewInit {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.getOnlineUsersOnNote)
+  onlineUsers$: Observable<OnlineUsersNote[]>;
+
   @ViewChild('heightPeople') heightPeople: ElementRef;
 
   @ViewChild('scrollbar') scrollbar: ElementRef;
-
-  user: string[] = [
-    'person',
-    'person',
-    'person',
-    'person',
-    'person',
-    'person',
-    'person',
-    'person',
-    'person',
-  ];
 
   constructor(
     public pService: PersonalizationService,

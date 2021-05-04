@@ -17,6 +17,7 @@ import {
   VideoModel,
 } from './models/ContentMode';
 import { OperationResult } from './models/TextOperationResult';
+import { OnlineUsersNote } from './models/online-users-note';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -102,6 +103,12 @@ export class ApiServiceNotes {
   getUsersOnPrivateNote(id: string) {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(
       `${environment.writeAPI}/api/share/notes/user/invites/${id}`,
+    );
+  }
+
+  getOnlineUsersOnNote(id: string) {
+    return this.httpClient.get<OnlineUsersNote[]>(
+      `${environment.writeAPI}/api/fullnote/users/${id}`,
     );
   }
 

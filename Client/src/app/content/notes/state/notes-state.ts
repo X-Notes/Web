@@ -37,6 +37,7 @@ import {
   TransformTypeNotes,
   UpdateLabelFullNote,
   ChangeTypeFullNote,
+  LoadOnlineUsersOnNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
 import { SmallNote } from '../models/smallNote';
@@ -47,6 +48,7 @@ import { Notes } from './Notes';
 import { FullNote } from '../models/fullNote';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
 import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
+import { OnlineUsersNote } from '../models/online-users-note';
 
 interface FullNoteState {
   note: FullNote;
@@ -66,6 +68,7 @@ interface NoteState {
   selectedLabelsFilter: string[];
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
+  onlineUsers: OnlineUsersNote[];
 }
 
 @State<NoteState>({
@@ -82,6 +85,7 @@ interface NoteState {
     selectedLabelsFilter: [],
     isCanceled: false,
     InvitedUsersToNote: [],
+    onlineUsers: [],
   },
 })
 @Injectable()
@@ -169,6 +173,11 @@ export class NoteStore {
   @Selector()
   static getUsersOnPrivateNote(state: NoteState): InvitedUsersToNoteOrFolder[] {
     return state.InvitedUsersToNote;
+  }
+
+  @Selector()
+  static getOnlineUsersOnNote(state: NoteState): OnlineUsersNote[] {
+    return state.onlineUsers;
   }
 
   // FULL NOTE
@@ -659,6 +668,15 @@ export class NoteStore {
     });
   }
 
+  @Action(LoadOnlineUsersOnNote)
+  async loadOnlineUsersOnNote(
+    { patchState }: StateContext<NoteState>,
+    { noteId }: LoadOnlineUsersOnNote,
+  ) {
+    patchState({ onlineUsers: [] });
+    const onlineUsers = await this.api.getOnlineUsersOnNote(noteId).toPromise();
+    patchState({ onlineUsers });
+  }
   // LOADING SMALL
 
   @Action(LoadNotes)

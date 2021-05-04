@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BI.helpers;
 using BI.Mapping;
 using Common.DatabaseModels.models;
 using Common.DTO.folders;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WriteContext.Repositories;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Users;
 
@@ -24,17 +26,23 @@ namespace BI.services.folders
         private readonly FolderRepository folderRepository;
         private readonly IMediator _mediator;
         private readonly UserRepository userRepository;
+        private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
         private readonly AppCustomMapper appCustomMapper;
+        private readonly AppRepository appRepository;
         public FolderHandlerQuery(
             FolderRepository folderRepository, 
             UserRepository userRepository,
             IMediator _mediator,
-            AppCustomMapper appCustomMapper)
+            AppCustomMapper appCustomMapper,
+            AppRepository appRepository,
+            UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this._mediator = _mediator;
             this.appCustomMapper = appCustomMapper;
+            this.appRepository = appRepository;
+            this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
         }
 
 
@@ -44,6 +52,18 @@ namespace BI.services.folders
             if (user != null)
             {
                 var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, request.TypeId);
+                var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
+
+                if (type.Id == request.TypeId)
+                {
+                    var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhere(x => x.UserId == user.Id);
+                    var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);
+                    var sharedFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(foldersIds);
+                    folders.AddRange(sharedFolders);
+                    folders = folders.DistinctBy(x => x.Id).ToList();
+                    folders = folders.OrderByDescending(x => x.UpdatedAt).ToList();
+                }
+
                 return appCustomMapper.MapFoldersToSmallFolders(folders);
             }
             return new List<SmallFolder>();
