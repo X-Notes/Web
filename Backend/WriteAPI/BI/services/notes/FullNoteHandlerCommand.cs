@@ -127,8 +127,14 @@ namespace BI.services.notes
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
 
                 // MOVE THIS TO WORKER
-                fileList.ForEach(file => file.TextFromPhoto = RemoveSpecialCharacters(ocrService.GetText(file.Path)));
-                fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
+                foreach(var fileitem in fileList)
+                {
+                    var textFromPhoto = ocrService.GetText(fileitem.Path);
+                    var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
+                    fileitem.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+                    fileitem.RecognizeObject = RecognizeObject;
+                }
+
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

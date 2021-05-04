@@ -7,13 +7,13 @@ namespace FacadeML
 {
     public class OcrService
     {
-        private readonly TesseractEngine ocrengine = new TesseractEngine(@".\tessdata", "eng", EngineMode.Default);
         public OcrService()
         {
 
         }
         public string GetText(string path)
         {
+            var ocrengine = new TesseractEngine(@".\tessdata", "eng", EngineMode.Default);
             var img = Pix.LoadFromFile(path);
             var res = ocrengine.Process(img);
             return res.GetText();
