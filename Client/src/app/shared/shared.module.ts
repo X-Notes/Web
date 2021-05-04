@@ -50,6 +50,7 @@ import { GetAudioPipe } from './pipes/get-audio.pipe';
 import { GetVideoPipe } from './pipes/get-video.pipe';
 import { GetDocumentPipe } from './pipes/get-document.pipe';
 import { LockComponent } from './modal_components/lock/lock.component';
+import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { LockComponent } from './modal_components/lock/lock.component';
     GetVideoPipe,
     GetDocumentPipe,
     LockComponent,
+    NoResultsIllustrationComponent,
   ],
   imports: [
     CommonModule,
@@ -146,6 +148,7 @@ import { LockComponent } from './modal_components/lock/lock.component';
     GetVideoPipe,
     GetDocumentPipe,
     ReactiveFormsModule,
+    NoResultsIllustrationComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

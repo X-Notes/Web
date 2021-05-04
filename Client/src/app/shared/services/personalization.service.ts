@@ -116,6 +116,8 @@ export class PersonalizationService {
 
   spinnerActive = false;
 
+  illustrationActive = false;
+
   timeForSpinnerLoading = 150;
 
   selectAllButton = new Subject();
@@ -194,6 +196,10 @@ export class PersonalizationService {
 
   setSpinnerState(flag: boolean) {
     this.spinnerActive = flag;
+  }
+
+  setIllustrationState(flag: boolean) {
+    this.illustrationActive = flag;
   }
 
   cancelSideBar() {

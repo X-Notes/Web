@@ -141,5 +141,11 @@
         "threeRow": "Three in row",
         "fourRow": "Four in row"
       }
+    },
+    "noResult": {
+      "privateNotes": "Personal notes will be displayed here",
+      "sharedNotes": "Shared notes will be displayed here",
+      "archiveNotes": "Archived notes will be displayed here",
+      "deletedNotes": "Deleted notes will be displayed here"
     }
   }

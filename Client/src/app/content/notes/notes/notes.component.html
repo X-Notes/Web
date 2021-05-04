@@ -116,5 +116,10 @@
     </div>
   </ng-scrollbar>
   <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+  <app-no-results-illustration
+    *ngIf="pService.illustrationActive"
+    illustration="archiveIllustration"
+    message="noResult.privateNotes"
+  ></app-no-results-illustration>
 </div>
 <div class="drag-helper main-helper"></div>

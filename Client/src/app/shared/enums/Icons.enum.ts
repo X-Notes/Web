@@ -46,4 +46,8 @@ export enum Icons {
   cancelThin = 'cancelThin',
   privateFolder = 'privateFolder',
   unlock = 'unlock',
+  privatesIllustration = 'privatesIllustration',
+  archiveIllustration = 'archiveIllustration',
+  deletedIllustration = 'deletedIllustration',
+  sharedIllustration = 'sharedIllustration',
 }

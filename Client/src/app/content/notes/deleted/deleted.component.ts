@@ -46,6 +46,8 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NoteDeleted)).toPromise();
     this.pService.setSpinnerState(true);
+    this.pService.setIllustrationState(false);
+
     this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
@@ -69,6 +71,9 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
+    if (!notes.length) {
+      this.pService.setIllustrationState(true);
+    }
     this.loaded = true;
   }
 
