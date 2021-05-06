@@ -9,4 +9,6 @@ export class NoResultsIllustrationComponent {
   @Input() message: string;
 
   @Input() illustration: string;
+
+  @Input() typeClass: string;
 }

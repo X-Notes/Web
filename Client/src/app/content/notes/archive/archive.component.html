@@ -15,3 +15,9 @@
     ></app-note>
   </div>
 </div>
+<app-no-results-illustration
+  *ngIf="pService.illustrationActive"
+  illustration="archiveIllustration"
+  typeClass="type-module"
+  message="noResult.archiveNotes"
+></app-no-results-illustration>
