@@ -5,6 +5,7 @@ using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Notes;
@@ -15,11 +16,19 @@ namespace BI.signalR
     public class AppSignalRHub : Hub
     {
         private readonly UserRepository userRepository;
+        private readonly NoteRepository noteRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
-        public AppSignalRHub(UserRepository userRepository, UserOnNoteRepository userOnNoteRepository)
+        private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
+        public AppSignalRHub(
+            UserRepository userRepository, 
+            UserOnNoteRepository userOnNoteRepository,
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+            NoteRepository noteRepository)
         {
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
+            this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;;
+            this.noteRepository = noteRepository;
         }
 
         public async Task UpdateDocumentFromClient(UpdateTextPart textPart)
@@ -31,35 +40,61 @@ namespace BI.signalR
         public async Task JoinNote(string noteId)
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
-            if (user != null && Guid.TryParse(noteId, out var guid))
+            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                var existUser = await userOnNoteRepository.GetUserFromNoteByIds(user.Id, guid);
-                if(existUser == null)
-                {
-                    var connectUser = new UserOnNoteNow()
-                    {
-                        UserId = user.Id,
-                        NoteId = guid
-                    };
-                    await userOnNoteRepository.Add(connectUser);
-                }
+                await TryToSetAsOnline(parsedNoteId, user.Id);
+                await JoinUserToNote(parsedNoteId, user.Id);
+                await Groups.AddToGroupAsync(Context.ConnectionId, noteId);
+                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
             }
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, noteId.ToString());
         }
+
+        public async Task TryToSetAsOnline(Guid parsedNoteId, Guid userId)
+        {
+            var existUser = await userOnNoteRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            if (existUser == null)
+            {
+                var connectUser = new UserOnNoteNow()
+                {
+                    UserId = userId,
+                    NoteId = parsedNoteId
+                };
+                await userOnNoteRepository.Add(connectUser);
+            }
+        }
+
+        public async Task JoinUserToNote(Guid parsedNoteId, Guid userId) // TODO MAKE THIS FOR FOLDER
+        {
+            var existUser = await usersOnPrivateNotesRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            var note = await noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+            var isCanAdd = (note.UserId != userId) && existUser == null;
+            if (isCanAdd)
+            {
+                var refTypeNote = await this.noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+                var connectUser = new UserOnPrivateNotes()
+                {
+                    UserId = userId,
+                    NoteId = parsedNoteId,
+                    AccessTypeId = refTypeNote.RefTypeId
+                };
+                await usersOnPrivateNotesRepository.Add(connectUser);
+            }
+        }
+
 
         public async Task LeaveNote(string noteId)
         {
-            /*
-            Console.WriteLine(new string('-', 30));
-            Console.WriteLine("Leave");           
-            Console.WriteLine(Context.ConnectionId);
-            Console.WriteLine(noteId);
-            Console.WriteLine(Context.UserIdentifier);
-            Console.WriteLine();
-            */
-
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId.ToString());
+            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
+            {
+                var users = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                if(users.Any())
+                {
+                    await userOnNoteRepository.RemoveRange(users);
+                }
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId);
+                await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
+            }
         }
 
         public override Task OnConnectedAsync()
@@ -72,7 +107,16 @@ namespace BI.signalR
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null)
             {
-                await userOnNoteRepository.RemoveFromOnline(user.Id);
+                var connections = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                if(connections.Any())
+                {
+                    await userOnNoteRepository.RemoveRange(connections);
+                    foreach(var connection in connections)
+                    {
+                        var stringConnection = connection.NoteId.ToString();
+                        await Clients.Group(stringConnection).SendAsync("updateOnlineUsers", stringConnection);
+                    }
+                }
             }
 
             await base.OnDisconnectedAsync(exception);

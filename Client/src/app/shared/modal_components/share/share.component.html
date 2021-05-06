@@ -91,7 +91,10 @@
                   [selectValue]="currentFolder?.refType.name"
                   (selectValueChange)="changeRefTypeFolder($event)"
                 >
-                  <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                  <app-select-option
+                    *ngFor="let item of [refType.viewer, refType.editor]"
+                    [value]="item"
+                  >
                     {{ ('modal.ShareModal.' + item) | translate }}
                   </app-select-option>
                 </app-select>
@@ -106,7 +109,10 @@
                   [selectValue]="currentNote?.refType.name"
                   (selectValueChange)="changeRefTypeNote($event)"
                 >
-                  <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                  <app-select-option
+                    *ngFor="let item of [refType.viewer, refType.editor]"
+                    [value]="item"
+                  >
                     {{ ('modal.ShareModal.' + item) | translate }}
                   </app-select-option>
                 </app-select>
@@ -184,60 +190,12 @@
             [appearance]="'compact'"
           >
             <div class="content-inner">
-              <div *ngFor="let user of usersOnPrivateNote$ | async" class="user">
-                <div class="photo">
-                  <img
-                    alt="user image"
-                    *ngIf="!user.noPhoto"
-                    (error)="user.noPhoto = true"
-                    [src]="user.photoId | getImage"
-                  />
-                  <div *ngIf="user.noPhoto" class="no-photo">
-                    <mat-icon svgIcon="people" [inline]="true"></mat-icon>
-                  </div>
-                </div>
-                <div class="user-info">
-                  <div class="name">
-                    <p>{{user.name}}</p>
-                  </div>
-                  <div class="email">
-                    <p>{{user.email}}</p>
-                  </div>
-                </div>
-                <div class="user-access-func">
-                  <button
-                    type="button"
-                    name=""
-                    (click)="changeUserPermission(refType.viewer, user.id)"
-                  >
-                    <div
-                      class="icon"
-                      [ngClass]="(user.accessType.name === refType.viewer) ? 'black' : ''"
-                    >
-                      <mat-icon [inline]="true">visibility</mat-icon>
-                    </div>
-                  </button>
-                  <div class="separator-buttons"></div>
-                  <button
-                    type="button"
-                    name=""
-                    (click)="changeUserPermission(refType.editor, user.id)"
-                  >
-                    <div
-                      class="icon"
-                      [ngClass]="(user.accessType.name === refType.editor) ? 'black' : ''"
-                    >
-                      <mat-icon [inline]="true">edit</mat-icon>
-                    </div>
-                  </button>
-                  <div class="separator-buttons"></div>
-                  <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
-                    <div class="icon black">
-                      <mat-icon [inline]="true">close</mat-icon>
-                    </div>
-                  </button>
-                </div>
-              </div>
+              <app-user-on-entity-card
+                *ngFor="let user of usersOnPrivateNote$ | async"
+                [user]="user"
+                (changeUserPermission)="changeUserPermission($event, user.id)"
+                (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
+              ></app-user-on-entity-card>
             </div>
           </ng-scrollbar>
 
@@ -247,53 +205,13 @@
             [visibility]="'hover'"
             [appearance]="'compact'"
           >
-            <div *ngFor="let user of usersOnPrivateFolder$ | async" class="user">
-              <div class="photo">
-                <img
-                  alt="user image"
-                  *ngIf="!user.noPhoto"
-                  (error)="user.noPhoto = true"
-                  [src]="user.photoId | getImage"
-                />
-                <div *ngIf="user.noPhoto" class="no-photo">
-                  <mat-icon svgIcon="people" [inline]="true"></mat-icon>
-                </div>
-              </div>
-              <div class="user-info">
-                <div class="name">
-                  <p>{{user.name}}</p>
-                </div>
-                <div class="email">
-                  <p>{{user.email}}</p>
-                </div>
-              </div>
-              <div class="user-access-func">
-                <button
-                  type="button"
-                  name=""
-                  (click)="changeUserPermission(refType.viewer, user.id)"
-                >
-                  <div class="icon" [ngClass]="(user.accessType === refType.viewer) ? 'black' : ''">
-                    <mat-icon [inline]="true">visibility</mat-icon>
-                  </div>
-                </button>
-                <div class="separator-buttons"></div>
-                <button
-                  type="button"
-                  name=""
-                  (click)="changeUserPermission(refType.editor, user.id)"
-                >
-                  <div class="icon" [ngClass]="(user.accessType === refType.editor) ? 'black' : ''">
-                    <mat-icon [inline]="true">edit</mat-icon>
-                  </div>
-                </button>
-                <div class="separator-buttons"></div>
-                <button type="button" name="" (click)="removeUserWithPermissions(user.id)">
-                  <div class="icon black">
-                    <mat-icon [inline]="true">close</mat-icon>
-                  </div>
-                </button>
-              </div>
+            <div class="content-inner">
+              <app-user-on-entity-card
+                *ngFor="let user of usersOnPrivateFolder$| async"
+                [user]="user"
+                (changeUserPermission)="changeUserPermission($event, user.id)"
+                (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
+              ></app-user-on-entity-card>
             </div>
           </ng-scrollbar>
         </div>
@@ -332,7 +250,10 @@
                     [selectValue]="currentNote?.refType.name"
                     (selectValueChange)="refTypeNotification($event)"
                   >
-                    <app-select-option *ngFor="let item of ['viewer', 'editor']" [value]="item">
+                    <app-select-option
+                      *ngFor="let item of [refType.viewer, refType.editor]"
+                      [value]="item"
+                    >
                       {{ ('modal.ShareModal.' + item) | translate }}
                     </app-select-option>
                   </app-select>

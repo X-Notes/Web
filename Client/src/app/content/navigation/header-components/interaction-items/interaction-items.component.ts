@@ -20,6 +20,9 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
+  @Select(AppStore.isActionFilterButton)
+  public isActionFilterButton$: Observable<boolean>;
+
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 

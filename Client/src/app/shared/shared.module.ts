@@ -51,6 +51,7 @@ import { GetVideoPipe } from './pipes/get-video.pipe';
 import { GetDocumentPipe } from './pipes/get-document.pipe';
 import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
+import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { NoResultsIllustrationComponent } from './custom-components/no-results-i
     GetDocumentPipe,
     LockComponent,
     NoResultsIllustrationComponent,
+    UserOnEntityCardComponent,
   ],
   imports: [
     CommonModule,
@@ -149,6 +151,7 @@ import { NoResultsIllustrationComponent } from './custom-components/no-results-i
     GetDocumentPipe,
     ReactiveFormsModule,
     NoResultsIllustrationComponent,
+    UserOnEntityCardComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

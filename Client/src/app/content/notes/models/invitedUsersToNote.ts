@@ -1,10 +1,10 @@
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { EntityRef } from 'src/app/shared/models/entityRef';
 
 export interface InvitedUsersToNoteOrFolder {
   id: string;
   photoId: string;
   name: string;
   email: string;
-  noPhoto: boolean;
-  accessType: RefTypeENUM;
+  accessType: EntityRef;
+  accessTypeId: string;
 }

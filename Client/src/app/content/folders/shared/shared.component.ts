@@ -44,7 +44,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Shared);
+    this.folderService.murriInitialise(this.refElements, FolderTypeENUM.Shared, false);
   }
 
   ngOnDestroy(): void {
