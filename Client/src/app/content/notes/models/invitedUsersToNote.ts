@@ -5,5 +5,6 @@ export interface InvitedUsersToNoteOrFolder {
   photoId: string;
   name: string;
   email: string;
+  noPhoto: boolean;
   accessType: RefTypeENUM;
 }
