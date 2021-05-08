@@ -1,3 +1,39 @@
-<div class="document-container">
-  <p>{{content.name}}</p>
+<div class="card" appTheme>
+  <div class="preview">
+    <div class="icon">
+      <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-info">
+      <div class="title">{{ content.name }}</div>
+      <div class="link">{{ content.updatedAt }}</div>
+    </div>
+    <div class="card-action">
+      <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+        <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+      </button>
+      <mat-menu
+        #menu="matMenu"
+        appLazyTheme
+        themeClass="menu"
+        attributeName="panelClass"
+        [element]="menu"
+      >
+        <button mat-menu-item type="button" name="options">
+          <mat-icon>wysiwyg</mat-icon>
+          <span>{{ 'innerNote.menu.review' | translate }}</span>
+        </button>
+        <button mat-menu-item type="button" name="options">
+          <mat-icon>downloading</mat-icon>
+          <span>{{ 'innerNote.menu.download' | translate }}</span>
+        </button>
+        <button mat-menu-item type="button" name="options">
+          <mat-icon>delete</mat-icon>
+          <span>{{ 'innerNote.menu.delete' | translate }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
 </div>

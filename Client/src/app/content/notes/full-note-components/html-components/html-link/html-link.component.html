@@ -1,5 +1,5 @@
 <div class="card" appTheme>
-  <div class="image-preview">
+  <div class="preview">
     <img [src]="data.image" />
   </div>
   <div class="card-body">
@@ -12,14 +12,20 @@
         <mat-icon>more_vert</mat-icon>
         <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
       </button>
-      <mat-menu #menu="matMenu">
+      <mat-menu
+        #menu="matMenu"
+        appLazyTheme
+        themeClass="menu"
+        attributeName="panelClass"
+        [element]="menu"
+      >
         <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
           <mat-icon>content_copy</mat-icon>
-          <span>{{ 'innerNote.linkMenu.copy' | translate }}</span>
+          <span>{{ 'innerNote.menu.copy' | translate }}</span>
         </button>
         <button mat-menu-item type="button" name="options">
           <mat-icon>delete</mat-icon>
-          <span>{{ 'innerNote.linkMenu.delete' | translate }}</span>
+          <span>{{ 'innerNote.menu.delete' | translate }}</span>
         </button>
       </mat-menu>
     </div>

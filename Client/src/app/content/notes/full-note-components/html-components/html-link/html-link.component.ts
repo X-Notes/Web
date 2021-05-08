@@ -2,10 +2,8 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
 import { ApiServiceNotes } from '../../../api-notes.service';
@@ -13,7 +11,7 @@ import { ApiServiceNotes } from '../../../api-notes.service';
 @Component({
   selector: 'app-html-link',
   templateUrl: './html-link.component.html',
-  styleUrls: ['./html-link.component.scss'],
+  styleUrls: ['../../styles/inner-card.scss'],
 })
 export class HtmlLinkComponent implements OnInit, OnDestroy {
   @Input() link: string;
@@ -48,18 +46,6 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
       }
     });
     this.data.title = this.data.title || parsedHtml.title;
-    this.store
-      .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((theme) => {
-        if (theme) {
-          if (theme.name === ThemeENUM.Dark) {
-            this.menu.panelClass = 'dark-menu';
-          } else {
-            this.menu.panelClass = null;
-          }
-        }
-      });
   }
 
   openNewTab() {

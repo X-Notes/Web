@@ -5,29 +5,54 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 @Component({
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
-  styleUrls: ['./document-note.component.scss'],
+  styleUrls: ['../styles/inner-card.scss'],
 })
 export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   content: DocumentModel;
 
-  constructor() {}
+  setFocus = ($event?: any) => {
+    console.log($event);
+  };
 
-  setFocus($event?: any) {}
+  setFocusToEnd = () => {};
 
-  setFocusToEnd() {}
+  updateHTML = (content: string) => {
+    console.log(content);
+  };
 
-  updateHTML(content: string) {}
-
-  getNative() {}
+  getNative = () => {};
 
   getContent() {
     return this.content;
   }
 
-  mouseEnter($event: any) {}
+  documentIcon() {
+    const type = this.content.name.split('.').pop().toLowerCase();
+    switch (type) {
+      case 'doc':
+      case 'docx':
+        return 'microsoftWord';
+      case 'xls':
+      case 'xlsx':
+        return 'microsoftExcel';
+      case 'ppt':
+      case 'pptx':
+        return 'microsoftPowerpoint';
+      case 'PDF':
+        return 'pdf';
+      default:
+        return 'fileInner';
+    }
+  }
 
-  mouseOut($event: any) {}
+  mouseEnter = ($event: any) => {
+    console.log($event);
+  };
 
-  ngOnInit(): void {}
+  mouseOut = ($event: any) => {
+    console.log($event);
+  };
+
+  ngOnInit = () => {};
 }

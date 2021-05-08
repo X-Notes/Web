@@ -127,7 +127,9 @@
       }
     },
     "innerNote": {
-      "linkMenu": {
+      "menu": {
+        "review": "Review",
+        "download": "Download",
         "copy": "Copy url",
         "delete": "Delete"
       },

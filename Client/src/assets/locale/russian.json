@@ -128,7 +128,9 @@
       }
     },
     "innerNote": {
-      "linkMenu": {
+      "menu": {
+        "review": "Просмотреть",
+        "download": "Скачать",
         "copy": "Скопировать ссылку",
         "delete": "Удалить"
       },

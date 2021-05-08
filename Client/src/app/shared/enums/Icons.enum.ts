@@ -50,4 +50,9 @@ export enum Icons {
   archiveIllustration = 'archiveIllustration',
   deletedIllustration = 'deletedIllustration',
   sharedIllustration = 'sharedIllustration',
+  fileInner = 'fileInner',
+  microsoftExcel = 'microsoftExcel',
+  microsoftPowerpoint = 'microsoftPowerpoint',
+  microsoftWord = 'microsoftWord',
+  pdf = 'pdf',
 }
