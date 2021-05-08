@@ -295,7 +295,7 @@ namespace BI.services.notes
             }
 
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
-            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, type.Id);
+            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, type.Id, true);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
             dbNotes = dbNotes.Zip(orders, (note, order) => {
