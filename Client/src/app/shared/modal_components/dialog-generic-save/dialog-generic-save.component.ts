@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-dialog-generic-save',
@@ -7,6 +7,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class DialogGenericSaveComponent {
   @Output() saveOutput = new EventEmitter<string>();
+
+  @Input() buttonText: string;
 
   save() {
     this.saveOutput.emit();

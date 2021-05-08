@@ -21,15 +21,15 @@
         attributeName="panelClass"
         [element]="menu"
       >
-        <button mat-menu-item type="button" name="options" (click)="openModal()">
+        <button mat-menu-item type="button" name="review" (click)="openModal()">
           <mat-icon>wysiwyg</mat-icon>
           <span>{{ 'innerNote.menu.review' | translate }}</span>
         </button>
-        <button mat-menu-item type="button" name="options">
-          <mat-icon>downloading</mat-icon>
+        <button mat-menu-item type="button" name="download">
+          <mat-icon>download</mat-icon>
           <span>{{ 'innerNote.menu.download' | translate }}</span>
         </button>
-        <button mat-menu-item type="button" name="options">
+        <button mat-menu-item type="button" name="delete">
           <mat-icon>delete</mat-icon>
           <span>{{ 'innerNote.menu.delete' | translate }}</span>
         </button>

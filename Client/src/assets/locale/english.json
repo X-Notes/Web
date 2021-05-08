@@ -60,6 +60,7 @@
       "color": "Color",
       "download": "Download",
       "lock": "Locked",
+      "unlock": "Remove lock",
       "archive": "Archive",
       "delete": "Delete",
       "history": "History",
@@ -116,14 +117,23 @@
       },
       "lockModal": {
         "lock": "Lock note",
+        "unLock": "Unlock note",
+        "unDecrypt": "Remove lock",
+        "remove": "Remove",
+        "сomeIn": "To come in",
+        "save": "Save",
         "password": "Password",
         "confirm": "Confirm password",
-        "placeholderPass": "type password",
-        "placeholderConfirm": "confirm",
+        "placeholderPass": "Type password",
+        "placeholderConfirm": "Confirm",
         "passMatchError": "passwords does not match",
         "required": "Required field",
         "minLength": "Password must be at least 6 characters",
         "incorrect": "Incorrect password"
+      },
+      "reviewModal": {
+        "review": "Review document",
+        "close": "Close"
       }
     },
     "innerNote": {

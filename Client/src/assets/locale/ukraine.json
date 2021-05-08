@@ -22,7 +22,7 @@
       "all": "Всі",
       "personal": "Особисті",
       "shared": "Спільні",
-      "archive": "Архив",
+      "archive": "Архів",
       "bin": "Кошик",
       "cancel": "Скасувати"
     },
@@ -62,6 +62,7 @@
       "color": "Колір",
       "download": "Завантажити",
       "lock": "Пароль",
+      "unlock": "Прибрати пароль",
       "archive": "Архів",
       "delete": "Видалити",
       "history": "Історія",
@@ -117,14 +118,23 @@
       },
       "lockModal": {
         "lock": "Заблокувати нотаток",
+        "unLock": "Розблокувати нотаток",
+        "unDecrypt": "Прибрати пароль",
+        "remove": "Прибрати",
+        "сomeIn": "Увійти",
+        "save": "Зберегти",
         "password": "Пароль",
         "confirm": "Підтвердити пароль",
         "placeholderPass": "Пароль",
-        "placeholderConfirm": "підтвердження",
+        "placeholderConfirm": "Підтвердження",
         "passMatchError": "Паролі не співпадають",
         "required": "Обов'язкове поле",
         "minLength": "Пароль должен состоять не менее чем из 6 символов",
         "incorrect": "Невірний пароль"
+      },
+      "reviewModal": {
+        "review": "Перегляд документу",
+        "close": "Закрити"
       }
     },
     "innerNote": {

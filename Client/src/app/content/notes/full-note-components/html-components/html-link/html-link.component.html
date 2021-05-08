@@ -1,6 +1,7 @@
 <div class="card" appTheme>
   <div class="preview">
-    <img [src]="data.image" />
+    <img [src]="data.image" (load)="isLoaded = true" [hidden]="!isLoaded" />
+    <app-spinner size="25" *ngIf="!isLoaded"></app-spinner>
   </div>
   <div class="card-body">
     <div class="card-info" (click)="openNewTab()">

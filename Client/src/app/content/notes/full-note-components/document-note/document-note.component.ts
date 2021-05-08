@@ -42,7 +42,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
       case 'ppt':
       case 'pptx':
         return 'microsoftPowerpoint';
-      case 'PDF':
+      case 'pdf':
         return 'pdf';
       default:
         return 'fileInner';

@@ -25,6 +25,8 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
     image: null,
   };
 
+  isLoaded = false;
+
   constructor(
     private api: ApiServiceNotes,
     private apiBrowserService: ApiBrowserTextService,
@@ -41,11 +43,15 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
       if (x.getAttribute('name') === 'title') {
         this.data.title = x.getAttribute('content');
       }
-      if (x.getAttribute('property') === 'og:image') {
+      if (
+        x.getAttribute('property')?.includes('image') ||
+        x.getAttribute('name')?.includes('image')
+      ) {
         this.data.image = x.getAttribute('content');
       }
     });
     this.data.title = this.data.title || parsedHtml.title;
+    this.data.image = this.data.image || parsedHtml.images[0].src;
   }
 
   openNewTab() {
