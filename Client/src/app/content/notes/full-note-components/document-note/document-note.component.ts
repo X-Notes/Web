@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { DocumentModel } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
@@ -10,6 +11,8 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   content: DocumentModel;
+
+  constructor(private dialogsManageService: DialogsManageService) {}
 
   setFocus = ($event?: any) => {
     console.log($event);
@@ -44,6 +47,10 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
       default:
         return 'fileInner';
     }
+  }
+
+  openModal() {
+    this.dialogsManageService.viewDock(this.content.fileId);
   }
 
   mouseEnter = ($event: any) => {

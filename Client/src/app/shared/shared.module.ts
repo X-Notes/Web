@@ -52,6 +52,9 @@ import { GetDocumentPipe } from './pipes/get-document.pipe';
 import { LockComponent } from './modal_components/lock/lock.component';
 import { NoResultsIllustrationComponent } from './custom-components/no-results-illustration/no-results-illustration.component';
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
+import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
+import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
+import { NgxDocViewerModule } from 'ngx-doc-viewer';
 
 @NgModule({
   declarations: [
@@ -92,6 +95,8 @@ import { UserOnEntityCardComponent } from './modal_components/share/user-on-enti
     LockComponent,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
+    ViewDocComponent,
+    DialogGenericSaveComponent,
   ],
   imports: [
     CommonModule,
@@ -109,6 +114,7 @@ import { UserOnEntityCardComponent } from './modal_components/share/user-on-enti
     MatIconModule,
     MatMenuModule,
     ReactiveFormsModule,
+    NgxDocViewerModule,
   ],
   exports: [
     TranslateModule,
@@ -152,6 +158,9 @@ import { UserOnEntityCardComponent } from './modal_components/share/user-on-enti
     ReactiveFormsModule,
     NoResultsIllustrationComponent,
     UserOnEntityCardComponent,
+    ViewDocComponent,
+    DialogGenericSaveComponent,
+    NgxDocViewerModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

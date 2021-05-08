@@ -10,6 +10,7 @@ import { LockComponent } from 'src/app/shared/modal_components/lock/lock.compone
 import { ManageNotesInFolderComponent } from 'src/app/shared/modal_components/manage-notes-in-folder/manage-notes-in-folder.component';
 import { OpenInnerSideComponent } from 'src/app/shared/modal_components/open-inner-side/open-inner-side.component';
 import { ShareComponent } from 'src/app/shared/modal_components/share/share.component';
+import { ViewDocComponent } from 'src/app/shared/modal_components/view-doc/view-doc.component';
 
 @Injectable({
   providedIn: 'root',
@@ -79,6 +80,19 @@ export class DialogsManageService {
       data: { id, isRemove },
     };
     return this.dialogService.openDialog(LockComponent, config);
+  }
+
+  viewDock(id: string) {
+    const config: MatDialogConfig = {
+      maxHeight: '100%',
+      maxWidth: '90vw',
+      panelClass:
+        this.getTheme() === ThemeENUM.Light
+          ? 'custom-dialog-class-light'
+          : 'custom-dialog-class-dark',
+      data: id,
+    };
+    return this.dialogService.openDialog(ViewDocComponent, config);
   }
 
   shareEntity() {

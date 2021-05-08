@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 1.25rem 2.25rem 0 2.25rem;
+  height: 70vh;
+  border-radius: 5px;
+  overflow: hidden;
+}

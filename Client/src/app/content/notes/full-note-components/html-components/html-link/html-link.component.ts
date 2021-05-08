@@ -11,7 +11,7 @@ import { ApiServiceNotes } from '../../../api-notes.service';
 @Component({
   selector: 'app-html-link',
   templateUrl: './html-link.component.html',
-  styleUrls: ['../../styles/inner-card.scss'],
+  styleUrls: ['../../styles/inner-card.scss', './html-link.component.scss'],
 })
 export class HtmlLinkComponent implements OnInit, OnDestroy {
   @Input() link: string;
