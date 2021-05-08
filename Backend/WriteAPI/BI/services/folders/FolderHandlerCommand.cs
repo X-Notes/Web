@@ -75,7 +75,7 @@ namespace BI.services.folders
 
         public async Task<Unit> Handle(ArchiveFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var type = await appRepository.GetFolderTypeByName(ModelsNaming.ArchivedFolder);
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
@@ -93,7 +93,7 @@ namespace BI.services.folders
 
         public async Task<Unit> Handle(ChangeColorFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (folders.Any())
@@ -115,7 +115,7 @@ namespace BI.services.folders
 
         public async Task<Unit> Handle(RestoreFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var type = await appRepository.GetFolderTypeByName(ModelsNaming.PrivateFolder);
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
@@ -132,7 +132,7 @@ namespace BI.services.folders
 
         public async Task<Unit> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var type = await appRepository.GetFolderTypeByName(ModelsNaming.DeletedFolder);
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
@@ -201,7 +201,7 @@ namespace BI.services.folders
 
         public async Task<Unit> Handle(DeleteFoldersCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var type = await appRepository.GetFolderTypeByName(ModelsNaming.DeletedFolder);
             var deletedFolders = user.Folders.Where(x => x.FolderTypeId == type.Id).ToList();
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
@@ -221,7 +221,7 @@ namespace BI.services.folders
         public async Task<Unit> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
         {
             var type = await appRepository.GetFolderTypeByName(ModelsNaming.PrivateFolder);
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)

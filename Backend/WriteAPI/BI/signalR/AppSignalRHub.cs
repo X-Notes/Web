@@ -4,6 +4,7 @@ using Common.DTO.notifications;
 using Common.DTO.parts;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace BI.signalR
 {
     public class AppSignalRHub : Hub
     {
+        public static ConcurrentDictionary<string, string> usersIdentifier_ConnectionId = new ConcurrentDictionary<string, string>();
+
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
@@ -99,11 +102,14 @@ namespace BI.signalR
 
         public override Task OnConnectedAsync()
         {
+            usersIdentifier_ConnectionId.TryAdd(Context.UserIdentifier, Context.ConnectionId);
             return base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            usersIdentifier_ConnectionId.TryRemove(Context.UserIdentifier, out var value);
+
             var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
             if (user != null)
             {

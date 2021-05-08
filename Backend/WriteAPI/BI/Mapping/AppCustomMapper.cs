@@ -23,26 +23,14 @@ namespace BI.Mapping
 {
     public class AppCustomMapper
     {
-        public FullNote MapNoteToFullNote(Note note)
-        {
-            var _fullNote = new FullNote()
-            {
-                Id = note.Id,
-                Color = note.Color,
-                NoteType = MapTypeToTypeDTO(note.NoteType),
-                RefType = MapRefToRefDTO(note.RefType),
-                Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
-                IsLocked = note.IsLocked,
-                DeletedAt = note.DeletedAt,
-                CreatedAt = note.CreatedAt,
-                UpdatedAt = note.UpdatedAt
-            };
-            return _fullNote;
-        }
 
         public List<BaseContentNoteDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
+            if(Contents == null)
+            {
+                return new List<BaseContentNoteDTO>();
+            }
+
             var resultList = new List<BaseContentNoteDTO>();
             
             foreach(var content in Contents)
@@ -158,17 +146,25 @@ namespace BI.Mapping
                 Color = tuple.note.Color,
                 Title = tuple.note.Title,
                 IsOpened = tuple.isOpened,
-                Labels = MapLabelsToLabelsDTO(tuple.note.LabelsNotes.GetLabelUnDesc()),
+                Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
                 RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
-                Contents = takeContentLength.HasValue ? 
-                MapContentsToContentsDTO(tuple.note.Contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(tuple.note.Contents).ToList(),
+                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, takeContentLength),
                 IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
                 UpdatedAt = tuple.note.UpdatedAt
             };
+        }
+
+        private List<BaseContentNoteDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents, int? takeContentLength = null)
+        {
+            if(!isLocked)
+            {
+                return takeContentLength.HasValue ? MapContentsToContentsDTO(contents).Take(takeContentLength.Value).ToList() :
+                MapContentsToContentsDTO(contents).ToList();
+            }
+            return new List<BaseContentNoteDTO>();
         }
 
         public SmallNote MapNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
@@ -178,17 +174,33 @@ namespace BI.Mapping
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
+                Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
                 RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
-                Contents = takeContentLength.HasValue ?
-                MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(note.Contents).ToList(),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
                 UpdatedAt = note.UpdatedAt
             };
+        }
+
+        public FullNote MapNoteToFullNote(Note note)
+        {
+            var _fullNote = new FullNote()
+            {
+                Id = note.Id,
+                Color = note.Color,
+                NoteType = MapTypeToTypeDTO(note.NoteType),
+                RefType = MapRefToRefDTO(note.RefType),
+                Title = note.Title,
+                Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
+                IsLocked = note.IsLocked,
+                DeletedAt = note.DeletedAt,
+                CreatedAt = note.CreatedAt,
+                UpdatedAt = note.UpdatedAt
+            };
+            return _fullNote;
         }
 
         public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids , int? takeContentLength = null)
@@ -198,12 +210,10 @@ namespace BI.Mapping
                 Id = note.Id,
                 Color = note.Color,
                 Title = note.Title,
-                Labels = MapLabelsToLabelsDTO(note.LabelsNotes.GetLabelUnDesc()),
+                Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
                 RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
-                Contents = takeContentLength.HasValue ?
-                MapContentsToContentsDTO(note.Contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(note.Contents).ToList(),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
@@ -223,15 +233,6 @@ namespace BI.Mapping
 
         public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, int? takeContentLength = null)
         {
-            var resultNotes = notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
-            resultNotes.ForEach(note =>
-            {
-                if (note.IsLocked)
-                {
-                    note.Contents = new List<BaseContentNoteDTO>();
-                }
-            });
-
             return notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
         }
 

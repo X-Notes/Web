@@ -38,6 +38,7 @@ import {
   UpdateLabelFullNote,
   ChangeTypeFullNote,
   LoadOnlineUsersOnNote,
+  UpdateOneFullNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
 import { SmallNote } from '../models/smallNote';
@@ -561,6 +562,15 @@ export class NoteStore {
       notes.splice(order.position - 1, 0, changedNote);
       dispatch(new UpdateNotes(new Notes(typeNote.name, [...notes]), typeNote.name));
     }
+  }
+
+  @Action(UpdateOneFullNote)
+  // eslint-disable-next-line class-methods-use-this
+  updateOneFullNote(
+    { patchState, getState }: StateContext<NoteState>,
+    { note }: UpdateOneFullNote,
+  ) {
+    patchState({ fullNoteState: { ...getState().fullNoteState, note } });
   }
 
   @Action(UpdateOneNote)

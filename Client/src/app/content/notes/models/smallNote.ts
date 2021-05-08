@@ -1,21 +1,9 @@
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { NoteType } from 'src/app/shared/models/noteType';
-import { Label } from '../../labels/models/label';
 import { ContentModel } from './ContentMode';
+import { FullNote } from './fullNote';
 
 // TODO MAKE CLASS
-export interface SmallNote {
-  id: string;
-  title: string;
-  color: string;
-  labels: Label[];
-  refType: EntityRef;
-  noteType: NoteType;
+export interface SmallNote extends FullNote {
   contents: ContentModel[];
   isSelected?: boolean;
   lockRedirect?: boolean;
-  isLocked: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
 }

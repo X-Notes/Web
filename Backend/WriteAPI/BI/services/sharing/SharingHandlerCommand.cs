@@ -68,7 +68,7 @@ namespace BI.services.sharing
 
         public async Task<Unit> Handle(ChangeRefTypeFolders request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFolders(request.Email);
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
             var folder = user.Folders.Where(x => request.Id == x.Id).FirstOrDefault();
             if (folder != null)
             {
@@ -94,7 +94,7 @@ namespace BI.services.sharing
 
         public async Task<Unit> Handle(ChangeRefTypeNotes request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotes(request.Email);
+            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var note = user.Notes.Where(x => request.Id == x.Id).FirstOrDefault();
             if (note != null)
             {

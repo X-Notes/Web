@@ -4,6 +4,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { Label } from '../../labels/models/label';
 import { Notes } from './Notes';
 import { SmallNote } from '../models/smallNote';
+import { FullNote } from '../models/fullNote';
 
 export class LoadNotes {
   static type = '[Notes] Load private notes';
@@ -146,6 +147,12 @@ export class SelectAllNote {
 }
 
 // UPDATING FROM FULL NOTE
+
+export class UpdateOneFullNote {
+  static type = '[Notes] update one full note';
+
+  constructor(public note: FullNote) {}
+}
 
 export class UpdateOneNote {
   static type = '[Notes] update one one';

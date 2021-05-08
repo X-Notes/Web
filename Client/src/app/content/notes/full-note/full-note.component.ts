@@ -29,6 +29,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { SignalRService } from 'src/app/core/signal-r.service';
 import {
   DeleteCurrentNote,
   LoadFullNote,
@@ -61,7 +62,6 @@ import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/note-history';
-import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-full-note',
@@ -180,11 +180,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.histories = await this.apiHistory.getHistory(this.id).toPromise();
     await this.signalRService.joinNote(this.id);
     this.store.dispatch(new LoadOnlineUsersOnNote(this.id));
+    this.signalRService.updateContentEvent
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.loadContent());
+  }
+
+  async loadContent() {
+    this.contents = await this.api.getContents(this.id).toPromise();
   }
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    this.contents = await this.api.getContents(this.id).toPromise();
+    await this.loadContent();
     this.store
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))
