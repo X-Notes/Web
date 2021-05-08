@@ -179,6 +179,8 @@ namespace BI.services.notes
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                     return new OperationResult<AlbumNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -243,6 +245,8 @@ namespace BI.services.notes
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
             }
 
@@ -293,6 +297,8 @@ namespace BI.services.notes
 
                                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
                             catch (Exception e)
@@ -329,6 +335,8 @@ namespace BI.services.notes
                                 await transaction.CommitAsync();
 
                                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                                 return new OperationResult<TextNoteDTO>(Success: true, textResult);
                             }
@@ -385,6 +393,8 @@ namespace BI.services.notes
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
@@ -428,6 +438,8 @@ namespace BI.services.notes
                     await textNotesRepository.Update(content);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     // TODO DEADLOCK
                     return new OperationResult<Unit>(Success: true, Unit.Value);
@@ -479,6 +491,8 @@ namespace BI.services.notes
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                     return new OperationResult<TextNoteDTO>(Success: true, textResult);
                 }
                 catch (Exception e)
@@ -528,6 +542,8 @@ namespace BI.services.notes
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 catch (Exception e)
@@ -569,6 +585,8 @@ namespace BI.services.notes
                     var photosIds = fileList.Select(x => x.Id).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     return new OperationResult<List<Guid>>(Success: true, photosIds);
                 }
@@ -620,6 +638,8 @@ namespace BI.services.notes
 
                         historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                        await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                         return new OperationResult<Unit>(Success: true, Unit.Value);
                     }
                     catch (Exception e)
@@ -645,6 +665,7 @@ namespace BI.services.notes
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -664,6 +685,7 @@ namespace BI.services.notes
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -712,6 +734,8 @@ namespace BI.services.notes
                         type, audioNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     return new OperationResult<AudioNoteDTO>(Success: true, result);
                 }
@@ -770,6 +794,8 @@ namespace BI.services.notes
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                     return new OperationResult<VideoNoteDTO>(Success: true, result);
                 }
                 catch (Exception e)
@@ -826,6 +852,8 @@ namespace BI.services.notes
                                 type, documentNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     return new OperationResult<DocumentNoteDTO>(Success: true, result);
                 }
