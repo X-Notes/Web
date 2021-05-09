@@ -1,0 +1,10 @@
+{
+  "name": "noots",
+  "version": "0.0",
+  "private": true,
+  "devDependencies": {
+    "@semantic-release/git": "^9.0.0",
+    "husky": "^6.0.0",
+    "semantic-release": "^17.4.2"
+  }
+}
