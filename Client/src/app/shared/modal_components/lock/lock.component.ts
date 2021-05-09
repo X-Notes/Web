@@ -6,9 +6,12 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
+import { FullNote } from 'src/app/content/notes/models/fullNote';
 import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { ChangeIsLockedFullNote, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
 import { PersonalizationService, shake } from '../../services/personalization.service';
 import { SnackbarService } from '../../services/snackbar.service';
 
@@ -38,11 +41,15 @@ const CompareValidator = (first: string, second: string) => {
 export class LockComponent implements OnInit, OnDestroy {
   note: SmallNote;
 
+  fullNote: FullNote;
+
   form: FormGroup;
 
   destroy = new Subject<void>();
 
   isSubmit = false;
+
+  isOpenInInner = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,15 +67,31 @@ export class LockComponent implements OnInit, OnDestroy {
     if (!id) {
       [id] = this.store.selectSnapshot(NoteStore.selectedIds);
     }
+    if (!id) {
+      this.fullNote = this.store.selectSnapshot(NoteStore.oneFull);
+      this.isOpenInInner = true;
+      this.setFormValidation(this.fullNote);
+      console.log(this.fullNote);
+    } else {
+      this.note = await this.getNote(id);
+      this.setFormValidation(this.note);
+    }
+  }
+
+  async getNote(id: string): Promise<SmallNote> {
     const type = this.store.selectSnapshot(AppStore.getTypeNote);
-    this.note = await this.store
+    const note = await this.store
       .select(NoteStore.getNote)
       .pipe(
         take(1),
         map((func) => func(id, type)),
       )
       .toPromise();
-    if (!this.note.isLocked) {
+    return note;
+  }
+
+  setFormValidation(note: SmallNote | FullNote) {
+    if (!note.isLocked) {
       this.form = this.fb.group(
         {
           password: [null, [Validators.required, Validators.minLength(6)]],
@@ -92,50 +115,137 @@ export class LockComponent implements OnInit, OnDestroy {
     return this.form.controls;
   }
 
+  get isLockedGeneric() {
+    if (this.isOpenInInner) {
+      return this.fullNote?.isLocked;
+    }
+    return this.note?.isLocked;
+  }
+
+  get isCurrentOperationButton() {
+    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
+      return 'modal.lockModal.save';
+    }
+    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
+      return 'modal.lockModal.remove';
+    }
+    return 'modal.lockModal.сomeIn';
+  }
+
+  get isCurrentOperationHeader() {
+    if (!(this.note?.isLocked || this.fullNote?.isLocked) && !this.data.isRemove) {
+      return 'modal.lockModal.lock';
+    }
+    if ((this.note?.isLocked || this.fullNote?.isLocked) && this.data.isRemove) {
+      return 'modal.lockModal.unDecrypt';
+    }
+    return 'modal.lockModal.unLock';
+  }
+
+  async decryptNote(note: SmallNote | FullNote) {
+    const { data } = await this.lockEncryptService
+      .decryptNote(note.id, this.form.controls.password.value)
+      .toPromise();
+    if (!data) {
+      const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
+      this.snackService.openSnackBar(message, null, 'center');
+      return false;
+    }
+    return note;
+  }
+
+  async tryUnlockNote(note: SmallNote | FullNote) {
+    const { data } = await this.lockEncryptService
+      .tryUnlockNote(note.id, this.form.controls.password.value)
+      .toPromise();
+    if (!data) {
+      const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
+      this.snackService.openSnackBar(message, null, 'center');
+      return false;
+    }
+    return true;
+  }
+
+  async encryptNote(note: SmallNote | FullNote) {
+    const { data } = await this.lockEncryptService
+      .encryptNote(
+        note.id,
+        this.form.controls.password.value,
+        this.form.controls.confirmation.value,
+      )
+      .toPromise();
+    return data;
+  }
+
+  async saveFullNote() {
+    if (this.fullNote.isLocked && this.data?.isRemove) {
+      const isSuccess = await this.decryptNote(this.fullNote);
+      if (isSuccess) {
+        const updatedNote = { ...this.fullNote };
+        updatedNote.isLocked = false;
+        this.store.dispatch(new ChangeIsLockedFullNote(false));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
+        this.dialogRef.close();
+      }
+      return;
+    }
+    if (!this.fullNote.isLocked) {
+      const isSuccess = await this.encryptNote(this.fullNote);
+      if (isSuccess) {
+        const updatedNote = { ...this.fullNote };
+        updatedNote.isLocked = true;
+        this.store.dispatch(new ChangeIsLockedFullNote(true));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
+        const route = this.fullNote.noteType.name;
+        if (route && route !== NoteTypeENUM.Private) {
+          this.router.navigate([`notes/${route}`]);
+        } else {
+          this.router.navigate(['notes']);
+        }
+        this.dialogRef.close();
+      }
+    }
+  }
+
+  async saveSmallNote() {
+    if (this.note.isLocked && this.data?.isRemove) {
+      const isSuccess = await this.decryptNote(this.note);
+      if (isSuccess) {
+        const updatedNote = { ...this.note };
+        updatedNote.isLocked = false;
+        this.router.navigate([`notes/${this.note.id}`]);
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.dialogRef.close();
+      }
+      return;
+    }
+    if (this.note.isLocked) {
+      const isSuccess = await this.tryUnlockNote(this.note);
+      if (isSuccess) {
+        this.router.navigate([`notes/${this.note.id}`]);
+        this.dialogRef.close();
+      }
+    } else {
+      const isSuccess = await this.encryptNote(this.note);
+      if (isSuccess) {
+        const updatedNote = { ...this.note };
+        updatedNote.isLocked = true;
+        this.router.navigate([`notes/${this.note.id}`]);
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.dialogRef.close();
+      }
+    }
+  }
+
   async save() {
     this.isSubmit = true;
     if (this.form.invalid) {
       return;
     }
-    const isNote = this.store.selectSnapshot(AppStore.isNote);
-    if (isNote) {
-      if (this.note.isLocked && this.data?.isRemove) {
-        const { data } = await this.lockEncryptService
-          .decryptNote(this.note.id, this.form.controls.password.value)
-          .toPromise();
-        if (data) {
-          this.router.navigate([`notes/${this.note.id}`]);
-          this.dialogRef.close();
-          return;
-        }
-        const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
-        this.snackService.openSnackBar(message, null, 'center');
-        return;
-      }
-      if (this.note.isLocked) {
-        const { data } = await this.lockEncryptService
-          .tryUnlockNote(this.note.id, this.form.controls.password.value)
-          .toPromise();
-        if (data) {
-          this.router.navigate([`notes/${this.note.id}`]);
-          this.dialogRef.close();
-          return;
-        }
-        const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
-        this.snackService.openSnackBar(message, null, 'center');
-      } else {
-        const { data } = await this.lockEncryptService
-          .encryptNote(
-            this.note.id,
-            this.form.controls.password.value,
-            this.form.controls.confirmation.value,
-          )
-          .toPromise();
-        if (data) {
-          this.router.navigate([`notes/${this.note.id}`]);
-          this.dialogRef.close();
-        }
-      }
+    if (this.isOpenInInner) {
+      this.saveFullNote();
+      return;
     }
+    this.saveSmallNote();
   }
 }

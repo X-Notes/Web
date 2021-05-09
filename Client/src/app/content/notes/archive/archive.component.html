@@ -15,3 +15,10 @@
     ></app-note>
   </div>
 </div>
+<app-no-results-illustration
+  *ngIf="pService.illustrationActive"
+  [isShow]="pService.illustrationActive"
+  [message]="'noResult.archiveNotes' | translate"
+  [illustration]="pService.icon.archiveIllustration"
+  typeClass="type-module"
+></app-no-results-illustration>

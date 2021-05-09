@@ -60,6 +60,7 @@
       "color": "Color",
       "download": "Download",
       "lock": "Locked",
+      "unlock": "Remove lock",
       "archive": "Archive",
       "delete": "Delete",
       "history": "History",
@@ -116,18 +117,29 @@
       },
       "lockModal": {
         "lock": "Lock note",
+        "unLock": "Unlock note",
+        "unDecrypt": "Remove lock",
+        "remove": "Remove",
+        "сomeIn": "To come in",
+        "save": "Save",
         "password": "Password",
         "confirm": "Confirm password",
-        "placeholderPass": "type password",
-        "placeholderConfirm": "confirm",
+        "placeholderPass": "Type password",
+        "placeholderConfirm": "Confirm",
         "passMatchError": "passwords does not match",
         "required": "Required field",
         "minLength": "Password must be at least 6 characters",
         "incorrect": "Incorrect password"
+      },
+      "reviewModal": {
+        "review": "Review document",
+        "close": "Close"
       }
     },
     "innerNote": {
-      "linkMenu": {
+      "menu": {
+        "review": "Review",
+        "download": "Download",
         "copy": "Copy url",
         "delete": "Delete"
       },
@@ -141,5 +153,17 @@
         "threeRow": "Three in row",
         "fourRow": "Four in row"
       }
+    },
+    "noResult": {
+      "privateNotes": "Personal notes will be displayed here",
+      "sharedNotes": "Shared notes will be displayed here",
+      "archiveNotes": "Archived notes will be displayed here",
+      "deletedNotes": "Deleted notes will be displayed here",
+      "allLabels": "Labels will be displayed here",
+      "deletedLabels": "Deleted labels will be displayed here",
+      "privateFolders": "Personal folders will be displayed here",
+      "sharedFolders": "Shared folders will be displayed here",
+      "archiveFolders": "Archived folders will be displayed here",
+      "deletedFolders": "Deleted folders will be displayed here"
     }
   }

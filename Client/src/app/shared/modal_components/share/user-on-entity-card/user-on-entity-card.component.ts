@@ -18,4 +18,6 @@ export class UserOnEntityCardComponent {
   removeUserWithPermissions = new EventEmitter();
 
   refType = RefTypeENUM;
+
+  noPhoto = false;
 }

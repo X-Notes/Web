@@ -9,3 +9,10 @@
     <app-folder [folder]="item"></app-folder>
   </div>
 </div>
+<app-no-results-illustration
+  *ngIf="pService.illustrationActive"
+  [isShow]="pService.illustrationActive"
+  [message]="'noResult.archiveFolders' | translate"
+  [illustration]="pService.icon.archiveFolderIllustration"
+  typeClass="type-module"
+></app-no-results-illustration>

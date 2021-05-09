@@ -50,6 +50,7 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
     this.pService.setSpinnerState(true);
+    this.pService.setIllustrationState(false);
 
     this.store
       .select(AppStore.appLoaded)
@@ -71,6 +72,15 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+
+    this.store
+      .select(NoteStore.privateCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (!x) {
+          this.pService.setIllustrationState(true);
+        }
+      });
 
     this.store
       .select(NoteStore.notesAddingPrivate)

@@ -45,6 +45,8 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelPrivate)).toPromise();
+    this.pService.setSpinnerState(true);
+    this.pService.setIllustrationState(false);
 
     this.store
       .select(AppStore.appLoaded)
@@ -61,7 +63,6 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    this.pService.setSpinnerState(true);
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.all);
@@ -70,6 +71,16 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+
+    this.store
+      .select(LabelStore.countAll)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (!x) {
+          this.pService.setSpinnerState(false);
+          this.pService.setIllustrationState(true);
+        }
+      });
 
     this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
   }
