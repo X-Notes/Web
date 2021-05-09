@@ -158,13 +158,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         );
         // eslint-disable-next-line no-param-reassign
         notes.forEach((x) => (x.isSelected = true));
-        const actions = notes.map(
-          (x) =>
-            new SelectIdNote(
-              x.id,
-              x.labels.map((z) => z.id),
-            ),
-        );
+        const actions = notes.map((x) => new SelectIdNote(x.id));
         this.store.dispatch(actions);
       }
     });

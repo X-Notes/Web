@@ -30,6 +30,8 @@ import { Label } from '../models/label';
 export class LabelComponent implements OnInit, OnDestroy {
   @Input() label: Label;
 
+  @Input() isSelected: boolean;
+
   @Output() updateLabel = new EventEmitter<Label>();
 
   @Output() deleteLabel = new EventEmitter<Label>();
@@ -76,14 +78,13 @@ export class LabelComponent implements OnInit, OnDestroy {
     const ids = this.store.selectSnapshot(NoteStore.selectedIds);
     const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
     if (isInner) {
-      const flag = this.label.isSelected;
-      this.store.dispatch(new UpdateLabelFullNote(this.label, flag));
+      this.store.dispatch(new UpdateLabelFullNote(this.label, this.isSelected));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       const type = this.store
         .selectSnapshot(AppStore.getNoteTypes)
         .find((x) => x.name === noteType);
-      if (!this.label.isSelected) {
+      if (!this.isSelected) {
         this.store.dispatch(new AddLabelOnNote(this.label, type, ids));
       } else {
         this.store.dispatch(new RemoveLabelFromNote(this.label, type, ids));

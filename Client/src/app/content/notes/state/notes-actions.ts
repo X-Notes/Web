@@ -127,7 +127,7 @@ export class LoadOnlineUsersOnNote {
 export class SelectIdNote {
   static type = '[Notes] Select note';
 
-  constructor(public id: string, public labelIds: string[]) {}
+  constructor(public id: string) {}
 }
 
 export class UnSelectIdNote {
