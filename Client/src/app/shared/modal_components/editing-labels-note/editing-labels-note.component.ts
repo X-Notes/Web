@@ -16,7 +16,7 @@ import { PersonalizationService, smoothOpacity } from '../../services/personaliz
   selector: 'app-editing-labels-note',
   templateUrl: './editing-labels-note.component.html',
   styleUrls: ['./editing-labels-note.component.scss'],
-  animations: [smoothOpacity],
+  animations: [smoothOpacity()],
 })
 export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();

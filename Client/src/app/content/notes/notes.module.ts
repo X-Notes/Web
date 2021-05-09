@@ -33,7 +33,6 @@ import { HistoryRecordComponent } from './full-note-components/history-record/hi
 import { AudioNoteComponent } from './full-note-components/audio-note/audio-note.component';
 import { VideoNoteComponent } from './full-note-components/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
-import { ApiNoteHistoryService } from './api-note-history.service';
 
 @NgModule({
   declarations: [

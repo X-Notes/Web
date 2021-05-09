@@ -71,10 +71,16 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
-    if (!notes.length) {
-      this.pService.setIllustrationState(true);
-    }
     this.loaded = true;
+
+    this.store
+      .select(NoteStore.privateCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (!x) {
+          this.pService.setIllustrationState(true);
+        }
+      });
 
     this.store
       .select(NoteStore.notesAddingPrivate)

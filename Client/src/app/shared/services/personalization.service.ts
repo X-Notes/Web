@@ -7,6 +7,7 @@ import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { FontSize } from '../models/FontSize';
+import { Icons } from '../enums/Icons.enum';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -75,9 +76,10 @@ export const tooltipAnimation = trigger('tooltip', [
   transition(':leave', [animate(150, style({ opacity: 0 }))]),
 ]);
 
-export const smoothOpacity = trigger('smoothOpacity', [
-  transition(':enter', [style({ opacity: 0 }), animate(100, style({ opacity: 1 }))]),
-]);
+export const smoothOpacity = (time = 100) =>
+  trigger('smoothOpacity', [
+    transition(':enter', [style({ opacity: 0 }), animate(time, style({ opacity: 1 }))]),
+  ]);
 
 export const notification = trigger('notification', [
   transition(':enter', [style({ opacity: 0 }), animate(100, style({ opacity: 1 }))]),
@@ -143,6 +145,8 @@ export class PersonalizationService {
   isCollapseShared = false;
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
+
+  icon = Icons;
 
   constructor(public lockEncryptService: LockEncryptService, private translate: TranslateService) {}
 

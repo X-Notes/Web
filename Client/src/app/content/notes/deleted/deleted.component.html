@@ -17,7 +17,8 @@
 </div>
 <app-no-results-illustration
   *ngIf="pService.illustrationActive"
-  illustration="deletedIllustration"
+  [isShow]="pService.illustrationActive"
+  [message]="'noResult.deletedNotes' | translate"
+  [illustration]="pService.icon.deletedIllustration"
   typeClass="type-module"
-  message="noResult.deletedNotes"
 ></app-no-results-illustration>

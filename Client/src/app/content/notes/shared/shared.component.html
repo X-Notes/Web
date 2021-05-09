@@ -17,7 +17,8 @@
 </div>
 <app-no-results-illustration
   *ngIf="pService.illustrationActive"
-  illustration="sharedIllustration"
+  [isShow]="pService.illustrationActive"
+  [message]="'noResult.sharedNotes' | translate"
+  [illustration]="pService.icon.sharedIllustration"
   typeClass="type-module"
-  message="noResult.sharedNotes"
 ></app-no-results-illustration>

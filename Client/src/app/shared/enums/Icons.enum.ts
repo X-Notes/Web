@@ -55,4 +55,10 @@ export enum Icons {
   microsoftPowerpoint = 'microsoftPowerpoint',
   microsoftWord = 'microsoftWord',
   pdf = 'pdf',
+  allLabelIllustration = 'allLabelIllustration',
+  archiveFolderIllustration = 'archiveFolderIllustration',
+  deletedFolderIllustration = 'deletedFolderIllustration',
+  deletedLabelIllustration = 'deletedLabelIllustration',
+  privateFolderIllustration = 'privateFolderIllustration',
+  sharedFolderIllustration = 'sharedFolderIllustration',
 }
