@@ -46,7 +46,7 @@ namespace BI.services.search
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
-            var allNotes = await searchRepository.GetNotesByUserId(user.Id);
+            var allNotes = await searchRepository.GetNotesByUserIdSearch(user.Id);
 
             allNotes = allNotes.Where(x =>
                     searchHelper.IsMatchContent(x.Title, request.SearchString)
@@ -58,12 +58,12 @@ namespace BI.services.search
 
             var folders = await searchRepository.GetFolderByUserIdAndString(user.Id, request.SearchString);
 
-            var searchedNotes = allNotes.Select(note => new NoteSearch() {
+            var searchedNotes = allNotes.Take(5).Select(note => new NoteSearch() {
             Id = note.Id,
             Name = note.Title
             }).ToList();
 
-            var searchedFolders = folders.Select(note => new FolderSearch()
+            var searchedFolders = folders.Take(5).Select(note => new FolderSearch()
             {
                 Id = note.Id,
                 Name = note.Title

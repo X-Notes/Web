@@ -59,6 +59,27 @@
 
 .mobile-buttons {
   display: none;
+
+  .inner-content {
+    .icon {
+      display: flex;
+    }
+  }
+}
+
+.more_vert {
+  margin-right: 0px;
+  width: 28px;
+  display: none;
+
+  .inner-content {
+    .icon {
+      display: flex;
+      font-size: 1.5rem;
+      height: 100%;
+      width: 100%;
+    }
+  }
 }
 
 @media (max-width: 1320px) {
@@ -73,6 +94,12 @@
   }
 
   .mobile-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .more_vert {
     display: flex;
     justify-content: center;
     align-items: center;
