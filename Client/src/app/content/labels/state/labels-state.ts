@@ -27,8 +27,6 @@ export interface LabelsForFiltersNotes {
 interface LabelState {
   labelsAll: Label[];
   labelsDeleted: Label[];
-  CountAll: number;
-  CountDeleted: number;
   loaded: boolean;
 }
 
@@ -37,8 +35,6 @@ interface LabelState {
   defaults: {
     labelsAll: [],
     labelsDeleted: [],
-    CountAll: 0,
-    CountDeleted: 0,
     loaded: false,
   },
 })
@@ -52,12 +48,12 @@ export class LabelStore {
 
   @Selector()
   static countAll(state: LabelState): number {
-    return state.CountAll;
+    return state.labelsAll.length;
   }
 
   @Selector()
   static countDeleted(state: LabelState): number {
-    return state.CountDeleted;
+    return state.labelsDeleted.length;
   }
 
   @Selector()
@@ -79,8 +75,6 @@ export class LabelStore {
           patchState({
             labelsAll: content.labelsAll,
             labelsDeleted: content.labelsDeleted,
-            CountAll: content.labelsAll.length,
-            CountDeleted: content.labelsDeleted.length,
             loaded: true,
           });
         }),
@@ -96,7 +90,6 @@ export class LabelStore {
         { name: '', color: LabelsColor.Red, id, isDeleted: false, countNotes: 0 },
         ...getState().labelsAll,
       ],
-      CountAll: getState().CountAll + 1,
     });
   }
 
@@ -114,8 +107,6 @@ export class LabelStore {
     patchState({
       labelsAll,
       labelsDeleted: [Newlabel, ...getState().labelsDeleted],
-      CountAll: getState().CountAll - 1,
-      CountDeleted: getState().CountDeleted + 1,
     });
   }
 
@@ -126,7 +117,6 @@ export class LabelStore {
     labelsDeleted = labelsDeleted.filter((x) => x.id !== label.id);
     patchState({
       labelsDeleted,
-      CountDeleted: getState().CountDeleted - 1,
     });
   }
 
@@ -214,14 +204,12 @@ export class LabelStore {
     patchState({
       labelsAll: [restoreLabel, ...getState().labelsAll],
       labelsDeleted: deletedLables,
-      CountAll: getState().CountAll + 1,
-      CountDeleted: getState().CountDeleted - 1,
     });
   }
 
   @Action(DeleteAllFromBin)
   async deleteAllFromBin({ patchState }: StateContext<LabelState>) {
     await this.api.removeAll().toPromise();
-    patchState({ labelsDeleted: [], CountDeleted: 0 });
+    patchState({ labelsDeleted: [] });
   }
 }

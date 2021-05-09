@@ -36,6 +36,11 @@ namespace BI.services.labels
             {
                 var labels = await labelRepository.GetAllByUserID(user.Id);
 
+                foreach(var label in labels)
+                {
+                    label.LabelsNotes = label.LabelsNotes.Where(x => x.Note.IsHistory == false).ToList();
+                }
+
                 var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();
                 var labelsDeleted = labels.Where(x => x.IsDeleted == true).OrderBy(x => x.Order).ToList();
 

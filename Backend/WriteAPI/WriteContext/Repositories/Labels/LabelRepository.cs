@@ -45,7 +45,11 @@ namespace WriteContext.Repositories.Labels
 
         public async Task<List<Label>> GetAllByUserID(Guid id)
         {
-            return await context.Labels.Where(x => x.UserId == id).Include(x => x.LabelsNotes).ToListAsync();
+            return await context.Labels
+                .Include(x => x.LabelsNotes)
+                .ThenInclude(x => x.Note)
+                .Where(x => x.UserId == id)
+                .ToListAsync();
         }
 
         public async Task<int> GetNotesCountByLabelId(Guid id)
