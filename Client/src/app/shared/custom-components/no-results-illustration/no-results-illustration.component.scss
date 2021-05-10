@@ -31,6 +31,7 @@
   &::after {
     content: '';
     display: block;
+    width: 100%;
     padding-bottom: 100%;
   }
 
@@ -72,6 +73,18 @@
 
     .title {
       font-size: 1.5rem;
+    }
+  }
+}
+
+.type-notification {
+  max-width: 85%;
+
+  .container {
+    padding: 1rem;
+
+    .title {
+      font-size: 1rem;
     }
   }
 }

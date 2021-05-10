@@ -61,4 +61,6 @@ export enum Icons {
   deletedLabelIllustration = 'deletedLabelIllustration',
   privateFolderIllustration = 'privateFolderIllustration',
   sharedFolderIllustration = 'sharedFolderIllustration',
+  historyIllustration = 'historyIllustration',
+  notificationIllustration = 'notificationIllustration',
 }

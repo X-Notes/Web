@@ -164,6 +164,17 @@
       "privateFolders": "Personal folders will be displayed here",
       "sharedFolders": "Shared folders will be displayed here",
       "archiveFolders": "Archived folders will be displayed here",
-      "deletedFolders": "Deleted folders will be displayed here"
+      "deletedFolders": "Deleted folders will be displayed here",
+      "notification": "No unread notifications",
+      "notificationAll": "You have no notifications"
+    },
+    "notification": {
+      "title": "Notification",
+      "readAll": "Read all notifications",
+      "seeAll": "See all notifications",
+      "goToNew": "Go to new notifications",
+      "newMessage": "New",
+      "readMessage": "Read message",
+      "ChangeUserPermissionNote": "Change user permission note"
     }
   }

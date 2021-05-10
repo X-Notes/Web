@@ -2,7 +2,6 @@
   "name": "noots",
   "version": "1.0.0",
   "description": "* docker build -t davydq/noots-write_api . -f writeAPI.dockerfile\r * docker build -t davydq/noots-web . -f webClient.dockerfile",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
