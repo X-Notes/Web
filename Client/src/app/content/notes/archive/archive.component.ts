@@ -46,6 +46,8 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NoteArchive)).toPromise();
     this.pService.setSpinnerState(true);
+    this.pService.setIllustrationState(false);
+
     this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
@@ -70,6 +72,14 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+    this.store
+      .select(NoteStore.archiveCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (!x) {
+          this.pService.setIllustrationState(true);
+        }
+      });
   }
 
   ngOnDestroy(): void {

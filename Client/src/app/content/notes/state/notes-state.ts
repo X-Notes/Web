@@ -39,6 +39,7 @@ import {
   ChangeTypeFullNote,
   LoadOnlineUsersOnNote,
   UpdateOneFullNote,
+  ChangeIsLockedFullNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
 import { SmallNote } from '../models/smallNote';
@@ -103,6 +104,7 @@ export class NoteStore {
   @Selector()
   static getNote(state: NoteState) {
     return (id: string, type: NoteTypeENUM) => {
+      console.log(id, type);
       const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
       return note;
     };
@@ -117,6 +119,9 @@ export class NoteStore {
         .reduce((acc, val) => acc.concat(val), [])
         .find((x) => x.id === id);
       return note.isLocked;
+    }
+    if (state.fullNoteState) {
+      return state.fullNoteState.note.isLocked;
     }
     return false;
   }
@@ -696,6 +701,19 @@ export class NoteStore {
     const note = getState().fullNoteState?.note;
     if (note) {
       const newNote: FullNote = { ...note, noteType: type };
+      patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
+    }
+  }
+
+  @Action(ChangeIsLockedFullNote)
+  // eslint-disable-next-line class-methods-use-this
+  async changeIsLockedFullNote(
+    { getState, patchState }: StateContext<NoteState>,
+    { isLocked }: ChangeIsLockedFullNote,
+  ) {
+    const note = getState().fullNoteState?.note;
+    if (note) {
+      const newNote: FullNote = { ...note, isLocked };
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }

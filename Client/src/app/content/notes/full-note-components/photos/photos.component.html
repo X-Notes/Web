@@ -53,6 +53,10 @@
     attributeName="panelClass"
     [element]="menu"
   >
+    <button mat-menu-item type="button" name="Upload photo" (click)="uploadHandler()">
+      <mat-icon>add_photo_alternate</mat-icon>
+      <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
+    </button>
     <button mat-menu-item type="button" name="Download">
       <mat-icon>download</mat-icon>
       <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
@@ -60,10 +64,6 @@
     <button mat-menu-item type="button" name="Delete" (click)="removeHandler()">
       <mat-icon>delete</mat-icon>
       <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
-    </button>
-    <button mat-menu-item type="button" name="Upload photo" (click)="uploadHandler()">
-      <mat-icon>add_photo_alternate</mat-icon>
-      <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
     </button>
     <button mat-menu-item type="button" name="Photo in row" [matMenuTriggerFor]="secondMenu">
       <mat-icon>art_track</mat-icon>

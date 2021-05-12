@@ -1,6 +1,14 @@
 <div class="user-shared-card">
   <div class="photo">
-    <img alt="user image" [src]="user.photoId | getImage" />
+    <img
+      alt="user image"
+      *ngIf="!noPhoto"
+      (error)="noPhoto = true"
+      [src]="user.photoId | getImage"
+    />
+    <div *ngIf="noPhoto" class="no-photo">
+      <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+    </div>
   </div>
   <div class="user-info">
     <div class="name">

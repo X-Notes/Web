@@ -1,0 +1,10 @@
+<div #wrapper class="wrapper" [ngClass]="typeClass" *ngIf="isShow" [@smoothOpacity]>
+  <div class="container">
+    <div class="illustration">
+      <mat-icon [svgIcon]="illustration" [inline]="true"></mat-icon>
+    </div>
+    <div class="title" appTheme>
+      <p>{{ message }}</p>
+    </div>
+  </div>
+</div>

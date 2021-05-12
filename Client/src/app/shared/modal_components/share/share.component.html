@@ -278,7 +278,15 @@
             <div class="user-suggestions">
               <div *ngFor="let user of searchUsers" class="user">
                 <div class="photo">
-                  <img alt="user image" [src]="user.photoId | getImage" />
+                  <img
+                    alt="user image"
+                    *ngIf="!user.noPhoto"
+                    (error)="user.noPhoto = true"
+                    [src]="user.photoId | getImage"
+                  />
+                  <div *ngIf="user.noPhoto" class="no-photo">
+                    <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+                  </div>
                 </div>
                 <div class="email">
                   <p>{{user.email}}</p>

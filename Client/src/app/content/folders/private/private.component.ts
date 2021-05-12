@@ -58,6 +58,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
     this.pService.setSpinnerState(true);
+    this.pService.setIllustrationState(false);
     this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
@@ -81,6 +82,15 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
+
+    this.store
+      .select(FolderStore.privateCount)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (!x) {
+          this.pService.setIllustrationState(true);
+        }
+      });
 
     this.store
       .select(FolderStore.foldersAddingPrivate)
