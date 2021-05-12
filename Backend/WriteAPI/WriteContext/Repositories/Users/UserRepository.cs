@@ -46,7 +46,7 @@ namespace WriteContext.Repositories.Users
             return await context.Users.Include(x => x.Labels).FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<User> GetUserWithNotes(string email)
+        public async Task<User> GetUserWithNotesIncludeNoteType(string email)
         {
             return await context.Users
                 .Include(x => x.Notes)
@@ -54,7 +54,7 @@ namespace WriteContext.Repositories.Users
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<User> GetUserWithFolders(string email)
+        public async Task<User> GetUserWithFoldersIncludeFolderType(string email)
         {
             return await context.Users
                 .Include(x => x.Folders)

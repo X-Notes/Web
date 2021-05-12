@@ -58,7 +58,7 @@ namespace BI.services
                 case OrderEntity.Note:
                     {
 
-                        var notes = (await userRepository.GetUserWithNotes(request.Email)).Notes;
+                        var notes = (await userRepository.GetUserWithNotesIncludeNoteType(request.Email)).Notes;
                         var note = notes.FirstOrDefault(x => x.Id == request.EntityId);
 
                         if (note != null)
@@ -84,7 +84,7 @@ namespace BI.services
                 case OrderEntity.Folder:
                     {
 
-                        var folders = (await userRepository.GetUserWithFolders(request.Email)).Folders;
+                        var folders = (await userRepository.GetUserWithFoldersIncludeFolderType(request.Email)).Folders;
                         var folder = folders.FirstOrDefault(x => x.Id == request.EntityId);
 
                         if (folder != null)

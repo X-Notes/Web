@@ -839,7 +839,6 @@ export class MenuButtonsService {
   }
 
   setItems(newItems: MenuItem[]) {
-    console.log('ITEMS: ', newItems);
     this.items = newItems;
   }
 

@@ -80,8 +80,9 @@
     (clickEvent)="hideMenu()"
     [tooltipMessage]="'header.menu' | translate"
     [tooltipPosition]="'Bottom'"
-    [styleClasses]="'generic-2 mobile-buttons'"
-    [iconClass]="'shared'"
+    [styleClasses]="'generic-2 more_vert'"
+    iconClass="more_vert"
+    [isDefault]="true"
   ></app-general-header-button>
 
   <div class="overlay" (click)="closeMenu()"></div>

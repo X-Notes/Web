@@ -65,7 +65,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, Guid typeId)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, Guid typeId, bool isHistory)
         {
             return await context.Notes
                 .Include(x => x.RefType)
@@ -73,7 +73,7 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
                 .OrderBy(x => x.Order)
-                .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false).ToListAsync();
+                .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
         }
 
         public async Task<List<Note>> GetNotesByIdsWithContent(IEnumerable<Guid> ids)

@@ -24,9 +24,15 @@ namespace BI.services.history
 
         public void DoWork()
         {
-            var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(10);
-            MakeCopy(histories).Wait();
-            historyCacheService.RemoveFromList(histories);
+            try
+            {
+                var histories = historyCacheService.GetCacheHistoriesForSnapshotingByTime(10);
+                MakeCopy(histories).Wait();
+                historyCacheService.RemoveFromList(histories);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public async Task MakeCopy(List<CacheHistory> histories)
@@ -40,21 +46,19 @@ namespace BI.services.history
                 var command = new CopyNoteCommand().GetIsHistory(history.AuthorNoteEmail, new List<Guid> { history.NoteId });
                 var results = await _mediator.Send(command);
                 var result = results.First();
-                if (result != null)
+                var noteHistory = new NoteHistory()
                 {
-                    var noteHistory = new NoteHistory()
-                    {
-                        NoteId = history.NoteId,
-                        SnapshotTime = DateTimeOffset.Now,
-                        NoteVersionId = result.Id
-                    };
-                    var dbNoteHistory = await noteHistoryRepository.Add(noteHistory);
-                    var userHistories = history.UsersThatEditIds.Select(userId => new UserNoteHistoryManyToMany() { 
-                        NoteHistoryId = dbNoteHistory.Entity.Id,
-                        UserId = userId
-                    });
-                    await userNoteHistoryManyToManyRepository.AddRange(userHistories);
-                }
+                    NoteId = history.NoteId,
+                    SnapshotTime = DateTimeOffset.Now,
+                    NoteVersionId = result.Id
+                };
+                var dbNoteHistory = await noteHistoryRepository.Add(noteHistory);
+                var userHistories = history.UsersThatEditIds.Select(userId => new UserNoteHistoryManyToMany()
+                {
+                    NoteHistoryId = dbNoteHistory.Entity.Id,
+                    UserId = userId
+                });
+                await userNoteHistoryManyToManyRepository.AddRange(userHistories);
             }
         }
 

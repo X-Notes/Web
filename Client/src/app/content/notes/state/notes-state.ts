@@ -38,11 +38,11 @@ import {
   UpdateLabelFullNote,
   ChangeTypeFullNote,
   LoadOnlineUsersOnNote,
+  UpdateOneFullNote,
   ChangeIsLockedFullNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
 import { SmallNote } from '../models/smallNote';
-import { LabelsOnSelectedNotes } from '../models/labelsOnSelectedNotes';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
@@ -61,7 +61,6 @@ interface NoteState {
   notes: Notes[];
   fullNoteState: FullNoteState;
   selectedIds: string[];
-  labelsIdsFromSelectedIds: LabelsOnSelectedNotes[];
   updateColorEvent: UpdateColor[];
   updateLabelsOnNoteEvent: UpdateLabelEvent[];
   removeFromMurriEvent: string[];
@@ -78,7 +77,6 @@ interface NoteState {
     notes: [],
     fullNoteState: null,
     selectedIds: [],
-    labelsIdsFromSelectedIds: [],
     updateColorEvent: [],
     updateLabelsOnNoteEvent: [],
     removeFromMurriEvent: [],
@@ -129,6 +127,16 @@ export class NoteStore {
   }
 
   @Selector()
+  static concatedAllNotes(state: NoteState) {
+    let newArr: SmallNote[] = [];
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < state.notes.length; i += 1) {
+      newArr = newArr.concat(state.notes[i].notes);
+    }
+    return newArr;
+  }
+
+  @Selector()
   static selectedCount(state: NoteState): number {
     return state.selectedIds.length;
   }
@@ -169,8 +177,12 @@ export class NoteStore {
   }
 
   @Selector()
-  static labelsIds(state: NoteState): LabelsOnSelectedNotes[] {
-    return state.labelsIdsFromSelectedIds;
+  static labelsIds(state: NoteState): string[] {
+    return this.concatedAllNotes(state)
+      .filter((note) => state.selectedIds.some((id) => id === note.id))
+      .map((x) => x.labels)
+      .flat()
+      .map((x) => x.id);
   }
 
   // SHARING
@@ -455,8 +467,25 @@ export class NoteStore {
       .map((note) => {
         return { ...note };
       });
-    const labelsArray = this.addLabelOnNote(notesForUpdate, label, patchState);
-    patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
+
+    const labelUpdate: UpdateLabelEvent[] = [];
+    notesForUpdate.forEach((x) => {
+      if (!x.labels.some((z) => z.id === label.id)) {
+        // eslint-disable-next-line no-param-reassign
+        x.labels = [
+          ...x.labels,
+          {
+            id: label.id,
+            color: label.color,
+            name: label.name,
+            isDeleted: label.isDeleted,
+            countNotes: 0,
+          },
+        ];
+        labelUpdate.push({ id: x.id, labels: x.labels });
+      }
+    });
+    patchState({ updateLabelsOnNoteEvent: labelUpdate });
 
     const notesForStore = notes.map((x) => {
       const note = { ...x };
@@ -489,11 +518,16 @@ export class NoteStore {
 
     const notes = this.getNotesByType(getState, typeNote.name);
 
-    const notesForUpdate = notes
-      .filter((x) => this.itemsFromFilterArray(selectedIds, x))
-      .map((note) => ({ ...note }));
-    const labelsArray = this.removeLabelFromNote(notesForUpdate, label, patchState);
-    patchState({ labelsIdsFromSelectedIds: [...labelsArray] });
+    const notesForUpdate = notes.filter((x) => this.itemsFromFilterArray(selectedIds, x));
+
+    const labelUpdate: UpdateLabelEvent[] = [];
+    notesForUpdate.forEach((x: SmallNote) => {
+      // eslint-disable-next-line no-param-reassign
+      const labels = x.labels.filter((z) => z.id !== label.id);
+      labelUpdate.push({ id: x.id, labels });
+    });
+
+    patchState({ updateLabelsOnNoteEvent: labelUpdate });
 
     const notesForStore = notes.map((x) => {
       const note = { ...x };
@@ -566,6 +600,15 @@ export class NoteStore {
       notes.splice(order.position - 1, 0, changedNote);
       dispatch(new UpdateNotes(new Notes(typeNote.name, [...notes]), typeNote.name));
     }
+  }
+
+  @Action(UpdateOneFullNote)
+  // eslint-disable-next-line class-methods-use-this
+  updateOneFullNote(
+    { patchState, getState }: StateContext<NoteState>,
+    { note }: UpdateOneFullNote,
+  ) {
+    patchState({ fullNoteState: { ...getState().fullNoteState, note } });
   }
 
   @Action(UpdateOneNote)
@@ -711,15 +754,10 @@ export class NoteStore {
 
   @Action(SelectIdNote)
   // eslint-disable-next-line class-methods-use-this
-  select({ patchState, getState }: StateContext<NoteState>, { id, labelIds }: SelectIdNote) {
+  select({ patchState, getState }: StateContext<NoteState>, { id }: SelectIdNote) {
     const ids = getState().selectedIds;
-    const select: LabelsOnSelectedNotes = {
-      id,
-      labelsIds: labelIds,
-    };
     patchState({
       selectedIds: [id, ...ids],
-      labelsIdsFromSelectedIds: [select, ...getState().labelsIdsFromSelectedIds],
     });
   }
 
@@ -728,28 +766,20 @@ export class NoteStore {
   unSelect({ getState, patchState }: StateContext<NoteState>, { id }: UnSelectIdNote) {
     let ids = getState().selectedIds;
     ids = ids.filter((x) => x !== id);
-    const labelsIds = getState().labelsIdsFromSelectedIds.filter((x) => x.id !== id);
-    patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: [...labelsIds] });
+    patchState({ selectedIds: [...ids] });
   }
 
   @Action(UnSelectAllNote)
   // eslint-disable-next-line class-methods-use-this
   unselectAll({ patchState }: StateContext<NoteState>) {
-    patchState({ selectedIds: [], labelsIdsFromSelectedIds: [] });
+    patchState({ selectedIds: [] });
   }
 
   @Action(SelectAllNote)
   selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
     const notes = this.getNotesByType(getState, typeNote.name);
     const ids = notes.map((z) => z.id);
-    const labelsIds = notes.map((x) => {
-      const values: LabelsOnSelectedNotes = {
-        id: x.id,
-        labelsIds: x.labels.map((z) => z.id),
-      };
-      return values;
-    });
-    patchState({ selectedIds: [...ids], labelsIdsFromSelectedIds: labelsIds });
+    patchState({ selectedIds: [...ids] });
   }
 
   @Action(CancelAllSelectedLabels)
@@ -798,60 +828,6 @@ export class NoteStore {
 
   itemsFromFilterArray = (ids: string[], note: SmallNote) => {
     return ids.indexOf(note.id) !== -1;
-  };
-
-  // eslint-disable-next-line class-methods-use-this
-  addLabelOnNote(
-    notes: SmallNote[],
-    label: Label,
-    patchState: (val: Partial<NoteState>) => NoteState,
-  ) {
-    const labelUpdate: UpdateLabelEvent[] = [];
-    const labelsArray: LabelsOnSelectedNotes[] = [];
-    notes.forEach((x) => {
-      const note = { ...x };
-      if (!note.labels.some((z) => z.id === label.id)) {
-        note.labels = [
-          ...note.labels,
-          {
-            id: label.id,
-            color: label.color,
-            name: label.name,
-            isDeleted: label.isDeleted,
-            countNotes: 0,
-          },
-        ];
-        labelUpdate.push({ id: note.id, labels: note.labels });
-      }
-      labelsArray.push({
-        labelsIds: [...note.labels.map((z) => z.id)],
-        id: note.id,
-      });
-    });
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
-    return labelsArray;
-  }
-
-  removeLabelFromNote = (
-    notes: SmallNote[],
-    label: Label,
-    patchState: (val: Partial<NoteState>) => NoteState,
-  ) => {
-    const labelUpdate: UpdateLabelEvent[] = [];
-    const labelsArray: LabelsOnSelectedNotes[] = [];
-    notes.forEach((x) => {
-      const note = { ...x };
-      note.labels = x.labels.filter((z) => z.id !== label.id);
-    });
-    notes.forEach((x) => {
-      labelsArray.push({
-        labelsIds: [...x.labels.map((z) => z.id)],
-        id: x.id,
-      });
-      labelUpdate.push({ id: x.id, labels: x.labels });
-    });
-    patchState({ updateLabelsOnNoteEvent: labelUpdate });
-    return labelsArray;
   };
 
   updateLabel = (note: SmallNote, label: Label) => {

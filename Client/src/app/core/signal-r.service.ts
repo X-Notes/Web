@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
-import { AppNotification } from './models/app-notification';
-import { LoadNotifications, NewNotification } from './stateApp/app-action';
+import { FullNote } from '../content/notes/models/fullNote';
+import { LoadOnlineUsersOnNote, UpdateOneFullNote } from '../content/notes/state/notes-actions';
+import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 
 @Injectable({
@@ -12,6 +13,8 @@ import { AppStore } from './stateApp/app-state';
 })
 export class SignalRService {
   public hubConnection: signalR.HubConnection;
+
+  public updateContentEvent = new Subject();
 
   constructor(private store: Store) {}
 
@@ -51,6 +54,14 @@ export class SignalRService {
 
     this.hubConnection.on('updateOnlineUsers', (noteId: string) => {
       this.store.dispatch(new LoadOnlineUsersOnNote(noteId));
+    });
+
+    this.hubConnection.on('updateNoteGeneral', (note: FullNote) => {
+      this.store.dispatch(new UpdateOneFullNote(note));
+    });
+
+    this.hubConnection.on('updateNoteContent', () => {
+      this.updateContentEvent.next();
     });
   };
 }
