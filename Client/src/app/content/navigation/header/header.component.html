@@ -79,6 +79,7 @@
 
     <!-- LABEL DELETE START -->
     <app-general-header-button
+      (click)="deleteAllFromBin()"
       *ngSwitchCase="'label-delete'"
       [message]="('header.emptyTrash' | translate)"
       [iconClass]="'delete'"

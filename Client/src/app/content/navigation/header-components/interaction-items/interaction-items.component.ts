@@ -9,6 +9,7 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MatMenu } from '@angular/material/menu';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-items',
@@ -19,6 +20,8 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   @Select(AppStore.getName)
   public route$: Observable<string>;
+
+  hideFor = hideForDemo;
 
   @Select(AppStore.isActionFilterButton)
   public isActionFilterButton$: Observable<boolean>;

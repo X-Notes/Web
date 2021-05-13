@@ -16,6 +16,7 @@ import {
   PersonalizationService,
 } from 'src/app/shared/services/personalization.service';
 import { SearchService } from 'src/app/shared/services/search.service';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-tools',
@@ -26,6 +27,8 @@ import { SearchService } from 'src/app/shared/services/search.service';
 export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNotificationsCount)
   public notificationCount$: Observable<number>;
+
+  hideFor = hideForDemo;
 
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;

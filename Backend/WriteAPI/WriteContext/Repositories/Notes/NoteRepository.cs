@@ -124,7 +124,7 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
-                .Where(x => x.UserId == userId && x.Id != noteId)
+                .Where(x => x.UserId == userId && x.Id != noteId && x.IsHistory == false)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync();
         }

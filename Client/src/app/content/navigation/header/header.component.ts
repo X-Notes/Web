@@ -19,6 +19,7 @@ import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 
 @Component({
   selector: 'app-header',
@@ -159,6 +160,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   newButton() {
     this.pService.newButtonSubject.next(true);
+  }
+
+  deleteAllFromBin() {
+    this.store.dispatch(DeleteAllFromBin);
   }
 
   routeChange(type: EntityType) {

@@ -34,6 +34,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { Theme } from 'src/app/shared/models/Theme';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-profile',
@@ -42,6 +43,8 @@ import { Theme } from 'src/app/shared/models/Theme';
   animations: [sideBarCloseOpen, showDropdown],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
+  hideFor = hideForDemo;
+
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
 

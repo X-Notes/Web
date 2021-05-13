@@ -41,6 +41,7 @@
   </ng-scrollbar>
 
   <app-general-header-button
+    *ngIf="hideFor"
     [tooltipMessage]="'header.video' | translate"
     [tooltipPosition]="'Bottom'"
     [iconClass]="'video'"
