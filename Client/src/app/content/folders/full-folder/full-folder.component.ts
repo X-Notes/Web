@@ -182,7 +182,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
-    this.folder = this.store.selectSnapshot(FolderStore.full);
+    this.store
+      .select(FolderStore.full)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((folder) => (this.folder = folder));
   }
 
   async loadSideBar() {

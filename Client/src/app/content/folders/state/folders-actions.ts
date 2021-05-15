@@ -22,6 +22,13 @@ export class ArchiveFolders {
   constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
 }
 
+// COLORS
+export class ChangeColorFullFolder {
+  static type = '[Folders] change color fullFolder';
+
+  constructor(public color: string) {}
+}
+
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
@@ -31,6 +38,8 @@ export class ChangeColorFolder {
 export class ClearColorFolders {
   static type = '[Folders] Clear color folder';
 }
+
+// //////////////////
 
 export class UpdateFolders {
   static type = '[Folders] Update folders';

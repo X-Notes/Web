@@ -8,7 +8,10 @@ import {
 } from 'src/app/content/notes/state/notes-actions';
 import { Observable } from 'rxjs/internal/Observable';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { ChangeColorFolder } from 'src/app/content/folders/state/folders-actions';
+import {
+  ChangeColorFolder,
+  ChangeColorFullFolder,
+} from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteColorPallete } from '../../enums/NoteColors';
@@ -63,8 +66,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     if (routePath) {
       const isInner = this.store.selectSnapshot(AppStore.isFolderInner);
       if (isInner) {
-        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
+        await this.store.dispatch(new ChangeColorFullFolder(this.current)).toPromise();
       } else {
         const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
         const type = this.store

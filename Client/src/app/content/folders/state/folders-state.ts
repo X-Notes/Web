@@ -30,6 +30,7 @@ import {
   TransformTypeFolders,
   ChangeTypeFullFolder,
   GetInvitedUsersToFolder,
+  ChangeColorFullFolder,
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { Folders } from '../models/Folders';
@@ -399,6 +400,20 @@ export class FolderStore {
       UnSelectAllFolder,
       ClearColorFolders,
     ]);
+  }
+
+  @Action(ChangeColorFullFolder)
+  async changeColorFullFolder(
+    { getState, patchState, dispatch }: StateContext<FolderState>,
+    { color }: ChangeColorFullFolder,
+  ) {
+    await this.api.changeColor([getState().fullFolderState.folder.id], color).toPromise();
+
+    const { folder } = getState().fullFolderState;
+    const newFolder: FullFolder = { ...folder, color };
+    patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
+    const folderUpdate = newFolder as SmallFolder;
+    dispatch(new UpdateOneFolder(folderUpdate, folder.folderType.name));
   }
 
   @Action(UpdateOneFolder)
