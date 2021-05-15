@@ -13,6 +13,15 @@
   }
 }
 
+.hide-tag-text {
+  min-width: auto;
+  .inner-content {
+    p {
+      display: none;
+    }
+  }
+}
+
 .history {
   width: auto;
   margin-right: 0;
