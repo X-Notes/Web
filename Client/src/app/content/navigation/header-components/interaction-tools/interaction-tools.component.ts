@@ -28,23 +28,17 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
   @Select(AppStore.getNotificationsCount)
   public notificationCount$: Observable<number>;
 
-  hideFor = hideForDemo;
-
   @Select(AppStore.isNoteInner)
   public isNoteInner$: Observable<boolean>;
 
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
   @ViewChild('searchInput') searchInput: ElementRef;
 
   searchStrChanged: Subject<string> = new Subject<string>();
+
+  hideFor = hideForDemo;
 
   searchResult = [];
 

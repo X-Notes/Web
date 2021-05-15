@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
-import { Subject, Observable } from 'rxjs';
-import { Select } from '@ngxs/store';
+import { Subject, Observable, BehaviorSubject, combineLatest, fromEvent } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs/operators';
+import { map, startWith, take } from 'rxjs/operators';
+import { FolderStore } from 'src/app/content/folders/state/folders-state';
+import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FontSize } from '../models/FontSize';
 import { Icons } from '../enums/Icons.enum';
 
@@ -146,9 +148,42 @@ export class PersonalizationService {
 
   changeOrientationSubject: Subject<boolean> = new Subject<boolean>();
 
+  isMenuActive$: Observable<boolean> = new Observable<boolean>();
+
+  windowHeight$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerHeight);
+
+  windowWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerWidth);
+
   icon = Icons;
 
-  constructor(public lockEncryptService: LockEncryptService, private translate: TranslateService) {}
+  constructor(
+    public lockEncryptService: LockEncryptService,
+    private translate: TranslateService,
+    private store: Store,
+  ) {
+    this.subscribeActiveMenu();
+    this.subscribeWindowEvents();
+  }
+
+  subscribeWindowEvents() {
+    fromEvent(window, 'resize')
+      .pipe(map((value) => value as any))
+      .subscribe((evt) => {
+        this.windowHeight$.next(evt.target.innerHeight);
+        this.windowWidth$.next(evt.target.innerWidth);
+      });
+  }
+
+  get isHideTextOnSmall$() {
+    return this.windowWidth$.pipe(map((value) => value < 1400));
+  }
+
+  subscribeActiveMenu() {
+    this.isMenuActive$ = combineLatest([
+      this.store.select(NoteStore.activeMenu).pipe(startWith(false)),
+      this.store.select(FolderStore.activeMenu).pipe(startWith(false)),
+    ]).pipe(map(([n, f]) => n || f));
+  }
 
   async getTranslateText(key) {
     return this.translate.get(key).pipe(take(1)).toPromise();

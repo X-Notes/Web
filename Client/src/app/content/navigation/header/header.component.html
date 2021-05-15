@@ -103,7 +103,7 @@
 
     <div
       class="interactions menu"
-      *ngIf="((menuActiveNotes$ | async) || (menuActiveFolders$ | async))"
+      *ngIf="(pService.isMenuActive$ | async) === (true)"
       [@showMenuLeftRight]
     >
       <app-menu class="menu-inner"></app-menu>

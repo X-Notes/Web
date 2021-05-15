@@ -254,7 +254,7 @@ export class FolderStore {
 
   @Selector()
   static activeMenu(state: FolderState): boolean {
-    return state.selectedIds.length > 0;
+    return state.selectedIds?.length > 0;
   }
 
   // Get folders

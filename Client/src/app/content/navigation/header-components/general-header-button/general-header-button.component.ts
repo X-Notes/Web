@@ -29,9 +29,16 @@ export class GeneralHeaderButtonComponent {
   isDefault = false;
 
   @Input()
-  isHideText$: Observable<boolean>;
+  isClassOnSize: boolean;
+
+  @Input()
+  classOnSize: string;
 
   clickHandler() {
     this.clickEvent.emit();
+  }
+
+  get isActiveMessage() {
+    return this.message?.length > 0;
   }
 }

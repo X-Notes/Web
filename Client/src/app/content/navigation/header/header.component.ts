@@ -14,11 +14,10 @@ import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
+import { SignalRService } from 'src/app/core/signal-r.service';
 import { NoteStore } from '../../notes/state/notes-state';
-import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
-import { SignalRService } from 'src/app/core/signal-r.service';
 import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 
 @Component({
@@ -41,12 +40,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.getMenuSwitch)
   public menuSwitch$: Observable<string>;
-
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
 
   @Select(AppStore.getNewButtonActive)
   public newButtonActive$: Observable<boolean>;

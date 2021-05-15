@@ -148,7 +148,7 @@ export class NoteStore {
 
   @Selector()
   static activeMenu(state: NoteState): boolean {
-    return state.selectedIds.length > 0;
+    return state.selectedIds?.length > 0;
   }
 
   @Selector()

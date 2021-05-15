@@ -14,9 +14,6 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   styleUrls: ['./interaction-inner-folder.component.scss'],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
@@ -24,7 +21,7 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  constructor(private store: Store, private pService: PersonalizationService) {}
+  constructor(private store: Store, public pService: PersonalizationService) {}
 
   ngOnInit(): void {
     this.initCountSelected();
