@@ -433,24 +433,6 @@ export class MenuButtonsService {
     },
   ];
 
-  public foldersItemsInner: MenuItem[] = [
-    {
-      icon: 'copy',
-      operation: () => this.copyFolders(),
-      isVisible: of(true),
-    },
-    {
-      icon: 'color',
-      operation: () => this.dialogsManageService.changeColor(),
-      isVisible: of(true),
-    },
-    {
-      icon: 'delete',
-      operation: () => console.log('TODO'),
-      isVisible: of(false),
-    },
-  ];
-
   constructor(
     private store: Store,
     private snackService: SnackbarService,
@@ -860,12 +842,19 @@ export class MenuButtonsService {
   }
 
   private copyFolders() {
-    const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-    const type = this.store
-      .selectSnapshot(AppStore.getFolderTypes)
-      .find((x) => x.name === folderType);
-    this.store.dispatch(new CopyFolders(type, ids));
+    const isInnerFolder = this.store.selectSnapshot(AppStore.isFolderInner);
+    if (isInnerFolder) {
+      const folder = this.store.selectSnapshot(FolderStore.full);
+      const ids = [folder.id];
+      this.store.dispatch(new CopyFolders(folder.folderType, ids));
+    } else {
+      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+      const type = this.store
+        .selectSnapshot(AppStore.getFolderTypes)
+        .find((x) => x.name === folderType);
+      const ids = this.store.selectSnapshot(FolderStore.selectedIds);
+      this.store.dispatch(new CopyFolders(type, ids));
+    }
   }
 
   // SET DELETE
@@ -909,6 +898,7 @@ export class MenuButtonsService {
   }
 
   private setDeleteFolders() {
+    alert(5);
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
     const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const type = this.store
