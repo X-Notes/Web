@@ -63,4 +63,5 @@ export enum Icons {
   sharedFolderIllustration = 'sharedFolderIllustration',
   historyIllustration = 'historyIllustration',
   notificationIllustration = 'notificationIllustration',
+  noAccessView = 'noAccessView',
 }

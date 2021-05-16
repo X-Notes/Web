@@ -29,6 +29,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ShortUser } from 'src/app/core/models/short-user';
+import { SignalRService } from 'src/app/core/signal-r.service';
 import {
   DeleteCurrentNote,
   LoadFullNote,
@@ -61,7 +62,6 @@ import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/note-history';
-import { SignalRService } from 'src/app/core/signal-r.service';
 
 @Component({
   selector: 'app-full-note',
@@ -160,7 +160,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sliderService.getSize();
     } else {
       this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
+      this.rend.setStyle(this.wrap?.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
       this.sliderService.active = 0;
     }
   }
@@ -198,7 +198,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const types = this.store.selectSnapshot(AppStore.getNoteTypes);
     const actions = types.map((x) => new LoadNotes(x.id, x));
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note.noteType.name);
+    await this.setSideBarNotes(this.note?.noteType?.name);
   }
 
   async ngOnInit() {

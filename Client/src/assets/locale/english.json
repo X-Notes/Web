@@ -166,7 +166,9 @@
       "archiveFolders": "Archived folders will be displayed here",
       "deletedFolders": "Deleted folders will be displayed here",
       "notification": "No unread notifications",
-      "notificationAll": "You have no notifications"
+      "notificationAll": "You have no notifications",
+      "history": "There is no history in the note yet",
+      "noAccessView": "You do not have permission to view the note"
     },
     "notification": {
       "title": "Notification",
