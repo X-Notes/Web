@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, take, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText } from '../../../models/ContentMode';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
