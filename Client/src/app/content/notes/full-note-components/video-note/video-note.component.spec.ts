@@ -8,9 +8,8 @@ describe('VideoNoteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VideoNoteComponent ]
-    })
-    .compileComponents();
+      declarations: [VideoNoteComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,9 +1,9 @@
 <div class="notification" appTheme>
   <div class="notification-header">
     <div class="title">
-      <p>Notification</p>
+      <p>{{ 'notification.title' | translate }}</p>
     </div>
-    <div class="actions interactions">
+    <div class="actions">
       <button
         name="Close notification"
         type="button"
@@ -27,23 +27,21 @@
     [appearance]="'compact'"
   >
     <div class="scroll-inner">
-      <div
-        class="notification-action read-all interactions p-sticky"
-        *ngIf="notificationsLen$ | async"
-      >
+      <div class="notification-action read-all p-sticky" *ngIf="getNewNotificationsLength$ | async">
         <button name="read all notifications" type="button" class="generic" #readAll>
           <div class="inner-content">
-            <p (click)="readAllMessages()">Read all notifications</p>
+            <p (click)="readAllMessages()">{{ 'notification.readAll' | translate}}</p>
           </div>
           <div class="ripple-container" matRipple [matRippleTrigger]="readAll"></div>
         </button>
       </div>
       <app-notification-message
         (click)="read(item.id)"
-        *ngFor="let item of notifications$ | async"
+        *ngFor="let item of notificationsNew$ | async"
         [message]="item"
+        [isRead]="false"
       ></app-notification-message>
-      <div class="notification-action see-all interactions">
+      <div class="notification-action see-all">
         <button
           (click)="toggleMessage = false"
           name="see all notifications"
@@ -52,17 +50,24 @@
           #seeAll
         >
           <div class="inner-content">
-            <p>See all notifications</p>
+            <p>{{ 'notification.seeAll' | translate }}</p>
           </div>
           <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
         </button>
       </div>
     </div>
+    <app-no-results-illustration
+      *ngIf="(getNewNotificationsLength$ | async) === (false || undefined || null || 0)"
+      [isShow]="true"
+      [message]="'noResult.notification' | translate"
+      [illustration]="pService.icon.notificationIllustration"
+      typeClass="type-notification"
+    ></app-no-results-illustration>
   </ng-scrollbar>
   <ng-template #readMessage>
     <ng-scrollbar class="scroll-wrapper" [visibility]="'hover'" [appearance]="'compact'">
       <div class="scroll-inner">
-        <div class="notification-action go-to interactions p-sticky">
+        <div class="notification-action go-to p-sticky">
           <button
             (click)="toggleMessage = true"
             name="see all notifications"
@@ -71,37 +76,25 @@
             #seeAll
           >
             <div class="inner-content">
-              <p>Go to new notifications</p>
+              <p>{{ 'notification.goToNew' | translate }}</p>
             </div>
             <div class="ripple-container" matRipple [matRippleTrigger]="seeAll"></div>
           </button>
         </div>
-        <div
+        <app-notification-message
           (click)="read(item.id)"
-          class="notification-message"
-          *ngFor="let item of notifications$ | async"
-        >
-          <div class="avatar">
-            <img alt="user image" [src]="item.userFromPhotoId | getImage" />
-          </div>
-          <div class="message">
-            <div class="info-message">
-              <div class="info status-read">
-                <p>Read message</p>
-              </div>
-              <div class="info date">
-                <p>{{ item.date | date : 'd MMM, h:mm' }}</p>
-              </div>
-            </div>
-            <div class="username">
-              <p>{{item.userFromName}}</p>
-            </div>
-            <div class="user-message">
-              <p>{{item.message}}</p>
-            </div>
-          </div>
-        </div>
+          *ngFor="let item of notificationsRead$ | async"
+          [message]="item"
+          [isRead]="true"
+        ></app-notification-message>
       </div>
+      <app-no-results-illustration
+        *ngIf="(getReadNotificationsLength$ | async) === (false || undefined || null || 0)"
+        [isShow]="true"
+        [message]="'noResult.notificationAll' | translate"
+        [illustration]="pService.icon.notificationIllustration"
+        typeClass="type-notification"
+      ></app-no-results-illustration>
     </ng-scrollbar>
   </ng-template>
   <!-- <app-spinner *ngIf="pService.spinnerActive"></app-spinner> -->

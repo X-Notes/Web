@@ -8,9 +8,8 @@ describe('UserOnEntityCardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserOnEntityCardComponent ]
-    })
-    .compileComponents();
+      declarations: [UserOnEntityCardComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

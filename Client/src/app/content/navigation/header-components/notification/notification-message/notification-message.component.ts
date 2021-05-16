@@ -7,4 +7,15 @@ import { Component, Input } from '@angular/core';
 })
 export class NotificationMessageComponent {
   @Input() message: Record<string, string>;
+
+  @Input() isRead: boolean;
+
+  get typeMessage() {
+    switch (this.message.message) {
+      case 'notification.ChangeUserPermissionNote':
+        return 'notification.ChangeUserPermissionNote';
+      default:
+        return null;
+    }
+  }
 }

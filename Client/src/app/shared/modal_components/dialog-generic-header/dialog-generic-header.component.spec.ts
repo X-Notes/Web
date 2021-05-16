@@ -8,9 +8,8 @@ describe('DialogGenericHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DialogGenericHeaderComponent ]
-    })
-    .compileComponents();
+      declarations: [DialogGenericHeaderComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -176,6 +176,13 @@
               *ngFor="let item of histories"
             ></app-history-record></div
         ></ng-scrollbar>
+        <app-no-results-illustration
+          *ngIf="true"
+          [isShow]="true"
+          [message]="'noResult.history' | translate"
+          [illustration]="pService.icon.historyIllustration"
+          typeClass="type-notification"
+        ></app-no-results-illustration>
       </div>
       <ng-scrollbar
         class="scroll-helper small-notes"
@@ -206,7 +213,14 @@
       <div class="drag-helper second-helper"></div>
     </div>
   </div>
-  <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">No can View</div>
+  <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessView' | translate"
+      [illustration]="pService.icon.noAccessView"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
   <app-spinner *ngIf="!loaded"></app-spinner>
   <app-text-edit-menu
     [style.top.px]="menuSelectionService.getTop"

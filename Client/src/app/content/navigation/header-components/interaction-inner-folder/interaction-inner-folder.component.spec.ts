@@ -8,9 +8,8 @@ describe('InteractionInnerFolderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InteractionInnerFolderComponent ]
-    })
-    .compileComponents();
+      declarations: [InteractionInnerFolderComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
