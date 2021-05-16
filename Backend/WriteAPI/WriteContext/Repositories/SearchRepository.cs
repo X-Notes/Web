@@ -20,13 +20,13 @@ namespace WriteContext.Repositories
         }
 
         // TODO MAKE FOR ALL NOTES
-        public async Task<List<Note>> GetNotesByUserId(Guid userId)
+        public async Task<List<Note>> GetNotesByUserIdSearch(Guid userId)
         {
             return await context.Notes
                 .Include(x => x.FoldersNotes).ThenInclude(z => z.Folder)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
-                .Where(x => x.UserId == userId).ToListAsync();
+                .Where(x => x.UserId == userId && x.IsHistory == false).ToListAsync();
         }
 
         // TODO MAKE FOR ALL FOLDERS

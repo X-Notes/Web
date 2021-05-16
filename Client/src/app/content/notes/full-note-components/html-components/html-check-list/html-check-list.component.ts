@@ -79,7 +79,11 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
         this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.updateText.emit({
+          content: str,
+          contentId: this.content.id,
+          checked: this.content.checked,
+        });
       });
   }
 
@@ -117,13 +121,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   async changeCheckBox() {
-    // TODO BUG
-    this.textChanged.pipe(take(1)).subscribe((str) =>
-      this.updateText.emit({
-        content: str,
-        contentId: this.content.id,
-        checked: !this.content.checked,
-      }),
-    );
+    this.content.checked = !this.content.checked;
+    this.textChanged.next(this.content.content);
   }
 }

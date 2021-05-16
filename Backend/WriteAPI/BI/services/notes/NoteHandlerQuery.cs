@@ -64,7 +64,7 @@ namespace BI.services.notes
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             if (user != null)
             {
-                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId);
+                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId, false);
                 var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
 
                 if(type.Id == request.TypeId)

@@ -180,11 +180,18 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.histories = await this.apiHistory.getHistory(this.id).toPromise();
     await this.signalRService.joinNote(this.id);
     this.store.dispatch(new LoadOnlineUsersOnNote(this.id));
+    this.signalRService.updateContentEvent
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.loadContent());
+  }
+
+  async loadContent() {
+    this.contents = await this.api.getContents(this.id).toPromise();
   }
 
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
-    this.contents = await this.api.getContents(this.id).toPromise();
+    await this.loadContent();
     this.store
       .select(NoteStore.oneFull)
       .pipe(takeUntil(this.destroy))

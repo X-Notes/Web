@@ -9,7 +9,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { LabelsOnSelectedNotes } from 'src/app/content/notes/models/labelsOnSelectedNotes';
+import { LabelSelect } from 'src/app/content/labels/models/label-select';
 import { PersonalizationService, smoothOpacity } from '../../services/personalization.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   searchStr = '';
 
-  public labels: Label[];
+  public labels: LabelSelect[];
 
   constructor(
     public dialogRef: MatDialogRef<EditingLabelsNoteComponent>,
@@ -40,26 +40,21 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    const labels = this.store.selectSnapshot(LabelStore.all);
-    this.labels = this.tranformLabels(labels);
+    this.initLabels();
 
     await this.pService.waitPreloading();
     this.loaded = true;
     this.checkSelect();
   }
 
+  initLabels() {
+    const labels = this.store.selectSnapshot(LabelStore.all);
+    this.labels = this.tranformLabels(labels);
+  }
+
   tranformLabels = (items: Label[]) => {
-    const labels = [...items];
-    return labels.map((label) => {
-      const obj: Label = {
-        id: label.id,
-        color: label.color,
-        countNotes: label.countNotes,
-        isDeleted: label.isDeleted,
-        isSelected: false,
-        name: label.name,
-      };
-      return obj;
+    return [...items].map((label) => {
+      return { ...label, isSelectedValue: false };
     });
   };
 
@@ -71,37 +66,26 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy))
         .subscribe((note) => {
           if (note) {
-            this.tryFind([{ id: note.id, labelsIds: note.labels.map((label) => label.id) }]);
+            this.initLabels();
+            const ids = note.labels.map((label) => label.id);
+            this.tryFind(ids);
           }
         });
     } else {
       this.store
         .select(NoteStore.labelsIds)
         .pipe(takeUntil(this.destroy))
-        .subscribe((model) => {
-          if (model) {
-            this.tryFind(model);
-          }
+        .subscribe((ids) => {
+          this.initLabels();
+          this.tryFind(ids);
         });
     }
   }
 
-  tryFind(z: LabelsOnSelectedNotes[]) {
-    const labels = this.tranformLabels(this.labels);
-    this.labels = labels;
-    for (const label of labels) {
-      let flag = false;
-      for (const item of z) {
-        const check = item.labelsIds.some((x) => x === label.id);
-        if (check) {
-          flag = true;
-        }
-      }
-      if (flag) {
-        label.isSelected = true;
-      } else {
-        label.isSelected = false;
-      }
+  tryFind(labelIds: string[]) {
+    for (const label of this.labels) {
+      const flag = labelIds.some((x) => x === label.id);
+      label.isSelectedValue = flag;
     }
   }
 
@@ -113,13 +97,13 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateLabel(label));
   }
 
-  delete(label: Label) {
+  deleteLabel(label: Label) {
     this.store.dispatch(new SetDeleteLabel(label));
   }
 
   async newLabel() {
     await this.store.dispatch(new AddLabel()).toPromise();
-    const newLabel = this.store.selectSnapshot(LabelStore.all)[0];
+    const newLabel = this.store.selectSnapshot(LabelStore.all)[0] as LabelSelect;
     this.labels = [newLabel, ...this.labels];
   }
 }

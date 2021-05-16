@@ -155,8 +155,7 @@ export class NotesService implements OnDestroy {
 
   highlightNote(note) {
     if (!note.isSelected) {
-      const labelsIds = note.labels.map((x) => x.id);
-      this.store.dispatch(new SelectIdNote(note.id, labelsIds));
+      this.store.dispatch(new SelectIdNote(note.id));
     } else {
       this.store.dispatch(new UnSelectIdNote(note.id));
     }
@@ -206,7 +205,7 @@ export class NotesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x) {
-          await this.UpdateLabelSelected(x);
+          await this.updateLabelSelected(x);
         }
       });
     this.firstInitFlag = true;
@@ -227,7 +226,7 @@ export class NotesService implements OnDestroy {
     }
   }
 
-  async UpdateLabelSelected(ids: string[]) {
+  async updateLabelSelected(ids: string[]) {
     if (ids.length !== 0 && this.firstInitFlag) {
       await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);

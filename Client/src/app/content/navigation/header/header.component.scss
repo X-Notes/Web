@@ -123,10 +123,11 @@ header {
         align-items: center;
         width: 30px;
         overflow: hidden;
+        background-color: transparent;
 
         .icon {
           display: flex;
-          font-size: 1.5rem;
+          font-size: 2rem;
         }
       }
     }

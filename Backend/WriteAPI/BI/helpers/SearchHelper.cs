@@ -22,12 +22,26 @@ namespace BI.helpers
 
         public bool IsMatchPhoto(AppFile photo, string search)
         {
-            if (photo.RecognizeObject.Contains(search) || photo.TextFromPhoto.Contains(search))
+            var flag = false;
+            if(!string.IsNullOrEmpty(photo.RecognizeObject))
             {
-                return true;
+                flag = photo.RecognizeObject.Contains(search);
+                if(flag)
+                {
+                    return flag;
+                }
             }
 
-            return false;
+            if (!string.IsNullOrEmpty(photo.TextFromPhoto))
+            {
+                flag = photo.TextFromPhoto.Contains(search);
+                if (flag)
+                {
+                    return flag;
+                }
+            }
+
+            return flag;
         }
 
     }

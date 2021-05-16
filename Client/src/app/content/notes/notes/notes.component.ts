@@ -49,8 +49,6 @@ export class NotesComponent implements OnInit, OnDestroy {
 
   public photoError = false;
 
-  labelsActive = false;
-
   public labelsFilters: LabelsForFiltersNotes[] = [];
 
   constructor(
@@ -101,10 +99,13 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.router.navigate([`notes/${notes[0].id}`]);
   }
 
+  get labelsActive() {
+    return this.labelsFilters.filter((z) => z.selected === true).length > 0;
+  }
+
   cancelLabel() {
-    this.labelsActive = false;
-    this.labelsFilters.forEach((z) => {
-      const label = { ...z };
+    this.labelsFilters.forEach((label) => {
+      // eslint-disable-next-line no-param-reassign
       label.selected = false;
     });
     this.store.dispatch(new CancelAllSelectedLabels(true));
@@ -113,7 +114,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   filterNotes(id: string) {
     const label = this.labelsFilters.find((z) => z.label.id === id);
     label.selected = !label.selected;
-    this.labelsActive = this.labelsFilters.filter((z) => z.selected === true).length > 0;
     this.store.dispatch(new UpdateSelectLabel(id));
   }
 
