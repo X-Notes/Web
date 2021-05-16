@@ -310,16 +310,6 @@ export class NoteStore {
     patchState({ updateColorEvent: [] });
   }
 
-  // Set deleting
-  @Action(SetDeleteNotes)
-  async deleteNotes(
-    { dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: SetDeleteNotes,
-  ) {
-    await this.api.setDeleteNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
-  }
-
   // Deleting
   @Action(DeleteNotesPermanently)
   async deleteNotesPermanently(
@@ -370,6 +360,16 @@ export class NoteStore {
       removeFromMurriEvent: [...selectedIds],
     });
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+  }
+
+  // Set deleting
+  @Action(SetDeleteNotes)
+  async deleteNotes(
+    { dispatch }: StateContext<NoteState>,
+    { typeNote, selectedIds }: SetDeleteNotes,
+  ) {
+    await this.api.setDeleteNotes(selectedIds).toPromise();
+    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
   }
 
   @Action(ArchiveNotes)

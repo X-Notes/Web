@@ -45,11 +45,6 @@ export class ClearAddedPrivateNotes {
 }
 
 // CHANGE STATE
-export class SetDeleteNotes {
-  static type = '[Notes] SetDelete notes';
-
-  constructor(public typeNote: NoteType, public selectedIds: string[]) {}
-}
 
 export class DeleteNotesPermanently {
   static type = '[Notes] Delete notes';
@@ -57,22 +52,21 @@ export class DeleteNotesPermanently {
   constructor(public selectedIds: string[], public typeNote: NoteType) {}
 }
 
-export class ArchiveNotes {
-  static type = '[Notes] Archive notes';
+export class BaseChangeTypeSmallNote {
+  public typeNote: NoteType;
 
-  constructor(public typeNote: NoteType, public selectedIds: string[]) {}
+  public selectedIds: string[];
 }
 
-export class MakeSharedNotes {
+export class SetDeleteNotes extends BaseChangeTypeSmallNote {
+  static type = '[Notes] SetDelete notes';
+}
+export class ArchiveNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] Archive notes';
-
-  constructor(public typeNote: NoteType, public selectedIds: string[]) {}
 }
 
-export class MakePrivateNotes {
+export class MakePrivateNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] MakePrivate notes';
-
-  constructor(public typeNote: NoteType, public selectedIds: string[]) {}
 }
 
 // Labels
