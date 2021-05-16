@@ -8,9 +8,8 @@ describe('ManageNotesInFolderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ManageNotesInFolderComponent ]
-    })
-    .compileComponents();
+      declarations: [ManageNotesInFolderComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

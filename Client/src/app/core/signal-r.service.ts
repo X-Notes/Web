@@ -3,8 +3,7 @@ import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { LoadOnlineUsersOnNote } from '../content/notes/state/notes-actions';
-import { AppNotification } from './models/app-notification';
-import { LoadNotifications, NewNotification } from './stateApp/app-action';
+import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';
 
 @Injectable({

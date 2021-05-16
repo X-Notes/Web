@@ -8,9 +8,8 @@ describe('NoResultsIllustrationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NoResultsIllustrationComponent ]
-    })
-    .compileComponents();
+      declarations: [NoResultsIllustrationComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

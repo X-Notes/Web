@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AudioModel } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
@@ -7,27 +7,31 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
   templateUrl: './audio-note.component.html',
   styleUrls: ['./audio-note.component.scss'],
 })
-export class AudioNoteComponent implements OnInit, ParentInteraction {
+export class AudioNoteComponent implements ParentInteraction {
   @Input()
   content: AudioModel;
 
-  constructor() {}
+  setFocus = ($event?: any) => {
+    console.log($event);
+  };
 
-  setFocus($event?: any) {}
+  setFocusToEnd = () => {};
 
-  setFocusToEnd() {}
+  updateHTML = (content: string) => {
+    console.log(content);
+  };
 
-  updateHTML(content: string) {}
-
-  getNative() {}
+  getNative = () => {};
 
   getContent() {
     return this.content;
   }
 
-  mouseEnter($event: any) {}
+  mouseEnter = ($event: any) => {
+    console.log($event);
+  };
 
-  mouseOut($event: any) {}
-
-  ngOnInit(): void {}
+  mouseOut = ($event: any) => {
+    console.log($event);
+  };
 }
