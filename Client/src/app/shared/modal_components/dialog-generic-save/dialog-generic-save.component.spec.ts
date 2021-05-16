@@ -8,9 +8,8 @@ describe('DialogGenericSaveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DialogGenericSaveComponent ]
-    })
-    .compileComponents();
+      declarations: [DialogGenericSaveComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

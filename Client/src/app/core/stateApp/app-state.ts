@@ -60,13 +60,27 @@ export class AppStore {
   }
 
   @Selector()
-  static getNotifications(state: AppState): AppNotification[] {
-    return state.notifications;
+  static getNewNotifications(state: AppState): AppNotification[] {
+    const notifications = state.notifications.filter((notif) => !notif.isRead);
+    return notifications;
   }
 
   @Selector()
-  static getNotificationsLength(state: AppState): number {
-    return state.notifications.length;
+  static getNewNotificationsLength(state: AppState): number {
+    const notifications = state.notifications.filter((notif) => !notif.isRead);
+    return notifications.length;
+  }
+
+  @Selector()
+  static getReadNotificationsLength(state: AppState): number {
+    const notifications = state.notifications.filter((notif) => notif.isRead);
+    return notifications.length;
+  }
+
+  @Selector()
+  static getReadNotifications(state: AppState): AppNotification[] {
+    const notifications = state.notifications.filter((notif) => notif.isRead);
+    return notifications;
   }
 
   @Selector()

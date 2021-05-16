@@ -8,9 +8,8 @@ describe('MemoryIndicatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MemoryIndicatorComponent ]
-    })
-    .compileComponents();
+      declarations: [MemoryIndicatorComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

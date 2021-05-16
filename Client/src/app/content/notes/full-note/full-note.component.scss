@@ -128,6 +128,7 @@
       }
 
       .history-section {
+        position: relative;
         display: flex;
         width: calc(100% - 4vw);
         height: 400px;
@@ -167,6 +168,12 @@
         margin-top: 1rem;
       }
     }
+  }
+
+  .wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
   }
 }
 
