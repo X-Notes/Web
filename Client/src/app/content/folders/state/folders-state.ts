@@ -37,6 +37,7 @@ import { Folders } from '../models/Folders';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invitedUsersToNote';
 
 interface FullFolderState {
+  isOwner: boolean;
   folder: FullFolder;
   canView: boolean;
   caEdit: boolean;
@@ -249,6 +250,21 @@ export class FolderStore {
   }
 
   @Selector()
+  static canView(state: FolderState): boolean {
+    return state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static canNoView(state: FolderState): boolean {
+    return !state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static isOwner(state: FolderState): boolean {
+    return state.fullFolderState?.isOwner;
+  }
+
+  @Selector()
   static selectedCount(state: FolderState): number {
     return state.selectedIds.length;
   }
@@ -448,6 +464,7 @@ export class FolderStore {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullFolderState: {
+        isOwner: request.isOwner,
         canView: request.canView,
         caEdit: request.canEdit,
         folder: request.fullFolder,

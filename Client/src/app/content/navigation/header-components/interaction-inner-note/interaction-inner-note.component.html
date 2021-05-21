@@ -50,6 +50,7 @@
 
   <app-menu
     class="menu-inner"
+    [items]="buttonService.items | manageMenuButtons:(isOwner$ | async)"
     *ngIf="pService.hideInnerMenu"
     [@showMenuLeftRight]
     [@.disabled]="pService.AnimationInnerMenu"

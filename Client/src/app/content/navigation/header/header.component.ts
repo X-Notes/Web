@@ -138,19 +138,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     switch (folder.folderType.name) {
       case FolderTypeENUM.Private: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsPrivate);
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;
       }
       case FolderTypeENUM.Shared: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsShared);
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
         break;
       }
       case FolderTypeENUM.Deleted: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsDeleted);
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
         break;
       }
       case FolderTypeENUM.Archive: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsArchive);
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
         break;
       }
       default: {

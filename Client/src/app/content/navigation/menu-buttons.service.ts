@@ -43,44 +43,54 @@ export class MenuButtonsService {
       icon: 'history',
       operation: () => 5,
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'lock',
       isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
       operation: () => this.dialogsManageService.lock(),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () => this.dialogsManageService.lock(null, true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -90,14 +100,18 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => {
         const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
   ];
 
@@ -106,45 +120,61 @@ export class MenuButtonsService {
       icon: 'history',
       operation: () => 5,
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'private',
       operation: () => {
         const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'lock',
       isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
       operation: () => this.dialogsManageService.lock(),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () => this.dialogsManageService.lock(null, true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -157,14 +187,18 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => {
         const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
   ];
 
@@ -172,37 +206,51 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'lock',
       isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
       operation: () => this.dialogsManageService.lock(),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () => this.dialogsManageService.lock(null, true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -215,19 +263,25 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'delete',
       operation: () => this.deleteNotes(),
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'restore',
       operation: () => {
         const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
   ];
 
@@ -236,45 +290,61 @@ export class MenuButtonsService {
       icon: 'history',
       operation: () => 5,
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'label',
       operation: () => this.dialogsManageService.changeLabels(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'private',
       operation: () => {
         const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'copy',
       operation: () => this.copyNotes(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'lock',
       isActive: this.store.select(NoteStore.selectedCount).pipe(map((x) => x > 1)),
       isVisible: this.store.select(NoteStore.isRemoveLock).pipe(map((x) => !x)),
       operation: () => this.dialogsManageService.lock(),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'unlock',
       isVisible: this.store.select(NoteStore.isRemoveLock),
       operation: () => this.dialogsManageService.lock(null, true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
@@ -284,9 +354,11 @@ export class MenuButtonsService {
       icon: 'delete',
       operation: () => {
         const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: false,
     },
   ];
 
@@ -294,29 +366,33 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: of(false),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -326,6 +402,8 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
@@ -334,6 +412,8 @@ export class MenuButtonsService {
         this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
   ];
 
@@ -341,37 +421,43 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: of(false),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'privateFolder',
       operation: () => {
         const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -381,6 +467,8 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
@@ -389,6 +477,8 @@ export class MenuButtonsService {
         this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
   ];
 
@@ -396,29 +486,33 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: of(false),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -428,19 +522,25 @@ export class MenuButtonsService {
         this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'delete',
       operation: () => this.deleteFolders(),
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'restore',
       operation: () => {
         const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
   ];
 
@@ -448,37 +548,43 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: of(false),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'shared',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'privateFolder',
       operation: () => {
         const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
+        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'copy',
       operation: () => this.copyFolders(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     {
       icon: 'color',
       operation: () => this.dialogsManageService.changeColor(),
       isVisible: of(true),
+      isNoOwnerCanSee: true,
+      isViewOnFullFolder: true,
     },
     // {
     //   icon: 'download',
-    //   operation: () => 5
-    // },
-    // {
-    //   icon: 'lock',
     //   operation: () => 5
     // },
     {
@@ -488,6 +594,8 @@ export class MenuButtonsService {
         this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
       },
       isVisible: of(true),
+      isNoOwnerCanSee: false,
+      isViewOnFullFolder: true,
     },
   ];
 
@@ -525,6 +633,26 @@ export class MenuButtonsService {
       }
       default: {
         throw new Error('error');
+      }
+    }
+  }
+
+  getFolderMenuByFolderType(type: FolderType) {
+    switch (type.name) {
+      case FolderTypeENUM.Private: {
+        return this.foldersItemsPrivate;
+      }
+      case FolderTypeENUM.Archive: {
+        return this.foldersItemsArchive;
+      }
+      case FolderTypeENUM.Shared: {
+        return this.foldersItemsShared;
+      }
+      case FolderTypeENUM.Deleted: {
+        return this.foldersItemsDeleted;
+      }
+      default: {
+        throw new Error('Incorrect type');
       }
     }
   }
@@ -722,6 +850,7 @@ export class MenuButtonsService {
   }
 
   setItems(newItems: MenuItem[]) {
+    console.log('Set items: ', newItems);
     this.items = newItems;
   }
 

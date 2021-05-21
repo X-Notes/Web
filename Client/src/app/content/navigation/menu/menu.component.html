@@ -1,5 +1,5 @@
 <div appTheme class="wrap" [ngClass]="[(isNoteInner$ | async) ? 'mobile-menu' : '']">
-  <ng-container *ngFor="let item of buttonService.items">
+  <ng-container *ngFor="let item of items">
     <button
       class="button-icon"
       #trigger

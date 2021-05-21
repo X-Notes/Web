@@ -4,5 +4,7 @@ export interface MenuItem {
   icon: string;
   isVisible?: Observable<boolean>;
   isActive?: Observable<boolean>;
-  operation: () => void; // arrow function
+  operation: () => void;
+  isNoOwnerCanSee: boolean;
+  isViewOnFullFolder: boolean;
 }

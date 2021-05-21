@@ -55,6 +55,7 @@ import { UserOnEntityCardComponent } from './modal_components/share/user-on-enti
 import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
 import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 
 @NgModule({
   declarations: [
@@ -97,6 +98,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
     UserOnEntityCardComponent,
     ViewDocComponent,
     DialogGenericSaveComponent,
+    ManageMenuButtonsPipe,
   ],
   imports: [
     CommonModule,
@@ -161,6 +163,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
     ViewDocComponent,
     DialogGenericSaveComponent,
     NgxDocViewerModule,
+    ManageMenuButtonsPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

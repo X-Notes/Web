@@ -55,6 +55,7 @@ interface FullNoteState {
   note: FullNote;
   canView: boolean;
   canEdit: boolean;
+  isOwner: boolean;
 }
 
 interface NoteState {
@@ -212,6 +213,11 @@ export class NoteStore {
   @Selector()
   static canNoView(state: NoteState): boolean {
     return !state.fullNoteState?.canView;
+  }
+
+  @Selector()
+  static isOwner(state: NoteState): boolean {
+    return state.fullNoteState?.isOwner;
   }
 
   // Get notes
@@ -635,6 +641,7 @@ export class NoteStore {
         canView: request.canView,
         canEdit: request.caEdit,
         note: request.fullNote,
+        isOwner: request.isOwner,
       },
     });
   }

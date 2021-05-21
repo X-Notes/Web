@@ -54,8 +54,7 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     // TODO
     let routePath = this.store.selectSnapshot(AppStore.isNote);
     if (routePath) {
-      const isInner = this.store.selectSnapshot(AppStore.isNoteInner);
-      if (isInner) {
+      if (this.store.selectSnapshot(AppStore.isNoteInner)) {
         await this.store.dispatch(new ChangeColorFullNote(this.current)).toPromise();
       } else {
         const ids = this.store.selectSnapshot(NoteStore.selectedIds);
@@ -64,9 +63,9 @@ export class ChangeColorComponent implements OnInit, OnDestroy {
     }
     routePath = this.store.selectSnapshot(AppStore.isFolder);
     if (routePath) {
-      const isInner = this.store.selectSnapshot(AppStore.isFolderInner);
-      if (isInner) {
-        await this.store.dispatch(new ChangeColorFullFolder(this.current)).toPromise();
+      if (this.store.selectSnapshot(AppStore.isFolderInner)) {
+        const ids = this.store.selectSnapshot(NoteStore.selectedIds);
+        await this.store.dispatch(new ChangeColorNote(this.current, ids)).toPromise();
       } else {
         const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
         const type = this.store

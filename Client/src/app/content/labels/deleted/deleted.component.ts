@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
@@ -108,6 +108,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   restoreLabel(label: Label) {
+    // TODO CHANGE
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
     let snackbarRef;
@@ -124,15 +125,19 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         throw new Error('error');
     }
-    snackbarRef.afterDismissed().subscribe((x) => {
-      if (x.dismissedByAction) {
-        this.store.dispatch(new SetDeleteLabel(label));
-      }
-    });
+    snackbarRef
+      .afterDismissed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        if (x.dismissedByAction) {
+          this.store.dispatch(new SetDeleteLabel(label));
+        }
+      });
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 
   async delete(label: Label) {
+    // TODO CHANGE
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
@@ -150,11 +155,14 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         throw new Error('error');
     }
-    snackbarRef.afterDismissed().subscribe((x) => {
-      if (x.dismissedByAction) {
-        this.store.dispatch(new SetDeleteLabel(label));
-      }
-    });
+    snackbarRef
+      .afterDismissed()
+      .pipe(take(1))
+      .subscribe((x) => {
+        if (x.dismissedByAction) {
+          this.store.dispatch(new SetDeleteLabel(label));
+        }
+      });
     setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 }

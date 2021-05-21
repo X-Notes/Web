@@ -175,8 +175,8 @@ export class ShareComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
-        this.getFullFolder();
-        this.currentWindowType = SharedType.Folder;
+        this.getNotes();
+        this.currentWindowType = SharedType.Note;
         break;
       }
       default: {

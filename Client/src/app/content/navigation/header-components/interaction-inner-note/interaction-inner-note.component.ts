@@ -23,6 +23,9 @@ export class InteractionInnerNoteComponent implements AfterViewInit {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
+  @Select(NoteStore.isOwner)
+  isOwner$: Observable<boolean>;
+
   @Select(NoteStore.getOnlineUsersOnNote)
   onlineUsers$: Observable<OnlineUsersNote[]>;
 

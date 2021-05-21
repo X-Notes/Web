@@ -106,7 +106,10 @@
       *ngIf="(pService.isMenuActive$ | async) === (true)"
       [@showMenuLeftRight]
     >
-      <app-menu class="menu-inner"></app-menu>
+      <app-menu
+        [items]="menuButtonService.items | manageMenuButtons:true"
+        class="menu-inner"
+      ></app-menu>
     </div>
 
     <app-interaction-tools class="interactions right-tools"></app-interaction-tools>
