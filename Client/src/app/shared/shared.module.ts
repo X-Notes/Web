@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { MatSliderModule } from '@angular/material/slider';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -115,6 +116,7 @@ import { DialogGenericSaveComponent } from './modal_components/dialog-generic-sa
     MatMenuModule,
     ReactiveFormsModule,
     NgxDocViewerModule,
+    MatSliderModule,
   ],
   exports: [
     TranslateModule,
@@ -161,6 +163,7 @@ import { DialogGenericSaveComponent } from './modal_components/dialog-generic-sa
     ViewDocComponent,
     DialogGenericSaveComponent,
     NgxDocViewerModule,
+    MatSliderModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],
