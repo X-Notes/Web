@@ -1,11 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { ApiBrowserTextService } from '../api-browser-text.service';
-import { ApiServiceNotes } from '../api-notes.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ContentType, HeadingType } from '../models/ContentMode';
 import { TransformContent } from '../models/transform-content';
-import { NoteStore } from '../state/notes-state';
 
 @Component({
   selector: 'app-text-edit-menu',

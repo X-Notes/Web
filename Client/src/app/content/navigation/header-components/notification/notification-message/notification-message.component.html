@@ -4,8 +4,11 @@
   </div>
   <div class="message">
     <div class="info-message">
-      <div class="info status-new">
-        <p>New</p>
+      <div class="info status-new" [ngClass]="isRead ? 'status-read' : 'status-new'">
+        <p>
+          {{ isRead ? ('notification.readMessage' | translate) : ('notification.newMessage' |
+          translate) }}
+        </p>
       </div>
       <div class="info date">
         <p>{{ message.date | date : 'd MMM, h:mm' }}</p>
@@ -15,7 +18,7 @@
       <p>{{message.userFromName}}</p>
     </div>
     <div class="user-message">
-      <p>{{message.message}}</p>
+      <p>{{ typeMessage | translate }}</p>
     </div>
   </div>
 </div>

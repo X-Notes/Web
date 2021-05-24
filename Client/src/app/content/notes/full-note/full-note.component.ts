@@ -160,7 +160,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sliderService.getSize();
     } else {
       this.sliderService.mainWidth = null;
-      this.rend.setStyle(this.wrap.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
+      this.rend.setStyle(this.wrap?.nativeElement, 'transform', `translate3d( ${0}%,0,0)`);
       this.sliderService.active = 0;
     }
   }
@@ -205,7 +205,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const types = this.store.selectSnapshot(AppStore.getNoteTypes);
     const actions = types.map((x) => new LoadNotes(x.id, x));
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note.noteType.name);
+    await this.setSideBarNotes(this.note?.noteType?.name);
   }
 
   async ngOnInit() {

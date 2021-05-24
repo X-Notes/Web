@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { VideoModel } from '../../models/ContentMode';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
@@ -7,27 +7,31 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
   templateUrl: './video-note.component.html',
   styleUrls: ['./video-note.component.scss'],
 })
-export class VideoNoteComponent implements OnInit, ParentInteraction {
+export class VideoNoteComponent implements ParentInteraction {
   @Input()
   content: VideoModel;
 
-  constructor() {}
+  setFocus = ($event?: any) => {
+    console.log($event);
+  };
 
-  setFocus($event?: any) {}
+  setFocusToEnd = () => {};
 
-  setFocusToEnd() {}
+  updateHTML = (content: string) => {
+    console.log(content);
+  };
 
-  updateHTML(content: string) {}
-
-  getNative() {}
+  getNative = () => {};
 
   getContent() {
     return this.content;
   }
 
-  mouseEnter($event: any) {}
+  mouseEnter = ($event: any) => {
+    console.log($event);
+  };
 
-  mouseOut($event: any) {}
-
-  ngOnInit(): void {}
+  mouseOut = ($event: any) => {
+    console.log($event);
+  };
 }
