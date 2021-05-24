@@ -72,6 +72,14 @@
       content: none;
     }
   }
+  .text-center {
+    .inner {
+      justify-content: center;
+      p {
+        margin: 1rem 0 1rem 0 !important;
+      }
+    }
+  }
 }
 
 .light {
@@ -134,20 +142,6 @@
 
       &::after {
         content: none;
-      }
-    }
-  }
-
-  .mobile-menu {
-    .button-icon {
-      &:nth-child(2) {
-        // LABEL MODAL WINDOW
-        display: none;
-      }
-
-      &:nth-child(3) {
-        // SHARED MODAL WINDOW
-        display: none;
       }
     }
   }

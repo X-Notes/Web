@@ -10,6 +10,7 @@ import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FontSize } from '../models/FontSize';
 import { Icons } from '../enums/Icons.enum';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -150,6 +151,8 @@ export class PersonalizationService {
 
   isMenuActive$: Observable<boolean> = new Observable<boolean>();
 
+  isMobileHistoryActive$: Observable<boolean> = new Observable<boolean>();
+
   windowHeight$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerHeight);
 
   windowWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerWidth);
@@ -163,6 +166,7 @@ export class PersonalizationService {
   ) {
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
+    this.subscribeMobileActiveMenu();
   }
 
   subscribeWindowEvents() {
@@ -174,8 +178,19 @@ export class PersonalizationService {
       });
   }
 
+  get isHistoryButtonInMobileMenu$() {
+    return this.windowWidth$.pipe(map((value) => value < 1025));
+  }
+
   get isHideTextOnSmall$() {
     return this.windowWidth$.pipe(map((value) => value < 1400));
+  }
+
+  subscribeMobileActiveMenu() {
+    this.isMobileHistoryActive$ = combineLatest([
+      this.store.select(AppStore.isNoteInner).pipe(startWith(false)),
+      this.isHistoryButtonInMobileMenu$.pipe(startWith(false)),
+    ]).pipe(map(([n, f]) => n && f));
   }
 
   subscribeActiveMenu() {

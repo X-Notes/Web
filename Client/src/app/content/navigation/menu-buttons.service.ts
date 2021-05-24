@@ -10,6 +10,7 @@ import { NoteType } from 'src/app/shared/models/noteType';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderStore } from '../folders/state/folders-state';
 import { NoteStore } from '../notes/state/notes-state';
 import {
@@ -42,7 +43,8 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      class: 'text-center',
+      isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
@@ -65,7 +67,7 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'lock',
@@ -119,7 +121,7 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
@@ -152,7 +154,7 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'lock',
@@ -206,6 +208,7 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
+      isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
@@ -228,7 +231,7 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'lock',
@@ -289,7 +292,7 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      isVisible: of(true),
+      isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,
     },
@@ -322,7 +325,7 @@ export class MenuButtonsService {
       operation: () => this.copyNotes(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
-      isViewOnFullFolder: true,
+      isViewOnFullFolder: false,
     },
     {
       icon: 'lock',
@@ -604,6 +607,7 @@ export class MenuButtonsService {
     private snackService: SnackbarService,
     private dialogsManageService: DialogsManageService,
     private sbws: SnackBarWrapperService,
+    private pService: PersonalizationService,
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
@@ -755,7 +759,7 @@ export class MenuButtonsService {
   }
 
   deletePermSnackbar(language: string, type: string, isMany: boolean) {
-    // Move to snackbar service
+    // TODO Move to snackbar service
     let snackbarRef;
     switch (language) {
       case LanguagesENUM.english: {
@@ -850,7 +854,6 @@ export class MenuButtonsService {
   }
 
   setItems(newItems: MenuItem[]) {
-    console.log('Set items: ', newItems);
     this.items = newItems;
   }
 

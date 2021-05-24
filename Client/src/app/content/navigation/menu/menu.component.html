@@ -2,6 +2,7 @@
   <ng-container *ngFor="let item of items">
     <button
       class="button-icon"
+      [ngClass]="item.class"
       #trigger
       (click)="item.operation()"
       CustomTooltip="{{ 'menu.' + item.icon | translate }}"
