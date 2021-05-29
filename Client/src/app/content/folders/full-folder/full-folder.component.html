@@ -45,6 +45,7 @@
   ></div>
 </div>
 <div
+  *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
@@ -104,21 +105,6 @@
         </div>
         <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
       </button>
-      <mat-menu #menu="matMenu">
-        <button
-          *ngFor="let item of menuButtonService.items"
-          (click)="item.operation()"
-          mat-menu-item
-          type="button"
-          [name]="item.icon"
-        >
-          <mat-icon
-            [svgIcon]="item.icon"
-            style="width: 1rem; height: 1rem; font-size: 1rem"
-          ></mat-icon>
-          <span> {{ ('menu.' + item.icon) | translate }} </span>
-        </button>
-      </mat-menu>
     </div>
     <div class="folder-color" [ngStyle]="{ backgroundColor: folder?.color }"></div>
   </div>
@@ -145,4 +131,23 @@
   </ng-scrollbar>
   <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
 </div>
+<div *ngIf="(canNoView$ | async) && loaded">No can View</div>
 <div class="drag-helper main-helper"></div>
+<mat-menu #menu="matMenu">
+  <ng-container *ngFor="let item of folderMenu | manageMenuButtons:(isOwner$ | async)">
+    <button
+      (click)="item.operation()"
+      mat-menu-item
+      type="button"
+      [name]="item.icon"
+      *ngIf="(item?.isVisible | async) === (true || undefined || null)"
+    >
+      <mat-icon
+        *ngIf="item.icon !== 'history'"
+        [svgIcon]="item.icon"
+        style="width: 1rem; height: 1rem; font-size: 1rem"
+      ></mat-icon>
+      <span> {{ ('menu.' + item.icon) | translate }} </span>
+    </button>
+  </ng-container>
+</mat-menu>

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { NoteStore } from '../../notes/state/notes-state';
+import { MenuItem } from '../menu_item';
 
 @Component({
   selector: 'app-menu',
@@ -18,6 +19,9 @@ export class MenuComponent {
   @Select(NoteStore.selectedCount)
   public selectedCount$: Observable<number>;
 
+  @Input()
+  public items: MenuItem[] = [];
+
   constructor(public pService: PersonalizationService, public buttonService: MenuButtonsService) {}
 
   // eslint-disable-next-line consistent-return
@@ -25,5 +29,6 @@ export class MenuComponent {
     if (!this.pService.check()) {
       return true;
     }
+    return false;
   };
 }

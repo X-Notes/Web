@@ -27,6 +27,6 @@
     <div class="ripple-container" matRipple [matRippleTrigger]="triggerThird"></div>
   </div>
   <div class="billing-field">
-    <div class="billing">B</div>
+    <div *ngIf="hideFor" class="billing">B</div>
   </div>
 </nav>

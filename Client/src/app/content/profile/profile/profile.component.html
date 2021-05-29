@@ -121,7 +121,7 @@
             </button>
           </div>
         </div>
-        <div class="sections">
+        <div *ngIf="hideFor" class="sections">
           <div class="header">
             <p>{{ 'profile.sectionGeneral' | translate }}</p>
           </div>
@@ -154,10 +154,10 @@
               </app-select>
             </div>
             <div class="field-key">
-              <div class="field-name">
+              <div *ngIf="hideFor"  class="field-name">
                 <p>{{ 'profile.personalKey' | translate }}</p>
               </div>
-              <div class="personal-key">
+              <div *ngIf="hideFor"  class="personal-key">
                 <input type="password" name="Personal key" />
                 <button class="generic-button" type="button" name="Update button" #changeKey>
                   <div class="content-button">

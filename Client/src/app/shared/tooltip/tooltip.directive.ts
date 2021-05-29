@@ -14,7 +14,7 @@ export class TooltipDirective implements OnDestroy {
   @Input('position') pos = '';
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('flagDisable') disable = '';
+  @Input('flagDisable') disable = false;
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('labelColor') labelColor = '';
@@ -29,7 +29,7 @@ export class TooltipDirective implements OnDestroy {
 
   @HostListener('mouseenter')
   show() {
-    if (this.disable === 'true') {
+    if (this.disable) {
       return;
     }
     if (!this.text) {

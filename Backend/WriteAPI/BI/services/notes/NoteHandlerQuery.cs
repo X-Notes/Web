@@ -95,6 +95,7 @@ namespace BI.services.notes
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
                 return new FullNoteAnswer()
                 {
+                    IsOwner = permissions.IsOwner,
                     CanView = true,
                     CanEdit = true,
                     FullNote = noteCustomMapper.MapNoteToFullNote(note)

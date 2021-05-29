@@ -16,10 +16,29 @@ export class AddFolder {
   static type = '[Folders] Add folder';
 }
 
-export class ArchiveFolders {
-  static type = '[Folders] Archive folders';
+export class BaseChangeTypeSmallFolder {
+  public typeFolder: FolderType;
 
-  constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
+  public selectedIds: string[];
+}
+
+export class ArchiveFolders extends BaseChangeTypeSmallFolder {
+  static type = '[Folders] Archive folders';
+}
+
+export class MakePrivateFolders extends BaseChangeTypeSmallFolder {
+  static type = '[Folders] MakePrivate folders';
+}
+
+export class SetDeleteFolders extends BaseChangeTypeSmallFolder {
+  static type = '[Folders] SetDelete folder';
+}
+
+// COLORS
+export class ChangeColorFullFolder {
+  static type = '[Folders] change color fullFolder';
+
+  constructor(public color: string) {}
 }
 
 export class ChangeColorFolder {
@@ -32,16 +51,12 @@ export class ClearColorFolders {
   static type = '[Folders] Clear color folder';
 }
 
+// //////////////////
+
 export class UpdateFolders {
   static type = '[Folders] Update folders';
 
   constructor(public folders: Folders, public typeFolder: FolderTypeENUM) {}
-}
-
-export class SetDeleteFolders {
-  static type = '[Folders] SetDelete folder';
-
-  constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
 }
 
 export class DeleteFoldersPermanently {
@@ -56,12 +71,6 @@ export class ClearAddedPrivateFolders {
 
 export class CopyFolders {
   static type = '[Folders] Copy folders';
-
-  constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
-}
-
-export class MakePrivateFolders {
-  static type = '[Folders] MakePrivate folders';
 
   constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
 }

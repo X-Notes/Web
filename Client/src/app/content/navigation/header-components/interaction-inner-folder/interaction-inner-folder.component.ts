@@ -7,6 +7,7 @@ import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-inner-folder',
@@ -14,17 +15,16 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
   styleUrls: ['./interaction-inner-folder.component.scss'],
 })
 export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
   @Select(AppStore.getName)
   public route$: Observable<string>;
 
   public countSelected: number;
 
+  hideFor = hideForDemo;
+
   destroy = new Subject<void>();
 
-  constructor(private store: Store, private pService: PersonalizationService) {}
+  constructor(private store: Store, public pService: PersonalizationService) {}
 
   ngOnInit(): void {
     this.initCountSelected();

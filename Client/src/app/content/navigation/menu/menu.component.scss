@@ -31,10 +31,6 @@
       cursor: text;
     }
 
-    &:first-child {
-      display: none;
-    }
-
     .inner {
       display: flex;
       align-items: center;
@@ -98,6 +94,7 @@
 
 .dark {
   .button-icon {
+    color: white;
     .inner {
       .icon {
         color: white;
@@ -122,12 +119,6 @@
     flex-direction: column;
 
     .button-icon {
-      &:first-child {
-        i {
-          display: none;
-        }
-      }
-
       .inner {
         width: 100%;
 
@@ -143,34 +134,6 @@
 
       &::after {
         content: none;
-      }
-    }
-  }
-
-  .mobile-menu {
-    .button-icon {
-      &:first-child {
-        display: flex;
-
-        .inner {
-          justify-content: center;
-          align-items: center;
-          font-weight: 700;
-
-          p {
-            letter-spacing: 3px;
-            margin: 0.75rem 0;
-          }
-        }
-      }
-      &:nth-child(2) {
-        // LABEL MODAL WINDOW
-        display: none;
-      }
-
-      &:nth-child(3) {
-        // SHARED MODAL WINDOW
-        display: none;
       }
     }
   }

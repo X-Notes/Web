@@ -51,6 +51,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatMenu) menu: MatMenu;
 
+  @Select(FolderStore.canView)
+  public canView$: Observable<boolean>;
+
+  @Select(FolderStore.canNoView)
+  public canNoView$: Observable<boolean>;
+
+  @Select(FolderStore.isOwner)
+  public isOwner$: Observable<boolean>;
+
   @Select(UserStore.getUserBackground)
   public userBackground$: Observable<ShortUser>;
 
@@ -88,18 +97,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.ffnService.murriInitialise(this.refElements);
-    this.store
-      .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((theme) => {
-        if (theme) {
-          if (theme.name === ThemeENUM.Dark) {
-            this.menu.panelClass = 'dark-menu';
-          } else {
-            this.menu.panelClass = null;
-          }
-        }
-      });
+    this.initPanelClassStyleSubscribe();
   }
 
   ngOnDestroy(): void {
@@ -122,12 +120,18 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.loadFolder();
-            await this.ffnService.loadNotes(this.folder.id);
+
+            if (this.folder) {
+              await this.ffnService.loadNotes(this.folder.id);
+            }
 
             await this.pService.waitPreloading();
             this.pService.setSpinnerState(false);
             this.loaded = true;
-            this.loadSideBar();
+
+            if (this.folder) {
+              this.loadSideBar();
+            }
 
             const types = this.store.selectSnapshot(AppStore.getNoteTypes);
             const actions = types.map((t) => new LoadNotes(t.id, t));
@@ -138,7 +142,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.initManageButtonSubscribe();
     this.initHeaderButtonSubscribe();
-    this.pService.onResize();
+  }
+
+  get folderMenu() {
+    const type = this.folder?.folderType;
+    if (type) {
+      return this.menuButtonService.getFolderMenuByFolderType(type);
+    }
+    return [];
   }
 
   initHeaderButtonSubscribe() {
@@ -164,6 +175,21 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  initPanelClassStyleSubscribe() {
+    this.store
+      .select(UserStore.getUserTheme)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((theme) => {
+        if (theme) {
+          if (theme.name === ThemeENUM.Dark) {
+            this.menu.panelClass = 'dark-menu';
+          } else {
+            this.menu.panelClass = null;
+          }
+        }
+      });
+  }
+
   initManageButtonSubscribe() {
     this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
       const instanse = this.dialogsService.openManageNotesInFolder();
@@ -182,7 +208,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
-    this.folder = this.store.selectSnapshot(FolderStore.full);
+    this.store
+      .select(FolderStore.full)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((folder) => (this.folder = folder));
   }
 
   async loadSideBar() {

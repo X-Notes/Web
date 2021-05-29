@@ -15,10 +15,13 @@ import { ShortUser } from 'src/app/core/models/short-user';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteStore } from '../../notes/state/notes-state';
-import { FolderStore } from '../../folders/state/folders-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { FullNote } from '../../notes/models/fullNote';
+import { DeleteAllFromBin } from '../../labels/state/labels-actions';
+import { FolderStore } from '../../folders/state/folders-state';
+import { FullFolder } from '../../folders/models/FullFolder';
 
 @Component({
   selector: 'app-header',
@@ -40,12 +43,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(AppStore.getMenuSwitch)
   public menuSwitch$: Observable<string>;
-
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
 
   @Select(AppStore.getNewButtonActive)
   public newButtonActive$: Observable<boolean>;
@@ -104,6 +101,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(async (note) => this.routeChangeFullNote(note));
 
     this.store
+      .select(FolderStore.full)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (folder) => this.routeChangeFullFolder(folder));
+
+    this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x: boolean) => {
@@ -128,6 +130,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.pService.stateSidebar = !this.pService.stateSidebar;
+  }
+
+  routeChangeFullFolder(folder: FullFolder) {
+    if (!folder) {
+      return;
+    }
+    switch (folder.folderType.name) {
+      case FolderTypeENUM.Private: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
+        break;
+      }
+      case FolderTypeENUM.Shared: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsShared);
+        break;
+      }
+      case FolderTypeENUM.Deleted: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsDeleted);
+        break;
+      }
+      case FolderTypeENUM.Archive: {
+        this.menuButtonService.setItems(this.menuButtonService.notesItemsArchive);
+        break;
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
   }
 
   routeChangeFullNote(note: FullNote) {
@@ -161,6 +190,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pService.newButtonSubject.next(true);
   }
 
+  deleteAllFromBin() {
+    this.store.dispatch(DeleteAllFromBin);
+  }
+
   routeChange(type: EntityType) {
     if (!type) {
       return;
@@ -184,7 +217,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
-        this.menuButtonService.setItems(this.menuButtonService.foldersItemsInner);
         break;
       }
 

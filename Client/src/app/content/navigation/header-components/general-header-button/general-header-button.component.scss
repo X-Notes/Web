@@ -1,5 +1,9 @@
 @import 'header-components';
 
+:host {
+  display: flex;
+}
+
 .filter {
   width: 30px;
 
@@ -9,6 +13,15 @@
 
     .icon {
       display: flex;
+    }
+  }
+}
+
+.hide-tag-text {
+  min-width: auto;
+  .inner-content {
+    p {
+      display: none;
     }
   }
 }

@@ -1,14 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { Store, Select } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { SelectAllNote, UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { SelectAllFolder, UnSelectAllFolder } from 'src/app/content/folders/state/folders-actions';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MatMenu } from '@angular/material/menu';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-items',
@@ -26,13 +27,9 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 
-  @Select(FolderStore.activeMenu)
-  public menuActiveFolders$: Observable<boolean>;
-
-  @Select(NoteStore.activeMenu)
-  public menuActiveNotes$: Observable<boolean>;
-
   @ViewChild(MatMenu) menu: MatMenu;
+
+  hideFor = hideForDemo;
 
   public countSelected: number;
 

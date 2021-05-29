@@ -64,4 +64,5 @@ export enum Icons {
   historyIllustration = 'historyIllustration',
   notificationIllustration = 'notificationIllustration',
   noAccessView = 'noAccessView',
+  history = 'history',
 }

@@ -34,6 +34,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { Theme } from 'src/app/shared/models/Theme';
+import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-profile',
@@ -65,6 +66,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
+  hideFor = hideForDemo;
+
   fontSize = FontSizeENUM;
 
   themes = ThemeENUM;
@@ -84,7 +87,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
-    this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
     this.store

@@ -1,7 +1,7 @@
 <div
   appTheme
   class="interactions"
-  [ngClass]="[((menuActiveNotes$ | async) || (menuActiveFolders$ | async)) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
+  [ngClass]="[(pService.isMenuActive$ | async) === (true) ? 'help-func' : '', (isNoteInner$ | async) ? 'inner-menu' : '']"
 >
   <div class="search-section" #search [ngClass]="isInputFocus ? 'active-search' : ''">
     <div class="search">
@@ -53,7 +53,7 @@
     CustomTooltip="{{ 'header.questions' | translate }}"
     position="Bottom"
     class="auxiliary-icon"
-    *ngIf="pService.check()"
+    *ngIf="pService.check() && hideFor"
     #question
   >
     <div class="icon">
