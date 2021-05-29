@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -15,7 +15,7 @@ import { LabelStore } from '../state/labels-state';
   styleUrls: ['./labels.component.scss'],
   animations: [sideBarCloseOpen],
 })
-export class LabelsComponent implements OnInit {
+export class LabelsComponent {
   @Select(LabelStore.countAll)
   countAll$: Observable<number>;
 
@@ -31,10 +31,6 @@ export class LabelsComponent implements OnInit {
   public photoError = false;
 
   constructor(public pService: PersonalizationService) {}
-
-  async ngOnInit() {
-    this.pService.onResize();
-  }
 
   changeSource() {
     this.photoError = true;

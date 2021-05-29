@@ -29,5 +29,6 @@ export class MenuComponent {
     if (!this.pService.check()) {
       return true;
     }
+    return false;
   };
 }

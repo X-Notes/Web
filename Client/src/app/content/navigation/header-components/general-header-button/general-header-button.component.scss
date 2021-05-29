@@ -1,5 +1,9 @@
 @import 'header-components';
 
+:host {
+  display: flex;
+}
+
 .filter {
   width: 30px;
 

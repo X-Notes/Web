@@ -1,4 +1,4 @@
-import { AfterViewInit, ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
+import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -19,7 +19,7 @@ import { MenuButtonsService } from '../../menu-buttons.service';
   styleUrls: ['./interaction-inner-note.component.scss'],
   animations: [showMenuLeftRight],
 })
-export class InteractionInnerNoteComponent implements AfterViewInit {
+export class InteractionInnerNoteComponent {
   @Select(NoteStore.oneFull)
   note$: Observable<FullNote>;
 
@@ -42,10 +42,6 @@ export class InteractionInnerNoteComponent implements AfterViewInit {
     public dialogsManageService: DialogsManageService,
   ) {}
 
-  ngAfterViewInit(): void {
-    this.setHeightScrollbar();
-  }
-
   closeMenu(): void {
     if (this.pService.checkWidth()) {
       this.pService.users = false;
@@ -60,28 +56,14 @@ export class InteractionInnerNoteComponent implements AfterViewInit {
     this.pService.hideInnerMenu = !this.pService.hideInnerMenu;
   }
 
-  setHeightScrollbar(): void {
-    if (this.pService.users && this.scrollbar) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      this.pService.checkWidth()
-        ? this.renderer.setStyle(
-            this.scrollbar?.nativeElement,
-            'height',
-            `${this.heightPeople?.nativeElement?.clientHeight}px`,
-          )
-        : this.renderer.setStyle(this.scrollbar?.nativeElement, 'height', '100%');
-    }
-  }
-
   showUsers() {
     this.pService.users = !this.pService.users;
-    setTimeout(() => this.setHeightScrollbar());
   }
 
-  // eslint-disable-next-line consistent-return
   disableTooltpUser(): boolean {
     if (this.pService.checkWidth()) {
       return true;
     }
+    return false;
   }
 }

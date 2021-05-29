@@ -177,7 +177,7 @@
             ></app-history-record></div
         ></ng-scrollbar>
         <app-no-results-illustration
-          *ngIf="true"
+          *ngIf="!histories?.length"
           [isShow]="true"
           [message]="'noResult.history' | translate"
           [illustration]="pService.icon.historyIllustration"

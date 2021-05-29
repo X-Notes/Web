@@ -8,9 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, startWith, take } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSize } from '../models/FontSize';
 import { Icons } from '../enums/Icons.enum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -164,6 +164,7 @@ export class PersonalizationService {
     private translate: TranslateService,
     private store: Store,
   ) {
+    this.onResize();
     this.subscribeActiveMenu();
     this.subscribeWindowEvents();
     this.subscribeMobileActiveMenu();

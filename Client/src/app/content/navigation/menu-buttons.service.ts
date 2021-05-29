@@ -43,7 +43,6 @@ export class MenuButtonsService {
     {
       icon: 'history',
       operation: () => 5,
-      class: 'text-center',
       isVisible: this.pService.isMobileHistoryActive$,
       isNoOwnerCanSee: true,
       isViewOnFullFolder: false,

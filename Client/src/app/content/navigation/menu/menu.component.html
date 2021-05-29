@@ -5,14 +5,14 @@
       [ngClass]="item.class"
       #trigger
       (click)="item.operation()"
-      CustomTooltip="{{ 'menu.' + item.icon | translate }}"
+      [CustomTooltip]="'menu.' + item.icon | translate"
       position="Bottom"
       [disabled]="item?.isActive | async"
       *ngIf="(item?.isVisible | async) === (true || undefined || null)"
-      flagDisable="{{ disableTooltpUser() }}"
+      [flagDisable]="disableTooltpUser()"
     >
       <div class="inner">
-        <div class="icon" *ngIf="item.icon !== 'history'">
+        <div class="icon">
           <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
         </div>
         <p>{{ 'menu.' + item.icon | translate }}</p>

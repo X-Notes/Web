@@ -43,8 +43,6 @@ import { hideForDemo } from 'src/environments/demo';
   animations: [sideBarCloseOpen, showDropdown],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  hideFor = hideForDemo;
-
   @Select(UserStore.getUserFontSize)
   public fontSize$: Observable<FontSize>;
 
@@ -68,6 +66,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
+  hideFor = hideForDemo;
+
   fontSize = FontSizeENUM;
 
   themes = ThemeENUM;
@@ -87,7 +87,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.Profile)).toPromise();
-    this.pService.onResize();
     this.userName = this.store.selectSnapshot(UserStore.getUser).name;
 
     this.store

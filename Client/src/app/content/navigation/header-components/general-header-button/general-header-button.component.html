@@ -1,12 +1,12 @@
-<div appTheme>
+<div class="d-flex" appTheme>
   <button
     type="button"
     (click)="clickHandler()"
     class="generic"
     [ngClass]="[styleClasses, isClassOnSize ? classOnSize : '']"
     #buttonRipple
-    CustomTooltip="{{tooltipMessage}}"
-    position="{{tooltipPosition}}"
+    [CustomTooltip]="tooltipMessage"
+    [position]="tooltipPosition"
   >
     <div class="inner-content">
       <p *ngIf="isActiveMessage">{{message}}</p>

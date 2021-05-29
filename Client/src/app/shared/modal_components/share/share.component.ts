@@ -126,7 +126,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.pService.onResize();
     const routing = this.store.selectSnapshot(AppStore.getRouting); // TODO REMOVE CHANGE ON INPUT
     switch (routing) {
       case EntityType.NoteArchive: {
