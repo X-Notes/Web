@@ -26,11 +26,9 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
     if (this.content.fileId) {
       this.files.push(`${environment.writeAPI}/api/Files/audio/${this.content.fileId}`);
     }
-    console.log(this.files[0]);
     this.audioService.getState().subscribe((state) => {
       this.state = state;
     });
-    this.openFile(this.files[0], 0);
   }
 
   setFocus = ($event?: any) => {
@@ -63,10 +61,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
     });
   }
 
-  openFile(file, index) {
-    this.currentFile = { index, file };
+  openFile(id, index) {
+    this.currentFile = { index, id };
     this.audioService.stop();
-    this.playStream(file);
+    this.playStream(this.files[index]);
   }
 
   pause() {
@@ -75,41 +73,5 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
 
   play() {
     this.audioService.play();
-  }
-
-  stop() {
-    this.audioService.stop();
-  }
-
-  loop() {
-    this.audioService.loop();
-  }
-
-  next() {
-    const index = this.currentFile.index + 1;
-    const file = this.files[index];
-    this.openFile(file, index);
-  }
-
-  previous() {
-    const index = this.currentFile.index - 1;
-    const file = this.files[index];
-    this.openFile(file, index);
-  }
-
-  isFirstPlaying() {
-    return this.currentFile.index === 0;
-  }
-
-  isLastPlaying() {
-    return this.currentFile.index === this.files.length - 1;
-  }
-
-  onSliderChangeEnd(change) {
-    this.audioService.seekTo(change.value);
-  }
-
-  onSliderVolumeChangeEnd(change) {
-    this.audioService.seekToVolume(change.value);
   }
 }

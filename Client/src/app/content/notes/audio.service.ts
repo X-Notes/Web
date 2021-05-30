@@ -100,6 +100,7 @@ export class AudioService {
   };
 
   private updateStateEvents(event: Event): void {
+    console.log(event);
     this.state.loop = this.audioObj.loop;
     switch (event.type) {
       case this.audioEvents.canplay:

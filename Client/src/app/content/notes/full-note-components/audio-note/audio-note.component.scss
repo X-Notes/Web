@@ -10,9 +10,56 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  border-radius: 5px;
 
-  .player {
+  button[type='button'] {
+    position: relative;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.8px solid transparent;
+    padding: 0;
+    min-height: 30px;
+    min-width: 30px;
+    outline: none;
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 50%;
+
+    .icon {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 1.5rem;
+    }
+  }
+
+  .playlist-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    padding: 0.25rem 0.5rem 0 0.5rem;
+
+    .title {
+      display: flex;
+      flex: 1;
+      font-size: 0.875rem;
+      color: #dedede;
+
+      p {
+        @include text-overflow;
+      }
+    }
+  }
+
+  .song {
+    display: flex;
+    align-items: center;
     width: 100%;
     border-radius: 5px;
 
@@ -21,101 +68,69 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 71px;
-      height: 71px;
-      border-radius: 5px 0 0 5px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin: 0.5rem;
+      overflow: hidden;
 
-      .icon {
+      .no-preview {
         display: flex;
-        width: 2rem;
-        height: 2rem;
-        font-size: 2rem;
+        font-size: 1.75rem;
+      }
+
+      .controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2);
+
+        button[type='button'] {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
 
     .audio-body {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       flex: 1;
       padding: 0.5rem;
       border-radius: 0 5px 5px 0;
 
-      .title {
-        display: flex;
-        width: 100%;
-        margin-bottom: 0.25rem;
+      button[type='button'] {
+        height: 35px;
+        width: 35px;
       }
 
-      .controls {
+      .audio-info {
         display: flex;
-        align-items: center;
-        width: 100%;
+        flex-direction: column;
+        flex: 1;
 
-        .slider-controls {
+        .audio-name {
           display: flex;
-          align-items: center;
-          flex: 1;
-
-          .slider {
-            flex: 1;
-            height: 28px;
-          }
-
-          .time {
-            display: flex;
-            padding: 0.25rem 0.5rem;
-          }
+          width: 100%;
+          margin-bottom: 0.25rem;
         }
 
-        .volume {
-          position: relative;
+        .audio-time {
           display: flex;
+          color: #8e8e8e;
+          font-size: 0.75rem;
 
-          .volume-slider {
-            position: absolute;
-            z-index: 100;
-            bottom: 32px;
-            left: 0;
-            border-radius: 5px;
-            padding: 0.25rem 0.13rem;
-            opacity: 0;
-            transition: 0.2s ease;
-
-            .slider {
-              width: 28px;
-            }
-          }
-
-          &:hover {
-            .volume-slider {
-              opacity: 1;
-            }
-          }
-        }
-
-        button[type='button'] {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          border: 0.8px solid transparent;
-          padding: 0;
-          outline: none;
-          overflow: hidden;
-          user-select: none;
-          cursor: pointer;
-          background-color: transparent;
-          border-radius: 5px;
-
-          .icon {
-            position: relative;
-            z-index: 5;
-            display: flex;
-            width: 1.5rem;
-            height: 1.5rem;
-            font-size: 1.5rem;
+          span {
+            margin: 0 0.25rem;
           }
         }
       }
@@ -126,20 +141,8 @@
 .dark {
   background-color: $dark-color;
 
-  .player {
-    .audio-body {
-      .controls {
-        button[type='button'] {
-          color: white;
-        }
-
-        .volume {
-          .volume-slider {
-            background-color: #1d1f21;
-          }
-        }
-      }
-    }
+  button[type='button'] {
+    color: white;
   }
 }
 
@@ -147,17 +150,4 @@
   background-color: #fafafa;
   color: $text-color;
   border: 0.8px solid #bababa;
-
-  .player {
-    .audio-body {
-      .controls {
-        .volume {
-          .volume-slider {
-            background-color: white;
-            box-shadow: 0 0 2px rgb(0 0 0 / 20%);
-          }
-        }
-      }
-    }
-  }
 }
