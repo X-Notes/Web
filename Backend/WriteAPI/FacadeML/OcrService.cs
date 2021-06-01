@@ -11,10 +11,10 @@ namespace FacadeML
         {
 
         }
-        public string GetText(string path)
+        public string GetText(byte[] bytes)
         {
             var ocrengine = new TesseractEngine(@".\tessdata", "eng", EngineMode.Default);
-            var img = Pix.LoadFromFile(path);
+            var img = Pix.LoadFromMemory(bytes);
             var res = ocrengine.Process(img);
             return res.GetText();
         }

@@ -46,6 +46,7 @@ namespace WriteAPI
                 Credential = GoogleCredential.FromFile("noots-storm-firebase.json")
             });
 
+            services.AzureConfig(Configuration);
             services.JWT(Configuration);
                 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
@@ -60,6 +61,7 @@ namespace WriteAPI
             services.Mediatr();
             services.DataBase(Configuration);
             services.BI();
+            services.FileStorage();
 
             services.AddMemoryCache();
 

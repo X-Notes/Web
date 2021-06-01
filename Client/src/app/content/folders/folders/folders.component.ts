@@ -35,7 +35,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
   public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   destroy = new Subject<void>();
 

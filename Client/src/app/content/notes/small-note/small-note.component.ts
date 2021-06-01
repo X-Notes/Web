@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { ChangeStateRelatedNote } from '../models/changeStateRelatedNote';
-import { ContentType } from '../models/ContentMode';
+import { ContentType } from '../models/ContentModel';
 import { RelatedNote } from '../models/relatedNote';
 @Component({
   selector: 'app-small-note',

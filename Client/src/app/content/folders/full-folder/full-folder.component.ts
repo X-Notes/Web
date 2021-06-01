@@ -61,7 +61,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   public isOwner$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;

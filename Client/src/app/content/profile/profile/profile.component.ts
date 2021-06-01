@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public theme$: Observable<Theme>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUserLanguage)
   public language$: Observable<LanguageDTO>;

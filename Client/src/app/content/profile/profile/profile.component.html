@@ -11,7 +11,11 @@
         *ngFor="let item of backgrounds$ | async"
         [ngClass]="item.id === (user$ | async).currentBackground?.id ? 'active-background' : ''"
       >
-        <img alt="background" [src]="item.path | getImage" (click)="setCurrent(item.id)" />
+        <img
+          alt="background"
+          [src]="item.photoPath | getImage: 'users'"
+          (click)="setCurrent(item.id)"
+        />
         <div class="thumbnail" (click)="removeBackground(item.id)">
           <div class="icon">
             <mat-icon svgIcon="cancelThin" [inline]="true"></mat-icon>
@@ -34,7 +38,7 @@
 <div
   appTheme
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <ng-scrollbar [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">
@@ -47,7 +51,7 @@
             <div class="photo" appDrop>
               <img
                 *ngIf="!photoError"
-                [src]="(user$ | async).photoId | getImage"
+                [src]="(user$ | async).photoPath | getImage: 'users'"
                 alt="User photo"
                 (error)="changeSource()"
               />
@@ -154,10 +158,10 @@
               </app-select>
             </div>
             <div class="field-key">
-              <div *ngIf="hideFor"  class="field-name">
+              <div *ngIf="hideFor" class="field-name">
                 <p>{{ 'profile.personalKey' | translate }}</p>
               </div>
-              <div *ngIf="hideFor"  class="personal-key">
+              <div *ngIf="hideFor" class="personal-key">
                 <input type="password" name="Personal key" />
                 <button class="generic-button" type="button" name="Update button" #changeKey>
                   <div class="content-button">

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AudioModel } from '../../models/ContentMode';
+import { AudioModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({

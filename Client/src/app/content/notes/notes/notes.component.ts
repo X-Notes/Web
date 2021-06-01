@@ -30,7 +30,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   public countShared: Observable<number>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(NoteStore.deletedCount)
   public countDeleted: Observable<number>;

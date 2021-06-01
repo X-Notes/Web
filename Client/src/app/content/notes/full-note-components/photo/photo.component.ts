@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
-import { Photo } from '../../models/ContentMode';
+import { Photo } from '../../models/ContentModel';
 
 @Component({
   selector: 'app-photo',
@@ -26,6 +26,6 @@ export class PhotoComponent {
   }
 
   deletePhoto() {
-    this.deleteEvent.emit(this.photo.id);
+    this.deleteEvent.emit(this.photo.fileId);
   }
 }

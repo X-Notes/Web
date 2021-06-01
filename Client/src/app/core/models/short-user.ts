@@ -7,6 +7,7 @@ export interface ShortUser {
   name: string;
   email: string;
   photoId: string;
+  photoPath: string;
   currentBackground: Background;
   language: LanguageDTO;
   theme: Theme;

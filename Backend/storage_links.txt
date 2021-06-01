@@ -1,0 +1,2 @@
+https://nootsdevstorage.blob.core.windows.net/users/**
+https://nootsdevstorage.blob.core.windows.net/notes/**

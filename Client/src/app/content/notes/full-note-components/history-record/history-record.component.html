@@ -9,7 +9,7 @@
       CustomTooltip="{{user.name}}"
       position="Bottom"
     >
-      <img [src]="user.photoId | getImage" />
+      <img [src]="user.photoPath | getImage: 'users'" />
     </div>
     <button
       type="button"
@@ -43,7 +43,7 @@
           <div class="content-inner" #userHeight>
             <div *ngFor="let user of history.users" class="user">
               <div class="user-image">
-                <img [src]="user.photoId | getImage" />
+                <img [src]="user.photoPath | getImage: 'users'" />
               </div>
               <p>{{user.name}}</p>
             </div>

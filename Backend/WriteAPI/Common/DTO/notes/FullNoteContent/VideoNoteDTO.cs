@@ -10,11 +10,13 @@ namespace Common.DTO.notes.FullNoteContent
     {
         public string Name { set; get; }
         public Guid FileId { set; get; }
-        public VideoNoteDTO(string Name, Guid fileId, Guid Id, string Type, DateTimeOffset UpdatedAt)
+        public string VideoPath { set; get; }
+        public VideoNoteDTO(string Name, Guid fileId, string VideoPath, Guid Id, string Type, DateTimeOffset UpdatedAt)
         : base(Id, Type, UpdatedAt)
         {
             this.FileId = fileId;
             this.Name = Name;
+            this.VideoPath = VideoPath;
         }
     }
 }

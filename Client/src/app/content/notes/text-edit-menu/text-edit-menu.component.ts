@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentType, HeadingType } from '../models/ContentMode';
+import { ContentType, HeadingType } from '../models/ContentModel';
 import { TransformContent } from '../models/transform-content';
 
 @Component({

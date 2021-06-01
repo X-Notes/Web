@@ -9,6 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
+    // TODO OPTIMIZATION SQL QUERY
     public class UserRepository : Repository<User>
     {
 
@@ -25,12 +26,13 @@ namespace WriteContext.Repositories.Users
                 .Include(x => x.Language)
                 .Include(x => x.FontSize)
                 .Include(x => x.Theme)
+                .Include(x => x.Photo)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithBackgrounds(string email)
         {
-            return await context.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.Include(x => x.Backgrounds).ThenInclude(x => x.File).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<List<User>> SearchByEmailAndName(string search, string email) // TODO BAD TOLOWER MAYBE FIX
@@ -38,6 +40,7 @@ namespace WriteContext.Repositories.Users
             return await context.Users
                 .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
                 .Where(x => x.Email != email)
+                .Include(x => x.Photo)
                 .ToListAsync();
         }
 

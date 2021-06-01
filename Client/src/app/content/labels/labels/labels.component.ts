@@ -26,7 +26,7 @@ export class LabelsComponent {
   public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   public photoError = false;
 

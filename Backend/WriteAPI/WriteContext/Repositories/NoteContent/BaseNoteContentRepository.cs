@@ -20,6 +20,9 @@ namespace WriteContext.Repositories.NoteContent
         {
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
@@ -30,6 +33,9 @@ namespace WriteContext.Repositories.NoteContent
         {
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
                 .Cast<T>()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }

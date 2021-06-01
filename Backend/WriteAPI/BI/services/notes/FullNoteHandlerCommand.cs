@@ -21,6 +21,7 @@ using MediatR;
 using Storage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -139,15 +140,30 @@ namespace BI.services.notes
                 // FILES LOGIC 
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
 
-                // MOVE THIS TO WORKER
+                // TODO MOVE THIS TO WORKER
                 foreach(var fileitem in fileList)
                 {
-                    var textFromPhoto = ocrService.GetText(fileitem.Path);
-                    var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
-                    fileitem.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
-                    fileitem.RecognizeObject = RecognizeObject;
+                    byte[] bytes;
+                    if(fileitem.FileType == SavePhotosType.FormFile)
+                    {
+                        using var ms = new MemoryStream();
+                        fileitem.IFormFile.CopyTo(ms);
+                        bytes = ms.ToArray();
+                    }
+                    else
+                    {
+                        bytes = fileitem.FilesBytes.Bytes;
+                    }
+
+                    var textFromPhoto = ocrService.GetText(bytes);
+                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+
+                    // TODO MOVE TO API
+                    // var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
+                    // fileitem.RecognizeObject = RecognizeObject;
                 }
 
+                var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -155,11 +171,11 @@ namespace BI.services.notes
                 {
                     await baseNoteContentRepository.Remove(contentForRemove);
 
-                    await fileRepository.AddRange(fileList);
+                    await fileRepository.AddRange(dbFiles);
 
                     var albumNote = new AlbumNote()
                     {
-                        Photos = fileList,
+                        Photos = dbFiles,
                         Note = note,
                         Order = contentForRemove.Order,
                         CountInRow = 2,
@@ -173,7 +189,7 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
-                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
+                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.Path)).ToList();
                     var result = new AlbumNoteDTO(resultPhotos, null, null, 
                         albumNote.Id, type, albumNote.CountInRow, albumNote.UpdatedAt);
 
@@ -187,7 +203,7 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = fileList.Select(x => x.Path).ToList();
+                    var pathes = dbFiles.Select(x => x.Path).ToList();
                     await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
                 }
             }
@@ -566,23 +582,43 @@ namespace BI.services.notes
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
 
-                fileList.ForEach(file => file.TextFromPhoto = RemoveSpecialCharacters(ocrService.GetText(file.Path)));
-                fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
+                foreach (var fileitem in fileList)
+                {
+                    byte[] bytes;
+                    if (fileitem.FileType == SavePhotosType.FormFile)
+                    {
+                        using var ms = new MemoryStream();
+                        fileitem.IFormFile.CopyTo(ms);
+                        bytes = ms.ToArray();
+                    }
+                    else
+                    {
+                        bytes = fileitem.FilesBytes.Bytes;
+                    }
+
+                    var textFromPhoto = ocrService.GetText(bytes);
+                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+                }
+
+                var dbFiles = fileList.Select(x => x.AppFile).ToList();
+
+                // TODO MOVE TO API
+                // fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
-                    await fileRepository.AddRange(fileList);
+                    await fileRepository.AddRange(dbFiles);
 
-                    album.Photos.AddRange(fileList);
+                    album.Photos.AddRange(dbFiles);
                     album.UpdatedAt = DateTimeOffset.Now;
 
                     await albumNoteRepository.Update(album);
 
                     await transaction.CommitAsync();
 
-                    var photosIds = fileList.Select(x => x.Id).ToList();
+                    var photosIds = dbFiles.Select(x => x.Id).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -594,7 +630,7 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = fileList.Select(x => x.Path).ToList();
+                    var pathes = dbFiles.Select(x => x.Path).ToList();
                     await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
                 }
             }
@@ -730,7 +766,7 @@ namespace BI.services.notes
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
                     var result = new AudioNoteDTO(
-                        audioNote.Name, audioNote.AppFileId, audioNote.Id, 
+                        audioNote.Name, audioNote.AppFileId, file.Path, audioNote.Id, 
                         type, audioNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
@@ -789,7 +825,7 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id,
+                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, file.Path, videoNote.Id,
                                 type, videoNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
@@ -848,7 +884,7 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                    var result = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id,
+                    var result = new DocumentNoteDTO(documentNote.Name, file.Path, documentNote.AppFileId, documentNote.Id,
                                 type, documentNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);

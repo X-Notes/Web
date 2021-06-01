@@ -1,5 +1,5 @@
 import { BreakEnterModel } from '../content-editable.service';
-import { ContentType } from './ContentMode';
+import { ContentType } from './ContentModel';
 
 export interface EnterEvent {
   id: string;

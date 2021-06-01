@@ -18,7 +18,11 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<List<User>> GetUsersOnlineUserOnNote(Guid noteId)
         {
-            return await context.UserOnNoteNow.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
+            return await context.UserOnNoteNow
+                .Include(x => x.User)
+                .ThenInclude(x => x.Photo)
+                .Where(x => x.NoteId == noteId)
+                .Select(x => x.User).ToListAsync();
         }
     }
 }

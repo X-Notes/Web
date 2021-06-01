@@ -2,7 +2,7 @@
   [icon]="'icon-plus'"
   [message]="'modal.reviewModal.review' | translate"
 ></app-dialog-generic-header>
-<ngx-doc-viewer class="viewer" [url]="data | getDocument" viewer="url"></ngx-doc-viewer>
+<ngx-doc-viewer class="viewer" [url]="data | getDocument: 'notes'" viewer="url"></ngx-doc-viewer>
 <app-dialog-generic-save
   (saveOutput)="close()"
   [buttonText]="'modal.reviewModal.close' | translate"

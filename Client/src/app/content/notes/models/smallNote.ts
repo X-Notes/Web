@@ -1,4 +1,4 @@
-import { ContentModel } from './ContentMode';
+import { ContentModel } from './ContentModel';
 import { FullNote } from './fullNote';
 
 // TODO MAKE CLASS

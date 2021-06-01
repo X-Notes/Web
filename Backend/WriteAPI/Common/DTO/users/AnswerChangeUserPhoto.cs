@@ -10,5 +10,6 @@ namespace Common.DTO.users
     {
         public bool Success { set; get; }
         public Guid Id { set; get; }
+        public string PhotoPath { set; get; }
     }
 }

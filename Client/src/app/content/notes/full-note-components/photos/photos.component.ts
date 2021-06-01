@@ -14,7 +14,7 @@ import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../api-notes.service';
-import { Photo, Album } from '../../models/ContentMode';
+import { Photo, Album } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemovePhotoFromAlbum } from '../../models/removePhotoFromAlbum';
 import { UploadPhotosToAlbum } from '../../models/uploadPhotosToAlbum';

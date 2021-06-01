@@ -30,7 +30,17 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.RelatedNote)
-                .ThenInclude(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .ThenInclude(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.RelatedNote)
+                .ThenInclude(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.RelatedNote)
+                .ThenInclude(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.RelatedNote)
+                .ThenInclude(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
         }

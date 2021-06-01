@@ -43,7 +43,7 @@
           </div>
           <div *ngSwitchCase="contentType.ALBUM" class="album">
             <ng-container *ngFor="let item of content.photos">
-              <img [src]="item.id | getImage" />
+              <img [src]="item.photoPath | getImage: 'notes'" />
             </ng-container>
           </div>
           <div *ngSwitchDefault>Default</div>

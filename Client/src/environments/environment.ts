@@ -13,6 +13,7 @@ export const environment = {
     messagingSenderId: '69998033878',
   },
   writeAPI: 'http://localhost:5000',
+  storage: 'https://nootsdevstorage.blob.core.windows.net',
 };
 
 /*

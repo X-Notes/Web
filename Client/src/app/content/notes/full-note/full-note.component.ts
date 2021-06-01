@@ -43,7 +43,7 @@ import { SmallNote } from '../models/smallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
+import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
@@ -96,7 +96,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   public canNoView$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -260,7 +260,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         const newAlbum = {
           ...this.contents[index],
-          photos: contentPhotos.filter((x) => x.id !== event.photoId),
+          photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
         };
         this.contents[index] = newAlbum;
       }

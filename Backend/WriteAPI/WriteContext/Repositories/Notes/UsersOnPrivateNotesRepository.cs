@@ -20,6 +20,7 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.UserOnPrivateNotes
                 .Include(x => x.User)
+                .ThenInclude(x => x.Photo)
                 .Include(x => x.AccessType)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }

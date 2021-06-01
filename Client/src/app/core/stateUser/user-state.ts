@@ -58,9 +58,9 @@ export class UserStore {
 
   @Selector()
   static getUserBackground(state: UserState): string {
-    const path = state.user.currentBackground?.path;
+    const path = state.user.currentBackground?.photoPath;
     if (path) {
-      return `${environment.writeAPI}/api/Files/image/${path}`;
+      return `${environment.storage}/users/${escape(path)}`;
     }
     return null;
   }
@@ -157,7 +157,7 @@ export class UserStore {
   ) {
     const newPhoto = await this.api.updateUserPhoto(photo).toPromise();
     patchState({
-      user: { ...getState().user, photoId: newPhoto.id },
+      user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath },
     });
   }
 }

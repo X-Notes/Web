@@ -29,11 +29,15 @@ export class Album extends ContentModel {
 export class AudioModel extends ContentModel {
   name: string;
 
+  audioPath: string;
+
   fileId: string;
 }
 
 export class VideoModel extends ContentModel {
   name: string;
+
+  videoPath: string;
 
   fileId: string;
 }
@@ -41,11 +45,15 @@ export class VideoModel extends ContentModel {
 export class DocumentModel extends ContentModel {
   name: string;
 
+  documentPath: string;
+
   fileId: string;
 }
 
 export class Photo {
-  id: string;
+  fileId: string;
+
+  photoPath: string;
 
   loaded: boolean;
 }

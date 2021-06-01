@@ -9,4 +9,5 @@ export const environment = {
     messagingSenderId: '69998033878',
   },
   writeAPI: 'http://noots.westeurope.cloudapp.azure.com:5000',
+  storage: 'https://nootsdevstorage.blob.core.windows.net',
 };

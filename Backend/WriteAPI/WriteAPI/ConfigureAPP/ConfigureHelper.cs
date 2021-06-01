@@ -13,6 +13,7 @@ using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using BI.signalR;
+using Common.Azure;
 using Common.DatabaseModels.models.Files;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
@@ -60,6 +61,7 @@ using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -223,7 +225,7 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
-            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
@@ -283,6 +285,18 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
+
+        public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
+            services.AddScoped(x => configService);
+
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(configService.StorageConnection);
+            });
+        }
+
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {
             services
@@ -334,7 +348,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryService>();
 
-            services.AddScoped<IFilesStorage, FilesStorage>();
+        }
+
+        public static void FileStorage(this IServiceCollection services)
+        {
+            services.AddScoped<IFilesStorage, AzureFileStorage>();
         }
     }
 }

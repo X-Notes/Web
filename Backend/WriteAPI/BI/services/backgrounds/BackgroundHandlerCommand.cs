@@ -49,6 +49,7 @@ namespace BI.services.backgrounds
             return Unit.Value;
         }
 
+        // TODO REMOVE FILES FROM STORAGE
         public async Task<Unit> Handle(RemoveBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithBackgrounds(request.Email);
@@ -73,20 +74,20 @@ namespace BI.services.backgrounds
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
-            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, getContentString, photoType);
+            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, ContentTypesFile.Images, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
 
             var item = new Backgrounds()
             {
-                UserId = user.Id
+                UserId = user.Id,
+                File = file
             };
 
             var success = await backgroundRepository.AddBackground(item, file);
 
             if (!success)
             {
-                filesStorage.RemoveFile(pathToCreatedFile);
+                await filesStorage.RemoveUserFile(pathToCreatedFile);
                 return null;
             }
 

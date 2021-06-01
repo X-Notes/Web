@@ -15,7 +15,7 @@ import {
   ContentModel,
   DocumentModel,
   VideoModel,
-} from './models/ContentMode';
+} from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
 import { OnlineUsersNote } from './models/online-users-note';
 

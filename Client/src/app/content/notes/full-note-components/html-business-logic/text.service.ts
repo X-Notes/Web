@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, ContentType } from '../../models/ContentMode';
+import { BaseText, ContentType } from '../../models/ContentModel';
 import { EnterEvent } from '../../models/enterEvent';
 import { HtmlService } from './html.service';
 

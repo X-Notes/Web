@@ -71,7 +71,14 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
         }
@@ -82,7 +89,14 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .Where(x => ids.Contains(x.Id) && x.IsHistory == false).ToListAsync();
         }
@@ -100,7 +114,14 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
@@ -111,7 +132,14 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .Where(x => x.UserId == userId && x.IsHistory == false)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync();
@@ -123,7 +151,14 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.RefType)
                 .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .Where(x => x.UserId == userId && x.Id != noteId && x.IsHistory == false)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync();

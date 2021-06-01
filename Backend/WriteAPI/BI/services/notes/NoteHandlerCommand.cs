@@ -268,8 +268,9 @@ namespace BI.services.notes
                                         files.Add(file);
                                     }
                                     var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
+                                    var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
-                                    contents.Add(new AlbumNote(album, fileList, dbNote.Entity.Id));
+                                    contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
                                     continue;
                                 }
                             case VideoNote videoNote:

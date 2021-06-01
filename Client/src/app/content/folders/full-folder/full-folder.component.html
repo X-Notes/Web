@@ -12,7 +12,7 @@
             <img
               *ngIf="!photoError"
               alt="photo"
-              [src]="(user$ | async).photoId | getImage"
+              [src]="(user$ | async).photoPath | getImage: 'users'"
               (error)="changeSource()"
             />
             <i *ngIf="photoError" class="icon-people"></i>
@@ -47,7 +47,7 @@
 <div
   *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div class="folder-sub-header" appTheme>
     <div class="container">

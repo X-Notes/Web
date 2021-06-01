@@ -1,4 +1,4 @@
-import { ContentType, HeadingType } from './ContentMode';
+import { ContentType, HeadingType } from './ContentModel';
 
 export interface TransformContent {
   id: string;

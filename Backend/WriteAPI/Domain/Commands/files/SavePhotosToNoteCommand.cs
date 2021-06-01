@@ -10,12 +10,19 @@ using System.Threading.Tasks;
 
 namespace Domain.Commands.files
 {
+    public class SavePhotosToNoteResponse {
+        public AppFile AppFile { set; get; }
+        public IFormFile IFormFile { set; get; }
+        public FilesBytes FilesBytes { set; get; }
+        public SavePhotosType FileType { set; get; }
+    }
+
     public enum SavePhotosType { 
         FormFile,
         Bytes
     }
 
-    public class SavePhotosToNoteCommand : IRequest<List<AppFile>>
+    public class SavePhotosToNoteCommand : IRequest<List<SavePhotosToNoteResponse>>
     {
         public List<IFormFile> FormFilePhotos { set; get; }
         public List<FilesBytes> FilesBytes { set; get; }

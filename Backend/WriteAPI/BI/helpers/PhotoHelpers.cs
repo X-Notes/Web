@@ -44,7 +44,7 @@ namespace BI.helpers
             return base64;
         }
 
-        public string GetPhotoType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        public string GetPhotoType(string contentType)
         {
             switch (contentType)
             {
@@ -63,7 +63,7 @@ namespace BI.helpers
             }
         }
 
-        public string GetAudioType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        public string GetAudioType(string contentType)
         {
             switch (contentType)
             {
@@ -79,7 +79,7 @@ namespace BI.helpers
         }
 
 
-        public string GetVideoType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        public string GetVideoType(string contentType)
         {
             switch (contentType)
             {
@@ -94,7 +94,7 @@ namespace BI.helpers
             }
         }
 
-        public string GetDocumentType(string contentType) // TODO ADD MESSAGE INSTEAD EXCEPTION 
+        public string GetDocumentType(string contentType)
         {
             switch (contentType)
             {

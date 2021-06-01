@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Album } from '../../models/ContentMode';
+import { Album } from '../../models/ContentModel';
 
 @Component({
   selector: 'app-note-preview-photos',

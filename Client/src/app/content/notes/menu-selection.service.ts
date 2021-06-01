@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseText } from './models/ContentMode';
+import { BaseText } from './models/ContentModel';
 
 @Injectable()
 export class MenuSelectionService {

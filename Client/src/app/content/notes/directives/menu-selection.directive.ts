@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentType } from '../models/ContentMode';
+import { ContentType } from '../models/ContentModel';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { SelectionService } from '../selection.service';
 

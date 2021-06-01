@@ -78,23 +78,22 @@ namespace BI.services.user
             if (user.PhotoId.HasValue)
             {
                 var oldPhoto = await fileRepository.FirstOrDefault(x => x.Id == user.PhotoId.Value);
-                filesStorage.RemoveFile(oldPhoto.Path);
+                await filesStorage.RemoveUserFile(oldPhoto.Path);
             }
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
-            var getContentString = filesStorage.GetValueFromDictionary(ContentTypesFile.Images);
-            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, getContentString, photoType);
+            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, ContentTypesFile.Images, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
 
             var success = await userRepository.UpdatePhoto(user, file);
 
             if(!success)
             {
-                filesStorage.RemoveFile(pathToCreatedFile);
+                await filesStorage.RemoveUserFile(pathToCreatedFile);
                 return new AnswerChangeUserPhoto { Success = false };
             }
 
-            return new AnswerChangeUserPhoto() { Success = true, Id = file.Id };
+            return new AnswerChangeUserPhoto() { Success = true, Id = file.Id, PhotoPath = pathToCreatedFile };
 
         }
 

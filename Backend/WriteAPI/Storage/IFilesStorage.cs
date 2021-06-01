@@ -12,10 +12,10 @@ namespace Storage
         public void CreateUserFolders(Guid userId);
         public void CreateNoteFolders(Guid noteId);
         public void CreateIfMissing();
-        Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd);
-        Task<string> SaveNoteFiles(IFormFile file, Guid noteId, string contentFolder, string fileTypeEnd);
-        Task<string> SaveNoteFiles(byte[] file, Guid noteId, string contentFolder, string fileTypeEnd);
-        string GetValueFromDictionary(ContentTypesFile type);
-        void RemoveFile(string path);
+        Task<string> SaveUserFile(IFormFile file, Guid userId, ContentTypesFile contentFolder, string fileTypeEnd);
+        Task<string> SaveNoteFiles(IFormFile file, Guid noteId, ContentTypesFile contentFolder, string fileTypeEnd);
+        Task<string> SaveNoteFiles(byte[] file, string ContentType, Guid noteId, ContentTypesFile contentFolder, string fileTypeEnd);
+        Task RemoveUserFile(string path);
+        Task RemoveNoteFile(string path);
     }
 }
