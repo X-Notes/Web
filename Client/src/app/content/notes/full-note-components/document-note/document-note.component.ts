@@ -50,7 +50,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   openModal() {
-    this.dialogsManageService.viewDock(this.content.fileId);
+    this.dialogsManageService.viewDock(this.content.documentPath);
   }
 
   mouseEnter = ($event: any) => {

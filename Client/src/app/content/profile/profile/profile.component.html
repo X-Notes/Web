@@ -13,7 +13,7 @@
       >
         <img
           alt="background"
-          [src]="item.photoPath | getImage: 'users'"
+          [src]="item.photoPath | getImage: (user$ | async).id"
           (click)="setCurrent(item.id)"
         />
         <div class="thumbnail" (click)="removeBackground(item.id)">
@@ -51,7 +51,7 @@
             <div class="photo" appDrop>
               <img
                 *ngIf="!photoError"
-                [src]="(user$ | async).photoPath | getImage: 'users'"
+                [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
                 alt="User photo"
                 (error)="changeSource()"
               />

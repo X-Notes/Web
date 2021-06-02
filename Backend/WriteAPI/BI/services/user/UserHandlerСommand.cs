@@ -58,7 +58,7 @@ namespace BI.services.user
 
             await userRepository.Add(user);
 
-            filesStorage.CreateUserFolders(user.Id);
+            await filesStorage.CreateUserContainer(user.Id);
 
             return Unit.Value;
         }
@@ -78,18 +78,18 @@ namespace BI.services.user
             if (user.PhotoId.HasValue)
             {
                 var oldPhoto = await fileRepository.FirstOrDefault(x => x.Id == user.PhotoId.Value);
-                await filesStorage.RemoveUserFile(oldPhoto.Path);
+                await filesStorage.RemoveFile(user.Id.ToString(), oldPhoto.Path);
             }
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
-            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, ContentTypesFile.Images, photoType);
+            var pathToCreatedFile = await filesStorage.SaveFile(user.Id.ToString(), request.File, ContentTypesFile.Images, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
 
             var success = await userRepository.UpdatePhoto(user, file);
 
             if(!success)
             {
-                await filesStorage.RemoveUserFile(pathToCreatedFile);
+                await filesStorage.RemoveFile(user.Id.ToString(), pathToCreatedFile);
                 return new AnswerChangeUserPhoto { Success = false };
             }
 

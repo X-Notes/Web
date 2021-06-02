@@ -20,9 +20,8 @@ namespace WriteAPI.Hosted
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            using var scope = serviceProvider.CreateScope();
-            using var fileService = scope.ServiceProvider.GetRequiredService<IFilesStorage>();
-            fileService.CreateIfMissing();
+            // using var scope = serviceProvider.CreateScope();
+            // using var fileService = scope.ServiceProvider.GetRequiredService<IFilesStorage>();
             return Task.CompletedTask;
         }
 

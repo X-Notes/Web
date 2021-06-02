@@ -12,7 +12,7 @@
             <img
               *ngIf="!photoError"
               alt="photo"
-              [src]="(user$ | async).photoPath | getImage: 'users'"
+              [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
               (error)="changeSource()"
             />
             <i *ngIf="photoError" class="icon-people"></i>

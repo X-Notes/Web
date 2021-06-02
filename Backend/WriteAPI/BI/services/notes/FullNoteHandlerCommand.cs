@@ -138,7 +138,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC 
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id.ToString(), request.Photos, note.Id));
 
                 // TODO MOVE THIS TO WORKER
                 foreach(var fileitem in fileList)
@@ -204,7 +204,7 @@ namespace BI.services.notes
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                     var pathes = dbFiles.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString() ,pathes));
                 }
             }
 
@@ -554,7 +554,7 @@ namespace BI.services.notes
                     await transaction.CommitAsync();
 
                     var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -580,7 +580,7 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
-                var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+                var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id.ToString(), request.Photos, note.Id));
 
                 foreach (var fileitem in fileList)
                 {
@@ -631,7 +631,7 @@ namespace BI.services.notes
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                     var pathes = dbFiles.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -670,7 +670,7 @@ namespace BI.services.notes
 
                         await transaction.CommitAsync();
 
-                        await _mediator.Send(new RemoveFilesByPathesCommand(new List<string> { photoForRemove.Path }));
+                        await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), new List<string> { photoForRemove.Path }));
 
                         historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -741,7 +741,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveAudiosToNoteCommand(request.Audio, note.Id));
+                var file = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id.ToString(), request.Audio, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -780,7 +780,7 @@ namespace BI.services.notes
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                     var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -801,7 +801,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveVideosToNoteCommand(request.Video, note.Id));
+                var file = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id.ToString(), request.Video, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -839,7 +839,7 @@ namespace BI.services.notes
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                     var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -860,7 +860,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(request.File, note.Id));
+                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id.ToString(), request.File, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -898,7 +898,7 @@ namespace BI.services.notes
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
                     var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 

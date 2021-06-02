@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
+import { ShortUser } from 'src/app/core/models/short-user';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../models/ContentModel';
 
@@ -13,6 +15,9 @@ import { Photo } from '../../models/ContentModel';
 export class PhotoComponent {
   @Output()
   deleteEvent = new EventEmitter<string>();
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   @Input()
   photo: Photo;

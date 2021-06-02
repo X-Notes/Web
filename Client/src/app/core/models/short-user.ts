@@ -4,6 +4,7 @@ import { Theme } from 'src/app/shared/models/Theme';
 import { Background } from './background';
 
 export interface ShortUser {
+  id: string;
   name: string;
   email: string;
   photoId: string;

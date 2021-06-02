@@ -10,9 +10,11 @@ namespace Domain.Commands.files
     public class RemoveFilesByPathesCommand : IRequest<Unit>
     {
         public List<string> Pathes { set; get; }
-        public RemoveFilesByPathesCommand(List<string> Pathes)
+        public string UserId { set; get; }
+        public RemoveFilesByPathesCommand(string userId, List<string> Pathes)
         {
             this.Pathes = Pathes;
+            UserId = userId;
         }
     }
 }

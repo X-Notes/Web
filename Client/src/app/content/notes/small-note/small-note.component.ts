@@ -1,4 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { ShortUser } from 'src/app/core/models/short-user';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { ChangeStateRelatedNote } from '../models/changeStateRelatedNote';
 import { ContentType } from '../models/ContentModel';
@@ -10,6 +14,9 @@ import { RelatedNote } from '../models/relatedNote';
 })
 export class SmallNoteComponent {
   @Input() note: RelatedNote;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   @Output() deleteNote = new EventEmitter<string>();
 

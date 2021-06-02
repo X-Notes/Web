@@ -38,7 +38,7 @@ namespace BI.services.files
                         foreach (var file in request.FormFilePhotos)
                         {
                             var photoType = photoHelpers.GetPhotoType(file.ContentType);
-                            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, ContentTypesFile.Images, photoType);
+                            var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file, ContentTypesFile.Images, photoType);
                             var fileDB = new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                             fileList.Add(new SavePhotosToNoteResponse {  AppFile = fileDB , IFormFile = file, FileType = SavePhotosType.FormFile });
                         }
@@ -49,7 +49,7 @@ namespace BI.services.files
                         foreach (var file in request.FilesBytes)
                         {
                             var photoType = photoHelpers.GetPhotoType(file.ContentType);
-                            var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, file.ContentType, request.NoteId, ContentTypesFile.Images, photoType);
+                            var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file.Bytes, file.ContentType, ContentTypesFile.Images, photoType);
                             var fileDB = new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                             fileList.Add(new SavePhotosToNoteResponse { AppFile = fileDB, FilesBytes = file, FileType = SavePhotosType.Bytes });
                         }
@@ -67,7 +67,7 @@ namespace BI.services.files
         {
             foreach (var path in request.Pathes)
             {
-                filesStorage.RemoveNoteFile(path);
+                filesStorage.RemoveFile(request.UserId, path);
             }
             return Task.FromResult(Unit.Value);
         }
@@ -80,14 +80,14 @@ namespace BI.services.files
                     {
                         var file = request.Document;
                         var documentType = photoHelpers.GetDocumentType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, ContentTypesFile.Files, documentType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId,  file, ContentTypesFile.Files, documentType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 case SaveDocumentsType.Bytes:
                     {
                         var file = request.FileBytes;
                         var documentType = photoHelpers.GetDocumentType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, file.ContentType, request.NoteId, ContentTypesFile.Files, documentType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file.Bytes, file.ContentType, ContentTypesFile.Files, documentType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 default:
@@ -106,14 +106,14 @@ namespace BI.services.files
                     {
                         var file = request.Video;
                         var videoType = photoHelpers.GetVideoType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, ContentTypesFile.Videos, videoType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file, ContentTypesFile.Videos, videoType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 case SaveVideosType.Bytes:
                     {
                         var file = request.FileBytes;
                         var videoType = photoHelpers.GetVideoType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, file.ContentType, request.NoteId, ContentTypesFile.Videos, videoType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file.Bytes, file.ContentType, ContentTypesFile.Videos, videoType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 default:
@@ -131,14 +131,14 @@ namespace BI.services.files
                     {
                         var file = request.Audio;
                         var audioType = photoHelpers.GetAudioType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file, request.NoteId, ContentTypesFile.Audios, audioType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file, ContentTypesFile.Audios, audioType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 case SaveAudiosType.Bytes:
                     {
                         var file = request.FileBytes;
                         var audioType = photoHelpers.GetAudioType(file.ContentType);
-                        var pathToCreatedFile = await filesStorage.SaveNoteFiles(file.Bytes, file.ContentType, request.NoteId, ContentTypesFile.Audios, audioType);
+                        var pathToCreatedFile = await filesStorage.SaveFile(request.UserId, file.Bytes, file.ContentType, ContentTypesFile.Audios, audioType);
                         return new AppFile { Path = pathToCreatedFile, Type = file.ContentType };
                     }
                 default:

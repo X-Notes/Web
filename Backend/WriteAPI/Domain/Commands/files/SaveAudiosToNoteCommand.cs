@@ -25,19 +25,22 @@ namespace Domain.Commands.files
 
 
         public Guid NoteId { set; get; }
+        public string UserId { set; get; }
 
-        public SaveAudiosToNoteCommand(IFormFile Audio, Guid NoteId)
+        public SaveAudiosToNoteCommand(string userId, IFormFile Audio, Guid NoteId)
         {
             this.Audio = Audio;
             this.NoteId = NoteId;
             this.FileType = SaveAudiosType.FormFile;
+            UserId = userId;
         }
 
-        public SaveAudiosToNoteCommand(FilesBytes FileBytes, Guid NoteId)
+        public SaveAudiosToNoteCommand(string userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;
             this.FileType = SaveAudiosType.Bytes;
+            UserId = userId;
         }
 
     }

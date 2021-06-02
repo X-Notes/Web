@@ -4,7 +4,7 @@
       alt="user image"
       *ngIf="!noPhoto"
       (error)="noPhoto = true"
-      [src]="user.photoPath | getImage: 'users'"
+      [src]="user.photoPath | getImage: user.id"
     />
     <div *ngIf="noPhoto" class="no-photo">
       <mat-icon svgIcon="people" [inline]="true"></mat-icon>

@@ -15,4 +15,9 @@ export class ViewDocComponent {
   close() {
     this.dialogRef.close();
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  get googleDriveUrl() {
+    return 'https://docs.google.com/gview?url=%URL%&embedded=true';
+  }
 }

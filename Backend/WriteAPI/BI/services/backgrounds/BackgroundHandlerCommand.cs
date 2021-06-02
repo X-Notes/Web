@@ -74,7 +74,7 @@ namespace BI.services.backgrounds
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
-            var pathToCreatedFile = await filesStorage.SaveUserFile(request.File, user.Id, ContentTypesFile.Images, photoType);
+            var pathToCreatedFile = await filesStorage.SaveFile(user.Id.ToString(), request.File, ContentTypesFile.Images, photoType);
             var file = new AppFile { Path = pathToCreatedFile, Type = request.File.ContentType };
 
             var item = new Backgrounds()
@@ -87,7 +87,7 @@ namespace BI.services.backgrounds
 
             if (!success)
             {
-                await filesStorage.RemoveUserFile(pathToCreatedFile);
+                await filesStorage.RemoveFile(user.Id.ToString(), pathToCreatedFile);
                 return null;
             }
 

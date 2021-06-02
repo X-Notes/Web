@@ -31,19 +31,22 @@ namespace Domain.Commands.files
         public SavePhotosType FileType { set; get; }
 
         public Guid NoteId { set; get; }
+        public string UserId { set; get; }
 
-        public SavePhotosToNoteCommand(List<IFormFile> Photos, Guid NoteId)
+        public SavePhotosToNoteCommand(string userId, List<IFormFile> Photos, Guid NoteId)
         {
             this.FormFilePhotos = Photos;
             this.NoteId = NoteId;
             FileType = SavePhotosType.FormFile;
+            UserId = userId;
         }
 
-        public SavePhotosToNoteCommand(List<FilesBytes> Photos, Guid NoteId)
+        public SavePhotosToNoteCommand(string userId, List<FilesBytes> Photos, Guid NoteId)
         {
             this.FilesBytes = Photos;
             this.NoteId = NoteId;
             FileType = SavePhotosType.Bytes;
+            UserId = userId;
         }
 
     }

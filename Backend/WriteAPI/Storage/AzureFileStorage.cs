@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
+using Storage.models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,17 +16,12 @@ namespace Storage
         private readonly BlobServiceClient blobServiceClient;
 
         private string userRoot = "users";
-        private string notesRoot = "notes";
 
-        private readonly BlobContainerClient _blobContainerClientUser;
-        private readonly BlobContainerClient _blobContainerClientNotes;
         private Dictionary<ContentTypesFile, string> folders;
 
         public AzureFileStorage(BlobServiceClient blobServiceClient)
         {
             this.blobServiceClient = blobServiceClient;
-            _blobContainerClientUser = blobServiceClient.GetBlobContainerClient(userRoot);
-            _blobContainerClientNotes = blobServiceClient.GetBlobContainerClient(notesRoot);
 
             folders = new Dictionary<ContentTypesFile, string>()
             {
@@ -36,41 +32,38 @@ namespace Storage
             };
         }
 
-        public void CreateIfMissing()
-        {
-            _blobContainerClientUser.CreateIfNotExists();
-            _blobContainerClientNotes.CreateIfNotExists();
-        }
-
-        public void CreateNoteFolders(Guid noteId)
-        {
-
-        }
-
-        public void CreateUserFolders(Guid userId)
-        {
-
-        }
 
         public void Dispose()
         {
 
         }
 
-        private string GetValueFromDictionary(ContentTypesFile type)
+        public async Task<GetFileResponse> GetFile(string userId, string path)
         {
-            return folders.GetValueOrDefault(type);
+            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            BlobClient blobClient = blobContainer.GetBlobClient(path);
+            if (await blobClient.ExistsAsync())
+            {
+                var ms = new MemoryStream();
+                await blobClient.DownloadToAsync(ms);
+                return new GetFileResponse
+                {
+                    File = ms.ToArray(),
+                    ContentType = blobClient.GetProperties().Value.ContentType
+                };
+            }
+            else
+            {
+                throw new Exception("File does not exist");
+            }
         }
 
-        public async Task RemoveUserFile(string path)
+        public async Task RemoveFile(string userId, string path)
         {
-           await _blobContainerClientUser.DeleteBlobAsync(path);
+           var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+           await blobContainer.DeleteBlobAsync(path);
         }
 
-        public async Task RemoveNoteFile(string path)
-        {
-            await _blobContainerClientNotes.DeleteBlobAsync(path);
-        }
 
         private async Task<MemoryStream> GetStreamFromFormFile(IFormFile file)
         {
@@ -79,6 +72,7 @@ namespace Storage
             ms.Position = 0;
             return ms;
         }
+
         private MemoryStream GetStreamFromBytes(byte[] bytes)
         {
             var ms = new MemoryStream(bytes);
@@ -101,10 +95,11 @@ namespace Storage
             return headers;
         }
 
-        public async Task<string> SaveNoteFiles(IFormFile file, Guid noteId, ContentTypesFile contentFolder, string fileTypeEnd)
+        public async Task<string> SaveFile(string userId, IFormFile file, ContentTypesFile contentFolder, string fileTypeEnd)
         {
-            var path = GetNoteFolder(noteId, contentFolder) + "\\" + Guid.NewGuid() + fileTypeEnd;
-            var blobClient = _blobContainerClientNotes.GetBlobClient(path);
+            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            var path = PathFactory(contentFolder, fileTypeEnd);
+            var blobClient = blobContainer.GetBlobClient(path);
 
             var stream = await GetStreamFromFormFile(file);
             var headers = GetBlobHttpHeaders(file);
@@ -115,10 +110,11 @@ namespace Storage
             return blobClient.Name;
         }
 
-        public async Task<string> SaveNoteFiles(byte[] file, string contentType, Guid noteId, ContentTypesFile contentFolder, string fileTypeEnd)
+        public async Task<string> SaveFile(string userId, byte[] file, string contentType, ContentTypesFile contentFolder, string fileTypeEnd)
         {
-            var path = GetNoteFolder(noteId, contentFolder) + "\\" + Guid.NewGuid() + fileTypeEnd;
-            var blobClient = _blobContainerClientNotes.GetBlobClient(path);
+            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            var path = PathFactory(contentFolder, fileTypeEnd);
+            var blobClient = blobContainer.GetBlobClient(path);
 
             var stream = GetStreamFromBytes(file);
             var headers = GetBlobHttpHeaders(contentType);
@@ -129,28 +125,14 @@ namespace Storage
             return blobClient.Name;
         }
 
-        public async Task<string> SaveUserFile(IFormFile file, Guid userId, ContentTypesFile contentFolder, string fileTypeEnd)
+        public string PathFactory(ContentTypesFile type, string fileTypeEnd)
         {
-            var path = GetUserFolder(userId, contentFolder) + "\\" + Guid.NewGuid() + fileTypeEnd;
-            var blobClient = _blobContainerClientUser.GetBlobClient(path);
-
-            var stream =  await GetStreamFromFormFile(file);
-            var headers = GetBlobHttpHeaders(file);
-
-            var resp = await blobClient.UploadAsync(stream, headers);
-
-            await stream.DisposeAsync();
-            return blobClient.Name;
+            return folders.GetValueOrDefault(type) + "/" + Guid.NewGuid() + "-" + Guid.NewGuid() + "-" + Guid.NewGuid() + fileTypeEnd;
         }
 
-        public string GetUserFolder(Guid userId, ContentTypesFile contentFolder)
+        public async Task CreateUserContainer(Guid userId)
         {
-            return userId + "\\" + GetValueFromDictionary(contentFolder);
-        }
-
-        public string GetNoteFolder(Guid noteId, ContentTypesFile contentFolder)
-        {
-            return noteId + "\\" + GetValueFromDictionary(contentFolder);
+            await blobServiceClient.CreateBlobContainerAsync(userId.ToString());
         }
     }
 }

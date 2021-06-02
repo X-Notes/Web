@@ -101,8 +101,6 @@ namespace BI.services.notes
 
             await noteRepository.Add(note, type.Id);
 
-            filesStorage.CreateNoteFolders(note.Id);
-
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
 
@@ -244,8 +242,6 @@ namespace BI.services.notes
                         AddedAt = DateTimeOffset.Now
                     });
 
-                    filesStorage.CreateNoteFolders(dbNote.Entity.Id);
-
                     await labelsNotesRepository.AddRange(labels);
 
                     var contents = new List<BaseNoteContent>();
@@ -264,10 +260,10 @@ namespace BI.services.notes
                                     var files = new List<FilesBytes>();
                                     foreach(var photo in album.Photos)
                                     {
-                                        var file = await _mediator.Send(new GetFileById(photo.Id));
+                                        var file = await _mediator.Send(new GetFileById(photo.Id, permissions.User.Id.ToString()));
                                         files.Add(file);
                                     }
-                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
+                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id.ToString(), files, dbNote.Entity.Id));
                                     var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
                                     contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
@@ -275,24 +271,24 @@ namespace BI.services.notes
                                 }
                             case VideoNote videoNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
 
                                     contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
                             case AudioNote audioNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
 
                                     contents.Add(new AudioNote(audioNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
                             case DocumentNote documentNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
 
                                     contents.Add(new DocumentNote(documentNote, newfile, dbNote.Entity.Id));
                                     continue;

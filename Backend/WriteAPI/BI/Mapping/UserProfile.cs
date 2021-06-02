@@ -13,6 +13,7 @@ namespace BI.Mapping
         public UserProfile()
         {
             CreateMap<User, ShortUser>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(d => d.Id))
                 .ForMember(x => x.Name, dest => dest.MapFrom(d => d.Name))
                 .ForMember(x => x.Email, dest => dest.MapFrom(d => d.Email))
                 .ForMember(x => x.PhotoId, dest => dest.MapFrom(d => d.PhotoId))
@@ -23,6 +24,7 @@ namespace BI.Mapping
                 .ForMember(x => x.FontSize, dest => dest.MapFrom(d => d.FontSize));
 
             CreateMap<User, OnlineUserOnNote>()
+                .ForMember(x => x.Id, dest => dest.MapFrom(d => d.Id))
                 .ForMember(x => x.Name, dest => dest.MapFrom(d => d.Name))
                 .ForMember(x => x.PhotoId, dest => dest.MapFrom(d => d.PhotoId))
                 .ForMember(x => x.PhotoPath, dest => dest.MapFrom(d => d.Photo.Path));

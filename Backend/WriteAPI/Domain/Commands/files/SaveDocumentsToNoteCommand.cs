@@ -24,20 +24,22 @@ namespace Domain.Commands.files
         public SaveDocumentsType FileType { set; get; }
 
         public Guid NoteId { set; get; }
+        public string UserId { set; get; }
 
-
-        public SaveDocumentsToNoteCommand(IFormFile Document, Guid NoteId)
+        public SaveDocumentsToNoteCommand(string userId, IFormFile Document, Guid NoteId)
         {
             this.Document = Document;
             this.NoteId = NoteId;
             this.FileType = SaveDocumentsType.FormFile;
+            UserId = userId;
         }
 
-        public SaveDocumentsToNoteCommand(FilesBytes FileBytes, Guid NoteId)
+        public SaveDocumentsToNoteCommand(string userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;
             this.FileType = SaveDocumentsType.Bytes;
+            UserId = userId;
         }
     }
 
