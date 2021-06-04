@@ -1,4 +1,5 @@
 export interface StreamAudioState {
+  id: string;
   playing: boolean;
   readableCurrentTime: string;
   readableDuration: string;

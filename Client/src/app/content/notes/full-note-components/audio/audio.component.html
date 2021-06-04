@@ -1,0 +1,55 @@
+<div class="preview">
+  <img *ngIf="false" />
+  <div class="no-preview">{{ item.audio.name[0] }}</div>
+  <div class="controls">
+    <button
+      appTheme
+      type="button"
+      name="play"
+      #playButton
+      (click)="play()"
+      [disabled]="stateInner?.error"
+      [CustomTooltip]="'innerNote.audio.play' | translate"
+      position="Bottom"
+      *ngIf="!stateInner?.playing"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">play_circle_outline</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="playButton"></div>
+    </button>
+    <button
+      appTheme
+      type="button"
+      name="pause"
+      #pauseButton
+      (click)="pause()"
+      *ngIf="stateInner?.playing"
+      [CustomTooltip]="'innerNote.audio.pause' | translate"
+      position="Bottom"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">pause</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="pauseButton"></div>
+    </button>
+  </div>
+</div>
+<div class="audio-body" (click)="openFile()">
+  <div class="audio-info">
+    <div class="audio-name">
+      <p>{{ item.audio.name }}</p>
+    </div>
+    <div class="audio-time">
+      <p>{{ stateInner?.readableCurrentTime }}</p>
+      <span>/</span>
+      <p>{{ stateInner?.readableDuration }}</p>
+    </div>
+  </div>
+  <button type="button" name="more" #more appTheme>
+    <div class="icon">
+      <mat-icon [inline]="true">more_vert</mat-icon>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
+  </button>
+</div>

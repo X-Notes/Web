@@ -1,0 +1,85 @@
+@import 'audio.scss';
+
+:host {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 0.5rem;
+  overflow: hidden;
+
+  .no-preview {
+    display: flex;
+    font-size: 1.75rem;
+  }
+
+  .controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+
+    button[type='button'] {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.audio-body {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0 5px 5px 0;
+
+  button[type='button'] {
+    height: 35px;
+    width: 35px;
+  }
+
+  .audio-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    .audio-name {
+      display: flex;
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+
+    .audio-time {
+      display: flex;
+      color: #8e8e8e;
+      font-size: 0.75rem;
+
+      span {
+        margin: 0 0.25rem;
+      }
+    }
+  }
+}
+
+.dark {
+  color: white;
+}

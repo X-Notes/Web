@@ -11,11 +11,12 @@ import { AudioEvents } from './models/AudioEvents.enum';
 export class AudioService {
   audioEvents = AudioEvents;
 
-  private stop$ = new Subject();
+  currentFile: any = {};
 
-  private audioObj = new Audio();
+  playlist = [];
 
-  private state: StreamAudioState = {
+  state: StreamAudioState = {
+    id: '',
     playing: false,
     readableCurrentTime: '',
     readableDuration: '',
@@ -27,14 +28,18 @@ export class AudioService {
     currentVolume: 0.25,
   };
 
+  private stop$ = new Subject();
+
+  private audioObj = new Audio();
+
   private stateChange: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
 
   getState(): Observable<StreamAudioState> {
-    return this.stateChange.asObservable();
+    return this.stateChange;
   }
 
-  playStream(url) {
-    return this.streamObservable(url).pipe(takeUntil(this.stop$));
+  playStream(url, id) {
+    return this.streamObservable(url, id).pipe(takeUntil(this.stop$));
   }
 
   play() {
@@ -66,8 +71,9 @@ export class AudioService {
     return moment.utc(momentTime).format(format);
   };
 
-  private streamObservable(url) {
+  private streamObservable(url, id) {
     return new Observable((observer) => {
+      this.state.id = id;
       this.audioObj.src = url;
       this.audioObj.volume = this.state.currentVolume;
       this.audioObj.load();
@@ -100,7 +106,6 @@ export class AudioService {
   };
 
   private updateStateEvents(event: Event): void {
-    console.log(event);
     this.state.loop = this.audioObj.loop;
     switch (event.type) {
       case this.audioEvents.canplay:
@@ -141,6 +146,7 @@ export class AudioService {
 
   private resetState() {
     this.state = {
+      id: '',
       playing: false,
       readableCurrentTime: '',
       readableDuration: '',

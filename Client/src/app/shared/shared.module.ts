@@ -56,6 +56,7 @@ import { NoResultsIllustrationComponent } from './custom-components/no-results-i
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
 import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
 import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
+import { AudioControlsComponent } from './custom-components/audio-controls/audio-controls.component';
 
 @NgModule({
   declarations: [
@@ -98,6 +99,7 @@ import { DialogGenericSaveComponent } from './modal_components/dialog-generic-sa
     UserOnEntityCardComponent,
     ViewDocComponent,
     DialogGenericSaveComponent,
+    AudioControlsComponent,
   ],
   imports: [
     CommonModule,
@@ -164,6 +166,7 @@ import { DialogGenericSaveComponent } from './modal_components/dialog-generic-sa
     DialogGenericSaveComponent,
     NgxDocViewerModule,
     MatSliderModule,
+    AudioControlsComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

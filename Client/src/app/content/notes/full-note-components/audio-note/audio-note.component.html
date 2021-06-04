@@ -3,66 +3,12 @@
     <div class="title">
       <p>Audio playlist</p>
     </div>
-    <button type="button" name="pause" #playlistOptions>
+    <button type="button" name="options" #playlistOptions>
       <div class="icon">
         <mat-icon [inline]="true">more_horiz</mat-icon>
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="playlistOptions"></div>
     </button>
   </div>
-  <div class="song" *ngFor="let item of files; let i = index">
-    <div class="preview">
-      <img *ngIf="false" />
-      <div class="no-preview">{{content.name[0]}}</div>
-      <div class="controls">
-        <button
-          type="button"
-          name="play"
-          #playButton
-          (click)="play()"
-          [disabled]="state?.error"
-          [CustomTooltip]="'innerNote.audio.play' | translate"
-          position="Bottom"
-          *ngIf="!state?.playing"
-        >
-          <div class="icon">
-            <mat-icon [inline]="true">play_circle_outline</mat-icon>
-          </div>
-          <div class="ripple-container" matRipple [matRippleTrigger]="playButton"></div>
-        </button>
-        <button
-          type="button"
-          name="pause"
-          #pauseButton
-          (click)="pause()"
-          *ngIf="state?.playing"
-          [CustomTooltip]="'innerNote.audio.pause' | translate"
-          position="Bottom"
-        >
-          <div class="icon">
-            <mat-icon [inline]="true">pause</mat-icon>
-          </div>
-          <div class="ripple-container" matRipple [matRippleTrigger]="pauseButton"></div>
-        </button>
-      </div>
-    </div>
-    <div class="audio-body" (click)="openFile(item.fileId, i)">
-      <div class="audio-info">
-        <div class="audio-name">
-          <p>{{ content.name }}</p>
-        </div>
-        <div class="audio-time">
-          <p>{{ state?.readableCurrentTime }}</p>
-          <span>/</span>
-          <p>{{ state?.readableDuration }}</p>
-        </div>
-      </div>
-      <button type="button" name="more" #more>
-        <div class="icon">
-          <mat-icon [inline]="true">more_vert</mat-icon>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
-      </button>
-    </div>
-  </div>
+  <app-audio *ngFor="let item of files; let i = index" [item]="{audio: item, index: i}"></app-audio>
 </div>
