@@ -18,12 +18,14 @@ import {
   SetDefaultBackground,
   UpdateUserName,
   UpdateUserPhoto,
+  LoadUsedDiskSpace,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
 
 interface UserState {
   user: ShortUser;
   isLogin: boolean;
+  memory: number;
 }
 
 @State<UserState>({
@@ -31,6 +33,7 @@ interface UserState {
   defaults: {
     user: null,
     isLogin: false,
+    memory: 0,
   },
 })
 @Injectable()
@@ -40,6 +43,26 @@ export class UserStore {
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
   ) {}
+
+  @Selector()
+  static getMemoryBytes(state: UserState): number {
+    return state.memory;
+  }
+
+  @Selector()
+  static getMemoryKBytes(state: UserState): number {
+    return state.memory / Math.pow(1024, 1);
+  }
+
+  @Selector()
+  static getMemoryMBytes(state: UserState): number {
+    return state.memory / Math.pow(1024, 2);
+  }
+
+  @Selector()
+  static getMemoryGBytes(state: UserState): number {
+    return state.memory / Math.pow(1024, 3);
+  }
 
   @Selector()
   static getStatus(state: UserState): boolean {
@@ -76,21 +99,21 @@ export class UserStore {
   }
 
   @Action(Login)
-  async login({ setState, dispatch }: StateContext<UserState>, { token, user }: Login) {
+  async login({ patchState, dispatch }: StateContext<UserState>, { token, user }: Login) {
     let userdb = await this.api.getUser().toPromise();
     if (userdb === null) {
       userdb = await this.api.newUser(user).toPromise();
       dispatch(new UpdateUserPhoto(user.photo));
     }
     dispatch(new SetToken(token));
-    setState({ user: userdb, isLogin: true });
+    patchState({ user: userdb, isLogin: true });
   }
 
   @Action(Logout)
   // eslint-disable-next-line class-methods-use-this
-  logout({ setState, dispatch }: StateContext<UserState>) {
+  logout({ patchState, dispatch }: StateContext<UserState>) {
     dispatch(new TokenSetNoUpdate());
-    setState({ user: null, isLogin: false });
+    patchState({ user: null, isLogin: false });
   }
 
   @Action(ChangeTheme)
@@ -159,5 +182,11 @@ export class UserStore {
     patchState({
       user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath },
     });
+  }
+
+  @Action(LoadUsedDiskSpace)
+  async loadUsedDiskSpace({ patchState, getState }: StateContext<UserState>) {
+    const memory = await this.api.getMemory().toPromise();
+    patchState({ memory: memory.totalSize });
   }
 }

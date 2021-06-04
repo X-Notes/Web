@@ -1,11 +1,14 @@
-<div *ngIf="hideFor" class="progress-section">
+<div class="progress-section">
   <div class="billing">B</div>
   <div class="progress-bar-section">
     <div class="text">
-      <p>50mb of 100MB</p>
+      <p>{{memory}} of {{userMemory}}MB</p>
     </div>
     <div class="progress-bar">
-      <div class="indicator"></div>
+      <div
+        [ngStyle]="{'width': procent, 'background-color': indicatorColor }"
+        class="indicator"
+      ></div>
     </div>
   </div>
 </div>

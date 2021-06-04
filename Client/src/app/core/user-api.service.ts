@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { User } from './models/user';
 import { ShortUser } from './models/short-user';
 import { AnswerChangePhoto } from './models/asnwer-change-photo';
+import { UserUsedDiskSpace } from './models/search/user-user-disk-space';
 
 export interface Token {
   token: string;
@@ -30,6 +31,10 @@ export class UserAPIService {
 
   getUser() {
     return this.httpClient.get<ShortUser>(`${environment.writeAPI}/api/user/short`);
+  }
+
+  getMemory() {
+    return this.httpClient.get<UserUsedDiskSpace>(`${environment.writeAPI}/api/user/memory`);
   }
 
   changeTheme(id: string) {

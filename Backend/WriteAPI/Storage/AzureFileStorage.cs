@@ -15,8 +15,6 @@ namespace Storage
     {
         private readonly BlobServiceClient blobServiceClient;
 
-        private string userRoot = "users";
-
         private Dictionary<ContentTypesFile, string> folders;
 
         public AzureFileStorage(BlobServiceClient blobServiceClient)
@@ -124,6 +122,19 @@ namespace Storage
             await stream.DisposeAsync();
             return blobClient.Name;
         }
+
+        public async Task<long> GetUsedDiskSpace(string userId)
+        {
+            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+            var files = blobContainer.GetBlobsByHierarchyAsync();
+            long length = 0;
+            await foreach(var file in files)
+            {
+                length += file.Blob.Properties.ContentLength.Value;
+            }
+            return length;
+        }
+
 
         public string PathFactory(ContentTypesFile type, string fileTypeEnd)
         {

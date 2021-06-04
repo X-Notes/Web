@@ -5,6 +5,7 @@ import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { LoadGeneralEntites } from 'src/app/core/stateApp/app-action';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 @Component({
   selector: 'app-content',
@@ -31,7 +32,7 @@ export class ContentComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((z) => {
         if (z) {
-          this.store.dispatch(LoadGeneralEntites);
+          this.store.dispatch([LoadGeneralEntites, LoadUsedDiskSpace]);
         }
       });
 

@@ -16,5 +16,6 @@ namespace Storage
         Task<string> SaveFile(string userId, byte[] file, string ContentType, ContentTypesFile contentFolder, string fileTypeEnd);
         Task RemoveFile(string userId, string path);
         Task<GetFileResponse> GetFile(string userId, string path);
+        Task<long> GetUsedDiskSpace(string userId);
     }
 }

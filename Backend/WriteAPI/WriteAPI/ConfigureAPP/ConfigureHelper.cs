@@ -92,6 +92,7 @@ namespace WriteAPI.ConfigureAPP
 
             // USER
             services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserMemory, GetUserMemoryResponse>, UserHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();

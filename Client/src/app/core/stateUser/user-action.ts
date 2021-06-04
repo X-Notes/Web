@@ -53,3 +53,9 @@ export class UpdateUserPhoto {
 
   constructor(public photo: FormData) {}
 }
+
+export class LoadUsedDiskSpace {
+  static type = '[User] load used disk space';
+
+  constructor() {}
+}
