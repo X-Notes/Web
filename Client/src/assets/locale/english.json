@@ -159,7 +159,9 @@
         "next": "Next",
         "play": "Play",
         "pause": "Pause",
-        "loop": "loop"
+        "loop": "loop",
+        "playlist": "Playlist",
+        "close": "Close"
       }
     },
     "noResult": {

@@ -11,7 +11,7 @@ import { AudioEvents } from './models/AudioEvents.enum';
 export class AudioService {
   audioEvents = AudioEvents;
 
-  currentFile: any = {};
+  currentFile;
 
   playlist = [];
 
@@ -38,6 +38,14 @@ export class AudioService {
     return this.stateChange;
   }
 
+  resetCurrent() {
+    this.currentFile = null;
+    this.playlist = null;
+    this.stop();
+    this.resetState();
+    this.stateChange.next(this.state);
+  }
+
   playStream(url, id) {
     return this.streamObservable(url, id).pipe(takeUntil(this.stop$));
   }
@@ -56,6 +64,7 @@ export class AudioService {
 
   loop() {
     this.audioObj.loop = !this.audioObj.loop;
+    this.state.loop = this.audioObj.loop;
   }
 
   seekTo(seconds) {
@@ -106,7 +115,6 @@ export class AudioService {
   };
 
   private updateStateEvents(event: Event): void {
-    this.state.loop = this.audioObj.loop;
     switch (event.type) {
       case this.audioEvents.canplay:
         this.state.duration = this.audioObj.duration;

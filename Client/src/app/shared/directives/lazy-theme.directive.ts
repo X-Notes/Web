@@ -32,7 +32,7 @@ export class LazyThemeDirective implements OnInit, OnDestroy {
         }
         if (theme.name === ThemeENUM.Dark) {
           if (this.element && this.attributeName) {
-            this.element[this.attributeName] = `dark-${this.themeClass}`;
+            this.element[this.attributeName] += `dark-${this.themeClass}`;
           } else {
             this.renderer.addClass(this.el.nativeElement, `dark-${this.themeClass}`);
             this.renderer.removeClass(this.el.nativeElement, `light-${this.themeClass}`);

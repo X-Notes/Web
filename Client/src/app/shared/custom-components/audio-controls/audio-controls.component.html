@@ -1,9 +1,54 @@
 <div class="player" appTheme>
+  <div class="controls-playlist">
+    <button
+      class="audio-button"
+      type="button"
+      name="audio playlist"
+      cdk-overlay-origin
+      #origin="cdkOverlayOrigin"
+      #audioPlaylist
+      (click)="isOpen = !isOpen"
+      [CustomTooltip]="'innerNote.audio.playlist' | translate"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">queue_music</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="audioPlaylist"></div>
+    </button>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="isOpen = false"
+    >
+      <div
+        #dropdown
+        class="dropdown"
+        [@showDropdown]
+        appLazyTheme
+        themeClass="dropdown"
+        attributeName="className"
+        [element]="dropdown"
+      >
+        <app-audio-small
+          *ngFor="let item of audioService.playlist; let i = index"
+          [name]="item.name"
+        ></app-audio-small>
+      </div>
+    </ng-template>
+  </div>
   <div class="preview">
-    <img />
+    <img *ngIf="false" />
+    <div class="no-preview" [CustomTooltip]="audioService.currentFile?.audio?.name">
+      {{ audioName }}
+    </div>
   </div>
   <div class="controls">
     <button
+      class="audio-button"
       type="button"
       name="skip prew"
       #skipPrew
@@ -17,6 +62,7 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="skipPrew"></div>
     </button>
     <button
+      class="audio-button"
       type="button"
       name="play"
       #playButton
@@ -31,6 +77,7 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="playButton"></div>
     </button>
     <button
+      class="audio-button"
       type="button"
       name="pause"
       #pauseButton
@@ -44,6 +91,7 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="pauseButton"></div>
     </button>
     <button
+      class="audio-button"
       type="button"
       name="skip next"
       #skipNext
@@ -57,7 +105,7 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="skipNext"></div>
     </button>
     <div class="slider-controls">
-      <div class="time">{{ state?.readableCurrentTime }}</div>
+      <div class="time" *ngIf="state?.readableCurrentTime">{{ state?.readableCurrentTime }}</div>
       <mat-slider
         class="slider"
         min="0"
@@ -67,10 +115,10 @@
         (input)="onSliderChangeEnd($event)"
         [disabled]="state?.error || audioService.currentFile.index === undefined"
       ></mat-slider>
-      <div class="time">{{ state?.readableDuration }}</div>
+      <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
     </div>
     <div class="volume">
-      <button type="button" name="sound" #volumeUp>
+      <button class="audio-button" type="button" name="sound" #volumeUp>
         <div class="icon">
           <mat-icon [inline]="true" *ngIf="state?.currentVolume >= 0.5">volume_up</mat-icon>
           <mat-icon [inline]="true" *ngIf="state?.currentVolume < 0.5 && state?.currentVolume !== 0"
@@ -94,6 +142,7 @@
       </div>
     </div>
     <button
+      class="audio-button"
       type="button"
       name="repeat"
       #repeat
@@ -105,12 +154,18 @@
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="repeat"></div>
     </button>
-    <button type="button" name="more" #more>
+    <button
+      class="audio-button audio-cancel"
+      type="button"
+      name="cancel"
+      #cancel
+      [CustomTooltip]="'innerNote.audio.close' | translate"
+      (click)="audioService.resetCurrent()"
+    >
       <div class="icon">
-        <mat-icon [inline]="true">more_vert</mat-icon>
+        <mat-icon [inline]="true">close</mat-icon>
       </div>
-      <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="cancel"></div>
     </button>
   </div>
-  <div class="playlist"></div>
 </div>

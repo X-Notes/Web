@@ -28,6 +28,7 @@ export class AudioComponent implements OnInit, OnDestroy {
       .getState()
       .pipe(takeUntil(this.destroy))
       .subscribe((state) => {
+        console.log(state, this.audioService.currentFile?.audio?.id);
         if (this.audioService.currentFile?.audio?.id === this.audio.id) {
           this.state = state;
         } else {

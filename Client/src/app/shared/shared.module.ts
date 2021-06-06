@@ -57,6 +57,7 @@ import { UserOnEntityCardComponent } from './modal_components/share/user-on-enti
 import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
 import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
 import { AudioControlsComponent } from './custom-components/audio-controls/audio-controls.component';
+import { AudioSmallComponent } from './custom-components/audio-small/audio-small.component';
 
 @NgModule({
   declarations: [
@@ -100,6 +101,7 @@ import { AudioControlsComponent } from './custom-components/audio-controls/audio
     ViewDocComponent,
     DialogGenericSaveComponent,
     AudioControlsComponent,
+    AudioSmallComponent,
   ],
   imports: [
     CommonModule,
