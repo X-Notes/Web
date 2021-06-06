@@ -1,7 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from '../../audio.service';
+import { AudioModel } from '../../models/ContentMode';
 import { StreamAudioState } from '../../models/StreamAudioState';
 
 @Component({
@@ -10,11 +11,15 @@ import { StreamAudioState } from '../../models/StreamAudioState';
   styleUrls: ['./audio.component.scss'],
 })
 export class AudioComponent implements OnInit, OnDestroy {
-  @Input() item: any;
+  @Output() playEvent = new EventEmitter<AudioModel>();
+
+  @Output() pauseEvent = new EventEmitter();
+
+  @Input() audio: any;
 
   destroy = new Subject();
 
-  stateInner: StreamAudioState;
+  state: StreamAudioState;
 
   constructor(public audioService: AudioService) {}
 
@@ -23,8 +28,10 @@ export class AudioComponent implements OnInit, OnDestroy {
       .getState()
       .pipe(takeUntil(this.destroy))
       .subscribe((state) => {
-        if (this.audioService.currentFile?.audio?.id === this.item.audio.id) {
-          this.stateInner = state;
+        if (this.audioService.currentFile?.audio?.id === this.audio.id) {
+          this.state = state;
+        } else {
+          this.state = null;
         }
       });
   }
@@ -34,31 +41,11 @@ export class AudioComponent implements OnInit, OnDestroy {
     this.destroy.complete();
   }
 
-  playStream(url, id) {
-    this.audioService.playStream(url, id).subscribe(() => {
-      // listening for fun here
-    });
+  pauseMusic() {
+    this.pauseEvent.emit();
   }
 
-  openFile() {
-    this.audioService.stop();
-    if (this.audioService.currentFile?.audio?.id !== this.item.audio.id) {
-      this.audioService.currentFile = this.item;
-      this.playStream(this.item.audio.url, this.item.audio.id);
-    }
-  }
-
-  pause() {
-    if (this.audioService.currentFile?.audio?.id !== this.item.audio.id) {
-      this.audioService.state = this.stateInner;
-    }
-    this.audioService.pause();
-  }
-
-  play() {
-    if (this.audioService.currentFile?.audio?.id !== this.item.audio.id) {
-      this.openFile();
-    }
-    this.audioService.play();
+  playMusic() {
+    this.playEvent.emit(this.audio);
   }
 }

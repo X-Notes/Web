@@ -20,12 +20,38 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
   ngOnInit(): void {
     if (this.content.fileId) {
       this.files.push({
+        // TODO REMOVE THIS WHEN PLAYLIST WILL BEEN DONE IN BE
         url: `${environment.writeAPI}/api/Files/audio/${this.content.fileId}`,
         id: this.content.fileId,
         name: this.content.name,
       });
-      this.audioService.playlist = this.files;
     }
+  }
+
+  playStream(url, id) {
+    this.audioService.playStream(url, id).subscribe(() => {
+      // listening for fun here
+    });
+  }
+
+  openFile(audio: AudioModel, index: number) {
+    this.audioService.stop();
+    if (this.audioService.currentFile?.audio?.id !== audio.id) {
+      this.audioService.playlist = this.files;
+      this.audioService.currentFile = { audio, index };
+      this.playStream(audio.url, audio.id);
+    }
+  }
+
+  pause() {
+    this.audioService.pause();
+  }
+
+  play(audio: AudioModel, index: number) {
+    if (this.audioService.currentFile?.audio?.id !== audio.id) {
+      this.openFile(audio, index);
+    }
+    this.audioService.play();
   }
 
   setFocus = ($event?: any) => {

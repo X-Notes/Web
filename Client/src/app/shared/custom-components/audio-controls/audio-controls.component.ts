@@ -16,9 +16,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   files: Array<any> = [];
 
-  currentFile: any = {};
-
-  constructor(private audioService: AudioService) {}
+  constructor(public audioService: AudioService) {}
 
   ngOnInit(): void {
     this.audioService
@@ -41,7 +39,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   openFile(item, index) {
-    this.currentFile = { index, item };
+    this.audioService.currentFile = { index, item };
     this.audioService.stop();
     this.playStream(item.url, item.id);
   }
@@ -63,27 +61,26 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    const index = this.currentFile.index + 1;
+    const index = this.audioService.currentFile.index + 1;
     const file = this.files[index];
     this.openFile(file, index);
   }
 
   previous() {
-    const index = this.currentFile.index - 1;
+    const index = this.audioService.currentFile.index - 1;
     const file = this.files[index];
     this.openFile(file, index);
   }
 
   isFirstPlaying() {
-    return this.currentFile.index === 0;
+    return this.audioService.currentFile.index === 0;
   }
 
   isLastPlaying() {
-    return this.currentFile.index === this.files.length - 1;
+    return this.audioService.currentFile.index === this.files.length - 1;
   }
 
   onSliderChangeEnd(change) {
-    console.log(change);
     this.audioService.seekTo(change.value);
   }
 

@@ -65,7 +65,7 @@
         step="1"
         [value]="state?.currentTime"
         (input)="onSliderChangeEnd($event)"
-        [disabled]="state?.error || currentFile.index === undefined"
+        [disabled]="state?.error || audioService.currentFile.index === undefined"
       ></mat-slider>
       <div class="time">{{ state?.readableDuration }}</div>
     </div>
@@ -89,7 +89,7 @@
           step="0.01"
           (input)="onSliderVolumeChangeEnd($event)"
           [value]="state?.currentVolume"
-          [disabled]="state?.error || currentFile.index === undefined"
+          [disabled]="state?.error || audioService.currentFile.index === undefined"
         ></mat-slider>
       </div>
     </div>

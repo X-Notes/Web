@@ -24,7 +24,6 @@
       display: flex;
       flex: 1;
       font-size: 0.875rem;
-      color: #dedede;
 
       p {
         @include text-overflow;
@@ -36,8 +35,18 @@
 .dark {
   background-color: $dark-color;
 
+  .playlist-options {
+    .title {
+      color: #dedede;
+    }
+  }
+
   button[type='button'] {
     color: white;
+
+    &:hover {
+      background-color: $dark-button;
+    }
   }
 }
 
@@ -45,4 +54,14 @@
   background-color: #fafafa;
   color: $text-color;
   border: 0.8px solid #bababa;
+
+  .playlist-options {
+    .title {
+      color: $text-color;
+    }
+  }
+
+  button[type='button']:hover {
+    background-color: #cacaca;
+  }
 }

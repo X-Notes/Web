@@ -15,7 +15,7 @@ export class AudioService {
 
   playlist = [];
 
-  state: StreamAudioState = {
+  private state: StreamAudioState = {
     id: '',
     playing: false,
     readableCurrentTime: '',

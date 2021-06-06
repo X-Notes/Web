@@ -1,17 +1,17 @@
-<div class="preview">
+<div class="preview" appTheme>
   <img *ngIf="false" />
-  <div class="no-preview">{{ item.audio.name[0] }}</div>
+  <div class="no-preview">{{ audio.name[0] }}</div>
   <div class="controls">
     <button
-      appTheme
+      class="interaction audio-button"
       type="button"
       name="play"
       #playButton
-      (click)="play()"
-      [disabled]="stateInner?.error"
+      (click)="playMusic()"
+      [disabled]="state?.error"
       [CustomTooltip]="'innerNote.audio.play' | translate"
       position="Bottom"
-      *ngIf="!stateInner?.playing"
+      *ngIf="!state?.playing"
     >
       <div class="icon">
         <mat-icon [inline]="true">play_circle_outline</mat-icon>
@@ -19,12 +19,12 @@
       <div class="ripple-container" matRipple [matRippleTrigger]="playButton"></div>
     </button>
     <button
-      appTheme
+      class="interaction audio-button"
       type="button"
       name="pause"
       #pauseButton
-      (click)="pause()"
-      *ngIf="stateInner?.playing"
+      (click)="pauseMusic()"
+      *ngIf="state?.playing"
       [CustomTooltip]="'innerNote.audio.pause' | translate"
       position="Bottom"
     >
@@ -35,21 +35,33 @@
     </button>
   </div>
 </div>
-<div class="audio-body" (click)="openFile()">
+<div class="audio-body" appTheme>
   <div class="audio-info">
     <div class="audio-name">
-      <p>{{ item.audio.name }}</p>
+      <p>{{ audio.name }}</p>
     </div>
     <div class="audio-time">
-      <p>{{ stateInner?.readableCurrentTime }}</p>
+      <p>{{ state?.readableCurrentTime }}</p>
       <span>/</span>
-      <p>{{ stateInner?.readableDuration }}</p>
+      <p>{{ state?.readableDuration }}</p>
     </div>
   </div>
-  <button type="button" name="more" #more appTheme>
+  <button class="audio-button" type="button" name="more" #more [matMenuTriggerFor]="menu">
     <div class="icon">
       <mat-icon [inline]="true">more_vert</mat-icon>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="more"></div>
   </button>
+  <mat-menu
+    #menu="matMenu"
+    appLazyTheme
+    themeClass="menu"
+    attributeName="panelClass"
+    [element]="menu"
+  >
+    <button mat-menu-item type="button" name="delete">
+      <mat-icon>delete</mat-icon>
+      <span>{{ 'innerNote.menu.delete' | translate }}</span>
+    </button>
+  </mat-menu>
 </div>

@@ -30,6 +30,8 @@ export class AudioModel extends ContentModel {
   name: string;
 
   fileId: string;
+
+  url: string;
 }
 
 export class VideoModel extends ContentModel {

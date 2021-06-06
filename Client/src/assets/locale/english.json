@@ -138,6 +138,7 @@
     },
     "innerNote": {
       "menu": {
+        "add": "Add new audio",
         "review": "Review",
         "download": "Download",
         "copy": "Copy url",
