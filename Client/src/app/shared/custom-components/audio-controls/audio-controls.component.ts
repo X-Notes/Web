@@ -48,9 +48,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   playStream(url, id) {
-    this.audioService.playStream(url, id).subscribe(() => {
-      // listening for fun here
-    });
+    this.audioService.playStream(url, id).subscribe();
   }
 
   openFile(item, index) {
@@ -73,6 +71,10 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   loop() {
     this.audioService.loop();
+  }
+
+  mute() {
+    this.audioService.mute();
   }
 
   next() {

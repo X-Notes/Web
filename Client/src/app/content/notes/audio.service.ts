@@ -15,6 +15,8 @@ export class AudioService {
 
   playlist = [];
 
+  volumeHelper: number;
+
   private state: StreamAudioState = {
     id: '',
     playing: false,
@@ -65,6 +67,18 @@ export class AudioService {
   loop() {
     this.audioObj.loop = !this.audioObj.loop;
     this.state.loop = this.audioObj.loop;
+  }
+
+  mute() {
+    const { currentVolume } = this.state;
+    if (this.audioObj.muted) {
+      this.audioObj.muted = false;
+      this.seekToVolume(this.volumeHelper);
+    } else {
+      this.audioObj.muted = true;
+      this.volumeHelper = currentVolume;
+      this.seekToVolume(0);
+    }
   }
 
   seekTo(seconds) {
@@ -133,6 +147,9 @@ export class AudioService {
         break;
       case this.audioEvents.volumechange:
         this.state.currentVolume = this.audioObj.volume;
+        if (this.state.currentVolume) {
+          this.audioObj.muted = false;
+        }
         break;
       case this.audioEvents.ended:
         if (this.audioObj.loop) {

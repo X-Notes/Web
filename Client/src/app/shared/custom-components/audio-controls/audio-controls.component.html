@@ -1,5 +1,5 @@
 <div class="player" appTheme>
-  <div class="controls-playlist">
+  <div class="controls controls-left">
     <button
       class="audio-button"
       type="button"
@@ -39,11 +39,11 @@
         ></app-audio-small>
       </div>
     </ng-template>
-  </div>
-  <div class="preview">
-    <img *ngIf="false" />
-    <div class="no-preview" [CustomTooltip]="audioService.currentFile?.audio?.name">
-      {{ audioName }}
+    <div class="preview">
+      <img *ngIf="false" />
+      <div class="no-preview" [CustomTooltip]="audioService.currentFile?.audio?.name">
+        {{ audioName }}
+      </div>
     </div>
   </div>
   <div class="controls">
@@ -104,21 +104,23 @@
       </div>
       <div class="ripple-container" matRipple [matRippleTrigger]="skipNext"></div>
     </button>
-    <div class="slider-controls">
-      <div class="time" *ngIf="state?.readableCurrentTime">{{ state?.readableCurrentTime }}</div>
-      <mat-slider
-        class="slider"
-        min="0"
-        [max]="state?.duration"
-        step="1"
-        [value]="state?.currentTime"
-        (input)="onSliderChangeEnd($event)"
-        [disabled]="state?.error || audioService.currentFile.index === undefined"
-      ></mat-slider>
-      <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
-    </div>
+  </div>
+  <div class="slider-controls">
+    <div class="time" *ngIf="state?.readableCurrentTime">{{ state?.readableCurrentTime }}</div>
+    <mat-slider
+      class="slider"
+      min="0"
+      [max]="state?.duration"
+      step="1"
+      [value]="state?.currentTime"
+      (input)="onSliderChangeEnd($event)"
+      [disabled]="state?.error || audioService.currentFile.index === undefined"
+    ></mat-slider>
+    <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
+  </div>
+  <div class="controls">
     <div class="volume">
-      <button class="audio-button" type="button" name="sound" #volumeUp>
+      <button (click)="mute()" class="audio-button" type="button" name="sound" #volumeUp>
         <div class="icon">
           <mat-icon [inline]="true" *ngIf="state?.currentVolume >= 0.5">volume_up</mat-icon>
           <mat-icon [inline]="true" *ngIf="state?.currentVolume < 0.5 && state?.currentVolume !== 0"
