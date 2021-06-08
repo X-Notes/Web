@@ -5,6 +5,7 @@ import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { LoadGeneralEntites } from 'src/app/core/stateApp/app-action';
+import { AudioService } from '../notes/audio.service';
 
 @Component({
   selector: 'app-content',
@@ -18,7 +19,11 @@ export class ContentComponent implements OnInit, OnDestroy {
 
   newProfile = false;
 
-  constructor(public pService: PersonalizationService, private store: Store) {}
+  constructor(
+    public pService: PersonalizationService,
+    private store: Store,
+    public audioService: AudioService,
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy.next();

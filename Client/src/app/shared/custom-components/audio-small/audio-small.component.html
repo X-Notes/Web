@@ -1,0 +1,15 @@
+<div class="audio-small" appTheme>
+  <div class="preview">
+    <img *ngIf="false" />
+    <div class="no-preview">{{ name[0] }}</div>
+  </div>
+  <div class="audio-info">
+    <p>{{ name }}</p>
+  </div>
+  <div class="audio-status">
+    <div class="icon">
+      <mat-icon [inline]="true">play_arrow</mat-icon>
+    </div>
+    <p>Currently playing</p>
+  </div>
+</div>

@@ -14,6 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+import { MatSliderModule } from '@angular/material/slider';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -55,6 +56,8 @@ import { NoResultsIllustrationComponent } from './custom-components/no-results-i
 import { UserOnEntityCardComponent } from './modal_components/share/user-on-entity-card/user-on-entity-card.component';
 import { ViewDocComponent } from './modal_components/view-doc/view-doc.component';
 import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
+import { AudioControlsComponent } from './custom-components/audio-controls/audio-controls.component';
+import { AudioSmallComponent } from './custom-components/audio-small/audio-small.component';
 import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 
 @NgModule({
@@ -98,6 +101,8 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     UserOnEntityCardComponent,
     ViewDocComponent,
     DialogGenericSaveComponent,
+    AudioControlsComponent,
+    AudioSmallComponent,
     ManageMenuButtonsPipe,
   ],
   imports: [
@@ -117,6 +122,7 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     MatMenuModule,
     ReactiveFormsModule,
     NgxDocViewerModule,
+    MatSliderModule,
   ],
   exports: [
     TranslateModule,
@@ -163,6 +169,8 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     ViewDocComponent,
     DialogGenericSaveComponent,
     NgxDocViewerModule,
+    MatSliderModule,
+    AudioControlsComponent,
     ManageMenuButtonsPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
