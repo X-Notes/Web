@@ -1,15 +1,15 @@
-<div appTheme>
+<div class="d-flex" appTheme>
   <button
     type="button"
     (click)="clickHandler()"
     class="generic"
-    [ngClass]="styleClasses"
+    [ngClass]="[styleClasses, isClassOnSize ? classOnSize : '']"
     #buttonRipple
-    CustomTooltip="{{tooltipMessage}}"
-    position="{{tooltipPosition}}"
+    [CustomTooltip]="tooltipMessage"
+    [position]="tooltipPosition"
   >
     <div class="inner-content">
-      <p *ngIf="message?.length > 0">{{message}}</p>
+      <p *ngIf="isActiveMessage">{{message}}</p>
       <div *ngIf="iconClass" class="icon">
         <mat-icon *ngIf="!isDefault" [svgIcon]="iconClass" [inline]="true"></mat-icon>
         <mat-icon *ngIf="isDefault" [inline]="true">{{iconClass}}</mat-icon>

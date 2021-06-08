@@ -210,7 +210,6 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async ngOnInit() {
     this.store.dispatch(new UpdateRoute(EntityType.NoteInner));
-    this.pService.onResize();
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 

@@ -55,6 +55,7 @@ interface FullNoteState {
   note: FullNote;
   canView: boolean;
   canEdit: boolean;
+  isOwner: boolean;
 }
 
 interface NoteState {
@@ -148,7 +149,7 @@ export class NoteStore {
 
   @Selector()
   static activeMenu(state: NoteState): boolean {
-    return state.selectedIds.length > 0;
+    return state.selectedIds?.length > 0;
   }
 
   @Selector()
@@ -212,6 +213,11 @@ export class NoteStore {
   @Selector()
   static canNoView(state: NoteState): boolean {
     return !state.fullNoteState?.canView;
+  }
+
+  @Selector()
+  static isOwner(state: NoteState): boolean {
+    return state.fullNoteState?.isOwner;
   }
 
   // Get notes
@@ -310,16 +316,6 @@ export class NoteStore {
     patchState({ updateColorEvent: [] });
   }
 
-  // Set deleting
-  @Action(SetDeleteNotes)
-  async deleteNotes(
-    { dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: SetDeleteNotes,
-  ) {
-    await this.api.setDeleteNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
-  }
-
   // Deleting
   @Action(DeleteNotesPermanently)
   async deleteNotesPermanently(
@@ -370,6 +366,16 @@ export class NoteStore {
       removeFromMurriEvent: [...selectedIds],
     });
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+  }
+
+  // Set deleting
+  @Action(SetDeleteNotes)
+  async deleteNotes(
+    { dispatch }: StateContext<NoteState>,
+    { typeNote, selectedIds }: SetDeleteNotes,
+  ) {
+    await this.api.setDeleteNotes(selectedIds).toPromise();
+    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
   }
 
   @Action(ArchiveNotes)
@@ -635,6 +641,7 @@ export class NoteStore {
         canView: request.canView,
         canEdit: request.caEdit,
         note: request.fullNote,
+        isOwner: request.isOwner,
       },
     });
   }

@@ -30,12 +30,14 @@ import {
   TransformTypeFolders,
   ChangeTypeFullFolder,
   GetInvitedUsersToFolder,
+  ChangeColorFullFolder,
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { Folders } from '../models/Folders';
 import { InvitedUsersToNoteOrFolder } from '../../notes/models/invitedUsersToNote';
 
 interface FullFolderState {
+  isOwner: boolean;
   folder: FullFolder;
   canView: boolean;
   caEdit: boolean;
@@ -248,13 +250,28 @@ export class FolderStore {
   }
 
   @Selector()
+  static canView(state: FolderState): boolean {
+    return state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static canNoView(state: FolderState): boolean {
+    return !state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static isOwner(state: FolderState): boolean {
+    return state.fullFolderState?.isOwner;
+  }
+
+  @Selector()
   static selectedCount(state: FolderState): number {
     return state.selectedIds.length;
   }
 
   @Selector()
   static activeMenu(state: FolderState): boolean {
-    return state.selectedIds.length > 0;
+    return state.selectedIds?.length > 0;
   }
 
   // Get folders
@@ -401,6 +418,20 @@ export class FolderStore {
     ]);
   }
 
+  @Action(ChangeColorFullFolder)
+  async changeColorFullFolder(
+    { getState, patchState, dispatch }: StateContext<FolderState>,
+    { color }: ChangeColorFullFolder,
+  ) {
+    await this.api.changeColor([getState().fullFolderState.folder.id], color).toPromise();
+
+    const { folder } = getState().fullFolderState;
+    const newFolder: FullFolder = { ...folder, color };
+    patchState({ fullFolderState: { ...getState().fullFolderState, folder: newFolder } });
+    const folderUpdate = newFolder as SmallFolder;
+    dispatch(new UpdateOneFolder(folderUpdate, folder.folderType.name));
+  }
+
   @Action(UpdateOneFolder)
   updateOneFolder(
     { dispatch, getState }: StateContext<FolderState>,
@@ -433,6 +464,7 @@ export class FolderStore {
     const request = await this.api.get(id).toPromise();
     patchState({
       fullFolderState: {
+        isOwner: request.isOwner,
         canView: request.canView,
         caEdit: request.canEdit,
         folder: request.fullFolder,

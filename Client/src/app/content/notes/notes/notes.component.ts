@@ -89,8 +89,6 @@ export class NotesComponent implements OnInit, OnDestroy {
         }
       });
     this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newNote());
-
-    this.pService.onResize();
   }
 
   async newNote() {

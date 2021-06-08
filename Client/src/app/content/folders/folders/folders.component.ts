@@ -53,7 +53,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.pService.onResize();
     this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newFolder());
   }
 

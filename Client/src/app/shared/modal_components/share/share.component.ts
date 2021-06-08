@@ -126,7 +126,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.pService.onResize();
     const routing = this.store.selectSnapshot(AppStore.getRouting); // TODO REMOVE CHANGE ON INPUT
     switch (routing) {
       case EntityType.NoteArchive: {
@@ -175,8 +174,8 @@ export class ShareComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
-        this.getFullFolder();
-        this.currentWindowType = SharedType.Folder;
+        this.getNotes();
+        this.currentWindowType = SharedType.Note;
         break;
       }
       default: {

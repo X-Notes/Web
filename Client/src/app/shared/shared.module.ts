@@ -58,6 +58,7 @@ import { ViewDocComponent } from './modal_components/view-doc/view-doc.component
 import { DialogGenericSaveComponent } from './modal_components/dialog-generic-save/dialog-generic-save.component';
 import { AudioControlsComponent } from './custom-components/audio-controls/audio-controls.component';
 import { AudioSmallComponent } from './custom-components/audio-small/audio-small.component';
+import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { AudioSmallComponent } from './custom-components/audio-small/audio-small
     DialogGenericSaveComponent,
     AudioControlsComponent,
     AudioSmallComponent,
+    ManageMenuButtonsPipe,
   ],
   imports: [
     CommonModule,
@@ -169,6 +171,7 @@ import { AudioSmallComponent } from './custom-components/audio-small/audio-small
     NgxDocViewerModule,
     MatSliderModule,
     AudioControlsComponent,
+    ManageMenuButtonsPipe,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

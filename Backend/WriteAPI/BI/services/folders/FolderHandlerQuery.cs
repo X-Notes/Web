@@ -80,6 +80,7 @@ namespace BI.services.folders
             {
                 return new FullFolderAnswer()
                 {
+                    IsOwner = permissions.IsOwner,
                     CanView = true,
                     CanEdit = true,
                     FullFolder = appCustomMapper.MapFolderToFullFolder(folder)
