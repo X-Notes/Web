@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Users
 {
-    public class UserProfilePhoto : BaseEntity
+    public class UserProfilePhoto : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

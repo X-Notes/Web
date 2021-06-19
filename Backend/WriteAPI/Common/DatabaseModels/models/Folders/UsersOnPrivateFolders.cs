@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.models.Folders
 {
-    public class UsersOnPrivateFolders : BaseEntity
+    public class UsersOnPrivateFolders : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }
@@ -15,7 +15,7 @@ namespace Common.DatabaseModels.models.Folders
         public Guid FolderId { set; get; }
         public Folder Folder { set; get; }
 
-        public Guid AccessTypeId { set; get; }
+        public RefTypeENUM AccessTypeId { set; get; }
         public RefType AccessType { set; get; }
     }
 }

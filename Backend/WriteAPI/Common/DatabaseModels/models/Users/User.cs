@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Common.DatabaseModels.models.Users
 {
-    public class User : BaseEntity
+    public class User : BaseEntity<Guid>
     {
         public string Name { set; get; }
 
@@ -52,7 +52,7 @@ namespace Common.DatabaseModels.models.Users
         public List<NoteHistory> NoteHistories { set; get; }
         public List<UserNoteHistoryManyToMany> UserHistories { set; get; }
 
-        public Guid BillingPlanId { set; get; }
+        public BillingPlanTypeENUM BillingPlanId { set; get; }
         public BillingPlan BillingPlan { set; get; }
     }
 }

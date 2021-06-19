@@ -18,9 +18,6 @@ namespace Common.Naming
         public const string SharedFolder = "shared";
         public const string ArchivedFolder = "archive";
 
-        public const string Viewer = "viewer";
-        public const string Editor = "editor";
-
         public const string Medium  = "medium";
         public const string Big  = "big";
 
@@ -45,9 +42,5 @@ namespace Common.Naming
         public const string Ukraine = "ukraine";
         public const string Russian = "russian";
         public const string English = "english";
-
-        public const string Billing_Basic = "Basic";
-        public const string Billing_Standart = "Standart";
-        public const string Billing_Business = "Business";
     }
 }

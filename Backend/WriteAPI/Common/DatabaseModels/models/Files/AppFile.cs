@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Files
 {
-    public class AppFile : BaseEntity
+    public class AppFile : BaseEntity<Guid>
     {
         public string PathPhotoSmall { set; get; }
         public string PathPhotoMedium { set; get; }

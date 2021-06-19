@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
 {
-    public class UserOnNoteRepository : Repository<UserOnNoteNow>
+    public class UserOnNoteRepository : Repository<UserOnNoteNow, Guid>
     {
         public UserOnNoteRepository(WriteContextDB contextDB)
             : base(contextDB)

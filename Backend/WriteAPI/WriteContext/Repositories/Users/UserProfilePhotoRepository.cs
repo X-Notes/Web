@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
-    public class UserProfilePhotoRepository : Repository<UserProfilePhoto>
+    public class UserProfilePhotoRepository : Repository<UserProfilePhoto, Guid>
     {
         public UserProfilePhotoRepository(WriteContextDB contextDB)
                 : base(contextDB)

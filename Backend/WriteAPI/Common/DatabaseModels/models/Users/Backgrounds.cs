@@ -3,7 +3,7 @@ using System;
 
 namespace Common.DatabaseModels.models.Users
 {
-    public class Backgrounds : BaseEntity
+    public class Backgrounds : BaseEntity<Guid>
     {
         public Guid FileId { set; get; }
         public AppFile File { set; get; }

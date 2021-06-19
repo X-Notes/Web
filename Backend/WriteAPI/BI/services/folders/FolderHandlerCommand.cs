@@ -3,6 +3,7 @@ using BI.Mapping;
 using Common;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.folders;
 using Common.Naming;
 using Domain.Commands.folders;
@@ -52,7 +53,6 @@ namespace BI.services.folders
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
 
             var privateType = await appRepository.GetFolderTypeByName(ModelsNaming.PrivateFolder);
-            var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
 
             var folder = new Folder()
             {
@@ -61,7 +61,7 @@ namespace BI.services.folders
                 Order = 1,
                 Color = FolderColorPallete.Green,
                 FolderTypeId = privateType.Id,
-                RefTypeId = refType.Id,
+                RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeOffset.Now,
                 UpdatedAt = DateTimeOffset.Now
             };

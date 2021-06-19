@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Plan
 {
-    public class BillingPlan : BaseEntity
+    public class BillingPlan : BaseEntity<BillingPlanTypeENUM>
     {
         public long MaxSize { set; get; }
         public string Name { set; get; }

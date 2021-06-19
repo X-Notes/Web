@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DatabaseModels
+namespace Common.DatabaseModels.models.Systems
 {
-    public class BaseEntity<T>
+    public enum RefTypeENUM
     {
-        public virtual T Id { set; get; }
+        Viewer = 1,
+        Editor = 2,
     }
 }

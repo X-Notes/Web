@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Common.DatabaseModels.models.NoteContent
 {
-    public class BaseNoteContent : BaseEntity
+    public class BaseNoteContent : BaseEntity<Guid>
     {
         public Guid NoteId { set; get; }
         public Note Note { set; get; }

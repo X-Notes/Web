@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
 {
-    public class NoteRepository : Repository<Note>
+    public class NoteRepository : Repository<Note, Guid>
     {
         public NoteRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -38,6 +38,7 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -47,11 +48,8 @@ namespace WriteContext.Repositories.Notes
         public async Task<Note> GetForCheckPermission(Guid id)
         {
             return await context.Notes
-                .Include(x => x.NoteType)
-                .Include(x => x.RefType)
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
-                .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -59,8 +57,6 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.NoteType)
-                .Include(x => x.RefType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -68,8 +64,6 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, Guid typeId, bool isHistory)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).Photos)
@@ -86,8 +80,6 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByIdsWithContent(IEnumerable<Guid> ids)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).Photos)
@@ -129,8 +121,6 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserId(Guid userId)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).Photos)
@@ -148,8 +138,6 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).Photos)
@@ -196,6 +184,7 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -229,6 +218,7 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -246,7 +236,7 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<Note> GetOneById(Guid noteId)
         {
-            return await context.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
+            return await context.Notes.FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
     }

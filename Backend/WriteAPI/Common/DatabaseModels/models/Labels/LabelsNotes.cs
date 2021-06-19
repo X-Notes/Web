@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Common.DatabaseModels.models.Labels
 {
-    public class LabelsNotes : BaseEntity
+    public class LabelsNotes : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

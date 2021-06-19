@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Common.DatabaseModels.models.Notes
 {
-    public class UserOnNoteNow : BaseEntity
+    public class UserOnNoteNow : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

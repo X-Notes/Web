@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Notes
 {
-    public class ReletatedNoteToInnerNote : BaseEntity
+    public class ReletatedNoteToInnerNote : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

@@ -260,13 +260,13 @@ namespace WriteContext
                 new NoteType  { Id = Guid.Parse("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), Name = ModelsNaming.ArchivedNote });
 
             modelBuilder.Entity<RefType>().HasData(
-                new RefType  { Id = Guid.Parse("7c247026-36c6-4c17-b227-afb37e8ec7cd"), Name = ModelsNaming.Viewer },
-                new RefType  { Id = Guid.Parse("397821bf-74d5-4bdf-81e4-0698d5a92476"), Name = ModelsNaming.Editor });
+                new RefType  { Id = RefTypeENUM.Viewer, Name = nameof(RefTypeENUM.Viewer) },
+                new RefType  { Id = RefTypeENUM.Editor, Name = nameof(RefTypeENUM.Editor) });
 
             modelBuilder.Entity<BillingPlan>().HasData(
-                new BillingPlan  { Id = Guid.Parse("8984401e-5e3a-454c-a05c-17f9cc848598"), Name = ModelsNaming.Billing_Basic, MaxSize = 100000000 },
-                new BillingPlan  { Id = Guid.Parse("00c89cbe-ac11-4149-a837-b30b68f5cfc1"), Name = ModelsNaming.Billing_Standart, MaxSize = 500000000 },
-                new BillingPlan  { Id = Guid.Parse("8af89b1d-1d73-422e-8709-d3b9e4e050d9"), Name = ModelsNaming.Billing_Business, MaxSize = 1000000000 });
+                new BillingPlan  { Id = BillingPlanTypeENUM.Basic, Name = nameof(BillingPlanTypeENUM.Basic), MaxSize = 100000000 },
+                new BillingPlan  { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 500000000 },
+                new BillingPlan  { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 1000000000 });
 
         }
     }

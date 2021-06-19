@@ -91,11 +91,6 @@ namespace BI.Mapping
             return new FolderTypeDTO(type.Id, type.Name);
         }
 
-        public RefTypeDTO MapRefToRefDTO(RefType type)
-        {
-            return new RefTypeDTO(type.Id, type.Name);
-        }
-
         public List<LabelDTO> MapLabelsToLabelsDTO(List<LabelsNotes> labelsNotes)
         {
             var count = labelsNotes.Count();
@@ -148,7 +143,7 @@ namespace BI.Mapping
                 IsOpened = tuple.isOpened,
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
-                RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
+                RefTypeId = tuple.note.RefTypeId,
                 Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, takeContentLength),
                 IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
@@ -176,7 +171,7 @@ namespace BI.Mapping
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
-                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
+                RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
@@ -192,7 +187,7 @@ namespace BI.Mapping
                 Id = note.Id,
                 Color = note.Color,
                 NoteType = MapTypeToTypeDTO(note.NoteType),
-                RefType = MapRefToRefDTO(note.RefType),
+                RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 IsLocked = note.IsLocked,
@@ -212,7 +207,7 @@ namespace BI.Mapping
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
-                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
+                RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
@@ -260,7 +255,7 @@ namespace BI.Mapping
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
                 FolderType = MapTypeToTypeDTO(folder.FolderType),
-                RefType = MapRefToRefDTO(folder.RefType),
+                RefTypeId = folder.RefTypeId,
                 PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
             };
         }
@@ -294,7 +289,7 @@ namespace BI.Mapping
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
                 FolderType = MapTypeToTypeDTO(folder.FolderType),
-                RefType = MapRefToRefDTO(folder.RefType)
+                RefTypeId = folder.RefTypeId
             };
         }
 

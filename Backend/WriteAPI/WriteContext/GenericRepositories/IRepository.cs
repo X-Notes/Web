@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace WriteContext.GenericRepositories
 {
-    public interface IRepository<T> where T : BaseEntity
+    public interface IRepository<T, IdType> where T : BaseEntity<IdType>
     {
-        Task<T> GetById(Guid id);
+        Task<T> GetById(IdType id);
         Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate);
 
         Task<EntityEntry<T>> Add(T entity);

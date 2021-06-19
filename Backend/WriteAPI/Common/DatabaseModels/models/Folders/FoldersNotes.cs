@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Common.DatabaseModels.models.Folders
 {
-    public class FoldersNotes : BaseEntity
+    public class FoldersNotes : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

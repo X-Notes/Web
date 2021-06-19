@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
-    public class BackgroundRepository : Repository<Backgrounds>
+    public class BackgroundRepository : Repository<Backgrounds, Guid>
     {
         public BackgroundRepository(WriteContextDB contextDB)
             : base(contextDB)

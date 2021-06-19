@@ -8,6 +8,7 @@ using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.NoteContent.NoteDict;
 using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.files;
 using Common.DTO.notes;
 using Common.Naming;
@@ -81,7 +82,6 @@ namespace BI.services.notes
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
             var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
-            var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
 
             var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
             var _contents = new List<BaseNoteContent>();
@@ -96,7 +96,7 @@ namespace BI.services.notes
                 Order = 1,
                 Color = NoteColorPallete.Green,
                 NoteTypeId = type.Id,
-                RefTypeId = refType.Id,
+                RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeOffset.Now,
                 UpdatedAt = DateTimeOffset.Now,
                 Contents = _contents

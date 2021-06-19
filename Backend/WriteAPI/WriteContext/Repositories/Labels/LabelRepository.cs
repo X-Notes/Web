@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Labels
 {
-    public class LabelRepository : Repository<Label>
+    public class LabelRepository : Repository<Label, Guid>
     {
         public LabelRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -36,6 +36,7 @@ namespace WriteContext.Repositories.Labels
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -80,6 +81,7 @@ namespace WriteContext.Repositories.Labels
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -112,6 +114,7 @@ namespace WriteContext.Repositories.Labels
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -142,6 +145,7 @@ namespace WriteContext.Repositories.Labels
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }

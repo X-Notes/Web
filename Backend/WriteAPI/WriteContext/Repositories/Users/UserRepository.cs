@@ -10,7 +10,7 @@ using WriteContext.GenericRepositories;
 namespace WriteContext.Repositories.Users
 {
     // TODO OPTIMIZATION SQL QUERY
-    public class UserRepository : Repository<User>
+    public class UserRepository : Repository<User, Guid>
     {
 
         public UserRepository(WriteContextDB contextDB)

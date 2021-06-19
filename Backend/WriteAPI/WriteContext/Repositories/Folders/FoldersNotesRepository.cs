@@ -10,7 +10,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Folders
 {
-    public class FoldersNotesRepository : Repository<FoldersNotes>
+    public class FoldersNotesRepository : Repository<FoldersNotes, Guid>
     {
         public FoldersNotesRepository(WriteContextDB contextDB)
         : base(contextDB)

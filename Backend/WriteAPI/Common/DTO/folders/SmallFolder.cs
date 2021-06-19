@@ -1,4 +1,5 @@
-﻿using Common.DTO.app;
+﻿using Common.DatabaseModels.models.Systems;
+using Common.DTO.app;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace Common.DTO.folders
         public Guid Id { get; set; }
         public string Title { set; get; }
         public string Color { set; get; }
-        public RefTypeDTO RefType { set; get; }
+        public RefTypeENUM RefTypeId { set; get; }
         public FolderTypeDTO FolderType { set; get; }
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }

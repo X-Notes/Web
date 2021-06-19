@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.app;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Common.DTO.folders
         public string Title { set; get; }
         public string Color { set; get; }
         public FolderTypeDTO FolderType { set; get; }
-        public RefTypeDTO RefType { set; get; }
+        public RefTypeENUM RefTypeId { set; get; }
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }

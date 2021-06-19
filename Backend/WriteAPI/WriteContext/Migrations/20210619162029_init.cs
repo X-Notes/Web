@@ -11,7 +11,7 @@ namespace WriteContext.Migrations
                 name: "BillingPlans",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     MaxSize = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
@@ -84,7 +84,7 @@ namespace WriteContext.Migrations
                 name: "RefTypes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -128,7 +128,7 @@ namespace WriteContext.Migrations
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true),
                     ThemeId = table.Column<Guid>(type: "uuid", nullable: false),
                     FontSizeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BillingPlanId = table.Column<Guid>(type: "uuid", nullable: false)
+                    BillingPlanId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,7 +198,7 @@ namespace WriteContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FolderTypeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RefTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RefTypeId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
@@ -261,7 +261,7 @@ namespace WriteContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteTypeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RefTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RefTypeId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
                     Order = table.Column<int>(type: "integer", nullable: false),
@@ -398,7 +398,7 @@ namespace WriteContext.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     FolderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: false)
+                    AccessTypeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -569,7 +569,7 @@ namespace WriteContext.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccessTypeId = table.Column<Guid>(type: "uuid", nullable: false)
+                    AccessTypeId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -739,9 +739,9 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "MaxSize", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("8984401e-5e3a-454c-a05c-17f9cc848598"), 100000000L, "Basic" },
-                    { new Guid("00c89cbe-ac11-4149-a837-b30b68f5cfc1"), 500000000L, "Standart" },
-                    { new Guid("8af89b1d-1d73-422e-8709-d3b9e4e050d9"), 1000000000L, "Business" }
+                    { 1, 100000000L, "Basic" },
+                    { 2, 500000000L, "Standart" },
+                    { 3, 1000000000L, "Business" }
                 });
 
             migrationBuilder.InsertData(
@@ -802,8 +802,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"), "viewer" },
-                    { new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"), "editor" }
+                    { 1, "Viewer" },
+                    { 2, "Editor" }
                 });
 
             migrationBuilder.InsertData(
@@ -848,8 +848,7 @@ namespace WriteContext.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Files_FileTypeId",
                 table: "Files",
-                column: "FileTypeId",
-                unique: true);
+                column: "FileTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Files_UserId",

@@ -1,4 +1,5 @@
-﻿using Common.DTO.permissions;
+﻿using Common.DatabaseModels.models.Systems;
+using Common.DTO.permissions;
 using Common.Naming;
 using Domain.Queries.permissions;
 using MediatR;
@@ -52,13 +53,13 @@ namespace BI.services.permissions
                 {
                     case ModelsNaming.SharedNote:
                         {
-                            switch (note.RefType.Name)
+                            switch (note.RefTypeId)
                             {
-                                case ModelsNaming.Editor:
+                                case RefTypeENUM.Editor:
                                     {
                                         return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                                     }
-                                case ModelsNaming.Viewer:
+                                case RefTypeENUM.Viewer:
                                     {
                                         return new UserPermissionsForNote().SetOnlyRead(user, note);
                                     }
@@ -68,11 +69,11 @@ namespace BI.services.permissions
                     default:
                         {
                             var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                            if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Editor)
+                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
                             {
                                 return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                             }
-                            if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Viewer)
+                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
                             {
                                 return new UserPermissionsForNote().SetOnlyRead(user, note);
                             }
@@ -104,13 +105,13 @@ namespace BI.services.permissions
                 {
                     case ModelsNaming.SharedFolder:
                         {
-                            switch (folder.RefType.Name)
+                            switch (folder.RefTypeId)
                             {
-                                case ModelsNaming.Editor:
+                                case RefTypeENUM.Editor:
                                     {
                                         return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
                                     }
-                                case ModelsNaming.Viewer:
+                                case RefTypeENUM.Viewer:
                                     {
                                         return new UserPermissionsForFolder().GetOnlyRead(user, folder);
                                     }
@@ -120,11 +121,11 @@ namespace BI.services.permissions
                     default:
                         {
                             var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                            if (folderUser != null && folderUser.AccessType.Name == ModelsNaming.Editor)
+                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
                             {
                                 return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
                             }
-                            if (folderUser != null && folderUser.AccessType.Name == ModelsNaming.Viewer)
+                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)
                             {
                                 return new UserPermissionsForFolder().GetOnlyRead(user, folder);
                             }

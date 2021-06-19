@@ -1,5 +1,6 @@
 ﻿using Common.Attributes;
 using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Systems;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ namespace Domain.Commands.share.notes
         [ValidationGuidAttribute]
         public Guid Id { get; set; }
 
-        [ValidationGuidAttribute]
-        public Guid RefTypeId { set; get; }
+        public RefTypeENUM RefTypeId { set; get; }
     }
 }

@@ -286,7 +286,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
 
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
 
         public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)

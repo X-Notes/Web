@@ -140,8 +140,8 @@ namespace WriteContext.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("RefTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("RefTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -189,8 +189,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AccessTypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("FolderId", "UserId");
 
@@ -345,8 +345,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("RefTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("RefTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -412,8 +412,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AccessTypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("NoteId", "UserId");
 
@@ -426,9 +426,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Plan.BillingPlan", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<long>("MaxSize")
                         .HasColumnType("bigint");
@@ -443,19 +442,19 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8984401e-5e3a-454c-a05c-17f9cc848598"),
+                            Id = 1,
                             MaxSize = 100000000L,
                             Name = "Basic"
                         },
                         new
                         {
-                            Id = new Guid("00c89cbe-ac11-4149-a837-b30b68f5cfc1"),
+                            Id = 2,
                             MaxSize = 500000000L,
                             Name = "Standart"
                         },
                         new
                         {
-                            Id = new Guid("8af89b1d-1d73-422e-8709-d3b9e4e050d9"),
+                            Id = 3,
                             MaxSize = 1000000000L,
                             Name = "Business"
                         });
@@ -592,9 +591,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.RefType", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -606,13 +604,13 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"),
-                            Name = "viewer"
+                            Id = 1,
+                            Name = "Viewer"
                         },
                         new
                         {
-                            Id = new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"),
-                            Name = "editor"
+                            Id = 2,
+                            Name = "Editor"
                         });
                 });
 
@@ -719,8 +717,8 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BillingPlanId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("BillingPlanId")
+                        .HasColumnType("integer");
 
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");

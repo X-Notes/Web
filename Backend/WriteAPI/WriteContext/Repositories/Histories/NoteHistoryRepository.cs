@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Histories
 {
-    public class NoteHistoryRepository : Repository<NoteHistory>
+    public class NoteHistoryRepository : Repository<NoteHistory, Guid>
     {
         public NoteHistoryRepository(WriteContextDB contextDB)
         : base(contextDB)

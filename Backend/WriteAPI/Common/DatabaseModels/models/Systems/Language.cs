@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Systems
 {
-    public class Language : BaseEntity
+    public class Language : BaseEntity<Guid>
     {
         public string Name { set; get; }
         public List<User> Users { set; get; }

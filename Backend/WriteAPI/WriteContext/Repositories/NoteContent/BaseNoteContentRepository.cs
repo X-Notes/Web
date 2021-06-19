@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.NoteContent
 {
-    public class BaseNoteContentRepository : Repository<BaseNoteContent>
+    public class BaseNoteContentRepository : Repository<BaseNoteContent, Guid>
     {
         public BaseNoteContentRepository(WriteContextDB contextDB)
             : base(contextDB)

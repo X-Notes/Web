@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Folders
 {
-    public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders>
+    public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders, Guid>
     {
         public UsersOnPrivateFoldersRepository(WriteContextDB contextDB)
             :base(contextDB)

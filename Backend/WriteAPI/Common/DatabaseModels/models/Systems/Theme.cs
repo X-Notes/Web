@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Systems
 {
-    public class Theme : BaseEntity
+    public class Theme : BaseEntity<Guid>
     {
         public string Name { set; get; }
 

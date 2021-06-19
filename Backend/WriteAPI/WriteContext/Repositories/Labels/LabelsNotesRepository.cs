@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Labels
 {
-    public class LabelsNotesRepository : Repository<LabelsNotes>
+    public class LabelsNotesRepository : Repository<LabelsNotes, Guid>
     {
         public LabelsNotesRepository(WriteContextDB contextDB)
             : base(contextDB)

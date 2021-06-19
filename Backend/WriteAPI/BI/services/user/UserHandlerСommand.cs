@@ -1,6 +1,7 @@
 ﻿using BI.helpers;
 using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Files;
+using Common.DatabaseModels.models.Plan;
 using Common.DatabaseModels.models.Users;
 using Common.DTO.users;
 using Common.Naming;
@@ -62,7 +63,6 @@ namespace BI.services.user
             var language = await appRepository.GetLanguageByName(ModelsNaming.English);
             var fontSize = await appRepository.GetFontSizeByName(ModelsNaming.Big);
             var theme = await appRepository.GetThemeByName(ModelsNaming.DarkTheme);
-            var billing = await appRepository.GetBillingPlanByName(ModelsNaming.Billing_Basic);
 
             var user = new User() {
                 Name = request.Name,
@@ -70,7 +70,7 @@ namespace BI.services.user
                 Email = request.Email,
                 FontSizeId = fontSize.Id,
                 ThemeId = theme.Id,
-                BillingPlanId = billing.Id
+                BillingPlanId = BillingPlanTypeENUM.Basic
             };
 
             await userRepository.Add(user);
