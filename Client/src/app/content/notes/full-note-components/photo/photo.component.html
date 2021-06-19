@@ -1,7 +1,7 @@
 <div class="photo" appTheme>
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
-    [src]="photo.photoPath | getImage: (user$ | async).id"
+    [src]="photo.photoFromBig | getImage: (user$ | async).id"
     (load)="onLoadImage()"
   />
   <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>

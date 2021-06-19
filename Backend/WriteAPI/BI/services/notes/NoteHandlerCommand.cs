@@ -53,12 +53,14 @@ namespace BI.services.notes
         private readonly IMediator _mediator;
         private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
+        private readonly FileRepository fileRepository;
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository,
             AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper,
             IMediator _mediator, LabelRepository labelRepository, LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService)
+            HistoryCacheService historyCacheService,
+            FileRepository fileRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -71,6 +73,7 @@ namespace BI.services.notes
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
+            this.fileRepository = fileRepository;
         }
 
 
@@ -160,6 +163,18 @@ namespace BI.services.notes
 
             if (selectdeletenotes.Count == request.Ids.Count)
             {
+                var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
+                var photos = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
+                var documents = contents.Where(x => x is DocumentNote).Select(x => x as DocumentNote).Select(x => x.AppFile);
+                var audios = contents.Where(x => x is AudioNote).Select(x => x as AudioNote).Select(x => x.AppFile);
+                var videos = contents.Where(x => x is VideoNote).Select(x => x as VideoNote).Select(x => x.AppFile);
+                photos.AddRange(documents);
+                photos.AddRange(audios);
+                photos.AddRange(videos);
+                var pathes = photos.SelectMany(x => x.GetNotNullPathes()).ToList();
+                await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
+
+                await fileRepository.RemoveRange(photos);
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
             }
             else
@@ -263,7 +278,7 @@ namespace BI.services.notes
                                         var file = await _mediator.Send(new GetFileById(photo.Id, permissions.User.Id.ToString()));
                                         files.Add(file);
                                     }
-                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id.ToString(), files, dbNote.Entity.Id));
+                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, files, dbNote.Entity.Id));
                                     var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
                                     contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
@@ -272,7 +287,7 @@ namespace BI.services.notes
                             case VideoNote videoNote:
                                 {
                                     var file = await _mediator.Send(new GetFileById(videoNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
+                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
                                     continue;
@@ -280,7 +295,7 @@ namespace BI.services.notes
                             case AudioNote audioNote:
                                 {
                                     var file = await _mediator.Send(new GetFileById(audioNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
+                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new AudioNote(audioNote, newfile, dbNote.Entity.Id));
                                     continue;
@@ -288,7 +303,7 @@ namespace BI.services.notes
                             case DocumentNote documentNote:
                                 {
                                     var file = await _mediator.Send(new GetFileById(documentNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id.ToString(), file, dbNote.Entity.Id));
+                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new DocumentNote(documentNote, newfile, dbNote.Entity.Id));
                                     continue;

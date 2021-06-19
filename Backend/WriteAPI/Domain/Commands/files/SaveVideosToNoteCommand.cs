@@ -24,9 +24,9 @@ namespace Domain.Commands.files
         public SaveVideosType FileType { set; get; }
 
         public Guid NoteId { set; get; }
-        public string UserId { set; get; }
+        public Guid UserId { set; get; }
 
-        public SaveVideosToNoteCommand(string userId, IFormFile Video, Guid NoteId)
+        public SaveVideosToNoteCommand(Guid userId, IFormFile Video, Guid NoteId)
         {
             this.Video = Video;
             this.NoteId = NoteId;
@@ -34,7 +34,7 @@ namespace Domain.Commands.files
             UserId = userId;
         }
 
-        public SaveVideosToNoteCommand(string userId, FilesBytes FileBytes, Guid NoteId)
+        public SaveVideosToNoteCommand(Guid userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;

@@ -45,5 +45,9 @@ namespace Common.Naming
         public const string Ukraine = "ukraine";
         public const string Russian = "russian";
         public const string English = "english";
+
+        public const string Billing_Basic = "Basic";
+        public const string Billing_Standart = "Standart";
+        public const string Billing_Business = "Business";
     }
 }

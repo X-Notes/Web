@@ -28,7 +28,7 @@ namespace BI.services.files
             var file = await fileRepository.FirstOrDefault(x => x.Id == request.Id);
             if (file != null)
             {
-                var resp = await filesStorage.GetFile(request.UserId, file.Path);
+                var resp = await filesStorage.GetFile(request.UserId, file.PathNonPhotoContent);
                 return new FilesBytes(resp.File, resp.ContentType);
             }
             throw new Exception("File does not exist");

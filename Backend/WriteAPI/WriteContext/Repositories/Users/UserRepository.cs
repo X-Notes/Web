@@ -26,7 +26,8 @@ namespace WriteContext.Repositories.Users
                 .Include(x => x.Language)
                 .Include(x => x.FontSize)
                 .Include(x => x.Theme)
-                .Include(x => x.Photo)
+                .Include(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
@@ -40,7 +41,8 @@ namespace WriteContext.Repositories.Users
             return await context.Users
                 .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
                 .Where(x => x.Email != email)
-                .Include(x => x.Photo)
+                .Include(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .ToListAsync();
         }
 
@@ -76,14 +78,15 @@ namespace WriteContext.Repositories.Users
                     await context.Files.AddAsync(file);
                     await context.SaveChangesAsync();
 
-                    user.PhotoId = file.Id;
-                    await Update(user);
+                    await context.UserProfilePhotos.AddAsync(new UserProfilePhoto { AppFileId = file.Id, UserId = user.Id });
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                     success = false;
                 }

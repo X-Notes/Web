@@ -8,18 +8,28 @@ namespace WriteContext.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Files",
+                name: "BillingPlans",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: true),
-                    Type = table.Column<string>(type: "text", nullable: true),
-                    TextFromPhoto = table.Column<string>(type: "text", nullable: true),
-                    RecognizeObject = table.Column<string>(type: "text", nullable: true)
+                    MaxSize = table.Column<long>(type: "bigint", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.PrimaryKey("PK_BillingPlans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FileTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -104,12 +114,6 @@ namespace WriteContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AlbumNoteAppFiles", x => new { x.AlbumNoteId, x.AppFileId });
-                    table.ForeignKey(
-                        name: "FK_AlbumNoteAppFiles_Files_AppFileId",
-                        column: x => x.AppFileId,
-                        principalTable: "Files",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,22 +123,22 @@ namespace WriteContext.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    PhotoId = table.Column<Guid>(type: "uuid", nullable: true),
                     PersonalKey = table.Column<string>(type: "text", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true),
                     ThemeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FontSizeId = table.Column<Guid>(type: "uuid", nullable: false)
+                    FontSizeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BillingPlanId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Files_PhotoId",
-                        column: x => x.PhotoId,
-                        principalTable: "Files",
+                        name: "FK_Users_BillingPlans_BillingPlanId",
+                        column: x => x.BillingPlanId,
+                        principalTable: "BillingPlans",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Users_FontSizes_FontSizeId",
                         column: x => x.FontSizeId,
@@ -156,24 +160,32 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Backgrounds",
+                name: "Files",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PathPhotoSmall = table.Column<string>(type: "text", nullable: true),
+                    PathPhotoMedium = table.Column<string>(type: "text", nullable: true),
+                    PathPhotoBig = table.Column<string>(type: "text", nullable: true),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    PathNonPhotoContent = table.Column<string>(type: "text", nullable: true),
+                    ContentType = table.Column<string>(type: "text", nullable: true),
+                    FileTypeId = table.Column<int>(type: "integer", nullable: false),
+                    TextFromPhoto = table.Column<string>(type: "text", nullable: true),
+                    RecognizeObject = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Backgrounds", x => x.Id);
+                    table.PrimaryKey("PK_Files", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Backgrounds_Files_FileId",
-                        column: x => x.FileId,
-                        principalTable: "Files",
+                        name: "FK_Files_FileTypes_FileTypeId",
+                        column: x => x.FileTypeId,
+                        principalTable: "FileTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Backgrounds_Users_UserId",
+                        name: "FK_Files_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -325,6 +337,55 @@ namespace WriteContext.Migrations
                     table.PrimaryKey("PK_NotificationSettings", x => x.Id);
                     table.ForeignKey(
                         name: "FK_NotificationSettings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Backgrounds",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FileId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Backgrounds", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Backgrounds_Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Backgrounds_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserProfilePhotos",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserProfilePhotos", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_UserProfilePhotos_Files_AppFileId",
+                        column: x => x.AppFileId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserProfilePhotos_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -674,6 +735,28 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "BillingPlans",
+                columns: new[] { "Id", "MaxSize", "Name" },
+                values: new object[,]
+                {
+                    { new Guid("8984401e-5e3a-454c-a05c-17f9cc848598"), 100000000L, "Basic" },
+                    { new Guid("00c89cbe-ac11-4149-a837-b30b68f5cfc1"), 500000000L, "Standart" },
+                    { new Guid("8af89b1d-1d73-422e-8709-d3b9e4e050d9"), 1000000000L, "Business" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "FileTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Text" },
+                    { 2, "Audio" },
+                    { 3, "Photo" },
+                    { 4, "Video" },
+                    { 5, "Document" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "FoldersTypes",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -689,8 +772,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"), "medium" },
-                    { new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), "big" }
+                    { new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), "big" },
+                    { new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"), "medium" }
                 });
 
             migrationBuilder.InsertData(
@@ -698,9 +781,9 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
+                    { new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"), "ukraine" },
                     { new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"), "russian" },
-                    { new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"), "english" },
-                    { new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"), "ukraine" }
+                    { new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"), "english" }
                 });
 
             migrationBuilder.InsertData(
@@ -761,6 +844,17 @@ namespace WriteContext.Migrations
                 name: "IX_DocumentNote_AppFileId",
                 table: "DocumentNote",
                 column: "AppFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_FileTypeId",
+                table: "Files",
+                column: "FileTypeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_UserId",
+                table: "Files",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Folders_FolderTypeId",
@@ -854,6 +948,16 @@ namespace WriteContext.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserProfilePhotos_AppFileId",
+                table: "UserProfilePhotos",
+                column: "AppFileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_BillingPlanId",
+                table: "Users",
+                column: "BillingPlanId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_CurrentBackgroundId",
                 table: "Users",
                 column: "CurrentBackgroundId",
@@ -874,12 +978,6 @@ namespace WriteContext.Migrations
                 name: "IX_Users_LanguageId",
                 table: "Users",
                 column: "LanguageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_PhotoId",
-                table: "Users",
-                column: "PhotoId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_ThemeId",
@@ -910,6 +1008,14 @@ namespace WriteContext.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_AlbumNoteAppFiles_Files_AppFileId",
+                table: "AlbumNoteAppFiles",
+                column: "AppFileId",
+                principalTable: "Files",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Users_Backgrounds_CurrentBackgroundId",
                 table: "Users",
                 column: "CurrentBackgroundId",
@@ -923,10 +1029,6 @@ namespace WriteContext.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Backgrounds_Files_FileId",
                 table: "Backgrounds");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Files_PhotoId",
-                table: "Users");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Backgrounds_Users_UserId",
@@ -969,6 +1071,9 @@ namespace WriteContext.Migrations
                 name: "UserOnPrivateNotes");
 
             migrationBuilder.DropTable(
+                name: "UserProfilePhotos");
+
+            migrationBuilder.DropTable(
                 name: "UsersOnPrivateFolders");
 
             migrationBuilder.DropTable(
@@ -1005,10 +1110,16 @@ namespace WriteContext.Migrations
                 name: "Files");
 
             migrationBuilder.DropTable(
+                name: "FileTypes");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Backgrounds");
+
+            migrationBuilder.DropTable(
+                name: "BillingPlans");
 
             migrationBuilder.DropTable(
                 name: "FontSizes");

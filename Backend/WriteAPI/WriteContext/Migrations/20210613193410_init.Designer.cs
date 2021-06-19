@@ -10,7 +10,7 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    [Migration("20210501020137_init")]
+    [Migration("20210613193410_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,21 +42,84 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
+                    b.Property<int>("FileTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PathNonPhotoContent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoBig")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoMedium")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoSmall")
                         .HasColumnType("text");
 
                     b.Property<string>("RecognizeObject")
                         .HasColumnType("text");
 
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("TextFromPhoto")
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileTypeId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.FileType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files");
+                    b.ToTable("FileTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Text"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Audio"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Photo"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Video"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Document"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -364,6 +427,43 @@ namespace WriteContext.Migrations
                     b.ToTable("UserOnPrivateNotes");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Plan.BillingPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("MaxSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BillingPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8984401e-5e3a-454c-a05c-17f9cc848598"),
+                            MaxSize = 100000000L,
+                            Name = "Basic"
+                        },
+                        new
+                        {
+                            Id = new Guid("00c89cbe-ac11-4149-a837-b30b68f5cfc1"),
+                            MaxSize = 500000000L,
+                            Name = "Standart"
+                        },
+                        new
+                        {
+                            Id = new Guid("8af89b1d-1d73-422e-8709-d3b9e4e050d9"),
+                            MaxSize = 1000000000L,
+                            Name = "Business"
+                        });
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
                 {
                     b.Property<Guid>("Id")
@@ -622,6 +722,9 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BillingPlanId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");
 
@@ -641,13 +744,12 @@ namespace WriteContext.Migrations
                     b.Property<string>("PersonalKey")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("PhotoId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("ThemeId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BillingPlanId");
 
                     b.HasIndex("CurrentBackgroundId")
                         .IsUnique();
@@ -659,12 +761,24 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.HasIndex("PhotoId")
-                        .IsUnique();
-
                     b.HasIndex("ThemeId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.UserProfilePhoto", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("UserProfilePhotos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
@@ -765,6 +879,25 @@ namespace WriteContext.Migrations
                     b.Navigation("AlbumNote");
 
                     b.Navigation("AppFile");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.FileType", "FileType")
+                        .WithOne("AppFile")
+                        .HasForeignKey("Common.DatabaseModels.models.Files.AppFile", "FileTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("Files")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileType");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -1053,6 +1186,12 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.Plan.BillingPlan", "BillingPlan")
+                        .WithMany("Users")
+                        .HasForeignKey("BillingPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.Users.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.Users.User", "CurrentBackgroundId");
@@ -1069,15 +1208,13 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "Photo")
-                        .WithOne("User")
-                        .HasForeignKey("Common.DatabaseModels.models.Users.User", "PhotoId");
-
                     b.HasOne("Common.DatabaseModels.models.Systems.Theme", "Theme")
                         .WithMany("Users")
                         .HasForeignKey("ThemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BillingPlan");
 
                     b.Navigation("CurrentBackground");
 
@@ -1085,9 +1222,26 @@ namespace WriteContext.Migrations
 
                     b.Navigation("Language");
 
-                    b.Navigation("Photo");
-
                     b.Navigation("Theme");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.UserProfilePhoto", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
+                        .WithMany("UserProfilePhotos")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithOne("UserProfilePhoto")
+                        .HasForeignKey("Common.DatabaseModels.models.Users.UserProfilePhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
@@ -1167,9 +1321,14 @@ namespace WriteContext.Migrations
 
                     b.Navigation("DocumentNotes");
 
-                    b.Navigation("User");
+                    b.Navigation("UserProfilePhotos");
 
                     b.Navigation("VideoNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.FileType", b =>
+                {
+                    b.Navigation("AppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -1206,6 +1365,11 @@ namespace WriteContext.Migrations
                     b.Navigation("UserOnNotesNow");
 
                     b.Navigation("UsersOnPrivateNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Plan.BillingPlan", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
@@ -1253,6 +1417,8 @@ namespace WriteContext.Migrations
                 {
                     b.Navigation("Backgrounds");
 
+                    b.Navigation("Files");
+
                     b.Navigation("Folders");
 
                     b.Navigation("Labels");
@@ -1270,6 +1436,8 @@ namespace WriteContext.Migrations
                     b.Navigation("UserOnNotes");
 
                     b.Navigation("UserOnPrivateNotes");
+
+                    b.Navigation("UserProfilePhoto");
 
                     b.Navigation("UsersOnPrivateFolders");
                 });

@@ -3,6 +3,7 @@ using Common.DatabaseModels.models.Folders;
 using Common.DatabaseModels.models.History;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Plan;
 using Common.DatabaseModels.models.Systems;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,9 @@ namespace Common.DatabaseModels.models.Users
         [Required]
         public string Email { set; get; }
 
-        public Guid? PhotoId { set; get; }
-        public AppFile Photo { set; get; }
+        public UserProfilePhoto UserProfilePhoto { set; get; }
+
+        public List<AppFile> Files { set; get; }
 
         public string PersonalKey { set; get; }
 
@@ -49,5 +51,8 @@ namespace Common.DatabaseModels.models.Users
 
         public List<NoteHistory> NoteHistories { set; get; }
         public List<UserNoteHistoryManyToMany> UserHistories { set; get; }
+
+        public Guid BillingPlanId { set; get; }
+        public BillingPlan BillingPlan { set; get; }
     }
 }

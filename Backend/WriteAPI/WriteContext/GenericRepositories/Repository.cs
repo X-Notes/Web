@@ -44,6 +44,14 @@ namespace WriteContext.GenericRepositories
             await context.SaveChangesAsync();
         }
 
+        public async Task RemoveById(Guid id)
+        {
+            var ent = await GetById(id);
+            entities.Remove(ent);
+            await context.SaveChangesAsync();
+        }
+
+
         public async Task<List<T>> GetAll()
         {
             return await entities.ToListAsync();

@@ -83,7 +83,7 @@ export class UserStore {
   static getUserBackground(state: UserState): string {
     const path = state.user.currentBackground?.photoPath;
     if (path) {
-      return `${environment.storage}/users/${escape(path)}`;
+      return `${environment.storage}/${state.user.id}/${escape(path)}`;
     }
     return null;
   }

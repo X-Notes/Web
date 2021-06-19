@@ -132,7 +132,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     for (const photo of this.content.photos) {
       photo.loaded = false;
     }
-
+    console.log(this.content.photos[0].photoFromBig);
     this.changeSizeAlbumHalder
       .pipe(takeUntil(this.destroy), debounceTime(500)) // TODO export const
       .subscribe(async (values) => {

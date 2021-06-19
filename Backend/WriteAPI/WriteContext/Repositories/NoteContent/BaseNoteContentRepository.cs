@@ -39,5 +39,16 @@ namespace WriteContext.Repositories.NoteContent
                 .Cast<T>()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public async Task<List<BaseNoteContent>> GetContentByNoteIds(List<Guid> ids)
+        {
+            return await entities
+                .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
+                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
+        }
+
     }
 }

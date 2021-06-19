@@ -25,9 +25,9 @@ namespace Domain.Commands.files
 
 
         public Guid NoteId { set; get; }
-        public string UserId { set; get; }
+        public Guid UserId { set; get; }
 
-        public SaveAudiosToNoteCommand(string userId, IFormFile Audio, Guid NoteId)
+        public SaveAudiosToNoteCommand(Guid userId, IFormFile Audio, Guid NoteId)
         {
             this.Audio = Audio;
             this.NoteId = NoteId;
@@ -35,7 +35,7 @@ namespace Domain.Commands.files
             UserId = userId;
         }
 
-        public SaveAudiosToNoteCommand(string userId, FilesBytes FileBytes, Guid NoteId)
+        public SaveAudiosToNoteCommand(Guid userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;

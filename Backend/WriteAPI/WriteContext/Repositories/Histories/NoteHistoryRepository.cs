@@ -22,7 +22,8 @@ namespace WriteContext.Repositories.Histories
         {
             return await entities.Where(x => x.NoteId == noteId)
                 .Include(x => x.Users)
-                .ThenInclude(x => x.Photo)
+                .ThenInclude(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .OrderByDescending(x => x.SnapshotTime).ToListAsync();
         }
 

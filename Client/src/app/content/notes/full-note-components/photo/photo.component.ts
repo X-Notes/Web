@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { ShortUser } from 'src/app/core/models/short-user';
@@ -12,7 +12,7 @@ import { Photo } from '../../models/ContentModel';
   styleUrls: ['./photo.component.scss'],
   animations: [photoInit],
 })
-export class PhotoComponent {
+export class PhotoComponent implements OnInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -25,6 +25,8 @@ export class PhotoComponent {
   destroy = new Subject<void>();
 
   constructor(private store: Store) {}
+
+  ngOnInit(): void {}
 
   onLoadImage() {
     this.photo.loaded = true;

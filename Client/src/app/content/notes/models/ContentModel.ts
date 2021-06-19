@@ -4,6 +4,12 @@ export class ContentModel {
   id: string;
 
   updatedAt: Date;
+
+  constructor(type: ContentType, id: string, updatedAt: Date) {
+    this.type = type;
+    this.id = id;
+    this.updatedAt = updatedAt;
+  }
 }
 
 export class BaseText extends ContentModel {
@@ -24,6 +30,16 @@ export class Album extends ContentModel {
   width: string;
 
   countInRow: number;
+
+  constructor(album: Partial<Album>) {
+    super(album.type, album.id, album.updatedAt);
+    this.countInRow = album.countInRow;
+    this.height = album.height;
+    this.id = album.id;
+    this.photos = album.photos.map(
+      (z) => new Photo(z.fileId, z.photoPathSmall, z.photoPathMedium, z.photoPathBig, z.loaded),
+    );
+  }
 }
 
 export class AudioModel extends ContentModel {
@@ -53,9 +69,35 @@ export class DocumentModel extends ContentModel {
 export class Photo {
   fileId: string;
 
-  photoPath: string;
+  photoPathSmall: string;
+
+  photoPathMedium: string;
+
+  photoPathBig: string;
 
   loaded: boolean;
+
+  get photoFromBig() {
+    return this.photoPathBig ?? this.photoPathMedium ?? this.photoPathSmall;
+  }
+
+  get photoFromSmall() {
+    return this.photoPathSmall ?? this.photoPathMedium ?? this.photoPathBig;
+  }
+
+  constructor(
+    fileId: string,
+    photoPathSmall: string,
+    photoPathMedium: string,
+    photoPathBig: string,
+    loaded: boolean,
+  ) {
+    this.fileId = fileId;
+    this.photoPathSmall = photoPathSmall;
+    this.photoPathMedium = photoPathMedium;
+    this.photoPathBig = photoPathBig;
+    this.loaded = loaded;
+  }
 }
 
 export enum HeadingType {

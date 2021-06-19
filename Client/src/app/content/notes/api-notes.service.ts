@@ -13,20 +13,23 @@ import {
   AudioModel,
   BaseText,
   ContentModel,
+  ContentType,
   DocumentModel,
   VideoModel,
 } from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
 import { OnlineUsersNote } from './models/online-users-note';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiServiceNotes {
   constructor(private httpClient: HttpClient) {}
 
   getNotes(id: string, type: NoteTypeENUM) {
-    return this.httpClient
-      .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${id}`)
-      .pipe(map((notes) => new Notes(type, notes)));
+    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${id}`).pipe(
+      map((z) => this.transformNotes(z)),
+      map((notes) => new Notes(type, notes)),
+    );
   }
 
   addLabel(labelId: string, noteIds: string[]) {
@@ -93,7 +96,9 @@ export class ApiServiceNotes {
   }
 
   getAll() {
-    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/all`);
+    return this.httpClient
+      .get<SmallNote[]>(`${environment.writeAPI}/api/note/all`)
+      .pipe(map((z) => this.transformNotes(z)));
   }
 
   new() {
@@ -231,19 +236,45 @@ export class ApiServiceNotes {
     );
   }
 
-  getContents(noteId: string) {
-    return this.httpClient.get<ContentModel[]>(
-      `${environment.writeAPI}/api/fullnote/contents/${noteId}`,
-    );
+  getContents(noteId: string): Observable<ContentModel[]> {
+    return this.httpClient
+      .get<ContentModel[]>(`${environment.writeAPI}/api/fullnote/contents/${noteId}`)
+      .pipe(map((x) => this.transformContent(x)));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  transformNotes(notes: SmallNote[]) {
+    return notes.map((note) => {
+      // eslint-disable-next-line no-param-reassign
+      note.contents = this.transformContent(note.contents);
+      return note;
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  transformContent(contents: ContentModel[]) {
+    return contents.map((z) => {
+      if (z.type === ContentType.ALBUM) {
+        return new Album(z);
+      }
+      return z;
+    });
   }
 
   // ALBUMS
 
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<Album>>(
-      `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
-      data,
-    );
+    return this.httpClient
+      .post<OperationResult<Album>>(
+        `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
+        data,
+      )
+      .pipe(
+        map((x) => {
+          x.data = new Album(x.data);
+          return x;
+        }),
+      );
   }
 
   // AUDIOS

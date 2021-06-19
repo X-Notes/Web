@@ -23,7 +23,7 @@ namespace Common.DTO.notifications
             this.IsSystemMessage = notification.IsSystemMessage;
             this.IsRead = notification.IsRead;
             this.Message = notification.Message;
-            this.UserFromPhotoId = notification.UserFrom.PhotoId;
+            this.UserFromPhotoId = notification.UserFrom.UserProfilePhoto.AppFileId;
             this.UserFromName = notification.UserFrom.Name;
             this.Date = Date;
         }

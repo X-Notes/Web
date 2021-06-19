@@ -26,6 +26,7 @@ using Common.DTO.notes.FullNoteContent;
 using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
+using ContentProcessing;
 using Domain.Commands.backgrounds;
 using Domain.Commands.encryption;
 using Domain.Commands.files;
@@ -249,6 +250,7 @@ namespace WriteAPI.ConfigureAPP
             // USERS
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
+            services.AddScoped<UserProfilePhotoRepository>();
 
             // FILES
             services.AddScoped<FileRepository>();
@@ -349,6 +351,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryService>();
 
+            services.AddScoped<IImageProcessor, ImageProcessor>();
         }
 
         public static void FileStorage(this IServiceCollection services)

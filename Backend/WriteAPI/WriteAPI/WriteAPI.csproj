@@ -32,6 +32,7 @@
     <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
     <ProjectReference Include="..\BI\BI.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\ContentProcessing\ContentProcessing.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\FacadeML\FacadeML.csproj" />
     <ProjectReference Include="..\FakeData\FakeData.csproj" />

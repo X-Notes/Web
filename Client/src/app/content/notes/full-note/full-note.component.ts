@@ -394,7 +394,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         throw new Error('incorrect type');
       }
     }
+    console.log('CHECK: ', resp);
     if (resp.success) {
+      console.log('CHECK2: ', resp);
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
     }

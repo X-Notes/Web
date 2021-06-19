@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Commands.files
 {
+    // TODO MAKE CORRECT FILE DELETING
     public class RemoveFilesByPathesCommand : IRequest<Unit>
     {
         public List<string> Pathes { set; get; }

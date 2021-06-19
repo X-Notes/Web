@@ -31,9 +31,9 @@ namespace Domain.Commands.files
         public SavePhotosType FileType { set; get; }
 
         public Guid NoteId { set; get; }
-        public string UserId { set; get; }
+        public Guid UserId { set; get; }
 
-        public SavePhotosToNoteCommand(string userId, List<IFormFile> Photos, Guid NoteId)
+        public SavePhotosToNoteCommand(Guid userId, List<IFormFile> Photos, Guid NoteId)
         {
             this.FormFilePhotos = Photos;
             this.NoteId = NoteId;
@@ -41,7 +41,7 @@ namespace Domain.Commands.files
             UserId = userId;
         }
 
-        public SavePhotosToNoteCommand(string userId, List<FilesBytes> Photos, Guid NoteId)
+        public SavePhotosToNoteCommand(Guid userId, List<FilesBytes> Photos, Guid NoteId)
         {
             this.FilesBytes = Photos;
             this.NoteId = NoteId;

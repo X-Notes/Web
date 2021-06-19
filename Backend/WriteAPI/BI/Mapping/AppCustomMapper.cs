@@ -46,7 +46,7 @@ namespace BI.Mapping
                     case AlbumNote aN:
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Path)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
@@ -54,21 +54,21 @@ namespace BI.Mapping
                     case AudioNote audioNote:
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
-                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.Path, audioNote.Id, type , audioNote.UpdatedAt);
+                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id, type , audioNote.UpdatedAt);
                             resultList.Add(audioNoteDTO);
                             break;
                         }
                     case VideoNote videoNote:
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.Path, videoNote.Id, type, videoNote.UpdatedAt);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, type, videoNote.UpdatedAt);
                             resultList.Add(videoNoteDTO);
                             break;
                         }
                     case DocumentNote documentNote:
                         {
                             var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.Path, documentNote.AppFileId, documentNote.Id, type, documentNote.UpdatedAt);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, type, documentNote.UpdatedAt);
                             resultList.Add(documentNoteDTO);
                             break;
                         }
@@ -306,8 +306,8 @@ namespace BI.Mapping
                 Id = user.Id,
                 Email = user.Email,
                 Name = user.Name,
-                PhotoId = user.PhotoId,
-                PhotoPath = user.Photo.Path
+                PhotoId = user.UserProfilePhoto.AppFileId,
+                PhotoPath = user.UserProfilePhoto.AppFile.PathPhotoBig
             };
         }
 

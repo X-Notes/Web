@@ -4,6 +4,7 @@ using Common.DatabaseModels.models.History;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Plan;
 using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using Common.Naming;
@@ -20,6 +21,7 @@ namespace WriteContext
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
         public DbSet<Backgrounds> Backgrounds { set; get; }
         public DbSet<Notification> Notifications { set; get; }
+        public DbSet<UserProfilePhoto> UserProfilePhotos { set; get; }
 
         // FOLDERS
         public DbSet<Folder> Folders { set; get; }
@@ -40,6 +42,7 @@ namespace WriteContext
         // FILES
         public DbSet<AppFile> Files { set; get; }
         public DbSet<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
+        public DbSet<FileType> FileTypes { set; get; }
 
         // NOTE CONTENT
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
@@ -60,7 +63,7 @@ namespace WriteContext
         public DbSet<RefType> RefTypes { set; get; }
         public DbSet<FolderType> FoldersTypes { set; get; }
         public DbSet<NoteType> NotesTypes { set; get; }
-
+        public DbSet<BillingPlan> BillingPlans { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
         {
@@ -77,6 +80,25 @@ namespace WriteContext
                 .WithOne(z => z.CurrentUserBackground)
                 .HasForeignKey<User>(h => h.CurrentBackgroundId);
 
+            modelBuilder.Entity<User>()
+                .HasOne(x => x.UserProfilePhoto)
+                .WithOne(z => z.User)
+                .HasForeignKey<UserProfilePhoto>(h => h.UserId);
+
+            modelBuilder.Entity<UserProfilePhoto>()
+                .HasKey(x => x.UserId);
+
+            modelBuilder.Entity<FileType>()
+                .HasMany(x => x.AppFiles)
+                .WithOne(x => x.FileType)
+                .HasForeignKey(x => x.FileTypeId);
+
+
+            modelBuilder.Entity<AppFile>()
+                .HasOne(x => x.User)
+                .WithMany(z => z.Files)
+                .HasForeignKey(h => h.UserId);
+
             modelBuilder.Entity<Note>()
                 .HasKey(x => new { x.Id });
 
@@ -85,10 +107,12 @@ namespace WriteContext
 
             modelBuilder.Entity<LabelsNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.LabelId });
+
             modelBuilder.Entity<LabelsNotes>()
                 .HasOne(bc => bc.Label)
                 .WithMany(b => b.LabelsNotes)
                 .HasForeignKey(bc => bc.LabelId);
+
             modelBuilder.Entity<LabelsNotes>()
                 .HasOne(bc => bc.Note)
                 .WithMany(c => c.LabelsNotes)
@@ -97,10 +121,12 @@ namespace WriteContext
 
             modelBuilder.Entity<FoldersNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.FolderId });
+
             modelBuilder.Entity<FoldersNotes>()
                 .HasOne(bc => bc.Folder)
                 .WithMany(b => b.FoldersNotes)
                 .HasForeignKey(bc => bc.FolderId);
+
             modelBuilder.Entity<FoldersNotes>()
                 .HasOne(bc => bc.Note)
                 .WithMany(c => c.FoldersNotes)
@@ -108,10 +134,12 @@ namespace WriteContext
 
             modelBuilder.Entity<UserOnPrivateNotes>()
                 .HasKey(bc => new { bc.NoteId, bc.UserId });
+
             modelBuilder.Entity<UserOnPrivateNotes>()
                 .HasOne(bc => bc.Note)
                 .WithMany(b => b.UsersOnPrivateNotes)
                 .HasForeignKey(bc => bc.NoteId);
+
             modelBuilder.Entity<UserOnPrivateNotes>()
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UserOnPrivateNotes)
@@ -119,10 +147,12 @@ namespace WriteContext
 
             modelBuilder.Entity<UsersOnPrivateFolders>()
                 .HasKey(bc => new { bc.FolderId, bc.UserId });
+
             modelBuilder.Entity<UsersOnPrivateFolders>()
                 .HasOne(bc => bc.Folder)
                 .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.FolderId);
+
             modelBuilder.Entity<UsersOnPrivateFolders>()
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UsersOnPrivateFolders)
@@ -194,38 +224,49 @@ namespace WriteContext
                 .HasForeignKey(m => m.UserToId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
+            modelBuilder.Entity<FileType>().HasData(
+                new FileType { Id = FileTypeEnum.Text, Name = nameof(FileTypeEnum.Text) },
+                new FileType { Id = FileTypeEnum.Audio, Name = nameof(FileTypeEnum.Audio) },
+                new FileType { Id = FileTypeEnum.Photo, Name = nameof(FileTypeEnum.Photo) },
+                new FileType { Id = FileTypeEnum.Video, Name = nameof(FileTypeEnum.Video) },
+                new FileType { Id = FileTypeEnum.Document, Name = nameof(FileTypeEnum.Document) }
+                );
 
             modelBuilder.Entity<Language>().HasData(
-                new { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
-                new { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = ModelsNaming.Russian },
-                new { Id = Guid.Parse("6579263d-c4db-446a-8223-7d895dc45f1b"), Name = ModelsNaming.English });
+                new Language { Id = Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"), Name = ModelsNaming.Ukraine },
+                new Language { Id = Guid.Parse("01a4f567-b5cd-4d98-8d55-b49df9415d99"), Name = ModelsNaming.Russian },
+                new Language  { Id = Guid.Parse("6579263d-c4db-446a-8223-7d895dc45f1b"), Name = ModelsNaming.English });
 
             modelBuilder.Entity<Theme>().HasData(
-                new { Id = Guid.Parse("5b08dced-b041-4a77-b290-f08e36af1d70"), Name = ModelsNaming.LightTheme },
-                new { Id = Guid.Parse("f52a188b-5422-4144-91f6-bde40b82ce22"), Name = ModelsNaming.DarkTheme });
+                new Theme  { Id = Guid.Parse("5b08dced-b041-4a77-b290-f08e36af1d70"), Name = ModelsNaming.LightTheme },
+                new Theme  { Id = Guid.Parse("f52a188b-5422-4144-91f6-bde40b82ce22"), Name = ModelsNaming.DarkTheme });
 
             modelBuilder.Entity<FontSize>().HasData(
-                new { Id = Guid.Parse("5c335a93-7aa7-40ff-b995-6c90f2536e98"), Name = ModelsNaming.Medium },
-                new { Id = Guid.Parse("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), Name = ModelsNaming.Big });
+                new FontSize  { Id = Guid.Parse("5c335a93-7aa7-40ff-b995-6c90f2536e98"), Name = ModelsNaming.Medium },
+                new FontSize  { Id = Guid.Parse("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), Name = ModelsNaming.Big });
 
 
 
             modelBuilder.Entity<FolderType>().HasData(
-                new { Id = Guid.Parse("381428f6-0568-4fb4-9c86-2d9e0f381308"), Name = ModelsNaming.PrivateFolder },
-                new { Id = Guid.Parse("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"), Name = ModelsNaming.SharedFolder },
-                new { Id = Guid.Parse("e3ea1cb2-5301-42fd-b283-2fe6133755c1"), Name = ModelsNaming.DeletedFolder },
-                new { Id = Guid.Parse("3e00dc8e-1030-4022-bc73-9d5c13b363d3"), Name = ModelsNaming.ArchivedFolder });
+                new FolderType  { Id = Guid.Parse("381428f6-0568-4fb4-9c86-2d9e0f381308"), Name = ModelsNaming.PrivateFolder },
+                new FolderType  { Id = Guid.Parse("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"), Name = ModelsNaming.SharedFolder },
+                new FolderType  { Id = Guid.Parse("e3ea1cb2-5301-42fd-b283-2fe6133755c1"), Name = ModelsNaming.DeletedFolder },
+                new FolderType  { Id = Guid.Parse("3e00dc8e-1030-4022-bc73-9d5c13b363d3"), Name = ModelsNaming.ArchivedFolder });
 
             modelBuilder.Entity<NoteType>().HasData(
-                new { Id = Guid.Parse("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"), Name = ModelsNaming.PrivateNote },
-                new { Id = Guid.Parse("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"), Name = ModelsNaming.SharedNote },
-                new { Id = Guid.Parse("1f384f3c-1aa8-4664-ac8d-e264e68164dc"), Name = ModelsNaming.DeletedNote },
-                new { Id = Guid.Parse("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), Name = ModelsNaming.ArchivedNote });
+                new NoteType  { Id = Guid.Parse("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"), Name = ModelsNaming.PrivateNote },
+                new NoteType  { Id = Guid.Parse("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"), Name = ModelsNaming.SharedNote },
+                new NoteType  { Id = Guid.Parse("1f384f3c-1aa8-4664-ac8d-e264e68164dc"), Name = ModelsNaming.DeletedNote },
+                new NoteType  { Id = Guid.Parse("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), Name = ModelsNaming.ArchivedNote });
 
             modelBuilder.Entity<RefType>().HasData(
-                new { Id = Guid.Parse("7c247026-36c6-4c17-b227-afb37e8ec7cd"), Name = ModelsNaming.Viewer },
-                new { Id = Guid.Parse("397821bf-74d5-4bdf-81e4-0698d5a92476"), Name = ModelsNaming.Editor });
+                new RefType  { Id = Guid.Parse("7c247026-36c6-4c17-b227-afb37e8ec7cd"), Name = ModelsNaming.Viewer },
+                new RefType  { Id = Guid.Parse("397821bf-74d5-4bdf-81e4-0698d5a92476"), Name = ModelsNaming.Editor });
+
+            modelBuilder.Entity<BillingPlan>().HasData(
+                new BillingPlan  { Id = Guid.Parse("8984401e-5e3a-454c-a05c-17f9cc848598"), Name = ModelsNaming.Billing_Basic, MaxSize = 100000000 },
+                new BillingPlan  { Id = Guid.Parse("00c89cbe-ac11-4149-a837-b30b68f5cfc1"), Name = ModelsNaming.Billing_Standart, MaxSize = 500000000 },
+                new BillingPlan  { Id = Guid.Parse("8af89b1d-1d73-422e-8709-d3b9e4e050d9"), Name = ModelsNaming.Billing_Business, MaxSize = 1000000000 });
 
         }
     }

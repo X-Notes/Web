@@ -42,7 +42,7 @@ namespace Storage
             BlobClient blobClient = blobContainer.GetBlobClient(path);
             if (await blobClient.ExistsAsync())
             {
-                var ms = new MemoryStream();
+                using var ms = new MemoryStream();
                 await blobClient.DownloadToAsync(ms);
                 return new GetFileResponse
                 {
@@ -62,29 +62,18 @@ namespace Storage
            await blobContainer.DeleteBlobAsync(path);
         }
 
-
-        private async Task<MemoryStream> GetStreamFromFormFile(IFormFile file)
+        public async Task RemoveFiles(string userId, params string[] pathes)
         {
-            var ms = new MemoryStream();
-            await file.CopyToAsync(ms);
-            ms.Position = 0;
-            return ms;
+            foreach(var path in pathes)
+            {
+                if(!string.IsNullOrEmpty(path))
+                {
+                    var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
+                    await blobContainer.DeleteBlobAsync(path);
+                }
+            }
         }
 
-        private MemoryStream GetStreamFromBytes(byte[] bytes)
-        {
-            var ms = new MemoryStream(bytes);
-            ms.Position = 0;
-            return ms;
-        }
-
-
-        private BlobHttpHeaders GetBlobHttpHeaders(IFormFile file)
-        {
-            var headers = new BlobHttpHeaders();
-            headers.ContentType = file.ContentType;
-            return headers;
-        }
 
         private BlobHttpHeaders GetBlobHttpHeaders(string contentType)
         {
@@ -93,20 +82,6 @@ namespace Storage
             return headers;
         }
 
-        public async Task<string> SaveFile(string userId, IFormFile file, ContentTypesFile contentFolder, string fileTypeEnd)
-        {
-            var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
-            var path = PathFactory(contentFolder, fileTypeEnd);
-            var blobClient = blobContainer.GetBlobClient(path);
-
-            var stream = await GetStreamFromFormFile(file);
-            var headers = GetBlobHttpHeaders(file);
-
-            var resp = await blobClient.UploadAsync(stream, headers);
-
-            await stream.DisposeAsync();
-            return blobClient.Name;
-        }
 
         public async Task<string> SaveFile(string userId, byte[] file, string contentType, ContentTypesFile contentFolder, string fileTypeEnd)
         {
@@ -114,7 +89,9 @@ namespace Storage
             var path = PathFactory(contentFolder, fileTypeEnd);
             var blobClient = blobContainer.GetBlobClient(path);
 
-            var stream = GetStreamFromBytes(file);
+            var stream = new MemoryStream(file);
+            stream.Position = 0;
+
             var headers = GetBlobHttpHeaders(contentType);
 
             var resp = await blobClient.UploadAsync(stream, headers);
@@ -143,7 +120,7 @@ namespace Storage
 
         public async Task CreateUserContainer(Guid userId)
         {
-            await blobServiceClient.CreateBlobContainerAsync(userId.ToString());
+            var container = await blobServiceClient.CreateBlobContainerAsync(userId.ToString(), PublicAccessType.Blob);
         }
     }
 }
