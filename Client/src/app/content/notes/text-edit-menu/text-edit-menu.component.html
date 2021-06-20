@@ -1,8 +1,8 @@
 <div (mousedown)="preventUnSelection($event)" class="container" appTheme>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)"
-    [ngClass]="getIsActive(contentType.HEADING, headingType.H1)"
+    (mousedown)="transformContent($event, textType.Heading, headingType.H1)"
+    [ngClass]="getIsActive(textType.Heading, headingType.H1)"
   >
     <div class="icon">
       <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
@@ -10,8 +10,8 @@
   </div>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)"
-    [ngClass]="getIsActive(contentType.HEADING, headingType.H2)"
+    (mousedown)="transformContent($event, textType.Heading, headingType.H2)"
+    [ngClass]="getIsActive(textType.Heading, headingType.H2)"
   >
     <div class="icon">
       <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
@@ -19,8 +19,8 @@
   </div>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)"
-    [ngClass]="getIsActive(contentType.HEADING, headingType.H3)"
+    (mousedown)="transformContent($event, textType.Heading, headingType.H3)"
+    [ngClass]="getIsActive(textType.Heading, headingType.H3)"
   >
     <div class="icon">
       <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
@@ -28,8 +28,8 @@
   </div>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.CHECKLIST)"
-    [ngClass]="getIsActive(contentType.CHECKLIST)"
+    (mousedown)="transformContent($event, textType.Checklist)"
+    [ngClass]="getIsActive(textType.Checklist)"
   >
     <div class="icon">
       <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
@@ -37,8 +37,8 @@
   </div>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.DOTLIST)"
-    [ngClass]="getIsActive(contentType.DOTLIST)"
+    (mousedown)="transformContent($event, textType.Dotlist)"
+    [ngClass]="getIsActive(textType.Dotlist)"
   >
     <div class="icon">
       <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
@@ -46,8 +46,8 @@
   </div>
   <div
     class="button"
-    (mousedown)="transformContent($event, contentType.NUMBERLIST)"
-    [ngClass]="getIsActive(contentType.NUMBERLIST)"
+    (mousedown)="transformContent($event, textType.Numberlist)"
+    [ngClass]="getIsActive(textType.Numberlist)"
   >
     <div class="icon">
       <mat-icon svgIcon="list" [inline]="true"></mat-icon>

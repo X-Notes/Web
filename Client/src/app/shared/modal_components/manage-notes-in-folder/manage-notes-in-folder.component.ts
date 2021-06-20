@@ -103,19 +103,19 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
         break;
       }
       case personal: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Private);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Private);
         break;
       }
       case shared: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Shared);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Shared);
         break;
       }
       case archive: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Archive);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Archive);
         break;
       }
       case bin: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Deleted);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Deleted);
         break;
       }
       default: {

@@ -20,7 +20,6 @@ import {
   deleteSmallNote,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/models/Theme';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -43,11 +42,18 @@ import { SmallNote } from '../models/smallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentModel';
+import {
+  Album,
+  BaseText,
+  ContentModel,
+  ContentTypeENUM,
+  HeadingTypeENUM,
+  NoteTextTypeENUM,
+} from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
-import { EnterEvent } from '../models/enterEvent';
+import { EnterEvent } from '../models/EnterEvent';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content';
 import { SelectionService } from '../selection.service';
@@ -105,15 +111,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loaded = false;
 
-  contentType = ContentType;
+  contentType = ContentTypeENUM;
+
+  textType = NoteTextTypeENUM;
 
   destroy = new Subject<void>();
 
   note: FullNote;
 
   contents: ContentModel[];
-
-  theme = Theme;
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
@@ -173,6 +179,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sideBarService.murriInitialise(this.refSideBarElements, this.id);
   }
 
+  getTextContent(index: number): BaseText {
+    return this.contents[index] as BaseText;
+  }
+
   async initNote() {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
@@ -202,10 +212,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadLeftMenuWithNotes() {
-    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const actions = types.map((x) => new LoadNotes(x.id, x));
+    const types = Object.values(NoteTypeENUM).filter((z) => typeof z === 'number');
+    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t));
+
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note?.noteType?.name);
+    await this.setSideBarNotes(this.note?.noteTypeId);
   }
 
   async ngOnInit() {
@@ -290,7 +301,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const breakLineType = value.breakModel.typeBreakLine;
     const { nextText } = value.breakModel;
     const newElement = await this.api
-      .insertLine(this.note.id, value.contentId, breakLineType, nextText)
+      .insertLine(this.note.id, value.contentId, value.nextItemType, breakLineType, nextText)
       .toPromise();
 
     if (!newElement.success) {
@@ -406,32 +417,32 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     let indexOf;
 
     const resp = await this.api
-      .updateContentType(this.note.id, value.id, value.contentType, value.headingType)
+      .updateContentType(this.note.id, value.id, value.textType, value.headingType)
       .toPromise();
 
     if (!resp.success) {
       return;
     }
 
-    switch (value.contentType) {
-      case ContentType.DEFAULT: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+    switch (value.textType) {
+      case NoteTextTypeENUM.Default: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.CHECKLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Checklist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.DOTLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Dotlist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.HEADING: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType, value.headingType);
+      case NoteTextTypeENUM.Heading: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType, value.headingType);
         break;
       }
-      case ContentType.NUMBERLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Numberlist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
       default: {
@@ -442,12 +453,16 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkAddLastTextContent(indexOf);
   }
 
-  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number {
+  defaultTextFocusClick(
+    id: string,
+    textTypeId: NoteTextTypeENUM,
+    headingType?: HeadingTypeENUM,
+  ): number {
     const item = this.contents.find((z) => z.id === id) as BaseText;
     const indexOf = this.contents.indexOf(item);
-    item.type = contentType;
+    item.noteTextTypeId = textTypeId;
     if (headingType) {
-      item.headingType = headingType;
+      item.headingTypeId = headingType;
     }
     setTimeout(() => {
       this.textElements?.toArray()[indexOf].setFocusToEnd();

@@ -59,7 +59,7 @@ namespace BI.services.labels
 
         public async Task<Guid> Handle(NewLabelCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             var label = new Label();
             label.UserId = user.Id;
@@ -96,7 +96,7 @@ namespace BI.services.labels
 
         public async Task<Unit> Handle(RemoveAllFromBinCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var labels = await labelRepository.GetWhere(x => x.UserId == user.Id && x.IsDeleted == true);

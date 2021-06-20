@@ -10,7 +10,7 @@ namespace Domain.Commands.users
 {
     public class UpdateFontSizeCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredEnumField(ErrorMessage = "Id is required.")]
         public FontSizeENUM Id { set; get; }
         public UpdateFontSizeCommand(FontSizeENUM Id, string Email) : base(Email)
         {

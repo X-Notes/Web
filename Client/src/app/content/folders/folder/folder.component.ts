@@ -9,7 +9,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
-import { SmallFolder } from '../models/folder';
+import { SmallFolder } from '../models/Folder';
 
 @Component({
   selector: 'app-folder',
@@ -42,10 +42,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       .subscribe((title) => {
         if (title) {
           const typeRoad = this.store.selectSnapshot(AppStore.getTypeFolder);
-          const type = this.store
-            .selectSnapshot(AppStore.getFolderTypes)
-            .find((x) => x.name === typeRoad);
-          this.store.dispatch(new UpdateTitle(title, this.folder.id, type));
+          this.store.dispatch(new UpdateTitle(title, this.folder.id, typeRoad));
         }
       });
   }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentType, HeadingType } from '../models/ContentModel';
+import { HeadingTypeENUM, NoteTextTypeENUM } from '../models/ContentModel';
 import { TransformContent } from '../models/transform-content';
 
 @Component({
@@ -13,9 +13,9 @@ export class TextEditMenuComponent {
   @Output()
   eventTransform = new EventEmitter<TransformContent>();
 
-  contentType = ContentType;
+  textType = NoteTextTypeENUM;
 
-  headingType = HeadingType;
+  headingType = HeadingTypeENUM;
 
   constructor(
     public menuSelectionService: MenuSelectionService,
@@ -28,18 +28,18 @@ export class TextEditMenuComponent {
     return false;
   };
 
-  async transformContent(e, type: ContentType, heading?: HeadingType) {
+  async transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
     const item = this.menuSelectionService.currentItem;
-    if (item.type === type && item.headingType === heading) {
+    if (item.noteTextTypeId === type && item.headingTypeId === heading) {
       this.eventTransform.emit({
         id: item.id,
-        contentType: ContentType.DEFAULT,
+        textType: NoteTextTypeENUM.Default,
         setFocusToEnd: true,
       });
     } else {
       this.eventTransform.emit({
         id: item.id,
-        contentType: type,
+        textType: type,
         headingType: heading,
         setFocusToEnd: true,
       });
@@ -48,17 +48,17 @@ export class TextEditMenuComponent {
     selection.removeAllRanges();
   }
 
-  getIsActive(type: ContentType, heading?: HeadingType) {
+  getIsActive(type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
     const item = this.menuSelectionService.currentItem;
     if (!item) {
       return;
     }
 
-    if (type === ContentType.HEADING && item.type === type) {
+    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeId === type) {
       // eslint-disable-next-line consistent-return
-      return heading === item.headingType ? 'active' : '';
+      return heading === item.headingTypeId ? 'active' : '';
     }
     // eslint-disable-next-line consistent-return
-    return type === item.type ? 'active' : '';
+    return type === item.noteTextTypeId ? 'active' : '';
   }
 }

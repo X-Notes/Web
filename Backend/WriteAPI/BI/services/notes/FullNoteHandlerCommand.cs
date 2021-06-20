@@ -212,7 +212,7 @@ namespace BI.services.notes
 
             if (permissions.CanWrite)
             {
-                var content = await textNotesRepository.GetById(request.ContentId);
+                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 content.Content = request.Content;
                 if (request.Checked.HasValue)
                 {
@@ -278,7 +278,7 @@ namespace BI.services.notes
                 {
                     case "NEXT":
                         {
-                            var newText = new TextNote(NoteId: note.Id, NoteTextTypeENUM.Default, content.Order + 1,
+                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1,
                                                         Content: request.NextText);
 
                             contents.Insert(insertIndex + 1, newText);
@@ -316,7 +316,7 @@ namespace BI.services.notes
                         }
                     case "PREV":
                         {
-                            var newText = new TextNote(NoteId: note.Id, NoteTextTypeENUM.Default, content.Order + 1, Content: request.NextText);
+                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1, Content: request.NextText);
 
                             contents.Insert(insertIndex, newText);
 
@@ -418,7 +418,7 @@ namespace BI.services.notes
 
             if (permissions.CanWrite)
             {
-                var content = await textNotesRepository.GetById(request.ContentId);
+                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 if (content != null)
                 {
                     content.NoteTextTypeId = request.Type;

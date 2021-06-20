@@ -1,6 +1,6 @@
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
-import { Theme } from 'src/app/shared/models/Theme';
-import { FontSize } from 'src/app/shared/models/FontSize';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { Background } from '../models/background';
 import { User } from '../models/user';
 
@@ -17,19 +17,19 @@ export class Logout {
 export class ChangeTheme {
   static type = '[User] Change theme';
 
-  constructor(public theme: Theme) {}
+  constructor(public theme: ThemeENUM) {}
 }
 
 export class ChangeLanguage {
   static type = '[User] Change Language';
 
-  constructor(public language: LanguageDTO) {}
+  constructor(public language: LanguagesENUM) {}
 }
 
 export class ChangeFontSize {
   static type = '[User] Change FontSize';
 
-  constructor(public fontSize: FontSize) {}
+  constructor(public fontSize: FontSizeENUM) {}
 }
 
 export class SetCurrentBackground {

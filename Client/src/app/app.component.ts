@@ -28,9 +28,9 @@ export class AppComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (language) => {
         if (language) {
-          await this.translateService.use(language.name).toPromise();
+          await this.translateService.use(LanguagesENUM[language].toLowerCase()).toPromise();
         } else {
-          await this.translateService.use(LanguagesENUM.english).toPromise();
+          await this.translateService.use(LanguagesENUM[LanguagesENUM.English].toLowerCase()).toPromise();
         }
       });
   }

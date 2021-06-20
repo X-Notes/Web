@@ -100,14 +100,11 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
 
   toggleTheme() {
     const userTheme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const themes = this.store.selectSnapshot(AppStore.getThemes);
-    if (userTheme.name === ThemeENUM.Dark) {
-      const whiteTheme = themes.find((x) => x.name === ThemeENUM.Light);
-      this.store.dispatch(new ChangeTheme(whiteTheme));
+    if (userTheme === ThemeENUM.Dark) {
+      this.store.dispatch(new ChangeTheme(ThemeENUM.Light));
     }
-    if (userTheme.name === ThemeENUM.Light) {
-      const blackTheme = themes.find((x) => x.name === ThemeENUM.Dark);
-      this.store.dispatch(new ChangeTheme(blackTheme));
+    if (userTheme === ThemeENUM.Light) {
+      this.store.dispatch(new ChangeTheme(ThemeENUM.Dark));
     }
   }
 

@@ -13,9 +13,9 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, ContentType } from '../../../models/ContentModel';
+import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/enterEvent';
+import { EnterEvent } from '../../../models/EnterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
 import { NumberListService } from '../../html-business-logic/numberList.service';
@@ -47,7 +47,7 @@ export class HtmlNumberListComponent
   prevContent: BaseText;
 
   @Input()
-  prevType: ContentType;
+  prevType: ContentTypeENUM;
 
   @Input()
   content: BaseText;
@@ -96,7 +96,7 @@ export class HtmlNumberListComponent
   }
 
   setNumber() {
-    if (this.prevContent && this.prevContent.type === ContentType.NUMBERLIST) {
+    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
       this.content.number = this.prevContent.number + 1;
     } else {
       this.content.number = 1;

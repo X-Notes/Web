@@ -59,7 +59,7 @@ namespace BI.services.notes
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId, false);
@@ -148,7 +148,7 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserId(user.Id);

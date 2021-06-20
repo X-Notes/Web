@@ -70,10 +70,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    const type = this.store
-      .selectSnapshot(AppStore.getFolderTypes)
-      .find((x) => x.name === FolderTypeENUM.Private);
-    await this.folderService.loadFolders(type);
+    await this.folderService.loadFolders(FolderTypeENUM.Private);
 
     let folders = this.store.selectSnapshot(FolderStore.privateFolders);
     folders = this.folderService.transformFolders(folders);

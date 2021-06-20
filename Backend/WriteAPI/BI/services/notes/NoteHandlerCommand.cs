@@ -78,7 +78,7 @@ namespace BI.services.notes
 
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             var _contents = new List<BaseNoteContent>();
 
@@ -309,7 +309,7 @@ namespace BI.services.notes
                 }
             }
 
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, NoteTypeENUM.Private, request.IsHistory);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
@@ -337,7 +337,7 @@ namespace BI.services.notes
                 {
                     var note = permissions.Note;
 
-                    var value = await labelsNotesRepository.FirstOrDefault(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
+                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
 
                     if (value != null)
                     {
@@ -367,7 +367,7 @@ namespace BI.services.notes
                 {
                     var note = permissions.Note;
 
-                    var value = await labelsNotesRepository.FirstOrDefault(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
+                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
 
                     if(value == null)
                     {

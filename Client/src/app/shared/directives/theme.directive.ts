@@ -19,7 +19,7 @@ export class ThemeDirective implements OnDestroy {
         if (!theme) {
           return;
         }
-        if (theme.name === ThemeENUM.Dark) {
+        if (theme === ThemeENUM.Dark) {
           this.renderer.addClass(this.el.nativeElement, 'dark');
           this.renderer.removeClass(this.el.nativeElement, 'light');
         } else {

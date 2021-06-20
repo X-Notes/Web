@@ -1,10 +1,7 @@
 import { ShortUser } from 'src/app/core/models/short-user';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
-import { Theme } from 'src/app/shared/models/Theme';
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import { TranslateService } from '@ngx-translate/core';
-import { FontSize } from 'src/app/shared/models/FontSize';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
@@ -21,6 +18,9 @@ import {
   LoadUsedDiskSpace,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 interface UserState {
   user: ShortUser;
@@ -75,8 +75,8 @@ export class UserStore {
   }
 
   @Selector()
-  static getUserTheme(state: UserState): Theme {
-    return state.user.theme;
+  static getUserTheme(state: UserState): ThemeENUM {
+    return state.user.themeId;
   }
 
   @Selector()
@@ -89,13 +89,13 @@ export class UserStore {
   }
 
   @Selector()
-  static getUserFontSize(state: UserState): FontSize {
-    return state.user.fontSize;
+  static getUserFontSize(state: UserState): FontSizeENUM {
+    return state.user.fontSizeId;
   }
 
   @Selector()
-  static getUserLanguage(state: UserState): LanguageDTO {
-    return state.user.language;
+  static getUserLanguage(state: UserState): LanguagesENUM {
+    return state.user.languageId;
   }
 
   @Action(Login)
@@ -119,8 +119,8 @@ export class UserStore {
   @Action(ChangeTheme)
   async changeTheme({ patchState, getState }: StateContext<UserState>, { theme }: ChangeTheme) {
     let { user } = getState();
-    await this.api.changeTheme(theme.id).toPromise();
-    user = { ...user, theme };
+    await this.api.changeTheme(theme).toPromise();
+    user = { ...user, themeId: theme };
     patchState({ user });
   }
 
@@ -129,9 +129,9 @@ export class UserStore {
     { patchState, getState }: StateContext<UserState>,
     { language }: ChangeLanguage,
   ) {
-    await this.api.changeLanguage(language.id).toPromise();
-    await this.translateService.use(language.name).toPromise();
-    patchState({ user: { ...getState().user, language } });
+    await this.api.changeLanguage(language).toPromise();
+    await this.translateService.use(LanguagesENUM[language].toLowerCase()).toPromise();
+    patchState({ user: { ...getState().user, languageId: language } });
   }
 
   @Action(ChangeFontSize)
@@ -140,8 +140,8 @@ export class UserStore {
     { fontSize }: ChangeFontSize,
   ) {
     let { user } = getState();
-    await this.api.changeFontSize(fontSize.id).toPromise();
-    user = { ...user, fontSize };
+    await this.api.changeFontSize(fontSize).toPromise();
+    user = { ...user, fontSizeId: fontSize };
     patchState({ user });
   }
 

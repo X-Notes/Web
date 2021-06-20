@@ -19,14 +19,14 @@
     </div>
   </div>
   <div class="user-access-func">
-    <button type="button" name="" (click)="changeUserPermission.emit(refType.viewer)">
-      <div class="icon" [ngClass]="(user.accessType.name === refType.viewer) ? 'black' : ''">
+    <button type="button" name="" (click)="changeUserPermission.emit(refType.Viewer)">
+      <div class="icon" [ngClass]="(user.accessTypeId === refType.Viewer) ? 'black' : ''">
         <mat-icon [inline]="true">visibility</mat-icon>
       </div>
     </button>
     <div class="separator-buttons"></div>
-    <button type="button" name="" (click)="changeUserPermission.emit(refType.editor)">
-      <div class="icon" [ngClass]="(user.accessType.name === refType.editor) ? 'black' : ''">
+    <button type="button" name="" (click)="changeUserPermission.emit(refType.Editor)">
+      <div class="icon" [ngClass]="(user.accessTypeId === refType.Editor) ? 'black' : ''">
         <mat-icon [inline]="true">edit</mat-icon>
       </div>
     </button>

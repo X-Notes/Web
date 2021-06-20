@@ -42,7 +42,7 @@ namespace BI.signalR
 
         public async Task JoinNote(string noteId)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
                 await TryToSetAsOnline(parsedNoteId, user.Id);
@@ -54,7 +54,7 @@ namespace BI.signalR
 
         public async Task TryToSetAsOnline(Guid parsedNoteId, Guid userId)
         {
-            var existUser = await userOnNoteRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            var existUser = await userOnNoteRepository.FirstOrDefaultAsync(x => x.NoteId == parsedNoteId && x.UserId == userId);
             if (existUser == null)
             {
                 var connectUser = new UserOnNoteNow()
@@ -68,12 +68,12 @@ namespace BI.signalR
 
         public async Task JoinUserToNote(Guid parsedNoteId, Guid userId) // TODO MAKE THIS FOR FOLDER
         {
-            var existUser = await usersOnPrivateNotesRepository.FirstOrDefault(x => x.NoteId == parsedNoteId && x.UserId == userId);
-            var note = await noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+            var existUser = await usersOnPrivateNotesRepository.FirstOrDefaultAsync(x => x.NoteId == parsedNoteId && x.UserId == userId);
+            var note = await noteRepository.FirstOrDefaultAsync(x => x.Id == parsedNoteId);
             var isCanAdd = (note.UserId != userId) && existUser == null;
             if (isCanAdd)
             {
-                var refTypeNote = await this.noteRepository.FirstOrDefault(x => x.Id == parsedNoteId);
+                var refTypeNote = await this.noteRepository.FirstOrDefaultAsync(x => x.Id == parsedNoteId);
                 var connectUser = new UserOnPrivateNotes()
                 {
                     UserId = userId,
@@ -87,7 +87,7 @@ namespace BI.signalR
 
         public async Task LeaveNote(string noteId)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
                 var users = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
@@ -110,7 +110,7 @@ namespace BI.signalR
         {
             usersIdentifier_ConnectionId.TryRemove(Context.UserIdentifier, out var value);
 
-            var user = await userRepository.FirstOrDefault(x => x.Email == Context.UserIdentifier);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
             if (user != null)
             {
                 var connections = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);

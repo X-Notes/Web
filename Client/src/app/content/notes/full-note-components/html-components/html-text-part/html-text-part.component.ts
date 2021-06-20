@@ -12,9 +12,9 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, ContentType, HeadingType } from '../../../models/ContentModel';
+import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/enterEvent';
+import { EnterEvent } from '../../../models/EnterEvent';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content';
 import { TransformToFileContent } from '../../../models/transform-file-content';
@@ -54,9 +54,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
-  contentType = ContentType;
+  textType = NoteTextTypeENUM;
 
-  headingType = HeadingType;
+  headingType = HeadingTypeENUM;
 
   textChanged: Subject<string> = new Subject<string>();
 
@@ -99,10 +99,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
       });
   }
 
-  transformContent($event, contentType: ContentType, heading?: HeadingType) {
+  transformContent($event, contentType: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
     $event.preventDefault();
     this.transformTo.emit({
-      contentType,
+      textType: contentType,
       headingType: heading,
       id: this.content.id,
       setFocusToEnd: true,

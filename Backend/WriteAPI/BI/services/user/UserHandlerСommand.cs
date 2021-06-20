@@ -76,7 +76,7 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(UpdateMainUserInfoCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.Name = request.Name;
             await userRepository.Update(user);
             return Unit.Value;
@@ -84,7 +84,7 @@ namespace BI.services.user
 
         public async Task<AnswerChangeUserPhoto> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             var userProfilePhoto = await userProfilePhotoRepository.GetWithFile(user.Id);
 
             if (userProfilePhoto != null)
@@ -92,7 +92,8 @@ namespace BI.services.user
                 var pathes = userProfilePhoto.AppFile.GetNotNullPathes();
                 await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
                 await userProfilePhotoRepository.Remove(userProfilePhoto);
-                await fileRepository.RemoveById(userProfilePhoto.AppFileId);
+                var dbFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == userProfilePhoto.AppFileId);
+                await fileRepository.Remove(dbFile);
             }
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
@@ -145,7 +146,7 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.LanguageId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
@@ -153,7 +154,7 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(UpdateThemeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.ThemeId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
@@ -161,7 +162,7 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(UpdateFontSizeCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.FontSizeId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;

@@ -25,7 +25,7 @@ namespace BI.services.files
 
         public async Task<FilesBytes> Handle(GetFileById request, CancellationToken cancellationToken)
         {
-            var file = await fileRepository.FirstOrDefault(x => x.Id == request.Id);
+            var file = await fileRepository.FirstOrDefaultAsync(x => x.Id == request.Id);
             if (file != null)
             {
                 var resp = await filesStorage.GetFile(request.UserId, file.PathNonPhotoContent);

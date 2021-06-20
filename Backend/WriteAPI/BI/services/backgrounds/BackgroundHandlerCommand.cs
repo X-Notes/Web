@@ -56,7 +56,7 @@ namespace BI.services.backgrounds
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.CurrentBackgroundId = null;
             await userRepository.Update(user);
             return Unit.Value;
@@ -72,14 +72,15 @@ namespace BI.services.backgrounds
                 var pathes = back.File.GetNotNullPathes();
                 await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
                 await backgroundRepository.Remove(back);
-                await fileRepository.RemoveById(back.FileId);
+                var dbFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == back.FileId);
+                await fileRepository.Remove(dbFile);
             }
             return Unit.Value;
         }
 
         public async Task<Unit> Handle(UpdateBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.CurrentBackgroundId = request.Id;
             await userRepository.Update(user);
             return Unit.Value;
@@ -87,7 +88,7 @@ namespace BI.services.backgrounds
 
         public async Task<BackgroundDTO> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
 

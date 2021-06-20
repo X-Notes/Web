@@ -61,14 +61,14 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
   copyToBuffer = () => {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     this.apiBrowserService.copyTest(this.link);
-    switch (language.name) {
-      case LanguagesENUM.english:
+    switch (language) {
+      case LanguagesENUM.English:
         this.snackService.openSnackBar(`Link copied`);
         break;
-      case LanguagesENUM.russian:
+      case LanguagesENUM.Russian:
         this.snackService.openSnackBar(`Ссылка скопирована`);
         break;
-      case LanguagesENUM.ukraine:
+      case LanguagesENUM.Ukraine:
         this.snackService.openSnackBar(`Посилання скопійоване`);
         break;
       default:

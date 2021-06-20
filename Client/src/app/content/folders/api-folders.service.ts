@@ -3,19 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { map } from 'rxjs/operators';
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { SmallFolder } from './models/folder';
+import { SmallFolder } from './models/Folder';
 import { Folders } from './models/Folders';
 import { RequestFullFolder } from './models/requestFullFolder';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invitedUsersToNote';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 
 @Injectable()
 export class ApiFoldersService {
   constructor(private httpClient: HttpClient) {}
 
-  getFolders(id: string, type: FolderTypeENUM) {
+  getFolders(type: FolderTypeENUM) {
     return this.httpClient
-      .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${id}`)
+      .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${type}`)
       .pipe(map((folders) => new Folders(type, folders)));
   }
 
@@ -25,7 +25,7 @@ export class ApiFoldersService {
     );
   }
 
-  changeUserPermission(folderId: string, userId: string, accessTypeId: string) {
+  changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       folderId,
       userId,
@@ -37,7 +37,7 @@ export class ApiFoldersService {
   sendInvitesToFolder(
     userIds: string[],
     folderId: string,
-    refTypeId: string,
+    refTypeId: RefTypeENUM,
     sendMessage: boolean,
     message: string,
   ) {
@@ -117,9 +117,9 @@ export class ApiFoldersService {
     return this.httpClient.patch(`${environment.writeAPI}/api/folder/ref/private`, obj);
   }
 
-  makePublic(refType: EntityRef, id: string) {
+  makePublic(refTypeId: RefTypeENUM, id: string) {
     const obj = {
-      refTypeId: refType.id,
+      refTypeId,
       id,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/folders/share`, obj);

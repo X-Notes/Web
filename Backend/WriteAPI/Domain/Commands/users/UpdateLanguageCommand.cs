@@ -10,7 +10,7 @@ namespace Domain.Commands.users
 {
     public class UpdateLanguageCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredEnumField(ErrorMessage = "Language Id is required.")]
         public LanguageENUM Id { set; get; }
 
         public UpdateLanguageCommand(LanguageENUM Id, string Email)

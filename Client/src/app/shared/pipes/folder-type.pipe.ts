@@ -5,7 +5,7 @@ import { FolderTypeENUM } from '../enums/FolderTypesEnum';
   name: 'folderType',
 })
 export class FolderTypePipe implements PipeTransform {
-  transform = (value: unknown) => {
+  transform = (value: FolderTypeENUM) => {
     switch (value) {
       case FolderTypeENUM.Private:
         return {
@@ -28,7 +28,7 @@ export class FolderTypePipe implements PipeTransform {
           route: 'deleted',
         };
       default:
-        return null;
+        throw new Error('Incorrect type');
     }
   };
 }

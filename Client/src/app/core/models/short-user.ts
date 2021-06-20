@@ -1,6 +1,6 @@
-import { FontSize } from 'src/app/shared/models/FontSize';
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
-import { Theme } from 'src/app/shared/models/Theme';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { Background } from './background';
 
 export interface ShortUser {
@@ -10,7 +10,7 @@ export interface ShortUser {
   photoId: string;
   photoPath: string;
   currentBackground: Background;
-  language: LanguageDTO;
-  theme: Theme;
-  fontSize: FontSize;
+  languageId: LanguagesENUM;
+  themeId: ThemeENUM;
+  fontSizeId: FontSizeENUM;
 }

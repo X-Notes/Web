@@ -1,5 +1,5 @@
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { NoteType } from 'src/app/shared/models/noteType';
+import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { Label } from '../../labels/models/label';
 
 export interface FullNote {
@@ -7,8 +7,8 @@ export interface FullNote {
   title: string;
   color: string;
   labels: Label[];
-  refType: EntityRef;
-  noteType: NoteType;
+  refTypeId: RefTypeENUM;
+  noteTypeId: NoteTypeENUM;
   isLocked: boolean;
   createdAt: Date;
   updatedAt: Date;

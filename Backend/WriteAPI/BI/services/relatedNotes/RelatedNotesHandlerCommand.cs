@@ -66,7 +66,7 @@ namespace BI.services.relatedNotes
 
             if (permissions.CanWrite)
             {
-                var relatedNote = await relatedRepository.FirstOrDefault(x => x.NoteId == note.Id && x.RelatedNoteId == request.RelatedNoteId);
+                var relatedNote = await relatedRepository.FirstOrDefaultAsync(x => x.NoteId == note.Id && x.RelatedNoteId == request.RelatedNoteId);
                 relatedNote.IsOpened = request.IsOpened;
                 await relatedRepository.Update(relatedNote);
                 return new OperationResult<Unit>(true, Unit.Value);

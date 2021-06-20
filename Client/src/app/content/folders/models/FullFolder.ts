@@ -1,10 +1,10 @@
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { FolderType } from 'src/app/shared/models/folderType';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 
 export interface FullFolder {
   id: string;
   title: string;
   color: string;
-  refType: EntityRef;
-  folderType: FolderType;
+  refTypeId: RefTypeENUM;
+  folderTypeId: FolderTypeENUM;
 }

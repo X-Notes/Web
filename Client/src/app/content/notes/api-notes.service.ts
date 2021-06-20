@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { EntityRef } from 'src/app/shared/models/entityRef';
+import { Observable } from 'rxjs';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { SmallNote } from './models/smallNote';
 import { RequestFullNote } from './models/requestFullNote';
 import { Notes } from './state/Notes';
@@ -13,20 +14,21 @@ import {
   AudioModel,
   BaseText,
   ContentModel,
-  ContentType,
+  ContentTypeENUM,
   DocumentModel,
+  HeadingTypeENUM,
+  NoteTextTypeENUM,
   VideoModel,
 } from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
 import { OnlineUsersNote } from './models/online-users-note';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiServiceNotes {
   constructor(private httpClient: HttpClient) {}
 
-  getNotes(id: string, type: NoteTypeENUM) {
-    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${id}`).pipe(
+  getNotes(type: NoteTypeENUM) {
+    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`).pipe(
       map((z) => this.transformNotes(z)),
       map((notes) => new Notes(type, notes)),
     );
@@ -117,9 +119,9 @@ export class ApiServiceNotes {
     );
   }
 
-  makePublic(refType: EntityRef, id: string) {
+  makePublic(refTypeId: RefTypeENUM, id: string) {
     const obj = {
-      refTypeId: refType.id,
+      refTypeId,
       id,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/share`, obj);
@@ -128,7 +130,7 @@ export class ApiServiceNotes {
   sendInvitesToNote(
     userIds: string[],
     noteId: string,
-    refTypeId: string,
+    refTypeId: RefTypeENUM,
     sendMessage: boolean,
     message: string,
   ) {
@@ -150,7 +152,7 @@ export class ApiServiceNotes {
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/remove`, obj);
   }
 
-  changeUserPermission(noteId: string, userId: string, accessTypeId: string) {
+  changeUserPermission(noteId: string, userId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       noteId,
       userId,
@@ -178,12 +180,19 @@ export class ApiServiceNotes {
     );
   }
 
-  insertLine(noteId: string, contentId: string, lineBreakType: string, nextText?: string) {
+  insertLine(
+    noteId: string,
+    contentId: string,
+    noteTextType: NoteTextTypeENUM,
+    lineBreakType: string,
+    nextText?: string,
+  ) {
     const obj = {
       noteId,
       contentId,
       lineBreakType,
       nextText,
+      noteTextType,
     };
     return this.httpClient.post<OperationResult<BaseText>>(
       `${environment.writeAPI}/api/fullnote/content/insert`,
@@ -223,7 +232,12 @@ export class ApiServiceNotes {
     );
   }
 
-  updateContentType(noteId: string, contentId: string, type: string, headingType: string) {
+  updateContentType(
+    noteId: string,
+    contentId: string,
+    type: NoteTextTypeENUM,
+    headingType: HeadingTypeENUM,
+  ) {
     const obj = {
       contentId,
       type,
@@ -254,7 +268,7 @@ export class ApiServiceNotes {
   // eslint-disable-next-line class-methods-use-this
   transformContent(contents: ContentModel[]) {
     return contents.map((z) => {
-      if (z.type === ContentType.ALBUM) {
+      if (z.typeId === ContentTypeENUM.NoteAlbum) {
         return new Album(z);
       }
       return z;
@@ -271,6 +285,7 @@ export class ApiServiceNotes {
       )
       .pipe(
         map((x) => {
+          // eslint-disable-next-line no-param-reassign
           x.data = new Album(x.data);
           return x;
         }),

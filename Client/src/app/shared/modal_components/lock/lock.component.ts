@@ -184,7 +184,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = false;
         this.store.dispatch(new ChangeIsLockedFullNote(false));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
       return;
@@ -195,8 +195,8 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = true;
         this.store.dispatch(new ChangeIsLockedFullNote(true));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
-        const route = this.fullNote.noteType.name;
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
+        const route = this.fullNote.noteTypeId;
         if (route && route !== NoteTypeENUM.Private) {
           this.router.navigate([`notes/${route}`]);
         } else {
@@ -214,7 +214,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = false;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
       return;
@@ -231,7 +231,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = true;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
     }

@@ -19,7 +19,7 @@ export class SnackbarService {
 
     return this.snackbar.open(message, action, {
       duration: 5000,
-      panelClass: theme.name === ThemeENUM.Light ? 'snackbar-light' : 'snackbar-dark',
+      panelClass: theme === ThemeENUM.Light ? 'snackbar-light' : 'snackbar-dark',
       horizontalPosition,
       verticalPosition: 'bottom',
     });

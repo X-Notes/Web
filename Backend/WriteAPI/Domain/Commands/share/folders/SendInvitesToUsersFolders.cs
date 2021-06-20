@@ -17,7 +17,7 @@ namespace Domain.Commands.share.folders
         [ValidationGuidAttribute]
         public Guid FolderId { set; get; }
 
-        [Required]
+        [RequiredEnumField(ErrorMessage = "Ref type id is required.")]
         public RefTypeENUM RefTypeId { set; get; }
 
         [Required]

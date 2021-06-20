@@ -1,8 +1,8 @@
-import { ContentType, HeadingType } from './ContentModel';
+import { HeadingTypeENUM, NoteTextTypeENUM } from './ContentModel';
 
 export interface TransformContent {
   id: string;
-  contentType: ContentType;
-  headingType?: HeadingType;
+  textType: NoteTextTypeENUM;
+  headingType?: HeadingTypeENUM;
   setFocusToEnd: boolean;
 }

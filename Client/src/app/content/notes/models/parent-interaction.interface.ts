@@ -1,9 +1,11 @@
+import { ContentModel } from './ContentModel';
+
 export interface ParentInteraction {
   setFocus($event?);
   setFocusToEnd();
   updateHTML(content: string);
   getNative();
-  getContent();
+  getContent(): ContentModel;
   mouseEnter($event);
   mouseOut($event);
 }

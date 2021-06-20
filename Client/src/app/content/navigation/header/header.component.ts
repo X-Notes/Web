@@ -136,7 +136,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!folder) {
       return;
     }
-    switch (folder.folderType.name) {
+    switch (folder.folderTypeId) {
       case FolderTypeENUM.Private: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;
@@ -163,7 +163,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!note) {
       return;
     }
-    switch (note.noteType.name) {
+    switch (note.noteTypeId) {
       case NoteTypeENUM.Private: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;

@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { ShortUser } from 'src/app/core/models/short-user';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { ChangeStateRelatedNote } from '../models/changeStateRelatedNote';
-import { ContentType } from '../models/ContentModel';
+import { ChangeStateRelatedNote } from '../models/ChangeStateRelatedNote';
+import { ContentTypeENUM, NoteTextTypeENUM } from '../models/ContentModel';
 import { RelatedNote } from '../models/relatedNote';
 @Component({
   selector: 'app-small-note',
@@ -22,7 +22,9 @@ export class SmallNoteComponent {
 
   @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();
 
-  contentType = ContentType;
+  contentType = ContentTypeENUM;
+
+  textType = NoteTextTypeENUM;
 
   constructor(public murriService: MurriService) {}
 

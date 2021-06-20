@@ -1,7 +1,7 @@
 <div
   class="field"
   [ngStyle]="{backgroundColor: label.color}"
-  [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : ''"
+  [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-size' : ''"
 >
   <div
     class="select"

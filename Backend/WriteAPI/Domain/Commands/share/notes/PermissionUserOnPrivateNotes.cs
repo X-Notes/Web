@@ -14,6 +14,7 @@ namespace Domain.Commands.share.notes
         [ValidationGuidAttribute]
         public Guid UserId { set; get; }
 
+        [RequiredEnumField(ErrorMessage = "Access type id is required.")]
         public RefTypeENUM AccessTypeId { set; get; }
     }
 }

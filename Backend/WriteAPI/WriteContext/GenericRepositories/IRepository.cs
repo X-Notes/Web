@@ -11,8 +11,7 @@ namespace WriteContext.GenericRepositories
 {
     public interface IRepository<T, IdType> where T : BaseEntity<IdType>
     {
-        Task<T> GetById(IdType id);
-        Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
         Task<EntityEntry<T>> Add(T entity);
         Task AddRange(IEnumerable<T> ents);

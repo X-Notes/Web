@@ -3,7 +3,7 @@
   class="highlighting-note"
   (click)="highlight(note)"
   [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
-  [ngClass]="(pService.fontSize$ | async).name === fontSize.Big ? 'big-select' : ''"
+  [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''"
 >
   <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
 </div>
@@ -11,7 +11,7 @@
   (click)="toNote(note)"
   class="note-inner"
   [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
-  [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
+  [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
 >
   <div class="labels">
     <div
@@ -32,11 +32,11 @@
     </ng-template>
   </div>
   <ng-container *ngFor="let content of note.contents">
-    <ng-container [ngSwitch]="content.type">
-      <ng-container *ngSwitchCase="contentType.DEFAULT">
+    <ng-container [ngSwitch]="content.typeId">
+      <ng-container *ngSwitchCase="contentType.Text">
         <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
       </ng-container>
-      <ng-container *ngSwitchCase="contentType.ALBUM">
+      <ng-container *ngSwitchCase="contentType.NoteAlbum">
         <app-note-preview-photos [album]="content"></app-note-preview-photos>
       </ng-container>
     </ng-container>

@@ -112,14 +112,14 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
     let snackbarRef;
-    switch (language.name) {
-      case LanguagesENUM.english:
+    switch (language) {
+      case LanguagesENUM.English:
         snackbarRef = this.snackService.openSnackBar(`Label moved to bin`, 'Undo');
         break;
-      case LanguagesENUM.russian:
+      case LanguagesENUM.Russian:
         snackbarRef = this.snackService.openSnackBar(`Ярлык перенесен в корзину`, 'Отменить');
         break;
-      case LanguagesENUM.ukraine:
+      case LanguagesENUM.Ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
         break;
       default:
@@ -142,14 +142,14 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
     let snackbarRef;
-    switch (language.name) {
-      case LanguagesENUM.english:
+    switch (language) {
+      case LanguagesENUM.English:
         snackbarRef = this.snackService.openSnackBar(`Label deleted permanently`, null);
         break;
-      case LanguagesENUM.russian:
+      case LanguagesENUM.Russian:
         snackbarRef = this.snackService.openSnackBar(`Ярлык удален безвозвратно`, null);
         break;
-      case LanguagesENUM.ukraine:
+      case LanguagesENUM.Ukraine:
         snackbarRef = this.snackService.openSnackBar(`Ярлык удален безповоротно`, null);
         break;
       default:

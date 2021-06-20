@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Theme } from 'src/app/shared/models/Theme';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -44,8 +43,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   loaded = false;
-
-  theme = Theme;
 
   public photoError = false;
 

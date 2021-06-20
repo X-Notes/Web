@@ -1,9 +1,9 @@
 import { BreakEnterModel } from '../content-editable.service';
-import { ContentType } from './ContentModel';
+import { NoteTextTypeENUM } from './ContentModel';
 
 export interface EnterEvent {
   id: string;
   breakModel: BreakEnterModel;
-  nextItemType: ContentType;
+  nextItemType: NoteTextTypeENUM;
   contentId: string;
 }

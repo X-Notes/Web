@@ -48,7 +48,7 @@ namespace BI.services.folders
 
         public async Task<SmallFolder> Handle(NewFolderCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             var folder = new Folder()
             {
@@ -179,7 +179,7 @@ namespace BI.services.folders
                 }
             }
 
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, FolderTypeENUM.Private);
 
             var orders = Enumerable.Range(1, dbFolders.Count);
