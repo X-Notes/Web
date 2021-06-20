@@ -1,0 +1,173 @@
+<div class="player" appTheme>
+  <div class="controls controls-left">
+    <button
+      class="audio-button"
+      type="button"
+      name="audio playlist"
+      cdk-overlay-origin
+      #origin="cdkOverlayOrigin"
+      #audioPlaylist
+      (click)="isOpen = !isOpen"
+      [CustomTooltip]="'innerNote.audio.playlist' | translate"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">queue_music</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="audioPlaylist"></div>
+    </button>
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayOrigin]="origin"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayPositions]="positions"
+      (backdropClick)="isOpen = false"
+    >
+      <div
+        #dropdown
+        class="dropdown"
+        [@showDropdown]
+        appLazyTheme
+        themeClass="dropdown"
+        attributeName="className"
+        [element]="dropdown"
+      >
+        <app-audio-small
+          *ngFor="let item of audioService.playlist; let i = index"
+          [name]="item.name"
+        ></app-audio-small>
+      </div>
+    </ng-template>
+    <div class="preview">
+      <img *ngIf="false" />
+      <div class="no-preview" [CustomTooltip]="audioService.currentFile?.audio?.name">
+        {{ audioName }}
+      </div>
+    </div>
+  </div>
+  <div class="controls">
+    <button
+      class="audio-button"
+      type="button"
+      name="skip prew"
+      #skipPrew
+      [disabled]="isFirstPlaying()"
+      (click)="previous()"
+      [CustomTooltip]="'innerNote.audio.previos' | translate"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">skip_previous</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="skipPrew"></div>
+    </button>
+    <button
+      class="audio-button"
+      type="button"
+      name="play"
+      #playButton
+      (click)="play()"
+      [disabled]="state?.error"
+      [CustomTooltip]="'innerNote.audio.play' | translate"
+      *ngIf="!state?.playing"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">play_circle_outline</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="playButton"></div>
+    </button>
+    <button
+      class="audio-button"
+      type="button"
+      name="pause"
+      #pauseButton
+      (click)="pause()"
+      *ngIf="state?.playing"
+      [CustomTooltip]="'innerNote.audio.pause' | translate"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">pause</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="pauseButton"></div>
+    </button>
+    <button
+      class="audio-button"
+      type="button"
+      name="skip next"
+      #skipNext
+      [disabled]="isLastPlaying()"
+      (click)="next()"
+      [CustomTooltip]="'innerNote.audio.next' | translate"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">skip_next</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="skipNext"></div>
+    </button>
+  </div>
+  <div class="slider-controls">
+    <div class="time" *ngIf="state?.readableCurrentTime">{{ state?.readableCurrentTime }}</div>
+    <mat-slider
+      class="slider"
+      min="0"
+      [max]="state?.duration"
+      step="1"
+      [value]="state?.currentTime"
+      (input)="onSliderChangeEnd($event)"
+      [disabled]="state?.error || audioService.currentFile.index === undefined"
+    ></mat-slider>
+    <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
+  </div>
+  <div class="controls">
+    <div class="volume">
+      <button (click)="mute()" class="audio-button" type="button" name="sound" #volumeUp>
+        <div class="icon">
+          <mat-icon [inline]="true" *ngIf="state?.currentVolume >= 0.5">volume_up</mat-icon>
+          <mat-icon [inline]="true" *ngIf="state?.currentVolume < 0.5 && state?.currentVolume !== 0"
+            >volume_down</mat-icon
+          >
+          <mat-icon [inline]="true" *ngIf="state?.currentVolume === 0">volume_off</mat-icon>
+        </div>
+        <div class="ripple-container" matRipple [matRippleTrigger]="volumeUp"></div>
+      </button>
+      <div class="volume-slider">
+        <mat-slider
+          vertical
+          class="slider"
+          min="0"
+          max="1"
+          step="0.01"
+          (input)="onSliderVolumeChangeEnd($event)"
+          [value]="state?.currentVolume"
+          [disabled]="state?.error || audioService.currentFile.index === undefined"
+        ></mat-slider>
+      </div>
+    </div>
+    <button
+      class="audio-button"
+      type="button"
+      name="repeat"
+      #repeat
+      (click)="loop()"
+      [CustomTooltip]="'innerNote.audio.loop' | translate"
+    >
+      <div class="icon" [ngStyle]="{'color': state?.loop ? '#0887a7' : ''}">
+        <mat-icon [inline]="true">repeat</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="repeat"></div>
+    </button>
+    <button
+      class="audio-button audio-cancel"
+      type="button"
+      name="cancel"
+      #cancel
+      [CustomTooltip]="'innerNote.audio.close' | translate"
+      (click)="audioService.resetCurrent()"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">close</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="cancel"></div>
+    </button>
+  </div>
+</div>

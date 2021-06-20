@@ -15,4 +15,5 @@
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="addMobile"></div>
   </button>
+  <app-audio-controls *ngIf="audioService.currentFile"></app-audio-controls>
 </main>

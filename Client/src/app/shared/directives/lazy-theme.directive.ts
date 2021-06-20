@@ -32,7 +32,7 @@ export class LazyThemeDirective implements OnInit, OnDestroy {
         }
         if (theme === ThemeENUM.Dark) {
           if (this.element && this.attributeName) {
-            this.element[this.attributeName] = `dark-${this.themeClass}`;
+            this.element[this.attributeName] += ` dark-${this.themeClass} `;
           } else {
             this.renderer.addClass(this.el.nativeElement, `dark-${this.themeClass}`);
             this.renderer.removeClass(this.el.nativeElement, `light-${this.themeClass}`);
@@ -40,7 +40,7 @@ export class LazyThemeDirective implements OnInit, OnDestroy {
         } else {
           // eslint-disable-next-line no-lonely-if
           if (this.element && this.attributeName) {
-            this.element[this.attributeName] = `light-${this.themeClass}`;
+            this.element[this.attributeName] += ` light-${this.themeClass} `;
           } else {
             this.renderer.removeClass(this.el.nativeElement, `dark-${this.themeClass}`);
             this.renderer.addClass(this.el.nativeElement, `light-${this.themeClass}`);
