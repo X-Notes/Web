@@ -1,7 +1,7 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { showDropdown } from 'src/app/shared/services/personalization.service';
-import { NoteHistory } from '../../models/history/note-history';
+import { NoteHistory } from '../../models/history/NoteHistory';
 
 @Component({
   selector: 'app-history-record',

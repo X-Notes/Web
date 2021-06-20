@@ -15,11 +15,11 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { TransformContent } from '../../../models/transform-content';
-import { TransformToFileContent } from '../../../models/transform-file-content';
-import { TypeUploadFile } from '../../../models/type-upload-file.enum';
-import { TypeUploadFormats } from '../../../models/type-upload-formats.enum';
+import { ParentInteraction } from '../../../models/ParentInteraction.interface';
+import { TransformContent } from '../../../models/TransformContent';
+import { TransformToFileContent } from '../../../models/TransformFileContent';
+import { TypeUploadFile } from '../../../models/TypeUploadFile.enum';
+import { TypeUploadFormats } from '../../../models/TypeUploadFormats.enum';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({

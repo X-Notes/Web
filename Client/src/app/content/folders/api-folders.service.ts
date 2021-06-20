@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { map } from 'rxjs/operators';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { SmallFolder } from './models/Folder';
 import { Folders } from './models/Folders';
-import { RequestFullFolder } from './models/requestFullFolder';
-import { InvitedUsersToNoteOrFolder } from '../notes/models/invitedUsersToNote';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { RequestFullFolder } from './models/RequestFullFolder';
+import { InvitedUsersToNoteOrFolder } from '../notes/models/InvitedUsersToNote';
 
 @Injectable()
 export class ApiFoldersService {

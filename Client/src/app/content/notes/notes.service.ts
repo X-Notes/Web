@@ -16,7 +16,7 @@ import {
 } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteStore } from './state/notes-state';
-import { SmallNote } from './models/smallNote';
+import { SmallNote } from './models/SmallNote';
 import { UpdateColor } from './state/updateColor';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 

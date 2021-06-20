@@ -15,7 +15,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText, HeadingTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { ParentInteraction } from '../../../models/ParentInteraction.interface';
 import { HeadingService } from '../../html-business-logic/heading.service';
 
 @Component({

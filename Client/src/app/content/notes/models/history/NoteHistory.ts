@@ -1,4 +1,4 @@
-import { UserHistory } from './user-history';
+import { UserHistory } from './UserHistory';
 
 export interface NoteHistory {
   snapshotTime: Date;

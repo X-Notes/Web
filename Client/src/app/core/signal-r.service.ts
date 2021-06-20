@@ -3,7 +3,7 @@ import * as signalR from '@aspnet/signalr';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { FullNote } from '../content/notes/models/fullNote';
+import { FullNote } from '../content/notes/models/FullNote';
 import { LoadOnlineUsersOnNote, UpdateOneFullNote } from '../content/notes/state/notes-actions';
 import { LoadNotifications } from './stateApp/app-action';
 import { AppStore } from './stateApp/app-state';

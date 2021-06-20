@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AudioService } from '../../audio.service';
 import { AudioModel, ContentModel } from '../../models/ContentModel';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
 @Component({
   selector: 'app-audio-note',

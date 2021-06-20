@@ -15,9 +15,9 @@ import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../api-notes.service';
 import { Photo, Album } from '../../models/ContentModel';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { RemovePhotoFromAlbum } from '../../models/removePhotoFromAlbum';
-import { UploadPhotosToAlbum } from '../../models/uploadPhotosToAlbum';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
+import { RemovePhotoFromAlbum } from '../../models/RemovePhotoFromAlbum';
+import { UploadPhotosToAlbum } from '../../models/UploadPhotosToAlbum';
 import { SelectionService } from '../../selection.service';
 @Component({
   selector: 'app-photos',

@@ -14,7 +14,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiFullFolderService } from 'src/app/content/folders/full-folder/services/api-full-folder.service';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { SmallNote } from 'src/app/content/notes/models/SmallNote';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { FontSizeENUM } from '../../enums/FontSizeEnum';
 import { NoteTypeENUM } from '../../enums/NoteTypesEnum';

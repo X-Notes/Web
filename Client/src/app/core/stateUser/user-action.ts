@@ -1,8 +1,8 @@
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { Background } from '../models/background';
-import { User } from '../models/user';
+import { Background } from '../models/Background';
+import { User } from '../models/User';
 
 export class Login {
   static type = '[User] Login User';
@@ -56,6 +56,4 @@ export class UpdateUserPhoto {
 
 export class LoadUsedDiskSpace {
   static type = '[User] load used disk space';
-
-  constructor() {}
 }

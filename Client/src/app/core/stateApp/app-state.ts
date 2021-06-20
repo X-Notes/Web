@@ -16,7 +16,7 @@ import {
   NewNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
-import { AppNotification } from '../models/app-notification';
+import { AppNotification } from '../models/AppNotification';
 
 interface AppState {
   routing: EntityType;
@@ -36,10 +36,7 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
-  constructor(
-    authService: AuthService,
-    public notificationService: NotificationServiceAPI,
-  ) {
+  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
     authService.init();
   }
 

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { VideoModel } from '../../models/ContentModel';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
 @Component({
   selector: 'app-video-note',

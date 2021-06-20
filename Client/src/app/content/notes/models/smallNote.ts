@@ -1,5 +1,5 @@
 import { ContentModel } from './ContentModel';
-import { FullNote } from './fullNote';
+import { FullNote } from './FullNote';
 
 // TODO MAKE CLASS
 export interface SmallNote extends FullNote {

@@ -29,7 +29,7 @@ import {
   ChangeTypeFullNote,
   BaseChangeTypeSmallNote,
 } from '../notes/state/notes-actions';
-import { MenuItem } from './menu_item';
+import { MenuItem } from './MenuItem';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from './snack-bar-wrapper.service';
 

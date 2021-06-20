@@ -27,7 +27,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import {
   DeleteCurrentNote,
@@ -37,8 +37,8 @@ import {
   UpdateTitle,
 } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
-import { FullNote } from '../models/fullNote';
-import { SmallNote } from '../models/smallNote';
+import { FullNote } from '../models/FullNote';
+import { SmallNote } from '../models/SmallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
@@ -54,20 +54,20 @@ import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
 import { EnterEvent } from '../models/EnterEvent';
-import { ParentInteraction } from '../models/parent-interaction.interface';
-import { TransformContent } from '../models/transform-content';
+import { ParentInteraction } from '../models/ParentInteraction.interface';
+import { TransformContent } from '../models/TransformContent';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
-import { TransformToFileContent } from '../models/transform-file-content';
-import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
-import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
+import { TransformToFileContent } from '../models/TransformFileContent';
+import { UploadPhotosToAlbum } from '../models/UploadPhotosToAlbum';
+import { RemovePhotoFromAlbum } from '../models/RemovePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
-import { TypeUploadFile } from '../models/type-upload-file.enum';
+import { TypeUploadFile } from '../models/TypeUploadFile.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
-import { NoteHistory } from '../models/history/note-history';
+import { NoteHistory } from '../models/history/NoteHistory';
 
 @Component({
   selector: 'app-full-note',

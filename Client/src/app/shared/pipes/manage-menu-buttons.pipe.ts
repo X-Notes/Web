@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { MenuItem } from 'src/app/content/navigation/menu_item';
+import { MenuItem } from 'src/app/content/navigation/MenuItem';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Pipe({

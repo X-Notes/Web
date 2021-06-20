@@ -1,9 +1,12 @@
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,
@@ -18,9 +21,6 @@ import {
   LoadUsedDiskSpace,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 interface UserState {
   user: ShortUser;
@@ -185,7 +185,7 @@ export class UserStore {
   }
 
   @Action(LoadUsedDiskSpace)
-  async loadUsedDiskSpace({ patchState, getState }: StateContext<UserState>) {
+  async loadUsedDiskSpace({ patchState }: StateContext<UserState>) {
     const memory = await this.api.getMemory().toPromise();
     patchState({ memory: memory.totalSize });
   }

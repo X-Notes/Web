@@ -13,7 +13,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
-import { PreviewNote } from 'src/app/content/notes/models/previewNote';
+import { PreviewNote } from 'src/app/content/notes/models/PreviewNote';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';

@@ -15,12 +15,12 @@ import {
   UpdateUserPhoto,
   SetDefaultBackground,
 } from 'src/app/core/stateUser/user-action';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { takeUntil } from 'rxjs/operators';
-import { Background } from 'src/app/core/models/background';
+import { Background } from 'src/app/core/models/Background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import {
   LoadBackgrounds,

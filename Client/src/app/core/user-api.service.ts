@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { User } from './models/user';
-import { ShortUser } from './models/short-user';
-import { AnswerChangePhoto } from './models/asnwer-change-photo';
-import { UserUsedDiskSpace } from './models/search/user-user-disk-space';
+import { User } from './models/User';
+import { ShortUser } from './models/ShortUser';
+import { AnswerChangePhoto } from './models/AsnwerChangePhoto';
+import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
 import { ThemeENUM } from '../shared/enums/ThemeEnum';
 import { FontSizeENUM } from '../shared/enums/FontSizeEnum';
 import { LanguagesENUM } from '../shared/enums/LanguagesENUM';

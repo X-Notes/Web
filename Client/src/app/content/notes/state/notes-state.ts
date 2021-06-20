@@ -42,14 +42,14 @@ import {
   ChangeIsLockedFullNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
-import { SmallNote } from '../models/smallNote';
+import { SmallNote } from '../models/SmallNote';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
-import { FullNote } from '../models/fullNote';
+import { FullNote } from '../models/FullNote';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
-import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
-import { OnlineUsersNote } from '../models/online-users-note';
+import { InvitedUsersToNoteOrFolder } from '../models/InvitedUsersToNote';
+import { OnlineUsersNote } from '../models/OnlineUsersNote';
 
 interface FullNoteState {
   note: FullNote;

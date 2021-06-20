@@ -14,8 +14,8 @@ import {
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
-import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';
-import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/InvitedUsersToNote';
+import { SmallNote } from 'src/app/content/notes/models/SmallNote';
 import {
   ChangeTypeFullNote,
   GetInvitedUsersToNote,
@@ -30,7 +30,7 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { EntityType } from '../../enums/EntityTypes';
 import { FolderTypeENUM } from '../../enums/FolderTypesEnum';
 import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
-import { SearchUserForShareModal } from '../../models/shortUserForShareModal';
+import { SearchUserForShareModal } from '../../models/ShortUserForShareModal';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/ThemeEnum';
@@ -353,9 +353,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     await this.apiFolder.makePublic(refTypeId, this.currentFolder.id).toPromise();
     this.currentFolder.refTypeId = refTypeId;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refTypeId;
-    this.store.dispatch(
-      new UpdateOneFolder(this.currentFolder, this.currentFolder.folderTypeId),
-    );
+    this.store.dispatch(new UpdateOneFolder(this.currentFolder, this.currentFolder.folderTypeId));
   }
 
   refTypeNotification(refType: RefTypeENUM): void {

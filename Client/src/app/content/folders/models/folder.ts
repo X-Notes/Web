@@ -1,4 +1,5 @@
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { PreviewNotesInFolder } from './PreviewNotesInFolder';
 
 export interface SmallFolder {

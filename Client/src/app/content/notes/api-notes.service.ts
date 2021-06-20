@@ -5,10 +5,10 @@ import { map } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
-import { SmallNote } from './models/smallNote';
-import { RequestFullNote } from './models/requestFullNote';
+import { SmallNote } from './models/SmallNote';
+import { RequestFullNote } from './models/RequestFullNote';
 import { Notes } from './state/Notes';
-import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
+import { InvitedUsersToNoteOrFolder } from './models/InvitedUsersToNote';
 import {
   Album,
   AudioModel,
@@ -21,7 +21,7 @@ import {
   VideoModel,
 } from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
-import { OnlineUsersNote } from './models/online-users-note';
+import { OnlineUsersNote } from './models/OnlineUsersNote';
 
 @Injectable()
 export class ApiServiceNotes {

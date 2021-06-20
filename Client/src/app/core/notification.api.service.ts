@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { AppNotification } from './models/app-notification';
+import { AppNotification } from './models/AppNotification';
 
 @Injectable({
   providedIn: 'root',

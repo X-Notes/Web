@@ -16,8 +16,8 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
 import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
-import { TransformContent } from '../../../models/transform-content';
+import { ParentInteraction } from '../../../models/ParentInteraction.interface';
+import { TransformContent } from '../../../models/TransformContent';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
 @Component({

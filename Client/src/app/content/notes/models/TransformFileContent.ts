@@ -1,4 +1,4 @@
-import { TypeUploadFile } from './type-upload-file.enum';
+import { TypeUploadFile } from './TypeUploadFile.enum';
 
 export interface TransformToFileContent {
   id: string;

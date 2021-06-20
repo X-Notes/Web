@@ -34,7 +34,7 @@ import {
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/updateColor';
 import { Folders } from '../models/Folders';
-import { InvitedUsersToNoteOrFolder } from '../../notes/models/invitedUsersToNote';
+import { InvitedUsersToNoteOrFolder } from '../../notes/models/InvitedUsersToNote';
 
 interface FullFolderState {
   isOwner: boolean;
