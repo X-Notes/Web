@@ -16,7 +16,7 @@ namespace WriteContext.Repositories.Folders
         }
 
 
-        public async Task Add(Folder folder, Guid TypeId)
+        public async Task Add(Folder folder, FolderTypeENUM TypeId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -43,7 +43,7 @@ namespace WriteContext.Repositories.Folders
                 }
             }
         }
-        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, Guid FromId, Guid ToId)
+        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, FolderTypeENUM FromId, FolderTypeENUM ToId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -130,7 +130,7 @@ namespace WriteContext.Repositories.Folders
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, Guid typeId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, FolderTypeENUM typeId)
         {
             return await context.Folders
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
@@ -143,7 +143,7 @@ namespace WriteContext.Repositories.Folders
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, Guid typeId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, FolderTypeENUM typeId)
         {
             return await context.Folders
                 .Include(x => x.FoldersNotes)

@@ -22,7 +22,6 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.User)
                 .ThenInclude(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)
-                .Include(x => x.AccessType)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
     }

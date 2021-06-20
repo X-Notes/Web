@@ -3,15 +3,13 @@ using BI.Mapping;
 using BI.services.history;
 using BI.signalR;
 using Common;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.NoteDict;
+using Common.DatabaseModels.models.NoteContent.ContentParts;
 using Common.DatabaseModels.models.Notes;
 using Common.DatabaseModels.models.Systems;
 using Common.DTO.files;
 using Common.DTO.notes;
-using Common.Naming;
 using Domain.Commands.files;
 using Domain.Commands.notes;
 using Domain.Queries.files;
@@ -81,12 +79,10 @@ namespace BI.services.notes
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
 
-            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
             var _contents = new List<BaseNoteContent>();
 
-            var newText = new TextNote {  Id = Guid.NewGuid(), Order = 1, TextType = textType };
+            var newText = new TextNote {  Id = Guid.NewGuid(), Order = 1, NoteTextTypeId = NoteTextTypeENUM.Default };
             _contents.Add(newText);
 
             var note = new Note()
@@ -95,14 +91,14 @@ namespace BI.services.notes
                 UserId = user.Id,
                 Order = 1,
                 Color = NoteColorPallete.Green,
-                NoteTypeId = type.Id,
+                NoteTypeId = NoteTypeENUM.Private,
                 RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeOffset.Now,
                 UpdatedAt = DateTimeOffset.Now,
                 Contents = _contents
             };
 
-            await noteRepository.Add(note, type.Id);
+            await noteRepository.Add(note, NoteTypeENUM.Private);
 
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
@@ -136,7 +132,6 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
@@ -144,7 +139,7 @@ namespace BI.services.notes
             {
                 notes.ForEach(note => note.RefType = null);
                 user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Deleted);
             }
             else
             {
@@ -156,9 +151,8 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
-            var deletednotes = user.Notes.Where(x => x.NoteTypeId == type.Id).ToList();
+            var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
             var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (selectdeletenotes.Count == request.Ids.Count)
@@ -187,14 +181,13 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.ArchivedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Archived);
             }
             else
             {
@@ -206,14 +199,13 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Private);
             }
             else
             {
@@ -225,7 +217,6 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var resultIds = new List<Guid>();
             var order = -1;
             foreach (var id in request.Ids)
@@ -242,7 +233,7 @@ namespace BI.services.notes
                         Color = noteForCopy.Color,
                         CreatedAt = DateTimeOffset.Now,
                         UpdatedAt = DateTimeOffset.Now,
-                        NoteTypeId = type.Id,
+                        NoteTypeId = NoteTypeENUM.Private,
                         RefTypeId = noteForCopy.RefTypeId,
                         Order = order--,
                         UserId = permissions.User.Id,
@@ -319,7 +310,7 @@ namespace BI.services.notes
             }
 
             var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
-            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, type.Id, request.IsHistory);
+            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, NoteTypeENUM.Private, request.IsHistory);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
             dbNotes = dbNotes.Zip(orders, (note, order) => {

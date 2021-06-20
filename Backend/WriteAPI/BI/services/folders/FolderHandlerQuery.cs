@@ -1,13 +1,10 @@
-﻿using AutoMapper;
-using BI.helpers;
+﻿using BI.helpers;
 using BI.Mapping;
-using Common.DatabaseModels.models;
+using Common.DatabaseModels.models.Folders;
 using Common.DTO.folders;
-using Common.Naming;
 using Domain.Queries.folders;
 using Domain.Queries.permissions;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -52,9 +49,8 @@ namespace BI.services.folders
             if (user != null)
             {
                 var folders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, request.TypeId);
-                var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
 
-                if (type.Id == request.TypeId)
+                if (FolderTypeENUM.Shared == request.TypeId)
                 {
                     var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhere(x => x.UserId == user.Id);
                     var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);

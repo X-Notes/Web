@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models.Systems;
+﻿using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.app;
 using Common.DTO.labels;
 using Common.DTO.notes.FullNoteContent;
@@ -14,7 +15,7 @@ namespace Common.DTO.notes
         public string Color { set; get; }
         public List<LabelDTO> Labels { set; get; }
         public RefTypeENUM RefTypeId { set; get; }
-        public NoteTypeDTO NoteType { set; get; }
+        public NoteTypeENUM NoteTypeId { set; get; }
         public List<BaseContentNoteDTO> Contents { set; get; }
         public bool IsLocked { set; get; }
 

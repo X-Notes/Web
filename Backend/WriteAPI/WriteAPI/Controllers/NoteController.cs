@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DatabaseModels.models.Notes;
 using Common.DTO.notes;
 using Common.DTO.users;
 using Domain.Commands.notes;
@@ -111,7 +112,7 @@ namespace WriteAPI.Controllers
 
         // GET Entities
         [HttpGet("type/{id}")]
-        public async Task<List<SmallNote>> GetNotesByType(Guid id)
+        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id)
         {
             var email = this.GetUserEmail();
             var query = new GetNotesByTypeQuery(email, id);

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.DatabaseModels.models.NoteContent.NoteDict
+namespace Common.DatabaseModels.models.Systems
 {
-    public enum HeadingNoteTypes
+    public enum FontSizeENUM
     {
-        H1,
-        H2,
-        H3
+        Big = 1,
+        Medium = 2
     }
 }

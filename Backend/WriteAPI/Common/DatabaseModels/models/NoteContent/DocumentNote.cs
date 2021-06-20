@@ -17,14 +17,17 @@ namespace Common.DatabaseModels.models.NoteContent
 
         public DocumentNote()
         {
-                
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Document;
         }
 
         public DocumentNote(DocumentNote entity, AppFile document, Guid NoteId)
         {
             this.NoteId = NoteId;
             Order = entity.Order;
+
             this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Document;
 
             Name = entity.Name;
 

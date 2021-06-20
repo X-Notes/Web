@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.models.NoteContent;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,8 @@ namespace Common.DTO.notes.FullNoteContent
         public string Name { set; get; }
         public Guid FileId { set; get; }
         public string VideoPath { set; get; }
-        public VideoNoteDTO(string Name, Guid fileId, string VideoPath, Guid Id, string Type, DateTimeOffset UpdatedAt)
-        : base(Id, Type, UpdatedAt)
+        public VideoNoteDTO(string Name, Guid fileId, string VideoPath, Guid Id, DateTimeOffset UpdatedAt)
+        : base(Id, ContentTypeENUM.Video, UpdatedAt)
         {
             this.FileId = fileId;
             this.Name = Name;

@@ -17,7 +17,8 @@ namespace Common.DatabaseModels.models.NoteContent
 
         public VideoNote()
         {
-
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Video;
         }
 
         public VideoNote(VideoNote entity, AppFile video, Guid NoteId)
@@ -25,6 +26,7 @@ namespace Common.DatabaseModels.models.NoteContent
             this.NoteId = NoteId;
             Order = entity.Order;
             this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Video;
 
             Name = entity.Name;
 

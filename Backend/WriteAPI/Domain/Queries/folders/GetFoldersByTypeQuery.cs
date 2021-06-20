@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DatabaseModels.models.Folders;
 using Common.DTO.folders;
 using MediatR;
 using System;
@@ -10,9 +11,9 @@ namespace Domain.Queries.folders
 {
     public class GetFoldersByTypeQuery : BaseQueryEntity, IRequest<List<SmallFolder>>
     {
-        [ValidationGuidAttribute]
-        public Guid TypeId { set; get; }
-        public GetFoldersByTypeQuery(string email, Guid id):base(email)
+        [Required]
+        public FolderTypeENUM TypeId { set; get; }
+        public GetFoldersByTypeQuery(string email, FolderTypeENUM id):base(email)
         {
             this.TypeId = id;
         }

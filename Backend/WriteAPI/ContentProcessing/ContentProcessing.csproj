@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <Compile Remove="models\**" />
+    <EmbeddedResource Remove="models\**" />
+    <None Remove="models\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="models\" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

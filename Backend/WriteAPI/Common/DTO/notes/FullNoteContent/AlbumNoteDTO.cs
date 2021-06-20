@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DatabaseModels.models.NoteContent;
+using System;
 using System.Collections.Generic;
 
 namespace Common.DTO.notes.FullNoteContent
@@ -10,8 +11,8 @@ namespace Common.DTO.notes.FullNoteContent
         public string Height { set; get; }
         public int CountInRow { set; get; }
         public AlbumNoteDTO(List<AlbumPhotoDTO> Files, string Width, 
-            string Height, Guid Id, string Type, int CountInRow, DateTimeOffset UpdatedAt)
-            : base(Id, Type, UpdatedAt)
+            string Height, Guid Id, int CountInRow, DateTimeOffset UpdatedAt)
+            : base(Id, ContentTypeENUM.Album, UpdatedAt)
         {
             this.Photos = Files;
             this.Height = Height;

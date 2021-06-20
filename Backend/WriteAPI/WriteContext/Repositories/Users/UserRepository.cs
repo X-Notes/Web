@@ -23,9 +23,6 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.CurrentBackground)
-                .Include(x => x.Language)
-                .Include(x => x.FontSize)
-                .Include(x => x.Theme)
                 .Include(x => x.UserProfilePhoto)
                 .ThenInclude(x => x.AppFile)
                 .FirstOrDefaultAsync(x => x.Email == email);
@@ -55,7 +52,6 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.Notes)
-                .ThenInclude(x => x.NoteType)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
@@ -63,7 +59,6 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.Folders)
-                .ThenInclude(x => x.FolderType)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 

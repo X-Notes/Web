@@ -17,7 +17,8 @@ namespace Common.DatabaseModels.models.NoteContent
 
         public AudioNote()
         {
-
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Audio;
         }
 
         public AudioNote(AudioNote entity, AppFile audio, Guid NoteId)
@@ -25,6 +26,7 @@ namespace Common.DatabaseModels.models.NoteContent
             this.NoteId = NoteId;
             Order = entity.Order;
             this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Audio;
 
             Name = entity.Name;
 

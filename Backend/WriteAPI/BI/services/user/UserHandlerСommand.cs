@@ -1,16 +1,14 @@
 ﻿using BI.helpers;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Files;
 using Common.DatabaseModels.models.Plan;
+using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using Common.DTO.users;
-using Common.Naming;
 using ContentProcessing;
 using Domain.Commands.files;
 using Domain.Commands.users;
 using MediatR;
 using Storage;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -59,17 +57,13 @@ namespace BI.services.user
 
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
-            // TODO OPTIMIZATION
-            var language = await appRepository.GetLanguageByName(ModelsNaming.English);
-            var fontSize = await appRepository.GetFontSizeByName(ModelsNaming.Big);
-            var theme = await appRepository.GetThemeByName(ModelsNaming.DarkTheme);
 
             var user = new User() {
                 Name = request.Name,
-                LanguageId = language.Id,
+                LanguageId = LanguageENUM.English,
                 Email = request.Email,
-                FontSizeId = fontSize.Id,
-                ThemeId = theme.Id,
+                FontSizeId = FontSizeENUM.Medium,
+                ThemeId = ThemeENUM.Dark,
                 BillingPlanId = BillingPlanTypeENUM.Basic
             };
 

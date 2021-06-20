@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DatabaseModels.models.Systems;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,10 @@ namespace Domain.Commands.users
 {
     public class UpdateLanguageCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [ValidationGuidAttribute]
-        public Guid Id { set; get; }
+        [Required]
+        public LanguageENUM Id { set; get; }
 
-        public UpdateLanguageCommand(Guid Id, string Email)
+        public UpdateLanguageCommand(LanguageENUM Id, string Email)
             :base(Email)
         {
             this.Id = Id;

@@ -20,14 +20,17 @@ namespace Common.DatabaseModels.models.NoteContent
 
         public AlbumNote()
         {
-
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Album;
         }
 
         public AlbumNote(AlbumNote entity, List<AppFile> photos, Guid NoteId)
         {
             this.NoteId = NoteId;
             Order = entity.Order;
+
             this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Album;
 
             Width = entity.Width;
             Height = entity.Height;

@@ -21,10 +21,6 @@ namespace WriteContext.Repositories.Folders
         {
             return await entities.Where(x => x.FolderId == folderId)
                 .Include(x => x.Note)
-                .ThenInclude(x => x.RefType)
-                .Include(x => x.Note)
-                .ThenInclude(x => x.NoteType)
-                .Include(x => x.Note)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Note)
                 .ThenInclude(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)

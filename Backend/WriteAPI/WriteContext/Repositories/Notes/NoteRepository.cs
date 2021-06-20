@@ -16,7 +16,7 @@ namespace WriteContext.Repositories.Notes
         {
         }
 
-        public async Task Add(Note note, Guid TypeId)
+        public async Task Add(Note note, NoteTypeENUM TypeId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -61,7 +61,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, Guid typeId, bool isHistory)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, NoteTypeENUM typeId, bool isHistory)
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -95,7 +95,7 @@ namespace WriteContext.Repositories.Notes
 
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, Guid typeId)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, NoteTypeENUM typeId)
         {
             return await context.Notes
                 .OrderBy(x => x.Order)
@@ -191,7 +191,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, Guid FromId, Guid ToId)
+        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NoteTypeENUM FromId, NoteTypeENUM ToId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {

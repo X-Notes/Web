@@ -4,7 +4,6 @@ using Common.DatabaseModels.models.History;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using Common.DTO.app;
 using Common.DTO.folders;
@@ -12,7 +11,6 @@ using Common.DTO.history;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
-using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Common.DTO.users;
 using System;
 using System.Collections.Generic;
@@ -39,36 +37,32 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.UpdatedAt);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }
                     case AlbumNote aN:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                             var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow, aN.UpdatedAt);
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
                     case AudioNote audioNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
-                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id, type , audioNote.UpdatedAt);
+                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id , audioNote.UpdatedAt);
                             resultList.Add(audioNoteDTO);
                             break;
                         }
                     case VideoNote videoNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, type, videoNote.UpdatedAt);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
                             resultList.Add(videoNoteDTO);
                             break;
                         }
                     case DocumentNote documentNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, type, documentNote.UpdatedAt);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
                             resultList.Add(documentNoteDTO);
                             break;
                         }
@@ -142,7 +136,7 @@ namespace BI.Mapping
                 Title = tuple.note.Title,
                 IsOpened = tuple.isOpened,
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
+                NoteTypeId = tuple.note.NoteTypeId,
                 RefTypeId = tuple.note.RefTypeId,
                 Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, takeContentLength),
                 IsLocked = tuple.note.IsLocked,
@@ -170,7 +164,7 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
+                NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsLocked = note.IsLocked,
@@ -186,7 +180,7 @@ namespace BI.Mapping
             {
                 Id = note.Id,
                 Color = note.Color,
-                NoteType = MapTypeToTypeDTO(note.NoteType),
+                NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
@@ -206,7 +200,7 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
+                NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsSelected = ids.Contains(note.Id),
@@ -254,7 +248,7 @@ namespace BI.Mapping
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
-                FolderType = MapTypeToTypeDTO(folder.FolderType),
+                FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId,
                 PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
             };
@@ -288,7 +282,7 @@ namespace BI.Mapping
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
-                FolderType = MapTypeToTypeDTO(folder.FolderType),
+                FolderTypeId = folder.FolderTypeId,
                 RefTypeId = folder.RefTypeId
             };
         }
@@ -302,7 +296,7 @@ namespace BI.Mapping
                 Email = user.Email,
                 Name = user.Name,
                 PhotoId = user.UserProfilePhoto.AppFileId,
-                PhotoPath = user.UserProfilePhoto.AppFile.PathPhotoBig
+                PhotoPath = user.UserProfilePhoto.AppFile.GetFromSmallPath
             };
         }
 

@@ -1,24 +1,18 @@
-﻿using BI.helpers;
-using BI.Mapping;
+﻿using BI.Mapping;
 using BI.services.history;
 using BI.signalR;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.NoteDict;
+using Common.DatabaseModels.models.NoteContent.ContentParts;
 using Common.DTO.notes.FullNoteContent;
-using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Domain.Commands.files;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
 using Domain.Commands.noteInner.fileContent.files;
 using Domain.Commands.noteInner.fileContent.videos;
-using Domain.Queries.notes;
 using Domain.Queries.permissions;
 using FacadeML;
-using FacadeML.models;
 using MediatR;
-using Storage;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -178,20 +172,19 @@ namespace BI.services.notes
                         Photos = dbFiles,
                         Note = note,
                         Order = contentForRemove.Order,
+                        ContentTypeId = ContentTypeENUM.Album,
                         CountInRow = 2,
                         Width = "100%",
                         Height = "auto",
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await albumNoteRepository.Add(albumNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
                     var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
                     var result = new AlbumNoteDTO(resultPhotos, null, null, 
-                        albumNote.Id, type, albumNote.CountInRow, albumNote.UpdatedAt);
+                        albumNote.Id, albumNote.CountInRow, albumNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -250,14 +243,13 @@ namespace BI.services.notes
                 var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
                 var lastOrder = contents.Max(x => x.Order);
 
-                var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                var text = new TextNote(note.Id, textType, lastOrder + 1);
+                var text = new TextNote(note.Id, NoteTextTypeENUM.Default, lastOrder + 1);
 
 
                 await baseNoteContentRepository.Add(text);
 
                 var textResult = new TextNoteDTO(text.Content, text.Id, 
-                    text.TextType, text.HeadingType, text.Checked, text.UpdatedAt);
+                    text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -286,9 +278,7 @@ namespace BI.services.notes
                 {
                     case "NEXT":
                         {
-                            var textType = TextNoteTypesDictionary.GetNextTypeForInserting(content.TextType);
-
-                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1,
+                            var newText = new TextNote(NoteId: note.Id, NoteTextTypeENUM.Default, content.Order + 1,
                                                         Content: request.NextText);
 
                             contents.Insert(insertIndex + 1, newText);
@@ -306,8 +296,8 @@ namespace BI.services.notes
                                 await textNotesRepository.Add(newText);
                                 await baseNoteContentRepository.UpdateRange(contents);
 
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, 
-                                    newText.HeadingType, newText.Checked, newText.UpdatedAt);
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.NoteTextTypeId, 
+                                    newText.HTypeId, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -326,8 +316,7 @@ namespace BI.services.notes
                         }
                     case "PREV":
                         {
-                            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1, Content: request.NextText);
+                            var newText = new TextNote(NoteId: note.Id, NoteTextTypeENUM.Default, content.Order + 1, Content: request.NextText);
 
                             contents.Insert(insertIndex, newText);
 
@@ -346,7 +335,7 @@ namespace BI.services.notes
                                 await baseNoteContentRepository.UpdateRange(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, 
-                                    newText.TextType, newText.HeadingType, newText.Checked, newText.UpdatedAt);
+                                    newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -427,29 +416,13 @@ namespace BI.services.notes
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
-            var typeIsExist = TextNoteTypesDictionary.IsExistValue(request.Type);
-
-            if (request.HeadingType != null)
-            {
-                var headingIsExist = HeadingNoteTypesDictionary.IsExistValue(request.HeadingType);
-                if (!headingIsExist)
-                {
-                    return new OperationResult<Unit>(Success: false, Unit.Value);
-                }
-            }
-
-            if (!typeIsExist)
-            {
-                return new OperationResult<Unit>(Success: false, Unit.Value);
-            }
-
             if (permissions.CanWrite)
             {
                 var content = await textNotesRepository.GetById(request.ContentId);
                 if (content != null)
                 {
-                    content.TextType = request.Type;
-                    content.HeadingType = request.HeadingType;
+                    content.NoteTextTypeId = request.Type;
+                    content.HTypeId = request.HeadingType;
                     content.UpdatedAt = DateTimeOffset.Now;
                     await textNotesRepository.Update(content);
 
@@ -502,8 +475,7 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
-                                    contentPrev.HeadingType, contentPrev.Checked, contentPrev.UpdatedAt);
+                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.NoteTextTypeId, contentPrev.HTypeId, contentPrev.Checked, contentPrev.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -758,17 +730,14 @@ namespace BI.services.notes
                         Name = request.Audio.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await audioNoteRepository.Add(audioNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
                     var result = new AudioNoteDTO(
-                        audioNote.Name, audioNote.AppFileId, file.PathNonPhotoContent, audioNote.Id, 
-                        type, audioNote.UpdatedAt);
+                        audioNote.Name, audioNote.AppFileId, file.PathNonPhotoContent, audioNote.Id, audioNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -818,16 +787,13 @@ namespace BI.services.notes
                         Name = request.Video.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await videoNoteRepository.Add(videoNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, file.PathNonPhotoContent, videoNote.Id,
-                                type, videoNote.UpdatedAt);
+                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, file.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -877,16 +843,13 @@ namespace BI.services.notes
                         Name = request.File.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await documentNoteRepository.Add(documentNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id,
-                                type, documentNote.UpdatedAt);
+                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

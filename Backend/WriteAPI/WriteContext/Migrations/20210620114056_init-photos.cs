@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WriteContext.Migrations
 {
-    public partial class init : Migration
+    public partial class initphotos : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,6 +18,18 @@ namespace WriteContext.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BillingPlans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContentTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContentTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +48,7 @@ namespace WriteContext.Migrations
                 name: "FoldersTypes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -48,7 +60,7 @@ namespace WriteContext.Migrations
                 name: "FontSizes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -57,10 +69,22 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Languages",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -72,12 +96,24 @@ namespace WriteContext.Migrations
                 name: "NotesTypes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NotesTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "NoteTextTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NoteTextTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,7 +132,7 @@ namespace WriteContext.Migrations
                 name: "Themes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -124,10 +160,10 @@ namespace WriteContext.Migrations
                     Name = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PersonalKey = table.Column<string>(type: "text", nullable: true),
-                    LanguageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    LanguageId = table.Column<int>(type: "integer", nullable: false),
                     CurrentBackgroundId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ThemeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FontSizeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ThemeId = table.Column<int>(type: "integer", nullable: false),
+                    FontSizeId = table.Column<int>(type: "integer", nullable: false),
                     BillingPlanId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -197,7 +233,7 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FolderTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FolderTypeId = table.Column<int>(type: "integer", nullable: false),
                     RefTypeId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
@@ -260,7 +296,7 @@ namespace WriteContext.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    NoteTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteTypeId = table.Column<int>(type: "integer", nullable: false),
                     RefTypeId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
@@ -430,11 +466,18 @@ namespace WriteContext.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
+                    ContentTypeId = table.Column<int>(type: "integer", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BaseNoteContents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContents_ContentTypes_ContentTypeId",
+                        column: x => x.ContentTypeId,
+                        principalTable: "ContentTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BaseNoteContents_Notes_NoteId",
                         column: x => x.NoteId,
@@ -670,9 +713,9 @@ namespace WriteContext.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: true),
-                    TextType = table.Column<string>(type: "text", nullable: false),
-                    HeadingType = table.Column<string>(type: "text", nullable: true),
-                    Checked = table.Column<bool>(type: "boolean", nullable: false)
+                    NoteTextTypeId = table.Column<int>(type: "integer", nullable: false),
+                    HTypeId = table.Column<int>(type: "integer", nullable: true),
+                    Checked = table.Column<bool>(type: "boolean", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -681,6 +724,18 @@ namespace WriteContext.Migrations
                         name: "FK_TextNote_BaseNoteContents_Id",
                         column: x => x.Id,
                         principalTable: "BaseNoteContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TextNote_HTypes_HTypeId",
+                        column: x => x.HTypeId,
+                        principalTable: "HTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TextNote_NoteTextTypes_NoteTextTypeId",
+                        column: x => x.NoteTextTypeId,
+                        principalTable: "NoteTextTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -739,9 +794,21 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "MaxSize", "Name" },
                 values: new object[,]
                 {
-                    { 1, 100000000L, "Basic" },
+                    { 3, 1000000000L, "Business" },
                     { 2, 500000000L, "Standart" },
-                    { 3, 1000000000L, "Business" }
+                    { 1, 100000000L, "Basic" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ContentTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 2, "Album" },
+                    { 5, "Video" },
+                    { 4, "Audio" },
+                    { 3, "Document" },
+                    { 1, "Text" }
                 });
 
             migrationBuilder.InsertData(
@@ -750,10 +817,10 @@ namespace WriteContext.Migrations
                 values: new object[,]
                 {
                     { 1, "Text" },
-                    { 2, "Audio" },
                     { 3, "Photo" },
                     { 4, "Video" },
-                    { 5, "Document" }
+                    { 5, "Document" },
+                    { 2, "Audio" }
                 });
 
             migrationBuilder.InsertData(
@@ -761,10 +828,10 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"), "private" },
-                    { new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"), "shared" },
-                    { new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"), "deleted" },
-                    { new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"), "archive" }
+                    { 2, "Shared" },
+                    { 4, "Deleted" },
+                    { 1, "Private" },
+                    { 3, "Archived" }
                 });
 
             migrationBuilder.InsertData(
@@ -772,8 +839,18 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"), "big" },
-                    { new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"), "medium" }
+                    { 1, "Big" },
+                    { 2, "Medium" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "HTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 3, "H3" },
+                    { 2, "H2" },
+                    { 1, "H1" }
                 });
 
             migrationBuilder.InsertData(
@@ -781,9 +858,21 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"), "ukraine" },
-                    { new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"), "russian" },
-                    { new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"), "english" }
+                    { 2, "Ukraine" },
+                    { 1, "English" },
+                    { 3, "Russian" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "NoteTextTypes",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 5, "Checklist" },
+                    { 4, "Numberlist" },
+                    { 3, "Dotlist" },
+                    { 2, "Heading" },
+                    { 1, "Default" }
                 });
 
             migrationBuilder.InsertData(
@@ -791,10 +880,10 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"), "private" },
-                    { new Guid("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"), "shared" },
-                    { new Guid("1f384f3c-1aa8-4664-ac8d-e264e68164dc"), "deleted" },
-                    { new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"), "archive" }
+                    { 2, "Shared" },
+                    { 3, "Archived" },
+                    { 1, "Private" },
+                    { 4, "Deleted" }
                 });
 
             migrationBuilder.InsertData(
@@ -811,8 +900,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"), "light" },
-                    { new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"), "dark" }
+                    { 1, "Dark" },
+                    { 2, "Light" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -834,6 +923,11 @@ namespace WriteContext.Migrations
                 name: "IX_Backgrounds_UserId",
                 table: "Backgrounds",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BaseNoteContents_ContentTypeId",
+                table: "BaseNoteContents",
+                column: "ContentTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BaseNoteContents_NoteId",
@@ -925,6 +1019,16 @@ namespace WriteContext.Migrations
                 name: "IX_ReletatedNoteToInnerNotes_RelatedNoteId",
                 table: "ReletatedNoteToInnerNotes",
                 column: "RelatedNoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TextNote_HTypeId",
+                table: "TextNote",
+                column: "HTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TextNote_NoteTextTypeId",
+                table: "TextNote",
+                column: "NoteTextTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserNoteHistoryManyToMany_NoteHistoryId",
@@ -1085,6 +1189,12 @@ namespace WriteContext.Migrations
                 name: "Labels");
 
             migrationBuilder.DropTable(
+                name: "HTypes");
+
+            migrationBuilder.DropTable(
+                name: "NoteTextTypes");
+
+            migrationBuilder.DropTable(
                 name: "NoteHistories");
 
             migrationBuilder.DropTable(
@@ -1095,6 +1205,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "FoldersTypes");
+
+            migrationBuilder.DropTable(
+                name: "ContentTypes");
 
             migrationBuilder.DropTable(
                 name: "Notes");

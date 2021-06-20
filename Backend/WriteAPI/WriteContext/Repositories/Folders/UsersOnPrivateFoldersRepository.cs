@@ -20,7 +20,6 @@ namespace WriteContext.Repositories.Folders
         {
             return await context.UsersOnPrivateFolders
                 .Include(x => x.User)
-                .Include(x => x.AccessType)
                 .Where(x => x.FolderId == folderId).ToListAsync();
         }
     }

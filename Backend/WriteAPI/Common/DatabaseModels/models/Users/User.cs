@@ -24,7 +24,7 @@ namespace Common.DatabaseModels.models.Users
 
         public string PersonalKey { set; get; }
 
-        public Guid LanguageId { set; get; }
+        public LanguageENUM LanguageId { set; get; }
         public Language Language { set; get; }
 
         public NotificationSetting NotificationSettings { set; get; }
@@ -34,10 +34,10 @@ namespace Common.DatabaseModels.models.Users
         public Guid? CurrentBackgroundId { set; get; }
         public Backgrounds CurrentBackground { set; get; }
 
-        public Guid ThemeId { set; get; }
+        public ThemeENUM ThemeId { set; get; }
         public Theme Theme { set; get; }
 
-        public Guid FontSizeId { set; get; }
+        public FontSizeENUM FontSizeId { set; get; }
         public FontSize FontSize { set; get; }
 
         public List<Folder> Folders { set; get; }

@@ -1,12 +1,10 @@
-﻿using Common.DatabaseModels.models.Systems;
+﻿using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.permissions;
-using Common.Naming;
 using Domain.Queries.permissions;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Folders;
@@ -49,9 +47,9 @@ namespace BI.services.permissions
                     return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: true);
                 }
 
-                switch (note.NoteType.Name)
+                switch (note.NoteTypeId)
                 {
-                    case ModelsNaming.SharedNote:
+                    case NoteTypeENUM.Shared:
                         {
                             switch (note.RefTypeId)
                             {
@@ -101,9 +99,9 @@ namespace BI.services.permissions
                     return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: true);
                 }
 
-                switch (folder.FolderType.Name)
+                switch (folder.FolderTypeId)
                 {
-                    case ModelsNaming.SharedFolder:
+                    case FolderTypeENUM.Shared:
                         {
                             switch (folder.RefTypeId)
                             {

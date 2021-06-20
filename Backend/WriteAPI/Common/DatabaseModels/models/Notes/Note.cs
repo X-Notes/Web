@@ -11,7 +11,7 @@ namespace Common.DatabaseModels.models.Notes
 {
     public class Note : BaseEntity<Guid>
     {
-        public Guid NoteTypeId { set; get; }
+        public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
 
         public RefTypeENUM RefTypeId { set; get; }

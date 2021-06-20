@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DatabaseModels.models.Systems;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ namespace Domain.Commands.users
 {
     public class UpdateFontSizeCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [ValidationGuidAttribute]
-        public Guid Id { set; get; }
-        public UpdateFontSizeCommand(Guid Id, string Email) : base(Email)
+        [Required]
+        public FontSizeENUM Id { set; get; }
+        public UpdateFontSizeCommand(FontSizeENUM Id, string Email) : base(Email)
         {
             this.Id = Id;
         }

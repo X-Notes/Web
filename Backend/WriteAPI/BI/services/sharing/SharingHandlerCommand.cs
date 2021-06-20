@@ -1,15 +1,11 @@
 ﻿using BI.signalR;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Folders;
 using Common.DatabaseModels.models.Notes;
 using Common.DatabaseModels.models.Users;
-using Common.DTO.notifications;
-using Common.Naming;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
 using Domain.Queries.permissions;
 using MediatR;
-using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,11 +69,10 @@ namespace BI.services.sharing
             if (folder != null)
             {
                 folder.RefTypeId = request.RefTypeId;
-                if (folder.FolderType.Name != ModelsNaming.SharedFolder)
+                if (folder.FolderTypeId != FolderTypeENUM.Shared)
                 {
-                    var type = await appRepository.GetFolderTypeByName(ModelsNaming.SharedFolder);
                     var foldersList = new List<Folder>() { folder };
-                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, type.Id);
+                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, FolderTypeENUM.Shared);
                 }
                 else
                 {
@@ -99,11 +94,10 @@ namespace BI.services.sharing
             if (note != null)
             {
                 note.RefTypeId = request.RefTypeId;
-                if (note.NoteType.Name != ModelsNaming.SharedNote)
+                if (note.NoteTypeId != NoteTypeENUM.Shared)
                 {
-                    var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
                     var notesList = new List<Note>() { note };
-                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, type.Id);
+                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, NoteTypeENUM.Shared);
                 }
                 else
                 {

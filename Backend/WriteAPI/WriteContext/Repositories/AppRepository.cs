@@ -1,4 +1,6 @@
-﻿using Common.DatabaseModels.models.Plan;
+﻿using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Plan;
 using Common.DatabaseModels.models.Systems;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

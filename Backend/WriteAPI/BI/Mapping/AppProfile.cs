@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
 using Common.DatabaseModels.models.Systems;
 using Common.DTO.app;
 

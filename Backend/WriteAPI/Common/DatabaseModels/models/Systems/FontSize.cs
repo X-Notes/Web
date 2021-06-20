@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Systems
 {
-    public class FontSize : BaseEntity<Guid>
+    public class FontSize : BaseEntity<FontSizeENUM>
     {
         public string Name { set; get; }
         public List<User> Users { set; get; }
