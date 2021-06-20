@@ -25,25 +25,27 @@
     </div>
     <div class="content-note">
       <ng-container *ngFor="let content of note.contents">
-        <div [ngSwitch]="content.type">
-          <div *ngSwitchCase="contentType.DEFAULT" class="text">
-            <p>{{content.content}}</p>
-          </div>
-          <div *ngSwitchCase="contentType.DOTLIST" class="dotlist">
-            <p>{{content.content}}</p>
-          </div>
-          <div *ngSwitchCase="contentType.NUMBERLIST" class="numberList">
-            <p>{{content.content}}</p>
-          </div>
-          <div *ngSwitchCase="contentType.CHECKLIST" class="checkList">
-            <p>{{content.content}}</p>
-          </div>
-          <div *ngSwitchCase="contentType.HEADING" class="numberList">
-            <p>{{content.content}}</p>
-          </div>
-          <div *ngSwitchCase="contentType.ALBUM" class="album">
+        <div [ngSwitch]="content.typeId">
+          <ng-container *ngSwitchCase="contentType.Text">
+            <div *ngIf="content.noteTextTypeId === textType.Default" class="text">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Dotlist" class="dotlist">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Numberlist" class="numberList">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Checklist" class="checkList">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Heading" class="numberList">
+              <p>{{content.content}}</p>
+            </div>
+          </ng-container>
+          <div *ngSwitchCase="contentType.NoteAlbum" class="album">
             <ng-container *ngFor="let item of content.photos">
-              <img [src]="item.id | getImage" />
+              <img [src]="item.photoPath | getImage: (user$ | async).id" />
             </ng-container>
           </div>
           <div *ngSwitchDefault>Default</div>

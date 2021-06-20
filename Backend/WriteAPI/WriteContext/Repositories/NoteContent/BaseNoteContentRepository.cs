@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.NoteContent
 {
-    public class BaseNoteContentRepository : Repository<BaseNoteContent>
+    public class BaseNoteContentRepository : Repository<BaseNoteContent, Guid>
     {
         public BaseNoteContentRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -20,6 +20,9 @@ namespace WriteContext.Repositories.NoteContent
         {
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
@@ -30,8 +33,22 @@ namespace WriteContext.Repositories.NoteContent
         {
             return await entities
                 .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
                 .Cast<T>()
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public async Task<List<BaseNoteContent>> GetContentByNoteIds(List<Guid> ids)
+        {
+            return await entities
+                .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudioNote).AppFile)
+                .Include(x => (x as DocumentNote).AppFile)
+                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
+        }
+
     }
 }

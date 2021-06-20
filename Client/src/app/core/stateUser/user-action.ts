@@ -1,8 +1,8 @@
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
-import { Theme } from 'src/app/shared/models/Theme';
-import { FontSize } from 'src/app/shared/models/FontSize';
-import { Background } from '../models/background';
-import { User } from '../models/user';
+import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { Background } from '../models/Background';
+import { User } from '../models/User';
 
 export class Login {
   static type = '[User] Login User';
@@ -17,19 +17,19 @@ export class Logout {
 export class ChangeTheme {
   static type = '[User] Change theme';
 
-  constructor(public theme: Theme) {}
+  constructor(public theme: ThemeENUM) {}
 }
 
 export class ChangeLanguage {
   static type = '[User] Change Language';
 
-  constructor(public language: LanguageDTO) {}
+  constructor(public language: LanguagesENUM) {}
 }
 
 export class ChangeFontSize {
   static type = '[User] Change FontSize';
 
-  constructor(public fontSize: FontSize) {}
+  constructor(public fontSize: FontSizeENUM) {}
 }
 
 export class SetCurrentBackground {
@@ -52,4 +52,8 @@ export class UpdateUserPhoto {
   static type = '[User] update userPhoto';
 
   constructor(public photo: FormData) {}
+}
+
+export class LoadUsedDiskSpace {
+  static type = '[User] load used disk space';
 }

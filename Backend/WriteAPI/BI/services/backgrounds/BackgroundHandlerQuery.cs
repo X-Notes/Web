@@ -29,7 +29,6 @@ namespace BI.services.backgrounds
             var user = await userRepository.GetUserWithBackgrounds(request.Email);
             if (user != null)
             {
-                user.Backgrounds.Reverse();
                 return mapper.Map<List<BackgroundDTO>>(user.Backgrounds);
             }
             return new List<BackgroundDTO>();

@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
-import { ContentType } from '../models/ContentMode';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { BaseText, ContentTypeENUM } from '../models/ContentModel';
+import { ParentInteraction } from '../models/ParentInteraction.interface';
 import { SelectionService } from '../selection.service';
 
 @Directive({
@@ -52,11 +52,14 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
     }
   }
 
-  getCurrentItem() {
+  getCurrentItem(): BaseText {
     for (const item of this.appMenuSelection) {
       const contentItem = item.getContent();
-      if (contentItem.type !== ContentType.ALBUM && item.getNative() === document.activeElement) {
-        return contentItem;
+      if (
+        contentItem.typeId === ContentTypeENUM.Text &&
+        item.getNative() === document.activeElement
+      ) {
+        return contentItem as BaseText;
       }
     }
     throw new Error('Element was not founded');

@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
 {
-    public class UsersOnPrivateNotesRepository : Repository<UserOnPrivateNotes>
+    public class UsersOnPrivateNotesRepository : Repository<UserOnPrivateNotes, Guid>
     {
         public UsersOnPrivateNotesRepository(WriteContextDB contextDB)
             :base(contextDB)
@@ -20,7 +20,8 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.UserOnPrivateNotes
                 .Include(x => x.User)
-                .Include(x => x.AccessType)
+                .ThenInclude(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .Where(x => x.NoteId == noteId).ToListAsync();
         }
     }

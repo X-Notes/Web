@@ -40,6 +40,13 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(new GetShortUser(currentUserEmail));
         }
 
+        [HttpGet("memory")]
+        public async Task<GetUserMemoryResponse> GetUsedDiskSpace()
+        {
+            var currentUserEmail = this.GetUserEmail();
+            return await _mediator.Send(new GetUserMemory(currentUserEmail));
+        }
+
         [HttpPut("username")]
         public async Task UpdateMainInformation([FromBody]UpdateMainUserInfoCommand info)
         {

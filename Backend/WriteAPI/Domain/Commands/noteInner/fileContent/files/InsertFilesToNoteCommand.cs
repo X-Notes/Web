@@ -14,10 +14,13 @@ namespace Domain.Commands.noteInner.fileContent.files
     {
         [Required]
         public IFormFile File { set; get; }
+
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public InsertFilesToNoteCommand(IFormFile File, Guid NoteId, Guid ContentId)
         {
             this.File = File;

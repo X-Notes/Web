@@ -6,7 +6,7 @@ import {
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { LabelStore } from '../state/labels-state';
 
 @Component({
@@ -26,7 +26,7 @@ export class LabelsComponent {
   public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   public photoError = false;
 

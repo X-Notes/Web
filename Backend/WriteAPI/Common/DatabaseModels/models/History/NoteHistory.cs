@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.History
 {
-    public class NoteHistory : BaseEntity
+    public class NoteHistory : BaseEntity<Guid>
     {
         public Guid NoteId { set; get; }
         public Note Note { set; get; }

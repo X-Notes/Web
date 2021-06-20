@@ -9,12 +9,12 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models.Notes
 {
-    public class Note : BaseEntity
+    public class Note : BaseEntity<Guid>
     {
-        public Guid NoteTypeId { set; get; }
+        public NoteTypeENUM NoteTypeId { set; get; }
         public NoteType NoteType { set; get; }
 
-        public Guid RefTypeId { set; get; }
+        public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
         public string Title { set; get; }

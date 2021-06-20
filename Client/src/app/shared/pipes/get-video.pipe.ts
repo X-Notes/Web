@@ -5,10 +5,10 @@ import { environment } from 'src/environments/environment';
   name: 'getVideo',
 })
 export class GetVideoPipe implements PipeTransform {
-  transform = (url: string) => {
-    if (url) {
-      return `${environment.writeAPI}/api/Files/video/${url}`;
+  transform = (url: string, prefix: string) => {
+    if (environment.production) {
+      return new Error('no implimented');
     }
-    return null;
+    return `${environment.storage}/${prefix}/${url}`;
   };
 }

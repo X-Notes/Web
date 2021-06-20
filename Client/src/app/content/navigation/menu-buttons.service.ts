@@ -5,8 +5,6 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
-import { FolderType } from 'src/app/shared/models/folderType';
-import { NoteType } from 'src/app/shared/models/noteType';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -31,7 +29,7 @@ import {
   ChangeTypeFullNote,
   BaseChangeTypeSmallNote,
 } from '../notes/state/notes-actions';
-import { MenuItem } from './menu_item';
+import { MenuItem } from './MenuItem';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from './snack-bar-wrapper.service';
 
@@ -610,9 +608,9 @@ export class MenuButtonsService {
   ) {}
 
   // eslint-disable-next-line class-methods-use-this
-  getRevertActionNotes(type: NoteType, ids): BaseChangeTypeSmallNote {
+  getRevertActionNotes(type: NoteTypeENUM, ids): BaseChangeTypeSmallNote {
     const types = NoteTypeENUM;
-    switch (type.name) {
+    switch (type) {
       case types.Private: {
         const obj = new MakePrivateNotes();
         obj.typeNote = type;
@@ -640,8 +638,8 @@ export class MenuButtonsService {
     }
   }
 
-  getFolderMenuByFolderType(type: FolderType) {
-    switch (type.name) {
+  getFolderMenuByFolderType(type: FolderTypeENUM) {
+    switch (type) {
       case FolderTypeENUM.Private: {
         return this.foldersItemsPrivate;
       }
@@ -661,9 +659,9 @@ export class MenuButtonsService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getRevertActionFolder(type: FolderType, ids): BaseChangeTypeSmallFolder {
+  getRevertActionFolder(type: FolderTypeENUM, ids): BaseChangeTypeSmallFolder {
     const types = FolderTypeENUM;
-    switch (type.name) {
+    switch (type) {
       case types.Private: {
         const obj = new MakePrivateFolders();
         obj.typeFolder = type;
@@ -691,27 +689,20 @@ export class MenuButtonsService {
     }
   }
 
-  changeFolderType(changeAction: BaseChangeTypeSmallFolder, folderType: FolderTypeENUM) {
-    let prevType: FolderType;
+  changeFolderType(changeAction: BaseChangeTypeSmallFolder, typeTo: FolderTypeENUM) {
+    let prevType: FolderTypeENUM;
     let ids;
 
     if (this.store.selectSnapshot(AppStore.isFolderInner)) {
       const folder = this.store.selectSnapshot(FolderStore.full);
       ids = [folder.id];
 
-      prevType = folder.folderType;
-
-      const typeTo = this.store
-        .selectSnapshot(AppStore.getFolderTypes)
-        .find((x) => x.name === folderType);
+      prevType = folder.folderTypeId;
 
       this.store.dispatch(new ChangeTypeFullFolder(typeTo));
     } else {
       ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      const currentType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      prevType = this.store
-        .selectSnapshot(AppStore.getFolderTypes)
-        .find((x) => x.name === currentType);
+      prevType = this.store.selectSnapshot(AppStore.getTypeFolder);
     }
 
     // eslint-disable-next-line no-param-reassign
@@ -724,26 +715,19 @@ export class MenuButtonsService {
     return this.getRevertActionFolder(prevType, ids);
   }
 
-  changeNoteType(changeAction: BaseChangeTypeSmallNote, noteType: NoteTypeENUM) {
-    let prevType: NoteType;
+  changeNoteType(changeAction: BaseChangeTypeSmallNote, typeTo: NoteTypeENUM) {
+    let prevType: NoteTypeENUM;
     let ids;
 
     if (this.store.selectSnapshot(AppStore.isNoteInner)) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       ids = [note.id];
 
-      prevType = note.noteType;
+      prevType = note.noteTypeId;
 
-      const type = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === noteType);
-
-      this.store.dispatch(new ChangeTypeFullNote(type));
+      this.store.dispatch(new ChangeTypeFullNote(typeTo));
     } else {
-      const currentType = this.store.selectSnapshot(AppStore.getTypeNote);
-      prevType = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === currentType);
+      prevType= this.store.selectSnapshot(AppStore.getTypeNote);
       ids = this.store.selectSnapshot(NoteStore.selectedIds);
     }
 
@@ -757,11 +741,11 @@ export class MenuButtonsService {
     return this.getRevertActionNotes(prevType, ids);
   }
 
-  deletePermSnackbar(language: string, type: string, isMany: boolean) {
+  deletePermSnackbar(language: LanguagesENUM, type: string, isMany: boolean) {
     // TODO Move to snackbar service
     let snackbarRef;
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(
             isMany ? `Notes deleted permanently` : `Note deleted permanently`,
@@ -775,7 +759,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(
             isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`,
@@ -789,7 +773,7 @@ export class MenuButtonsService {
         }
         break;
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
           snackbarRef = this.snackService.openSnackBar(
             isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`,
@@ -814,42 +798,37 @@ export class MenuButtonsService {
 
   deleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
-    const type = this.store
-      .selectSnapshot(AppStore.getNoteTypes)
-      .find((x) => x.name === NoteTypeENUM.Deleted);
+
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids = [note.id];
-      this.store.dispatch(new DeleteNotesPermanently(ids, type));
+      this.store.dispatch(new DeleteNotesPermanently(ids, NoteTypeENUM.Deleted));
     } else {
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new DeleteNotesPermanently(ids, type));
+      this.store.dispatch(new DeleteNotesPermanently(ids, NoteTypeENUM.Deleted));
       const language = this.store.selectSnapshot(UserStore.getUserLanguage);
 
       if (isInnerNote) {
         const note = this.store.selectSnapshot(NoteStore.oneFull);
         const idsInner = [note.id];
-        this.deletePermSnackbar(language.name, 'Note', false);
-        this.store.dispatch(new DeleteNotesPermanently(idsInner, type));
+        this.deletePermSnackbar(language, 'Note', false);
+        this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted));
       } else {
         const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
         const isMany = idsOuter.length > 1;
-        this.deletePermSnackbar(language.name, 'Note', isMany);
-        this.store.dispatch(new DeleteNotesPermanently(idsOuter, type));
+        this.deletePermSnackbar(language, 'Note', isMany);
+        this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted));
       }
     }
   }
 
   deleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    const type = this.store
-      .selectSnapshot(AppStore.getFolderTypes)
-      .find((x) => x.name === FolderTypeENUM.Deleted);
-    this.store.dispatch(new DeleteFoldersPermanently(ids, type));
+    this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted));
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1;
-    this.deletePermSnackbar(language.name, 'Folder', isMany);
-    this.store.dispatch(new DeleteFoldersPermanently(ids, type));
+    this.deletePermSnackbar(language, 'Folder', isMany);
+    this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted));
   }
 
   setItems(newItems: MenuItem[]) {
@@ -862,14 +841,11 @@ export class MenuButtonsService {
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids = [note.id];
-      this.store.dispatch(new CopyNotes(note.noteType, ids));
+      this.store.dispatch(new CopyNotes(note.noteTypeId, ids));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const type = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === noteType);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(type, ids));
+      this.store.dispatch(new CopyNotes(noteType, ids));
     }
   }
 
@@ -878,14 +854,11 @@ export class MenuButtonsService {
     if (isInnerFolder) {
       const folder = this.store.selectSnapshot(FolderStore.full);
       const ids = [folder.id];
-      this.store.dispatch(new CopyFolders(folder.folderType, ids));
+      this.store.dispatch(new CopyFolders(folder.folderTypeId, ids));
     } else {
       const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
-      const type = this.store
-        .selectSnapshot(AppStore.getFolderTypes)
-        .find((x) => x.name === folderType);
       const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-      this.store.dispatch(new CopyFolders(type, ids));
+      this.store.dispatch(new CopyFolders(folderType, ids));
     }
   }
 }

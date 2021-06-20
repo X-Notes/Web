@@ -8,8 +8,8 @@ import * as Muuri from 'muuri';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
 import { Order, OrderEntity } from './order.service';
 import { PersonalizationService } from './personalization.service';
-import { NoteType } from '../models/noteType';
-import { FolderType } from '../models/folderType';
+import { FolderTypeENUM } from '../enums/FolderTypesEnum';
+import { NoteTypeENUM } from '../enums/NoteTypesEnum';
 
 @Injectable()
 export class MurriService {
@@ -77,7 +77,7 @@ export class MurriService {
 
   /// NOTE MURRI
 
-  initMurriNoteAsync(type: NoteType, isDragEnabled: boolean) {
+  initMurriNoteAsync(type: NoteTypeENUM, isDragEnabled: boolean) {
     return new Promise<boolean>((resolve) =>
       setTimeout(() => {
         this.initMurriNote(type, isDragEnabled);
@@ -86,7 +86,7 @@ export class MurriService {
     );
   }
 
-  initMurriNote(type: NoteType, isDragEnabled: boolean) {
+  initMurriNote(type: NoteTypeENUM, isDragEnabled: boolean) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
@@ -131,7 +131,7 @@ export class MurriService {
   /// ///////////////////////////////////
 
   /// FOLDERS
-  initMurriFolder(type: FolderType, isDragEnabled: boolean = true) {
+  initMurriFolder(type: FolderTypeENUM, isDragEnabled: boolean = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {

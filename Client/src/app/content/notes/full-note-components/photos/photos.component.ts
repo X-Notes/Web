@@ -14,10 +14,10 @@ import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../api-notes.service';
-import { Photo, Album } from '../../models/ContentMode';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { RemovePhotoFromAlbum } from '../../models/removePhotoFromAlbum';
-import { UploadPhotosToAlbum } from '../../models/uploadPhotosToAlbum';
+import { Photo, Album } from '../../models/ContentModel';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
+import { RemovePhotoFromAlbum } from '../../models/RemovePhotoFromAlbum';
+import { UploadPhotosToAlbum } from '../../models/UploadPhotosToAlbum';
 import { SelectionService } from '../../selection.service';
 @Component({
   selector: 'app-photos',
@@ -132,7 +132,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     for (const photo of this.content.photos) {
       photo.loaded = false;
     }
-
+    console.log(this.content.photos[0].photoFromBig);
     this.changeSizeAlbumHalder
       .pipe(takeUntil(this.destroy), debounceTime(500)) // TODO export const
       .subscribe(async (values) => {

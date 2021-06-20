@@ -44,7 +44,7 @@ namespace BI.services.search
 
         public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearch request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
             var allNotes = await searchRepository.GetNotesByUserIdSearch(user.Id);
 

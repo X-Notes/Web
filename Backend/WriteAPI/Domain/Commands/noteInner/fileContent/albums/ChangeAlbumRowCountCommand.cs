@@ -10,8 +10,10 @@ namespace Domain.Commands.noteInner.fileContent.albums
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         [Range(1, 4)]
         public int Count { set; get; }
     }

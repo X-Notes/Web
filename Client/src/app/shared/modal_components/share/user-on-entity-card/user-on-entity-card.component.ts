@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invitedUsersToNote';
+import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/InvitedUsersToNote';
 import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 
 @Component({

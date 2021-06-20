@@ -9,8 +9,10 @@ namespace Domain.Commands.noteInner.fileContent.albums
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public RemoveAlbumCommand(Guid NoteId, Guid ContentId, string Email)
         {
             this.NoteId = NoteId;

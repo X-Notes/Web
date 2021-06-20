@@ -1,36 +1,27 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
-import { Theme } from 'src/app/shared/models/Theme';
-import { FontSize } from 'src/app/shared/models/FontSize';
-import { NoteType } from 'src/app/shared/models/noteType';
-import { FolderType } from 'src/app/shared/models/folderType';
-import { GeneralApp } from 'src/app/shared/models/generalApp';
-import { EntityRef } from 'src/app/shared/models/entityRef';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { AuthService } from '../auth.service';
-import { AppServiceAPI } from '../app.service';
+
 import {
   UpdateRoute,
   SetToken,
   TokenSetNoUpdate,
-  LoadGeneralEntites,
   LoadNotifications,
   ReadAllNotifications,
   ReadNotification,
   NewNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
-import { AppNotification } from '../models/app-notification';
+import { AppNotification } from '../models/AppNotification';
 
 interface AppState {
   routing: EntityType;
   token: string;
   tokenUpdated: boolean;
-  generalApp: GeneralApp;
   notifications: AppNotification[];
 }
 
@@ -40,24 +31,15 @@ interface AppState {
     routing: null,
     token: null,
     tokenUpdated: false,
-    generalApp: null,
     notifications: [],
   },
 })
 @Injectable()
 export class AppStore {
-  constructor(
-    authService: AuthService, // DONT DELETE THIS ROW
-    public appService: AppServiceAPI,
-    public notificationService: NotificationServiceAPI,
-  ) {
+  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
     authService.init();
   }
 
-  @Selector()
-  static getLanguages(state: AppState): LanguageDTO[] {
-    return state.generalApp.languages;
-  }
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {
@@ -69,6 +51,11 @@ export class AppStore {
   static getNewNotificationsLength(state: AppState): number {
     const notifications = state.notifications.filter((notif) => !notif.isRead);
     return notifications.length;
+  }
+
+  @Selector()
+  static appLoaded(state: AppState): boolean {
+    return state.tokenUpdated;
   }
 
   @Selector()
@@ -89,38 +76,8 @@ export class AppStore {
   }
 
   @Selector()
-  static getThemes(state: AppState): Theme[] {
-    return state.generalApp.themes;
-  }
-
-  @Selector()
-  static getFontSizes(state: AppState): FontSize[] {
-    return state.generalApp.fontSizes;
-  }
-
-  @Selector()
-  static getNoteTypes(state: AppState): NoteType[] {
-    return state.generalApp.noteTypes;
-  }
-
-  @Selector()
-  static getFolderTypes(state: AppState): FolderType[] {
-    return state.generalApp.folderTypes;
-  }
-
-  @Selector()
-  static getRefs(state: AppState): EntityRef[] {
-    return state.generalApp.refs;
-  }
-
-  @Selector()
   static getToken(state: AppState): string {
     return state.token;
-  }
-
-  @Selector()
-  static appLoaded(state: AppState): boolean {
-    return state.tokenUpdated && state.generalApp !== null;
   }
 
   @Selector()
@@ -360,12 +317,6 @@ export class AppStore {
   // eslint-disable-next-line class-methods-use-this
   setNoUpdateToken({ patchState }: StateContext<AppState>) {
     patchState({ token: null, tokenUpdated: false });
-  }
-
-  @Action(LoadGeneralEntites)
-  async loadGeneralEntites({ patchState }: StateContext<AppState>) {
-    const general = await this.appService.getLoadGeneral().toPromise();
-    patchState({ generalApp: general });
   }
 
   @Action(LoadNotifications)

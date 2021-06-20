@@ -46,6 +46,7 @@ namespace WriteAPI
                 Credential = GoogleCredential.FromFile("noots-storm-firebase.json")
             });
 
+            services.AzureConfig(Configuration);
             services.JWT(Configuration);
                 
             services.AddAutoMapper(typeof(UserProfile).Assembly);
@@ -60,6 +61,7 @@ namespace WriteAPI
             services.Mediatr();
             services.DataBase(Configuration);
             services.BI();
+            services.FileStorage();
 
             services.AddMemoryCache();
 
@@ -68,6 +70,8 @@ namespace WriteAPI
             services.AddHostedService<MLHosted>();
 
             services.AddHttpClient();
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +91,16 @@ namespace WriteAPI
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseRouting();
             app.UseCors("MyPolicy");

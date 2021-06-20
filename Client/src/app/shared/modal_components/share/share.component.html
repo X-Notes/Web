@@ -83,16 +83,16 @@
               />
               <div
                 class="dropdown-wrapper"
-                *ngIf="currentFolder?.folderType.name.toLowerCase() === folderType.Shared && currentWindowType === windowType.Folder"
+                *ngIf="currentFolder?.folderTypeId === folderType.Shared && currentWindowType === windowType.Folder"
               >
                 <app-select
                   class="dropdown-button"
                   [translate]="'modal.ShareModal'"
-                  [selectValue]="currentFolder?.refType.name"
+                  [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
                   (selectValueChange)="changeRefTypeFolder($event)"
                 >
                   <app-select-option
-                    *ngFor="let item of [refType.viewer, refType.editor]"
+                    *ngFor="let item of [refType.Viewer, refType.Editor]"
                     [value]="item"
                   >
                     {{ ('modal.ShareModal.' + item) | translate }}
@@ -101,16 +101,16 @@
               </div>
               <div
                 class="dropdown-wrapper"
-                *ngIf="currentNote?.noteType.name === noteType.Shared && currentWindowType === windowType.Note"
+                *ngIf="currentNote?.noteTypeId === noteType.Shared && currentWindowType === windowType.Note"
               >
                 <app-select
                   class="dropdown-button"
                   [translate]="'modal.ShareModal'"
-                  [selectValue]="currentNote?.refType.name"
+                  [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
                   (selectValueChange)="changeRefTypeNote($event)"
                 >
                   <app-select-option
-                    *ngFor="let item of [refType.viewer, refType.editor]"
+                    *ngFor="let item of [refType.Viewer, refType.Editor]"
                     [value]="item"
                   >
                     {{ ('modal.ShareModal.' + item) | translate }}
@@ -133,22 +133,22 @@
               >
                 <app-toggle-text
                   on
-                  [color]="(theme$ | async).name === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
+                  [color]="(theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
                 >
                 <app-toggle-text
                   off
-                  [color]="(theme$ | async).name === themes.Dark && isSharedButtonActive ? '#202020' : ''"
+                  [color]="(theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
                 >
               </app-button-toggle>
               <div class="toggle-description">
-                <p *ngIf="currentNote?.noteType !== noteType.Shared">
+                <p *ngIf="currentNote?.noteTypeId !== noteType.Shared">
                   Anyone on the internet with this links
                 </p>
-                <p *ngIf="currentNote?.noteType === noteType.Shared">
+                <p *ngIf="currentNote?.noteTypeId === noteType.Shared">
                   Only people added can open with this link
                 </p>
               </div>
@@ -162,22 +162,22 @@
               >
                 <app-toggle-text
                   on
-                  [color]="(theme$ | async).name === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
+                  [color]="(theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
                 >
                 <app-toggle-text
                   off
-                  [color]="(theme$ | async).name === themes.Dark && isSharedButtonActive ? '#202020' : ''"
+                  [color]="(theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''"
                 >
                   {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
                 >
               </app-button-toggle>
               <div class="toggle-description">
-                <p *ngIf="currentFolder?.folderType !== folderType.Shared">
+                <p *ngIf="currentFolder?.folderTypeId !== folderType.Shared">
                   Anyone on the internet with this links
                 </p>
-                <p *ngIf="currentFolder?.folderType === folderType.Shared">
+                <p *ngIf="currentFolder?.folderTypeId === folderType.Shared">
                   Only people added can open with this link
                 </p>
               </div>
@@ -247,11 +247,11 @@
                   <app-select
                     class="dropdown-button"
                     [translate]="'modal.ShareModal'"
-                    [selectValue]="currentNote?.refType.name"
+                    [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
                     (selectValueChange)="refTypeNotification($event)"
                   >
                     <app-select-option
-                      *ngFor="let item of [refType.viewer, refType.editor]"
+                      *ngFor="let item of [refType.Viewer, refType.Editor]"
                       [value]="item"
                     >
                       {{ ('modal.ShareModal.' + item) | translate }}
@@ -282,7 +282,7 @@
                     alt="user image"
                     *ngIf="!user.noPhoto"
                     (error)="user.noPhoto = true"
-                    [src]="user.photoId | getImage"
+                    [src]="user.photoPath | getImage: user.id"
                   />
                   <div *ngIf="user.noPhoto" class="no-photo">
                     <mat-icon svgIcon="people" [inline]="true"></mat-icon>

@@ -1,4 +1,7 @@
-﻿using Common.DatabaseModels.models.Systems;
+﻿using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Plan;
+using Common.DatabaseModels.models.Systems;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -41,6 +44,16 @@ namespace WriteContext.Repositories
         public async Task<Theme> GetThemeByName(string name)
         {
             return await contextDB.Themes.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<List<BillingPlan>> GetBillingPlans()
+        {
+            return await contextDB.BillingPlans.ToListAsync();
+        }
+
+        public async Task<BillingPlan> GetBillingPlanByName(string name)
+        {
+            return await contextDB.BillingPlans.FirstOrDefaultAsync(x => x.Name == name);
         }
 
         public async Task<List<NoteType>> GetNoteTypes()

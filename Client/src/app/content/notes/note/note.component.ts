@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { SmallNote } from '../models/smallNote';
-import { ContentType } from '../models/ContentMode';
+import { SmallNote } from '../models/SmallNote';
+import { ContentTypeENUM } from '../models/ContentModel';
 
 @Component({
   selector: 'app-note',
@@ -18,7 +18,7 @@ export class NoteComponent {
 
   fontSize = FontSizeENUM;
 
-  contentType = ContentType;
+  contentType = ContentTypeENUM;
 
   constructor(public pService: PersonalizationService) {}
 

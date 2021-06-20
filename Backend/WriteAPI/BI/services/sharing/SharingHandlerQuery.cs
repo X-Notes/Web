@@ -41,7 +41,7 @@ namespace BI.services.sharing
 
         public async Task<List<InvitedUsersToFoldersOrNote>> Handle(GetUsersOnPrivateNote request, CancellationToken cancellationToken)
         {
-            var users = await this.usersOnPrivateNotesRepository.GetByNoteIdUserOnPrivateNote(request.NoteId);
+            var users = await usersOnPrivateNotesRepository.GetByNoteIdUserOnPrivateNote(request.NoteId);
             return this.mapper.Map<List<InvitedUsersToFoldersOrNote>>(users);
         }
 

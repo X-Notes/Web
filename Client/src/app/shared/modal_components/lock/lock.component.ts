@@ -6,8 +6,8 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { FullNote } from 'src/app/content/notes/models/fullNote';
-import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { FullNote } from 'src/app/content/notes/models/FullNote';
+import { SmallNote } from 'src/app/content/notes/models/SmallNote';
 import { ChangeIsLockedFullNote, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -184,7 +184,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = false;
         this.store.dispatch(new ChangeIsLockedFullNote(false));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
       return;
@@ -195,8 +195,8 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.fullNote };
         updatedNote.isLocked = true;
         this.store.dispatch(new ChangeIsLockedFullNote(true));
-        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteType.name));
-        const route = this.fullNote.noteType.name;
+        this.store.dispatch(new UpdateOneNote(updatedNote as SmallNote, updatedNote.noteTypeId));
+        const route = this.fullNote.noteTypeId;
         if (route && route !== NoteTypeENUM.Private) {
           this.router.navigate([`notes/${route}`]);
         } else {
@@ -214,7 +214,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = false;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
       return;
@@ -231,7 +231,7 @@ export class LockComponent implements OnInit, OnDestroy {
         const updatedNote = { ...this.note };
         updatedNote.isLocked = true;
         this.router.navigate([`notes/${this.note.id}`]);
-        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteType.name));
+        this.store.dispatch(new UpdateOneNote(updatedNote, updatedNote.noteTypeId));
         this.dialogRef.close();
       }
     }

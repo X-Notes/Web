@@ -81,13 +81,10 @@ export class LabelComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateLabelFullNote(this.label, this.isSelected));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const type = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === noteType);
       if (!this.isSelected) {
-        this.store.dispatch(new AddLabelOnNote(this.label, type, ids));
+        this.store.dispatch(new AddLabelOnNote(this.label, noteType, ids));
       } else {
-        this.store.dispatch(new RemoveLabelFromNote(this.label, type, ids));
+        this.store.dispatch(new RemoveLabelFromNote(this.label, noteType, ids));
       }
     }
   }

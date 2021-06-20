@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { User } from './models/user';
-import { ShortUser } from './models/short-user';
-import { AnswerChangePhoto } from './models/asnwer-change-photo';
+import { User } from './models/User';
+import { ShortUser } from './models/ShortUser';
+import { AnswerChangePhoto } from './models/AsnwerChangePhoto';
+import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
+import { ThemeENUM } from '../shared/enums/ThemeEnum';
+import { FontSizeENUM } from '../shared/enums/FontSizeEnum';
+import { LanguagesENUM } from '../shared/enums/LanguagesENUM';
 
 export interface Token {
   token: string;
@@ -32,21 +36,25 @@ export class UserAPIService {
     return this.httpClient.get<ShortUser>(`${environment.writeAPI}/api/user/short`);
   }
 
-  changeTheme(id: string) {
+  getMemory() {
+    return this.httpClient.get<UserUsedDiskSpace>(`${environment.writeAPI}/api/user/memory`);
+  }
+
+  changeTheme(id: ThemeENUM) {
     const obj = {
       id,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/user/theme`, obj);
   }
 
-  changeFontSize(id: string) {
+  changeFontSize(id: FontSizeENUM) {
     const obj = {
       id,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/user/font`, obj);
   }
 
-  changeLanguage(id: string) {
+  changeLanguage(id: LanguagesENUM) {
     const obj = {
       id,
     };

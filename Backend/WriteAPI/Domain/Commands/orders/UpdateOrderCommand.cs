@@ -10,10 +10,12 @@ namespace Domain.Commands.orders
 {
     public class UpdateOrderCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredEnumField(ErrorMessage = "Order type is required.")]
         public OrderEntity OrderEntity { set; get; }
+
         [Required]
         public int Position { set; get; }
+
         [ValidationGuidAttribute]
         public Guid EntityId { set; get; }
     }

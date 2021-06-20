@@ -31,7 +31,7 @@ namespace WriteAPI.Controllers
         [HttpGet]
         public async Task<IEnumerable<NotificationDTO>> GetNotifications()
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
             if(user != null)
             {
                 var notifs = await this.notificationRepository.GetByUserOrdered(user.Id);
@@ -43,7 +43,7 @@ namespace WriteAPI.Controllers
         [HttpGet("read/all")]
         public async Task<IActionResult> ReadAllNotifications()
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
             if (user != null)
             {
                 var notifs = await this.notificationRepository
@@ -58,10 +58,10 @@ namespace WriteAPI.Controllers
         [HttpGet("read/{id}")]
         public async Task<IActionResult> ReadAllNotifications(Guid id)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == this.GetUserEmail());
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
             if (user != null)
             {
-                var notif = await notificationRepository.FirstOrDefault(x => x.UserToId == user.Id && x.Id == id);
+                var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == user.Id && x.Id == id);
                 notif.IsRead = true;
                 await notificationRepository.Update(notif);
                 return Ok();

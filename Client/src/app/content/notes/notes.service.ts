@@ -16,7 +16,7 @@ import {
 } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/updateLabels';
 import { NoteStore } from './state/notes-state';
-import { SmallNote } from './models/smallNote';
+import { SmallNote } from './models/SmallNote';
 import { UpdateColor } from './state/updateColor';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 
@@ -62,10 +62,7 @@ export class NotesService implements OnDestroy {
           this.murriService.grid.destroy();
           this.notes = this.allNotes;
           const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-          const type = this.store
-            .selectSnapshot(AppStore.getNoteTypes)
-            .find((z) => z.name === roadType);
-          await this.murriService.initMurriNoteAsync(type, true);
+          await this.murriService.initMurriNoteAsync(roadType, true);
           await this.murriService.setOpacityFlagAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
@@ -121,10 +118,7 @@ export class NotesService implements OnDestroy {
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        const type = this.store
-          .selectSnapshot(AppStore.getNoteTypes)
-          .find((x) => x.name === noteType);
-        this.murriService.initMurriNote(type, !this.isFiltedMode);
+        this.murriService.initMurriNote(noteType, !this.isFiltedMode);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
@@ -134,10 +128,7 @@ export class NotesService implements OnDestroy {
   murriInitialiseShared(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        const type = this.store
-          .selectSnapshot(AppStore.getNoteTypes)
-          .find((x) => x.name === noteType);
-        this.murriService.initMurriNote(type, false);
+        this.murriService.initMurriNote(noteType, false);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
@@ -145,11 +136,10 @@ export class NotesService implements OnDestroy {
   }
 
   async loadNotes(typeENUM: NoteTypeENUM) {
-    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const type = types.find((x) => x.name === typeENUM);
-    await this.store.dispatch(new LoadNotes(type.id, type)).toPromise();
 
-    const actions = types.filter((x) => x.id !== type.id).map((t) => new LoadNotes(t.id, t));
+    await this.store.dispatch(new LoadNotes(typeENUM)).toPromise();
+    const types = Object.values(NoteTypeENUM).filter(z => typeof z == 'number' && z !== typeENUM);
+    const actions = types.map((t :NoteTypeENUM) => new LoadNotes(t));
     this.store.dispatch(actions);
   }
 
@@ -235,10 +225,7 @@ export class NotesService implements OnDestroy {
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
       const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-      const type = this.store
-        .selectSnapshot(AppStore.getNoteTypes)
-        .find((x) => x.name === roadType);
-      await this.murriService.initMurriNoteAsync(type, false);
+      await this.murriService.initMurriNoteAsync(roadType, false);
       await this.murriService.setOpacityFlagAsync(0);
     }
   }

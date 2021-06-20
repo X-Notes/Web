@@ -8,7 +8,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { AddFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 
@@ -35,7 +35,7 @@ export class FoldersComponent implements OnInit, OnDestroy {
   public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   destroy = new Subject<void>();
 

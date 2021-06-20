@@ -13,10 +13,13 @@ namespace Domain.Commands.noteInner.fileContent.albums
     {
         [Required]
         public List<IFormFile> Photos { set; get; }
+
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public InsertAlbumToNoteCommand(List<IFormFile> Photos, Guid NoteId, Guid ContentId)
         {
             this.Photos = Photos;

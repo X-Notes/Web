@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Background } from 'src/app/core/models/background';
+import { Background } from 'src/app/core/models/Background';
 
 @Injectable()
 export class BackgroundService {

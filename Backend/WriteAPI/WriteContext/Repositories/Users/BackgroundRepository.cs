@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
-    public class BackgroundRepository : Repository<Backgrounds>
+    public class BackgroundRepository : Repository<Backgrounds, Guid>
     {
         public BackgroundRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -29,12 +29,15 @@ namespace WriteContext.Repositories.Users
                     background.FileId = file.Id;
 
                     await context.Backgrounds.AddAsync(background);
-
+                    await context.SaveChangesAsync();
+                    
                     await transaction.CommitAsync();
 
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
+                    // TODO ADD LOGGING
                     await transaction.RollbackAsync();
                     success = false;
                 }

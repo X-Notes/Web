@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Album } from '../../models/ContentMode';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { ShortUser } from 'src/app/core/models/ShortUser';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { Album } from '../../models/ContentModel';
 
 @Component({
   selector: 'app-note-preview-photos',
@@ -9,6 +13,9 @@ import { Album } from '../../models/ContentMode';
 export class NotePreviewPhotosComponent implements OnInit {
   @Input()
   album: Album;
+
+  @Select(UserStore.getUser)
+  public user$: Observable<ShortUser>;
 
   // eslint-disable-next-line class-methods-use-this
   ngOnInit(): void {}

@@ -13,11 +13,12 @@ namespace BI.Mapping
         {
             CreateMap<Backgrounds, BackgroundDTO>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
-                .ForMember(x => x.Path, dest => dest.MapFrom(f => f.FileId));
+                .ForMember(x => x.PhotoId, dest => dest.MapFrom(f => f.FileId))
+                .ForMember(x => x.PhotoPath, dest => dest.MapFrom(f => f.File.GetFromBigPath));
 
             CreateMap<BackgroundDTO, Backgrounds>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
-                .ForMember(x => x.FileId, dest => dest.MapFrom(f => f.Path));
+                .ForMember(x => x.FileId, dest => dest.MapFrom(f => f.PhotoId));
         }
     }
 }

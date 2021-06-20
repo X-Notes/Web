@@ -14,7 +14,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiFullFolderService } from 'src/app/content/folders/full-folder/services/api-full-folder.service';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { SmallNote } from 'src/app/content/notes/models/SmallNote';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { FontSizeENUM } from '../../enums/FontSizeEnum';
 import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
@@ -103,19 +103,19 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
         break;
       }
       case personal: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Private);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Private);
         break;
       }
       case shared: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Shared);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Shared);
         break;
       }
       case archive: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Archive);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Archive);
         break;
       }
       case bin: {
-        tempNotes = [...this.notes].filter((note) => note.noteType.name === NoteTypeENUM.Deleted);
+        tempNotes = [...this.notes].filter((note) => note.noteTypeId === NoteTypeENUM.Deleted);
         break;
       }
       default: {

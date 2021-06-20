@@ -12,10 +12,13 @@ namespace Domain.Commands.noteInner.fileContent.audios
     {
         [Required]
         public IFormFile Audio { set; get; }
+
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public InsertAudiosToNoteCommand(IFormFile Audio, Guid NoteId, Guid ContentId)
         {
             this.Audio = Audio;

@@ -5,11 +5,9 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FolderType } from 'src/app/shared/models/folderType';
 import { LoadFolders } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
-import { SmallFolder } from './models/folder';
+import { SmallFolder } from './models/Folder';
 import { UpdateColor } from '../notes/state/updateColor';
 
 @Injectable()
@@ -80,22 +78,18 @@ export class FolderService implements OnDestroy {
   ) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.folders.length && this.folders.length !== 0 && !this.firstInitedMurri) {
-        const type = this.store
-          .selectSnapshot(AppStore.getFolderTypes)
-          .find((x) => x.name === folderType);
-        this.murriService.initMurriFolder(type, isDragEnabled);
+        this.murriService.initMurriFolder(folderType, isDragEnabled);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });
   }
 
-  async loadFolders(typeENUM: FolderType) {
-    const types = this.store.selectSnapshot(AppStore.getFolderTypes);
-    const type = types.find((x) => x.name === typeENUM.name);
-    await this.store.dispatch(new LoadFolders(type.id, typeENUM)).toPromise();
+  async loadFolders(typeENUM: FolderTypeENUM) {
+    await this.store.dispatch(new LoadFolders(typeENUM)).toPromise();
 
-    const actions = types.filter((x) => x.id !== type.id).map((t) => new LoadFolders(t.id, t));
+    const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number' && z !== typeENUM);
+    const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
     this.store.dispatch(actions);
   }
 

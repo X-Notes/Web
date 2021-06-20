@@ -20,7 +20,6 @@ import {
   deleteSmallNote,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
-import { Theme } from 'src/app/shared/models/Theme';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -28,7 +27,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import {
   DeleteCurrentNote,
@@ -38,30 +37,37 @@ import {
   UpdateTitle,
 } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
-import { FullNote } from '../models/fullNote';
-import { SmallNote } from '../models/smallNote';
+import { FullNote } from '../models/FullNote';
+import { SmallNote } from '../models/SmallNote';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
-import { Album, BaseText, ContentModel, ContentType, HeadingType } from '../models/ContentMode';
+import {
+  Album,
+  BaseText,
+  ContentModel,
+  ContentTypeENUM,
+  HeadingTypeENUM,
+  NoteTextTypeENUM,
+} from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
-import { EnterEvent } from '../models/enterEvent';
-import { ParentInteraction } from '../models/parent-interaction.interface';
-import { TransformContent } from '../models/transform-content';
+import { EnterEvent } from '../models/EnterEvent';
+import { ParentInteraction } from '../models/ParentInteraction.interface';
+import { TransformContent } from '../models/TransformContent';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
-import { TransformToFileContent } from '../models/transform-file-content';
-import { UploadPhotosToAlbum } from '../models/uploadPhotosToAlbum';
-import { RemovePhotoFromAlbum } from '../models/removePhotoFromAlbum';
+import { TransformToFileContent } from '../models/TransformFileContent';
+import { UploadPhotosToAlbum } from '../models/UploadPhotosToAlbum';
+import { RemovePhotoFromAlbum } from '../models/RemovePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
-import { TypeUploadFile } from '../models/type-upload-file.enum';
+import { TypeUploadFile } from '../models/TypeUploadFile.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
-import { NoteHistory } from '../models/history/note-history';
+import { NoteHistory } from '../models/history/NoteHistory';
 
 @Component({
   selector: 'app-full-note',
@@ -96,7 +102,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   public canNoView$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -105,15 +111,15 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loaded = false;
 
-  contentType = ContentType;
+  contentType = ContentTypeENUM;
+
+  textType = NoteTextTypeENUM;
 
   destroy = new Subject<void>();
 
   note: FullNote;
 
   contents: ContentModel[];
-
-  theme = Theme;
 
   nameChanged: Subject<string> = new Subject<string>(); // CHANGE
 
@@ -173,6 +179,10 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sideBarService.murriInitialise(this.refSideBarElements, this.id);
   }
 
+  getTextContent(index: number): BaseText {
+    return this.contents[index] as BaseText;
+  }
+
   async initNote() {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
@@ -202,10 +212,11 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadLeftMenuWithNotes() {
-    const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-    const actions = types.map((x) => new LoadNotes(x.id, x));
+    const types = Object.values(NoteTypeENUM).filter((z) => typeof z === 'number');
+    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t));
+
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.note?.noteType?.name);
+    await this.setSideBarNotes(this.note?.noteTypeId);
   }
 
   async ngOnInit() {
@@ -260,7 +271,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         const newAlbum = {
           ...this.contents[index],
-          photos: contentPhotos.filter((x) => x.id !== event.photoId),
+          photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
         };
         this.contents[index] = newAlbum;
       }
@@ -290,7 +301,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     const breakLineType = value.breakModel.typeBreakLine;
     const { nextText } = value.breakModel;
     const newElement = await this.api
-      .insertLine(this.note.id, value.contentId, breakLineType, nextText)
+      .insertLine(this.note.id, value.contentId, value.nextItemType, breakLineType, nextText)
       .toPromise();
 
     if (!newElement.success) {
@@ -394,7 +405,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         throw new Error('incorrect type');
       }
     }
+    console.log('CHECK: ', resp);
     if (resp.success) {
+      console.log('CHECK2: ', resp);
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
     }
@@ -404,32 +417,32 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     let indexOf;
 
     const resp = await this.api
-      .updateContentType(this.note.id, value.id, value.contentType, value.headingType)
+      .updateContentType(this.note.id, value.id, value.textType, value.headingType)
       .toPromise();
 
     if (!resp.success) {
       return;
     }
 
-    switch (value.contentType) {
-      case ContentType.DEFAULT: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+    switch (value.textType) {
+      case NoteTextTypeENUM.Default: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.CHECKLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Checklist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.DOTLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Dotlist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
-      case ContentType.HEADING: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType, value.headingType);
+      case NoteTextTypeENUM.Heading: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType, value.headingType);
         break;
       }
-      case ContentType.NUMBERLIST: {
-        indexOf = this.defaultTextFocusClick(value.id, value.contentType);
+      case NoteTextTypeENUM.Numberlist: {
+        indexOf = this.defaultTextFocusClick(value.id, value.textType);
         break;
       }
       default: {
@@ -440,12 +453,16 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkAddLastTextContent(indexOf);
   }
 
-  defaultTextFocusClick(id: string, contentType: ContentType, headingType?: HeadingType): number {
+  defaultTextFocusClick(
+    id: string,
+    textTypeId: NoteTextTypeENUM,
+    headingType?: HeadingTypeENUM,
+  ): number {
     const item = this.contents.find((z) => z.id === id) as BaseText;
     const indexOf = this.contents.indexOf(item);
-    item.type = contentType;
+    item.noteTextTypeId = textTypeId;
     if (headingType) {
-      item.headingType = headingType;
+      item.headingTypeId = headingType;
     }
     setTimeout(() => {
       this.textElements?.toArray()[indexOf].setFocusToEnd();

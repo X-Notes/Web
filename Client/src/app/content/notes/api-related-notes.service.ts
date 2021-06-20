@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { PreviewNote } from './models/previewNote';
-import { RelatedNote } from './models/relatedNote';
+import { PreviewNote } from './models/PreviewNote';
+import { RelatedNote } from './models/RelatedNote';
 import { OperationResult } from './models/TextOperationResult';
 
 @Injectable()

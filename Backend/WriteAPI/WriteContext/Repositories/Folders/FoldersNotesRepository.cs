@@ -10,7 +10,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Folders
 {
-    public class FoldersNotesRepository : Repository<FoldersNotes>
+    public class FoldersNotesRepository : Repository<FoldersNotes, Guid>
     {
         public FoldersNotesRepository(WriteContextDB contextDB)
         : base(contextDB)
@@ -20,10 +20,6 @@ namespace WriteContext.Repositories.Folders
         public async Task<List<FoldersNotes>> GetOrderedByFolderIdWithNotes(Guid folderId)
         {
             return await entities.Where(x => x.FolderId == folderId)
-                .Include(x => x.Note)
-                .ThenInclude(x => x.RefType)
-                .Include(x => x.Note)
-                .ThenInclude(x => x.NoteType)
                 .Include(x => x.Note)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Note)

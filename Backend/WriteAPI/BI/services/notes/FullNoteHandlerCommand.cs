@@ -1,26 +1,21 @@
-﻿using BI.helpers;
-using BI.Mapping;
+﻿using BI.Mapping;
 using BI.services.history;
 using BI.signalR;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.NoteDict;
+using Common.DatabaseModels.models.NoteContent.ContentParts;
 using Common.DTO.notes.FullNoteContent;
-using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Domain.Commands.files;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
 using Domain.Commands.noteInner.fileContent.files;
 using Domain.Commands.noteInner.fileContent.videos;
-using Domain.Queries.notes;
 using Domain.Queries.permissions;
 using FacadeML;
-using FacadeML.models;
 using MediatR;
-using Storage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -137,17 +132,32 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC 
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, request.Photos, note.Id));
 
-                // MOVE THIS TO WORKER
+                // TODO MOVE THIS TO WORKER
                 foreach(var fileitem in fileList)
                 {
-                    var textFromPhoto = ocrService.GetText(fileitem.Path);
-                    var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
-                    fileitem.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
-                    fileitem.RecognizeObject = RecognizeObject;
+                    byte[] bytes;
+                    if(fileitem.FileType == SavePhotosType.FormFile)
+                    {
+                        using var ms = new MemoryStream();
+                        fileitem.IFormFile.CopyTo(ms);
+                        bytes = ms.ToArray();
+                    }
+                    else
+                    {
+                        bytes = fileitem.FilesBytes.Bytes;
+                    }
+
+                    var textFromPhoto = ocrService.GetText(bytes);
+                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+
+                    // TODO MOVE TO API
+                    // var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
+                    // fileitem.RecognizeObject = RecognizeObject;
                 }
 
+                var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -155,27 +165,26 @@ namespace BI.services.notes
                 {
                     await baseNoteContentRepository.Remove(contentForRemove);
 
-                    await fileRepository.AddRange(fileList);
+                    await fileRepository.AddRange(dbFiles);
 
                     var albumNote = new AlbumNote()
                     {
-                        Photos = fileList,
+                        Photos = dbFiles,
                         Note = note,
                         Order = contentForRemove.Order,
+                        ContentTypeId = ContentTypeENUM.Album,
                         CountInRow = 2,
                         Width = "100%",
                         Height = "auto",
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await albumNoteRepository.Add(albumNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
-                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id)).ToList();
+                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
                     var result = new AlbumNoteDTO(resultPhotos, null, null, 
-                        albumNote.Id, type, albumNote.CountInRow, albumNote.UpdatedAt);
+                        albumNote.Id, albumNote.CountInRow, albumNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -187,8 +196,8 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = fileList.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString() ,pathes));
                 }
             }
 
@@ -203,7 +212,7 @@ namespace BI.services.notes
 
             if (permissions.CanWrite)
             {
-                var content = await textNotesRepository.GetById(request.ContentId);
+                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 content.Content = request.Content;
                 if (request.Checked.HasValue)
                 {
@@ -234,14 +243,13 @@ namespace BI.services.notes
                 var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
                 var lastOrder = contents.Max(x => x.Order);
 
-                var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                var text = new TextNote(note.Id, textType, lastOrder + 1);
+                var text = new TextNote(note.Id, NoteTextTypeENUM.Default, lastOrder + 1);
 
 
                 await baseNoteContentRepository.Add(text);
 
                 var textResult = new TextNoteDTO(text.Content, text.Id, 
-                    text.TextType, text.HeadingType, text.Checked, text.UpdatedAt);
+                    text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -270,9 +278,7 @@ namespace BI.services.notes
                 {
                     case "NEXT":
                         {
-                            var textType = TextNoteTypesDictionary.GetNextTypeForInserting(content.TextType);
-
-                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1,
+                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1,
                                                         Content: request.NextText);
 
                             contents.Insert(insertIndex + 1, newText);
@@ -290,8 +296,8 @@ namespace BI.services.notes
                                 await textNotesRepository.Add(newText);
                                 await baseNoteContentRepository.UpdateRange(contents);
 
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.TextType, 
-                                    newText.HeadingType, newText.Checked, newText.UpdatedAt);
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.NoteTextTypeId, 
+                                    newText.HTypeId, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -310,8 +316,7 @@ namespace BI.services.notes
                         }
                     case "PREV":
                         {
-                            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
-                            var newText = new TextNote(NoteId: note.Id, textType, content.Order + 1, Content: request.NextText);
+                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1, Content: request.NextText);
 
                             contents.Insert(insertIndex, newText);
 
@@ -330,7 +335,7 @@ namespace BI.services.notes
                                 await baseNoteContentRepository.UpdateRange(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, 
-                                    newText.TextType, newText.HeadingType, newText.Checked, newText.UpdatedAt);
+                                    newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -411,29 +416,13 @@ namespace BI.services.notes
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
-            var typeIsExist = TextNoteTypesDictionary.IsExistValue(request.Type);
-
-            if (request.HeadingType != null)
-            {
-                var headingIsExist = HeadingNoteTypesDictionary.IsExistValue(request.HeadingType);
-                if (!headingIsExist)
-                {
-                    return new OperationResult<Unit>(Success: false, Unit.Value);
-                }
-            }
-
-            if (!typeIsExist)
-            {
-                return new OperationResult<Unit>(Success: false, Unit.Value);
-            }
-
             if (permissions.CanWrite)
             {
-                var content = await textNotesRepository.GetById(request.ContentId);
+                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 if (content != null)
                 {
-                    content.TextType = request.Type;
-                    content.HeadingType = request.HeadingType;
+                    content.NoteTextTypeId = request.Type;
+                    content.HTypeId = request.HeadingType;
                     content.UpdatedAt = DateTimeOffset.Now;
                     await textNotesRepository.Update(content);
 
@@ -486,8 +475,7 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.TextType,
-                                    contentPrev.HeadingType, contentPrev.Checked, contentPrev.UpdatedAt);
+                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.NoteTextTypeId, contentPrev.HTypeId, contentPrev.Checked, contentPrev.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -537,8 +525,8 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var pathes = contentForRemove.Photos.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = contentForRemove.Photos.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -564,25 +552,45 @@ namespace BI.services.notes
             if (permissions.CanWrite)
             {
                 var album = await this.baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
-                var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(request.Photos, note.Id));
+                var fileList = await this._mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, request.Photos, note.Id));
 
-                fileList.ForEach(file => file.TextFromPhoto = RemoveSpecialCharacters(ocrService.GetText(file.Path)));
-                fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
+                foreach (var fileitem in fileList)
+                {
+                    byte[] bytes;
+                    if (fileitem.FileType == SavePhotosType.FormFile)
+                    {
+                        using var ms = new MemoryStream();
+                        fileitem.IFormFile.CopyTo(ms);
+                        bytes = ms.ToArray();
+                    }
+                    else
+                    {
+                        bytes = fileitem.FilesBytes.Bytes;
+                    }
+
+                    var textFromPhoto = ocrService.GetText(bytes);
+                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+                }
+
+                var dbFiles = fileList.Select(x => x.AppFile).ToList();
+
+                // TODO MOVE TO API
+                // fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
-                    await fileRepository.AddRange(fileList);
+                    await fileRepository.AddRange(dbFiles);
 
-                    album.Photos.AddRange(fileList);
+                    album.Photos.AddRange(dbFiles);
                     album.UpdatedAt = DateTimeOffset.Now;
 
                     await albumNoteRepository.Update(album);
 
                     await transaction.CommitAsync();
 
-                    var photosIds = fileList.Select(x => x.Id).ToList();
+                    var photosIds = dbFiles.Select(x => x.Id).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -594,8 +602,8 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = fileList.Select(x => x.Path).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -634,7 +642,8 @@ namespace BI.services.notes
 
                         await transaction.CommitAsync();
 
-                        await _mediator.Send(new RemoveFilesByPathesCommand(new List<string> { photoForRemove.Path }));
+                        var filesForRemove = photoForRemove.GetNotNullPathes().ToList();
+                        await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), filesForRemove));
 
                         historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -705,7 +714,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveAudiosToNoteCommand(request.Audio, note.Id));
+                var file = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, request.Audio, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -721,17 +730,14 @@ namespace BI.services.notes
                         Name = request.Audio.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await audioNoteRepository.Add(audioNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
                     var result = new AudioNoteDTO(
-                        audioNote.Name, audioNote.AppFileId, audioNote.Id, 
-                        type, audioNote.UpdatedAt);
+                        audioNote.Name, audioNote.AppFileId, file.PathNonPhotoContent, audioNote.Id, audioNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -743,8 +749,8 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = new List<string> { file.PathNonPhotoContent };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -765,7 +771,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveVideosToNoteCommand(request.Video, note.Id));
+                var file = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id, request.Video, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -781,16 +787,13 @@ namespace BI.services.notes
                         Name = request.Video.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await videoNoteRepository.Add(videoNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id,
-                                type, videoNote.UpdatedAt);
+                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, file.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -802,8 +805,8 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = new List<string> { file.PathNonPhotoContent };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 
@@ -824,7 +827,7 @@ namespace BI.services.notes
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
-                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(request.File, note.Id));
+                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id, request.File, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -840,16 +843,13 @@ namespace BI.services.notes
                         Name = request.File.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
-                        UpdatedAt = DateTimeOffset.Now
                     };
 
                     await documentNoteRepository.Add(documentNote);
 
                     await transaction.CommitAsync();
 
-                    var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                    var result = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id,
-                                type, documentNote.UpdatedAt);
+                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -861,8 +861,8 @@ namespace BI.services.notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = new List<string> { file.Path };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(pathes));
+                    var pathes = new List<string> { file.PathNonPhotoContent };
+                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
                 }
             }
 

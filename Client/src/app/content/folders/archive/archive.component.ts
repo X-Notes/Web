@@ -70,10 +70,8 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    const type = this.store
-      .selectSnapshot(AppStore.getFolderTypes)
-      .find((x) => x.name === FolderTypeENUM.Archive);
-    await this.folderService.loadFolders(type);
+
+    await this.folderService.loadFolders(FolderTypeENUM.Archive);
 
     let folders = this.store.selectSnapshot(FolderStore.archiveFolders);
     folders = this.folderService.transformFolders(folders);

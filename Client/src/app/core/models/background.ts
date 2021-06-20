@@ -1,4 +1,5 @@
 export interface Background {
   id: string;
-  path: string;
+  photoId: string;
+  photoPath: string;
 }

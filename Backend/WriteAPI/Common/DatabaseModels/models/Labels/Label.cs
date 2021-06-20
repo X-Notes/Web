@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models.Labels
 {
-    public class Label : BaseEntity
+    public class Label : BaseEntity<Guid>
     {
         public string Color { set; get; }
         public string Name { set; get; }

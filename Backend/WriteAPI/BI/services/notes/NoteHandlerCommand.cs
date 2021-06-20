@@ -3,14 +3,13 @@ using BI.Mapping;
 using BI.services.history;
 using BI.signalR;
 using Common;
-using Common.DatabaseModels.models;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.NoteDict;
+using Common.DatabaseModels.models.NoteContent.ContentParts;
 using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
 using Common.DTO.files;
 using Common.DTO.notes;
-using Common.Naming;
 using Domain.Commands.files;
 using Domain.Commands.notes;
 using Domain.Queries.files;
@@ -53,12 +52,14 @@ namespace BI.services.notes
         private readonly IMediator _mediator;
         private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
+        private readonly FileRepository fileRepository;
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository,
             AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper,
             IMediator _mediator, LabelRepository labelRepository, LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService)
+            HistoryCacheService historyCacheService,
+            FileRepository fileRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -71,19 +72,17 @@ namespace BI.services.notes
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
+            this.fileRepository = fileRepository;
         }
 
 
         public async Task<SmallNote> Handle(NewPrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
-            var refType = await appRepository.GetRefTypeByName(ModelsNaming.Viewer);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var textType = TextNoteTypesDictionary.GetValueFromDictionary(TextNoteTypes.DEFAULT);
             var _contents = new List<BaseNoteContent>();
 
-            var newText = new TextNote {  Id = Guid.NewGuid(), Order = 1, TextType = textType };
+            var newText = new TextNote {  Id = Guid.NewGuid(), Order = 1, NoteTextTypeId = NoteTextTypeENUM.Default };
             _contents.Add(newText);
 
             var note = new Note()
@@ -92,16 +91,14 @@ namespace BI.services.notes
                 UserId = user.Id,
                 Order = 1,
                 Color = NoteColorPallete.Green,
-                NoteTypeId = type.Id,
-                RefTypeId = refType.Id,
+                NoteTypeId = NoteTypeENUM.Private,
+                RefTypeId = RefTypeENUM.Viewer,
                 CreatedAt = DateTimeOffset.Now,
                 UpdatedAt = DateTimeOffset.Now,
                 Contents = _contents
             };
 
-            await noteRepository.Add(note, type.Id);
-
-            filesStorage.CreateNoteFolders(note.Id);
+            await noteRepository.Add(note, NoteTypeENUM.Private);
 
             var newNote = await noteRepository.GetOneById(note.Id);
             newNote.LabelsNotes = new List<LabelsNotes>();
@@ -135,7 +132,6 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(SetDeleteNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
@@ -143,7 +139,7 @@ namespace BI.services.notes
             {
                 notes.ForEach(note => note.RefType = null);
                 user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Deleted);
             }
             else
             {
@@ -155,13 +151,24 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(DeleteNotesCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.DeletedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
-            var deletednotes = user.Notes.Where(x => x.NoteTypeId == type.Id).ToList();
+            var deletednotes = user.Notes.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted).ToList();
             var selectdeletenotes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
 
             if (selectdeletenotes.Count == request.Ids.Count)
             {
+                var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
+                var photos = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
+                var documents = contents.Where(x => x is DocumentNote).Select(x => x as DocumentNote).Select(x => x.AppFile);
+                var audios = contents.Where(x => x is AudioNote).Select(x => x as AudioNote).Select(x => x.AppFile);
+                var videos = contents.Where(x => x is VideoNote).Select(x => x as VideoNote).Select(x => x.AppFile);
+                photos.AddRange(documents);
+                photos.AddRange(audios);
+                photos.AddRange(videos);
+                var pathes = photos.SelectMany(x => x.GetNotNullPathes()).ToList();
+                await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
+
+                await fileRepository.RemoveRange(photos);
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
             }
             else
@@ -174,14 +181,13 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(ArchiveNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.ArchivedNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Archived);
             }
             else
             {
@@ -193,14 +199,13 @@ namespace BI.services.notes
 
         public async Task<Unit> Handle(MakePrivateNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
                 notes.ForEach(note => note.RefType = null);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, type.Id);
+                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Private);
             }
             else
             {
@@ -212,7 +217,6 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
-            var type = await appRepository.GetNoteTypeByName(ModelsNaming.PrivateNote);
             var resultIds = new List<Guid>();
             var order = -1;
             foreach (var id in request.Ids)
@@ -229,7 +233,7 @@ namespace BI.services.notes
                         Color = noteForCopy.Color,
                         CreatedAt = DateTimeOffset.Now,
                         UpdatedAt = DateTimeOffset.Now,
-                        NoteTypeId = type.Id,
+                        NoteTypeId = NoteTypeENUM.Private,
                         RefTypeId = noteForCopy.RefTypeId,
                         Order = order--,
                         UserId = permissions.User.Id,
@@ -243,8 +247,6 @@ namespace BI.services.notes
                         LabelId = label.LabelId,
                         AddedAt = DateTimeOffset.Now
                     });
-
-                    filesStorage.CreateNoteFolders(dbNote.Entity.Id);
 
                     await labelsNotesRepository.AddRange(labels);
 
@@ -264,34 +266,35 @@ namespace BI.services.notes
                                     var files = new List<FilesBytes>();
                                     foreach(var photo in album.Photos)
                                     {
-                                        var file = await _mediator.Send(new GetFileById(photo.Id));
+                                        var file = await _mediator.Send(new GetFileById(photo.Id, permissions.User.Id.ToString()));
                                         files.Add(file);
                                     }
-                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(files, dbNote.Entity.Id));
+                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, files, dbNote.Entity.Id));
+                                    var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
-                                    contents.Add(new AlbumNote(album, fileList, dbNote.Entity.Id));
+                                    contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
                                     continue;
                                 }
                             case VideoNote videoNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
                             case AudioNote audioNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new AudioNote(audioNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
                             case DocumentNote documentNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId));
-                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(file, dbNote.Entity.Id));
+                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId, permissions.User.Id.ToString()));
+                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
 
                                     contents.Add(new DocumentNote(documentNote, newfile, dbNote.Entity.Id));
                                     continue;
@@ -306,8 +309,8 @@ namespace BI.services.notes
                 }
             }
 
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
-            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, type.Id, request.IsHistory);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, NoteTypeENUM.Private, request.IsHistory);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
             dbNotes = dbNotes.Zip(orders, (note, order) => {
@@ -334,7 +337,7 @@ namespace BI.services.notes
                 {
                     var note = permissions.Note;
 
-                    var value = await labelsNotesRepository.FirstOrDefault(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
+                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
 
                     if (value != null)
                     {
@@ -364,7 +367,7 @@ namespace BI.services.notes
                 {
                     var note = permissions.Note;
 
-                    var value = await labelsNotesRepository.FirstOrDefault(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
+                    var value = await labelsNotesRepository.FirstOrDefaultAsync(x => x.LabelId == request.LabelId && x.NoteId == note.Id);
 
                     if(value == null)
                     {

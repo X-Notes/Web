@@ -13,6 +13,7 @@ using BI.services.search;
 using BI.services.sharing;
 using BI.services.user;
 using BI.signalR;
+using Common.Azure;
 using Common.DatabaseModels.models.Files;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.backgrounds;
@@ -25,6 +26,7 @@ using Common.DTO.notes.FullNoteContent;
 using Common.DTO.permissions;
 using Common.DTO.search;
 using Common.DTO.users;
+using ContentProcessing;
 using Domain.Commands.backgrounds;
 using Domain.Commands.encryption;
 using Domain.Commands.files;
@@ -60,6 +62,7 @@ using FakeData;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -90,6 +93,7 @@ namespace WriteAPI.ConfigureAPP
 
             // USER
             services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserMemory, GetUserMemoryResponse>, UserHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
@@ -223,7 +227,7 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
-            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
@@ -246,6 +250,7 @@ namespace WriteAPI.ConfigureAPP
             // USERS
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
+            services.AddScoped<UserProfilePhotoRepository>();
 
             // FILES
             services.AddScoped<FileRepository>();
@@ -281,8 +286,20 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
 
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }
+
+        public static void AzureConfig(this IServiceCollection services, IConfiguration Configuration)
+        {
+            var configService = Configuration.GetSection("Azure").Get<AzureConfig>();
+            services.AddScoped(x => configService);
+
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(configService.StorageConnection);
+            });
+        }
+
         public static void JWT(this IServiceCollection services, IConfiguration Configuration)
         {
             services
@@ -334,7 +351,12 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryService>();
 
-            services.AddScoped<IFilesStorage, FilesStorage>();
+            services.AddScoped<IImageProcessor, ImageProcessor>();
+        }
+
+        public static void FileStorage(this IServiceCollection services)
+        {
+            services.AddScoped<IFilesStorage, AzureFileStorage>();
         }
     }
 }

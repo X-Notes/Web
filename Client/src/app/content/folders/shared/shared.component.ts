@@ -70,10 +70,8 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-    const type = this.store
-      .selectSnapshot(AppStore.getFolderTypes)
-      .find((x) => x.name === FolderTypeENUM.Shared);
-    await this.folderService.loadFolders(type);
+
+    await this.folderService.loadFolders(FolderTypeENUM.Shared);
 
     let folders = this.store.selectSnapshot(FolderStore.sharedFolders);
     folders = this.folderService.transformFolders(folders);

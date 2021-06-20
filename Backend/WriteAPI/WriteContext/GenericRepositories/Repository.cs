@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WriteContext.GenericRepositories
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T, IdType> : IRepository<T, IdType> where T : BaseEntity<IdType> where IdType : struct
     {
         public readonly WriteContextDB context;
         protected DbSet<T> entities;
@@ -20,9 +20,7 @@ namespace WriteContext.GenericRepositories
             entities = context.Set<T>();
         }
 
-        public async Task<T> GetById(Guid id) => await entities.FirstOrDefaultAsync(z => z.Id == id);
-        public async Task<T> GetByIdNoCache(Guid id) => await entities.AsNoTracking().FirstOrDefaultAsync(z => z.Id == id);
-        public async Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate)
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
             => await entities.FirstOrDefaultAsync(predicate);
 
         public async Task<EntityEntry<T>> Add(T entity)

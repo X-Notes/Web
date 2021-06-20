@@ -1,5 +1,5 @@
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { FolderType } from 'src/app/shared/models/folderType';
+import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
 import { PreviewNotesInFolder } from './PreviewNotesInFolder';
 
 export interface SmallFolder {
@@ -7,8 +7,8 @@ export interface SmallFolder {
   title: string;
   color: string;
   previewNotes: PreviewNotesInFolder[];
-  refType: EntityRef;
-  folderType: FolderType;
+  refTypeId: RefTypeENUM;
+  folderTypeId: FolderTypeENUM;
   isSelected?: boolean;
   lockRedirect?: boolean;
   createdAt: Date;

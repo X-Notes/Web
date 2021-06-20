@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Theme } from 'src/app/shared/models/Theme';
 import {
   PersonalizationService,
   sideBarCloseOpen,
@@ -9,7 +8,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';
@@ -30,7 +29,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   public countShared: Observable<number>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(NoteStore.deletedCount)
   public countDeleted: Observable<number>;
@@ -44,8 +43,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   loaded = false;
-
-  theme = Theme;
 
   public photoError = false;
 

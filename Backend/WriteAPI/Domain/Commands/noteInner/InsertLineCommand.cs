@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DatabaseModels.models.NoteContent.ContentParts;
 using Common.DTO.notes.FullNoteContent;
 using MediatR;
 using System;
@@ -10,10 +11,16 @@ namespace Domain.Commands.noteInner
     {
         [ValidationGuidAttribute]
         public Guid NoteId { set; get; }
+
         [ValidationGuidAttribute]
         public Guid ContentId { set; get; }
+
         [Required]
         public string LineBreakType { set; get; }
+
         public string NextText { set; get; }
+
+        [RequiredEnumField(ErrorMessage = "NoteTextType is required.")]
+        public NoteTextTypeENUM NoteTextType { set; get; }
     }
 }

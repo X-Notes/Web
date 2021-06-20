@@ -7,7 +7,7 @@ import {
   SetBackground,
   RemoveBackground,
 } from './background-action';
-import { Background } from '../models/background';
+import { Background } from '../models/Background';
 import { SetCurrentBackground } from '../stateUser/user-action';
 
 interface BackgroundState {

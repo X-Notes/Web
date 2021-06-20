@@ -108,8 +108,7 @@ export class DialogsManageService {
     return this.dialogService.openDialog(ShareComponent, config);
   }
 
-  getTheme() {
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    return theme.name;
+  getTheme(): ThemeENUM {
+    return this.store.selectSnapshot(UserStore.getUserTheme);
   }
 }

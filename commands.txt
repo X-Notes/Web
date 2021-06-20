@@ -1,0 +1,31 @@
+docker --
+
+docker build -t davydq/noots-write_api . -f writeAPI.dockerfile
+docker build -t davydq/noots-web . -f webClient.dockerfile
+
+angular worker settings --
+
+ng build --prod
+http-server -p 8080 -c-1 dist/Client
+http://localhost:8080/
+
+  "dataGroups": [{
+    "name": "api-performance",
+    "urls": [
+      "http://localhost:5000/**"
+    ],
+    "cacheConfig": {
+      "maxSize": 10000,
+      "maxAge": "3d",
+      "strategy": "performance"
+    }
+  }]
+
+  // TEST22
+
+azure storage --
+
+https://nootsdevstorage.blob.core.windows.net/users/**
+https://nootsdevstorage.blob.core.windows.net/notes/**
+
+az storage account blob-service-properties update --account-name nootsdevstorage --default-service-version 2017-04-17

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { AudioService } from '../../audio.service';
-import { AudioModel } from '../../models/ContentMode';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { AudioModel, ContentModel } from '../../models/ContentModel';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
 @Component({
   selector: 'app-audio-note',
@@ -39,7 +39,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
     if (this.audioService.currentFile?.audio?.id !== audio.id) {
       this.audioService.playlist = this.files;
       this.audioService.currentFile = { audio, index };
-      this.playStream(audio.url, audio.id);
+      this.playStream(audio.audioPath, audio.id);
     }
   }
 
@@ -66,7 +66,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
 
   getNative = () => {};
 
-  getContent() {
+  getContent(): ContentModel {
     return this.content;
   }
 

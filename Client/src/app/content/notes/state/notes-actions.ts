@@ -1,15 +1,14 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { NoteType } from 'src/app/shared/models/noteType';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
 import { Label } from '../../labels/models/label';
 import { Notes } from './Notes';
-import { SmallNote } from '../models/smallNote';
-import { FullNote } from '../models/fullNote';
+import { SmallNote } from '../models/SmallNote';
+import { FullNote } from '../models/FullNote';
 
 export class LoadNotes {
   static type = '[Notes] Load private notes';
 
-  constructor(public id: string, public type: NoteType) {}
+  constructor(public type: NoteTypeENUM) {}
 }
 
 export class AddNote {
@@ -37,7 +36,7 @@ export class ClearColorNotes {
 export class CopyNotes {
   static type = '[Notes] Copy notes';
 
-  constructor(public typeNote: NoteType, public selectedIds: string[]) {}
+  constructor(public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
 }
 
 export class ClearAddedPrivateNotes {
@@ -49,11 +48,11 @@ export class ClearAddedPrivateNotes {
 export class DeleteNotesPermanently {
   static type = '[Notes] Delete notes';
 
-  constructor(public selectedIds: string[], public typeNote: NoteType) {}
+  constructor(public selectedIds: string[], public typeNote: NoteTypeENUM) {}
 }
 
 export class BaseChangeTypeSmallNote {
-  public typeNote: NoteType;
+  public typeNote: NoteTypeENUM;
 
   public selectedIds: string[];
 }
@@ -80,13 +79,13 @@ export class UpdateLabelOnNote {
 export class AddLabelOnNote {
   static type = '[Notes] Add label';
 
-  constructor(public label: Label, public typeNote: NoteType, public selectedIds: string[]) {}
+  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
 }
 
 export class RemoveLabelFromNote {
   static type = '[Notes] Remove label';
 
-  constructor(public label: Label, public typeNote: NoteType, public selectedIds: string[]) {}
+  constructor(public label: Label, public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
 }
 
 export class ClearUpdatelabelEvent {
@@ -100,7 +99,7 @@ export class RemoveFromDomMurri {
 export class PositionNote {
   static type = '[Notes] Position notes';
 
-  constructor(public order: Order, public typeNote: NoteType) {}
+  constructor(public order: Order, public typeNote: NoteTypeENUM) {}
 }
 
 // SHARING
@@ -137,7 +136,7 @@ export class UnSelectAllNote {
 export class SelectAllNote {
   static type = '[Notes] Select all';
 
-  constructor(public typeNote: NoteType) {}
+  constructor(public typeNote: NoteTypeENUM) {}
 }
 
 // UPDATING FROM FULL NOTE
@@ -198,7 +197,7 @@ export class ChangeColorFullNote {
 export class ChangeTypeFullNote {
   static type = '[Notes] change type fullNote';
 
-  constructor(public type: NoteType) {}
+  constructor(public type: NoteTypeENUM) {}
 }
 
 export class ChangeIsLockedFullNote {

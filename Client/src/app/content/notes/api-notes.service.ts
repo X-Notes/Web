@@ -3,30 +3,35 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { EntityRef } from 'src/app/shared/models/entityRef';
-import { SmallNote } from './models/smallNote';
-import { RequestFullNote } from './models/requestFullNote';
+import { Observable } from 'rxjs';
+import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { SmallNote } from './models/SmallNote';
+import { RequestFullNote } from './models/RequestFullNote';
 import { Notes } from './state/Notes';
-import { InvitedUsersToNoteOrFolder } from './models/invitedUsersToNote';
+import { InvitedUsersToNoteOrFolder } from './models/InvitedUsersToNote';
 import {
   Album,
   AudioModel,
   BaseText,
   ContentModel,
+  ContentTypeENUM,
   DocumentModel,
+  HeadingTypeENUM,
+  NoteTextTypeENUM,
   VideoModel,
-} from './models/ContentMode';
+} from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
-import { OnlineUsersNote } from './models/online-users-note';
+import { OnlineUsersNote } from './models/OnlineUsersNote';
 
 @Injectable()
 export class ApiServiceNotes {
   constructor(private httpClient: HttpClient) {}
 
-  getNotes(id: string, type: NoteTypeENUM) {
-    return this.httpClient
-      .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${id}`)
-      .pipe(map((notes) => new Notes(type, notes)));
+  getNotes(type: NoteTypeENUM) {
+    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`).pipe(
+      map((z) => this.transformNotes(z)),
+      map((notes) => new Notes(type, notes)),
+    );
   }
 
   addLabel(labelId: string, noteIds: string[]) {
@@ -93,7 +98,9 @@ export class ApiServiceNotes {
   }
 
   getAll() {
-    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/all`);
+    return this.httpClient
+      .get<SmallNote[]>(`${environment.writeAPI}/api/note/all`)
+      .pipe(map((z) => this.transformNotes(z)));
   }
 
   new() {
@@ -112,9 +119,9 @@ export class ApiServiceNotes {
     );
   }
 
-  makePublic(refType: EntityRef, id: string) {
+  makePublic(refTypeId: RefTypeENUM, id: string) {
     const obj = {
-      refTypeId: refType.id,
+      refTypeId,
       id,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/share`, obj);
@@ -123,7 +130,7 @@ export class ApiServiceNotes {
   sendInvitesToNote(
     userIds: string[],
     noteId: string,
-    refTypeId: string,
+    refTypeId: RefTypeENUM,
     sendMessage: boolean,
     message: string,
   ) {
@@ -145,7 +152,7 @@ export class ApiServiceNotes {
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/remove`, obj);
   }
 
-  changeUserPermission(noteId: string, userId: string, accessTypeId: string) {
+  changeUserPermission(noteId: string, userId: string, accessTypeId: RefTypeENUM) {
     const obj = {
       noteId,
       userId,
@@ -173,12 +180,19 @@ export class ApiServiceNotes {
     );
   }
 
-  insertLine(noteId: string, contentId: string, lineBreakType: string, nextText?: string) {
+  insertLine(
+    noteId: string,
+    contentId: string,
+    noteTextType: NoteTextTypeENUM,
+    lineBreakType: string,
+    nextText?: string,
+  ) {
     const obj = {
       noteId,
       contentId,
       lineBreakType,
       nextText,
+      noteTextType,
     };
     return this.httpClient.post<OperationResult<BaseText>>(
       `${environment.writeAPI}/api/fullnote/content/insert`,
@@ -218,7 +232,12 @@ export class ApiServiceNotes {
     );
   }
 
-  updateContentType(noteId: string, contentId: string, type: string, headingType: string) {
+  updateContentType(
+    noteId: string,
+    contentId: string,
+    type: NoteTextTypeENUM,
+    headingType: HeadingTypeENUM,
+  ) {
     const obj = {
       contentId,
       type,
@@ -231,19 +250,46 @@ export class ApiServiceNotes {
     );
   }
 
-  getContents(noteId: string) {
-    return this.httpClient.get<ContentModel[]>(
-      `${environment.writeAPI}/api/fullnote/contents/${noteId}`,
-    );
+  getContents(noteId: string): Observable<ContentModel[]> {
+    return this.httpClient
+      .get<ContentModel[]>(`${environment.writeAPI}/api/fullnote/contents/${noteId}`)
+      .pipe(map((x) => this.transformContent(x)));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  transformNotes(notes: SmallNote[]) {
+    return notes.map((note) => {
+      // eslint-disable-next-line no-param-reassign
+      note.contents = this.transformContent(note.contents);
+      return note;
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  transformContent(contents: ContentModel[]) {
+    return contents.map((z) => {
+      if (z.typeId === ContentTypeENUM.NoteAlbum) {
+        return new Album(z);
+      }
+      return z;
+    });
   }
 
   // ALBUMS
 
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<Album>>(
-      `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
-      data,
-    );
+    return this.httpClient
+      .post<OperationResult<Album>>(
+        `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
+        data,
+      )
+      .pipe(
+        map((x) => {
+          // eslint-disable-next-line no-param-reassign
+          x.data = new Album(x.data);
+          return x;
+        }),
+      );
   }
 
   // AUDIOS

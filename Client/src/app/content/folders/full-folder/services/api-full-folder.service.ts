@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PreviewNote } from 'src/app/content/notes/models/previewNote';
-import { SmallNote } from 'src/app/content/notes/models/smallNote';
+import { PreviewNote } from 'src/app/content/notes/models/PreviewNote';
+import { SmallNote } from 'src/app/content/notes/models/SmallNote';
 import { OperationResult } from 'src/app/content/notes/models/TextOperationResult';
 import { environment } from 'src/environments/environment';
 

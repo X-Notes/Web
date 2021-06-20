@@ -40,21 +40,83 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
+                    b.Property<int>("FileTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PathNonPhotoContent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoBig")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoMedium")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathPhotoSmall")
                         .HasColumnType("text");
 
                     b.Property<string>("RecognizeObject")
                         .HasColumnType("text");
 
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("TextFromPhoto")
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.FileType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Files");
+                    b.ToTable("FileTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Text"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Audio"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Photo"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Video"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Document"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -72,14 +134,14 @@ namespace WriteContext.Migrations
                     b.Property<DateTimeOffset>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("FolderTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("FolderTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("RefTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("RefTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -99,6 +161,41 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Folders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.FolderType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FoldersTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Private"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Shared"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Archived"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Deleted"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.FoldersNotes", b =>
@@ -127,8 +224,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AccessTypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("FolderId", "UserId");
 
@@ -237,6 +334,9 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("ContentTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
@@ -248,9 +348,121 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ContentTypeId");
+
                     b.HasIndex("NoteId");
 
                     b.ToTable("BaseNoteContents");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentParts.HType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "H1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "H2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "H3"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentParts.NoteTextType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NoteTextTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Default"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Heading"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Dotlist"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Numberlist"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Checklist"
+                        });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContentTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Text"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Album"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Document"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Audio"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Video"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
@@ -274,8 +486,8 @@ namespace WriteContext.Migrations
                     b.Property<bool>("IsLocked")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("NoteTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("NoteTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
@@ -283,8 +495,8 @@ namespace WriteContext.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("RefTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("RefTypeId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -304,6 +516,41 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.NoteType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NotesTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Private"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Shared"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Archived"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Deleted"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Notes.ReletatedNoteToInnerNote", b =>
@@ -350,8 +597,8 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccessTypeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("AccessTypeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("NoteId", "UserId");
 
@@ -362,47 +609,46 @@ namespace WriteContext.Migrations
                     b.ToTable("UserOnPrivateNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Plan.BillingPlan", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("MaxSize")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("FoldersTypes");
+                    b.ToTable("BillingPlans");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("381428f6-0568-4fb4-9c86-2d9e0f381308"),
-                            Name = "private"
+                            Id = 1,
+                            MaxSize = 100000000L,
+                            Name = "Basic"
                         },
                         new
                         {
-                            Id = new Guid("96c416cd-94d1-4f6c-9dd6-3b1f1e1e14e9"),
-                            Name = "shared"
+                            Id = 2,
+                            MaxSize = 500000000L,
+                            Name = "Standart"
                         },
                         new
                         {
-                            Id = new Guid("e3ea1cb2-5301-42fd-b283-2fe6133755c1"),
-                            Name = "deleted"
-                        },
-                        new
-                        {
-                            Id = new Guid("3e00dc8e-1030-4022-bc73-9d5c13b363d3"),
-                            Name = "archive"
+                            Id = 3,
+                            MaxSize = 1000000000L,
+                            Name = "Business"
                         });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.FontSize", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -414,21 +660,20 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5c335a93-7aa7-40ff-b995-6c90f2536e98"),
-                            Name = "medium"
+                            Id = 2,
+                            Name = "Medium"
                         },
                         new
                         {
-                            Id = new Guid("656e1f08-bb0e-406c-a0b9-77dc3e10a86b"),
-                            Name = "big"
+                            Id = 1,
+                            Name = "Big"
                         });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.Language", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -440,62 +685,25 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("38b402a0-e1b1-42d7-b472-db788a1a3924"),
-                            Name = "ukraine"
+                            Id = 1,
+                            Name = "English"
                         },
                         new
                         {
-                            Id = new Guid("01a4f567-b5cd-4d98-8d55-b49df9415d99"),
-                            Name = "russian"
+                            Id = 2,
+                            Name = "Ukraine"
                         },
                         new
                         {
-                            Id = new Guid("6579263d-c4db-446a-8223-7d895dc45f1b"),
-                            Name = "english"
-                        });
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Systems.NoteType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NotesTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d01e34ef-3bc0-4fd4-b4cf-0996101e9d87"),
-                            Name = "private"
-                        },
-                        new
-                        {
-                            Id = new Guid("ad503d43-c28e-405a-aa20-bcb4e2b1a2a5"),
-                            Name = "shared"
-                        },
-                        new
-                        {
-                            Id = new Guid("1f384f3c-1aa8-4664-ac8d-e264e68164dc"),
-                            Name = "deleted"
-                        },
-                        new
-                        {
-                            Id = new Guid("556a3f0d-1edd-4ccc-bd7e-b087b033849a"),
-                            Name = "archive"
+                            Id = 3,
+                            Name = "Russian"
                         });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.RefType", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -507,21 +715,20 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7c247026-36c6-4c17-b227-afb37e8ec7cd"),
-                            Name = "viewer"
+                            Id = 1,
+                            Name = "Viewer"
                         },
                         new
                         {
-                            Id = new Guid("397821bf-74d5-4bdf-81e4-0698d5a92476"),
-                            Name = "editor"
+                            Id = 2,
+                            Name = "Editor"
                         });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.Theme", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -533,13 +740,13 @@ namespace WriteContext.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5b08dced-b041-4a77-b290-f08e36af1d70"),
-                            Name = "light"
+                            Id = 1,
+                            Name = "Dark"
                         },
                         new
                         {
-                            Id = new Guid("f52a188b-5422-4144-91f6-bde40b82ce22"),
-                            Name = "dark"
+                            Id = 2,
+                            Name = "Light"
                         });
                 });
 
@@ -620,6 +827,9 @@ namespace WriteContext.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("BillingPlanId")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("CurrentBackgroundId")
                         .HasColumnType("uuid");
 
@@ -627,11 +837,11 @@ namespace WriteContext.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("FontSizeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("FontSizeId")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid>("LanguageId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -639,13 +849,12 @@ namespace WriteContext.Migrations
                     b.Property<string>("PersonalKey")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("PhotoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ThemeId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("ThemeId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BillingPlanId");
 
                     b.HasIndex("CurrentBackgroundId")
                         .IsUnique();
@@ -657,12 +866,24 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.HasIndex("PhotoId")
-                        .IsUnique();
-
                     b.HasIndex("ThemeId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.UserProfilePhoto", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("UserProfilePhotos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
@@ -715,18 +936,21 @@ namespace WriteContext.Migrations
                 {
                     b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
 
-                    b.Property<bool>("Checked")
+                    b.Property<bool?>("Checked")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Content")
                         .HasColumnType("text");
 
-                    b.Property<string>("HeadingType")
-                        .HasColumnType("text");
+                    b.Property<int?>("HTypeId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("TextType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("NoteTextTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("HTypeId");
+
+                    b.HasIndex("NoteTextTypeId");
 
                     b.ToTable("TextNote");
                 });
@@ -765,9 +989,28 @@ namespace WriteContext.Migrations
                     b.Navigation("AppFile");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.FileType", "FileType")
+                        .WithMany("AppFiles")
+                        .HasForeignKey("FileTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithMany("Files")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FileType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Systems.FolderType", "FolderType")
+                    b.HasOne("Common.DatabaseModels.models.Folders.FolderType", "FolderType")
                         .WithMany("Folders")
                         .HasForeignKey("FolderTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -900,18 +1143,26 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.BaseNoteContent", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.ContentType", "ContentType")
+                        .WithMany("BaseNoteContents")
+                        .HasForeignKey("ContentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.Notes.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("ContentType");
+
                     b.Navigation("Note");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Systems.NoteType", "NoteType")
+                    b.HasOne("Common.DatabaseModels.models.Notes.NoteType", "NoteType")
                         .WithMany("Notes")
                         .HasForeignKey("NoteTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1051,6 +1302,12 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.Plan.BillingPlan", "BillingPlan")
+                        .WithMany("Users")
+                        .HasForeignKey("BillingPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Common.DatabaseModels.models.Users.Backgrounds", "CurrentBackground")
                         .WithOne("CurrentUserBackground")
                         .HasForeignKey("Common.DatabaseModels.models.Users.User", "CurrentBackgroundId");
@@ -1067,15 +1324,13 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "Photo")
-                        .WithOne("User")
-                        .HasForeignKey("Common.DatabaseModels.models.Users.User", "PhotoId");
-
                     b.HasOne("Common.DatabaseModels.models.Systems.Theme", "Theme")
                         .WithMany("Users")
                         .HasForeignKey("ThemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BillingPlan");
 
                     b.Navigation("CurrentBackground");
 
@@ -1083,9 +1338,26 @@ namespace WriteContext.Migrations
 
                     b.Navigation("Language");
 
-                    b.Navigation("Photo");
-
                     b.Navigation("Theme");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.UserProfilePhoto", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
+                        .WithMany("UserProfilePhotos")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithOne("UserProfilePhoto")
+                        .HasForeignKey("Common.DatabaseModels.models.Users.UserProfilePhoto", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
@@ -1133,11 +1405,25 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.TextNote", b =>
                 {
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.ContentParts.HType", "HType")
+                        .WithMany("TextNotes")
+                        .HasForeignKey("HTypeId");
+
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
                         .WithOne()
                         .HasForeignKey("Common.DatabaseModels.models.NoteContent.TextNote", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.ContentParts.NoteTextType", "NoteTextType")
+                        .WithMany("TextNotes")
+                        .HasForeignKey("NoteTextTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HType");
+
+                    b.Navigation("NoteTextType");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.VideoNote", b =>
@@ -1165,9 +1451,14 @@ namespace WriteContext.Migrations
 
                     b.Navigation("DocumentNotes");
 
-                    b.Navigation("User");
+                    b.Navigation("UserProfilePhotos");
 
                     b.Navigation("VideoNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.FileType", b =>
+                {
+                    b.Navigation("AppFiles");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -1175,6 +1466,11 @@ namespace WriteContext.Migrations
                     b.Navigation("FoldersNotes");
 
                     b.Navigation("UsersOnPrivateFolders");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Folders.FolderType", b =>
+                {
+                    b.Navigation("Folders");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.History.NoteHistory", b =>
@@ -1185,6 +1481,21 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.Labels.Label", b =>
                 {
                     b.Navigation("LabelsNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentParts.HType", b =>
+                {
+                    b.Navigation("TextNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentParts.NoteTextType", b =>
+                {
+                    b.Navigation("TextNotes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.ContentType", b =>
+                {
+                    b.Navigation("BaseNoteContents");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Notes.Note", b =>
@@ -1206,9 +1517,14 @@ namespace WriteContext.Migrations
                     b.Navigation("UsersOnPrivateNotes");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.Systems.FolderType", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.Notes.NoteType", b =>
                 {
-                    b.Navigation("Folders");
+                    b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Plan.BillingPlan", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.FontSize", b =>
@@ -1219,11 +1535,6 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.Language", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.models.Systems.NoteType", b =>
-                {
-                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Systems.RefType", b =>
@@ -1251,6 +1562,8 @@ namespace WriteContext.Migrations
                 {
                     b.Navigation("Backgrounds");
 
+                    b.Navigation("Files");
+
                     b.Navigation("Folders");
 
                     b.Navigation("Labels");
@@ -1268,6 +1581,8 @@ namespace WriteContext.Migrations
                     b.Navigation("UserOnNotes");
 
                     b.Navigation("UserOnPrivateNotes");
+
+                    b.Navigation("UserProfilePhoto");
 
                     b.Navigation("UsersOnPrivateFolders");
                 });

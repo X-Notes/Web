@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
 {
-    public class UserOnNoteRepository : Repository<UserOnNoteNow>
+    public class UserOnNoteRepository : Repository<UserOnNoteNow, Guid>
     {
         public UserOnNoteRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -18,7 +18,12 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<List<User>> GetUsersOnlineUserOnNote(Guid noteId)
         {
-            return await context.UserOnNoteNow.Include(x => x.User).Where(x => x.NoteId == noteId).Select(x => x.User).ToListAsync();
+            return await context.UserOnNoteNow
+                .Include(x => x.User)
+                .ThenInclude(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
+                .Where(x => x.NoteId == noteId)
+                .Select(x => x.User).ToListAsync();
         }
     }
 }

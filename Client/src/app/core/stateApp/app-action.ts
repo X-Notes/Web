@@ -1,5 +1,5 @@
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { AppNotification } from '../models/app-notification';
+import { AppNotification } from '../models/AppNotification';
 
 export class UpdateRoute {
   static type = '[App] Update route';
@@ -15,10 +15,6 @@ export class SetToken {
 
 export class TokenSetNoUpdate {
   static type = '[App] Set noUpdateToken';
-}
-
-export class LoadGeneralEntites {
-  static type = '[App] Load General Entities';
 }
 
 export class LoadNotifications {

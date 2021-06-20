@@ -7,7 +7,6 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
-import { LanguageDTO } from 'src/app/shared/models/LanguageDTO';
 import {
   ChangeLanguage,
   ChangeFontSize,
@@ -16,13 +15,12 @@ import {
   UpdateUserPhoto,
   SetDefaultBackground,
 } from 'src/app/core/stateUser/user-action';
-import { FontSize } from 'src/app/shared/models/FontSize';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { takeUntil } from 'rxjs/operators';
-import { Background } from 'src/app/core/models/background';
+import { Background } from 'src/app/core/models/Background';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import {
   LoadBackgrounds,
@@ -33,8 +31,8 @@ import {
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { Theme } from 'src/app/shared/models/Theme';
 import { hideForDemo } from 'src/environments/demo';
+import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 
 @Component({
   selector: 'app-profile',
@@ -44,25 +42,22 @@ import { hideForDemo } from 'src/environments/demo';
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSize>;
+  public fontSize$: Observable<FontSizeENUM>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 
   @Select(UserStore.getUserTheme)
-  public theme$: Observable<Theme>;
+  public theme$: Observable<ThemeENUM>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUserLanguage)
-  public language$: Observable<LanguageDTO>;
+  public language$: Observable<LanguagesENUM>;
 
   @Select(BackgroundStore.getUserBackgrounds)
   public backgrounds$: Observable<Background[]>;
-
-  @Select(AppStore.getLanguages)
-  public languages$: Observable<LanguageDTO[]>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
@@ -71,6 +66,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   fontSize = FontSizeENUM;
 
   themes = ThemeENUM;
+
+  languages = Object.values(LanguagesENUM).filter(x => typeof x === 'string').map((z: string) => z.toLowerCase());
 
   userName;
 
@@ -103,7 +100,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(() => this.newBackground());
   }
 
-  setLanguage(item: LanguageDTO): void {
+  setLanguage(item: LanguagesENUM): void {
     this.store.dispatch(new ChangeLanguage(item));
   }
 
@@ -135,24 +132,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   changeTheme(value: boolean) {
-    const themes = this.store.selectSnapshot(AppStore.getThemes);
     if (value) {
-      const whiteTheme = themes.find((x) => x.name === ThemeENUM.Light);
-      this.store.dispatch(new ChangeTheme(whiteTheme));
+      this.store.dispatch(new ChangeTheme(ThemeENUM.Light));
     } else {
-      const darkTheme = themes.find((x) => x.name === ThemeENUM.Dark);
-      this.store.dispatch(new ChangeTheme(darkTheme));
+      this.store.dispatch(new ChangeTheme(ThemeENUM.Dark));
     }
   }
 
   changeFontSize(value: boolean) {
-    const fontSizes = this.store.selectSnapshot(AppStore.getFontSizes);
     if (value) {
-      const bigSize = fontSizes.find((x) => x.name === FontSizeENUM.Big);
-      this.store.dispatch(new ChangeFontSize(bigSize));
+      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Big));
     } else {
-      const mediumSize = fontSizes.find((x) => x.name === FontSizeENUM.Medium);
-      this.store.dispatch(new ChangeFontSize(mediumSize));
+      this.store.dispatch(new ChangeFontSize(FontSizeENUM.Medium));
     }
   }
 

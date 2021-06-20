@@ -15,15 +15,15 @@ export class SnackBarWrapperService {
   constructor(private snackService: SnackbarService, private store: Store) {}
 
   // eslint-disable-next-line class-methods-use-this
-  getNotesNaming(isMany: boolean, language: string) {
+  getNotesNaming(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return isMany ? 'Notes' : 'Note';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return isMany ? 'Заметки' : 'Заметка';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return isMany ? 'Нотатки' : 'Нотаток';
       }
       default: {
@@ -33,15 +33,15 @@ export class SnackBarWrapperService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getFoldersNaming(isMany: boolean, language: string): string {
+  getFoldersNaming(isMany: boolean, language: LanguagesENUM): string {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return isMany ? 'Folders' : 'Folder';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return isMany ? 'Папки' : 'Папка';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return isMany ? 'Папки' : 'Папка';
       }
       default: {
@@ -51,15 +51,15 @@ export class SnackBarWrapperService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getMoveToMessage(isMany: boolean, language: string) {
+  getMoveToMessage(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return isMany ? 'moved to' : 'moved to';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return isMany ? 'перенесены в' : 'перенесена в';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return isMany ? 'перенесені в' : 'перенесена в';
       }
       default: {
@@ -69,15 +69,15 @@ export class SnackBarWrapperService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getUndoMessage(language: string) {
+  getUndoMessage(language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return 'Undo';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return 'Отменить';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return 'Відмінити';
       }
       default: {
@@ -86,15 +86,15 @@ export class SnackBarWrapperService {
     }
   }
 
-  getArchiveEntityName(isMany: boolean, language: string) {
+  getArchiveEntityName(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return 'archive';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return 'архив';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return 'архів';
       }
       default: {
@@ -103,15 +103,15 @@ export class SnackBarWrapperService {
     }
   }
 
-  getPrivateEntityName(isMany: boolean, language: string) {
+  getPrivateEntityName(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return 'private';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return 'личные';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return 'особисті';
       }
       default: {
@@ -120,15 +120,15 @@ export class SnackBarWrapperService {
     }
   }
 
-  getDeleteEntityName(isMany: boolean, language: string) {
+  getDeleteEntityName(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return 'bin';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return 'корзину';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return 'кошик';
       }
       default: {
@@ -137,15 +137,15 @@ export class SnackBarWrapperService {
     }
   }
 
-  getSharedEntityName(isMany: boolean, language: string) {
+  getSharedEntityName(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
-      case LanguagesENUM.english: {
+      case LanguagesENUM.English: {
         return 'shared';
       }
-      case LanguagesENUM.russian: {
+      case LanguagesENUM.Russian: {
         return 'общие';
       }
-      case LanguagesENUM.ukraine: {
+      case LanguagesENUM.Ukraine: {
         return 'спільні';
       }
       default: {
@@ -156,9 +156,9 @@ export class SnackBarWrapperService {
 
   buildArchive(
     callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
-    entityNameOp: (isMany: boolean, language: string) => string,
+    entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
   ) {
-    const lname = this.store.selectSnapshot(UserStore.getUserLanguage).name;
+    const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
     const message = this.concatMessages(
       lname,
       callback.selectedIds.length > 1,
@@ -171,9 +171,9 @@ export class SnackBarWrapperService {
 
   buildPrivate(
     callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
-    entityNameOp: (isMany: boolean, language: string) => string,
+    entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
   ) {
-    const lname = this.store.selectSnapshot(UserStore.getUserLanguage).name;
+    const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
     const message = this.concatMessages(
       lname,
       callback.selectedIds.length > 1,
@@ -186,9 +186,9 @@ export class SnackBarWrapperService {
 
   buildDelete(
     callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
-    entityNameOp: (isMany: boolean, language: string) => string,
+    entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
   ) {
-    const lname = this.store.selectSnapshot(UserStore.getUserLanguage).name;
+    const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
     const message = this.concatMessages(
       lname,
       callback.selectedIds.length > 1,
@@ -216,9 +216,9 @@ export class SnackBarWrapperService {
   }
 
   concatMessages(
-    language: string,
+    language: LanguagesENUM,
     isMany: boolean,
-    ...ops: ((isMany: boolean, language: string) => string)[]
+    ...ops: ((isMany: boolean, language: LanguagesENUM) => string)[]
   ): string {
     let result = '';
     // eslint-disable-next-line no-return-assign

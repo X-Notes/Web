@@ -1,6 +1,6 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, ContentType } from '../../models/ContentMode';
-import { EnterEvent } from '../../models/enterEvent';
+import { BaseText, NoteTextTypeENUM } from '../../models/ContentModel';
+import { EnterEvent } from '../../models/EnterEvent';
 import { HtmlService } from './html.service';
 
 @Injectable()
@@ -29,7 +29,12 @@ export class TextService extends HtmlService {
     $event.preventDefault();
     const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
     content.content = this.getNativeElement(contentHtml).innerText;
-    const event = super.eventEventFactory(content.id, breakModel, ContentType.DEFAULT, content.id);
+    const event = super.eventEventFactory(
+      content.id,
+      breakModel,
+      NoteTextTypeENUM.Default,
+      content.id,
+    );
     enterEvent.emit(event);
     console.log(event);
   }

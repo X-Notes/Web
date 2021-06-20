@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.DatabaseModels.models.Folders;
 using Common.DTO.folders;
 using Domain.Commands.folders;
 using Domain.Queries.folders;
@@ -33,7 +34,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("type/{id}")]
-        public async Task<List<SmallFolder>> GetPrivateFolders(Guid id)
+        public async Task<List<SmallFolder>> GetPrivateFolders(FolderTypeENUM id)
         {
             var email = this.GetUserEmail();
             var query = new GetFoldersByTypeQuery(email, id);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Files
 {
-    public class AlbumNoteAppFile : BaseEntity
+    public class AlbumNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

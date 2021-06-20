@@ -17,7 +17,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import {
   PersonalizationService,
@@ -30,7 +30,7 @@ import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/FullFolder';
-import { SmallFolder } from '../models/folder';
+import { SmallFolder } from '../models/Folder';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
@@ -61,7 +61,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   public isOwner$: Observable<boolean>;
 
   @Select(UserStore.getUserBackground)
-  public userBackground$: Observable<ShortUser>;
+  public userBackground$: Observable<string>;
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -133,8 +133,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
               this.loadSideBar();
             }
 
-            const types = this.store.selectSnapshot(AppStore.getNoteTypes);
-            const actions = types.map((t) => new LoadNotes(t.id, t));
+            const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number');
+            const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
             this.store.dispatch(actions);
           }
         });
@@ -145,7 +145,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get folderMenu() {
-    const type = this.folder?.folderType;
+    const type = this.folder?.folderTypeId;
     if (type) {
       return this.menuButtonService.getFolderMenuByFolderType(type);
     }
@@ -181,7 +181,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((theme) => {
         if (theme) {
-          if (theme.name === ThemeENUM.Dark) {
+          if (theme === ThemeENUM.Dark) {
             this.menu.panelClass = 'dark-menu';
           } else {
             this.menu.panelClass = null;
@@ -215,10 +215,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async loadSideBar() {
-    const types = this.store.selectSnapshot(AppStore.getFolderTypes);
-    const actions = types.map((action) => new LoadFolders(action.id, action));
+    const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number');
+    const actions = types.map((action : FolderTypeENUM) => new LoadFolders(action));
     await this.store.dispatch(actions).toPromise();
-    await this.setSideBarNotes(this.folder.folderType.name);
+    await this.setSideBarNotes(this.folder.folderTypeId);
   }
 
   setSideBarNotes(folderType: FolderTypeENUM) {

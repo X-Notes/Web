@@ -9,7 +9,8 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
-    public class UserRepository : Repository<User>
+    // TODO OPTIMIZATION SQL QUERY
+    public class UserRepository : Repository<User, Guid>
     {
 
         public UserRepository(WriteContextDB contextDB)
@@ -22,15 +23,14 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.CurrentBackground)
-                .Include(x => x.Language)
-                .Include(x => x.FontSize)
-                .Include(x => x.Theme)
+                .Include(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User> GetUserWithBackgrounds(string email)
         {
-            return await context.Users.Include(x => x.Backgrounds).FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.Include(x => x.Backgrounds).ThenInclude(x => x.File).FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<List<User>> SearchByEmailAndName(string search, string email) // TODO BAD TOLOWER MAYBE FIX
@@ -38,6 +38,8 @@ namespace WriteContext.Repositories.Users
             return await context.Users
                 .Where(x => x.Email.ToLower().Contains(search) || x.Name.ToLower().Contains(search))
                 .Where(x => x.Email != email)
+                .Include(x => x.UserProfilePhoto)
+                .ThenInclude(x => x.AppFile)
                 .ToListAsync();
         }
 
@@ -50,7 +52,6 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.Notes)
-                .ThenInclude(x => x.NoteType)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
@@ -58,7 +59,6 @@ namespace WriteContext.Repositories.Users
         {
             return await context.Users
                 .Include(x => x.Folders)
-                .ThenInclude(x => x.FolderType)
                 .FirstOrDefaultAsync(x => x.Email == email);
         }
 
@@ -73,14 +73,15 @@ namespace WriteContext.Repositories.Users
                     await context.Files.AddAsync(file);
                     await context.SaveChangesAsync();
 
-                    user.PhotoId = file.Id;
-                    await Update(user);
+                    await context.UserProfilePhotos.AddAsync(new UserProfilePhoto { AppFileId = file.Id, UserId = user.Id });
+                    await context.SaveChangesAsync();
 
                     await transaction.CommitAsync();
 
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                     success = false;
                 }

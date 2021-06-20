@@ -12,7 +12,7 @@
             <img
               *ngIf="!photoError"
               alt="photo"
-              [src]="(user$ | async).photoId | getImage"
+              [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
               (error)="changeSource()"
             />
             <i *ngIf="photoError" class="icon-people"></i>
@@ -57,7 +57,7 @@
 </div>
 <div
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">

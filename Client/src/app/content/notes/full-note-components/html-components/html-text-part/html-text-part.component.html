@@ -15,22 +15,22 @@
   <div *ngIf="isActive" class="no-content">
     <p>Text</p>
     <div class="buttons" (mousedown)="preventClick($event)">
-      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H1)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
         <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H2)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
         <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformContent($event, contentType.HEADING, headingType.H3)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformContent($event, contentType.CHECKLIST)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformContent($event, contentType.DOTLIST)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
         <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformContent($event, contentType.NUMBERLIST)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.PHOTOS, true)">

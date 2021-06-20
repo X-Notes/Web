@@ -11,14 +11,14 @@ import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { EntityType } from 'src/app/shared/enums/EntityTypes';
 import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { ShortUser } from 'src/app/core/models/short-user';
+import { ShortUser } from 'src/app/core/models/ShortUser';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../menu-buttons.service';
-import { FullNote } from '../../notes/models/fullNote';
+import { FullNote } from '../../notes/models/FullNote';
 import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/FullFolder';
@@ -136,7 +136,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!folder) {
       return;
     }
-    switch (folder.folderType.name) {
+    switch (folder.folderTypeId) {
       case FolderTypeENUM.Private: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;
@@ -163,7 +163,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!note) {
       return;
     }
-    switch (note.noteType.name) {
+    switch (note.noteTypeId) {
       case NoteTypeENUM.Private: {
         this.menuButtonService.setItems(this.menuButtonService.notesItemsPrivate);
         break;

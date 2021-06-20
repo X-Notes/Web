@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
-import { DocumentModel } from '../../models/ContentMode';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { DocumentModel } from '../../models/ContentModel';
+import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
 @Component({
   selector: 'app-document-note',
@@ -50,7 +50,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   openModal() {
-    this.dialogsManageService.viewDock(this.content.fileId);
+    this.dialogsManageService.viewDock(this.content.documentPath);
   }
 
   mouseEnter = ($event: any) => {

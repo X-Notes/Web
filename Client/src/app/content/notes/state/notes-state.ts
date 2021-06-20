@@ -42,14 +42,14 @@ import {
   ChangeIsLockedFullNote,
 } from './notes-actions';
 import { UpdateColor } from './updateColor';
-import { SmallNote } from '../models/smallNote';
+import { SmallNote } from '../models/SmallNote';
 import { Label } from '../../labels/models/label';
 import { UpdateLabelEvent } from './updateLabels';
 import { Notes } from './Notes';
-import { FullNote } from '../models/fullNote';
+import { FullNote } from '../models/FullNote';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
-import { InvitedUsersToNoteOrFolder } from '../models/invitedUsersToNote';
-import { OnlineUsersNote } from '../models/online-users-note';
+import { InvitedUsersToNoteOrFolder } from '../models/InvitedUsersToNote';
+import { OnlineUsersNote } from '../models/OnlineUsersNote';
 
 interface FullNoteState {
   note: FullNote;
@@ -350,13 +350,12 @@ export class NoteStore {
     notesAdded = [
       ...notesAdded.map((note) => {
         const newNote = { ...note };
-        newNote.noteType = { ...newNote.noteType };
         return newNote;
       }),
     ];
     notesAdded = notesAdded.map((x) => {
       const note = { ...x };
-      note.noteType.name = typeTo;
+      note.noteTypeId = typeTo;
       return note;
     });
     const newNotesTo = [...notesAdded, ...notesTo];
@@ -375,7 +374,7 @@ export class NoteStore {
     { typeNote, selectedIds }: SetDeleteNotes,
   ) {
     await this.api.setDeleteNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Deleted, selectedIds));
+    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Deleted, selectedIds));
   }
 
   @Action(ArchiveNotes)
@@ -384,7 +383,7 @@ export class NoteStore {
     { typeNote, selectedIds }: ArchiveNotes,
   ) {
     await this.api.archiveNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Archive, selectedIds));
+    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Archive, selectedIds));
   }
 
   @Action(MakePrivateNotes)
@@ -393,7 +392,7 @@ export class NoteStore {
     { typeNote, selectedIds }: MakePrivateNotes,
   ) {
     await this.api.makePrivateNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote.name, NoteTypeENUM.Private, selectedIds));
+    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Private, selectedIds));
   }
 
   // Color change
@@ -444,7 +443,7 @@ export class NoteStore {
     );
     dispatch([UnSelectAllNote]);
 
-    if (typeNote.name === NoteTypeENUM.Private) {
+    if (typeNote === NoteTypeENUM.Private) {
       patchState({
         notesAddingPrivate: [...newNotes],
       });
@@ -466,7 +465,7 @@ export class NoteStore {
     { label, typeNote, selectedIds }: AddLabelOnNote,
   ) {
     await this.api.addLabel(label.id, selectedIds).toPromise();
-    const notes = this.getNotesByType(getState, typeNote.name);
+    const notes = this.getNotesByType(getState, typeNote);
 
     const notesForUpdate = notes
       .filter((x) => this.itemsFromFilterArray(selectedIds, x))
@@ -511,7 +510,7 @@ export class NoteStore {
       }
       return note;
     });
-    dispatch(new UpdateNotes(new Notes(typeNote.name, notesForStore), typeNote.name));
+    dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
     dispatch(new UpdateLabelCount(label));
   }
 
@@ -522,7 +521,7 @@ export class NoteStore {
   ) {
     await this.api.removeLabel(label.id, getState().selectedIds).toPromise();
 
-    const notes = this.getNotesByType(getState, typeNote.name);
+    const notes = this.getNotesByType(getState, typeNote);
 
     const notesForUpdate = notes.filter((x) => this.itemsFromFilterArray(selectedIds, x));
 
@@ -542,7 +541,7 @@ export class NoteStore {
       }
       return note;
     });
-    dispatch(new UpdateNotes(new Notes(typeNote.name, notesForStore), typeNote.name));
+    dispatch(new UpdateNotes(new Notes(typeNote, notesForStore), typeNote));
     dispatch(new UpdateLabelCount(label));
   }
 
@@ -597,14 +596,14 @@ export class NoteStore {
     { getState, dispatch }: StateContext<NoteState>,
     { order, typeNote }: PositionNote,
   ) {
-    let notes = this.getNotesByType(getState, typeNote.name);
+    let notes = this.getNotesByType(getState, typeNote);
     const changedNote = notes.find((x) => x.id === order.entityId);
     const flag = notes.indexOf(changedNote);
     if (flag + 1 !== order.position) {
       await this.orderService.changeOrder(order).toPromise();
       notes = notes.filter((x) => x.id !== order.entityId);
       notes.splice(order.position - 1, 0, changedNote);
-      dispatch(new UpdateNotes(new Notes(typeNote.name, [...notes]), typeNote.name));
+      dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
     }
   }
 
@@ -669,7 +668,7 @@ export class NoteStore {
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
     const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
+    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
   }
 
   @Action(UpdateTitle)
@@ -682,7 +681,7 @@ export class NoteStore {
     patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     await this.api.updateTitle(str, note.id).toPromise();
     const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
+    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
   }
 
   @Action(ChangeColorFullNote)
@@ -696,7 +695,7 @@ export class NoteStore {
     const newNote: FullNote = { ...note, color };
     patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     const noteUpdate = newNote as SmallNote;
-    dispatch(new UpdateOneNote(noteUpdate, note.noteType.name));
+    dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
   }
 
   @Action(ChangeTypeFullNote)
@@ -707,7 +706,7 @@ export class NoteStore {
   ) {
     const note = getState().fullNoteState?.note;
     if (note) {
-      const newNote: FullNote = { ...note, noteType: type };
+      const newNote: FullNote = { ...note, noteTypeId: type };
       patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
     }
   }
@@ -748,9 +747,9 @@ export class NoteStore {
   // LOADING SMALL
 
   @Action(LoadNotes)
-  async loadNotes({ getState, patchState }: StateContext<NoteState>, { id, type }: LoadNotes) {
-    if (!getState().notes.find((z) => z.typeNotes === type.name)) {
-      const notesAPI = await this.api.getNotes(id, type.name).toPromise();
+  async loadNotes({ getState, patchState }: StateContext<NoteState>, { type }: LoadNotes) {
+    if (!getState().notes.find((z) => z.typeNotes === type)) {
+      const notesAPI = await this.api.getNotes(type).toPromise();
       patchState({
         notes: [...getState().notes, notesAPI],
       });
@@ -784,7 +783,7 @@ export class NoteStore {
 
   @Action(SelectAllNote)
   selectAll({ patchState, getState }: StateContext<NoteState>, { typeNote }: SelectAllNote) {
-    const notes = this.getNotesByType(getState, typeNote.name);
+    const notes = this.getNotesByType(getState, typeNote);
     const ids = notes.map((z) => z.id);
     patchState({ selectedIds: [...ids] });
   }

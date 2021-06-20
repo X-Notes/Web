@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,9 @@ namespace FakeData
                 .RuleFor(u => u.Name, (f, y) => f.Internet.UserName(y.Name))
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.Name))
 
-                .RuleFor(u => u.LanguageId, f => Guid.Parse("38b402a0-e1b1-42d7-b472-db788a1a3924"))
-                .RuleFor(u => u.ThemeId, f => Guid.Parse("f52a188b-5422-4144-91f6-bde40b82ce22"))
-                .RuleFor(u => u.FontSizeId, f => Guid.Parse("5c335a93-7aa7-40ff-b995-6c90f2536e98"));
+                .RuleFor(u => u.LanguageId, f => LanguageENUM.English)
+                .RuleFor(u => u.ThemeId, f => ThemeENUM.Dark)
+                .RuleFor(u => u.FontSizeId, f => FontSizeENUM.Medium);
         }
 
         public List<User> GetUsers(int count)

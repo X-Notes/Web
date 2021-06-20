@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
+using Storage.models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +11,11 @@ namespace Storage
 {
     public interface IFilesStorage : IDisposable
     {
-        public void CreateUserFolders(Guid userId);
-        public void CreateNoteFolders(Guid noteId);
-        public void CreateIfMissing();
-        Task<string> SaveUserFile(IFormFile file, Guid userId, string contentFolder, string fileTypeEnd);
-        Task<string> SaveNoteFiles(IFormFile file, Guid noteId, string contentFolder, string fileTypeEnd);
-        Task<string> SaveNoteFiles(byte[] file, Guid noteId, string contentFolder, string fileTypeEnd);
-        string GetValueFromDictionary(ContentTypesFile type);
-        void RemoveFile(string path);
+        public Task CreateUserContainer(Guid userId);
+        Task<string> SaveFile(string userId, byte[] file, string ContentType, ContentTypesFile contentFolder, string fileTypeEnd);
+        Task RemoveFile(string userId, string path);
+        Task RemoveFiles(string userId, params string[] pathes);
+        Task<GetFileResponse> GetFile(string userId, string path);
+        Task<long> GetUsedDiskSpace(string userId);
     }
 }

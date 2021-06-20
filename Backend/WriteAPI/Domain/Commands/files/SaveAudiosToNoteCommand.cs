@@ -1,4 +1,5 @@
-﻿using Common.DatabaseModels.models.Files;
+﻿using Common.Attributes;
+using Common.DatabaseModels.models.Files;
 using Common.DTO.files;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -19,25 +20,31 @@ namespace Domain.Commands.files
     public class SaveAudiosToNoteCommand : IRequest<AppFile>
     {
         public IFormFile Audio { set; get; }
+
         public FilesBytes FileBytes { set; get; }
 
+        [RequiredEnumField(ErrorMessage = "FileType is required.")]
         public SaveAudiosType FileType { set; get; }
 
 
         public Guid NoteId { set; get; }
 
-        public SaveAudiosToNoteCommand(IFormFile Audio, Guid NoteId)
+        public Guid UserId { set; get; }
+
+        public SaveAudiosToNoteCommand(Guid userId, IFormFile Audio, Guid NoteId)
         {
             this.Audio = Audio;
             this.NoteId = NoteId;
             this.FileType = SaveAudiosType.FormFile;
+            UserId = userId;
         }
 
-        public SaveAudiosToNoteCommand(FilesBytes FileBytes, Guid NoteId)
+        public SaveAudiosToNoteCommand(Guid userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;
             this.FileType = SaveAudiosType.Bytes;
+            UserId = userId;
         }
 
     }

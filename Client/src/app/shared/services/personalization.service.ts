@@ -9,8 +9,8 @@ import { map, startWith, take } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSize } from '../models/FontSize';
 import { Icons } from '../enums/Icons.enum';
+import { FontSizeENUM } from '../enums/FontSizeEnum';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
@@ -117,7 +117,7 @@ export const shake = trigger('shake', [
 })
 export class PersonalizationService {
   @Select(UserStore.getUserFontSize)
-  public fontSize$: Observable<FontSize>;
+  public fontSize$: Observable<FontSizeENUM>;
 
   spinnerActive = false;
 

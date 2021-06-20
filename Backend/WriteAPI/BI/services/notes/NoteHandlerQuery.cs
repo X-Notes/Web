@@ -2,15 +2,13 @@
 using BI.helpers;
 using BI.Mapping;
 using Common.DatabaseModels.models.Labels;
-using Common.DatabaseModels.models.NoteContent;
+using Common.DatabaseModels.models.Notes;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.users;
-using Common.Naming;
 using Domain.Queries.notes;
 using Domain.Queries.permissions;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -61,13 +59,12 @@ namespace BI.services.notes
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId, false);
-                var type = await appRepository.GetNoteTypeByName(ModelsNaming.SharedNote);
 
-                if(type.Id == request.TypeId)
+                if(NoteTypeENUM.Shared == request.TypeId)
                 {
                     var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhere(x => x.UserId == user.Id);
                     var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
@@ -151,7 +148,7 @@ namespace BI.services.notes
 
         public async Task<List<SmallNote>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserId(user.Id);

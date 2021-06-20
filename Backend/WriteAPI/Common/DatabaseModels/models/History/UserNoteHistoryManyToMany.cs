@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.History
 {
-    public class UserNoteHistoryManyToMany : BaseEntity
+    public class UserNoteHistoryManyToMany : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }

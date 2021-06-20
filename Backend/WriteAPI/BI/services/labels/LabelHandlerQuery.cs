@@ -31,7 +31,7 @@ namespace BI.services.labels
 
         public async Task<LabelsDTO> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var labels = await labelRepository.GetAllByUserID(user.Id);
@@ -55,7 +55,7 @@ namespace BI.services.labels
 
         public async Task<int> Handle(GetCountNotesByLabel request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 return await this.labelRepository.GetNotesCountByLabelId(request.LabelId);

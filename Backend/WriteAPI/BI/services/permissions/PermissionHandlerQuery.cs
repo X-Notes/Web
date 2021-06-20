@@ -1,11 +1,10 @@
-﻿using Common.DTO.permissions;
-using Common.Naming;
+﻿using Common.DatabaseModels.models.Folders;
+using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.models.Systems;
+using Common.DTO.permissions;
 using Domain.Queries.permissions;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Folders;
@@ -33,7 +32,7 @@ namespace BI.services.permissions
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNote request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var note = await this.noteRepository.GetForCheckPermission(request.NoteId);
@@ -48,17 +47,17 @@ namespace BI.services.permissions
                     return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: true);
                 }
 
-                switch (note.NoteType.Name)
+                switch (note.NoteTypeId)
                 {
-                    case ModelsNaming.SharedNote:
+                    case NoteTypeENUM.Shared:
                         {
-                            switch (note.RefType.Name)
+                            switch (note.RefTypeId)
                             {
-                                case ModelsNaming.Editor:
+                                case RefTypeENUM.Editor:
                                     {
                                         return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                                     }
-                                case ModelsNaming.Viewer:
+                                case RefTypeENUM.Viewer:
                                     {
                                         return new UserPermissionsForNote().SetOnlyRead(user, note);
                                     }
@@ -68,11 +67,11 @@ namespace BI.services.permissions
                     default:
                         {
                             var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                            if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Editor)
+                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
                             {
                                 return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
                             }
-                            if (noteUser != null && noteUser.AccessType.Name == ModelsNaming.Viewer)
+                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
                             {
                                 return new UserPermissionsForNote().SetOnlyRead(user, note);
                             }
@@ -85,7 +84,7 @@ namespace BI.services.permissions
 
         public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolder request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FirstOrDefault(x => x.Email == request.Email);
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var folder = await folderRepository.GetForUpdateTitle(request.FolderId);
@@ -100,17 +99,17 @@ namespace BI.services.permissions
                     return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: true);
                 }
 
-                switch (folder.FolderType.Name)
+                switch (folder.FolderTypeId)
                 {
-                    case ModelsNaming.SharedFolder:
+                    case FolderTypeENUM.Shared:
                         {
-                            switch (folder.RefType.Name)
+                            switch (folder.RefTypeId)
                             {
-                                case ModelsNaming.Editor:
+                                case RefTypeENUM.Editor:
                                     {
                                         return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
                                     }
-                                case ModelsNaming.Viewer:
+                                case RefTypeENUM.Viewer:
                                     {
                                         return new UserPermissionsForFolder().GetOnlyRead(user, folder);
                                     }
@@ -120,11 +119,11 @@ namespace BI.services.permissions
                     default:
                         {
                             var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                            if (folderUser != null && folderUser.AccessType.Name == ModelsNaming.Editor)
+                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
                             {
                                 return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
                             }
-                            if (folderUser != null && folderUser.AccessType.Name == ModelsNaming.Viewer)
+                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)
                             {
                                 return new UserPermissionsForFolder().GetOnlyRead(user, folder);
                             }

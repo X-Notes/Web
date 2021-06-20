@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Users
 {
-    public class Notification : BaseEntity
+    public class Notification : BaseEntity<Guid>
     {
         public Guid? UserFromId { set; get; }
         public User UserFrom { set; get; }

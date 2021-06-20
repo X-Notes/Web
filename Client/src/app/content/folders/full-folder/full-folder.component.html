@@ -12,7 +12,7 @@
             <img
               *ngIf="!photoError"
               alt="photo"
-              [src]="(user$ | async).photoId | getImage"
+              [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
               (error)="changeSource()"
             />
             <i *ngIf="photoError" class="icon-people"></i>
@@ -47,13 +47,13 @@
 <div
   *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
-  [ngStyle]="{'background-image': (user$ | async).currentBackground?.path !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div class="folder-sub-header" appTheme>
     <div class="container">
       <div class="navigation">
-        <a [routerLink]="'/folders/' + (folder?.folderType?.name | folderType)?.route" class="link"
-          >{{ (folder?.folderType?.name | folderType)?.tranlate | translate }}</a
+        <a [routerLink]="'/folders/' + (folder?.folderTypeId | folderType)?.route" class="link"
+          >{{ (folder?.folderTypeId | folderType)?.tranlate | translate }}</a
         >
         <span class="divider">/</span>
         <a class="link">{{ folder?.title }}</a>
@@ -116,7 +116,7 @@
           class="grid-item"
           id="{{item.id}}"
           *ngFor="let item of ffnService.noteService.notes"
-          [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async).name === fontSize.Big ? 'big-size' : '']"
+          [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
         >
           <app-note
             [note]="item"

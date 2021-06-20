@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notifications
 {
-    public class NotificationRepository : Repository<Notification>
+    public class NotificationRepository : Repository<Notification, Guid>
     {
         public NotificationRepository(WriteContextDB contextDB)
             : base(contextDB)

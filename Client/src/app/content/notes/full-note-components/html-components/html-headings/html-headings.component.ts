@@ -12,10 +12,10 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, HeadingType } from '../../../models/ContentMode';
+import { BaseText, HeadingTypeENUM } from '../../../models/ContentModel';
 import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/enterEvent';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { EnterEvent } from '../../../models/EnterEvent';
+import { ParentInteraction } from '../../../models/ParentInteraction.interface';
 import { HeadingService } from '../../html-business-logic/heading.service';
 
 @Component({
@@ -42,7 +42,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
-  hType = HeadingType;
+  hType = HeadingTypeENUM;
 
   textChanged: Subject<string> = new Subject<string>();
 

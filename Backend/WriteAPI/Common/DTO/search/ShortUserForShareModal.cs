@@ -10,5 +10,6 @@ namespace Common.DTO.search
         public string Name { set; get; }
         public string Email { set; get; }
         public Guid PhotoId { set; get; }
+        public string PhotoPath { set; get; }
     }
 }

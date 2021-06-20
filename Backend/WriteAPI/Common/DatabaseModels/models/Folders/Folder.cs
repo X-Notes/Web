@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Common.DatabaseModels.models.Folders
 {
-    public class Folder : BaseEntity
+    public class Folder : BaseEntity<Guid>
     {
-        public Guid FolderTypeId { set; get; }
+        public FolderTypeENUM FolderTypeId { set; get; }
         public FolderType FolderType { set; get; }
 
-        public Guid RefTypeId { set; get; }
+        public RefTypeENUM RefTypeId { set; get; }
         public RefType RefType { set; get; }
 
         public string Title { set; get; }

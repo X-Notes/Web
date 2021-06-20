@@ -1,13 +1,12 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { FolderType } from 'src/app/shared/models/folderType';
 import { Folders } from '../models/Folders';
-import { SmallFolder } from '../models/folder';
+import { SmallFolder } from '../models/Folder';
 
 export class LoadFolders {
   static type = '[Folders] Load private folders';
 
-  constructor(public id: string, public type: FolderType) {}
+  constructor(public type: FolderTypeENUM) {}
 }
 
 // FUNCTIONS
@@ -17,7 +16,7 @@ export class AddFolder {
 }
 
 export class BaseChangeTypeSmallFolder {
-  public typeFolder: FolderType;
+  public typeFolder: FolderTypeENUM;
 
   public selectedIds: string[];
 }
@@ -44,7 +43,7 @@ export class ChangeColorFullFolder {
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
-  constructor(public color: string, public typeFolder: FolderType, public selectedIds: string[]) {}
+  constructor(public color: string, public typeFolder: FolderTypeENUM, public selectedIds: string[]) {}
 }
 
 export class ClearColorFolders {
@@ -62,7 +61,7 @@ export class UpdateFolders {
 export class DeleteFoldersPermanently {
   static type = '[Folders] Delete folders';
 
-  constructor(public selectedIds: string[], public typeNote: FolderType) {}
+  constructor(public selectedIds: string[], public typeNote: FolderTypeENUM) {}
 }
 
 export class ClearAddedPrivateFolders {
@@ -72,13 +71,13 @@ export class ClearAddedPrivateFolders {
 export class CopyFolders {
   static type = '[Folders] Copy folders';
 
-  constructor(public typeFolder: FolderType, public selectedIds: string[]) {}
+  constructor(public typeFolder: FolderTypeENUM, public selectedIds: string[]) {}
 }
 
 export class PositionFolder {
   static type = '[Folders] Position folders';
 
-  constructor(public order: Order, public typeFolder: FolderType) {}
+  constructor(public order: Order, public typeFolder: FolderTypeENUM) {}
 }
 
 // Muuri remove from dom
@@ -106,13 +105,13 @@ export class UnSelectAllFolder {
 export class SelectAllFolder {
   static type = '[Folders] Select all';
 
-  constructor(public typeFolder: FolderType) {}
+  constructor(public typeFolder: FolderTypeENUM) {}
 }
 
 export class UpdateTitle {
   static type = '[Folders] update title';
 
-  constructor(public str: string, public id: string, public typeFolder: FolderType) {}
+  constructor(public str: string, public id: string, public typeFolder: FolderTypeENUM) {}
 }
 
 export class UpdateOneFolder {
@@ -140,7 +139,7 @@ export class TransformTypeFolders {
 export class ChangeTypeFullFolder {
   static type = '[Folders] change type fullFolder';
 
-  constructor(public type: FolderType) {}
+  constructor(public type: FolderTypeENUM) {}
 }
 
 export class GetInvitedUsersToFolder {

@@ -49,7 +49,7 @@ export class SelectionService {
       this.apiBrowserService.getSelection().empty();
     }
     for (const elem of refElements) {
-      if (theme.name === ThemeENUM.Dark) {
+      if (theme === ThemeENUM.Dark) {
         elem.style.backgroundColor = '#2a2d32';
       } else {
         elem.style.backgroundColor = '#f3f3f3';

@@ -9,14 +9,14 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
 {
-    public class NoteRepository : Repository<Note>
+    public class NoteRepository : Repository<Note, Guid>
     {
         public NoteRepository(WriteContextDB contextDB)
             : base(contextDB)
         {
         }
 
-        public async Task Add(Note note, Guid TypeId)
+        public async Task Add(Note note, NoteTypeENUM TypeId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -38,6 +38,7 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -47,11 +48,8 @@ namespace WriteContext.Repositories.Notes
         public async Task<Note> GetForCheckPermission(Guid id)
         {
             return await context.Notes
-                .Include(x => x.NoteType)
-                .Include(x => x.RefType)
                 .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
-                .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -59,19 +57,22 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.NoteType)
-                .Include(x => x.RefType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, Guid typeId, bool isHistory)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, NoteTypeENUM typeId, bool isHistory)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
         }
@@ -79,17 +80,22 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByIdsWithContent(IEnumerable<Guid> ids)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .Where(x => ids.Contains(x.Id) && x.IsHistory == false).ToListAsync();
         }
 
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, Guid typeId)
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, NoteTypeENUM typeId)
         {
             return await context.Notes
                 .OrderBy(x => x.Order)
@@ -100,7 +106,14 @@ namespace WriteContext.Repositories.Notes
         {
             return await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
@@ -108,10 +121,15 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserId(Guid userId)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .Where(x => x.UserId == userId && x.IsHistory == false)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync();
@@ -120,10 +138,15 @@ namespace WriteContext.Repositories.Notes
         public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId)
         {
             return await context.Notes
-                .Include(x => x.RefType)
-                .Include(x => x.NoteType)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudioNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .Where(x => x.UserId == userId && x.Id != noteId && x.IsHistory == false)
                 .OrderBy(x => x.CreatedAt)
                 .ToListAsync();
@@ -161,13 +184,14 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
         }
 
 
-        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, Guid FromId, Guid ToId)
+        public async Task CastNotes(List<Note> notesForCasting, List<Note> allUserNotes, NoteTypeENUM FromId, NoteTypeENUM ToId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -194,6 +218,7 @@ namespace WriteContext.Repositories.Notes
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -211,7 +236,7 @@ namespace WriteContext.Repositories.Notes
 
         public async Task<Note> GetOneById(Guid noteId)
         {
-            return await context.Notes.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == noteId);
+            return await context.Notes.FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
     }

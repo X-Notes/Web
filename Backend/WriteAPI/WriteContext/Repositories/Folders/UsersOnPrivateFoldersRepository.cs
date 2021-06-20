@@ -9,7 +9,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Folders
 {
-    public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders>
+    public class UsersOnPrivateFoldersRepository : Repository<UsersOnPrivateFolders, Guid>
     {
         public UsersOnPrivateFoldersRepository(WriteContextDB contextDB)
             :base(contextDB)
@@ -20,7 +20,6 @@ namespace WriteContext.Repositories.Folders
         {
             return await context.UsersOnPrivateFolders
                 .Include(x => x.User)
-                .Include(x => x.AccessType)
                 .Where(x => x.FolderId == folderId).ToListAsync();
         }
     }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels
 {
-    public class BaseEntity
+    public class BaseEntity<T>
     {
-        public virtual Guid Id { set; get; }
+        public virtual T Id { set; get; }
     }
 }

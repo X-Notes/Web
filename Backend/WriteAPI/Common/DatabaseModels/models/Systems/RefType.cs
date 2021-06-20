@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Common.DatabaseModels.models.Systems
 {
-    public class RefType : BaseEntity
+    public class RefType : BaseEntity<RefTypeENUM>
     {
         public string Name { set; get; }
         public List<Note> Notes { set; get; }

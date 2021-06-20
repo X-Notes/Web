@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Folders
 {
-    public class FolderRepository : Repository<Folder>
+    public class FolderRepository : Repository<Folder, Guid>
     {
         public FolderRepository(WriteContextDB contextDB)
             : base(contextDB)
@@ -16,7 +16,7 @@ namespace WriteContext.Repositories.Folders
         }
 
 
-        public async Task Add(Folder folder, Guid TypeId)
+        public async Task Add(Folder folder, FolderTypeENUM TypeId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -38,11 +38,12 @@ namespace WriteContext.Repositories.Folders
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
         }
-        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, Guid FromId, Guid ToId)
+        public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, FolderTypeENUM FromId, FolderTypeENUM ToId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -69,6 +70,7 @@ namespace WriteContext.Repositories.Folders
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -106,6 +108,7 @@ namespace WriteContext.Repositories.Folders
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await transaction.RollbackAsync();
                 }
             }
@@ -115,10 +118,7 @@ namespace WriteContext.Repositories.Folders
         public async Task<Folder> GetForUpdateTitle(Guid id)
         {
             return await context.Folders
-                .Include(x => x.FolderType)
-                .Include(x => x.RefType)
                 .Include(x => x.UsersOnPrivateFolders)
-                .ThenInclude(x => x.AccessType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -127,16 +127,12 @@ namespace WriteContext.Repositories.Folders
             return await context.Folders
                 .Include(folder => folder.FoldersNotes)
                 .Include(folder => folder.UsersOnPrivateFolders)
-                .Include(x => x.FolderType)
-                .Include(x => x.RefType)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, Guid typeId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeId(Guid userId, FolderTypeENUM typeId)
         {
             return await context.Folders
-                .Include(x => x.RefType)
-                .Include(x => x.FolderType)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
@@ -147,11 +143,9 @@ namespace WriteContext.Repositories.Folders
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, Guid typeId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, FolderTypeENUM typeId)
         {
             return await context.Folders
-                .Include(x => x.RefType)
-                .Include(x => x.FolderType)
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .OrderBy(x => x.Order)
@@ -161,8 +155,6 @@ namespace WriteContext.Repositories.Folders
         public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(IEnumerable<Guid> folderIds)
         {
             return await context.Folders
-                .Include(x => x.RefType)
-                .Include(x => x.FolderType)
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .OrderBy(x => x.Order)
@@ -171,7 +163,7 @@ namespace WriteContext.Repositories.Folders
 
         public async Task<Folder> GetOneById(Guid folderId)
         {
-            return await context.Folders.Include(x => x.RefType).FirstOrDefaultAsync(x => x.Id == folderId);
+            return await context.Folders.FirstOrDefaultAsync(x => x.Id == folderId);
         }
 
     }

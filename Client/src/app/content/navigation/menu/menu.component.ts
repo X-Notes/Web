@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MenuButtonsService } from '../menu-buttons.service';
 import { NoteStore } from '../../notes/state/notes-state';
-import { MenuItem } from '../menu_item';
+import { MenuItem } from '../MenuItem';
 
 @Component({
   selector: 'app-menu',

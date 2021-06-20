@@ -1,4 +1,4 @@
 export enum FontSizeENUM {
-  Medium = 'medium',
-  Big = 'big',
+  Big = 1,
+  Medium = 2,
 }

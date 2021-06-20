@@ -4,7 +4,6 @@ using Common.DatabaseModels.models.History;
 using Common.DatabaseModels.models.Labels;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Systems;
 using Common.DatabaseModels.models.Users;
 using Common.DTO.app;
 using Common.DTO.folders;
@@ -12,7 +11,6 @@ using Common.DTO.history;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
-using Common.DTO.notes.FullNoteContent.NoteContentTypeDict;
 using Common.DTO.users;
 using System;
 using System.Collections.Generic;
@@ -39,36 +37,32 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.TextType, tN.HeadingType, tN.Checked, tN.UpdatedAt);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }
                     case AlbumNote aN:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.ALBUM);
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, type, aN.CountInRow, aN.UpdatedAt);
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
+                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
                     case AudioNote audioNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.AUDIO);
-                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.Id, type , audioNote.UpdatedAt);
+                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id , audioNote.UpdatedAt);
                             resultList.Add(audioNoteDTO);
                             break;
                         }
                     case VideoNote videoNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.VIDEO);
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.Id, type, videoNote.UpdatedAt);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
                             resultList.Add(videoNoteDTO);
                             break;
                         }
                     case DocumentNote documentNote:
                         {
-                            var type = NoteContentTypeDictionary.GetValueFromDictionary(NoteContentType.DOCUMENT);
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFileId, documentNote.Id, type, documentNote.UpdatedAt);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
                             resultList.Add(documentNoteDTO);
                             break;
                         }
@@ -89,11 +83,6 @@ namespace BI.Mapping
         public FolderTypeDTO MapTypeToTypeDTO(FolderType type)
         {
             return new FolderTypeDTO(type.Id, type.Name);
-        }
-
-        public RefTypeDTO MapRefToRefDTO(RefType type)
-        {
-            return new RefTypeDTO(type.Id, type.Name);
         }
 
         public List<LabelDTO> MapLabelsToLabelsDTO(List<LabelsNotes> labelsNotes)
@@ -147,8 +136,8 @@ namespace BI.Mapping
                 Title = tuple.note.Title,
                 IsOpened = tuple.isOpened,
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = tuple.note.NoteType != null ? MapTypeToTypeDTO(tuple.note.NoteType) : null,
-                RefType = tuple.note.RefType != null ? MapRefToRefDTO(tuple.note.RefType) : null,
+                NoteTypeId = tuple.note.NoteTypeId,
+                RefTypeId = tuple.note.RefTypeId,
                 Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, takeContentLength),
                 IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
@@ -175,8 +164,8 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
-                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
+                NoteTypeId = note.NoteTypeId,
+                RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
@@ -191,8 +180,8 @@ namespace BI.Mapping
             {
                 Id = note.Id,
                 Color = note.Color,
-                NoteType = MapTypeToTypeDTO(note.NoteType),
-                RefType = MapRefToRefDTO(note.RefType),
+                NoteTypeId = note.NoteTypeId,
+                RefTypeId = note.RefTypeId,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 IsLocked = note.IsLocked,
@@ -211,8 +200,8 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
-                NoteType = note.NoteType != null ? MapTypeToTypeDTO(note.NoteType) : null,
-                RefType = note.RefType != null ? MapRefToRefDTO(note.RefType) : null,
+                NoteTypeId = note.NoteTypeId,
+                RefTypeId = note.RefTypeId,
                 Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
@@ -259,8 +248,8 @@ namespace BI.Mapping
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
-                FolderType = MapTypeToTypeDTO(folder.FolderType),
-                RefType = MapRefToRefDTO(folder.RefType),
+                FolderTypeId = folder.FolderTypeId,
+                RefTypeId = folder.RefTypeId,
                 PreviewNotes = MapNotesToNotesPreviewInFolder(notes)
             };
         }
@@ -293,8 +282,8 @@ namespace BI.Mapping
                 DeletedAt = folder.DeletedAt,
                 UpdatedAt = folder.UpdatedAt,
                 Title = folder.Title,
-                FolderType = MapTypeToTypeDTO(folder.FolderType),
-                RefType = MapRefToRefDTO(folder.RefType)
+                FolderTypeId = folder.FolderTypeId,
+                RefTypeId = folder.RefTypeId
             };
         }
 
@@ -306,7 +295,8 @@ namespace BI.Mapping
                 Id = user.Id,
                 Email = user.Email,
                 Name = user.Name,
-                PhotoId = user.PhotoId
+                PhotoId = user.UserProfilePhoto.AppFileId,
+                PhotoPath = user.UserProfilePhoto.AppFile.GetFromSmallPath
             };
         }
 

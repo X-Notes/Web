@@ -2,8 +2,8 @@ import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BreakEnterModel, ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { BaseText, ContentType } from '../../models/ContentMode';
-import { EnterEvent } from '../../models/enterEvent';
+import { BaseText, NoteTextTypeENUM } from '../../models/ContentModel';
+import { EnterEvent } from '../../models/EnterEvent';
 import { SelectionService } from '../../selection.service';
 
 @Injectable()
@@ -120,7 +120,7 @@ export abstract class HtmlService {
   eventEventFactory(
     id: string,
     breakModel: BreakEnterModel,
-    nextItemType: ContentType,
+    nextItemType: NoteTextTypeENUM,
     contentId: string,
   ): EnterEvent {
     const eventModel: EnterEvent = {
