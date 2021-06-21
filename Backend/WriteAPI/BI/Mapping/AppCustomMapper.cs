@@ -37,7 +37,8 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, 
+                                tN.Checked, tN.IsBold, tN.IsItalic, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }

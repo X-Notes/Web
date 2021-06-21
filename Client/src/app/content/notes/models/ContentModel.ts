@@ -21,6 +21,10 @@ export class BaseText extends ContentModel {
 
   checked?: boolean;
 
+  isBold: boolean;
+
+  isItalic: boolean;
+
   number?: number;
 }
 

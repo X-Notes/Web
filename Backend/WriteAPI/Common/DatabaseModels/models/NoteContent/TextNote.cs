@@ -19,6 +19,10 @@ namespace Common.DatabaseModels.models.NoteContent
 
         public bool? Checked { set; get; }
 
+        public bool IsBold { set; get; }
+
+        public bool IsItalic { set; get; }
+
         public TextNote()
         {
             this.UpdatedAt = DateTimeOffset.Now;

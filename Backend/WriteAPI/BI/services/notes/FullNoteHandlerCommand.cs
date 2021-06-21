@@ -217,6 +217,8 @@ namespace BI.services.notes
                 if (request.Checked.HasValue)
                 {
                     content.Checked = request.Checked.Value;
+                    content.IsBold = request.IsBold ?? content.IsBold;
+                    content.IsItalic = request.IsItalic ?? content.IsItalic;
                 }
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.Update(content);
@@ -249,7 +251,7 @@ namespace BI.services.notes
                 await baseNoteContentRepository.Add(text);
 
                 var textResult = new TextNoteDTO(text.Content, text.Id, 
-                    text.NoteTextTypeId, text.HTypeId, text.Checked, text.UpdatedAt);
+                    text.NoteTextTypeId, text.HTypeId, text.Checked, text.IsBold, text.IsItalic, text.UpdatedAt);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -297,7 +299,7 @@ namespace BI.services.notes
                                 await baseNoteContentRepository.UpdateRange(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.NoteTextTypeId, 
-                                    newText.HTypeId, newText.Checked, newText.UpdatedAt);
+                                    newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -335,7 +337,7 @@ namespace BI.services.notes
                                 await baseNoteContentRepository.UpdateRange(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, 
-                                    newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.UpdatedAt);
+                                    newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
 
@@ -475,7 +477,9 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, contentPrev.NoteTextTypeId, contentPrev.HTypeId, contentPrev.Checked, contentPrev.UpdatedAt);
+                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id, 
+                        contentPrev.NoteTextTypeId, contentPrev.HTypeId, contentPrev.Checked, 
+                        contentPrev.IsBold, contentPrev.IsItalic, contentPrev.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

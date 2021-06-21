@@ -211,12 +211,21 @@ export class ApiServiceNotes {
     );
   }
 
-  updateContentText(noteId: string, contentId: string, content: string, checked: boolean) {
+  updateContentText(
+    noteId: string,
+    contentId: string,
+    content: string,
+    checked: boolean,
+    isBold: boolean,
+    isItalic: boolean,
+  ) {
     const obj = {
       contentId,
       content,
       noteId,
       checked,
+      isBold,
+      isItalic,
     };
     return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/text`, obj);
   }

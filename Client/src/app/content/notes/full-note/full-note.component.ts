@@ -355,7 +355,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
     this.api
-      .updateContentText(this.note.id, event.contentId, event.content, event.checked)
+      .updateContentText(
+        this.note.id,
+        event.contentId,
+        event.content,
+        event.checked,
+        event.isBold,
+        event.isItalic,
+      )
       .toPromise();
     if (isLast) {
       this.addNewElementToEnd();
@@ -405,9 +412,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         throw new Error('incorrect type');
       }
     }
-    console.log('CHECK: ', resp);
+
     if (resp.success) {
-      console.log('CHECK2: ', resp);
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
     }
