@@ -59,7 +59,7 @@
     attributeName="panelClass"
     [element]="menu"
   >
-    <button mat-menu-item type="button" name="delete">
+    <button mat-menu-item type="button" name="delete" (click)="deleteAudio.emit(audio.fileId)">
       <mat-icon>delete</mat-icon>
       <span>{{ 'innerNote.menu.delete' | translate }}</span>
     </button>

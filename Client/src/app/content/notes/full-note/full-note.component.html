@@ -140,6 +140,8 @@
               #htmlComp
               *ngSwitchCase="contentType.Audio"
               [content]="item"
+              (removePlaylist)="removePlaylistHandler($event)"
+              (deleteAudio)="removeAudioFromPlaylistHandler($event)"
             ></app-audio-note>
             <app-video-note
               #htmlComp

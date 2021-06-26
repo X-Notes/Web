@@ -339,6 +339,17 @@ export class ApiServiceNotes {
     );
   }
 
+  removePlaylist(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/audios/remove`,
+      obj,
+    );
+  }
+
   uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<string[]>>(
       `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
@@ -349,6 +360,12 @@ export class ApiServiceNotes {
   removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
     return this.httpClient.delete<OperationResult<any>>(
       `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
+    );
+  }
+
+  removeAudioFromPlaylist(noteId: string, contentId: string, audioId: string) {
+    return this.httpClient.delete<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/audios/${noteId}/${contentId}/${audioId}`,
     );
   }
 

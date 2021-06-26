@@ -160,7 +160,6 @@ namespace BI.services.notes
                     return content;
                 }).ToList();
 
-                var photosIds = contentForRemove.Photos.Select(x => x.Id);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

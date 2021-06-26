@@ -26,7 +26,7 @@
         <mat-icon>library_music</mat-icon>
         <span>{{ 'innerNote.menu.add' | translate }}</span>
       </button>
-      <button mat-menu-item type="button" name="delete">
+      <button mat-menu-item type="button" name="delete" (click)="removePlaylist.emit(content.id)">
         <mat-icon>delete</mat-icon>
         <span>{{ 'innerNote.menu.delete' | translate }}</span>
       </button>
@@ -37,5 +37,6 @@
     [audio]="item"
     (playEvent)="play($event, i)"
     (pauseEvent)="pause()"
+    (deleteAudio)="deleteAudioHandler($event)"
   ></app-audio>
 </div>

@@ -160,6 +160,23 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+        [HttpPost("audios/remove")]
+        public async Task<OperationResult<Unit>> RemovePlaylist(RemovePlaylistCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("audios/{noteId}/{contentId}/{audioFileId}")]
+        public async Task<OperationResult<Unit>> RemoveAudioFromPlaylist(Guid noteId, Guid contentId, Guid audioFileId)
+        {
+            var command = new RemoveAudioCommand(noteId, contentId, audioFileId);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        // VIDEOS
+
         [HttpPost("videos/{id}/{contentId}")]
         public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId)
         {
@@ -167,6 +184,7 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
+
 
         [HttpPost("files/{id}/{contentId}")]
         public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)

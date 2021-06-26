@@ -15,6 +15,8 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   @Output() pauseEvent = new EventEmitter();
 
+  @Output() deleteAudio = new EventEmitter<string>();
+
   @Input() audio: AudioModel;
 
   destroy = new Subject();

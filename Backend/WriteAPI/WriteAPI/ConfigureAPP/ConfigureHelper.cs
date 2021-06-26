@@ -167,6 +167,8 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE AUDIOS
             services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudiosPlaylistNoteDTO>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemovePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveAudioCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
 
             // FULL NOTE VIDEOS
             services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();

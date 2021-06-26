@@ -49,6 +49,7 @@ import {
   ContentTypeENUM,
   HeadingTypeENUM,
   NoteTextTypeENUM,
+  PlaylistModel,
 } from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
@@ -68,6 +69,7 @@ import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/TypeUploadFile.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/NoteHistory';
+import { RemoveAudioFromPlaylist } from '../models/removeAudioFromPlaylist';
 
 @Component({
   selector: 'app-full-note',
@@ -245,6 +247,13 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   };
 
+  removePlaylistHandler = async (id: string) => {
+    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
   uploadPhotoToAlbumHandler = async ($event: UploadPhotosToAlbum) => {
     const resp = await this.api
       .uploadPhotosToAlbum($event.formData, this.note.id, $event.id)
@@ -269,11 +278,30 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       if (contentPhotos.length === 1) {
         this.contents = this.contents.filter((x) => x.id !== event.contentId);
       } else {
-        const newAlbum = {
-          ...this.contents[index],
+        const newAlbum: Album = {
+          ...(this.contents[index] as Album),
           photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
         };
         this.contents[index] = newAlbum;
+      }
+    }
+  }
+
+  async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
+    const resp = await this.api
+      .removeAudioFromPlaylist(this.note.id, event.contentId, event.audioId)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === event.contentId);
+      const audios = (this.contents[index] as PlaylistModel).audios;
+      if (audios.length === 1) {
+        this.contents = this.contents.filter((x) => x.id !== event.contentId);
+      } else {
+        const newPlaylist: PlaylistModel = {
+          ...(this.contents[index] as PlaylistModel),
+          audios: audios.filter((x) => x.fileId !== event.audioId),
+        };
+        this.contents[index] = newPlaylist;
       }
     }
   }
