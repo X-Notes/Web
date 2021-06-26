@@ -29,7 +29,7 @@ namespace BI.services.files
             if (file != null)
             {
                 var resp = await filesStorage.GetFile(request.UserId, file.PathNonPhotoContent);
-                return new FilesBytes(resp.File, resp.ContentType);
+                return new FilesBytes(resp.File, resp.ContentType, file.Name);
             }
             throw new Exception("File does not exist");
         }

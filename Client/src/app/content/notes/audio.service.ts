@@ -4,6 +4,10 @@ import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import { StreamAudioState } from './models/StreamAudioState';
 import { AudioEvents } from './models/AudioEvents.enum';
+import { AudioModel } from './models/ContentModel';
+import { environment } from 'src/environments/environment';
+import { Store } from '@ngxs/store';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +15,9 @@ import { AudioEvents } from './models/AudioEvents.enum';
 export class AudioService {
   audioEvents = AudioEvents;
 
-  currentFile;
+  currentFile: AudioModel;
 
-  playlist = [];
+  playlist: AudioModel[] = [];
 
   volumeHelper: number;
 
@@ -35,6 +39,8 @@ export class AudioService {
   private audioObj = new Audio();
 
   private stateChange: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
+
+  constructor(private store: Store) {}
 
   getState(): Observable<StreamAudioState> {
     return this.stateChange;
@@ -94,10 +100,16 @@ export class AudioService {
     return moment.utc(momentTime).format(format);
   };
 
+  getAudioUrl(url: string) {
+    return `${environment.storage}/${this.store.selectSnapshot(UserStore.getUser).id}/${escape(
+      url,
+    )}`;
+  }
+
   private streamObservable(url, id) {
     return new Observable((observer) => {
       this.state.id = id;
-      this.audioObj.src = url;
+      this.audioObj.src = this.getAudioUrl(url);
       this.audioObj.volume = this.state.currentVolume;
       this.audioObj.load();
 

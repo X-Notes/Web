@@ -8,10 +8,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.noteInner.fileContent.audios
 {
-    public class InsertAudiosToNoteCommand : BaseCommandEntity, IRequest<OperationResult<AudioNoteDTO>>
+    public class InsertAudiosToNoteCommand : BaseCommandEntity, IRequest<OperationResult<AudiosPlaylistNoteDTO>>
     {
         [Required]
-        public IFormFile Audio { set; get; }
+        public List<IFormFile> Audios { set; get; }
 
         [ValidationGuid]
         public Guid NoteId { set; get; }
@@ -19,9 +19,9 @@ namespace Domain.Commands.noteInner.fileContent.audios
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public InsertAudiosToNoteCommand(IFormFile Audio, Guid NoteId, Guid ContentId)
+        public InsertAudiosToNoteCommand(List<IFormFile> Audios, Guid NoteId, Guid ContentId)
         {
-            this.Audio = Audio;
+            this.Audios = Audios;
             this.NoteId = NoteId;
             this.ContentId = ContentId;
         }

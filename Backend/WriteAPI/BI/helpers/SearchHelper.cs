@@ -1,16 +1,10 @@
-﻿using Common.DatabaseModels.models;
-using Common.DatabaseModels.models.Files;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.DatabaseModels.models.Files;
 
 namespace BI.helpers
 {
-    public class SearchHelper
+    public static class SearchHelper
     {
-        public bool IsMatchContent(string Content, string search)
+        public static bool IsMatchContent(string Content, string search)
         {
             if (!string.IsNullOrEmpty(Content) && Content.Contains(search))
             {
@@ -20,7 +14,7 @@ namespace BI.helpers
             return false;
         }
 
-        public bool IsMatchPhoto(AppFile photo, string search)
+        public static bool IsMatchPhoto(AppFile photo, string search)
         {
             var flag = false;
             if(!string.IsNullOrEmpty(photo.RecognizeObject))

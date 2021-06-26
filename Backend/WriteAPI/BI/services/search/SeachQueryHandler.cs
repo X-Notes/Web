@@ -22,17 +22,15 @@ namespace BI.services.search
         private readonly SearchRepository searchRepository;
         private readonly UserRepository userRepository;
         private readonly IMapper mapper;
-        private readonly SearchHelper searchHelper;
+
         public SeachQueryHandler(
             UserRepository userRepository,
             IMapper mapper,
-            SearchRepository searchRepository,
-            SearchHelper searchHelper)
+            SearchRepository searchRepository)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
             this.searchRepository = searchRepository;
-            this.searchHelper = searchHelper;
         }
 
         public async Task<List<ShortUserForShareModal>> Handle(GetUsersForSharingModalQuery request, CancellationToken cancellationToken)
@@ -49,11 +47,11 @@ namespace BI.services.search
             var allNotes = await searchRepository.GetNotesByUserIdSearch(user.Id);
 
             allNotes = allNotes.Where(x =>
-                    searchHelper.IsMatchContent(x.Title, request.SearchString)
-                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.SearchString))
+                    SearchHelper.IsMatchContent(x.Title, request.SearchString)
+                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.SearchString))
                     || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => label.Name.Contains(request.SearchString))
                     || x.Contents.OfType<AlbumNote>()
-                                .Any(x => x.Photos.Any(photo => searchHelper.IsMatchPhoto(photo, request.SearchString)))
+                                .Any(x => x.Photos.Any(photo => SearchHelper.IsMatchPhoto(photo, request.SearchString)))
                     ).ToList();
 
             var folders = await searchRepository.GetFolderByUserIdAndString(user.Id, request.SearchString);

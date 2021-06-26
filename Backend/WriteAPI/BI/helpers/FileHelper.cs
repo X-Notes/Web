@@ -3,14 +3,15 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BI.helpers
 {
-    public class PhotoHelpers
+    public static class FileHelper
     {
-        private async Task<byte[]> GetBytesFromFile(IFormFile file)
+        private static async Task<byte[]> GetBytesFromFile(IFormFile file)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -18,18 +19,19 @@ namespace BI.helpers
                 return memoryStream.ToArray();
             }
         }
-        private string ConvertBase64png(byte[] bytes)
+
+        private static string ConvertBase64png(byte[] bytes)
         {
             var base64 = Convert.ToBase64String(bytes);
             return "data:image/png;base64," + base64;
         }
-        private string ConvertBase64jpeg(byte[] bytes)
+        private static string ConvertBase64jpeg(byte[] bytes)
         {
             var base64 = Convert.ToBase64String(bytes);
             return "data:image/jpeg;base64," + base64;
         }
 
-        public async Task<string> GetBase64(IFormFile file)
+        public static async Task<string> GetBase64(IFormFile file)
         {
             var bytes = await GetBytesFromFile(file);
             var base64 = "";
@@ -44,7 +46,7 @@ namespace BI.helpers
             return base64;
         }
 
-        public string GetPhotoType(string contentType)
+        public static string GetPhotoType(string contentType)
         {
             switch (contentType)
             {
@@ -63,7 +65,7 @@ namespace BI.helpers
             }
         }
 
-        public string GetAudioType(string contentType)
+        public static string GetAudioType(string contentType)
         {
             switch (contentType)
             {
@@ -79,7 +81,7 @@ namespace BI.helpers
         }
 
 
-        public string GetVideoType(string contentType)
+        public static string GetVideoType(string contentType)
         {
             switch (contentType)
             {
@@ -94,7 +96,7 @@ namespace BI.helpers
             }
         }
 
-        public string GetDocumentType(string contentType)
+        public static string GetDocumentType(string contentType)
         {
             switch (contentType)
             {
@@ -119,6 +121,22 @@ namespace BI.helpers
                         throw new Exception("Incorrect document type");
                     }
             }
+        }
+
+
+        public static async Task<FilesBytes> GetFilesBytesAsync(this IFormFile formFile)
+        {
+            using var ms = new MemoryStream();
+            await formFile.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            return new FilesBytes(bytes, formFile.ContentType, formFile.FileName);
+        }
+
+        public static async Task<List<FilesBytes>> GetFilesBytesAsync(this List<IFormFile> formFiles)
+        {
+            var tasks = formFiles.Select(x => GetFilesBytesAsync(x));
+            var result = await Task.WhenAll(tasks);
+            return result.ToList();
         }
 
     }

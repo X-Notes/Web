@@ -15,7 +15,7 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   @Output() pauseEvent = new EventEmitter();
 
-  @Input() audio: any;
+  @Input() audio: AudioModel;
 
   destroy = new Subject();
 
@@ -28,7 +28,7 @@ export class AudioComponent implements OnInit, OnDestroy {
       .getState()
       .pipe(takeUntil(this.destroy))
       .subscribe((state) => {
-        if (this.audioService.currentFile?.audio?.id === this.audio.id) {
+        if (this.audioService.currentFile?.fileId === this.audio.fileId) {
           this.state = state;
         } else {
           this.state = null;

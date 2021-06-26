@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.models.Files
 {
-    public class AlbumNoteAppFile : BaseEntity<Guid>
+    public class AudioNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]
         public override Guid Id { set; get; }
@@ -12,7 +12,7 @@ namespace Common.DatabaseModels.models.Files
         public Guid AppFileId { get; set; }
         public AppFile AppFile { get; set; }
 
-        public Guid AlbumNoteId { get; set; }
-        public AlbumNote AlbumNote { get; set; }
+        public Guid AudioNoteId { get; set; }
+        public AudiosPlaylistNote AudioNote { get; set; }
     }
 }

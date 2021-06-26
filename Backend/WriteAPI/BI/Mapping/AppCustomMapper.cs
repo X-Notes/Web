@@ -49,10 +49,11 @@ namespace BI.Mapping
                             resultList.Add(aNDTO);
                             break;
                         }
-                    case AudioNote audioNote:
+                    case AudiosPlaylistNote playlistNote:
                         {
-                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id , audioNote.UpdatedAt);
-                            resultList.Add(audioNoteDTO);
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent)).ToList();
+                            var playlistDTO = new AudiosPlaylistNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
+                            resultList.Add(playlistDTO);
                             break;
                         }
                     case VideoNote videoNote:

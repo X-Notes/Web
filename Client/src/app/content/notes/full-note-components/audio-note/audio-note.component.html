@@ -1,7 +1,7 @@
 <div class="playlist" appTheme>
   <div class="playlist-options">
     <div class="title">
-      <p>Audio playlist</p>
+      <p>{{content?.name}}</p>
     </div>
     <button
       class="audio-button"
@@ -33,7 +33,7 @@
     </mat-menu>
   </div>
   <app-audio
-    *ngFor="let item of files; let i = index"
+    *ngFor="let item of content.audios; let i = index"
     [audio]="item"
     (playEvent)="play($event, i)"
     (pauseEvent)="pause()"

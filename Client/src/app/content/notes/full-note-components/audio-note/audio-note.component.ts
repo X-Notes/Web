@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { AudioService } from '../../audio.service';
-import { AudioModel, ContentModel } from '../../models/ContentModel';
+import { AudioModel, ContentModel, PlaylistModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
 @Component({
@@ -11,22 +10,11 @@ import { ParentInteraction } from '../../models/ParentInteraction.interface';
 })
 export class AudioNoteComponent implements ParentInteraction, OnInit {
   @Input()
-  content: AudioModel;
-
-  files: Array<any> = [];
+  content: PlaylistModel;
 
   constructor(private audioService: AudioService) {}
 
-  ngOnInit(): void {
-    if (this.content.fileId) {
-      this.files.push({
-        // TODO REMOVE THIS WHEN PLAYLIST WILL BEEN DONE IN BE
-        url: `${environment.writeAPI}/api/Files/audio/${this.content.fileId}`,
-        id: this.content.fileId,
-        name: this.content.name,
-      });
-    }
-  }
+  ngOnInit(): void {}
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
@@ -36,10 +24,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
 
   openFile(audio: AudioModel, index: number) {
     this.audioService.stop();
-    if (this.audioService.currentFile?.audio?.id !== audio.id) {
-      this.audioService.playlist = this.files;
-      this.audioService.currentFile = { audio, index };
-      this.playStream(audio.audioPath, audio.id);
+    if (this.audioService.currentFile?.fileId !== audio.fileId) {
+      this.audioService.playlist = this.content.audios;
+      this.audioService.currentFile = audio;
+      this.playStream(audio.audioPath, audio.fileId);
     }
   }
 
@@ -48,7 +36,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit {
   }
 
   play(audio: AudioModel, index: number) {
-    if (this.audioService.currentFile?.audio?.id !== audio.id) {
+    if (this.audioService.currentFile?.fileId !== audio.fileId) {
       this.openFile(audio, index);
     }
     this.audioService.play();

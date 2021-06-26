@@ -49,7 +49,13 @@ export class Album extends ContentModel {
   }
 }
 
-export class AudioModel extends ContentModel {
+export class PlaylistModel extends ContentModel {
+  name: string;
+
+  audios: AudioModel[];
+}
+
+export class AudioModel {
   name: string;
 
   audioPath: string;

@@ -41,9 +41,7 @@
     </ng-template>
     <div class="preview">
       <img *ngIf="false" />
-      <div class="no-preview" [CustomTooltip]="audioService.currentFile?.audio?.name">
-        {{ audioName }}
-      </div>
+      <div class="no-preview" [CustomTooltip]="audioName">{{ audioName }}</div>
     </div>
   </div>
   <div class="controls">
@@ -114,7 +112,7 @@
       step="1"
       [value]="state?.currentTime"
       (input)="onSliderChangeEnd($event)"
-      [disabled]="state?.error || audioService.currentFile.index === undefined"
+      [disabled]="state?.error || audioService.currentFile === undefined"
     ></mat-slider>
     <div class="time" *ngIf="state?.readableDuration">{{ state?.readableDuration }}</div>
   </div>
@@ -139,7 +137,7 @@
           step="0.01"
           (input)="onSliderVolumeChangeEnd($event)"
           [value]="state?.currentVolume"
-          [disabled]="state?.error || audioService.currentFile.index === undefined"
+          [disabled]="state?.error || audioService.currentFile === undefined"
         ></mat-slider>
       </div>
     </div>

@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace Common.DTO.notes.FullNoteContent
 {
-    public class AudioNoteDTO : BaseContentNoteDTO
+    public class AudioNoteDTO
     {
         public string Name { set; get; }
         public Guid FileId { set; get; }
         public string AudioPath { set; get; }
-        public AudioNoteDTO(string Name, Guid fileId, string AudioPath, Guid Id, DateTimeOffset UpdatedAt)
-            : base(Id, ContentTypeENUM.Audio, UpdatedAt)
+        public AudioNoteDTO(string Name, Guid fileId, string AudioPath)
         {
             this.FileId = fileId;
             this.Name = Name;

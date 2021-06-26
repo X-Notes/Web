@@ -153,9 +153,9 @@ namespace WriteAPI.Controllers
         // AUDIO
 
         [HttpPost("audios/{id}/{contentId}")]
-        public async Task<OperationResult<AudioNoteDTO>> InsertAudios(IFormFile audio, Guid id, Guid contentId)
+        public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
         {
-            var command = new InsertAudiosToNoteCommand(audio, id, contentId);
+            var command = new InsertAudiosToNoteCommand(audios, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }

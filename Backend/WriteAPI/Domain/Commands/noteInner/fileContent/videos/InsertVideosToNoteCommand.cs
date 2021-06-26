@@ -14,10 +14,13 @@ namespace Domain.Commands.noteInner.fileContent.videos
     {
         [Required]
         public IFormFile Video { set; get; }
+
         [ValidationGuid]
         public Guid NoteId { set; get; }
+
         [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public InsertVideosToNoteCommand(IFormFile Video, Guid NoteId, Guid ContentId)
         {
             this.Video = Video;
