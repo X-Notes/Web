@@ -4,14 +4,19 @@ namespace Common.DTO.notes.FullNoteContent
 {
     public class AlbumPhotoDTO
     {
-        public Guid Id { set; get; }
-        public string PhotoPathSmall { set; get; }
-        public string PhotoPathMedium { set; get; }
-        public string PhotoPathBig { set; get; }
+        public Guid FileId { set; get; }
 
-        public AlbumPhotoDTO(Guid id, string photoPathSmall, string photoPathMedium, string photoPathBig)
+        public string PhotoPathSmall { set; get; }
+
+        public string PhotoPathMedium { set; get; }
+
+        public string PhotoPathBig { set; get; }
+        public string Name { set; get; }
+
+        public AlbumPhotoDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig)
         {
-            this.Id = id;
+            this.Name = name;
+            this.FileId = fileId;
             this.PhotoPathSmall = photoPathSmall;
             this.PhotoPathMedium = photoPathMedium;
             this.PhotoPathBig = photoPathBig;

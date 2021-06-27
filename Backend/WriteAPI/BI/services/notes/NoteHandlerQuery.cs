@@ -90,33 +90,17 @@ namespace BI.services.notes
             {
                 var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer()
-                {
-                    IsOwner = permissions.IsOwner,
-                    CanView = true,
-                    CanEdit = true,
-                    FullNote = noteCustomMapper.MapNoteToFullNote(note)
-                };
+                return new FullNoteAnswer(permissions.IsOwner, true, true, note.UserId, noteCustomMapper.MapNoteToFullNote(note));
             }
 
             if(permissions.CanRead)
             {
                 var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer()
-                {
-                    CanView = true,
-                    CanEdit = false,
-                    FullNote = noteCustomMapper.MapNoteToFullNote(note)
-                };
+                return new FullNoteAnswer(permissions.IsOwner, true, false, note.UserId, noteCustomMapper.MapNoteToFullNote(note));
             }
 
-            return new FullNoteAnswer()
-            {
-                CanView = false,
-                CanEdit = false,
-                FullNote = null
-            };
+            return new FullNoteAnswer(permissions.IsOwner, false, false, null, null);
         }
 
         public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)

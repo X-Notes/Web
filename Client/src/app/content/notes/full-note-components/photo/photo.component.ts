@@ -16,6 +16,9 @@ export class PhotoComponent implements OnInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
+  @Output()
+  downloadPhotoEvent = new EventEmitter<Photo>();
+
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
 

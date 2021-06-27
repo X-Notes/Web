@@ -11,14 +11,21 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { combineLatest, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import * as JSZip from 'jszip';
+import { combineLatest, forkJoin, Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { environment } from 'src/environments/environment';
 import { ApiServiceNotes } from '../../api-notes.service';
+import { ExportService } from '../../export.service';
 import { Photo, Album } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 import { RemovePhotoFromAlbum } from '../../models/RemovePhotoFromAlbum';
 import { UploadPhotosToAlbum } from '../../models/UploadPhotosToAlbum';
 import { SelectionService } from '../../selection.service';
+import { saveAs } from 'file-saver';
+import { NoteStore } from '../../state/notes-state';
+
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -68,6 +75,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private selectionService: SelectionService,
     private api: ApiServiceNotes,
     private store: Store,
+    private exportService: ExportService,
   ) {}
 
   ngOnDestroy(): void {
@@ -170,6 +178,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       const item = { ...z };
       item.loaded = false;
     });
+  }
+
+  async exportAlbum() {
+    await this.exportService.exportAlbum(this.content);
+  }
+
+  async exportPhoto(photo: Photo) {
+    await this.exportService.exportPhoto(photo);
   }
 
   initPhotos() {

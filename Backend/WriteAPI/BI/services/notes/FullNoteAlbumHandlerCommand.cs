@@ -117,7 +117,7 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
+                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
                     var result = new AlbumNoteDTO(resultPhotos, null, null,
                         albumNote.Id, albumNote.CountInRow, albumNote.UpdatedAt);
 

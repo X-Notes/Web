@@ -19,7 +19,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.store.selectSnapshot(AppStore.getToken);
     let request = req;
-    if (!request.url.includes('google')) {
+    if (!request.url.includes('google') && !request.url.includes('blob.core')) {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,

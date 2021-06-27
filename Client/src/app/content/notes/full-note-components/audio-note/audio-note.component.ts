@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from '../../audio.service';
+import { ExportService } from '../../export.service';
 import { AudioModel, ContentModel, PlaylistModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 import { RemoveAudioFromPlaylist } from '../../models/removeAudioFromPlaylist';
@@ -22,7 +23,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   destroy = new Subject<void>();
 
-  constructor(private audioService: AudioService) {}
+  constructor(private audioService: AudioService, private exportService: ExportService) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -37,7 +38,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     });
   }
 
-  openFile(audio: AudioModel, index: number) {
+  openFile(audio: AudioModel) {
     this.audioService.stop();
     if (this.audioService.currentFile?.fileId !== audio.fileId) {
       this.audioService.playlist = this.content.audios;
@@ -46,13 +47,21 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     }
   }
 
+  async exportPlaylist(playlist: PlaylistModel) {
+    await this.exportService.exportPlaylist(playlist);
+  }
+
+  async exportAudio(audio: AudioModel) {
+    await this.exportService.exportAudio(audio);
+  }
+
   pause() {
     this.audioService.pause();
   }
 
-  play(audio: AudioModel, index: number) {
+  play(audio: AudioModel) {
     if (this.audioService.currentFile?.fileId !== audio.fileId) {
-      this.openFile(audio, index);
+      this.openFile(audio);
     }
     this.audioService.play();
   }

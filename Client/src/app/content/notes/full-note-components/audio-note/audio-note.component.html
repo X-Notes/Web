@@ -26,6 +26,10 @@
         <mat-icon>library_music</mat-icon>
         <span>{{ 'innerNote.menu.add' | translate }}</span>
       </button>
+      <button mat-menu-item type="button" name="Download" (click)="exportPlaylist(content)">
+        <mat-icon>download</mat-icon>
+        <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+      </button>
       <button mat-menu-item type="button" name="delete" (click)="removePlaylist.emit(content.id)">
         <mat-icon>delete</mat-icon>
         <span>{{ 'innerNote.menu.delete' | translate }}</span>
@@ -33,10 +37,11 @@
     </mat-menu>
   </div>
   <app-audio
-    *ngFor="let item of content.audios; let i = index"
+    *ngFor="let item of content.audios;"
     [audio]="item"
-    (playEvent)="play($event, i)"
+    (playEvent)="play($event)"
     (pauseEvent)="pause()"
     (deleteAudio)="deleteAudioHandler($event)"
+    (exportAudio)="exportAudio($event)"
   ></app-audio>
 </div>
