@@ -160,7 +160,7 @@ namespace BI.services.notes
                 var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
                 var photos = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
                 var documents = contents.Where(x => x is DocumentNote).Select(x => x as DocumentNote).Select(x => x.AppFile);
-                var audios = contents.Where(x => x is AudioNote).Select(x => x as AudioNote).Select(x => x.AppFile);
+                var audios = contents.Where(x => x is AudiosPlaylistNote).Select(x => x as AudiosPlaylistNote).SelectMany(x => x.Audios);
                 var videos = contents.Where(x => x is VideoNote).Select(x => x as VideoNote).Select(x => x.AppFile);
                 photos.AddRange(documents);
                 photos.AddRange(audios);
@@ -283,12 +283,19 @@ namespace BI.services.notes
                                     contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
                                     continue;
                                 }
-                            case AudioNote audioNote:
+                            case AudiosPlaylistNote audioNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(audioNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
+                                    var files = new List<FilesBytes>();
 
-                                    contents.Add(new AudioNote(audioNote, newfile, dbNote.Entity.Id));
+                                    foreach (var audio in audioNote.Audios)
+                                    {
+                                        var file = await _mediator.Send(new GetFileById(audio.Id, permissions.User.Id.ToString()));
+                                        files.Add(file);
+                                    }
+
+                                    var fileList = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, files, dbNote.Entity.Id));
+
+                                    contents.Add(new AudiosPlaylistNote(audioNote, fileList, dbNote.Entity.Id));
                                     continue;
                                 }
                             case DocumentNote documentNote:

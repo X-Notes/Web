@@ -51,8 +51,8 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     this.audioService.playStream(url, id).subscribe();
   }
 
-  openFile(item, index) {
-    this.audioService.currentFile = { index, item };
+  openFile(item) {
+    this.audioService.currentFile = item;
     this.audioService.stop();
     this.playStream(item.url, item.id);
   }
@@ -78,23 +78,46 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   next() {
-    const index = this.audioService.currentFile.index + 1;
-    const file = this.audioService.playlist[index];
-    this.openFile(file, index);
+    let index = this.audioService.playlist.findIndex(
+      (x) => x.fileId === this.audioService.currentFile.fileId,
+    );
+    index = index + 1;
+    if (this.audioService.playlist[index]) {
+      const file = this.audioService.playlist[index];
+      this.openFile(file);
+    } else {
+      throw new Error('index doest not exist');
+    }
   }
 
   previous() {
-    const index = this.audioService.currentFile.index - 1;
-    const file = this.audioService.playlist[index];
-    this.openFile(file, index);
+    let index = this.audioService.playlist.findIndex(
+      (x) => x.fileId === this.audioService.currentFile.fileId,
+    );
+    index = index - 1;
+    if (this.audioService.playlist[index]) {
+      const file = this.audioService.playlist[index];
+      this.openFile(file);
+    } else {
+      throw new Error('index doest not exist');
+    }
   }
 
   isFirstPlaying() {
-    return this.audioService.currentFile.index === 0;
+    return (
+      this.audioService.playlist.findIndex(
+        (x) => x.fileId === this.audioService.currentFile.fileId,
+      ) === 0
+    );
   }
 
   isLastPlaying() {
-    return this.audioService.currentFile.index === this.audioService.playlist.length - 1;
+    return (
+      this.audioService.playlist.findIndex(
+        (x) => x.fileId === this.audioService.currentFile.fileId,
+      ) ===
+      this.audioService.playlist.length - 1
+    );
   }
 
   onSliderChangeEnd(change) {
@@ -106,6 +129,6 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   get audioName() {
-    return this.audioService.currentFile?.audio?.name[0];
+    return this.audioService.currentFile?.name;
   }
 }

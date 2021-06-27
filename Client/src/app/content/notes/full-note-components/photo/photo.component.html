@@ -1,7 +1,7 @@
 <div class="photo" appTheme>
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
-    [src]="photo.photoFromBig | getImage: (user$ | async).id"
+    [src]="photo.photoFromBig | getImage: (id$ | async)"
     (load)="onLoadImage()"
   />
   <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>
@@ -19,7 +19,7 @@
   attributeName="panelClass"
   [element]="menu"
 >
-  <button mat-menu-item type="button" name="Download">
+  <button mat-menu-item type="button" name="Download" (click)="downloadPhotoEvent.emit(photo)">
     <mat-icon>download</mat-icon>
     <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
   </button>

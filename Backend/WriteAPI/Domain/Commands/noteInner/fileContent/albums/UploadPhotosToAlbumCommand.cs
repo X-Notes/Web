@@ -4,20 +4,20 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Domain.Commands.noteInner
+namespace Domain.Commands.noteInner.fileContent.albums
 {
-    public class UploadPhotosToAlbum : BaseCommandEntity, IRequest<OperationResult<List<Guid>>>
+    public class UploadPhotosToAlbumCommand : BaseCommandEntity, IRequest<OperationResult<List<AlbumPhotoDTO>>>
     {
-        [ValidationGuidAttribute]
+        [ValidationGuid]
         public Guid NoteId { set; get; }
-        [ValidationGuidAttribute]
+
+        [ValidationGuid]
         public Guid ContentId { set; get; }
+
         public List<IFormFile> Photos { set; get; }
-        public UploadPhotosToAlbum(Guid NoteId, Guid ContentId, List<IFormFile> Photos)
+
+        public UploadPhotosToAlbumCommand(Guid NoteId, Guid ContentId, List<IFormFile> Photos)
         {
             this.NoteId = NoteId;
             this.ContentId = ContentId;

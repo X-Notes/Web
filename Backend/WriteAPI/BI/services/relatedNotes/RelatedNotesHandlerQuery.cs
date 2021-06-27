@@ -26,7 +26,6 @@ namespace BI.services.relatedNotes
         private readonly UserRepository userRepository;
         private readonly AppCustomMapper noteMapper;
         private readonly IMediator _mediator;
-        private readonly SearchHelper searchHelper;
 
         public RelatedNotesHandlerQuery(
             ReletatedNoteToInnerNoteRepository relatedRepository,
@@ -34,8 +33,7 @@ namespace BI.services.relatedNotes
             NoteRepository noteRepository,
             UserRepository userRepository,
             AppCustomMapper noteMapper,
-            IMediator _mediator,
-            SearchHelper searchHelper)
+            IMediator _mediator)
         {
             this.relatedRepository = relatedRepository;
             this.noteCustomMapper = noteCustomMapper;
@@ -43,7 +41,6 @@ namespace BI.services.relatedNotes
             this.userRepository = userRepository;
             this.noteMapper = noteMapper;
             this._mediator = _mediator;
-            this.searchHelper = searchHelper;
         }
 
         public async Task<List<RelatedNote>> Handle(GetRelatedNotesQuery request, CancellationToken cancellationToken)
@@ -68,9 +65,9 @@ namespace BI.services.relatedNotes
                 }
                 else
                 {
-                    allNotes = allNotes.Where(x => 
-                    searchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.Search))
+                    allNotes = allNotes.Where(x =>
+                    SearchHelper.IsMatchContent(x.Title, request.Search)
+                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.Search))
                     || relatedNotesIds.Contains(x.Id)
                     ).ToList();
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

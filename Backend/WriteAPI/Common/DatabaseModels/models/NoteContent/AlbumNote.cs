@@ -11,6 +11,7 @@ namespace Common.DatabaseModels.models.NoteContent
     [Table("AlbumNote")]
     public class AlbumNote : BaseNoteContent
     {
+        public string Name { set; get; }
         public string Width { set; get; }
         public string Height { set; get; }
         public int CountInRow { set; get; }
@@ -35,6 +36,7 @@ namespace Common.DatabaseModels.models.NoteContent
             Width = entity.Width;
             Height = entity.Height;
             CountInRow = entity.CountInRow;
+            Name = entity.Name;
 
             Photos = photos;
         }

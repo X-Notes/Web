@@ -8,7 +8,7 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.NoteContent
 {
-    public class AudioNoteRepository : Repository<AudioNote, Guid>
+    public class AudioNoteRepository : Repository<AudiosPlaylistNote, Guid>
     {
         public AudioNoteRepository(WriteContextDB contextDB)
                 : base(contextDB)

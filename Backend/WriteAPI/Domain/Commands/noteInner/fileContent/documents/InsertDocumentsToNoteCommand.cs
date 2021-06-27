@@ -5,12 +5,11 @@ using Common.DTO.notes.FullNoteContent;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Commands.noteInner.fileContent.files
+namespace Domain.Commands.noteInner.fileContent.documents
 {
-    public class InsertFilesToNoteCommand : BaseCommandEntity, IRequest<OperationResult<DocumentNoteDTO>>
+    public class InsertDocumentsToNoteCommand : BaseCommandEntity, IRequest<OperationResult<DocumentNoteDTO>>
     {
         [Required]
         public IFormFile File { set; get; }
@@ -21,7 +20,7 @@ namespace Domain.Commands.noteInner.fileContent.files
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public InsertFilesToNoteCommand(IFormFile File, Guid NoteId, Guid ContentId)
+        public InsertDocumentsToNoteCommand(IFormFile File, Guid NoteId, Guid ContentId)
         {
             this.File = File;
             this.NoteId = NoteId;

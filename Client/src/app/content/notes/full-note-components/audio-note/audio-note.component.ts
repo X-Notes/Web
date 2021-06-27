@@ -1,57 +1,110 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { Subject } from 'rxjs';
 import { AudioService } from '../../audio.service';
-import { AudioModel, ContentModel } from '../../models/ContentModel';
+import { ExportService } from '../../export.service';
+import { AudioModel, ContentModel, PlaylistModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
+import { RemoveAudioFromPlaylist } from '../../models/removeAudioFromPlaylist';
+import { TypeUploadFormats } from '../../models/TypeUploadFormats.enum';
+import { UploadFileToEntity } from '../../models/UploadFilesToEntity';
 
 @Component({
   selector: 'app-audio-note',
   templateUrl: './audio-note.component.html',
   styleUrls: ['./audio-note.component.scss'],
 })
-export class AudioNoteComponent implements ParentInteraction, OnInit {
+export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
   @Input()
-  content: AudioModel;
+  content: PlaylistModel;
 
-  files: Array<any> = [];
+  formats = TypeUploadFormats.AUDIOS;
 
-  constructor(private audioService: AudioService) {}
+  @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
-  ngOnInit(): void {
-    if (this.content.fileId) {
-      this.files.push({
-        // TODO REMOVE THIS WHEN PLAYLIST WILL BEEN DONE IN BE
-        url: `${environment.writeAPI}/api/Files/audio/${this.content.fileId}`,
-        id: this.content.fileId,
-        name: this.content.name,
-      });
-    }
+  @Output()
+  removePlaylist = new EventEmitter<string>();
+
+  @Output()
+  changeTitleEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
+
+  @Output()
+  uploadEvent = new EventEmitter<UploadFileToEntity>();
+
+  destroy = new Subject<void>();
+
+  constructor(private audioService: AudioService, private exportService: ExportService) {}
+
+  ngOnDestroy(): void {
+    this.destroy.next();
+    this.destroy.complete();
   }
+
+  ngOnInit(): void {}
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
-      // listening for fun here
+      // TODO listening for fun here
     });
   }
 
-  openFile(audio: AudioModel, index: number) {
-    this.audioService.stop();
-    if (this.audioService.currentFile?.audio?.id !== audio.id) {
-      this.audioService.playlist = this.files;
-      this.audioService.currentFile = { audio, index };
-      this.playStream(audio.audioPath, audio.id);
+  uploadHandler = () => {
+    this.uploadAudiosRef.nativeElement.click();
+  };
+
+  async uploadAudios(event) {
+    const data = new FormData();
+    const { files } = event.target;
+    for (const file of files) {
+      data.append('audios', file);
     }
+    this.uploadEvent.emit({ id: this.content.id, formData: data });
+  }
+
+  openFile(audio: AudioModel) {
+    this.audioService.stop();
+    if (this.audioService.currentFile?.fileId !== audio.fileId) {
+      this.audioService.playlist = this.content.audios;
+      this.audioService.currentFile = audio;
+      this.playStream(audio.audioPath, audio.fileId);
+    }
+  }
+
+  async exportPlaylist(playlist: PlaylistModel) {
+    await this.exportService.exportPlaylist(playlist);
+  }
+
+  async exportAudio(audio: AudioModel) {
+    await this.exportService.exportAudio(audio);
   }
 
   pause() {
     this.audioService.pause();
   }
 
-  play(audio: AudioModel, index: number) {
-    if (this.audioService.currentFile?.audio?.id !== audio.id) {
-      this.openFile(audio, index);
+  play(audio: AudioModel) {
+    if (this.audioService.currentFile?.fileId !== audio.fileId) {
+      this.openFile(audio);
     }
     this.audioService.play();
+  }
+
+  deleteAudioHandler(audioId: string) {
+    this.deleteAudio.emit({
+      audioId,
+      contentId: this.content.id,
+    });
   }
 
   setFocus = ($event?: any) => {

@@ -10,6 +10,7 @@
           *ngFor="let item of block"
           [photo]="item"
           (deleteEvent)="removePhotoHandler($event)"
+          (downloadPhotoEvent)="exportPhoto($event)"
         ></app-photo>
       </div>
     </div>
@@ -23,6 +24,7 @@
           *ngFor="let item of lastBlock"
           [photo]="item"
           (deleteEvent)="removePhotoHandler($event)"
+          (downloadPhotoEvent)="exportPhoto($event)"
         >
         </app-photo>
       </div>
@@ -57,7 +59,7 @@
       <mat-icon>add_photo_alternate</mat-icon>
       <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
     </button>
-    <button mat-menu-item type="button" name="Download">
+    <button mat-menu-item type="button" name="Download" (click)="exportAlbum()">
       <mat-icon>download</mat-icon>
       <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
     </button>

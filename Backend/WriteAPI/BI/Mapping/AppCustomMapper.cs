@@ -37,21 +37,23 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.UpdatedAt);
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, 
+                                tN.Checked, tN.IsBold, tN.IsItalic, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
                         }
                     case AlbumNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
-                    case AudioNote audioNote:
+                    case AudiosPlaylistNote playlistNote:
                         {
-                            var audioNoteDTO = new AudioNoteDTO(audioNote.Name, audioNote.AppFileId, audioNote.AppFile.PathNonPhotoContent, audioNote.Id , audioNote.UpdatedAt);
-                            resultList.Add(audioNoteDTO);
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent)).ToList();
+                            var playlistDTO = new AudiosPlaylistNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
+                            resultList.Add(playlistDTO);
                             break;
                         }
                     case VideoNote videoNote:

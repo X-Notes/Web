@@ -7,7 +7,7 @@ namespace Common.DatabaseModels.models.NoteContent
         Text = 1,
         Album = 2,
         Document = 3,
-        Audio = 4,
+        PlaylistAudios = 4,
         Video = 5,
     }
 }

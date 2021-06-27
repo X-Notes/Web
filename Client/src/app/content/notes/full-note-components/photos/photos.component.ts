@@ -14,10 +14,11 @@ import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../api-notes.service';
+import { ExportService } from '../../export.service';
 import { Photo, Album } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 import { RemovePhotoFromAlbum } from '../../models/RemovePhotoFromAlbum';
-import { UploadPhotosToAlbum } from '../../models/UploadPhotosToAlbum';
+import { UploadFileToEntity as UploadFilesToEntity } from '../../models/UploadFilesToEntity';
 import { SelectionService } from '../../selection.service';
 @Component({
   selector: 'app-photos',
@@ -39,7 +40,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   deletePhotoFromAlbum = new EventEmitter<RemovePhotoFromAlbum>();
 
   @Output()
-  uploadEvent = new EventEmitter<UploadPhotosToAlbum>();
+  uploadEvent = new EventEmitter<UploadFilesToEntity>();
 
   @Input()
   content: Album;
@@ -68,6 +69,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private selectionService: SelectionService,
     private api: ApiServiceNotes,
     private store: Store,
+    private exportService: ExportService,
   ) {}
 
   ngOnDestroy(): void {
@@ -170,6 +172,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       const item = { ...z };
       item.loaded = false;
     });
+  }
+
+  async exportAlbum() {
+    await this.exportService.exportAlbum(this.content);
+  }
+
+  async exportPhoto(photo: Photo) {
+    await this.exportService.exportPhoto(photo);
   }
 
   initPhotos() {

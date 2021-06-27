@@ -29,15 +29,13 @@ namespace BI.services.user
         private readonly UserRepository userRepository;
         private readonly FileRepository fileRepository;
 
-        private readonly PhotoHelpers photoHelpers;
         private readonly IFilesStorage filesStorage;
         private readonly AppRepository appRepository;
         private readonly IImageProcessor imageProcessor;
         private readonly UserProfilePhotoRepository userProfilePhotoRepository;
         private readonly IMediator _mediator;
         public UserHandlerСommand(
-            UserRepository userRepository, 
-            PhotoHelpers photoHelpers, 
+            UserRepository userRepository,
             IFilesStorage filesStorage,
             FileRepository fileRepository,
             AppRepository appRepository,
@@ -46,7 +44,6 @@ namespace BI.services.user
             IMediator _mediator)
         {
             this.userRepository = userRepository;
-            this.photoHelpers = photoHelpers;
             this.filesStorage = filesStorage;
             this.fileRepository = fileRepository;
             this.appRepository = appRepository;
@@ -96,7 +93,7 @@ namespace BI.services.user
                 await fileRepository.Remove(dbFile);
             }
 
-            var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
+            var photoType = FileHelper.GetPhotoType(request.File.ContentType);
 
             using var ms = new MemoryStream();
             await request.File.CopyToAsync(ms);
@@ -115,7 +112,7 @@ namespace BI.services.user
                 var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
 
                 appFile = new AppFile(minFile, mediumFile, null, request.File.ContentType,
-                    thumbs[superMinType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                    thumbs[superMinType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
             else if(thumbs.ContainsKey(superMinType))
             {
@@ -123,12 +120,13 @@ namespace BI.services.user
                 var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
 
                 appFile = new AppFile(minFile, defaultFile, null, request.File.ContentType,
-                    thumbs[superMinType].Bytes.Length + thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                    thumbs[superMinType].Bytes.Length + thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
             else
             {
                 var minFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                appFile = new AppFile(minFile, null, null, request.File.ContentType, thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                appFile = new AppFile(minFile, null, null, request.File.ContentType, 
+                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
 
             var success = await userRepository.UpdatePhoto(user, appFile);

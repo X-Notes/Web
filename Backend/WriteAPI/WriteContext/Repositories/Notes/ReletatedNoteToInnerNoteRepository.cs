@@ -37,7 +37,7 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => (x as VideoNote).AppFile)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as AudioNote).AppFile)
+                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
                 .ThenInclude(x => (x as DocumentNote).AppFile)

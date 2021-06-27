@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { ShortUser } from 'src/app/core/models/ShortUser';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../models/ContentModel';
+import { NoteStore } from '../../state/notes-state';
 
 @Component({
   selector: 'app-photo',
@@ -16,8 +15,11 @@ export class PhotoComponent implements OnInit {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
+  @Output()
+  downloadPhotoEvent = new EventEmitter<Photo>();
+
+  @Select(NoteStore.authorId)
+  public id$: Observable<string>;
 
   @Input()
   photo: Photo;

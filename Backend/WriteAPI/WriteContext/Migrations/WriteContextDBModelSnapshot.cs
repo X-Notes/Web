@@ -46,6 +46,9 @@ namespace WriteContext.Migrations
                     b.Property<int>("FileTypeId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.Property<string>("PathNonPhotoContent")
                         .HasColumnType("text");
 
@@ -77,6 +80,21 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AudioNoteAppFile", b =>
+                {
+                    b.Property<Guid>("AudioNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AudioNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("AudioNoteAppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Files.FileType", b =>
@@ -456,7 +474,7 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Audio"
+                            Name = "PlaylistAudios"
                         },
                         new
                         {
@@ -896,23 +914,21 @@ namespace WriteContext.Migrations
                     b.Property<string>("Height")
                         .HasColumnType("text");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
                     b.Property<string>("Width")
                         .HasColumnType("text");
 
                     b.ToTable("AlbumNote");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudioNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudiosPlaylistNote", b =>
                 {
                     b.HasBaseType("Common.DatabaseModels.models.NoteContent.BaseNoteContent");
 
-                    b.Property<Guid>("AppFileId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
-
-                    b.HasIndex("AppFileId");
 
                     b.ToTable("AudioNote");
                 });
@@ -944,6 +960,12 @@ namespace WriteContext.Migrations
 
                     b.Property<int?>("HTypeId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsBold")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsItalic")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("NoteTextTypeId")
                         .HasColumnType("integer");
@@ -1006,6 +1028,25 @@ namespace WriteContext.Migrations
                     b.Navigation("FileType");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.Files.AudioNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
+                        .WithMany("AudioNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.models.NoteContent.AudiosPlaylistNote", "AudioNote")
+                        .WithMany("AudioNoteAppFiles")
+                        .HasForeignKey("AudioNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("AudioNote");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.Folders.Folder", b =>
@@ -1369,21 +1410,13 @@ namespace WriteContext.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudioNote", b =>
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudiosPlaylistNote", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.models.Files.AppFile", "AppFile")
-                        .WithMany("AudioNotes")
-                        .HasForeignKey("AppFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Common.DatabaseModels.models.NoteContent.BaseNoteContent", null)
                         .WithOne()
-                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AudioNote", "Id")
+                        .HasForeignKey("Common.DatabaseModels.models.NoteContent.AudiosPlaylistNote", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AppFile");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.DocumentNote", b =>
@@ -1447,7 +1480,7 @@ namespace WriteContext.Migrations
                 {
                     b.Navigation("AlbumNoteAppFiles");
 
-                    b.Navigation("AudioNotes");
+                    b.Navigation("AudioNoteAppFiles");
 
                     b.Navigation("DocumentNotes");
 
@@ -1590,6 +1623,11 @@ namespace WriteContext.Migrations
             modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AlbumNote", b =>
                 {
                     b.Navigation("AlbumNoteAppFiles");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.models.NoteContent.AudiosPlaylistNote", b =>
+                {
+                    b.Navigation("AudioNoteAppFiles");
                 });
 #pragma warning restore 612, 618
         }

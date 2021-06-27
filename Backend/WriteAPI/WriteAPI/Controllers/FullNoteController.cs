@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.users;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
-using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.documents;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Queries.notes;
 using MediatR;
@@ -16,7 +14,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -116,11 +113,11 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("album/upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<Guid>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
+        public async Task<OperationResult<List<AlbumPhotoDTO>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
         {
             if (photos.Count > 0)
             {
-                var command = new UploadPhotosToAlbum(id, contentId, photos);
+                var command = new UploadPhotosToAlbumCommand(id, contentId, photos);
                 command.Email = this.GetUserEmail();
                 return await _mediator.Send(command);
             }
@@ -153,12 +150,48 @@ namespace WriteAPI.Controllers
         // AUDIO
 
         [HttpPost("audios/{id}/{contentId}")]
-        public async Task<OperationResult<AudioNoteDTO>> InsertAudios(IFormFile audio, Guid id, Guid contentId)
+        public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
         {
-            var command = new InsertAudiosToNoteCommand(audio, id, contentId);
+            var command = new InsertAudiosToNoteCommand(audios, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
+
+        [HttpPost("audios/remove")]
+        public async Task<OperationResult<Unit>> RemovePlaylist(RemovePlaylistCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpDelete("audios/{noteId}/{contentId}/{audioFileId}")]
+        public async Task<OperationResult<Unit>> RemoveAudioFromPlaylist(Guid noteId, Guid contentId, Guid audioFileId)
+        {
+            var command = new RemoveAudioCommand(noteId, contentId, audioFileId);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("audios/upload/{id}/{contentId}")]
+        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToPlaylist(List<IFormFile> audios, Guid id, Guid contentId)
+        {
+            if (audios.Count > 0)
+            {
+                var command = new UploadAudiosToPlaylistCommand(id, contentId, audios);
+                command.Email = this.GetUserEmail();
+                return await _mediator.Send(command);
+            }
+            throw new Exception("Files can`t be empty");
+        }
+
+        [HttpPatch("audios/name")]
+        public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNamePlaylistCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        // VIDEOS
 
         [HttpPost("videos/{id}/{contentId}")]
         public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId)
@@ -168,13 +201,33 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+
+        [HttpPost("videos/remove")]
+        public async Task<OperationResult<Unit>> RemoveVideo(RemoveVideoCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+
+        // DOCUMENTS
+
         [HttpPost("files/{id}/{contentId}")]
         public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
         {
-            var command = new InsertFilesToNoteCommand(file, id, contentId);
+            var command = new InsertDocumentsToNoteCommand(file, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
+
+
+        [HttpPost("files/remove")]
+        public async Task<OperationResult<Unit>> RemoveDocument(RemoveDocumentCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
 
         [HttpGet("users/{id}")]
         public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)

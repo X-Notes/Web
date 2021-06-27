@@ -74,31 +74,15 @@ namespace BI.services.folders
 
             if(permissions.CanWrite)
             {
-                return new FullFolderAnswer()
-                {
-                    IsOwner = permissions.IsOwner,
-                    CanView = true,
-                    CanEdit = true,
-                    FullFolder = appCustomMapper.MapFolderToFullFolder(folder)
-                };
+                return new FullFolderAnswer(permissions.IsOwner, true, true, folder.UserId, appCustomMapper.MapFolderToFullFolder(folder));
             }
 
             if(permissions.CanRead)
             {
-                return new FullFolderAnswer()
-                {
-                    CanView = true,
-                    CanEdit = false,
-                    FullFolder = appCustomMapper.MapFolderToFullFolder(folder)
-                };
+                return new FullFolderAnswer(permissions.IsOwner, true, false, folder.UserId, appCustomMapper.MapFolderToFullFolder(folder));
             }
 
-            return new FullFolderAnswer()
-            {
-                CanView = false,
-                CanEdit = false,
-                FullFolder = null
-            };
+            return new FullFolderAnswer(permissions.IsOwner, false, false, null, null);
 
         }
     }

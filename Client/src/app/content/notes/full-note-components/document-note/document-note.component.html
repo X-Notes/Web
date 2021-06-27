@@ -25,11 +25,16 @@
           <mat-icon>wysiwyg</mat-icon>
           <span>{{ 'innerNote.menu.review' | translate }}</span>
         </button>
-        <button mat-menu-item type="button" name="download">
+        <button mat-menu-item type="button" name="download" (click)="exportDocument()">
           <mat-icon>download</mat-icon>
           <span>{{ 'innerNote.menu.download' | translate }}</span>
         </button>
-        <button mat-menu-item type="button" name="delete">
+        <button
+          mat-menu-item
+          type="button"
+          name="delete"
+          (click)="deleteDocumentEvent.emit(content.id)"
+        >
           <mat-icon>delete</mat-icon>
           <span>{{ 'innerNote.menu.delete' | translate }}</span>
         </button>

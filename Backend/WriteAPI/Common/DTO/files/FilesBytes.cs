@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Common.DTO.files
 {
@@ -10,10 +6,12 @@ namespace Common.DTO.files
     {
         public byte[] Bytes { set; get; }
         public string ContentType { set; get; }
-        public FilesBytes(byte[] Bytes, string Type)
+        public string FileName { set; get; }
+        public FilesBytes(byte[] Bytes, string Type, string FileName)
         {
             this.Bytes = Bytes;
             this.ContentType = Type;
+            this.FileName = FileName;
         }
     }
 }

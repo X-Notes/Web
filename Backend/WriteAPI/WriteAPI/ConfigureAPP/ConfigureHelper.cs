@@ -36,7 +36,7 @@ using Domain.Commands.labels;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
-using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.documents;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
@@ -148,30 +148,37 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE
-            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteHandlerCommand>();           
-            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteTextHandlerCommand>();           
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
 
 
             // FULL NOTE ALBUM
-            services.AddScoped<IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<AlbumPhotoDTO>>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteAlbumHandlerCommand>();
 
             // FULL NOTE AUDIOS
-            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudioNoteDTO>>, FullNoteHandlerCommand>();
-            // FULL NOTE VIDEOS
-            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteHandlerCommand>();
-            // FULL NOTE FILES
-            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudiosPlaylistNoteDTO>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemovePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveAudioCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeNamePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadAudiosToPlaylistCommand, OperationResult<List<AudioNoteDTO>>>, FullNoteAudioHandlerCommand>();
 
+            // FULL NOTE VIDEOS
+            services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveVideoCommand, OperationResult<Unit>>, FullNoteVideoHandlerCommand>();
+
+            // FULL NOTE DOCUMENTS
+            services.AddScoped<IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveDocumentCommand, OperationResult<Unit>>, FullNoteDocumentHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
@@ -228,7 +235,7 @@ namespace WriteAPI.ConfigureAPP
             //Files
             services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesByPathesCommand, Unit>, FileHandlerCommand>();
@@ -335,9 +342,6 @@ namespace WriteAPI.ConfigureAPP
         }
         public static void BI(this IServiceCollection services)
         {
-            services.AddScoped<PhotoHelpers>();
-            services.AddScoped<SearchHelper>();
-
             services.AddScoped<UserGenerator>();
             services.AddScoped<DatabaseFakeDataBridge>();
 

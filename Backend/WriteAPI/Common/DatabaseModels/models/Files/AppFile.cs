@@ -14,6 +14,7 @@ namespace Common.DatabaseModels.models.Files
         public string PathPhotoMedium { set; get; }
         public string PathPhotoBig { set; get; }
 
+        public string Name { set; get; }
         public long Size { set; get; }
 
         public string PathNonPhotoContent { set; get; }
@@ -29,11 +30,15 @@ namespace Common.DatabaseModels.models.Files
         public User User { get; set; }
 
         public List<UserProfilePhoto> UserProfilePhotos { set; get; }
+
         public List<AlbumNote> AlbumNotes { set; get; }
         public List<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
 
         public List<VideoNote> VideoNotes { set; get; }
-        public List<AudioNote> AudioNotes { set; get; }
+
+        public List<AudiosPlaylistNote> AudioNotes { set; get; }
+        public List<AudioNoteAppFile> AudioNoteAppFiles { set; get; }
+
         public List<DocumentNote> DocumentNotes { set; get; }
 
         public AppFile()
@@ -41,16 +46,18 @@ namespace Common.DatabaseModels.models.Files
 
         }
 
-        public AppFile(string pathNonPhotoContent, string type, long size, FileTypeEnum fileTypeId, Guid userId)
+        public AppFile(string pathNonPhotoContent, string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
             PathNonPhotoContent = pathNonPhotoContent;
             ContentType = type;
             Size = size;
             FileTypeId = fileTypeId;
             UserId = userId;
+            Name = name;
         }
 
-        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, string type, long size, FileTypeEnum fileTypeId, Guid userId)
+        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, 
+            string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
             PathPhotoSmall = pathPhotoSmall;
             PathPhotoMedium = pathPhotoMedium;
@@ -59,6 +66,7 @@ namespace Common.DatabaseModels.models.Files
             Size = size;
             FileTypeId = fileTypeId;
             UserId = userId;
+            Name = name;
         }
 
         public string GetFromSmallPath

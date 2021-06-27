@@ -26,21 +26,18 @@ namespace BI.services.folders
         private readonly NoteRepository noteRepository;
         private readonly IMediator _mediator;
         private readonly AppCustomMapper noteMapper;
-        private readonly SearchHelper searchHelper;
 
         public FullFolderHandlerQuery(
             FoldersNotesRepository foldersNotesRepository,
             IMediator _mediator,
             AppCustomMapper noteMapper,
-            NoteRepository noteRepository,
-            SearchHelper searchHelper
+            NoteRepository noteRepository
             )
         {
             this.foldersNotesRepository = foldersNotesRepository;
             this._mediator = _mediator;
             this.noteMapper = noteMapper;
             this.noteRepository = noteRepository;
-            this.searchHelper = searchHelper;
         }
 
         public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderId request, CancellationToken cancellationToken)
@@ -78,8 +75,8 @@ namespace BI.services.folders
                 }
                 else
                 {
-                    allNotes = allNotes.Where(x => searchHelper.IsMatchContent(x.Title, request.Search)
-                    || x.Contents.OfType<TextNote>().Any(x => searchHelper.IsMatchContent(x.Content, request.Search))
+                    allNotes = allNotes.Where(x => SearchHelper.IsMatchContent(x.Title, request.Search)
+                    || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.Search))
                     || folderdNotesIds.Contains(x.Id)
                     ).ToList();
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, folderdNotesIds);

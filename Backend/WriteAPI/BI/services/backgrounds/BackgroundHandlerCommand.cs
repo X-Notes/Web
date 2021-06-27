@@ -30,14 +30,12 @@ namespace BI.services.backgrounds
         private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
-        private readonly PhotoHelpers photoHelpers;
         private readonly IFilesStorage filesStorage;
         private readonly IImageProcessor imageProcessor;
         private readonly IMediator _mediator;
         private readonly FileRepository fileRepository;
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
-                                        PhotoHelpers photoHelpers,
                                         IMapper mapper,
                                         IFilesStorage filesStorage,
                                         IImageProcessor imageProcessor,
@@ -46,7 +44,6 @@ namespace BI.services.backgrounds
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
-            this.photoHelpers = photoHelpers;
             this.mapper = mapper;
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
@@ -90,7 +87,7 @@ namespace BI.services.backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var photoType = photoHelpers.GetPhotoType(request.File.ContentType);
+            var photoType = FileHelper.GetPhotoType(request.File.ContentType);
 
             var ms = new MemoryStream();
             await request.File.CopyToAsync(ms);
@@ -107,20 +104,23 @@ namespace BI.services.backgrounds
                 var bigFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[bigType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
                 var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
 
-                appFile = new AppFile(null, mediumFile, bigFile, request.File.ContentType, thumbs[bigType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                appFile = new AppFile(null, mediumFile, bigFile, request.File.ContentType, 
+                    thumbs[bigType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
             else if (thumbs.ContainsKey(mediumType))
             {
                 var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
                 var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
 
-                appFile = new AppFile(null, mediumFile, defaultFile, request.File.ContentType, thumbs[CopyType.Default].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                appFile = new AppFile(null, mediumFile, defaultFile, request.File.ContentType, 
+                    thumbs[CopyType.Default].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
             else
             {
                 var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
 
-                appFile = new AppFile(defaultFile, null, null, request.File.ContentType, thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id);
+                appFile = new AppFile(defaultFile, null, null, request.File.ContentType, 
+                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
 
 

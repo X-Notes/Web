@@ -44,11 +44,14 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import {
   Album,
+  AudioModel,
   BaseText,
   ContentModel,
   ContentTypeENUM,
   HeadingTypeENUM,
   NoteTextTypeENUM,
+  Photo,
+  PlaylistModel,
 } from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
@@ -62,12 +65,13 @@ import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformToFileContent } from '../models/TransformFileContent';
-import { UploadPhotosToAlbum } from '../models/UploadPhotosToAlbum';
+import { UploadFileToEntity } from '../models/UploadFilesToEntity';
 import { RemovePhotoFromAlbum } from '../models/RemovePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/TypeUploadFile.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/NoteHistory';
+import { RemoveAudioFromPlaylist } from '../models/removeAudioFromPlaylist';
 
 @Component({
   selector: 'app-full-note',
@@ -245,16 +249,56 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   };
 
-  uploadPhotoToAlbumHandler = async ($event: UploadPhotosToAlbum) => {
+  removePlaylistHandler = async (id: string) => {
+    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  removeDocumentHandler = async (id: string) => {
+    const resp = await this.api.removeFileFromNote(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  removeVideoHandler = async (id: string) => {
+    const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  uploadAudiosToPlaylistHandler = async ($event: UploadFileToEntity) => {
+    const resp = await this.api
+      .uploadAudiosToPlaylist($event.formData, this.note.id, $event.id)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === $event.id);
+      const audios = (this.contents[index] as PlaylistModel).audios;
+      const resultAudios = [...audios, ...resp.data];
+      const newPlaylist: PlaylistModel = {
+        ...(this.contents[index] as PlaylistModel),
+        audios: resultAudios,
+      };
+      this.contents[index] = newPlaylist;
+    }
+  };
+
+  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
     const resp = await this.api
       .uploadPhotosToAlbum($event.formData, this.note.id, $event.id)
       .toPromise();
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === $event.id);
-      const newPhotos = resp.data.map((x) => ({ id: x, loaded: false }));
+      const newPhotos: Photo[] = resp.data.map(
+        (x) =>
+          new Photo(x.fileId, x.photoPathSmall, x.photoPathMedium, x.photoPathBig, false, x.name),
+      );
       const contentPhotos = (this.contents[index] as Album).photos;
       const resultPhotos = [...contentPhotos, ...newPhotos];
-      const newAlbum = { ...this.contents[index], photos: resultPhotos };
+      const newAlbum: Album = { ...(this.contents[index] as Album), photos: resultPhotos };
       this.contents[index] = newAlbum;
     }
   };
@@ -269,11 +313,40 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       if (contentPhotos.length === 1) {
         this.contents = this.contents.filter((x) => x.id !== event.contentId);
       } else {
-        const newAlbum = {
-          ...this.contents[index],
+        const newAlbum: Album = {
+          ...(this.contents[index] as Album),
           photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
         };
         this.contents[index] = newAlbum;
+      }
+    }
+  }
+
+  async changePlaylistName(contentId: string) {
+    // TODO
+    const name = 'any name';
+    const resp = await this.api.changePlaylistName(this.note.id, contentId, name).toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === contentId);
+      (this.contents[index] as PlaylistModel).name = name;
+    }
+  }
+
+  async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
+    const resp = await this.api
+      .removeAudioFromPlaylist(this.note.id, event.contentId, event.audioId)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === event.contentId);
+      const audios = (this.contents[index] as PlaylistModel).audios;
+      if (audios.length === 1) {
+        this.contents = this.contents.filter((x) => x.id !== event.contentId);
+      } else {
+        const newPlaylist: PlaylistModel = {
+          ...(this.contents[index] as PlaylistModel),
+          audios: audios.filter((x) => x.fileId !== event.audioId),
+        };
+        this.contents[index] = newPlaylist;
       }
     }
   }
@@ -355,7 +428,14 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
     this.api
-      .updateContentText(this.note.id, event.contentId, event.content, event.checked)
+      .updateContentText(
+        this.note.id,
+        event.contentId,
+        event.content,
+        event.checked,
+        event.isBold,
+        event.isItalic,
+      )
       .toPromise();
     if (isLast) {
       this.addNewElementToEnd();
@@ -405,9 +485,8 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         throw new Error('incorrect type');
       }
     }
-    console.log('CHECK: ', resp);
+
     if (resp.success) {
-      console.log('CHECK2: ', resp);
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
     }

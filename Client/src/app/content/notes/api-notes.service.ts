@@ -18,6 +18,7 @@ import {
   DocumentModel,
   HeadingTypeENUM,
   NoteTextTypeENUM,
+  Photo,
   VideoModel,
 } from './models/ContentModel';
 import { OperationResult } from './models/TextOperationResult';
@@ -160,6 +161,7 @@ export class ApiServiceNotes {
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/permission`, obj);
   }
+
   // FULL NOTE
 
   updateTitle(title: string, id: string) {
@@ -211,12 +213,21 @@ export class ApiServiceNotes {
     );
   }
 
-  updateContentText(noteId: string, contentId: string, content: string, checked: boolean) {
+  updateContentText(
+    noteId: string,
+    contentId: string,
+    content: string,
+    checked: boolean,
+    isBold: boolean,
+    isItalic: boolean,
+  ) {
     const obj = {
       contentId,
       content,
       noteId,
       checked,
+      isBold,
+      isItalic,
     };
     return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/text`, obj);
   }
@@ -292,33 +303,6 @@ export class ApiServiceNotes {
       );
   }
 
-  // AUDIOS
-
-  insertAudiosToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<AudioModel>>(
-      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  // VIDEOS
-
-  insertVideosToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<VideoModel>>(
-      `${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  // FILES
-
-  insertFilesToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<DocumentModel>>(
-      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
-      data,
-    );
-  }
-
   removeAlbum(noteId: string, contentId: string) {
     const obj = {
       noteId,
@@ -331,7 +315,7 @@ export class ApiServiceNotes {
   }
 
   uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<string[]>>(
+    return this.httpClient.post<OperationResult<Photo[]>>(
       `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
       data,
     );
@@ -367,6 +351,93 @@ export class ApiServiceNotes {
       obj,
     );
   }
+
+  // AUDIOS
+
+  insertAudiosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<AudioModel>>(
+      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  removePlaylist(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/audios/remove`,
+      obj,
+    );
+  }
+
+  removeAudioFromPlaylist(noteId: string, contentId: string, audioId: string) {
+    return this.httpClient.delete<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/audios/${noteId}/${contentId}/${audioId}`,
+    );
+  }
+
+  changePlaylistName(noteId: string, contentId: string, name: string) {
+    const obj = {
+      noteId,
+      contentId,
+      name,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/audios/name`,
+      obj,
+    );
+  }
+
+  uploadAudiosToPlaylist(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<AudioModel[]>>(
+      `${environment.writeAPI}/api/fullnote/audios/upload/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  // VIDEOS
+
+  insertVideosToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<VideoModel>>(
+      `${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  removeVideoFromNote(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/videos/remove`,
+      obj,
+    );
+  }
+
+  // FILES
+
+  insertFilesToNote(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<DocumentModel>>(
+      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
+      data,
+    );
+  }
+
+  removeFileFromNote(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId,
+    };
+    return this.httpClient.post<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/files/remove`,
+      obj,
+    );
+  }
+
+  // LINKS
 
   getMetaLink(url: string) {
     const obj = {

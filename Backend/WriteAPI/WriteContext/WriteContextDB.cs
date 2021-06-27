@@ -46,7 +46,7 @@ namespace WriteContext
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
         public DbSet<TextNote> TextNotes { set; get; }
         public DbSet<AlbumNote> AlbumNotes { set; get; }
-        public DbSet<AudioNote> AudiosNote { set; get; }
+        public DbSet<AudiosPlaylistNote> AudiosNote { set; get; }
         public DbSet<VideoNote> VideosNote { set; get; }
         public DbSet<DocumentNote> DocumentsNote { set; get; }
 
@@ -192,7 +192,22 @@ namespace WriteContext
                         j.HasKey(bc => new { bc.AlbumNoteId, bc.AppFileId });
                     });
 
-
+            modelBuilder.Entity<AudiosPlaylistNote>()
+                .HasMany(x => x.Audios)
+                .WithMany(x => x.AudioNotes)
+                .UsingEntity<AudioNoteAppFile>(
+                    j => j
+                         .HasOne(pt => pt.AppFile)
+                         .WithMany(t => t.AudioNoteAppFiles)
+                         .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                         .HasOne(pt => pt.AudioNote)
+                         .WithMany(p => p.AudioNoteAppFiles)
+                         .HasForeignKey(pt => pt.AudioNoteId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.AudioNoteId, bc.AppFileId });
+                    });
            
             modelBuilder.Entity<User>()
                 .HasMany(p => p.NoteHistories)
@@ -288,7 +303,7 @@ namespace WriteContext
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
                 new ContentType { Id = ContentTypeENUM.Album, Name = nameof(ContentTypeENUM.Album) },
                 new ContentType { Id = ContentTypeENUM.Document, Name = nameof(ContentTypeENUM.Document) },
-                new ContentType { Id = ContentTypeENUM.Audio, Name = nameof(ContentTypeENUM.Audio) },
+                new ContentType { Id = ContentTypeENUM.PlaylistAudios, Name = nameof(ContentTypeENUM.PlaylistAudios) },
                 new ContentType { Id = ContentTypeENUM.Video, Name = nameof(ContentTypeENUM.Video) }
              );
 
