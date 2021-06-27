@@ -120,7 +120,7 @@ namespace WriteAPI.Controllers
         {
             if (photos.Count > 0)
             {
-                var command = new UploadPhotosToAlbum(id, contentId, photos);
+                var command = new UploadPhotosToAlbumCommand(id, contentId, photos);
                 command.Email = this.GetUserEmail();
                 return await _mediator.Send(command);
             }
@@ -189,7 +189,7 @@ namespace WriteAPI.Controllers
         [HttpPost("files/{id}/{contentId}")]
         public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
         {
-            var command = new InsertFilesToNoteCommand(file, id, contentId);
+            var command = new InsertDocumentsToNoteCommand(file, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }

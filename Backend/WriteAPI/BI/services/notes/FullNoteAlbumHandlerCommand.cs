@@ -4,7 +4,6 @@ using BI.signalR;
 using Common.DatabaseModels.models.NoteContent;
 using Common.DTO.notes.FullNoteContent;
 using Domain.Commands.files;
-using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Queries.permissions;
 using FacadeML;
@@ -25,7 +24,7 @@ namespace BI.services.notes
     public class FullNoteAlbumHandlerCommand:
         IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>,
-        IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>,
+        IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<Guid>>>,
         IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>
@@ -281,7 +280,7 @@ namespace BI.services.notes
         }
 
 
-        public async Task<OperationResult<List<Guid>>> Handle(UploadPhotosToAlbum request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Guid>>> Handle(UploadPhotosToAlbumCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

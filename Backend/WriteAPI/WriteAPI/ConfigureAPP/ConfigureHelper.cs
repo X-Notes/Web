@@ -36,7 +36,7 @@ using Domain.Commands.labels;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
-using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.documents;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
@@ -162,7 +162,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
-            services.AddScoped<IRequestHandler<UploadPhotosToAlbum, OperationResult<List<Guid>>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<Guid>>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteAlbumHandlerCommand>();
 
             // FULL NOTE AUDIOS
@@ -174,7 +174,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
-            services.AddScoped<IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
 
 
             //FOLDERS

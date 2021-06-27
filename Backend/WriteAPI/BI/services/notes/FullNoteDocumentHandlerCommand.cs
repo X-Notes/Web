@@ -9,7 +9,7 @@ using Domain.Commands.files;
 using Domain.Commands.noteInner;
 using Domain.Commands.noteInner.fileContent.albums;
 using Domain.Commands.noteInner.fileContent.audios;
-using Domain.Commands.noteInner.fileContent.files;
+using Domain.Commands.noteInner.fileContent.documents;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Queries.permissions;
 using FacadeML;
@@ -29,7 +29,7 @@ namespace BI.services.notes
 {
     public class FullNoteDocumentHandlerCommand :       
         // FILES
-        IRequestHandler<InsertFilesToNoteCommand, OperationResult<DocumentNoteDTO>>
+        IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -61,7 +61,7 @@ namespace BI.services.notes
         }
 
 
-        public async Task<OperationResult<DocumentNoteDTO>> Handle(InsertFilesToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<DocumentNoteDTO>> Handle(InsertDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
