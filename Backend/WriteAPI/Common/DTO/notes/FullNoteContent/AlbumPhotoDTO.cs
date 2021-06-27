@@ -11,6 +11,7 @@ namespace Common.DTO.notes.FullNoteContent
         public string PhotoPathMedium { set; get; }
 
         public string PhotoPathBig { set; get; }
+
         public string Name { set; get; }
 
         public AlbumPhotoDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig)

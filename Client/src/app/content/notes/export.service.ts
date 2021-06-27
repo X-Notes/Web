@@ -5,7 +5,7 @@ import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Album, AudioModel, Photo, PlaylistModel } from './models/ContentModel';
+import { Album, AudioModel, DocumentModel, Photo, PlaylistModel } from './models/ContentModel';
 import { NoteStore } from './state/notes-state';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
@@ -75,5 +75,11 @@ export class ExportService {
     const path = this.getPath(audio.audioPath);
     const blob = await this.getBlobFile(path).toPromise();
     saveAs(blob, audio.name);
+  }
+
+  async exportDocument(document: DocumentModel) {
+    const path = this.getPath(document.documentPath);
+    const blob = await this.getBlobFile(path).toPromise();
+    saveAs(blob, document.name);
   }
 }

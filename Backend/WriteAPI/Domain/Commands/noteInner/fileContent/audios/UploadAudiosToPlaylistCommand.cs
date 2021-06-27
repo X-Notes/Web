@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Commands.noteInner.fileContent.albums
+namespace Domain.Commands.noteInner.fileContent.audios
 {
-    public class UploadPhotosToAlbumCommand : BaseCommandEntity, IRequest<OperationResult<List<AlbumPhotoDTO>>>
+    public class UploadAudiosToPlaylistCommand : BaseCommandEntity, IRequest<OperationResult<List<AudioNoteDTO>>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
@@ -15,13 +15,13 @@ namespace Domain.Commands.noteInner.fileContent.albums
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public List<IFormFile> Photos { set; get; }
+        public List<IFormFile> Audios { set; get; }
 
-        public UploadPhotosToAlbumCommand(Guid NoteId, Guid ContentId, List<IFormFile> Photos)
+        public UploadAudiosToPlaylistCommand(Guid NoteId, Guid ContentId, List<IFormFile> Audios)
         {
             this.NoteId = NoteId;
             this.ContentId = ContentId;
-            this.Photos = Photos;
+            this.Audios = Audios;
         }
     }
 }

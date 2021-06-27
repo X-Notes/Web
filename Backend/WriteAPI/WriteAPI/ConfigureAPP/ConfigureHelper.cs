@@ -162,20 +162,23 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
-            services.AddScoped<IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<Guid>>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<AlbumPhotoDTO>>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteAlbumHandlerCommand>();
 
             // FULL NOTE AUDIOS
             services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudiosPlaylistNoteDTO>>, FullNoteAudioHandlerCommand>();
             services.AddScoped<IRequestHandler<RemovePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveAudioCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<ChangeNamePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<UploadAudiosToPlaylistCommand, OperationResult<List<AudioNoteDTO>>>, FullNoteAudioHandlerCommand>();
 
             // FULL NOTE VIDEOS
             services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveVideoCommand, OperationResult<Unit>>, FullNoteVideoHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
             services.AddScoped<IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
-
+            services.AddScoped<IRequestHandler<RemoveDocumentCommand, OperationResult<Unit>>, FullNoteDocumentHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

@@ -24,7 +24,7 @@ namespace BI.services.notes
     public class FullNoteAlbumHandlerCommand:
         IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>,
         IRequestHandler<RemoveAlbumCommand, OperationResult<Unit>>,
-        IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<Guid>>>,
+        IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<AlbumPhotoDTO>>>,
         IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>
@@ -139,6 +139,7 @@ namespace BI.services.notes
             return new OperationResult<AlbumNoteDTO>(Success: false, null);
         }
 
+        // TODO REMOVE WITHOUT ORDERING
         public async Task<OperationResult<Unit>> Handle(RemoveAlbumCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
@@ -199,8 +200,10 @@ namespace BI.services.notes
                 album.CountInRow = request.Count;
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
+
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -219,8 +222,10 @@ namespace BI.services.notes
                 album.Width = request.Width;
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.Update(album);
+
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
                 return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
@@ -245,6 +250,8 @@ namespace BI.services.notes
                     var resp = await _mediator.Send(new RemoveAlbumCommand(note.Id, album.Id, request.Email));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
@@ -280,7 +287,7 @@ namespace BI.services.notes
         }
 
 
-        public async Task<OperationResult<List<Guid>>> Handle(UploadPhotosToAlbumCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<AlbumPhotoDTO>>> Handle(UploadPhotosToAlbumCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -317,13 +324,13 @@ namespace BI.services.notes
 
                     await transaction.CommitAsync();
 
-                    var photosIds = dbFiles.Select(x => x.Id).ToList();
+                    var photos = dbFiles.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<List<Guid>>(Success: true, photosIds);
+                    return new OperationResult<List<AlbumPhotoDTO>>(Success: true, photos);
                 }
                 catch (Exception e)
                 {
@@ -334,7 +341,7 @@ namespace BI.services.notes
                 }
             }
 
-            return new OperationResult<List<Guid>>(Success: false, null);
+            return new OperationResult<List<AlbumPhotoDTO>>(Success: false, null);
         }
 
     }

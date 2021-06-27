@@ -7,7 +7,7 @@ import { AudioEvents } from './models/AudioEvents.enum';
 import { AudioModel } from './models/ContentModel';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
+import { NoteStore } from './state/notes-state';
 
 @Injectable({
   providedIn: 'root',
@@ -101,9 +101,7 @@ export class AudioService {
   };
 
   getAudioUrl(url: string) {
-    return `${environment.storage}/${this.store.selectSnapshot(UserStore.getUser).id}/${escape(
-      url,
-    )}`;
+    return `${environment.storage}/${this.store.selectSnapshot(NoteStore.authorId)}/${escape(url)}`;
   }
 
   private streamObservable(url, id) {

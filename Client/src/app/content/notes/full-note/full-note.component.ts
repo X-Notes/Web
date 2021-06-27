@@ -44,11 +44,13 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import {
   Album,
+  AudioModel,
   BaseText,
   ContentModel,
   ContentTypeENUM,
   HeadingTypeENUM,
   NoteTextTypeENUM,
+  Photo,
   PlaylistModel,
 } from '../models/ContentModel';
 import { LineBreakType } from '../html-models';
@@ -63,7 +65,7 @@ import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from '../models/EditTextEventModel';
 import { TransformToFileContent } from '../models/TransformFileContent';
-import { UploadPhotosToAlbum } from '../models/UploadPhotosToAlbum';
+import { UploadFileToEntity } from '../models/UploadFilesToEntity';
 import { RemovePhotoFromAlbum } from '../models/RemovePhotoFromAlbum';
 import { SidebarNotesService } from '../sidebar-notes.service';
 import { TypeUploadFile } from '../models/TypeUploadFile.enum';
@@ -254,16 +256,49 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   };
 
-  uploadPhotoToAlbumHandler = async ($event: UploadPhotosToAlbum) => {
+  removeDocumentHandler = async (id: string) => {
+    const resp = await this.api.removeFileFromNote(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  removeVideoHandler = async (id: string) => {
+    const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+    }
+  };
+
+  uploadAudiosToPlaylistHandler = async ($event: UploadFileToEntity) => {
+    const resp = await this.api
+      .uploadAudiosToPlaylist($event.formData, this.note.id, $event.id)
+      .toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === $event.id);
+      const audios = (this.contents[index] as PlaylistModel).audios;
+      const resultAudios = [...audios, ...resp.data];
+      const newPlaylist: PlaylistModel = {
+        ...(this.contents[index] as PlaylistModel),
+        audios: resultAudios,
+      };
+      this.contents[index] = newPlaylist;
+    }
+  };
+
+  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
     const resp = await this.api
       .uploadPhotosToAlbum($event.formData, this.note.id, $event.id)
       .toPromise();
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === $event.id);
-      const newPhotos = resp.data.map((x) => ({ id: x, loaded: false }));
+      const newPhotos: Photo[] = resp.data.map(
+        (x) =>
+          new Photo(x.fileId, x.photoPathSmall, x.photoPathMedium, x.photoPathBig, false, x.name),
+      );
       const contentPhotos = (this.contents[index] as Album).photos;
       const resultPhotos = [...contentPhotos, ...newPhotos];
-      const newAlbum = { ...this.contents[index], photos: resultPhotos };
+      const newAlbum: Album = { ...(this.contents[index] as Album), photos: resultPhotos };
       this.contents[index] = newAlbum;
     }
   };
@@ -284,6 +319,16 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
         };
         this.contents[index] = newAlbum;
       }
+    }
+  }
+
+  async changePlaylistName(contentId: string) {
+    // TODO
+    const name = 'any name';
+    const resp = await this.api.changePlaylistName(this.note.id, contentId, name).toPromise();
+    if (resp.success) {
+      const index = this.contents.findIndex((x) => x.id === contentId);
+      (this.contents[index] as PlaylistModel).name = name;
     }
   }
 

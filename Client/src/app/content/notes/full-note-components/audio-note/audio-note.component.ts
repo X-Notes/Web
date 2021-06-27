@@ -1,11 +1,21 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { AudioService } from '../../audio.service';
 import { ExportService } from '../../export.service';
 import { AudioModel, ContentModel, PlaylistModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 import { RemoveAudioFromPlaylist } from '../../models/removeAudioFromPlaylist';
+import { TypeUploadFormats } from '../../models/TypeUploadFormats.enum';
+import { UploadFileToEntity } from '../../models/UploadFilesToEntity';
 
 @Component({
   selector: 'app-audio-note',
@@ -16,10 +26,21 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   @Input()
   content: PlaylistModel;
 
+  formats = TypeUploadFormats.AUDIOS;
+
+  @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
+
   @Output()
   removePlaylist = new EventEmitter<string>();
 
-  @Output() deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
+  @Output()
+  changeTitleEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
+
+  @Output()
+  uploadEvent = new EventEmitter<UploadFileToEntity>();
 
   destroy = new Subject<void>();
 
@@ -36,6 +57,19 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.audioService.playStream(url, id).subscribe(() => {
       // TODO listening for fun here
     });
+  }
+
+  uploadHandler = () => {
+    this.uploadAudiosRef.nativeElement.click();
+  };
+
+  async uploadAudios(event) {
+    const data = new FormData();
+    const { files } = event.target;
+    for (const file of files) {
+      data.append('audios', file);
+    }
+    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   openFile(audio: AudioModel) {

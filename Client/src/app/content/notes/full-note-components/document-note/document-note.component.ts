@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { ExportService } from '../../export.service';
 import { DocumentModel } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 
@@ -12,7 +13,12 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   content: DocumentModel;
 
-  constructor(private dialogsManageService: DialogsManageService) {}
+  @Output() deleteDocumentEvent = new EventEmitter<string>();
+
+  constructor(
+    private dialogsManageService: DialogsManageService,
+    private exportService: ExportService,
+  ) {}
 
   setFocus = ($event?: any) => {
     console.log($event);
@@ -28,6 +34,10 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   getContent() {
     return this.content;
+  }
+
+  async exportDocument() {
+    await this.exportService.exportDocument(this.content);
   }
 
   documentIcon() {

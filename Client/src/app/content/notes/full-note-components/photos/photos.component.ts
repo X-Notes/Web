@@ -11,21 +11,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import * as JSZip from 'jszip';
-import { combineLatest, forkJoin, Subject } from 'rxjs';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { environment } from 'src/environments/environment';
+import { combineLatest, Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../api-notes.service';
 import { ExportService } from '../../export.service';
 import { Photo, Album } from '../../models/ContentModel';
 import { ParentInteraction } from '../../models/ParentInteraction.interface';
 import { RemovePhotoFromAlbum } from '../../models/RemovePhotoFromAlbum';
-import { UploadPhotosToAlbum } from '../../models/UploadPhotosToAlbum';
+import { UploadFileToEntity as UploadFilesToEntity } from '../../models/UploadFilesToEntity';
 import { SelectionService } from '../../selection.service';
-import { saveAs } from 'file-saver';
-import { NoteStore } from '../../state/notes-state';
-
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -46,7 +40,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   deletePhotoFromAlbum = new EventEmitter<RemovePhotoFromAlbum>();
 
   @Output()
-  uploadEvent = new EventEmitter<UploadPhotosToAlbum>();
+  uploadEvent = new EventEmitter<UploadFilesToEntity>();
 
   @Input()
   content: Album;

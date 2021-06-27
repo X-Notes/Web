@@ -142,16 +142,20 @@
               [content]="item"
               (removePlaylist)="removePlaylistHandler($event)"
               (deleteAudio)="removeAudioFromPlaylistHandler($event)"
+              (changeTitleEvent)="changePlaylistName($event)"
+              (uploadEvent)="uploadAudiosToPlaylistHandler($event)"
             ></app-audio-note>
             <app-video-note
               #htmlComp
               *ngSwitchCase="contentType.Video"
               [content]="item"
+              (deleteVideoEvent)="removeVideoHandler($event)"
             ></app-video-note>
             <app-document-note
               #htmlComp
               *ngSwitchCase="contentType.Document"
               [content]="item"
+              (deleteDocumentEvent)="removeDocumentHandler($event)"
             ></app-document-note>
             <div *ngSwitchDefault>Default</div>
           </div>
