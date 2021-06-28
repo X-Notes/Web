@@ -13,12 +13,10 @@ namespace BI.Services.Backgrounds
         IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>
     {
         private readonly IMapper mapper;
-        private readonly BackgroundRepository backgroundRepository;
         private readonly UserRepository userRepository;
-        public BackgroundHandlerQuery(IMapper mapper, BackgroundRepository backgroundRepository, UserRepository userRepository)
+        public BackgroundHandlerQuery(IMapper mapper, UserRepository userRepository)
         {
             this.mapper = mapper;
-            this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
         }
 

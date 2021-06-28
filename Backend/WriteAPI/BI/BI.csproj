@@ -12,12 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ContentProcessing\ContentProcessing.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\FacadeML\FacadeML.csproj" />
-    <ProjectReference Include="..\FakeData\FakeData.csproj" />
     <ProjectReference Include="..\Storage\Storage.csproj" />
     <ProjectReference Include="..\WriteContext\WriteContext.csproj" />
   </ItemGroup>

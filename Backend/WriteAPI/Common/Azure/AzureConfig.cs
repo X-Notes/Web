@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Common.Azure
+﻿namespace Common.Azure
 {
     public class AzureConfig
     {

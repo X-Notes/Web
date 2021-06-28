@@ -9,7 +9,6 @@ using Common.DTO.Folders;
 using Domain.Queries.Folders;
 using Domain.Queries.Permissions;
 using MediatR;
-using WriteContext.Repositories;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Users;
 
@@ -22,23 +21,24 @@ namespace BI.Services.Folders
 
         private readonly FolderRepository folderRepository;
         private readonly IMediator _mediator;
+
         private readonly UserRepository userRepository;
+
         private readonly UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository;
+
         private readonly AppCustomMapper appCustomMapper;
-        private readonly AppRepository appRepository;
+
         public FolderHandlerQuery(
             FolderRepository folderRepository, 
             UserRepository userRepository,
             IMediator _mediator,
             AppCustomMapper appCustomMapper,
-            AppRepository appRepository,
             UsersOnPrivateFoldersRepository usersOnPrivateFoldersRepository)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
             this._mediator = _mediator;
             this.appCustomMapper = appCustomMapper;
-            this.appRepository = appRepository;
             this.usersOnPrivateFoldersRepository = usersOnPrivateFoldersRepository;
         }
 
