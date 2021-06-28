@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SearchNotesFolders } from 'src/app/core/models/search/SearchNotesFolders';
 import { environment } from 'src/environments/environment';
-import { SearchUserForShareModal } from '../models/ShortUserForShareModal';
+import { SearchUserForShareModal } from '../models/short-user-for-share-modal.model';
 
 @Injectable({
   providedIn: 'root',

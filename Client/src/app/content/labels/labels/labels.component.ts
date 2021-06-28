@@ -6,7 +6,7 @@ import {
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { LabelStore } from '../state/labels-state';
 
 @Component({

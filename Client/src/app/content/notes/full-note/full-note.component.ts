@@ -20,14 +20,14 @@ import {
   deleteSmallNote,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { SignalRService } from 'src/app/core/signal-r.service';
 import {
   DeleteCurrentNote,
@@ -37,8 +37,8 @@ import {
   UpdateTitle,
 } from '../state/notes-actions';
 import { NoteStore } from '../state/notes-state';
-import { FullNote } from '../models/FullNote';
-import { SmallNote } from '../models/SmallNote';
+import { FullNote } from '../models/full-note.model';
+import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
@@ -52,26 +52,26 @@ import {
   NoteTextTypeENUM,
   Photo,
   PlaylistModel,
-} from '../models/ContentModel';
+} from '../models/content-model.model';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
 import { SelectionDirective } from '../directives/selection.directive';
-import { EnterEvent } from '../models/EnterEvent';
-import { ParentInteraction } from '../models/ParentInteraction.interface';
-import { TransformContent } from '../models/TransformContent';
+import { EnterEvent } from '../models/enter-event.model';
+import { ParentInteraction } from '../models/parent-interaction.interface';
+import { TransformContent } from '../models/transform-content.model';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { EditTextEventModel } from '../models/EditTextEventModel';
-import { TransformToFileContent } from '../models/TransformFileContent';
-import { UploadFileToEntity } from '../models/UploadFilesToEntity';
-import { RemovePhotoFromAlbum } from '../models/RemovePhotoFromAlbum';
+import { EditTextEventModel } from '../models/edit-text-event.model';
+import { TransformToFileContent } from '../models/transform-file-content.model';
+import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { RemovePhotoFromAlbum } from '../models/remove-photo-from-album.model';
 import { SidebarNotesService } from '../sidebar-notes.service';
-import { TypeUploadFile } from '../models/TypeUploadFile.enum';
+import { TypeUploadFile } from '../models/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
-import { NoteHistory } from '../models/history/NoteHistory';
-import { RemoveAudioFromPlaylist } from '../models/removeAudioFromPlaylist';
+import { NoteHistory } from '../models/history/note-history.model';
+import { RemoveAudioFromPlaylist } from '../models/remove-audio-from-playlist.model';
 
 @Component({
   selector: 'app-full-note',

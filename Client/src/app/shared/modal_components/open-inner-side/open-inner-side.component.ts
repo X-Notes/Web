@@ -13,12 +13,12 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
-import { PreviewNote } from 'src/app/content/notes/models/PreviewNote';
+import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
-import { FontSizeENUM } from '../../enums/FontSizeEnum';
-import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
+import { FontSizeENUM } from '../../enums/font-size.enum';
+import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 

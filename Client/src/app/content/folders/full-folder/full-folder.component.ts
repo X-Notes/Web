@@ -11,26 +11,26 @@ import {
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import {
   PersonalizationService,
   sideBarCloseOpen,
 } from 'src/app/shared/services/personalization.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
-import { FullFolder } from '../models/FullFolder';
-import { SmallFolder } from '../models/Folder';
+import { FullFolder } from '../models/full-folder.model';
+import { SmallFolder } from '../models/folder.model';
 import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
@@ -133,7 +133,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
               this.loadSideBar();
             }
 
-            const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number');
+            const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
             const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
             this.store.dispatch(actions);
           }
@@ -215,8 +215,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async loadSideBar() {
-    const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number');
-    const actions = types.map((action : FolderTypeENUM) => new LoadFolders(action));
+    const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
+    const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action));
     await this.store.dispatch(actions).toPromise();
     await this.setSideBarNotes(this.folder.folderTypeId);
   }

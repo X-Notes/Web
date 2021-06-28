@@ -1,13 +1,11 @@
-﻿using Common.DatabaseModels.models;
-using Common.DatabaseModels.models.Folders;
-using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.Notes;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.Notes;
 
 namespace WriteContext.Repositories
 {

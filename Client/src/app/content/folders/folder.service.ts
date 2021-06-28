@@ -4,11 +4,11 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { LoadFolders } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
-import { SmallFolder } from './models/Folder';
-import { UpdateColor } from '../notes/state/updateColor';
+import { SmallFolder } from './models/folder.model';
+import { UpdateColor } from '../notes/state/update-color.model';
 
 @Injectable()
 export class FolderService implements OnDestroy {
@@ -88,7 +88,9 @@ export class FolderService implements OnDestroy {
   async loadFolders(typeENUM: FolderTypeENUM) {
     await this.store.dispatch(new LoadFolders(typeENUM)).toPromise();
 
-    const types = Object.values(FolderTypeENUM).filter(z => typeof z == 'number' && z !== typeENUM);
+    const types = Object.values(FolderTypeENUM).filter(
+      (z) => typeof z == 'number' && z !== typeENUM,
+    );
     const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
     this.store.dispatch(actions);
   }

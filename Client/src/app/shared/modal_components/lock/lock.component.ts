@@ -6,12 +6,12 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { LockEncryptService } from 'src/app/content/notes/lock-encrypt.service';
-import { FullNote } from 'src/app/content/notes/models/FullNote';
-import { SmallNote } from 'src/app/content/notes/models/SmallNote';
+import { FullNote } from 'src/app/content/notes/models/full-note.model';
+import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { ChangeIsLockedFullNote, UpdateOneNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
+import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { PersonalizationService, shake } from '../../services/personalization.service';
 import { SnackbarService } from '../../services/snackbar.service';
 

@@ -6,11 +6,11 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
+import { LabelsColor } from 'src/app/shared/enums/labels-colors.enum';
 import { EnumUtil } from 'src/app/shared/services/enum.util';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import {
   AddLabelOnNote,
@@ -19,7 +19,7 @@ import {
 } from '../../notes/state/notes-actions';
 import { NoteStore } from '../../notes/state/notes-state';
 import { RestoreLabel } from '../state/labels-actions';
-import { Label } from '../models/label';
+import { Label } from '../models/label.model';
 
 @Component({
   selector: 'app-label',

@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { ChangeStateRelatedNote } from '../models/ChangeStateRelatedNote';
-import { ContentTypeENUM, NoteTextTypeENUM } from '../models/ContentModel';
-import { RelatedNote } from '../models/RelatedNote';
+import { ChangeStateRelatedNote } from '../models/change-state-related-note.model';
+import { ContentTypeENUM, NoteTextTypeENUM } from '../models/content-model.model';
+import { RelatedNote } from '../models/related-note.model';
 @Component({
   selector: 'app-small-note',
   templateUrl: './small-note.component.html',

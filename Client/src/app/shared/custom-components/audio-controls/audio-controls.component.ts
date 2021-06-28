@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from 'src/app/content/notes/audio.service';
-import { StreamAudioState } from 'src/app/content/notes/models/StreamAudioState';
+import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 
 @Component({

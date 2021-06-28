@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models.Users;
-using Common.DTO.backgrounds;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Common.DatabaseModels.Models.Users;
+using Common.DTO.Backgrounds;
 
 namespace BI.Mapping
 {

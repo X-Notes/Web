@@ -1,12 +1,12 @@
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,
@@ -19,13 +19,18 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   LoadUsedDiskSpace,
+  LoadPersonalization,
+  UpdatePersonalization,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
+import { PersonalizationSetting } from '../models/personalization-setting.model';
+import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
 
 interface UserState {
   user: ShortUser;
   isLogin: boolean;
   memory: number;
+  personalizationSettings: PersonalizationSetting;
 }
 
 @State<UserState>({
@@ -34,6 +39,7 @@ interface UserState {
     user: null,
     isLogin: false,
     memory: 0,
+    personalizationSettings: null,
   },
 })
 @Injectable()
@@ -42,6 +48,7 @@ export class UserStore {
     private api: UserAPIService,
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
+    private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
   ) {}
 
   @Selector()
@@ -188,5 +195,24 @@ export class UserStore {
   async loadUsedDiskSpace({ patchState }: StateContext<UserState>) {
     const memory = await this.api.getMemory().toPromise();
     patchState({ memory: memory.totalSize });
+  }
+
+  @Action(LoadPersonalization)
+  async loadPersonalization({ patchState }: StateContext<UserState>) {
+    const pr = await this.apiPersonalizationSettingsService
+      .getPersonalizationSettings()
+      .toPromise();
+    patchState({ personalizationSettings: pr });
+  }
+
+  @Action(UpdatePersonalization)
+  async updatePersonalization(
+    { patchState }: StateContext<UserState>,
+    { settings }: UpdatePersonalization,
+  ) {
+    await this.apiPersonalizationSettingsService
+      .updateUserPersonalizationSettings(settings)
+      .toPromise();
+    patchState({ personalizationSettings: settings });
   }
 }

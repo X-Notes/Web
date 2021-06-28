@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { BaseChangeTypeSmallFolder } from '../folders/state/folders-actions';
 import { BaseChangeTypeSmallNote } from '../notes/state/notes-actions';

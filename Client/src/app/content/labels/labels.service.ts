@@ -2,7 +2,7 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { Label } from './models/label';
+import { Label } from './models/label.model';
 
 @Injectable()
 export class LabelsService implements OnDestroy {

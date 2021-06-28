@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using Common.DatabaseModels.models.Notes;
+using Common.DatabaseModels.Models.Notes;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes

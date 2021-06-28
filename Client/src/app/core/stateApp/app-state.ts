@@ -1,8 +1,8 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { AuthService } from '../auth.service';
 
@@ -16,7 +16,7 @@ import {
   NewNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
-import { AppNotification } from '../models/AppNotification';
+import { AppNotification } from '../models/app-notification.model';
 
 interface AppState {
   routing: EntityType;
@@ -39,7 +39,6 @@ export class AppStore {
   constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
     authService.init();
   }
-
 
   @Selector()
   static getNewNotifications(state: AppState): AppNotification[] {

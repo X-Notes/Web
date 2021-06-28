@@ -4,8 +4,8 @@ import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Store } from '@ngxs/store';
 import { UserAPIService } from './user-api.service';
-import { User } from './models/User';
-import { Login, Logout } from './stateUser/user-action';
+import { User } from './models/user.model';
+import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateApp/app-action';
 
@@ -47,9 +47,9 @@ export class AuthService {
         } catch (e) {
           console.log(e);
         } finally {
-          this.store
-            .dispatch(new Login(token, user))
-            .subscribe(() => this.router.navigate(['/notes']));
+          await this.store.dispatch(new Login(token, user)).toPromise();
+          await this.store.dispatch(LoadPersonalization).toPromise();
+          this.router.navigate(['/notes']);
         }
       }
       setInterval(async () => this.updateToken(firebaseUser), 10 * 60 * 1000); // TODO CLEAR SETINTERVAL

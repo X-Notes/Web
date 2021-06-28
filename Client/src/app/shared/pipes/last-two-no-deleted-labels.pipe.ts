@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Label } from 'src/app/content/labels/models/label';
+import { Label } from 'src/app/content/labels/models/label.model';
 
 @Pipe({
   name: 'lastTwoNoDeletedLabels',

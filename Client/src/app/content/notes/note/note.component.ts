@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { SmallNote } from '../models/SmallNote';
-import { ContentTypeENUM } from '../models/ContentModel';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { SmallNote } from '../models/small-note.model';
+import { ContentTypeENUM } from '../models/content-model.model';
 
 @Component({
   selector: 'app-note',

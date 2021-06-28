@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { NoteHistory } from './models/history/NoteHistory';
+import { NoteHistory } from './models/history/note-history.model';
 
 @Injectable()
 export class ApiNoteHistoryService {

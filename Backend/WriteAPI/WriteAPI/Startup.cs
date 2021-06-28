@@ -1,6 +1,6 @@
 using AutoMapper;
 using BI.Mapping;
-using BI.signalR;
+using BI.SignalR;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Builder;

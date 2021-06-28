@@ -12,17 +12,17 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { LabelStore } from '../state/labels-state';
 import { LabelsService } from '../labels.service';
 import { UpdateLabel, LoadLabels, DeleteLabel, SetDeleteLabel } from '../state/labels-actions';
-import { Label } from '../models/label';
+import { Label } from '../models/label.model';
 
 @Component({
   selector: 'app-deleted',

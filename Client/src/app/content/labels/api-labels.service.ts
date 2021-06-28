@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { Label } from './models/label';
-import { Labels } from './models/labels';
+import { Label } from './models/label.model';
+import { Labels } from './models/labels.model';
 
 @Injectable()
 export class ApiServiceLabels {

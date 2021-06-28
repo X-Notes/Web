@@ -1,11 +1,11 @@
 ﻿using Bogus;
-using Common.DatabaseModels.models.Systems;
-using Common.DatabaseModels.models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Systems;
+using Common.DatabaseModels.Models.Users;
 
 namespace FakeData
 {

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { AppNotification } from 'src/app/core/models/AppNotification';
+import { AppNotification } from 'src/app/core/models/app-notification.model';
 import { ReadAllNotifications, ReadNotification } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';

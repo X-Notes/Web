@@ -13,11 +13,11 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
-import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/ParentInteraction.interface';
-import { TransformContent } from '../../../models/TransformContent';
+import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/content-model.model';
+import { EditTextEventModel } from '../../../models/edit-text-event.model';
+import { EnterEvent } from '../../../models/enter-event.model';
+import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content.model';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
 @Component({

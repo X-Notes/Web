@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { FolderTypeENUM } from '../enums/FolderTypesEnum';
+import { FolderTypeENUM } from '../enums/folder-types.enum';
 
 @Pipe({
   name: 'folderType',

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
-import { LabelsColor } from 'src/app/shared/enums/LabelsColors';
+import { LabelsColor } from 'src/app/shared/enums/labels-colors.enum';
 import {
   LoadLabels,
   AddLabel,
@@ -16,7 +16,7 @@ import {
   UpdateLabelCount,
 } from './labels-actions';
 import { ApiServiceLabels } from '../api-labels.service';
-import { Label } from '../models/label';
+import { Label } from '../models/label.model';
 import { UpdateLabelOnNote } from '../../notes/state/notes-actions';
 
 export interface LabelsForFiltersNotes {

@@ -1,12 +1,12 @@
-﻿using Common.DTO.history;
-using Domain.Queries.history;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.History;
+using Domain.Queries.History;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers

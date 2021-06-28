@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DTO.labels;
-using Domain.Commands.labels;
-using Domain.Queries.labels;
+using Common.DTO.Labels;
+using Domain.Commands.Labels;
+using Domain.Queries.Labels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

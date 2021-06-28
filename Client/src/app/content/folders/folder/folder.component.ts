@@ -5,11 +5,11 @@ import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { updateTitleEntitesDelay } from 'src/app/core/defaults/bounceDelay';
 import { SelectIdFolder, UnSelectIdFolder, UpdateTitle } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
-import { SmallFolder } from '../models/Folder';
+import { SmallFolder } from '../models/folder.model';
 
 @Component({
   selector: 'app-folder',

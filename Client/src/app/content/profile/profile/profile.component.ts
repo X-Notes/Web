@@ -14,13 +14,14 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   SetDefaultBackground,
+  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { takeUntil } from 'rxjs/operators';
-import { Background } from 'src/app/core/models/Background';
+import { Background } from 'src/app/core/models/background.model';
 import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import {
   LoadBackgrounds,
@@ -29,10 +30,10 @@ import {
   SetBackground,
 } from 'src/app/core/backgrounds/background-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { hideForDemo } from 'src/environments/demo';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 
 @Component({
   selector: 'app-profile',
@@ -67,7 +68,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themes = ThemeENUM;
 
-  languages = Object.values(LanguagesENUM).filter(x => typeof x === 'string').map((z: string) => z.toLowerCase());
+  languages = Object.values(LanguagesENUM)
+    .filter((x) => typeof x === 'string')
+    .map((z: string) => z.toLowerCase());
 
   userName;
 

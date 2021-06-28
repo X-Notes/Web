@@ -1,5 +1,5 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { Label } from '../models/label';
+import { Label } from '../models/label.model';
 
 export class LoadLabels {
   static type = '[Labels] Load Labels';

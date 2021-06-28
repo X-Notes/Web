@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
-using Common.DTO.users;
-using Domain.Commands.users;
-using Domain.Queries.users;
+using Common.DTO.Users;
+using Domain.Commands.Users;
+using Domain.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

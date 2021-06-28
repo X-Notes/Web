@@ -5,7 +5,13 @@ import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Album, AudioModel, DocumentModel, Photo, PlaylistModel } from './models/ContentModel';
+import {
+  Album,
+  AudioModel,
+  DocumentModel,
+  Photo,
+  PlaylistModel,
+} from './models/content-model.model';
 import { NoteStore } from './state/notes-state';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';

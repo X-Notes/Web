@@ -2,8 +2,8 @@ import { ElementRef, Renderer2, ViewChild, Component } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { FullNote } from 'src/app/content/notes/models/FullNote';
-import { OnlineUsersNote } from 'src/app/content/notes/models/OnlineUsersNote';
+import { FullNote } from 'src/app/content/notes/models/full-note.model';
+import { OnlineUsersNote } from 'src/app/content/notes/models/online-users-note.model';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import {
   PersonalizationService,

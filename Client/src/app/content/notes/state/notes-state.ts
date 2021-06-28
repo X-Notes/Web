@@ -2,7 +2,7 @@ import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
 import { OrderService } from 'src/app/shared/services/order.service';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { ApiServiceNotes } from '../api-notes.service';
 import {
   LoadNotes,
@@ -41,15 +41,15 @@ import {
   UpdateOneFullNote,
   ChangeIsLockedFullNote,
 } from './notes-actions';
-import { UpdateColor } from './updateColor';
-import { SmallNote } from '../models/SmallNote';
-import { Label } from '../../labels/models/label';
-import { UpdateLabelEvent } from './updateLabels';
-import { Notes } from './Notes';
-import { FullNote } from '../models/FullNote';
+import { UpdateColor } from './update-color.model';
+import { SmallNote } from '../models/small-note.model';
+import { Label } from '../../labels/models/label.model';
+import { UpdateLabelEvent } from './update-labels.model';
+import { Notes } from './notes.model';
+import { FullNote } from '../models/full-note.model';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
-import { InvitedUsersToNoteOrFolder } from '../models/InvitedUsersToNote';
-import { OnlineUsersNote } from '../models/OnlineUsersNote';
+import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.model';
+import { OnlineUsersNote } from '../models/online-users-note.model';
 
 interface FullNoteState {
   note: FullNote;

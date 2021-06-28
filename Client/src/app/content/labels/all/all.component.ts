@@ -12,14 +12,14 @@ import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel } from '../state/labels-actions';
-import { Label } from '../models/label';
+import { Label } from '../models/label.model';
 
 @Component({
   selector: 'app-all',

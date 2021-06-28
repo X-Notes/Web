@@ -1,13 +1,13 @@
-﻿using Common.DTO.users;
-using Domain.Commands.share.folders;
-using Domain.Commands.share.notes;
-using Domain.Queries.sharing;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.DTO.Users;
+using Domain.Commands.Share.Folders;
+using Domain.Commands.Share.Notes;
+using Domain.Queries.Sharing;
 using WriteAPI.ControllerConfig;
 using WriteAPI.Filters;
 

@@ -839,6 +839,53 @@ namespace WriteContext.Migrations
                     b.ToTable("NotificationSettings");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.PersonalizationSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsViewAudioOnNote")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsViewDocumentOnNote")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsViewPhotosOnNote")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsViewTextOnNote")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsViewVideoOnNote")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("NotesInFolderCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(5);
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("PersonalizationSettings");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1341,6 +1388,17 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.models.Users.PersonalizationSetting", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.models.Users.User", "User")
+                        .WithOne("PersonalizationSetting")
+                        .HasForeignKey("Common.DatabaseModels.models.Users.PersonalizationSetting", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.models.Users.User", b =>
                 {
                     b.HasOne("Common.DatabaseModels.models.Plan.BillingPlan", "BillingPlan")
@@ -1608,6 +1666,8 @@ namespace WriteContext.Migrations
                     b.Navigation("NotificationsFrom");
 
                     b.Navigation("NotificationsTo");
+
+                    b.Navigation("PersonalizationSetting");
 
                     b.Navigation("UserHistories");
 

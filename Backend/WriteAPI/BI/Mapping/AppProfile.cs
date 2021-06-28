@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models.Folders;
-using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Systems;
-using Common.DTO.app;
+using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Systems;
+using Common.DTO.App;
 
 namespace BI.Mapping
 {

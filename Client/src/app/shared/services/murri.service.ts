@@ -8,8 +8,8 @@ import * as Muuri from 'muuri';
 import { ApiRelatedNotesService } from 'src/app/content/notes/api-related-notes.service';
 import { Order, OrderEntity } from './order.service';
 import { PersonalizationService } from './personalization.service';
-import { FolderTypeENUM } from '../enums/FolderTypesEnum';
-import { NoteTypeENUM } from '../enums/NoteTypesEnum';
+import { FolderTypeENUM } from '../enums/folder-types.enum';
+import { NoteTypeENUM } from '../enums/note-types.enum';
 
 @Injectable()
 export class MurriService {

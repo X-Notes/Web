@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserStore } from './core/stateUser/user-state';
-import { LanguagesENUM } from './shared/enums/LanguagesENUM';
+import { LanguagesENUM } from './shared/enums/languages.enum';
 import { IconsService } from './shared/services/icons.service';
 
 @Component({
@@ -30,7 +30,9 @@ export class AppComponent implements OnInit, OnDestroy {
         if (language) {
           await this.translateService.use(LanguagesENUM[language].toLowerCase()).toPromise();
         } else {
-          await this.translateService.use(LanguagesENUM[LanguagesENUM.English].toLowerCase()).toPromise();
+          await this.translateService
+            .use(LanguagesENUM[LanguagesENUM.English].toLowerCase())
+            .toPromise();
         }
       });
   }

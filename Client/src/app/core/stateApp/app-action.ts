@@ -1,5 +1,5 @@
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { AppNotification } from '../models/AppNotification';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { AppNotification } from '../models/app-notification.model';
 
 export class UpdateRoute {
   static type = '[App] Update route';

@@ -1,13 +1,13 @@
-﻿using Common.DTO.notes.FullNoteContent;
-using Domain.Commands.encryption;
-using Domain.Queries.encryption;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.Encryption;
+using Domain.Queries.Encryption;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers

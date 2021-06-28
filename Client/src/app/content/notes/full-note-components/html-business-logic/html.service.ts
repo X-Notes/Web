@@ -2,8 +2,8 @@ import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { BreakEnterModel, ContentEditableService } from '../../content-editable.service';
 import { MenuSelectionService } from '../../menu-selection.service';
-import { BaseText, NoteTextTypeENUM } from '../../models/ContentModel';
-import { EnterEvent } from '../../models/EnterEvent';
+import { BaseText, NoteTextTypeENUM } from '../../models/content-model.model';
+import { EnterEvent } from '../../models/enter-event.model';
 import { SelectionService } from '../../selection.service';
 
 @Injectable()

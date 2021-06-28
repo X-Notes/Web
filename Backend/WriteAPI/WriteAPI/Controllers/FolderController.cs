@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.DatabaseModels.models.Folders;
-using Common.DTO.folders;
-using Domain.Commands.folders;
-using Domain.Queries.folders;
+using Common.DatabaseModels.Models.Folders;
+using Common.DTO.Folders;
+using Domain.Commands.Folders;
+using Domain.Queries.Folders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

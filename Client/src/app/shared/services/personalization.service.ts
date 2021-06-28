@@ -9,8 +9,8 @@ import { map, startWith, take } from 'rxjs/operators';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { Icons } from '../enums/Icons.enum';
-import { FontSizeENUM } from '../enums/FontSizeEnum';
+import { Icons } from '../enums/icons.enum';
+import { FontSizeENUM } from '../enums/font-size.enum';
 
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),

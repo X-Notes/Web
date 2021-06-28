@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
@@ -29,7 +29,7 @@ import {
   ChangeTypeFullNote,
   BaseChangeTypeSmallNote,
 } from '../notes/state/notes-actions';
-import { MenuItem } from './MenuItem';
+import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from './snack-bar-wrapper.service';
 
@@ -727,7 +727,7 @@ export class MenuButtonsService {
 
       this.store.dispatch(new ChangeTypeFullNote(typeTo));
     } else {
-      prevType= this.store.selectSnapshot(AppStore.getTypeNote);
+      prevType = this.store.selectSnapshot(AppStore.getTypeNote);
       ids = this.store.selectSnapshot(NoteStore.selectedIds);
     }
 

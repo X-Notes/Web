@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DTO.backgrounds;
-using Domain.Commands.backgrounds;
-using Domain.Queries.backgrounds;
+using Common.DTO.Backgrounds;
+using Domain.Commands.Backgrounds;
+using Domain.Queries.Backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
