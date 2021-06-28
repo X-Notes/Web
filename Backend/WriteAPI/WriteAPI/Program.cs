@@ -22,5 +22,6 @@ namespace WriteAPI
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }
