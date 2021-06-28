@@ -1,4 +1,4 @@
-import { FullNote } from './FullNote';
+import { FullNote } from './full-note.model';
 
 export interface RequestFullNote {
   isOwner: boolean;

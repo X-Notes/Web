@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
-import { Photo } from '../../models/ContentModel';
+import { Photo } from '../../models/content-model.model';
 import { NoteStore } from '../../state/notes-state';
 
 @Component({

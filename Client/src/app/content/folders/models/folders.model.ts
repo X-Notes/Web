@@ -1,5 +1,5 @@
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { SmallFolder } from './Folder';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
+import { SmallFolder } from './folder.model';
 
 export class Folders {
   typeFolders: FolderTypeENUM;

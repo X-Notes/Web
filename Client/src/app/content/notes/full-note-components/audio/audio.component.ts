@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from '../../audio.service';
-import { AudioModel } from '../../models/ContentModel';
-import { StreamAudioState } from '../../models/StreamAudioState';
+import { AudioModel } from '../../models/content-model.model';
+import { StreamAudioState } from '../../models/stream-audio-state.model';
 
 @Component({
   selector: 'app-audio',

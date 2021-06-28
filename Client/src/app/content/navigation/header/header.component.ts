@@ -9,19 +9,19 @@ import { takeUntil } from 'rxjs/operators';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { LoadNotifications } from 'src/app/core/stateApp/app-action';
 import { SignalRService } from 'src/app/core/signal-r.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { NoteStore } from '../../notes/state/notes-state';
 import { MenuButtonsService } from '../menu-buttons.service';
-import { FullNote } from '../../notes/models/FullNote';
+import { FullNote } from '../../notes/models/full-note.model';
 import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 import { FolderStore } from '../../folders/state/folders-state';
-import { FullFolder } from '../../folders/models/FullFolder';
+import { FullFolder } from '../../folders/models/full-folder.model';
 
 @Component({
   selector: 'app-header',

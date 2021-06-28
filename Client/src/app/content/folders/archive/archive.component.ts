@@ -11,12 +11,12 @@ import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
-import { EntityType } from 'src/app/shared/enums/EntityTypes';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
@@ -70,7 +70,6 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadContent() {
-
     await this.folderService.loadFolders(FolderTypeENUM.Archive);
 
     let folders = this.store.selectSnapshot(FolderStore.archiveFolders);

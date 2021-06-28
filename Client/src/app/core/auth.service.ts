@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Store } from '@ngxs/store';
 import { UserAPIService } from './user-api.service';
-import { User } from './models/User';
+import { User } from './models/user.model';
 import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateApp/app-action';

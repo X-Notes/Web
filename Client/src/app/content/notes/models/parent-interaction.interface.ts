@@ -1,4 +1,4 @@
-import { ContentModel } from './ContentModel';
+import { ContentModel } from './content-model.model';
 
 export interface ParentInteraction {
   setFocus($event?);

@@ -8,7 +8,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AddFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 

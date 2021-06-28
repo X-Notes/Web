@@ -1,9 +1,9 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { Label } from '../../labels/models/label';
-import { Notes } from './Notes';
-import { SmallNote } from '../models/SmallNote';
-import { FullNote } from '../models/FullNote';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { Label } from '../../labels/models/label.model';
+import { Notes } from './notes.model';
+import { SmallNote } from '../models/small-note.model';
+import { FullNote } from '../models/full-note.model';
 
 export class LoadNotes {
   static type = '[Notes] Load private notes';

@@ -14,7 +14,7 @@ import {
 } from 'src/app/content/folders/state/folders-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { NoteColorPallete } from '../../enums/NoteColors';
+import { NoteColorPallete } from '../../enums/note-colors.enum';
 import { EnumUtil } from '../../services/enum.util';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/InvitedUsersToNote';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invited-users-to-note.model';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 @Component({
   selector: 'app-user-on-entity-card',

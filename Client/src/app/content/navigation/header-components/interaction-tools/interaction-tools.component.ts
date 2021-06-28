@@ -10,7 +10,7 @@ import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   notification,
   PersonalizationService,

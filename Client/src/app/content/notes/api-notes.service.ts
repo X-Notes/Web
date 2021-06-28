@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
-import { SmallNote } from './models/SmallNote';
-import { RequestFullNote } from './models/RequestFullNote';
-import { Notes } from './state/Notes';
-import { InvitedUsersToNoteOrFolder } from './models/InvitedUsersToNote';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { SmallNote } from './models/small-note.model';
+import { RequestFullNote } from './models/request-full-note.model';
+import { Notes } from './state/notes.model';
+import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
 import {
   Album,
   AudioModel,
@@ -20,9 +20,9 @@ import {
   NoteTextTypeENUM,
   Photo,
   VideoModel,
-} from './models/ContentModel';
-import { OperationResult } from './models/TextOperationResult';
-import { OnlineUsersNote } from './models/OnlineUsersNote';
+} from './models/content-model.model';
+import { OperationResult } from './models/operation-result.model';
+import { OnlineUsersNote } from './models/online-users-note.model';
 
 @Injectable()
 export class ApiServiceNotes {

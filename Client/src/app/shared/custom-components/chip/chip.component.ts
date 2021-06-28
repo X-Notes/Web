@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ThemeENUM } from '../../enums/ThemeEnum';
+import { ThemeENUM } from '../../enums/theme.enum';
 
 @Component({
   selector: 'app-chip',

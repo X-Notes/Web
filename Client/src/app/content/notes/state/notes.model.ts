@@ -1,5 +1,5 @@
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { SmallNote } from '../models/SmallNote';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { SmallNote } from '../models/small-note.model';
 
 export class Notes {
   typeNotes: NoteTypeENUM;

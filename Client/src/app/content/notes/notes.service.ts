@@ -5,7 +5,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Router } from '@angular/router';
 import {
   CancelAllSelectedLabels,
@@ -14,10 +14,10 @@ import {
   SelectIdNote,
   UnSelectIdNote,
 } from './state/notes-actions';
-import { UpdateLabelEvent } from './state/updateLabels';
+import { UpdateLabelEvent } from './state/update-labels.model';
 import { NoteStore } from './state/notes-state';
-import { SmallNote } from './models/SmallNote';
-import { UpdateColor } from './state/updateColor';
+import { SmallNote } from './models/small-note.model';
+import { UpdateColor } from './state/update-color.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 
 @Injectable()
@@ -136,10 +136,9 @@ export class NotesService implements OnDestroy {
   }
 
   async loadNotes(typeENUM: NoteTypeENUM) {
-
     await this.store.dispatch(new LoadNotes(typeENUM)).toPromise();
-    const types = Object.values(NoteTypeENUM).filter(z => typeof z == 'number' && z !== typeENUM);
-    const actions = types.map((t :NoteTypeENUM) => new LoadNotes(t));
+    const types = Object.values(NoteTypeENUM).filter((z) => typeof z == 'number' && z !== typeENUM);
+    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t));
     this.store.dispatch(actions);
   }
 

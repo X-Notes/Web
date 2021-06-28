@@ -1,12 +1,12 @@
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,

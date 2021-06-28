@@ -8,7 +8,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Router } from '@angular/router';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ShortUser } from 'src/app/core/models/ShortUser';
+import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { LabelsForFiltersNotes, LabelStore } from '../../labels/state/labels-state';
 import { LoadLabels } from '../../labels/state/labels-actions';

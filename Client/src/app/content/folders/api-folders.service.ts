@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map } from 'rxjs/operators';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
-import { SmallFolder } from './models/Folder';
-import { Folders } from './models/Folders';
-import { RequestFullFolder } from './models/RequestFullFolder';
-import { InvitedUsersToNoteOrFolder } from '../notes/models/InvitedUsersToNote';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { SmallFolder } from './models/folder.model';
+import { Folders } from './models/folders.model';
+import { RequestFullFolder } from './models/request-full-folder.model';
+import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
 
 @Injectable()
 export class ApiFoldersService {

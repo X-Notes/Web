@@ -1,6 +1,6 @@
-import { NoteTypeENUM } from 'src/app/shared/enums/NoteTypesEnum';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
-import { Label } from '../../labels/models/label';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { Label } from '../../labels/models/label.model';
 
 export interface FullNote {
   id: string;

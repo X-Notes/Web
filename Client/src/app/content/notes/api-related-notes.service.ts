@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { PreviewNote } from './models/PreviewNote';
-import { RelatedNote } from './models/RelatedNote';
-import { OperationResult } from './models/TextOperationResult';
+import { PreviewNote } from './models/preview-note.model';
+import { RelatedNote } from './models/related-note.model';
+import { OperationResult } from './models/operation-result.model';
 
 @Injectable()
 export class ApiRelatedNotesService {

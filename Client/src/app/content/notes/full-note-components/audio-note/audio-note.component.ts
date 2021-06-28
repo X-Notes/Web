@@ -11,11 +11,11 @@ import {
 import { Subject } from 'rxjs';
 import { AudioService } from '../../audio.service';
 import { ExportService } from '../../export.service';
-import { AudioModel, ContentModel, PlaylistModel } from '../../models/ContentModel';
-import { ParentInteraction } from '../../models/ParentInteraction.interface';
-import { RemoveAudioFromPlaylist } from '../../models/removeAudioFromPlaylist';
-import { TypeUploadFormats } from '../../models/TypeUploadFormats.enum';
-import { UploadFileToEntity } from '../../models/UploadFilesToEntity';
+import { AudioModel, ContentModel, PlaylistModel } from '../../models/content-model.model';
+import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
+import { TypeUploadFormats } from '../../models/type-upload-formats.enum';
+import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 
 @Component({
   selector: 'app-audio-note',

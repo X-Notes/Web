@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ChangeColorComponent } from 'src/app/shared/modal_components/change-color/change-color.component';
 import { DialogService } from 'src/app/shared/modal_components/dialog.service';
 import { EditingLabelsNoteComponent } from 'src/app/shared/modal_components/editing-labels-note/editing-labels-note.component';

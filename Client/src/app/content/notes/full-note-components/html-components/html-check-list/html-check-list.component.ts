@@ -12,12 +12,12 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText } from '../../../models/ContentModel';
-import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/ParentInteraction.interface';
-import { TransformContent } from '../../../models/TransformContent';
-import { CheckListService } from '../../html-business-logic/checkList.service';
+import { BaseText } from '../../../models/content-model.model';
+import { EditTextEventModel } from '../../../models/edit-text-event.model';
+import { EnterEvent } from '../../../models/enter-event.model';
+import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content.model';
+import { CheckListService } from '../../html-business-logic/check-list.service';
 
 @Component({
   selector: 'app-html-check-list',

@@ -1,4 +1,4 @@
-import { HeadingTypeENUM, NoteTextTypeENUM } from './ContentModel';
+import { HeadingTypeENUM, NoteTextTypeENUM } from './content-model.model';
 
 export interface TransformContent {
   id: string;

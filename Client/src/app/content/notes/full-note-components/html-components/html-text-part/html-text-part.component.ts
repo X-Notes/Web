@@ -12,14 +12,14 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../../models/ContentModel';
-import { EditTextEventModel } from '../../../models/EditTextEventModel';
-import { EnterEvent } from '../../../models/EnterEvent';
-import { ParentInteraction } from '../../../models/ParentInteraction.interface';
-import { TransformContent } from '../../../models/TransformContent';
-import { TransformToFileContent } from '../../../models/TransformFileContent';
-import { TypeUploadFile } from '../../../models/TypeUploadFile.enum';
-import { TypeUploadFormats } from '../../../models/TypeUploadFormats.enum';
+import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../../models/content-model.model';
+import { EditTextEventModel } from '../../../models/edit-text-event.model';
+import { EnterEvent } from '../../../models/enter-event.model';
+import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { TransformContent } from '../../../models/transform-content.model';
+import { TransformToFileContent } from '../../../models/transform-file-content.model';
+import { TypeUploadFile } from '../../../models/type-upload-file.enum';
+import { TypeUploadFormats } from '../../../models/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({

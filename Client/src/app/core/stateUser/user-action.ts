@@ -1,9 +1,9 @@
-import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
-import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
-import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
-import { Background } from '../models/Background';
+import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { Background } from '../models/background.model';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
-import { User } from '../models/User';
+import { User } from '../models/user.model';
 
 export class Login {
   static type = '[User] Login User';

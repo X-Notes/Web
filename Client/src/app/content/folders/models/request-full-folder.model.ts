@@ -1,4 +1,4 @@
-import { FullFolder } from './FullFolder';
+import { FullFolder } from './full-folder.model';
 
 export interface RequestFullFolder {
   isOwner: boolean;

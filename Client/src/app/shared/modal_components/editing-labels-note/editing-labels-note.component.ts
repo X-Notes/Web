@@ -2,14 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { LabelStore } from 'src/app/content/labels/state/labels-state';
-import { Label } from 'src/app/content/labels/models/label';
+import { Label } from 'src/app/content/labels/models/label.model';
 import { UpdateLabel, SetDeleteLabel, AddLabel } from 'src/app/content/labels/state/labels-actions';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { LabelSelect } from 'src/app/content/labels/models/label-select';
+import { LabelSelect } from 'src/app/content/labels/models/label-select.model';
 import { PersonalizationService, smoothOpacity } from '../../services/personalization.service';
 
 @Component({

@@ -1,11 +1,11 @@
 import { State, Selector, Action, StateContext } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { OrderService } from 'src/app/shared/services/order.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { patch, updateItem } from '@ngxs/store/operators';
-import { SmallFolder } from '../models/Folder';
+import { SmallFolder } from '../models/folder.model';
 import { ApiFoldersService } from '../api-folders.service';
-import { FullFolder } from '../models/FullFolder';
+import { FullFolder } from '../models/full-folder.model';
 import {
   LoadFolders,
   AddFolder,
@@ -32,9 +32,9 @@ import {
   GetInvitedUsersToFolder,
   ChangeColorFullFolder,
 } from './folders-actions';
-import { UpdateColor } from '../../notes/state/updateColor';
-import { Folders } from '../models/Folders';
-import { InvitedUsersToNoteOrFolder } from '../../notes/models/InvitedUsersToNote';
+import { UpdateColor } from '../../notes/state/update-color.model';
+import { Folders } from '../models/folders.model';
+import { InvitedUsersToNoteOrFolder } from '../../notes/models/invited-users-to-note.model';
 
 interface FullFolderState {
   isOwner: boolean;

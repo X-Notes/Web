@@ -1,4 +1,4 @@
-import { Label } from '../../labels/models/label';
+import { Label } from '../../labels/models/label.model';
 
 export interface UpdateLabelEvent {
   id: string;

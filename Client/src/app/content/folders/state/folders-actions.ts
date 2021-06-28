@@ -1,7 +1,7 @@
 import { Order } from 'src/app/shared/services/order.service';
-import { FolderTypeENUM } from 'src/app/shared/enums/FolderTypesEnum';
-import { Folders } from '../models/Folders';
-import { SmallFolder } from '../models/Folder';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
+import { Folders } from '../models/folders.model';
+import { SmallFolder } from '../models/folder.model';
 
 export class LoadFolders {
   static type = '[Folders] Load private folders';
@@ -43,7 +43,11 @@ export class ChangeColorFullFolder {
 export class ChangeColorFolder {
   static type = '[Folders] Change color folder';
 
-  constructor(public color: string, public typeFolder: FolderTypeENUM, public selectedIds: string[]) {}
+  constructor(
+    public color: string,
+    public typeFolder: FolderTypeENUM,
+    public selectedIds: string[],
+  ) {}
 }
 
 export class ClearColorFolders {

@@ -1,4 +1,4 @@
-import { RefTypeENUM } from "src/app/shared/enums/refTypeEnum";
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export interface InvitedUsersToNoteOrFolder {
   id: string;

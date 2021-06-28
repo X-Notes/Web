@@ -4,7 +4,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ApiFoldersService } from 'src/app/content/folders/api-folders.service';
-import { SmallFolder } from 'src/app/content/folders/models/Folder';
+import { SmallFolder } from 'src/app/content/folders/models/folder.model';
 import {
   ChangeTypeFullFolder,
   GetInvitedUsersToFolder,
@@ -14,8 +14,8 @@ import {
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { ApiBrowserTextService } from 'src/app/content/notes/api-browser-text.service';
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
-import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/InvitedUsersToNote';
-import { SmallNote } from 'src/app/content/notes/models/SmallNote';
+import { InvitedUsersToNoteOrFolder } from 'src/app/content/notes/models/invited-users-to-note.model';
+import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import {
   ChangeTypeFullNote,
   GetInvitedUsersToNote,
@@ -23,17 +23,17 @@ import {
   UpdateOneNote,
 } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
-import { RefTypeENUM } from 'src/app/shared/enums/refTypeEnum';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
-import { EntityType } from '../../enums/EntityTypes';
-import { FolderTypeENUM } from '../../enums/FolderTypesEnum';
-import { NoteTypeENUM } from '../../enums/NoteTypesEnum';
-import { SearchUserForShareModal } from '../../models/ShortUserForShareModal';
+import { EntityType } from '../../enums/entity-types.enum';
+import { FolderTypeENUM } from '../../enums/folder-types.enum';
+import { NoteTypeENUM } from '../../enums/note-types.enum';
+import { SearchUserForShareModal } from '../../models/short-user-for-share-modal.model';
 import { PersonalizationService, showDropdown } from '../../services/personalization.service';
 import { SearchService } from '../../services/search.service';
-import { ThemeENUM } from '../../enums/ThemeEnum';
+import { ThemeENUM } from '../../enums/theme.enum';
 
 export enum SharedType {
   Note,
@@ -292,14 +292,16 @@ export class ShareComponent implements OnInit, OnDestroy {
     if (this.currentFolder.folderTypeId !== FolderTypeENUM.Shared) {
       await this.apiFolder.makePublic(RefTypeENUM.Viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Shared;
-      this.folders.find((note) => note.id === this.currentFolder.id).folderTypeId = FolderTypeENUM.Shared;
+      this.folders.find((note) => note.id === this.currentFolder.id).folderTypeId =
+        FolderTypeENUM.Shared;
       const commands = this.factoryForCommandsSharedFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
       this.store.dispatch(new ChangeTypeFullFolder(FolderTypeENUM.Shared));
     } else {
       await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Private;
-      this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId = FolderTypeENUM.Private;
+      this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId =
+        FolderTypeENUM.Private;
       const commands = this.factoryForCommandsPrivateFolders([this.currentFolder.id]);
       this.commandsForChange.set(this.currentFolder.id, commands);
       this.store.dispatch(new ChangeTypeFullFolder(FolderTypeENUM.Private));

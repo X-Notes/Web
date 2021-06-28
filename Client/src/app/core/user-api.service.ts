@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { User } from './models/User';
-import { ShortUser } from './models/ShortUser';
-import { AnswerChangePhoto } from './models/AsnwerChangePhoto';
+import { User } from './models/user.model';
+import { ShortUser } from './models/short-user.model';
+import { AnswerChangePhoto } from './models/answer-change-photo.model';
 import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
-import { ThemeENUM } from '../shared/enums/ThemeEnum';
-import { FontSizeENUM } from '../shared/enums/FontSizeEnum';
-import { LanguagesENUM } from '../shared/enums/LanguagesENUM';
+import { ThemeENUM } from '../shared/enums/theme.enum';
+import { FontSizeENUM } from '../shared/enums/font-size.enum';
+import { LanguagesENUM } from '../shared/enums/languages.enum';
 
 export interface Token {
   token: string;
