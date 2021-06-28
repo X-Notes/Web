@@ -14,6 +14,7 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   SetDefaultBackground,
+  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/ShortUser';
 import { AuthService } from 'src/app/core/auth.service';
@@ -67,7 +68,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themes = ThemeENUM;
 
-  languages = Object.values(LanguagesENUM).filter(x => typeof x === 'string').map((z: string) => z.toLowerCase());
+  languages = Object.values(LanguagesENUM)
+    .filter((x) => typeof x === 'string')
+    .map((z: string) => z.toLowerCase());
 
   userName;
 

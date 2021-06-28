@@ -19,13 +19,18 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   LoadUsedDiskSpace,
+  LoadPersonalization,
+  UpdatePersonalization,
 } from './user-action';
 import { UserAPIService } from '../user-api.service';
+import { PersonalizationSetting } from '../models/personalization-setting.model';
+import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
 
 interface UserState {
   user: ShortUser;
   isLogin: boolean;
   memory: number;
+  personalizationSettings: PersonalizationSetting;
 }
 
 @State<UserState>({
@@ -34,6 +39,7 @@ interface UserState {
     user: null,
     isLogin: false,
     memory: 0,
+    personalizationSettings: null,
   },
 })
 @Injectable()
@@ -42,6 +48,7 @@ export class UserStore {
     private api: UserAPIService,
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
+    private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
   ) {}
 
   @Selector()
@@ -188,5 +195,24 @@ export class UserStore {
   async loadUsedDiskSpace({ patchState }: StateContext<UserState>) {
     const memory = await this.api.getMemory().toPromise();
     patchState({ memory: memory.totalSize });
+  }
+
+  @Action(LoadPersonalization)
+  async loadPersonalization({ patchState }: StateContext<UserState>) {
+    const pr = await this.apiPersonalizationSettingsService
+      .getPersonalizationSettings()
+      .toPromise();
+    patchState({ personalizationSettings: pr });
+  }
+
+  @Action(UpdatePersonalization)
+  async updatePersonalization(
+    { patchState }: StateContext<UserState>,
+    { settings }: UpdatePersonalization,
+  ) {
+    await this.apiPersonalizationSettingsService
+      .updateUserPersonalizationSettings(settings)
+      .toPromise();
+    patchState({ personalizationSettings: settings });
   }
 }

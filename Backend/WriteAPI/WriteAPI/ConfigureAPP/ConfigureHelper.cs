@@ -8,6 +8,7 @@ using BI.services.history;
 using BI.services.labels;
 using BI.services.notes;
 using BI.services.permissions;
+using BI.services.personalizations;
 using BI.services.relatedNotes;
 using BI.services.search;
 using BI.services.sharing;
@@ -24,6 +25,7 @@ using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
 using Common.DTO.permissions;
+using Common.DTO.personalization;
 using Common.DTO.search;
 using Common.DTO.users;
 using ContentProcessing;
@@ -40,6 +42,7 @@ using Domain.Commands.noteInner.fileContent.documents;
 using Domain.Commands.noteInner.fileContent.videos;
 using Domain.Commands.notes;
 using Domain.Commands.orders;
+using Domain.Commands.personalizations;
 using Domain.Commands.relatedNotes;
 using Domain.Commands.share.folders;
 using Domain.Commands.share.notes;
@@ -53,6 +56,7 @@ using Domain.Queries.innerFolder;
 using Domain.Queries.labels;
 using Domain.Queries.notes;
 using Domain.Queries.permissions;
+using Domain.Queries.personalization;
 using Domain.Queries.relatedNotes;
 using Domain.Queries.search;
 using Domain.Queries.sharing;
@@ -243,6 +247,10 @@ namespace WriteAPI.ConfigureAPP
             // Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserPermissionsForFolder, UserPermissionsForFolder>, PermissionHandlerQuery>();
+
+            // Personalizations
+            services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
+            services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>, PersonalizationHandlerCommand>();
         }
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
@@ -292,6 +300,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<NoteHistoryRepository>();
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
 
+            // Personalization
+            services.AddScoped<PersonalizationSettingRepository>();
 
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         }

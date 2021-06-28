@@ -35,7 +35,7 @@ namespace BI.services.notes
         private readonly AppCustomMapper noteCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
-        private readonly AppRepository appRepository;
+
         public NoteHandlerQuery(
             IMapper mapper, 
             NoteRepository noteRepository, 
@@ -44,7 +44,6 @@ namespace BI.services.notes
             AppCustomMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            AppRepository appRepository,
             UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
         {
             this.mapper = mapper;
@@ -54,7 +53,6 @@ namespace BI.services.notes
             this.noteCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.appRepository = appRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -78,7 +76,7 @@ namespace BI.services.notes
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes, takeContentLength: 2);
             }
-            return new List<SmallNote>();
+            throw new System.Exception("User not found");
         }
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)

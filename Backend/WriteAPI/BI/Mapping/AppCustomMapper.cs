@@ -11,6 +11,7 @@ using Common.DTO.history;
 using Common.DTO.labels;
 using Common.DTO.notes;
 using Common.DTO.notes.FullNoteContent;
+using Common.DTO.personalization;
 using Common.DTO.users;
 using System;
 using System.Collections.Generic;
@@ -322,5 +323,17 @@ namespace BI.Mapping
             return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
         }
 
+        public PersonalizationSettingDTO MapPersonalizationSettingToPersonalizationSettingDTO(PersonalizationSetting pr)
+        {
+            return new PersonalizationSettingDTO()
+            {
+                IsViewAudioOnNote = pr.IsViewAudioOnNote,
+                IsViewDocumentOnNote = pr.IsViewDocumentOnNote,
+                IsViewPhotosOnNote = pr.IsViewPhotosOnNote,
+                IsViewTextOnNote = pr.IsViewTextOnNote,
+                IsViewVideoOnNote = pr.IsViewVideoOnNote,
+                NotesInFolderCount = pr.NotesInFolderCount
+            };
+        }
     }
 }

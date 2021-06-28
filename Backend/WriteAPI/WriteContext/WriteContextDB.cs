@@ -16,54 +16,83 @@ namespace WriteContext
     {
         // USERS & NOTIFICATIONS
         public DbSet<User> Users { get; set; }
+
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
+
+        public DbSet<PersonalizationSetting> PersonalizationSettings { set; get; }
+
         public DbSet<Backgrounds> Backgrounds { set; get; }
+
         public DbSet<Notification> Notifications { set; get; }
+
         public DbSet<UserProfilePhoto> UserProfilePhotos { set; get; }
 
         // FOLDERS
         public DbSet<Folder> Folders { set; get; }
+
         public DbSet<FoldersNotes> FoldersNotes { set; get; }
+
         public DbSet<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
 
         // LABELS
         public DbSet<Label> Labels { set; get; }
+
         public DbSet<LabelsNotes> LabelsNotes { set; get; }
 
         // NOTES
         public DbSet<Note> Notes { set; get; }
+
         public DbSet<ReletatedNoteToInnerNote> ReletatedNoteToInnerNotes { set; get; }
+
         public DbSet<UserOnNoteNow> UserOnNoteNow { set; get; }
+
         public DbSet<UserOnPrivateNotes> UserOnPrivateNotes { set; get; }
 
 
         // FILES
         public DbSet<AppFile> Files { set; get; }
+
         public DbSet<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
+
         public DbSet<FileType> FileTypes { set; get; }
 
         // NOTE CONTENT
         public DbSet<BaseNoteContent> BaseNoteContents { set; get; }
+
         public DbSet<TextNote> TextNotes { set; get; }
+
         public DbSet<AlbumNote> AlbumNotes { set; get; }
+
         public DbSet<AudiosPlaylistNote> AudiosNote { set; get; }
+
         public DbSet<VideoNote> VideosNote { set; get; }
+
         public DbSet<DocumentNote> DocumentsNote { set; get; }
 
         // NOTE HISTORY
         public DbSet<NoteHistory> NoteHistories { set; get; }
+
         public DbSet<UserNoteHistoryManyToMany> UserNoteHistoryManyToMany { set; get; }
 
         // SYSTEMS
         public DbSet<Language> Languages { set; get; }
+
         public DbSet<Theme> Themes { set; get; }
+
         public DbSet<FontSize> FontSizes { set; get; }
+
         public DbSet<RefType> RefTypes { set; get; }
+
         public DbSet<FolderType> FoldersTypes { set; get; }
+
         public DbSet<NoteType> NotesTypes { set; get; }
+
         public DbSet<BillingPlan> BillingPlans { set; get; }
+
         public DbSet<HType> HTypes { set; get; }
+
         public DbSet<NoteTextType> NoteTextTypes { set; get; }
+
         public DbSet<ContentType> ContentTypes { set; get; }
 
         public WriteContextDB(DbContextOptions<WriteContextDB> options) : base(options)
@@ -89,11 +118,39 @@ namespace WriteContext
             modelBuilder.Entity<UserProfilePhoto>()
                 .HasKey(x => x.UserId);
 
+            // PersonalizationSetting
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.NotesInFolderCount)
+                .HasDefaultValue(5);
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.IsViewAudioOnNote)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.IsViewDocumentOnNote)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.IsViewPhotosOnNote)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.IsViewVideoOnNote)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<PersonalizationSetting>()
+                .Property(b => b.IsViewTextOnNote)
+                .HasDefaultValue(true);
+
+            // ----------------------------------------
+
+
             modelBuilder.Entity<FileType>()
                 .HasMany(x => x.AppFiles)
                 .WithOne(x => x.FileType)
                 .HasForeignKey(x => x.FileTypeId);
-
 
             modelBuilder.Entity<AppFile>()
                 .HasOne(x => x.User)

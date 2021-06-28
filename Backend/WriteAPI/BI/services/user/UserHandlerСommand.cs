@@ -27,29 +27,35 @@ namespace BI.services.user
         IRequestHandler<UpdateFontSizeCommand, Unit>
     {
         private readonly UserRepository userRepository;
+
         private readonly FileRepository fileRepository;
 
         private readonly IFilesStorage filesStorage;
-        private readonly AppRepository appRepository;
+
         private readonly IImageProcessor imageProcessor;
+
         private readonly UserProfilePhotoRepository userProfilePhotoRepository;
+
         private readonly IMediator _mediator;
+
+        private readonly PersonalizationSettingRepository personalizationSettingRepository;
+
         public UserHandlerСommand(
             UserRepository userRepository,
             IFilesStorage filesStorage,
             FileRepository fileRepository,
-            AppRepository appRepository,
             IImageProcessor imageProcessor,
             UserProfilePhotoRepository userProfilePhotoRepository,
-            IMediator _mediator)
+            IMediator _mediator,
+            PersonalizationSettingRepository personalizationSettingRepository)
         {
             this.userRepository = userRepository;
             this.filesStorage = filesStorage;
             this.fileRepository = fileRepository;
-            this.appRepository = appRepository;
             this.imageProcessor = imageProcessor;
             this.userProfilePhotoRepository = userProfilePhotoRepository;
             this._mediator = _mediator;
+            this.personalizationSettingRepository = personalizationSettingRepository;
         }
 
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
@@ -67,6 +73,8 @@ namespace BI.services.user
             await userRepository.Add(user);
 
             await filesStorage.CreateUserContainer(user.Id);
+
+            await personalizationSettingRepository.Add(new PersonalizationSetting().GetNewFactory(user.Id));
 
             return Unit.Value;
         }

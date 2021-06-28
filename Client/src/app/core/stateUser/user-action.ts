@@ -2,6 +2,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/FontSizeEnum';
 import { LanguagesENUM } from 'src/app/shared/enums/LanguagesENUM';
 import { ThemeENUM } from 'src/app/shared/enums/ThemeEnum';
 import { Background } from '../models/Background';
+import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { User } from '../models/User';
 
 export class Login {
@@ -56,4 +57,14 @@ export class UpdateUserPhoto {
 
 export class LoadUsedDiskSpace {
   static type = '[User] load used disk space';
+}
+
+export class LoadPersonalization {
+  static type = '[User] load personalization';
+}
+
+export class UpdatePersonalization {
+  static type = '[User] update personalization';
+
+  constructor(public settings: PersonalizationSetting) {}
 }
