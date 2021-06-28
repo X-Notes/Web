@@ -1,21 +1,21 @@
-﻿using BI.services.notes;
-using Common.DatabaseModels.models.Folders;
-using Common.DatabaseModels.models.History;
-using Common.DatabaseModels.models.Labels;
-using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Users;
-using Common.DTO.app;
-using Common.DTO.folders;
-using Common.DTO.history;
-using Common.DTO.labels;
-using Common.DTO.notes;
-using Common.DTO.notes.FullNoteContent;
-using Common.DTO.personalization;
-using Common.DTO.users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BI.Services.Notes;
+using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.Labels;
+using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Users;
+using Common.DTO.App;
+using Common.DTO.Folders;
+using Common.DTO.History;
+using Common.DTO.Labels;
+using Common.DTO.Notes;
+using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Personalization;
+using Common.DTO.Users;
 
 
 namespace BI.Mapping

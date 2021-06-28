@@ -1,14 +1,14 @@
-﻿using Common.DTO.notes;
-using Common.DTO.notes.FullNoteContent;
-using Domain.Commands.relatedNotes;
-using Domain.Queries.relatedNotes;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.Notes;
+using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.RelatedNotes;
+using Domain.Queries.RelatedNotes;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers

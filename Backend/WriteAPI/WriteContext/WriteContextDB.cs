@@ -1,13 +1,13 @@
-﻿using Common.DatabaseModels.models.Files;
-using Common.DatabaseModels.models.Folders;
-using Common.DatabaseModels.models.History;
-using Common.DatabaseModels.models.Labels;
-using Common.DatabaseModels.models.NoteContent;
-using Common.DatabaseModels.models.NoteContent.ContentParts;
-using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Plan;
-using Common.DatabaseModels.models.Systems;
-using Common.DatabaseModels.models.Users;
+﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.Labels;
+using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Plan;
+using Common.DatabaseModels.Models.Systems;
+using Common.DatabaseModels.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace WriteContext

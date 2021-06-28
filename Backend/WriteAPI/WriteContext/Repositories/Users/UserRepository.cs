@@ -1,10 +1,10 @@
-﻿using Common.DatabaseModels.models.Files;
-using Common.DatabaseModels.models.Users;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Users;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users

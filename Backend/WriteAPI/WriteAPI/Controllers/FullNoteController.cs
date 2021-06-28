@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.DTO.notes.FullNoteContent;
-using Common.DTO.users;
-using Domain.Commands.noteInner;
-using Domain.Commands.noteInner.fileContent.albums;
-using Domain.Commands.noteInner.fileContent.audios;
-using Domain.Commands.noteInner.fileContent.documents;
-using Domain.Commands.noteInner.fileContent.videos;
-using Domain.Queries.notes;
+using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Users;
+using Domain.Commands.NoteInner;
+using Domain.Commands.NoteInner.FileContent.Albums;
+using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Videos;
+using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -83,11 +83,11 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
-        [HttpGet("contents/{id}")]
-        public async Task<List<BaseContentNoteDTO>> GetNoteContent(Guid id)
+        [HttpGet("contents/{noteId}")]
+        public async Task<List<BaseContentNoteDTO>> GetNoteContent(Guid noteId)
         {
             var email = this.GetUserEmail();
-            var command = new GetNoteContentsQuery(email, id);
+            var command = new GetNoteContentsQuery(email, noteId);
             return await this._mediator.Send(command);
         }
 

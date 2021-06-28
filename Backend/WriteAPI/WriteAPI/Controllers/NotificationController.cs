@@ -1,5 +1,4 @@
 ﻿using Common.DatabaseModels.models;
-using Common.DTO.notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.Notifications;
 using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;

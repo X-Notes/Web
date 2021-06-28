@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Common.DTO.app;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.DTO.App;
 using WriteContext.Repositories;
 
 namespace WriteAPI.Controllers

@@ -1,5 +1,5 @@
-﻿using Common.DatabaseModels.models.NoteContent;
-using System;
+﻿using System;
+using Common.DatabaseModels.Models.NoteContent;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.NoteContent

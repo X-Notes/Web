@@ -1,7 +1,7 @@
-﻿using Common.DatabaseModels.models.Users;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Users;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users

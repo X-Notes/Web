@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Common.DatabaseModels.models.Folders;
-using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Users;
-using Common.DTO.search;
-using Common.DTO.users;
+using Common.DatabaseModels.Models.Folders;
+using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Users;
+using Common.DTO.Search;
+using Common.DTO.Users;
 
 namespace BI.Mapping
 {

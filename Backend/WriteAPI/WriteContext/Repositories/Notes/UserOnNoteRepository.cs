@@ -3,8 +3,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System;
-using Common.DatabaseModels.models.Notes;
-using Common.DatabaseModels.models.Users;
+using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.Users;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes

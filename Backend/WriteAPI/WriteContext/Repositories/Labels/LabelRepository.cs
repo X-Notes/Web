@@ -1,10 +1,10 @@
-﻿using Common.DatabaseModels.models.Labels;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.Labels;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Labels

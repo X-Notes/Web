@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DTO.notes;
-using Common.DTO.notes.FullNoteContent;
-using Domain.Commands.folderInner;
-using Domain.Queries.innerFolder;
+using Common.DTO.Notes;
+using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.FolderInner;
+using Domain.Queries.InnerFolder;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
