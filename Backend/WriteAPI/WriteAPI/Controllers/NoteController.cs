@@ -115,7 +115,7 @@ namespace WriteAPI.Controllers
         public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id, [FromQuery]PersonalizationSettingDTO settings)
         {
             var email = this.GetUserEmail();
-            var query = new GetNotesByTypeQuery(email, id);
+            var query = new GetNotesByTypeQuery(email, id, settings);
             return await _mediator.Send(query);
         }
 

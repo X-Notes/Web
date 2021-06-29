@@ -59,7 +59,8 @@ namespace BI.Services.Notes
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, request.TypeId, false);
+                var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContentWithPersonalization
+                    (user.Id, request.TypeId, false, request.Settings, 10);
 
                 if (NoteTypeENUM.Shared == request.TypeId)
                 {
@@ -71,9 +72,9 @@ namespace BI.Services.Notes
                     notes = notes.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
-                notes.ForEach(x => x.Contents = x.Contents.OrderBy(x => x.Order).ToList());
-                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
-                return noteCustomMapper.MapNotesToSmallNotesDTO(notes, takeContentLength: 2);
+                notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
+
+                return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
             throw new System.Exception("User not found");
         }
