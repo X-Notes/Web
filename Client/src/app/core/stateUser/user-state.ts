@@ -52,6 +52,11 @@ export class UserStore {
   ) {}
 
   @Selector()
+  static getPersonalizationSettings(state: UserState): PersonalizationSetting {
+    return state.personalizationSettings;
+  }
+
+  @Selector()
   static getMemoryBytes(state: UserState): number {
     return state.memory;
   }

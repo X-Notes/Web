@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
@@ -28,11 +29,19 @@ import { OnlineUsersNote } from './models/online-users-note.model';
 export class ApiServiceNotes {
   constructor(private httpClient: HttpClient) {}
 
-  getNotes(type: NoteTypeENUM) {
-    return this.httpClient.get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`).pipe(
-      map((z) => this.transformNotes(z)),
-      map((notes) => new Notes(type, notes)),
-    );
+  getNotes(type: NoteTypeENUM, settings: PersonalizationSetting) {
+    let params = new HttpParams();
+    if (settings) {
+      Object.keys(settings).forEach((key) => {
+        params = params.append(key, settings[key]);
+      });
+    }
+    return this.httpClient
+      .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`, { params })
+      .pipe(
+        map((z) => this.transformNotes(z)),
+        map((notes) => new Notes(type, notes)),
+      );
   }
 
   addLabel(labelId: string, noteIds: string[]) {
