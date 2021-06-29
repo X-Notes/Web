@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
+using Common.DTO.Personalization;
 using Domain.Commands.Notes;
 using Domain.Queries.Notes;
 using MediatR;
@@ -111,10 +112,10 @@ namespace WriteAPI.Controllers
 
         // GET Entities
         [HttpGet("type/{id}")]
-        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id)
+        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id, [FromQuery]PersonalizationSettingDTO settings)
         {
             var email = this.GetUserEmail();
-            var query = new GetNotesByTypeQuery(email, id);
+            var query = new GetNotesByTypeQuery(email, id, settings);
             return await _mediator.Send(query);
         }
 
@@ -126,7 +127,6 @@ namespace WriteAPI.Controllers
 
             return await _mediator.Send(query);
         }
-
 
         [HttpGet("{id}")]
         public async Task<FullNoteAnswer> Get(Guid id)

@@ -44,7 +44,6 @@ import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from '../full-note-slider.service';
 import {
   Album,
-  AudioModel,
   BaseText,
   ContentModel,
   ContentTypeENUM,
@@ -216,8 +215,9 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async loadLeftMenuWithNotes() {
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     const types = Object.values(NoteTypeENUM).filter((z) => typeof z === 'number');
-    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t));
+    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
 
     await this.store.dispatch(actions).toPromise();
     await this.setSideBarNotes(this.note?.noteTypeId);
@@ -276,7 +276,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .toPromise();
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === $event.id);
-      const audios = (this.contents[index] as PlaylistModel).audios;
+      const { audios } = this.contents[index] as PlaylistModel;
       const resultAudios = [...audios, ...resp.data];
       const newPlaylist: PlaylistModel = {
         ...(this.contents[index] as PlaylistModel),
@@ -338,7 +338,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
       .toPromise();
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === event.contentId);
-      const audios = (this.contents[index] as PlaylistModel).audios;
+      const { audios } = this.contents[index] as PlaylistModel;
       if (audios.length === 1) {
         this.contents = this.contents.filter((x) => x.id !== event.contentId);
       } else {

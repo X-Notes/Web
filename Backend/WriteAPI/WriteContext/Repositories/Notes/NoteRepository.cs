@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DTO.Personalization;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Notes
@@ -75,6 +76,52 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => (x as DocumentNote).AppFile)
                 .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
+        }
+
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
+            Guid userId, NoteTypeENUM typeId, bool isHistory, PersonalizationSettingDTO settings, int takeLength)
+        {
+            var notes = await context.Notes
+                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory)
+                    .OrderBy(x => x.Order).ToListAsync();
+
+
+            var types = new List<int>();
+            types.Add((int)ContentTypeENUM.Text);
+            if (settings.IsViewPhotosOnNote)
+            {
+                types.Add((int)ContentTypeENUM.Album);
+            }
+
+            if (settings.IsViewVideoOnNote)
+            {
+                types.Add((int)ContentTypeENUM.Video);
+            }
+
+            if (settings.IsViewAudioOnNote)
+            {
+                types.Add((int)ContentTypeENUM.PlaylistAudios);
+            }
+
+            if (settings.IsViewDocumentOnNote)
+            {
+                types.Add((int)ContentTypeENUM.Document);
+            }
+
+            var notesIds = notes.Select(z => z.Id).ToHashSet();
+
+            var contents = await context.BaseNoteContents
+                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId))
+                .Include(z => (z as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudiosPlaylistNote).Audios)
+                .Include(x => (x as DocumentNote).AppFile).ToListAsync();
+
+            var contentLookUp = contents.ToLookup(x => x.NoteId);
+            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(takeLength).OrderBy(z => z.Order).ToList());
+
+            return notes;
         }
 
         public async Task<List<Note>> GetNotesByIdsWithContent(IEnumerable<Guid> ids)

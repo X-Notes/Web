@@ -1,5 +1,6 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
@@ -8,7 +9,7 @@ import { FullNote } from '../models/full-note.model';
 export class LoadNotes {
   static type = '[Notes] Load private notes';
 
-  constructor(public type: NoteTypeENUM) {}
+  constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
 }
 
 export class AddNote {

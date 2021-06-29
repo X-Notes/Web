@@ -19,6 +19,7 @@ import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
 import { UpdateColor } from './state/update-color.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -136,9 +137,12 @@ export class NotesService implements OnDestroy {
   }
 
   async loadNotes(typeENUM: NoteTypeENUM) {
-    await this.store.dispatch(new LoadNotes(typeENUM)).toPromise();
-    const types = Object.values(NoteTypeENUM).filter((z) => typeof z == 'number' && z !== typeENUM);
-    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t));
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    await this.store.dispatch(new LoadNotes(typeENUM, pr)).toPromise();
+    const types = Object.values(NoteTypeENUM).filter(
+      (z) => typeof z === 'number' && z !== typeENUM,
+    );
+    const actions = types.map((t: NoteTypeENUM) => new LoadNotes(t, pr));
     this.store.dispatch(actions);
   }
 
