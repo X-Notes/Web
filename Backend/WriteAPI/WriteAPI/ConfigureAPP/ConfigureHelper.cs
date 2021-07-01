@@ -136,6 +136,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();

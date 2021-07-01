@@ -332,7 +332,8 @@ namespace BI.Mapping
                 IsViewPhotosOnNote = pr.IsViewPhotosOnNote,
                 IsViewTextOnNote = pr.IsViewTextOnNote,
                 IsViewVideoOnNote = pr.IsViewVideoOnNote,
-                NotesInFolderCount = pr.NotesInFolderCount
+                NotesInFolderCount = pr.NotesInFolderCount,
+                ContentInNoteCount = pr.ContentInNoteCount
             };
         }
     }

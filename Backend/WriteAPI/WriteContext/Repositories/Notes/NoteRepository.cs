@@ -78,15 +78,9 @@ namespace WriteContext.Repositories.Notes
                 .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
         }
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
-            Guid userId, NoteTypeENUM typeId, bool isHistory, PersonalizationSettingDTO settings, int takeLength)
+
+        public List<int> GetFilterTypes(PersonalizationSettingDTO settings)
         {
-            var notes = await context.Notes
-                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory)
-                    .OrderBy(x => x.Order).ToListAsync();
-
-
             var types = new List<int>();
             types.Add((int)ContentTypeENUM.Text);
             if (settings.IsViewPhotosOnNote)
@@ -108,6 +102,19 @@ namespace WriteContext.Repositories.Notes
             {
                 types.Add((int)ContentTypeENUM.Document);
             }
+            return types;
+        }
+
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
+            Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false)
+                    .OrderBy(x => x.Order).ToListAsync();
+
+
+            var types = GetFilterTypes(settings);
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();
 
@@ -119,7 +126,30 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => (x as DocumentNote).AppFile).ToListAsync();
 
             var contentLookUp = contents.ToLookup(x => x.NoteId);
-            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(takeLength).OrderBy(z => z.Order).ToList());
+            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(settings.ContentInNoteCount).OrderBy(z => z.Order).ToList());
+
+            return notes;
+        }
+
+        public async Task<List<Note>> GetNotesByNoteIdsIdWithContentWithPersonalization(
+            List<Guid> noteIds, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Where(x => noteIds.Contains(x.Id) && x.IsHistory == false)
+                    .OrderBy(x => x.Order).ToListAsync();
+
+            var types = GetFilterTypes(settings);
+
+            var contents = await context.BaseNoteContents
+                .Where(z => types.Contains((int)z.ContentTypeId) && noteIds.Contains(z.NoteId))
+                .Include(z => (z as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudiosPlaylistNote).Audios)
+                .Include(x => (x as DocumentNote).AppFile).ToListAsync();
+
+            var contentLookUp = contents.ToLookup(x => x.NoteId);
+            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(settings.ContentInNoteCount).OrderBy(z => z.Order).ToList());
 
             return notes;
         }

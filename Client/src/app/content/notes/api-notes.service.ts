@@ -44,6 +44,17 @@ export class ApiServiceNotes {
       );
   }
 
+  getNotesMany(noteIds: string[], settings: PersonalizationSetting) {
+    const obj = {
+      noteIds,
+      settings,
+    };
+
+    return this.httpClient
+      .post<SmallNote[]>(`${environment.writeAPI}/api/note/many`, obj)
+      .pipe(map((z) => this.transformNotes(z)));
+  }
+
   addLabel(labelId: string, noteIds: string[]) {
     const obj = {
       labelId,

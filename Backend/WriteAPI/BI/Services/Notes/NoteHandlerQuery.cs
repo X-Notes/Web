@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace BI.Services.Notes
 {
     public class NoteHandlerQuery :
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
+        IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
         IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>,
@@ -54,13 +56,14 @@ namespace BI.Services.Notes
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
         }
+
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
                 var notes = await noteRepository.GetNotesByUserIdAndTypeIdWithContentWithPersonalization
-                    (user.Id, request.TypeId, false, request.Settings, 10);
+                    (user.Id, request.TypeId, request.Settings);
 
                 if (NoteTypeENUM.Shared == request.TypeId)
                 {
@@ -76,6 +79,7 @@ namespace BI.Services.Notes
 
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
+
             throw new System.Exception("User not found");
         }
 
@@ -138,7 +142,27 @@ namespace BI.Services.Notes
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
-            return new List<SmallNote>();
+
+            throw new System.Exception("User not found");
+        }
+
+        public async Task<List<SmallNote>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
+        {
+            var canReadIds = new List<Guid>();
+            foreach (var noteId in request.NoteIds)
+            {
+                var command = new GetUserPermissionsForNote(noteId, request.Email);
+                var permissions = await _mediator.Send(command);
+
+                if (permissions.CanRead)
+                {
+                    canReadIds.Add(noteId);
+                }
+            }
+
+            var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
+
+            return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
     }
 

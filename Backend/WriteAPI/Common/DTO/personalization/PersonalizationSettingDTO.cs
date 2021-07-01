@@ -4,6 +4,8 @@
     {
         public int NotesInFolderCount { set; get; }
 
+        public int ContentInNoteCount { set; get; }
+
         public bool IsViewVideoOnNote { set; get; }
 
         public bool IsViewAudioOnNote { set; get; }

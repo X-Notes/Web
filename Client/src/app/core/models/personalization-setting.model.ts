@@ -1,6 +1,8 @@
 export interface PersonalizationSetting {
   notesInFolderCount: number;
 
+  contentInNoteCount: number;
+
   isViewVideoOnNote: boolean;
 
   isViewAudioOnNote: boolean;

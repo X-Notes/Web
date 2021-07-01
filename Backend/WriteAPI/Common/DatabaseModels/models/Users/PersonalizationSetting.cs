@@ -9,6 +9,8 @@ namespace Common.DatabaseModels.Models.Users
 
         public int NotesInFolderCount { set; get; }
 
+        public int ContentInNoteCount { set; get; }
+
         public bool IsViewVideoOnNote { set; get; }
 
         public bool IsViewAudioOnNote { set; get; }
@@ -21,6 +23,7 @@ namespace Common.DatabaseModels.Models.Users
 
         public PersonalizationSetting GetNewFactory(Guid userId)
         {
+            ContentInNoteCount = 10;
             NotesInFolderCount = 5;
             IsViewVideoOnNote = true;
             IsViewAudioOnNote = true;

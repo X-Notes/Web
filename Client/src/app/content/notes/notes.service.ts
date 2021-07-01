@@ -13,6 +13,7 @@ import {
   LoadNotes,
   SelectIdNote,
   UnSelectIdNote,
+  UpdateOneNote,
 } from './state/notes-actions';
 import { UpdateLabelEvent } from './state/update-labels.model';
 import { NoteStore } from './state/notes-state';
@@ -20,6 +21,8 @@ import { SmallNote } from './models/small-note.model';
 import { UpdateColor } from './state/update-color.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ApiServiceNotes } from './api-notes.service';
+import { NotesUpdaterService } from './notes-updater.service';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -42,6 +45,8 @@ export class NotesService implements OnDestroy {
     private murriService: MurriService,
     private router: Router,
     private dialogsManageService: DialogsManageService,
+    private apiService: ApiServiceNotes,
+    private updateService: NotesUpdaterService,
   ) {
     this.store
       .select(NoteStore.updateColorEvent)
@@ -119,19 +124,31 @@ export class NotesService implements OnDestroy {
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        this.murriService.initMurriNote(noteType, !this.isFiltedMode);
+        let flag = !this.isFiltedMode;
+        if (noteType === NoteTypeENUM.Shared) {
+          flag = false;
+        }
+        this.murriService.initMurriNote(noteType, flag);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
+        await this.loadNotesWithUpdates();
       }
     });
   }
 
-  murriInitialiseShared(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
-    refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        this.murriService.initMurriNote(noteType, false);
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
+  async loadNotesWithUpdates() {
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.updateService.ids$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
+      if (ids.length > 0) {
+        const notes = await this.apiService.getNotesMany(ids, pr).toPromise();
+        const actionsForUpdate = notes.map((note) => new UpdateOneNote(note, note.noteTypeId));
+        this.store.dispatch(actionsForUpdate);
+        const transformNotes = this.transformNotes(notes);
+        transformNotes.forEach((note) => {
+          const index = this.notes.findIndex((x) => x.id === note.id);
+          this.notes[index].contents = note.contents;
+        });
+        await this.murriService.refreshLayoutAsync();
       }
     });
   }
@@ -234,8 +251,7 @@ export class NotesService implements OnDestroy {
   }
 
   get isFiltedMode() {
-    const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
-    return ids.length > 0;
+    return this.store.selectSnapshot(NoteStore.getSelectedLabelFilter).length > 0;
   }
 
   addToDom(notes: SmallNote[]) {

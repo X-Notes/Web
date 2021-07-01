@@ -34,6 +34,7 @@ import { AudioNoteComponent } from './full-note-components/audio-note/audio-note
 import { VideoNoteComponent } from './full-note-components/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
+import { NotesUpdaterService } from './notes-updater.service';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { AudioComponent } from './full-note-components/audio/audio.component';
     MurriService,
     SelectionService,
     MenuSelectionService,
+    NotesUpdaterService,
   ],
 })
 export class NotesModule {}

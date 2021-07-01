@@ -119,6 +119,13 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(query);
         }
 
+        [HttpPost("many")]
+        public async Task<List<SmallNote>> GetNoteByType(GetNotesByNoteIdsQuery query)
+        {
+            query.Email= this.GetUserEmail();
+            return await _mediator.Send(query);
+        }
+
         [HttpGet("all")]
         public async Task<List<SmallNote>> GetAllNotes()
         {

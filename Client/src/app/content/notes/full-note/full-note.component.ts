@@ -71,6 +71,7 @@ import { TypeUploadFile } from '../models/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/note-history.model';
 import { RemoveAudioFromPlaylist } from '../models/remove-audio-from-playlist.model';
+import { NotesUpdaterService } from '../notes-updater.service';
 
 @Component({
   selector: 'app-full-note',
@@ -78,7 +79,7 @@ import { RemoveAudioFromPlaylist } from '../models/remove-audio-from-playlist.mo
   styleUrls: ['./full-note.component.scss'],
   animations: [sideBarCloseOpen, deleteSmallNote, showHistory],
   providers: [
-    NotesService,
+    NotesService, // TODO MAYBE NO NEED
     ContentEditableService,
     FullNoteSliderService,
     MurriService,
@@ -147,6 +148,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
     public sideBarService: SidebarNotesService,
     private apiHistory: ApiNoteHistoryService,
     private signalRService: SignalRService,
+    private updateNoteService: NotesUpdaterService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
@@ -616,6 +618,7 @@ export class FullNoteComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnDestroy() {
+    this.updateNoteService.ids$.next([...this.updateNoteService.ids$.getValue(), this.id]);
     await this.signalRService.leaveNote(this.id);
     this.sideBarService.murriService.flagForOpacity = false;
     this.destroy.next();

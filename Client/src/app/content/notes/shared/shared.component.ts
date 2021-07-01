@@ -44,7 +44,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.noteService.murriInitialiseShared(this.refElements, NoteTypeENUM.Shared);
+    this.noteService.murriInitialise(this.refElements, NoteTypeENUM.Shared);
   }
 
   async ngOnInit() {
