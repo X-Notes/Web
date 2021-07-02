@@ -1,3 +1,5 @@
+import { SortedByENUM } from './sorted-by.enum';
+
 export interface PersonalizationSetting {
   notesInFolderCount: number;
 
@@ -12,4 +14,8 @@ export interface PersonalizationSetting {
   isViewTextOnNote: boolean;
 
   isViewDocumentOnNote: boolean;
+
+  sortedFolderByTypeId: SortedByENUM;
+
+  sortedNoteByTypeId: SortedByENUM;
 }

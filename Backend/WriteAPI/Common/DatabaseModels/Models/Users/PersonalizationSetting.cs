@@ -7,6 +7,13 @@ namespace Common.DatabaseModels.Models.Users
         public Guid UserId { set; get; }
         public User User { set; get; }
 
+        public SortedByENUM SortedNoteByTypeId { set; get; }
+        public SortedByType SortedNoteByType { set; get; }
+
+        public SortedByENUM SortedFolderByTypeId { set; get; }
+        public SortedByType SortedFolderByType { set; get; }
+
+
         public int NotesInFolderCount { set; get; }
 
         public int ContentInNoteCount { set; get; }

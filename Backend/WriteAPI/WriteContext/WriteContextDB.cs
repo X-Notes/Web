@@ -20,6 +20,8 @@ namespace WriteContext
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
 
         public DbSet<PersonalizationSetting> PersonalizationSettings { set; get; }
+        
+        public DbSet<SortedByType> SortedByTypes { set; get; }
 
         public DbSet<Backgrounds> Backgrounds { set; get; }
 
@@ -125,24 +127,14 @@ namespace WriteContext
                 .HasDefaultValue(5);
 
             modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.IsViewAudioOnNote)
-                .HasDefaultValue(true);
+                .HasOne(x => x.SortedFolderByType)
+                .WithMany(x => x.PersonalizationSettingsFolders)
+                .HasForeignKey(x => x.SortedFolderByTypeId);
 
             modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.IsViewDocumentOnNote)
-                .HasDefaultValue(true);
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.IsViewPhotosOnNote)
-                .HasDefaultValue(true);
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.IsViewVideoOnNote)
-                .HasDefaultValue(true);
-
-            modelBuilder.Entity<PersonalizationSetting>()
-                .Property(b => b.IsViewTextOnNote)
-                .HasDefaultValue(true);
+                .HasOne(x => x.SortedNoteByType)
+                .WithMany(x => x.PersonalizationSettingsNotes)
+                .HasForeignKey(x => x.SortedNoteByTypeId);
 
             // ----------------------------------------
 
@@ -346,6 +338,12 @@ namespace WriteContext
                 new HType { Id = HTypeENUM.H1, Name = nameof(HTypeENUM.H1) },
                 new HType { Id = HTypeENUM.H2, Name = nameof(HTypeENUM.H2) },
                 new HType { Id = HTypeENUM.H3, Name = nameof(HTypeENUM.H3) }
+            );
+
+            modelBuilder.Entity<SortedByType>().HasData(
+                new SortedByType { Id = SortedByENUM.AscDate, Name = nameof(SortedByENUM.AscDate) },
+                new SortedByType { Id = SortedByENUM.DescDate, Name = nameof(SortedByENUM.DescDate) },
+                new SortedByType { Id = SortedByENUM.CustomOrder, Name = nameof(SortedByENUM.CustomOrder) }
             );
 
             modelBuilder.Entity<NoteTextType>().HasData(

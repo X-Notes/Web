@@ -333,7 +333,9 @@ namespace BI.Mapping
                 IsViewTextOnNote = pr.IsViewTextOnNote,
                 IsViewVideoOnNote = pr.IsViewVideoOnNote,
                 NotesInFolderCount = pr.NotesInFolderCount,
-                ContentInNoteCount = pr.ContentInNoteCount
+                ContentInNoteCount = pr.ContentInNoteCount,
+                SortedNoteByTypeId = pr.SortedNoteByTypeId,
+                SortedFolderByTypeId = pr.SortedFolderByTypeId
             };
         }
     }

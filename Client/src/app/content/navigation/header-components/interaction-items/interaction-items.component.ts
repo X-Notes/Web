@@ -29,8 +29,6 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatMenu) menu: MatMenu;
 
-  hideFor = hideForDemo;
-
   public countSelected: number;
 
   destroy = new Subject<void>();
