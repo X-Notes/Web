@@ -5,13 +5,15 @@ using Common.DatabaseModels.Models.Systems;
 
 namespace Common.DTO.Folders
 {
-    public class SmallFolder
+    public class SmallFolder2
     {
         public Guid Id { get; set; }
 
         public string Title { set; get; }
 
         public string Color { set; get; }
+
+        public int Order { set; get; }
 
         public RefTypeENUM RefTypeId { set; get; }
 
