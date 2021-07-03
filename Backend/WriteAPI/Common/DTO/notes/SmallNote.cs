@@ -10,12 +10,21 @@ namespace Common.DTO.Notes
     public class SmallNote
     {
         public Guid Id { get; set; }
+
         public string Title { set; get; }
+
         public string Color { set; get; }
+
+        public int Order { set; get; }
+
         public List<LabelDTO> Labels { set; get; }
+
         public RefTypeENUM RefTypeId { set; get; }
+
         public NoteTypeENUM NoteTypeId { set; get; }
+
         public List<BaseContentNoteDTO> Contents { set; get; }
+
         public bool IsLocked { set; get; }
 
         public DateTimeOffset DeletedAt { set; get; }

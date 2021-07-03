@@ -10,6 +10,10 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { MatMenu } from '@angular/material/menu';
 import { hideForDemo } from 'src/environments/demo';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import { UpdatePersonalization } from 'src/app/core/stateUser/user-action';
 
 @Component({
   selector: 'app-interaction-items',
@@ -27,9 +31,20 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
   @Select(AppStore.isProfile)
   public isProfile$: Observable<boolean>;
 
+  @Select(AppStore.isFolder)
+  public isFolder$: Observable<boolean>;
+
+  @Select(AppStore.isNote)
+  public isNote$: Observable<boolean>;
+
+  @Select(UserStore.getPersonalizationSettings)
+  public personalizationSetting$: Observable<PersonalizationSetting>;
+
   @ViewChild(MatMenu) menu: MatMenu;
 
   public countSelected: number;
+
+  sortedTypes = SortedByENUM;
 
   destroy = new Subject<void>();
 
@@ -88,5 +103,38 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
 
   newButton() {
     this.pService.newButtonSubject.next(true);
+  }
+
+  prMenuStyle(
+    sortedType: SortedByENUM,
+    prSettings: PersonalizationSetting,
+    isFolder: boolean,
+    isNote: boolean,
+  ) {
+    const effect = 'rgba(0,0,0,0.15)';
+    if (isFolder) {
+      return {
+        background: sortedType === prSettings.sortedFolderByTypeId ? effect : null,
+      };
+    }
+    if (isNote) {
+      return {
+        background: sortedType === prSettings.sortedNoteByTypeId ? effect : null,
+      };
+    }
+  }
+
+  updatePrMenuHandler(sortedType: SortedByENUM) {
+    const prSettings = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    if (this.store.selectSnapshot(AppStore.isFolder)) {
+      this.store.dispatch(
+        new UpdatePersonalization({ ...prSettings, sortedFolderByTypeId: sortedType }),
+      );
+    }
+    if (this.store.selectSnapshot(AppStore.isNote)) {
+      this.store.dispatch(
+        new UpdatePersonalization({ ...prSettings, sortedNoteByTypeId: sortedType }),
+      );
+    }
   }
 }

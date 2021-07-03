@@ -148,7 +148,6 @@ namespace WriteContext.Repositories.Folders
             return await context.Folders
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
-                .OrderBy(x => x.Order)
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
@@ -157,7 +156,6 @@ namespace WriteContext.Repositories.Folders
             return await context.Folders
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
-                .OrderBy(x => x.Order)
                 .Where(x => folderIds.Contains(x.Id)).ToListAsync();
         }
 

@@ -111,7 +111,7 @@ namespace WriteContext.Repositories.Notes
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                     .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false)
-                    .OrderBy(x => x.Order).ToListAsync();
+                    .ToListAsync();
 
 
             var types = GetFilterTypes(settings);
@@ -166,7 +166,6 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => x.Contents)
                 .ThenInclude(x => (x as DocumentNote).AppFile)
-                .OrderBy(x => x.Order)
                 .Where(x => ids.Contains(x.Id) && x.IsHistory == false).ToListAsync();
         }
 

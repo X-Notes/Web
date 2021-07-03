@@ -14,7 +14,7 @@ using WriteContext.Repositories.Users;
 
 namespace BI.Services.Folders
 {
-    public class FolderHandlerQuery2 :
+    public class FolderHandlerQuery :
         IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>,
         IRequestHandler<GetFullFolderQuery, FullFolderAnswer>
     {
@@ -28,7 +28,7 @@ namespace BI.Services.Folders
 
         private readonly AppCustomMapper appCustomMapper;
 
-        public FolderHandlerQuery2(
+        public FolderHandlerQuery(
             FolderRepository folderRepository, 
             UserRepository userRepository,
             IMediator _mediator,

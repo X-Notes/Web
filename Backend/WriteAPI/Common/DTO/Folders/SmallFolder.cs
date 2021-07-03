@@ -5,7 +5,7 @@ using Common.DatabaseModels.Models.Systems;
 
 namespace Common.DTO.Folders
 {
-    public class SmallFolder2
+    public class SmallFolder
     {
         public Guid Id { get; set; }
 

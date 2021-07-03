@@ -14,11 +14,16 @@ export interface Order {
   entityId: string;
 }
 
+export interface OrderResponse {
+  entityId: string;
+  newOrder: number;
+}
+
 @Injectable()
 export class OrderService {
   constructor(private httpClient: HttpClient) {}
 
   changeOrder(order: Order) {
-    return this.httpClient.post(`${environment.writeAPI}/api/order`, order);
+    return this.httpClient.post<OrderResponse[]>(`${environment.writeAPI}/api/order`, order);
   }
 }

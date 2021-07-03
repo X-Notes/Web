@@ -6,6 +6,7 @@ export interface SmallFolder {
   id: string;
   title: string;
   color: string;
+  order: number;
   previewNotes: PreviewNotesInFolder[];
   refTypeId: RefTypeENUM;
   folderTypeId: FolderTypeENUM;

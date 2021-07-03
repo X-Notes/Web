@@ -72,7 +72,6 @@ namespace BI.Services.Notes
                     var sharedNotes = await noteRepository.GetNotesByIdsWithContent(notesIds);
                     notes.AddRange(sharedNotes);
                     notes = notes.DistinctBy(x => x.Id).ToList();
-                    notes = notes.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());

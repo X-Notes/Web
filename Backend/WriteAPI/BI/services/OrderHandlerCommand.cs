@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ using WriteContext.Repositories.Users;
 
 namespace BI.Services
 {
-    public class OrderHandlerCommand : IRequestHandler<UpdateOrderCommand, Unit>
+    public class OrderHandlerCommand : IRequestHandler<UpdateOrderCommand, List<UpdateOrderEntityResponse>>
     {
         private readonly LabelRepository labelRepository;
         private readonly NoteRepository noteRepository;
@@ -29,7 +30,7 @@ namespace BI.Services
             this.userRepository = userRepository;
             this.folderRepository = folderRepository;
         }
-        public async Task<Unit> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+        public async Task<List<UpdateOrderEntityResponse>> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
             switch (request.OrderEntity)
             {
@@ -51,13 +52,20 @@ namespace BI.Services
                                 tempLabels.Where(x => x.Order >= request.Position && x.Order < label.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 label.Order = request.Position;
                             }
+
                             await labelRepository.UpdateRange(tempLabels);
+
+                            var result = tempLabels
+                                            .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })
+                                            .ToList();
+                            result.Add(new UpdateOrderEntityResponse { EntityId = label.Id, NewOrder = label.Order });
+
+                            return result;
                         }
                         break;
                     }
                 case OrderEntity.Note:
                     {
-
                         var notes = (await userRepository.GetUserWithNotesIncludeNoteType(request.Email)).Notes;
                         var note = notes.FirstOrDefault(x => x.Id == request.EntityId);
 
@@ -75,10 +83,16 @@ namespace BI.Services
                                 notesWithType.Where(x => x.Order >= request.Position && x.Order < note.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 note.Order = request.Position;
                             }
-                            await noteRepository.UpdateRange(notesWithType);
-                        }
 
-                        Console.WriteLine("Note");
+                            await noteRepository.UpdateRange(notesWithType);
+
+                            var result = notesWithType
+                                            .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })
+                                            .ToList();
+                            result.Add(new UpdateOrderEntityResponse { EntityId = note.Id, NewOrder = note.Order });
+
+                            return result;
+                        }
                         break;
                     }
                 case OrderEntity.Folder:
@@ -101,9 +115,16 @@ namespace BI.Services
                                 foldersWithType.Where(x => x.Order >= request.Position && x.Order < folder.Order).ToList().ForEach(x => x.Order = x.Order + 1);
                                 folder.Order = request.Position;
                             }
+
                             await folderRepository.UpdateRange(foldersWithType);
+
+                            var result = foldersWithType
+                                            .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })
+                                            .ToList();
+                            result.Add(new UpdateOrderEntityResponse { EntityId = folder.Id, NewOrder = folder.Order });
+
+                            return result;
                         }
-                        Console.WriteLine("Note");
                         break;
                     }
                 default:
@@ -111,7 +132,7 @@ namespace BI.Services
                         throw new Exception();
                     }
             }
-            return Unit.Value;
+            throw new Exception();
         }
     }
 }

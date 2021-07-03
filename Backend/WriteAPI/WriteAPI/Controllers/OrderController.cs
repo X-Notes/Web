@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.Orders;
 using Domain.Commands.Orders;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,11 +26,11 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost]
-        public async Task UpdateEntityOrder(UpdateOrderCommand command)
+        public async Task<List<UpdateOrderEntityResponse>> UpdateEntityOrder(UpdateOrderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
@@ -37,6 +38,7 @@ namespace BI.Services.Folders
             if (permissions.CanWrite)
             {
                 folder.Title = request.Title;
+                folder.UpdatedAt = DateTimeOffset.Now;
                 await folderRepository.Update(folder);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -64,8 +66,11 @@ namespace BI.Services.Folders
                     return folderNote;
                 });
 
+                folder.UpdatedAt = DateTimeOffset.Now;
+
                 await foldersNotesRepository.RemoveRange(foldersNotes);
                 await foldersNotesRepository.AddRange(newFoldersNotes);
+                await folderRepository.Update(folder);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -9,16 +9,19 @@ import { LoadFolders } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
 import { SmallFolder } from './models/folder.model';
 import { UpdateColor } from '../notes/state/update-color.model';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 
 @Injectable()
 export class FolderService implements OnDestroy {
   destroy = new Subject<void>();
 
-  allFolders: SmallFolder[] = [];
-
   folders: SmallFolder[] = [];
 
   firstInitedMurri = false;
+
+  sortedFolderByTypeId: SortedByENUM = null;
 
   constructor(
     private store: Store,
@@ -64,6 +67,18 @@ export class FolderService implements OnDestroy {
           }
         }
       });
+
+    this.store
+      .select(UserStore.getPersonalizationSettings)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (pr) => {
+        if (this.sortedFolderByTypeId && this.sortedFolderByTypeId !== pr.sortedFolderByTypeId) {
+          this.sortedFolderByTypeId = pr.sortedFolderByTypeId;
+          await this.changeOrderTypeHandler();
+        } else {
+          this.sortedFolderByTypeId = pr.sortedFolderByTypeId;
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -78,11 +93,30 @@ export class FolderService implements OnDestroy {
   ) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.folders.length && this.folders.length !== 0 && !this.firstInitedMurri) {
+        isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(folderType, isDragEnabled);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
       }
     });
+  }
+
+  async changeOrderTypeHandler() {
+    await this.murriService.setOpacityFlagAsync(0, false);
+    await this.murriService.wait(150);
+    this.murriService.grid.destroy();
+    this.folders = this.orderBy(this.folders);
+    const roadType = this.store.selectSnapshot(AppStore.getTypeFolder);
+    const isDraggable = roadType !== FolderTypeENUM.Shared && this.isSortable;
+    this.murriService.initMurriFolderAsync(roadType, isDraggable);
+    await this.murriService.setOpacityFlagAsync(0);
+  }
+
+  get isSortable() {
+    return (
+      this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedFolderByTypeId ===
+      SortedByENUM.CustomOrder
+    );
   }
 
   async loadFolders(typeENUM: FolderTypeENUM) {
@@ -103,8 +137,33 @@ export class FolderService implements OnDestroy {
   };
 
   firstInit(folders: SmallFolder[]) {
-    this.allFolders = [...folders].map((note) => ({ ...note }));
-    this.folders = this.allFolders;
+    folders = this.orderBy(folders);
+    this.folders = [...folders].map((note) => ({ ...note }));
+  }
+
+  orderBy(folders: SmallFolder[]) {
+    if (this.store.selectSnapshot(AppStore.getTypeFolder) === FolderTypeENUM.Shared) {
+      return folders.sort(
+        (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+      );
+    }
+
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    switch (pr.sortedFolderByTypeId) {
+      case SortedByENUM.AscDate: {
+        return folders.sort(
+          (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+        );
+      }
+      case SortedByENUM.DescDate: {
+        return folders.sort(
+          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        );
+      }
+      case SortedByENUM.CustomOrder: {
+        return folders.sort((a, b) => a.order - b.order);
+      }
+    }
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {

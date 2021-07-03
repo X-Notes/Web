@@ -18,6 +18,8 @@ namespace Common.DatabaseModels.Models.Folders
         public int Order { set; get; }
         public Guid UserId { set; get; }
         public User User { set; get; }
+
+        // TODO THIS MUST BE NULLABLE
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
