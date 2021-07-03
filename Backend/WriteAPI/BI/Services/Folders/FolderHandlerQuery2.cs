@@ -14,7 +14,7 @@ using WriteContext.Repositories.Users;
 
 namespace BI.Services.Folders
 {
-    public class FolderHandlerQuery :
+    public class FolderHandlerQuery2 :
         IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>,
         IRequestHandler<GetFullFolderQuery, FullFolderAnswer>
     {
@@ -28,7 +28,7 @@ namespace BI.Services.Folders
 
         private readonly AppCustomMapper appCustomMapper;
 
-        public FolderHandlerQuery(
+        public FolderHandlerQuery2(
             FolderRepository folderRepository, 
             UserRepository userRepository,
             IMediator _mediator,
@@ -57,7 +57,6 @@ namespace BI.Services.Folders
                     var sharedFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(foldersIds);
                     folders.AddRange(sharedFolders);
                     folders = folders.DistinctBy(x => x.Id).ToList();
-                    folders = folders.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
                 return appCustomMapper.MapFoldersToSmallFolders(folders);
