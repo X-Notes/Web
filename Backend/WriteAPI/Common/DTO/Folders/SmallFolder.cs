@@ -13,6 +13,8 @@ namespace Common.DTO.Folders
 
         public string Color { set; get; }
 
+        public int Order { set; get; }
+
         public RefTypeENUM RefTypeId { set; get; }
 
         public FolderTypeENUM FolderTypeId { set; get; }

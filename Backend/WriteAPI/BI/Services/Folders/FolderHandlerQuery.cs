@@ -57,7 +57,6 @@ namespace BI.Services.Folders
                     var sharedFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(foldersIds);
                     folders.AddRange(sharedFolders);
                     folders = folders.DistinctBy(x => x.Id).ToList();
-                    folders = folders.OrderByDescending(x => x.UpdatedAt).ToList();
                 }
 
                 return appCustomMapper.MapFoldersToSmallFolders(folders);

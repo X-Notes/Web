@@ -602,13 +602,15 @@ export class NoteStore {
     { getState, dispatch }: StateContext<NoteState>,
     { order, typeNote }: PositionNote,
   ) {
-    let notes = this.getNotesByType(getState, typeNote);
+    let notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
     const changedNote = notes.find((x) => x.id === order.entityId);
     const flag = notes.indexOf(changedNote);
     if (flag + 1 !== order.position) {
-      await this.orderService.changeOrder(order).toPromise();
-      notes = notes.filter((x) => x.id !== order.entityId);
-      notes.splice(order.position - 1, 0, changedNote);
+      const resp = await this.orderService.changeOrder(order).toPromise();
+      resp.forEach((z) => {
+        const indexOf = notes.findIndex((x) => x.id === z.entityId);
+        notes[indexOf].order = z.newOrder;
+      });
       dispatch(new UpdateNotes(new Notes(typeNote, [...notes]), typeNote));
     }
   }

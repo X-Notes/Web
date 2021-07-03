@@ -1,4 +1,6 @@
-﻿namespace Common.DTO.Personalization
+﻿using Common.DatabaseModels.Models.Users;
+
+namespace Common.DTO.Personalization
 {
     public class PersonalizationSettingDTO
     {
@@ -15,6 +17,10 @@
         public bool IsViewTextOnNote { set; get; }
 
         public bool IsViewDocumentOnNote { set; get; }
+
+        public SortedByENUM SortedNoteByTypeId { set; get; }
+
+        public SortedByENUM SortedFolderByTypeId { set; get; }
 
     }
 }

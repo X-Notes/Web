@@ -29,6 +29,7 @@ namespace Common.DatabaseModels.Models.Notes
         public Guid UserId { set; get; }
         public User User { set; get; }
 
+        // TODO THIS MUST BE NULLABLE
         public DateTimeOffset DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }

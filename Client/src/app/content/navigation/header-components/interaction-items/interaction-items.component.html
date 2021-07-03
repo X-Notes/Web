@@ -26,7 +26,7 @@
 ></app-general-header-button>
 
 <app-general-header-button
-  *ngIf="(isActionFilterButton$ | async) && hideFor"
+  *ngIf="(isActionFilterButton$ | async)"
   [matMenuTriggerFor]="menu"
   [tooltipMessage]="('header.filter' | translate)"
   [tooltipPosition]="'Bottom'"
@@ -41,15 +41,33 @@
   attributeName="panelClass"
   [element]="menu"
 >
-  <button mat-menu-item type="button" [name]="'header.filterMenu.dateAsc' | translate">
+  <button
+    (click)="updatePrMenuHandler(sortedTypes.AscDate)"
+    [ngStyle]="prMenuStyle(sortedTypes.AscDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item
+    type="button"
+    [name]="'header.filterMenu.dateAsc' | translate"
+  >
     <mat-icon>north</mat-icon>
     <span> {{ 'header.filterMenu.dateAsc' | translate }} </span>
   </button>
-  <button mat-menu-item type="button" [name]="'header.filterMenu.dateDesc' | translate">
+  <button
+    (click)="updatePrMenuHandler(sortedTypes.DescDate)"
+    [ngStyle]="prMenuStyle(sortedTypes.DescDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item
+    type="button"
+    [name]="'header.filterMenu.dateDesc' | translate"
+  >
     <mat-icon>south</mat-icon>
     <span> {{ 'header.filterMenu.dateDesc' | translate }} </span>
   </button>
-  <button mat-menu-item type="button" [name]="'header.filterMenu.order' | translate">
+  <button
+    (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"
+    [ngStyle]="prMenuStyle(sortedTypes.CustomOrder, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item
+    type="button"
+    [name]="'header.filterMenu.order' | translate"
+  >
     <mat-icon>reorder</mat-icon>
     <span> {{ 'header.filterMenu.order' | translate }} </span>
   </button>

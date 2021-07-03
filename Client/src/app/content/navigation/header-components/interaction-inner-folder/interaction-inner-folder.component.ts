@@ -7,7 +7,6 @@ import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { hideForDemo } from 'src/environments/demo';
 
 @Component({
   selector: 'app-interaction-inner-folder',
@@ -19,8 +18,6 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
   public route$: Observable<string>;
 
   public countSelected: number;
-
-  hideFor = hideForDemo;
 
   destroy = new Subject<void>();
 

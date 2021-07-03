@@ -156,13 +156,15 @@ export class FolderStore {
     { getState, dispatch }: StateContext<FolderState>,
     { order, typeFolder }: PositionFolder,
   ) {
-    let folders = this.getFoldersByType(getState, typeFolder);
+    let folders = this.getFoldersByType(getState, typeFolder).map((x) => ({ ...x }));
     const changedFolder = folders.find((x) => x.id === order.entityId);
     const flag = folders.indexOf(changedFolder);
     if (flag + 1 !== order.position) {
-      await this.orderService.changeOrder(order).toPromise();
-      folders = folders.filter((x) => x.id !== order.entityId);
-      folders.splice(order.position - 1, 0, changedFolder);
+      const resp = await this.orderService.changeOrder(order).toPromise();
+      resp.forEach((z) => {
+        const indexOf = folders.findIndex((x) => x.id === z.entityId);
+        folders[indexOf].order = z.newOrder;
+      });
       dispatch(new UpdateFolders(new Folders(typeFolder, [...folders]), typeFolder));
     }
   }

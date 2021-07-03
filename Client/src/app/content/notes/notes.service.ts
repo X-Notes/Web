@@ -23,6 +23,7 @@ import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
 import { NotesUpdaterService } from './notes-updater.service';
+import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 
 @Injectable()
 export class NotesService implements OnDestroy {
@@ -31,13 +32,13 @@ export class NotesService implements OnDestroy {
 
   destroy = new Subject<void>();
 
-  allNotes: SmallNote[] = [];
-
   notes: SmallNote[] = [];
 
   firstInitFlag = false;
 
   firstInitedMurri = false;
+
+  sortedNoteByTypeId: SortedByENUM = null;
 
   constructor(
     public pService: PersonalizationService,
@@ -66,9 +67,15 @@ export class NotesService implements OnDestroy {
           await this.murriService.setOpacityFlagAsync(0, false);
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
-          this.notes = this.allNotes;
+
+          const tempNotes = this.transformNotes(this.getNotesByCurrentType);
+          this.notes = this.orderBy(tempNotes);
+
           const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
-          await this.murriService.initMurriNoteAsync(roadType, true);
+
+          const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
+          await this.murriService.initMurriNoteAsync(roadType, isDraggable);
+
           await this.murriService.setOpacityFlagAsync(0);
           this.store.dispatch(new CancelAllSelectedLabels(false));
         }
@@ -119,16 +126,91 @@ export class NotesService implements OnDestroy {
           }
         }
       });
+
+    this.store
+      .select(UserStore.getPersonalizationSettings)
+      .pipe(takeUntil(this.destroy))
+      .subscribe(async (pr) => {
+        if (this.sortedNoteByTypeId && this.sortedNoteByTypeId !== pr.sortedNoteByTypeId) {
+          this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
+          await this.changeOrderTypeHandler();
+        } else {
+          this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
+        }
+      });
+  }
+
+  orderBy(notes: SmallNote[]) {
+    if (this.store.selectSnapshot(AppStore.getTypeNote) === NoteTypeENUM.Shared) {
+      return notes.sort(
+        (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+      );
+    }
+
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    switch (pr.sortedNoteByTypeId) {
+      case SortedByENUM.AscDate: {
+        return notes.sort(
+          (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+        );
+      }
+      case SortedByENUM.DescDate: {
+        return notes.sort(
+          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        );
+      }
+      case SortedByENUM.CustomOrder: {
+        return notes.sort((a, b) => a.order - b.order);
+      }
+    }
+  }
+
+  get getNotesByCurrentType() {
+    switch (this.store.selectSnapshot(AppStore.getTypeNote)) {
+      case NoteTypeENUM.Private: {
+        return this.store.selectSnapshot(NoteStore.privateNotes);
+      }
+      case NoteTypeENUM.Shared: {
+        return this.store.selectSnapshot(NoteStore.sharedNotes);
+      }
+      case NoteTypeENUM.Archive: {
+        return this.store.selectSnapshot(NoteStore.archiveNotes);
+      }
+      case NoteTypeENUM.Deleted: {
+        this.store.selectSnapshot(NoteStore.deletedNotes);
+      }
+      default: {
+        throw new Error('Incorrect type');
+      }
+    }
+  }
+
+  get isSortable() {
+    return (
+      this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedNoteByTypeId ===
+      SortedByENUM.CustomOrder
+    );
+  }
+
+  async changeOrderTypeHandler() {
+    await this.murriService.setOpacityFlagAsync(0, false);
+    await this.murriService.wait(150);
+    this.murriService.grid.destroy();
+    this.notes = this.orderBy(this.notes);
+    const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
+    const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
+    this.murriService.initMurriNoteAsync(roadType, isDraggable);
+    await this.murriService.setOpacityFlagAsync(0);
   }
 
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
-        let flag = !this.isFiltedMode;
-        if (noteType === NoteTypeENUM.Shared) {
-          flag = false;
-        }
-        this.murriService.initMurriNote(noteType, flag);
+        const isDraggable =
+          !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
+        console.log(isDraggable);
+        await this.murriService.initMurriNoteAsync(noteType, isDraggable);
+
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
         await this.loadNotesWithUpdates();
@@ -191,22 +273,21 @@ export class NotesService implements OnDestroy {
     this.labelsIds?.unsubscribe();
   }
 
-  transformNotes = (items: SmallNote[]) => {
+  private transformNotes = (items: SmallNote[]): SmallNote[] => {
     const notes = [...items];
     return notes.map((note) => {
       return { ...note, isSelected: false, lockRedirect: false };
     });
   };
 
-  firstInit(notes: SmallNote[]) {
-    this.allNotes = [...notes].map((x) => {
-      return { ...x };
-    });
+  firstInit() {
+    let tempNotes = this.transformNotes(this.getNotesByCurrentType);
+    tempNotes = this.orderBy(tempNotes);
     if (!this.isFiltedMode) {
-      this.notes = this.allNotes;
+      this.notes = tempNotes;
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
-      this.notes = this.allNotes.filter((x) =>
+      this.notes = tempNotes.filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
     }
@@ -241,9 +322,12 @@ export class NotesService implements OnDestroy {
       await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
-      this.notes = this.allNotes.filter((x) =>
+
+      let tempNotes = this.transformNotes(this.getNotesByCurrentType).filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
+      this.notes = this.orderBy(tempNotes);
+
       const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(roadType, false);
       await this.murriService.setOpacityFlagAsync(0);

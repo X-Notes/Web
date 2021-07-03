@@ -75,7 +75,6 @@ import { NotesUpdaterService } from './notes-updater.service';
     MurriService,
     SelectionService,
     MenuSelectionService,
-    NotesUpdaterService,
   ],
 })
 export class NotesModule {}

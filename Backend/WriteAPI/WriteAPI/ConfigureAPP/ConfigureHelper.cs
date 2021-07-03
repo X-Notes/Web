@@ -83,6 +83,7 @@ using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
+using Common.DTO.Orders;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -205,7 +206,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
 
             //Order
-            services.AddScoped<IRequestHandler<UpdateOrderCommand, Unit>, OrderHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateOrderCommand, List<UpdateOrderEntityResponse>>, OrderHandlerCommand>();
 
             //SHARE
             services.AddScoped<IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();

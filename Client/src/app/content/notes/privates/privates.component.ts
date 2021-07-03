@@ -65,9 +65,7 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent(typeENUM = NoteTypeENUM.Private) {
     await this.noteService.loadNotes(typeENUM);
 
-    let notes = this.store.selectSnapshot(NoteStore.privateNotes);
-    notes = this.noteService.transformNotes(notes);
-    this.noteService.firstInit(notes);
+    this.noteService.firstInit();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

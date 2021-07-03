@@ -131,6 +131,16 @@ export class MurriService {
   /// ///////////////////////////////////
 
   /// FOLDERS
+
+  initMurriFolderAsync(type: FolderTypeENUM, isDragEnabled: boolean) {
+    return new Promise<boolean>((resolve) =>
+      setTimeout(() => {
+        this.initMurriFolder(type, isDragEnabled);
+        resolve(true);
+      }),
+    );
+  }
+
   initMurriFolder(type: FolderTypeENUM, isDragEnabled: boolean = true) {
     const gridItemName = '.grid-item';
     const gridElement = document.querySelector('.grid') as HTMLElement;
