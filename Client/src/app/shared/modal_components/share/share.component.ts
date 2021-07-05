@@ -35,6 +35,11 @@ import { PersonalizationService, showDropdown } from '../../services/personaliza
 import { SearchService } from '../../services/search.service';
 import { ThemeENUM } from '../../enums/theme.enum';
 
+export interface StartType {
+  id: string;
+  type: NoteTypeENUM | FolderTypeENUM;
+}
+
 export enum SharedType {
   Note,
   Folder,
@@ -86,7 +91,7 @@ export class ShareComponent implements OnInit, OnDestroy {
 
   selectedUsers: SearchUserForShareModal[] = [];
 
-  commandsForChange = new Map<string, any[]>();
+  startIdsType: StartType[] = [];
 
   public positions = [
     new ConnectionPositionPair(
@@ -119,9 +124,24 @@ export class ShareComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.searchStrChanged.next();
     this.searchStrChanged.complete();
-    const commands: any[] = [];
-    this.commandsForChange.forEach((value) => value.forEach((z) => commands.push(z)));
-    this.store.dispatch(commands);
+
+    const commandsNotes = this.notes
+      .filter((x) => this.startIdsType.some((z) => z.id === x.id && z.type !== x.noteTypeId))
+      .map((x) =>
+        x.noteTypeId === NoteTypeENUM.Shared
+          ? this.factoryForCommandNote(x.id, NoteTypeENUM.Shared)
+          : this.factoryForCommandNote(x.id, NoteTypeENUM.Private),
+      );
+
+    const commandsFolders = this.folders
+      .filter((x) => this.startIdsType.some((z) => z.id === x.id && z.type !== x.folderTypeId))
+      .map((x) =>
+        x.folderTypeId === FolderTypeENUM.Shared
+          ? this.factoryForCommandFolder(x.id, FolderTypeENUM.Shared)
+          : this.factoryForCommandFolder(x.id, FolderTypeENUM.Private),
+      );
+
+    this.store.dispatch([...commandsNotes, ...commandsFolders]);
   }
 
   ngOnInit(): void {
@@ -271,77 +291,63 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   async changeNoteType() {
+    if (!this.startIdsType.some((x) => x.id === this.currentNote.id)) {
+      this.startIdsType.push({ id: this.currentNote.id, type: this.currentNote.noteTypeId });
+    }
+
     if (this.currentNote.noteTypeId !== NoteTypeENUM.Shared) {
       await this.apiNote.makePublic(RefTypeENUM.Viewer, this.currentNote.id).toPromise();
       this.currentNote.noteTypeId = NoteTypeENUM.Shared;
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Shared;
-      const commands = this.factoryForCommandsShared([this.currentNote.id]);
-      this.commandsForChange.set(this.currentNote.id, commands);
-      this.store.dispatch(new ChangeTypeFullNote(NoteTypeENUM.Shared));
+      this.store.dispatch([
+        new ChangeTypeFullNote(NoteTypeENUM.Shared),
+        new UpdateOneNote(this.currentNote, NoteTypeENUM.Shared),
+      ]);
     } else {
       await this.apiNote.makePrivateNotes([this.currentNote.id]).toPromise();
       this.currentNote.noteTypeId = NoteTypeENUM.Private;
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Private;
-      const commands = this.factoryForCommandsPrivate([this.currentNote.id]);
-      this.commandsForChange.set(this.currentNote.id, commands);
-      this.store.dispatch(new ChangeTypeFullNote(NoteTypeENUM.Private));
+      this.store.dispatch([
+        new ChangeTypeFullNote(NoteTypeENUM.Private),
+        new UpdateOneNote(this.currentNote, NoteTypeENUM.Private),
+      ]);
     }
   }
 
   async changeFolderType() {
+    if (!this.startIdsType.some((x) => x.id === this.currentFolder.id)) {
+      this.startIdsType.push({ id: this.currentFolder.id, type: this.currentFolder.folderTypeId });
+    }
+
     if (this.currentFolder.folderTypeId !== FolderTypeENUM.Shared) {
       await this.apiFolder.makePublic(RefTypeENUM.Viewer, this.currentFolder.id).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Shared;
       this.folders.find((note) => note.id === this.currentFolder.id).folderTypeId =
         FolderTypeENUM.Shared;
-      const commands = this.factoryForCommandsSharedFolders([this.currentFolder.id]);
-      this.commandsForChange.set(this.currentFolder.id, commands);
-      this.store.dispatch(new ChangeTypeFullFolder(FolderTypeENUM.Shared));
+      this.store.dispatch([
+        new ChangeTypeFullFolder(FolderTypeENUM.Shared),
+        new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Shared),
+      ]);
     } else {
       await this.apiFolder.makePrivateFolders([this.currentFolder.id]).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Private;
       this.folders.find((folder) => folder.id === this.currentFolder.id).folderTypeId =
         FolderTypeENUM.Private;
-      const commands = this.factoryForCommandsPrivateFolders([this.currentFolder.id]);
-      this.commandsForChange.set(this.currentFolder.id, commands);
-      this.store.dispatch(new ChangeTypeFullFolder(FolderTypeENUM.Private));
+      this.store.dispatch([
+        new ChangeTypeFullFolder(FolderTypeENUM.Private),
+        new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Private),
+      ]);
     }
   }
 
-  factoryForCommandsShared(ids: string[]) {
-    const commands: any[] = [];
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Archive, NoteTypeENUM.Shared, ids));
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Private, NoteTypeENUM.Shared, ids));
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Deleted, NoteTypeENUM.Shared, ids));
-    commands.push(new UpdateOneNote(this.currentNote, NoteTypeENUM.Shared));
-    return commands;
+  factoryForCommandNote(id: string, typeTo: NoteTypeENUM): TransformTypeNotes {
+    const startType = this.startIdsType.find((x) => x.id == id).type as NoteTypeENUM;
+    return new TransformTypeNotes(startType, typeTo, [id]);
   }
 
-  factoryForCommandsPrivate(ids: string[]) {
-    const commands: any[] = [];
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Archive, NoteTypeENUM.Private, ids));
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Shared, NoteTypeENUM.Private, ids));
-    commands.push(new TransformTypeNotes(NoteTypeENUM.Deleted, NoteTypeENUM.Private, ids));
-    commands.push(new UpdateOneNote(this.currentNote, NoteTypeENUM.Private));
-    return commands;
-  }
-
-  factoryForCommandsSharedFolders(ids: string[]) {
-    const commands: any[] = [];
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Archive, FolderTypeENUM.Shared, ids));
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Private, FolderTypeENUM.Shared, ids));
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Deleted, FolderTypeENUM.Shared, ids));
-    commands.push(new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Shared));
-    return commands;
-  }
-
-  factoryForCommandsPrivateFolders(ids: string[]) {
-    const commands: any[] = [];
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Archive, FolderTypeENUM.Private, ids));
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Shared, FolderTypeENUM.Private, ids));
-    commands.push(new TransformTypeFolders(FolderTypeENUM.Deleted, FolderTypeENUM.Private, ids));
-    commands.push(new UpdateOneFolder(this.currentFolder, FolderTypeENUM.Private));
-    return commands;
+  factoryForCommandFolder(id: string, typeTo: FolderTypeENUM): TransformTypeFolders {
+    const startType = this.startIdsType.find((x) => x.id == id).type as FolderTypeENUM;
+    return new TransformTypeFolders(startType, typeTo, [id]);
   }
 
   async changeRefTypeNote(refTypeId: RefTypeENUM) {
