@@ -46,7 +46,14 @@
       <p>{{note.updatedAt | date: 'medium' }}</p>
     </div>
     <div class="help-icons">
-      <div *ngFor="let item of [1,2,3]" class="icon">
+      <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
+        <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+      </div>
+      <div
+        *ngFor="let item of note.additionalInfo?.noteFolderInfos"
+        [CustomTooltip]="item.folderName"
+        class="icon"
+      >
         <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
       </div>
     </div>

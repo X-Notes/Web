@@ -280,7 +280,7 @@ export class NotesService implements OnDestroy {
     });
   };
 
-  firstInit() {
+  async firstInit() {
     let tempNotes = this.transformNotes(this.getNotesByCurrentType);
     tempNotes = this.orderBy(tempNotes);
     if (!this.isFiltedMode) {
@@ -300,6 +300,13 @@ export class NotesService implements OnDestroy {
         }
       });
     this.firstInitFlag = true;
+
+    const noteIds = this.notes.map((x) => x.id);
+    const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
+    for (const info of additionalInfo) {
+      const noteIndex = this.notes.findIndex((x) => x.id == info.noteId);
+      this.notes[noteIndex].additionalInfo = info;
+    }
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {

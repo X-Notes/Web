@@ -1,3 +1,4 @@
+import { BottomNoteContent } from './bottom-note-content.model';
 import { ContentModel } from './content-model.model';
 import { FullNote } from './full-note.model';
 
@@ -7,4 +8,5 @@ export interface SmallNote extends FullNote {
   order: number;
   isSelected?: boolean;
   lockRedirect?: boolean;
+  additionalInfo?: BottomNoteContent;
 }

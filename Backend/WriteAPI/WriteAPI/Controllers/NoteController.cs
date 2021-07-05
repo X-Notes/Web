@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
+using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Personalization;
 using Domain.Commands.Notes;
 using Domain.Queries.Notes;
@@ -116,6 +117,14 @@ namespace WriteAPI.Controllers
         {
             var email = this.GetUserEmail();
             var query = new GetNotesByTypeQuery(email, id, settings);
+            return await _mediator.Send(query);
+        }
+
+
+        [HttpPost("additional")]
+        public async Task<List<BottomNoteContent>> GetAdditionalInfo(GetAdditionalContentInfoQuery query)
+        {
+            query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
         }
 

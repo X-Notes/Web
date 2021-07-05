@@ -65,7 +65,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent(typeENUM = NoteTypeENUM.Archive) {
     await this.noteService.loadNotes(typeENUM);
 
-    this.noteService.firstInit();
+    await this.noteService.firstInit();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

@@ -84,6 +84,7 @@ using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
 using Common.DTO.Orders;
+using Common.DTO.Notes.AdditionalContent;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -136,6 +137,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
+            services.AddScoped<IRequestHandler<GetAdditionalContentInfoQuery, List<BottomNoteContent>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();

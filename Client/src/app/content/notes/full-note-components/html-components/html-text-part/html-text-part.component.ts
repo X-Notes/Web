@@ -18,8 +18,8 @@ import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
-import { TypeUploadFile } from '../../../models/type-upload-file.enum';
-import { TypeUploadFormats } from '../../../models/type-upload-formats.enum';
+import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
+import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
 
 @Component({

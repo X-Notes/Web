@@ -4,6 +4,8 @@ import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { OperationResult } from 'src/app/content/notes/models/operation-result.model';
 import { environment } from 'src/environments/environment';
+import { map } from 'rxjs/operators';
+import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 
 @Injectable()
 export class ApiFullFolderService {
@@ -20,7 +22,9 @@ export class ApiFullFolderService {
       folderId,
       search,
     };
-    return this.httpClient.post<PreviewNote[]>(`${this.controllerApi}/preview`, obj);
+    return this.httpClient
+      .post<PreviewNote[]>(`${this.controllerApi}/preview`, obj)
+      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
   updateNotesInFolder(noteIds: string[], folderId: string) {
