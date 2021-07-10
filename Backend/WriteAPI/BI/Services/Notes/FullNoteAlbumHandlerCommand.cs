@@ -76,7 +76,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC 
                 var filebytes = await request.Photos.GetFilesBytesAsync();
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, filebytes, note.Id));
+                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
                 // TODO MOVE THIS TO WORKER
                 foreach (var fileitem in fileList)
@@ -274,7 +274,7 @@ namespace BI.Services.Notes
                 var album = await baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
 
                 var filebytes = await request.Photos.GetFilesBytesAsync();
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, filebytes, note.Id));
+                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
                 foreach (var fileitem in fileList)
                 {

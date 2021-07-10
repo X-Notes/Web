@@ -64,7 +64,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC
                 var filebyte = await request.Video.GetFilesBytesAsync();
-                var file = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id, filebyte, note.Id));
+                var file = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebyte, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

@@ -67,7 +67,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC
                 var bytes = await request.Audios.GetFilesBytesAsync();
-                var files = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, bytes, note.Id));
+                var files = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, bytes, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -222,7 +222,7 @@ namespace BI.Services.Notes
                 var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
 
                 var filebytes = await request.Audios.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, filebytes, note.Id));
+                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

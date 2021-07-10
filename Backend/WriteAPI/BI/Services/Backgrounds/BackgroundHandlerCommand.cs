@@ -54,7 +54,6 @@ namespace BI.Services.Backgrounds
             return Unit.Value;
         }
 
-        // TODO REMOVE FILES FROM STORAGE
         public async Task<Unit> Handle(RemoveBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithBackgrounds(request.Email);
