@@ -16,6 +16,7 @@ import { ApiFullFolderService } from 'src/app/content/folders/full-folder/servic
 import { FolderStore } from 'src/app/content/folders/state/folders-state';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
@@ -76,7 +77,8 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
         await this.murriService.setOpacityFlagAsync(0, false);
         await this.murriService.wait(150);
         this.murriService.grid.destroy();
-        this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str).toPromise();
+        const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+        this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
@@ -86,7 +88,8 @@ export class ManageNotesInFolderComponent implements OnInit, OnDestroy, AfterVie
 
   async loadContent() {
     const folderId = this.store.selectSnapshot(FolderStore.full).id;
-    this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, '').toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.notes = await this.apiFullFolder.getAllPreviewNotes(folderId, '', pr).toPromise();
     this.viewNotes = [...this.notes];
 
     await this.pService.waitPreloading();

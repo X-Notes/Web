@@ -130,9 +130,12 @@ export class ApiServiceNotes {
     return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${id}`);
   }
 
-  getAll() {
+  getAll(settings: PersonalizationSetting) {
+    const obj = {
+      settings,
+    };
     return this.httpClient
-      .get<SmallNote[]>(`${environment.writeAPI}/api/note/all`)
+      .post<SmallNote[]>(`${environment.writeAPI}/api/note/all`, obj)
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 

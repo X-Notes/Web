@@ -6,6 +6,7 @@ import { OperationResult } from 'src/app/content/notes/models/operation-result.m
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 @Injectable()
 export class ApiFullFolderService {
@@ -17,10 +18,11 @@ export class ApiFullFolderService {
     return this.httpClient.get<SmallNote[]>(`${this.controllerApi}/${folderId}`);
   }
 
-  getAllPreviewNotes(folderId: string, search: string) {
+  getAllPreviewNotes(folderId: string, search: string, settings: PersonalizationSetting) {
     const obj = {
       folderId,
       search,
+      settings,
     };
     return this.httpClient
       .post<PreviewNote[]>(`${this.controllerApi}/preview`, obj)

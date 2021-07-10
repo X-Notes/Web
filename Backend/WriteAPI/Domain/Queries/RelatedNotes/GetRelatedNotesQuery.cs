@@ -7,7 +7,9 @@ namespace Domain.Queries.RelatedNotes
 {
     public class GetRelatedNotesQuery : BaseQueryEntity, IRequest<List<RelatedNote>>
     {
+
         public Guid NoteId { set; get; }
+
         public GetRelatedNotesQuery(string email, Guid id)
             : base(email)
         {

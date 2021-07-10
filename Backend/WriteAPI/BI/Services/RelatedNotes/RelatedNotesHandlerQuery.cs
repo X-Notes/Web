@@ -56,7 +56,7 @@ namespace BI.Services.RelatedNotes
             {
                 var relatedNotes = await relatedRepository.GetRelatedNotes(request.NoteId);
                 var relatedNotesIds = relatedNotes.Select(x => x.RelatedNoteId).ToList();
-                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId);
+                var allNotes = await noteRepository.GetNotesByUserIdWithoutNote(permissions.User.Id, request.NoteId, request.Settings);
                 if (string.IsNullOrEmpty(request.Search))
                 {
                     return noteMapper.MapNotesToPreviewNotesDTO(allNotes, relatedNotesIds);

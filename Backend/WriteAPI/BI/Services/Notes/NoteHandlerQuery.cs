@@ -75,7 +75,7 @@ namespace BI.Services.Notes
                 {
                     var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhere(x => x.UserId == user.Id);
                     var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-                    var sharedNotes = await noteRepository.GetNotesByIdsWithContent(notesIds);
+                    var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
                     notes.AddRange(sharedNotes);
                     notes = notes.DistinctBy(x => x.Id).ToList();
                 }
@@ -142,7 +142,7 @@ namespace BI.Services.Notes
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var notes = await noteRepository.GetNotesByUserId(user.Id);
+                var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes);

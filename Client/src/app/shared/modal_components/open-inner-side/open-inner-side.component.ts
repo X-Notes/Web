@@ -17,6 +17,7 @@ import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { UnSelectAllNote } from 'src/app/content/notes/state/notes-actions';
 import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { FontSizeENUM } from '../../enums/font-size.enum';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { MurriService } from '../../services/murri.service';
@@ -90,7 +91,8 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
         await this.murriService.setOpacityFlagAsync(0, false);
         await this.murriService.wait(150);
         this.murriService.grid.destroy();
-        this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str).toPromise();
+        const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+        this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, str, pr).toPromise();
         this.viewNotes = [...this.notes];
         this.pService.setSpinnerState(false);
         await this.murriService.initMurriPreviewDialogNoteAsync();
@@ -100,7 +102,8 @@ export class OpenInnerSideComponent implements OnInit, OnDestroy, AfterViewInit 
 
   async loadContent() {
     const noteId = this.store.selectSnapshot(NoteStore.oneFull).id;
-    this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, '').toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.notes = await this.apiRelatedNotes.getAllPreviewNotes(noteId, '', pr).toPromise();
     this.viewNotes = [...this.notes];
 
     await this.pService.waitPreloading();

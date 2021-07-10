@@ -10,10 +10,8 @@ using Domain.Commands.Notes;
 using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
-using WriteAPI.Filters;
 
 namespace WriteAPI.Controllers
 {
@@ -135,12 +133,10 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(query);
         }
 
-        [HttpGet("all")]
-        public async Task<List<SmallNote>> GetAllNotes()
+        [HttpPost("all")]
+        public async Task<List<SmallNote>> GetAllNotes(GetAllNotesQuery query)
         {
-            var query = new GetAllNotesQuery();
             query.Email = this.GetUserEmail();
-
             return await _mediator.Send(query);
         }
 
