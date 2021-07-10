@@ -1,0 +1,40 @@
+<app-general-header-button
+  (clickEvent)="manageNotesInFolderHandler()"
+  [message]="'Manage'"
+  [styleClasses]="'manage-notes'"
+></app-general-header-button>
+
+<app-general-header-button
+  *ngIf="(pService.isMenuActive$ | async) === (false)"
+  (clickEvent)="newButton()"
+  [message]="'new.' + (route$ | async ) | translate"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-2 generic-unfixed generic-create'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="selectAll()"
+  [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
+  [classOnSize]="'hide-tag-text'"
+  [message]="('header.select' | translate)"
+  [iconClass]="'select'"
+  [styleClasses]="'generic-2 generic-unfixed'"
+></app-general-header-button>
+
+<app-general-header-button
+  (clickEvent)="settingsClick()"
+  [tooltipMessage]="('header.filter' | translate)"
+  [tooltipPosition]="'Bottom'"
+  [iconClass]="'filter'"
+  [styleClasses]="'generic-2 filter'"
+></app-general-header-button>
+
+<app-general-header-button
+  *ngIf="(pService.isMenuActive$ | async) === (true)"
+  (clickEvent)="unselectAll()"
+  [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
+  [classOnSize]="'hide-tag-text'"
+  [message]="('header.selected' | translate) + ' ' + countSelected"
+  [iconClass]="'plus'"
+  [styleClasses]="'generic-2 generic-unfixed rotate'"
+></app-general-header-button>

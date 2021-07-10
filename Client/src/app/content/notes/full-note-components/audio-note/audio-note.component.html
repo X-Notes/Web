@@ -1,0 +1,63 @@
+<div class="playlist" appTheme>
+  <div class="playlist-options">
+    <div class="title">
+      <p>{{content?.name}}</p>
+    </div>
+    <button
+      class="audio-button"
+      type="button"
+      name="options"
+      #playlistOptions
+      [matMenuTriggerFor]="menu"
+    >
+      <div class="icon">
+        <mat-icon [inline]="true">more_horiz</mat-icon>
+      </div>
+      <div class="ripple-container" matRipple [matRippleTrigger]="playlistOptions"></div>
+    </button>
+    <mat-menu
+      #menu="matMenu"
+      appLazyTheme
+      themeClass="menu"
+      attributeName="panelClass"
+      [element]="menu"
+    >
+      <button mat-menu-item type="button" name="add new audio" (click)="uploadHandler()">
+        <mat-icon>library_music</mat-icon>
+        <span>{{ 'innerNote.menu.add' | translate }}</span>
+      </button>
+      <button mat-menu-item type="button" name="Download" (click)="exportPlaylist(content)">
+        <mat-icon>download</mat-icon>
+        <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+      </button>
+      <button
+        mat-menu-item
+        type="button"
+        name="Change title"
+        (click)="changeTitleEvent.emit(content.id)"
+      >
+        <span> change title(no trn) </span>
+      </button>
+      <button mat-menu-item type="button" name="delete" (click)="removePlaylist.emit(content.id)">
+        <mat-icon>delete</mat-icon>
+        <span>{{ 'innerNote.menu.delete' | translate }}</span>
+      </button>
+    </mat-menu>
+  </div>
+  <app-audio
+    *ngFor="let item of content.audios;"
+    [audio]="item"
+    (playEvent)="play($event)"
+    (pauseEvent)="pause()"
+    (deleteAudio)="deleteAudioHandler($event)"
+    (exportAudio)="exportAudio($event)"
+  ></app-audio>
+</div>
+<input
+  #uploadAudiosRef
+  type="file"
+  multiple
+  [accept]="formats"
+  hidden="true"
+  (change)="uploadAudios($event)"
+/>

@@ -1,0 +1,61 @@
+<div
+  #highlightNote
+  class="highlighting-note"
+  (click)="highlight(note)"
+  [ngStyle]="{'backgroundColor': note.isSelected ? 'rgba(101, 226, 113, 0.65)' : '' }"
+  [ngClass]="(pService.fontSize$ | async) === fontSize.Big ? 'big-select' : ''"
+>
+  <div class="ripple-container" matRipple [matRippleTrigger]="highlightNote"></div>
+</div>
+<div
+  (click)="toNote(note)"
+  class="note-inner"
+  [ngStyle]="{'cursor': note.lockRedirect ? 'pointer' : ''}"
+  [ngClass]="[pService.orientationMobile? 'small' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
+>
+  <div class="labels">
+    <div
+      class="label"
+      *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
+      [ngStyle]="{backgroundColor: label.color}"
+      CustomTooltip="{{ label.name }}"
+      position="Top"
+      labelColor="{{ label.color }}"
+    >
+      <p>{{label.name}}</p>
+    </div>
+  </div>
+  <div class="header">
+    <h4 *ngIf="note.title; else notNamed">{{note.title}}</h4>
+    <ng-template #notNamed>
+      <h4 class="not-named">Add content to your note</h4>
+    </ng-template>
+  </div>
+  <ng-container *ngFor="let content of note.contents">
+    <ng-container [ngSwitch]="content.typeId">
+      <ng-container *ngSwitchCase="contentType.Text">
+        <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
+      </ng-container>
+      <ng-container *ngSwitchCase="contentType.NoteAlbum">
+        <app-note-preview-photos [album]="content"></app-note-preview-photos>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <div class="footer">
+    <div class="date">
+      <p>{{note.updatedAt | date: 'medium' }}</p>
+    </div>
+    <div class="help-icons">
+      <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
+        <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+      </div>
+      <div
+        *ngFor="let item of note.additionalInfo?.noteFolderInfos"
+        [CustomTooltip]="item.folderName"
+        class="icon"
+      >
+        <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.375rem;
+}
+
+.photo {
+  display: flex;
+  flex: 1 1 calc((100% / 2) - (1.125rem / 2));
+  height: 100px;
+  border-radius: 5px;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  &:nth-child(2n) {
+    margin-left: 0.25rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .photo {
+    flex: 1 1 100%;
+
+    &:nth-child(2n) {
+      margin-left: 0;
+    }
+  }
+}

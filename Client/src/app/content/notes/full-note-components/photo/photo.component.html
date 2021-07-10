@@ -1,0 +1,30 @@
+<div class="photo" appTheme>
+  <img
+    [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
+    [src]="photo.photoFromBig | getImage: (id$ | async)"
+    (load)="onLoadImage()"
+  />
+  <app-spinner [size]="25" *ngIf="!photo.loaded"></app-spinner>
+  <div class="action">
+    <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+      <mat-icon [inline]="true">more_horiz</mat-icon>
+      <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+    </button>
+  </div>
+</div>
+<mat-menu
+  #menu="matMenu"
+  appLazyTheme
+  themeClass="menu"
+  attributeName="panelClass"
+  [element]="menu"
+>
+  <button mat-menu-item type="button" name="Download" (click)="downloadPhotoEvent.emit(photo)">
+    <mat-icon>download</mat-icon>
+    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+  </button>
+  <button mat-menu-item (click)="deletePhoto()" type="button" name="Delete">
+    <mat-icon>delete</mat-icon>
+    <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+  </button>
+</mat-menu>

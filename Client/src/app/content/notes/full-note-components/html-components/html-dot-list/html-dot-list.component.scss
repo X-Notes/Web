@@ -1,0 +1,45 @@
+@import 'innerNote';
+
+.dot-list {
+  width: 100%;
+  display: flex;
+
+  .dot-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0.5rem 0 0.25rem;
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: white;
+    }
+  }
+  .text-container {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+  }
+}
+
+.dark {
+  .dot-list {
+    .dot-container {
+      .dot {
+        background-color: white;
+      }
+    }
+  }
+}
+
+.light {
+  .dot-list {
+    .dot-container {
+      .dot {
+        background-color: $text-color;
+      }
+    }
+  }
+}

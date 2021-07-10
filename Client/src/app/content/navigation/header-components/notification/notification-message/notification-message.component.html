@@ -1,0 +1,24 @@
+<div class="notification-message" appTheme>
+  <div class="avatar">
+    <img alt="user image" [src]="message.userFromPhotoId | getImage: message.userFromPhotoId" />
+  </div>
+  <div class="message">
+    <div class="info-message">
+      <div class="info status-new" [ngClass]="isRead ? 'status-read' : 'status-new'">
+        <p>
+          {{ isRead ? ('notification.readMessage' | translate) : ('notification.newMessage' |
+          translate) }}
+        </p>
+      </div>
+      <div class="info date">
+        <p>{{ message.date | date : 'd MMM, h:mm' }}</p>
+      </div>
+    </div>
+    <div class="username">
+      <p>{{message.userFromName}}</p>
+    </div>
+    <div class="user-message">
+      <p>{{ typeMessage | translate }}</p>
+    </div>
+  </div>
+</div>

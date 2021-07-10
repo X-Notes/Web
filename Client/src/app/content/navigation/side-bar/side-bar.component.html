@@ -1,0 +1,32 @@
+<nav appTheme>
+  <div class="module" routerLink="/notes" routerLinkActive="active" #triggerFirst>
+    <div class="item">
+      <div class="main-icon">
+        <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+      </div>
+      <p>{{ 'notes.name' | translate }}</p>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerFirst"></div>
+  </div>
+  <div class="module" routerLink="/folders" routerLinkActive="active" #triggerSecond>
+    <div class="item">
+      <div class="main-icon">
+        <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
+      </div>
+      <p>{{ 'folders.name' | translate }}</p>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerSecond"></div>
+  </div>
+  <div class="module" routerLink="/labels" routerLinkActive="active" #triggerThird>
+    <div class="item">
+      <div class="main-icon">
+        <mat-icon svgIcon="label" [inline]="true"></mat-icon>
+      </div>
+      <p>{{ 'labels.name' | translate }}</p>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="triggerThird"></div>
+  </div>
+  <div class="billing-field">
+    <div *ngIf="hideFor" class="billing">B</div>
+  </div>
+</nav>

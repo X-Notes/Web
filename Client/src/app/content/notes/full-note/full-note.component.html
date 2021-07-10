@@ -1,0 +1,240 @@
+<div appTheme class="sub-nav">
+  <div
+    class="sub-nav-section"
+    *ngIf="pService.stateSidebar"
+    [@sidebarCloseOpen]
+    [@.disabled]="pService.check()"
+  >
+    <ng-scrollbar class="notes-section" [visibility]="'hover'" [appearance]="'compact'">
+      <div
+        class="note"
+        *ngFor="let item of notesLink"
+        [ngStyle]="{'backgroundColor': item.color}"
+        [routerLink]="['/notes/', item.id]"
+      >
+        <p>{{ item.title | replace: 'note' }}</p>
+      </div>
+    </ng-scrollbar>
+    <div class="information">
+      <div class="separator"></div>
+      <app-memory-indicator></app-memory-indicator>
+    </div>
+  </div>
+  <div
+    class="overlay"
+    (click)="pService.cancelSideBar()"
+    [ngClass]="pService.stateSidebar ? 'visible' : ''"
+  ></div>
+</div>
+<div
+  appTheme
+  class="content-generic-project full-content"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
+  <div
+    *ngIf="(canView$ | async) && loaded"
+    class="wrapper-note"
+    #fullWrap
+    (panstart)="sliderService.panStart()"
+    (panmove)="panMove($event)"
+    (panend)="panEnd($event)"
+  >
+    <div
+      appTextEditMenu
+      appSelection
+      [appMenuSelection]="textElements"
+      [appCopy]="refElements"
+      (selectionEvent)="selectionHandler($event)"
+      (selectionStartEvent)="selectionStartHandler($event)"
+      [style.width.px]="sliderService.mainWidth"
+      class="main-content"
+    >
+      <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
+      <div class="labels-section">
+        <div
+          class="label"
+          *ngFor="let label of note?.labels | noDeletedLabels"
+          [ngStyle]="{backgroundColor: label.color}"
+        >
+          <p>{{label.name}}</p>
+        </div>
+      </div>
+      <div class="title-section">
+        <div
+          contenteditable="true"
+          (paste)="pasteCommandHandler($event)"
+          [textContent]="note?.title"
+          class="title"
+          (input)="onInput($event)"
+        ></div>
+        <div class="placeholder">Title</div>
+        <div class="left-border"></div>
+      </div>
+      <div class="content-section">
+        <div *ngFor="let item of contents; let i = index;">
+          <div [ngSwitch]="item.typeId">
+            <ng-container *ngSwitchCase="contentType.Text">
+              <app-html-text-part
+                *ngIf="item.noteTextTypeId === textType.Default"
+                #htmlComp
+                [content]="item"
+                (enterEvent)="enterHandler($event)"
+                (deleteThis)="deleteHTMLHandler($event)"
+                (concatThisWithPrev)="concatThisWithPrev($event)"
+                (transformTo)="transformToTypeText($event)"
+                (transformToFile)="transformToFileType($event)"
+                (updateText)="updateTextHandler($event, i === contents.length - 1)"
+              ></app-html-text-part>
+              <app-html-number-list
+                #htmlComp
+                *ngIf="item.noteTextTypeId === textType.Numberlist"
+                [prevContent]="getTextContent(i - 1)"
+                [prevType]="getTextContent(i - 1)?.noteTextTypeId"
+                [content]="item"
+                (enterEvent)="enterHandler($event)"
+                (transformTo)="transformToTypeText($event)"
+                (deleteThis)="deleteHTMLHandler($event)"
+                (updateText)="updateTextHandler($event, i === contents.length - 1)"
+                (concatThisWithPrev)="concatThisWithPrev($event)"
+              ></app-html-number-list>
+              <app-html-dot-list
+                #htmlComp
+                *ngIf="item.noteTextTypeId === textType.Dotlist"
+                [content]="item"
+                (enterEvent)="enterHandler($event)"
+                (transformTo)="transformToTypeText($event)"
+                (deleteThis)="deleteHTMLHandler($event)"
+                (concatThisWithPrev)="concatThisWithPrev($event)"
+                (updateText)="updateTextHandler($event, i === contents.length - 1)"
+              ></app-html-dot-list>
+              <app-html-check-list
+                #htmlComp
+                *ngIf="item.noteTextTypeId === textType.Checklist"
+                [content]="item"
+                (enterEvent)="enterHandler($event)"
+                (transformTo)="transformToTypeText($event)"
+                (deleteThis)="deleteHTMLHandler($event)"
+                (concatThisWithPrev)="concatThisWithPrev($event)"
+                (updateText)="updateTextHandler($event, i === contents.length - 1)"
+              ></app-html-check-list>
+              <app-html-headings
+                #htmlComp
+                *ngIf="item.noteTextTypeId === textType.Heading"
+                [content]="item"
+                (enterEvent)="enterHandler($event)"
+                (deleteThis)="deleteHTMLHandler($event)"
+                (concatThisWithPrev)="concatThisWithPrev($event)"
+                (updateText)="updateTextHandler($event, i === contents.length - 1)"
+              ></app-html-headings>
+            </ng-container>
+            <app-photos
+              #htmlComp
+              *ngSwitchCase="contentType.NoteAlbum"
+              [content]="item"
+              [noteId]="note.id"
+              (deleteEvent)="removeAlbumHandler($event)"
+              (uploadEvent)="uploadPhotoToAlbumHandler($event)"
+              (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
+            ></app-photos>
+            <app-audio-note
+              #htmlComp
+              *ngSwitchCase="contentType.Audio"
+              [content]="item"
+              (removePlaylist)="removePlaylistHandler($event)"
+              (deleteAudio)="removeAudioFromPlaylistHandler($event)"
+              (changeTitleEvent)="changePlaylistName($event)"
+              (uploadEvent)="uploadAudiosToPlaylistHandler($event)"
+            ></app-audio-note>
+            <app-video-note
+              #htmlComp
+              *ngSwitchCase="contentType.Video"
+              [content]="item"
+              (deleteVideoEvent)="removeVideoHandler($event)"
+            ></app-video-note>
+            <app-document-note
+              #htmlComp
+              *ngSwitchCase="contentType.Document"
+              [content]="item"
+              (deleteDocumentEvent)="removeDocumentHandler($event)"
+            ></app-document-note>
+            <div *ngSwitchDefault>Default</div>
+          </div>
+        </div>
+        <div
+          class="empty"
+          (mousedown)="placeHolderClick($event)"
+          (mousemove)="mouseEnter($event)"
+          (mouseout)="mouseOut($event)"
+        ></div>
+      </div>
+    </div>
+    <div class="secondary-content" [style.width.px]="sliderService.mainWidth">
+      <div class="open" #open (click)="sideBarService.openSideModal(id)">
+        <div class="icon">
+          <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        </div>
+        <p>open note or file</p>
+        <div class="ripple-container" matRipple [matRippleTrigger]="open"></div>
+      </div>
+      <div class="history-section" *ngIf="pService.toggleHistory" [@showHistory]>
+        <ng-scrollbar class="history-records" [visibility]="'hover'" [appearance]="'compact'">
+          <div class="content-inner-history">
+            <app-history-record
+              [history]="item"
+              *ngFor="let item of histories"
+            ></app-history-record></div
+        ></ng-scrollbar>
+        <app-no-results-illustration
+          *ngIf="!histories?.length"
+          [isShow]="true"
+          [message]="'noResult.history' | translate"
+          [illustration]="pService.icon.historyIllustration"
+          typeClass="type-notification"
+        ></app-no-results-illustration>
+      </div>
+      <ng-scrollbar
+        class="scroll-helper small-notes"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
+        <div class="content-inner-small">
+          <div
+            class="grid"
+            *ngIf="loaded"
+            [ngStyle]="{'opacity': sideBarService.murriService.flagForOpacity ? '1' : '0'}"
+          >
+            <div
+              #item
+              id="{{item.id}}"
+              class="grid-item-small"
+              *ngFor="let item of sideBarService.notes"
+            >
+              <app-small-note
+                [note]="item"
+                (deleteNote)="sideBarService.deleteSmallNote($event, id)"
+                (changeState)="sideBarService.changeState($event, id)"
+              ></app-small-note>
+            </div>
+          </div>
+        </div>
+      </ng-scrollbar>
+      <div class="drag-helper second-helper"></div>
+    </div>
+  </div>
+  <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessView' | translate"
+      [illustration]="pService.icon.noAccessView"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
+  <app-spinner *ngIf="!loaded"></app-spinner>
+  <app-text-edit-menu
+    [style.top.px]="menuSelectionService.getTop"
+    [style.left.px]="menuSelectionService.left"
+    [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'"
+    (eventTransform)="transformToTypeText($event)"
+  >
+  </app-text-edit-menu>
+</div>
