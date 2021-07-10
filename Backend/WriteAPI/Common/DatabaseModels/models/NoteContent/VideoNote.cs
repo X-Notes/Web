@@ -8,7 +8,9 @@ namespace Common.DatabaseModels.Models.NoteContent
     public class VideoNote : BaseNoteContent
     {
         public string Name { set; get; }
+
         public Guid AppFileId { get; set; }
+
         public AppFile AppFile { get; set; }
 
         public VideoNote()
@@ -17,16 +19,17 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Video;
         }
 
-        public VideoNote(VideoNote entity, AppFile video, Guid NoteId)
+        public VideoNote(VideoNote entity, Guid appFileId, Guid NoteId)
         {
             this.NoteId = NoteId;
+
             Order = entity.Order;
+            Name = entity.Name;
+
             this.UpdatedAt = DateTimeOffset.Now;
             this.ContentTypeId = ContentTypeENUM.Video;
 
-            Name = entity.Name;
-
-            AppFile = video;
+            AppFileId = appFileId;
         }
     }
 }
