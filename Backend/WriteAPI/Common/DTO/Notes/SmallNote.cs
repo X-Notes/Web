@@ -17,6 +17,8 @@ namespace Common.DTO.Notes
 
         public int Order { set; get; }
 
+        public Guid UserId { set; get; }
+
         public List<LabelDTO> Labels { set; get; }
 
         public RefTypeENUM RefTypeId { set; get; }

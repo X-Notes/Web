@@ -1,7 +1,4 @@
-﻿using Azure.Storage.Blobs;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using Storage.Models;
 
@@ -15,5 +12,6 @@ namespace Storage
         Task RemoveFiles(string userId, params string[] pathes);
         Task<GetFileResponse> GetFile(string userId, string path);
         Task<long> GetUsedDiskSpace(string userId);
+        Task<string> CopyBlobAsync(string userFromId, string path, string userToId, ContentTypesFile contentFolder, string fileTypeEnd);
     }
 }

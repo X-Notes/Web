@@ -148,7 +148,15 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).AlbumNoteAppFiles)
                 .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents)
                 .ThenInclude(x => (x as AudiosPlaylistNote).AudioNoteAppFiles)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideoNote).AppFile)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 

@@ -6,6 +6,9 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Storage.Models;
+using Azure.Storage.Blobs.Specialized;
+using System.Linq;
+using Azure;
 
 namespace Storage
 {
@@ -96,6 +99,68 @@ namespace Storage
 
             await stream.DisposeAsync();
             return blobClient.Name;
+        }
+
+        public async Task<string> CopyBlobAsync(string userFromId, string path, string userToId, ContentTypesFile contentFolder, string fileTypeEnd)
+        {
+            try
+            {
+                var blobContainerFrom = blobServiceClient.GetBlobContainerClient(userFromId);
+                var blobContainerTo = blobServiceClient.GetBlobContainerClient(userToId);
+
+                BlobClient sourceBlob = blobContainerFrom.GetBlobClient(path);
+
+                if (await sourceBlob.ExistsAsync())
+                {
+                    // Lease the source blob for the copy operation 
+                    // to prevent another client from modifying it.
+                    BlobLeaseClient lease = sourceBlob.GetBlobLeaseClient();
+
+                    // Specifying -1 for the lease interval creates an infinite lease.
+                    await lease.AcquireAsync(TimeSpan.FromSeconds(-1));
+
+                    // Get the source blob's properties and display the lease state.
+                    BlobProperties sourceProperties = await sourceBlob.GetPropertiesAsync();
+                    Console.WriteLine($"Lease state: {sourceProperties.LeaseState}");
+
+                    // Get a BlobClient representing the destination blob with a unique name.
+                    BlobClient destBlob = blobContainerTo.GetBlobClient(PathFactory(contentFolder, fileTypeEnd));
+
+                    // Start the copy operation.
+                    await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
+
+                    // Get the destination blob's properties and display the copy status.
+                    BlobProperties destProperties = await destBlob.GetPropertiesAsync();
+
+                    Console.WriteLine($"Copy status: {destProperties.CopyStatus}");
+                    Console.WriteLine($"Copy progress: {destProperties.CopyProgress}");
+                    Console.WriteLine($"Completion time: {destProperties.CopyCompletedOn}");
+                    Console.WriteLine($"Total bytes: {destProperties.ContentLength}");
+
+                    // Update the source blob's properties.
+                    sourceProperties = await sourceBlob.GetPropertiesAsync();
+
+                    if (sourceProperties.LeaseState == LeaseState.Leased)
+                    {
+                        // Break the lease on the source blob.
+                        await lease.BreakAsync();
+
+                        // Update the source blob's properties to check the lease state.
+                        sourceProperties = await sourceBlob.GetPropertiesAsync();
+                        Console.WriteLine($"Lease state: {sourceProperties.LeaseState}");
+                    }
+
+                    return destBlob.Name;
+                }
+
+                throw new Exception("Blob does not exist");
+            }
+            catch (RequestFailedException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+                throw;
+            }
         }
 
         public async Task<long> GetUsedDiskSpace(string userId)

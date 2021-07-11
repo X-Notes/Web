@@ -98,7 +98,7 @@ namespace BI.Services.user
                 await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile).SetIsNoCheckDelete());
             }
 
-            var photoType = FileHelper.GetPhotoType(request.File.ContentType);
+            var photoType = FileHelper.GetExtension(request.File.FileName);
 
             using var ms = new MemoryStream();
             await request.File.CopyToAsync(ms);

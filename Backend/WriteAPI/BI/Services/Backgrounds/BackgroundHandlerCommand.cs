@@ -78,7 +78,7 @@ namespace BI.Services.Backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var photoType = FileHelper.GetPhotoType(request.File.ContentType);
+            var photoType = FileHelper.GetExtension(request.File.FileName);
 
             var ms = new MemoryStream();
             await request.File.CopyToAsync(ms);

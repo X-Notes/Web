@@ -243,6 +243,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
 

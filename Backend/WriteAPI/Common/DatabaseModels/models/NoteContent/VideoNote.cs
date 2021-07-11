@@ -31,5 +31,18 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             AppFileId = appFileId;
         }
+
+        public VideoNote(VideoNote entity, AppFile file, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+
+            Order = entity.Order;
+            Name = entity.Name;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Video;
+
+            AppFile = file;
+        }
     }
 }

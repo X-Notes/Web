@@ -11,6 +11,7 @@ namespace Common.DatabaseModels.Models.NoteContent
         public string Name { set; get; }
 
         public List<AppFile> Audios { set; get; }
+
         public List<AudioNoteAppFile> AudioNoteAppFiles { set; get; }
 
         public AudiosPlaylistNote()
@@ -30,6 +31,19 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.PlaylistAudios;
 
             AudioNoteAppFiles = audios;
+        }
+
+        public AudiosPlaylistNote(AudiosPlaylistNote entity, List<AppFile> audios, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+
+            Order = entity.Order;
+            Name = entity.Name;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.PlaylistAudios;
+
+            Audios = audios;
         }
 
     }

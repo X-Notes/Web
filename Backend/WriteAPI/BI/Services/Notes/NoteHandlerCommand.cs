@@ -217,7 +217,7 @@ namespace BI.Services.Notes
                 var command = new GetUserPermissionsForNote(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
-                if (permissions.CanWrite)
+                if (permissions.CanRead)
                 {
                     var noteForCopy = await noteRepository.GetNoteByIdForCopy(id);
                     var newNote = new Note()
@@ -256,33 +256,72 @@ namespace BI.Services.Notes
                                 }
                             case AlbumNote album:
                                 {
-                                    var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile { 
-                                        AlbumNoteId = dbNote.Entity.Id,
-                                        AppFileId = x.AppFileId
-                                    }).ToList();
- 
-                                    contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
+
+                                    if(permissions.IsOwner)
+                                    {
+                                        var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile
+                                        {
+                                            AlbumNoteId = dbNote.Entity.Id,
+                                            AppFileId = x.AppFileId
+                                        }).ToList();
+                                        contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommands = album.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Images));
+                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                        var copyPhotos = (await Task.WhenAll(tasks)).ToList();
+                                        contents.Add(new AlbumNote(album, copyPhotos, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case VideoNote videoNote:
-                                {                                   
-                                    contents.Add(new VideoNote(videoNote, videoNote.AppFileId, dbNote.Entity.Id));
+                                {
+                                    if (permissions.IsOwner)
+                                    {
+                                        contents.Add(new VideoNote(videoNote, videoNote.AppFileId, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, videoNote.AppFile, ContentTypesFile.Videos);
+                                        var fileCopy = await _mediator.Send(copyCommand);
+                                        contents.Add(new VideoNote(videoNote, fileCopy, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case AudiosPlaylistNote audioNote:
                                 {
-                                    var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                    if(permissions.IsOwner)
                                     {
-                                        AudioNoteId = dbNote.Entity.Id,
-                                        AppFileId = x.AppFileId
-                                    }).ToList();
-                      
-                                    contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, dbNote.Entity.Id));
+                                        var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                        {
+                                            AudioNoteId = dbNote.Entity.Id,
+                                            AppFileId = x.AppFileId
+                                        }).ToList();
+
+                                        contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommands = audioNote.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Audios));
+                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                        var copyAudios = (await Task.WhenAll(tasks)).ToList();
+                                        contents.Add(new AudiosPlaylistNote(audioNote, copyAudios, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case DocumentNote documentNote:
                                 {
-                                    contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, dbNote.Entity.Id));
+                                    if (permissions.IsOwner)
+                                    {
+                                        contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, documentNote.AppFile, ContentTypesFile.Files);
+                                        var fileCopy = await _mediator.Send(copyCommand);
+                                        contents.Add(new DocumentNote(documentNote, fileCopy, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             default:

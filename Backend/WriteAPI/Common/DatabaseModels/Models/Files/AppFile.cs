@@ -66,6 +66,28 @@ namespace Common.DatabaseModels.Models.Files
             Name = name;
         }
 
+        public AppFile(string pathNoPhotoContent, AppFile appFile, Guid userId)
+        {
+            PathNonPhotoContent = pathNoPhotoContent;
+            ContentType = appFile.ContentType;
+            Size = appFile.Size;
+            FileTypeId = appFile.FileTypeId;
+            UserId = userId;
+            Name = appFile.Name;
+        }
+
+        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, AppFile appFile, Guid userId)
+        {
+            PathPhotoSmall = pathPhotoSmall;
+            PathPhotoMedium = pathPhotoMedium;
+            PathPhotoBig = pathPhotoBig;
+            ContentType = appFile.ContentType;
+            Size = appFile.Size;
+            FileTypeId = appFile.FileTypeId;
+            UserId = userId;
+            Name = appFile.Name;
+        }
+
         public string GetFromSmallPath
         { 
             get

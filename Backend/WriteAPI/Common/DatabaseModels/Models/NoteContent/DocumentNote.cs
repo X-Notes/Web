@@ -32,5 +32,18 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.AppFileId = AppFileId;
         }
 
+        public DocumentNote(DocumentNote entity, AppFile file, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+            Order = entity.Order;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Document;
+
+            Name = entity.Name;
+
+            this.AppFile = file;
+        }
+
     }
 }

@@ -37,5 +37,21 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             AlbumNoteAppFiles = albumNoteAppFiles;
         }
+
+        public AlbumNote(AlbumNote entity, List<AppFile> files, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Album;
+
+            Width = entity.Width;
+            Height = entity.Height;
+            CountInRow = entity.CountInRow;
+            Name = entity.Name;
+            Order = entity.Order;
+
+            Photos = files;
+        }
     }
 }
