@@ -105,6 +105,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
 
+
             // Backgrounds
             services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
