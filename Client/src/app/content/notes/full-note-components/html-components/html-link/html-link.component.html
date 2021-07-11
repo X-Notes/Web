@@ -1,0 +1,34 @@
+<div class="card" appTheme>
+  <div class="preview">
+    <img [src]="data.image" (load)="isLoaded = true" [hidden]="!isLoaded" />
+    <app-spinner size="25" *ngIf="!isLoaded"></app-spinner>
+  </div>
+  <div class="card-body">
+    <div class="card-info" (click)="openNewTab()">
+      <div class="title">{{ data.title }}</div>
+      <div class="link">{{ link }}</div>
+    </div>
+    <div class="card-action">
+      <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+        <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+      </button>
+      <mat-menu
+        #menu="matMenu"
+        appLazyTheme
+        themeClass="menu"
+        attributeName="panelClass"
+        [element]="menu"
+      >
+        <button (click)="copyToBuffer()" mat-menu-item type="button" name="options">
+          <mat-icon>content_copy</mat-icon>
+          <span>{{ 'innerNote.menu.copy' | translate }}</span>
+        </button>
+        <button mat-menu-item type="button" name="options">
+          <mat-icon>delete</mat-icon>
+          <span>{{ 'innerNote.menu.delete' | translate }}</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</div>

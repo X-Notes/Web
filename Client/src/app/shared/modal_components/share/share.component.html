@@ -1,0 +1,308 @@
+<div
+  appTheme
+  class="outer"
+  [ngClass]="[pService.isCollapseShared && (notes.length > 1 || folders.length > 1) ? 'half-helper' : '', notes.length > 1 || folders.length > 1 ? 'many-notes' : 'one-note']"
+>
+  <div class="few-notes" *ngIf="notes.length > 1 || folders.length > 1">
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.selectedNotes' | translate"
+      [autoClose]="false"
+      [isMessage]="pService.isCollapseShared"
+      (clickEvent)="collapseToggle()"
+    ></app-dialog-generic-header>
+
+    <ng-scrollbar
+      *ngIf="currentWindowType === windowType.Note"
+      class="notes-sharing"
+      [visibility]="'hover'"
+      [track]="'all'"
+      [appearance]="'compact'"
+    >
+      <div
+        class="note"
+        *ngFor="let item of notes"
+        CustomTooltip="{{item.title}}"
+        position="Top"
+        [ngStyle]="{'backgroundColor' : item.color}"
+        labelColor="{{item.color}}"
+        [ngClass]="{'active-note': currentNote?.id === item.id}"
+        (click)="changeNote(item)"
+        flagDisable="{{ disableTooltipUser() }}"
+      >
+        <p>{{item.title | replace : 'note' }}</p>
+      </div>
+    </ng-scrollbar>
+
+    <ng-scrollbar
+      *ngIf="currentWindowType === windowType.Folder"
+      class="notes-sharing"
+      [visibility]="'hover'"
+      [track]="'all'"
+      [appearance]="'compact'"
+    >
+      <div
+        class="note"
+        *ngFor="let item of folders"
+        CustomTooltip="{{item.title}}"
+        position="Top"
+        [ngStyle]="{'backgroundColor' : item.color}"
+        labelColor="{{item.color}}"
+        [ngClass]="{'active-note': currentFolder?.id === item.id}"
+        (click)="changeFolder(item)"
+        flagDisable="{{ disableTooltipUser() }}"
+      >
+        <p>{{item.title | replace : 'folder'}}</p>
+      </div>
+    </ng-scrollbar>
+  </div>
+  <div class="sharing">
+    <app-dialog-generic-header
+      [icon]="'icon-plus'"
+      [message]="'modal.ShareModal.Share' | translate"
+    ></app-dialog-generic-header>
+
+    <mat-tab-group class="tabs" mat-stretch-tabs #tabs>
+      <mat-tab isActive="true" label="{{ 'modal.ShareModal.access' | translate }}">
+        <div class="tab-content">
+          <div class="content-access">
+            <div class="link-access-field">
+              <input
+                *ngIf="currentWindowType === windowType.Note"
+                readonly
+                type="text"
+                value="{{ currentNote?.id | sharingLink: currentWindowType}}"
+                id="linkInputNote"
+              />
+              <input
+                *ngIf="currentWindowType === windowType.Folder"
+                readonly
+                type="text"
+                value="{{ currentFolder?.id | sharingLink: currentWindowType}}"
+                id="linkInputFolder"
+              />
+              <div
+                class="dropdown-wrapper"
+                *ngIf="currentFolder?.folderTypeId === folderType.Shared && currentWindowType === windowType.Folder"
+              >
+                <app-select
+                  class="dropdown-button"
+                  [translate]="'modal.ShareModal'"
+                  [selectValue]="refType[currentFolder?.refTypeId]"
+                  (selectValueChange)="changeRefTypeFolder($event)"
+                >
+                  <app-select-option
+                    *ngFor="let item of [refType.Viewer, refType.Editor]"
+                    [value]="item"
+                  >
+                    {{ ('modal.ShareModal.' + item) | translate }}
+                  </app-select-option>
+                </app-select>
+              </div>
+              <div
+                class="dropdown-wrapper"
+                *ngIf="currentNote?.noteTypeId === noteType.Shared && currentWindowType === windowType.Note"
+              >
+                <app-select
+                  class="dropdown-button"
+                  [translate]="'modal.ShareModal'"
+                  [selectValue]="refType[currentFolder?.refTypeId]"
+                  (selectValueChange)="changeRefTypeNote($event)"
+                >
+                  <app-select-option
+                    *ngFor="let item of [refType.Viewer, refType.Editor]"
+                    [value]="item"
+                  >
+                    {{ ('modal.ShareModal.' + item) | translate }}
+                  </app-select-option>
+                </app-select>
+              </div>
+              <div class="copy" #copy (click)="copyInputLink()">
+                <div class="ripple-container" matRipple [matRippleTrigger]="copy"></div>
+                <div class="icon">
+                  <mat-icon svgIcon="copy"></mat-icon>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="currentWindowType === windowType.Note" class="toggle-field">
+              <app-button-toggle
+                class="toggle"
+                [value]="isPrivateButtonActive ?  false : true"
+                [style]="'classic'"
+                (valueChange)="changeNoteType()"
+              >
+                <app-toggle-text
+                  on
+                  [color]="(theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
+                >
+                  {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
+                >
+                <app-toggle-text
+                  off
+                  [color]="(theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''"
+                >
+                  {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
+                >
+              </app-button-toggle>
+              <div class="toggle-description">
+                <p *ngIf="currentNote?.noteTypeId !== noteType.Shared">
+                  Anyone on the internet with this links
+                </p>
+                <p *ngIf="currentNote?.noteTypeId === noteType.Shared">
+                  Only people added can open with this link
+                </p>
+              </div>
+            </div>
+            <div *ngIf="currentWindowType === windowType.Folder" class="toggle-field">
+              <app-button-toggle
+                class="toggle"
+                [value]="isPrivateButtonActive ?  false : true"
+                [style]="'classic'"
+                (valueChange)="changeFolderType()"
+              >
+                <app-toggle-text
+                  on
+                  [color]="(theme$ | async) === themes.Dark && isPrivateButtonActive ? '#202020' : ''"
+                >
+                  {{ 'modal.ShareModal.personal' | translate }}</app-toggle-text
+                >
+                <app-toggle-text
+                  off
+                  [color]="(theme$ | async) === themes.Dark && isSharedButtonActive ? '#202020' : ''"
+                >
+                  {{ 'modal.ShareModal.shared' | translate }}</app-toggle-text
+                >
+              </app-button-toggle>
+              <div class="toggle-description">
+                <p *ngIf="currentFolder?.folderTypeId !== folderType.Shared">
+                  Anyone on the internet with this links
+                </p>
+                <p *ngIf="currentFolder?.folderTypeId === folderType.Shared">
+                  Only people added can open with this link
+                </p>
+              </div>
+            </div>
+          </div>
+          <ng-scrollbar
+            *ngIf="currentWindowType === windowType.Note"
+            class="user-access"
+            [visibility]="'hover'"
+            [appearance]="'compact'"
+          >
+            <div class="content-inner">
+              <app-user-on-entity-card
+                *ngFor="let user of usersOnPrivateNote$ | async"
+                [user]="user"
+                (changeUserPermission)="changeUserPermission($event, user.id)"
+                (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
+              ></app-user-on-entity-card>
+            </div>
+          </ng-scrollbar>
+
+          <ng-scrollbar
+            *ngIf="currentWindowType === windowType.Folder"
+            class="user-access"
+            [visibility]="'hover'"
+            [appearance]="'compact'"
+          >
+            <div class="content-inner">
+              <app-user-on-entity-card
+                *ngFor="let user of usersOnPrivateFolder$| async"
+                [user]="user"
+                (changeUserPermission)="changeUserPermission($event, user.id)"
+                (removeUserWithPermissions)="removeUserWithPermissions(user.id)"
+              ></app-user-on-entity-card>
+            </div>
+          </ng-scrollbar>
+        </div>
+      </mat-tab>
+      <mat-tab label="{{ 'modal.ShareModal.Share' | translate }}">
+        <div class="tab-content">
+          <app-search class="search" (changeOutput)="changed($event)"></app-search>
+          <ng-scrollbar
+            class="interaction-container"
+            [visibility]="'hover'"
+            [appearance]="'compact'"
+          >
+            <div *ngIf="selectedUsers.length > 0" class="mail-notification">
+              <div class="mail-container">
+                <div *ngFor="let user of selectedUsers" class="user-mail">
+                  <p>{{user.email}}</p>
+                  <div class="icon" (click)="removeUserFromInvites(user)">
+                    <mat-icon [inline]="true">close</mat-icon>
+                  </div>
+                </div>
+              </div>
+              <div class="checkbox-notification">
+                <mat-checkbox
+                  [checked]="isSendNotification"
+                  (change)="isSendNotification = !isSendNotification"
+                >
+                  {{ 'modal.ShareModal.alert' | translate }}
+                </mat-checkbox>
+              </div>
+              <div class="interaction-mail">
+                <textarea [(ngModel)]="messageTextArea"></textarea>
+                <div class="interaction-buttons">
+                  <app-select
+                    class="dropdown-button"
+                    [translate]="'modal.ShareModal'"
+                    [selectValue]="refType[currentFolder?.refTypeId]"
+                    (selectValueChange)="refTypeNotification($event)"
+                  >
+                    <app-select-option
+                      *ngFor="let item of [refType.Viewer, refType.Editor]"
+                      [value]="item"
+                    >
+                      {{ ('modal.ShareModal.' + item) | translate }}
+                    </app-select-option>
+                  </app-select>
+                  <button
+                    class="send-button"
+                    type="button"
+                    #changeAccessRipple
+                    (click)="sendInvites()"
+                  >
+                    <div class="content-button">
+                      <p>{{ 'modal.ShareModal.send' | translate }}</p>
+                    </div>
+                    <div
+                      class="ripple-container"
+                      matRipple
+                      [matRippleTrigger]="changeAccessRipple"
+                    ></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="user-suggestions">
+              <div *ngFor="let user of searchUsers" class="user">
+                <div class="photo">
+                  <img
+                    alt="user image"
+                    *ngIf="!user.noPhoto"
+                    (error)="user.noPhoto = true"
+                    [src]="user.photoPath | getImage: user.id"
+                  />
+                  <div *ngIf="user.noPhoto" class="no-photo">
+                    <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+                  </div>
+                </div>
+                <div class="email">
+                  <p>{{user.email}}</p>
+                </div>
+                <div class="user-access-func">
+                  <button type="button" name="Share user note" (click)="addUserToInvite(user)">
+                    <div class="icon">
+                      <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-scrollbar>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

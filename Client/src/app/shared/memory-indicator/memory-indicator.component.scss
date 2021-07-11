@@ -1,0 +1,62 @@
+:host {
+  height: 100%;
+}
+.progress-section {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 1.5rem;
+
+  .billing {
+    display: none;
+  }
+
+  .progress-bar-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .text {
+      font-weight: 300;
+      font-size: 0.625rem;
+      text-transform: uppercase;
+      margin-bottom: 0.3125rem;
+      transition: 0.2s ease;
+    }
+
+    .progress-bar {
+      height: 5px;
+      width: 100%;
+      border-radius: 3px;
+      background-color: #1a1a1a;
+
+      .indicator {
+        height: inherit;
+        border-radius: inherit;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .progress-section {
+    height: calc(100% - 2px);
+
+    .billing {
+      display: flex;
+      margin-right: 0.5rem;
+    }
+
+    .progress-bar-section {
+      width: calc(100% - 34px);
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .progress-section {
+    height: calc(100% - 1px);
+  }
+}

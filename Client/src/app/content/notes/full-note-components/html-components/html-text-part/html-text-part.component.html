@@ -1,0 +1,59 @@
+<div
+  appTheme
+  class="main-container"
+  (mouseover)="mouseEnter($event)"
+  (mouseleave)="mouseOut($event)"
+  (click)="setFocus($event)"
+>
+  <p
+    #contentHtml
+    class="block-generic default-text-size"
+    (input)="onInput($event)"
+    contenteditable="true"
+    [textContent]="content?.content"
+  ></p>
+  <div *ngIf="isActive" class="no-content">
+    <p>Text</p>
+    <div class="buttons" (mousedown)="preventClick($event)">
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
+        <mat-icon svgIcon="h1" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H2)">
+        <mat-icon svgIcon="h2" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
+        <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
+        <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, textType.Dotlist)">
+        <mat-icon svgIcon="listDot" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
+        <mat-icon svgIcon="list" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.PHOTOS, true)">
+        <mat-icon svgIcon="image" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.FILES, false)">
+        <mat-icon svgIcon="file" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.VIDEOS, false)">
+        <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.AUDIOS, true)">
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
+    </div>
+  </div>
+</div>
+<input
+  #uploadFile
+  type="file"
+  [multiple]="isMulptiply"
+  [accept]="formats"
+  hidden="true"
+  (change)="uploadFiles($event)"
+/>
+<app-html-link *ngIf="isLink" [link]="CurrentTextCotent"></app-html-link>

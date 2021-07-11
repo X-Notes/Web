@@ -1,0 +1,52 @@
+<app-dialog-generic-header
+  [icon]="'icon-plus'"
+  [message]="'modal.ColorModal.Colors' | translate"
+></app-dialog-generic-header>
+<div class="preview-container">
+  <div
+    *ngIf="(isNote$ | async) || (isFolderInner$ | async)"
+    class="note"
+    [ngStyle]="{'backgroundColor': current}"
+  >
+    <div class="labels">
+      <div class="label">
+        <p>Label</p>
+      </div>
+    </div>
+    <span class="title">Preview</span>
+    <span class="description"
+      >Document is a written, drawn, presented, or memorialized representation of thought.</span
+    >
+    <span class="date">{{date | date:'dd.MM.yyyy'}}</span>
+  </div>
+  <div *ngIf="(isFolder$ | async) && (isFolderInner$ | async) !== true" class="folder">
+    <div class="outer" [ngStyle]="{'backgroundColor': shadeColor(current, -20)}"></div>
+    <div class="inner" [ngStyle]="{'backgroundColor': current}">
+      <p>Preview</p>
+      <div class="notes-folder">
+        <div *ngFor="let item of [1,2,3]" class="note-folder">
+          <div class="icon">
+            <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+          </div>
+          <p>Hello Hello Hello Hello</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="color-container">
+  <div class="color-pallete">
+    <div
+      *ngFor="let item of pallete"
+      class="color"
+      [ngStyle]="{'backgroundColor': item, 'boxShadow': item === current ? '0px 2px 4px rgba(0, 0, 0, 0.25), inset 0 0 0 2px #0887a7' : ''}"
+      (click)="changeCurrent(item)"
+    ></div>
+  </div>
+</div>
+<div appTheme class="button-container">
+  <div class="save-button" (click)="changeColor()" #saveButton>
+    <span>{{ 'modal.ColorModal.save' | translate }}</span>
+    <div class="ripple-container" matRipple [matRippleTrigger]="saveButton"></div>
+  </div>
+</div>

@@ -1,0 +1,192 @@
+{
+    "notes": {
+      "name": "Notes"
+    },
+    "folders": {
+      "name": "Folders"
+    },
+    "labels": {
+      "name": "Labels"
+    },
+    "people": {
+      "name": "People"
+    },
+    "new": {
+      "note": "New note",
+      "folder": "New folder",
+      "background": "New background",
+      "label": "New label",
+      "inner-folder": "New note"
+    },
+    "subMenu": {
+      "all": "All",
+      "personal": "Personal",
+      "shared": "Shared",
+      "archive": "Archive",
+      "bin": "Bin",
+      "cancel": "Cancel"
+    },
+    "languages": {
+      "english": "English",
+      "russian": "Russian",
+      "ukraine": "Ukrainian"
+    },
+    "header": {
+      "selected": "Selected",
+      "new": "New note",
+      "select": "Select all",
+      "filter": "Filter",
+      "theme": "Theme",
+      "search": "Search...",
+      "questions": "Question",
+      "notification": "Notification",
+      "orientation": "Mode",
+      "back": "Go back",
+      "video": "Video",
+      "countUsers": "Number of users",
+      "menu": "Menu",
+      "defaultColor": "Default color",
+      "emptyTrash": "Empty Trash",
+      "filterMenu": {
+        "dateAsc": "Sort by asc",
+        "dateDesc": "Sort by desc",
+        "order": "Custom order"
+      }
+    },
+    "menu": {
+      "label": "Label",
+      "shared": "Shared",
+      "copy": "Copy",
+      "color": "Color",
+      "download": "Download",
+      "lock": "Locked",
+      "unlock": "Remove lock",
+      "archive": "Archive",
+      "delete": "Delete",
+      "history": "History",
+      "private": "Personal",
+      "privateFolder": "Personal"
+    },
+    "profile": {
+      "sectionProfile": "Profile",
+      "sectionGeneral": "General",
+      "sectionAccount": "Account",
+      "sectionPersonalization": "Personalization",
+      "nameUser": "Name",
+      "email": "Email addres",
+      "descriptionEmail": "Your email address is your identity on Noots and is used to log in",
+      "logOut": "Log out",
+      "update": "Update",
+      "language": "Language",
+      "personalKey": " Personal key",
+      "changeKey": "Change",
+      "resetKey": "Reset",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "genericTooltip": "See how the notes will look in the",
+      "genericPreview": "preview",
+      "noteSize": "Note size",
+      "noteDefault": "Default",
+      "noteBig": "Big"
+    },
+    "modal": {
+      "labelModal": {
+        "Labels": "Labels",
+        "search": "Label name..."
+      },
+      "ColorModal": {
+        "Colors": "Colors",
+        "save": "Save"
+      },
+      "ShareModal": {
+        "Share": "Share",
+        "access": "Access",
+        "sharing": "Sharing",
+        "personal": "Personal",
+        "shared": "Shared",
+        "selectedNotes": "Selected notes",
+        "search": "Search...",
+        "alert": "Send alert",
+        "editor": "Editor",
+        "viewer": "Viewer",
+        "send": "Send"
+      },
+      "folderManage": {
+        "notes": "Add notes to folder"
+      },
+      "lockModal": {
+        "lock": "Lock note",
+        "unLock": "Unlock note",
+        "unDecrypt": "Remove lock",
+        "remove": "Remove",
+        "сomeIn": "To come in",
+        "save": "Save",
+        "password": "Password",
+        "confirm": "Confirm password",
+        "placeholderPass": "Type password",
+        "placeholderConfirm": "Confirm",
+        "passMatchError": "passwords does not match",
+        "required": "Required field",
+        "minLength": "Password must be at least 6 characters",
+        "incorrect": "Incorrect password"
+      },
+      "reviewModal": {
+        "review": "Review document",
+        "close": "Close"
+      }
+    },
+    "innerNote": {
+      "menu": {
+        "add": "Add new audio",
+        "review": "Review",
+        "download": "Download",
+        "copy": "Copy url",
+        "delete": "Delete"
+      },
+      "photoMenu": {
+        "download": "Download",
+        "delete": "Delete",
+        "upload": "Upload new",
+        "countRow": "Photo in row",
+        "oneRow": "One in row",
+        "twoRow": "Two in row",
+        "threeRow": "Three in row",
+        "fourRow": "Four in row"
+      },
+      "audio": {
+        "previos": "Previos",
+        "next": "Next",
+        "play": "Play",
+        "pause": "Pause",
+        "loop": "loop",
+        "playlist": "Playlist",
+        "close": "Close"
+      }
+    },
+    "noResult": {
+      "privateNotes": "Personal notes will be displayed here",
+      "sharedNotes": "Shared notes will be displayed here",
+      "archiveNotes": "Archived notes will be displayed here",
+      "deletedNotes": "Deleted notes will be displayed here",
+      "allLabels": "Labels will be displayed here",
+      "deletedLabels": "Deleted labels will be displayed here",
+      "privateFolders": "Personal folders will be displayed here",
+      "sharedFolders": "Shared folders will be displayed here",
+      "archiveFolders": "Archived folders will be displayed here",
+      "deletedFolders": "Deleted folders will be displayed here",
+      "notification": "No unread notifications",
+      "notificationAll": "You have no notifications",
+      "history": "There is no history in the note yet",
+      "noAccessView": "You do not have permission to view the note"
+    },
+    "notification": {
+      "title": "Notification",
+      "readAll": "Read all notifications",
+      "seeAll": "See all notifications",
+      "goToNew": "Go to new notifications",
+      "newMessage": "New",
+      "readMessage": "Read message",
+      "ChangeUserPermissionNote": "Change user permission note"
+    }
+  }

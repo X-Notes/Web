@@ -1,0 +1,67 @@
+@import 'variables';
+@import 'audio.scss';
+
+:host {
+  display: flex;
+  padding: 0 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.playlist {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+
+  .playlist-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    padding: 0.25rem 0.5rem 0 0.5rem;
+
+    .title {
+      display: flex;
+      flex: 1;
+      font-size: 0.875rem;
+
+      p {
+        @include text-overflow;
+      }
+    }
+  }
+}
+
+.dark {
+  background-color: $dark-color;
+
+  .playlist-options {
+    .title {
+      color: #dedede;
+    }
+  }
+
+  button[type='button'] {
+    color: white;
+
+    &:hover {
+      background-color: $dark-button;
+    }
+  }
+}
+
+.light {
+  background-color: #fafafa;
+  color: $text-color;
+  border: 0.8px solid #bababa;
+
+  .playlist-options {
+    .title {
+      color: $text-color;
+    }
+  }
+
+  button[type='button']:hover {
+    background-color: #cacaca;
+  }
+}

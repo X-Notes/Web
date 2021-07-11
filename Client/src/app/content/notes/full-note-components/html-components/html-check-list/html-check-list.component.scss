@@ -1,0 +1,26 @@
+@import 'innerNote';
+
+.check-list {
+  width: 100%;
+  display: flex;
+
+  .checkbox-container {
+    display: flex;
+  }
+  .text-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 0.5rem;
+
+    p {
+      transition: 0.2s ease;
+    }
+
+    .checked-item {
+      text-decoration: line-through;
+      color: #8e8e8e;
+    }
+  }
+}
