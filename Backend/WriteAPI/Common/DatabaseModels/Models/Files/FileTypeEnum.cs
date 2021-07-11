@@ -2,10 +2,9 @@
 {
     public enum FileTypeEnum : int
     {
-        Text = 1,
-        Audio = 2,
-        Photo = 3,
-        Video = 4,
-        Document = 5
+        Audio = 1,
+        Photo = 2,
+        Video = 3,
+        Document = 4
     }
 }

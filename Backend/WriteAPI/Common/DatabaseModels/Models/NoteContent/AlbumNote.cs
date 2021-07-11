@@ -22,10 +22,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Album;
         }
 
-        public AlbumNote(AlbumNote entity, List<AppFile> photos, Guid NoteId)
+        public AlbumNote(AlbumNote entity, List<AlbumNoteAppFile> albumNoteAppFiles, Guid NoteId)
         {
             this.NoteId = NoteId;
-            Order = entity.Order;
 
             this.UpdatedAt = DateTimeOffset.Now;
             this.ContentTypeId = ContentTypeENUM.Album;
@@ -34,8 +33,25 @@ namespace Common.DatabaseModels.Models.NoteContent
             Height = entity.Height;
             CountInRow = entity.CountInRow;
             Name = entity.Name;
+            Order = entity.Order;
 
-            Photos = photos;
+            AlbumNoteAppFiles = albumNoteAppFiles;
+        }
+
+        public AlbumNote(AlbumNote entity, List<AppFile> files, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Album;
+
+            Width = entity.Width;
+            Height = entity.Height;
+            CountInRow = entity.CountInRow;
+            Name = entity.Name;
+            Order = entity.Order;
+
+            Photos = files;
         }
     }
 }

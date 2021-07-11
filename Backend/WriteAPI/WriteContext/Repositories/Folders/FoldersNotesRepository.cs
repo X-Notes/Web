@@ -37,5 +37,11 @@ namespace WriteContext.Repositories.Folders
             return await entities.Where(x => x.FolderId == folderId && notesIds.Contains(x.NoteId)).OrderBy(x => x.Order).ToListAsync();
         }
 
+        public async Task<List<FoldersNotes>> GetByNoteIdsIncludeFolder(List<Guid> noteIds)
+        {
+            return await entities.Where(ent => noteIds.Contains(ent.NoteId)).Include(x => x.Folder).ToListAsync();
+        }
+
+
     }
 }

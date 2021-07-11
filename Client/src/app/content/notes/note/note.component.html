@@ -37,7 +37,7 @@
         <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
       </ng-container>
       <ng-container *ngSwitchCase="contentType.NoteAlbum">
-        <app-note-preview-photos [album]="content"></app-note-preview-photos>
+        <app-note-preview-photos [album]="content" [userId]="note.userId"></app-note-preview-photos>
       </ng-container>
     </ng-container>
   </ng-container>
@@ -46,7 +46,14 @@
       <p>{{note.updatedAt | date: 'medium' }}</p>
     </div>
     <div class="help-icons">
-      <div *ngFor="let item of [1,2,3]" class="icon">
+      <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
+        <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+      </div>
+      <div
+        *ngFor="let item of note.additionalInfo?.noteFolderInfos"
+        [CustomTooltip]="item.folderName"
+        class="icon"
+      >
         <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
       </div>
     </div>

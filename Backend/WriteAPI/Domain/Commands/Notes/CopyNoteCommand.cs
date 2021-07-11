@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Domain.Commands.Notes
 {
-    public class CopyNoteCommand : BaseCommandEntity, IRequest<List<SmallNote>>
+    public class CopyNoteCommand : BaseCommandEntity, IRequest<List<Guid>>
     {
         [Required]
         public List<Guid> Ids { set; get; }

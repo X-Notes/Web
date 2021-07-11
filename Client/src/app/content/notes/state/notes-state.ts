@@ -437,9 +437,10 @@ export class NoteStore {
   @Action(CopyNotes)
   async copyNotes(
     { getState, dispatch, patchState }: StateContext<NoteState>,
-    { typeNote, selectedIds }: CopyNotes,
+    { typeNote, selectedIds, pr }: CopyNotes,
   ) {
-    const newNotes = await this.api.copyNotes(selectedIds).toPromise();
+    const newIds = await this.api.copyNotes(selectedIds).toPromise();
+    const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
     const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
     dispatch(
       new UpdateNotes(

@@ -44,7 +44,7 @@ namespace BI.Services.Permissions
 
                 if (note.UserId == user.Id)
                 {
-                    return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: true);
+                    return new UserPermissionsForNote().SetFullAccess(user, note);
                 }
 
                 switch (note.NoteTypeId)
@@ -55,7 +55,7 @@ namespace BI.Services.Permissions
                             {
                                 case RefTypeENUM.Editor:
                                     {
-                                        return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
+                                        return new UserPermissionsForNote().SetFullAccess(user, note);
                                     }
                                 case RefTypeENUM.Viewer:
                                     {
@@ -69,7 +69,7 @@ namespace BI.Services.Permissions
                             var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
                             if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
                             {
-                                return new UserPermissionsForNote().SetFullAccess(user, note, isOwner: false);
+                                return new UserPermissionsForNote().SetFullAccess(user, note);
                             }
                             if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
                             {
@@ -79,6 +79,7 @@ namespace BI.Services.Permissions
                         }
                 }
             }
+
             return new UserPermissionsForNote().SetUserNotFounded();
         }
 

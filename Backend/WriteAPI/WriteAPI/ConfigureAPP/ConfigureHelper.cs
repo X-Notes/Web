@@ -9,7 +9,6 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Storage;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,6 @@ using BI.Services.Personalizations;
 using BI.Services.RelatedNotes;
 using BI.Services.Search;
 using BI.Services.Sharing;
-using BI.Services.user;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
@@ -84,6 +82,8 @@ using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
 using Common.DTO.Orders;
+using Common.DTO.Notes.AdditionalContent;
+using BI.Services.UserHandlers;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -132,10 +132,11 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<DeleteNotesCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
-            services.AddScoped<IRequestHandler<CopyNoteCommand, List<SmallNote>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<CopyNoteCommand, List<Guid>>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
+            services.AddScoped<IRequestHandler<GetAdditionalContentInfoQuery, List<BottomNoteContent>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
@@ -237,12 +238,13 @@ namespace WriteAPI.ConfigureAPP
 
 
             //Files
-            services.AddScoped<IRequestHandler<GetFileById, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFileByPath, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveFilesByPathesCommand, Unit>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();
@@ -289,7 +291,11 @@ namespace WriteAPI.ConfigureAPP
 
             // Note Content 
             services.AddScoped<AlbumNoteRepository>();
+            services.AddScoped<AlbumNoteAppFileRepository>();
+
             services.AddScoped<AudioNoteRepository>();
+            services.AddScoped<AudioNoteAppFileRepository>();
+
             services.AddScoped<VideoNoteRepository>();
             services.AddScoped<DocumentNoteRepository>();
             services.AddScoped<TextNotesRepository>();

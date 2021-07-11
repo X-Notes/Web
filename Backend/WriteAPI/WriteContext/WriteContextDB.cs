@@ -290,7 +290,6 @@ namespace WriteContext
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<FileType>().HasData(
-                new FileType { Id = FileTypeEnum.Text, Name = nameof(FileTypeEnum.Text) },
                 new FileType { Id = FileTypeEnum.Audio, Name = nameof(FileTypeEnum.Audio) },
                 new FileType { Id = FileTypeEnum.Photo, Name = nameof(FileTypeEnum.Photo) },
                 new FileType { Id = FileTypeEnum.Video, Name = nameof(FileTypeEnum.Video) },

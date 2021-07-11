@@ -177,7 +177,7 @@ export class NotesService implements OnDestroy {
         return this.store.selectSnapshot(NoteStore.archiveNotes);
       }
       case NoteTypeENUM.Deleted: {
-        this.store.selectSnapshot(NoteStore.deletedNotes);
+        return this.store.selectSnapshot(NoteStore.deletedNotes);
       }
       default: {
         throw new Error('Incorrect type');
@@ -231,6 +231,7 @@ export class NotesService implements OnDestroy {
           this.notes[index].contents = note.contents;
         });
         await this.murriService.refreshLayoutAsync();
+        this.updateService.ids$.next([]);
       }
     });
   }
@@ -280,7 +281,7 @@ export class NotesService implements OnDestroy {
     });
   };
 
-  firstInit() {
+  async firstInit() {
     let tempNotes = this.transformNotes(this.getNotesByCurrentType);
     tempNotes = this.orderBy(tempNotes);
     if (!this.isFiltedMode) {
@@ -300,6 +301,13 @@ export class NotesService implements OnDestroy {
         }
       });
     this.firstInitFlag = true;
+
+    const noteIds = this.notes.map((x) => x.id);
+    const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
+    for (const info of additionalInfo) {
+      const noteIndex = this.notes.findIndex((x) => x.id == info.noteId);
+      this.notes[noteIndex].additionalInfo = info;
+    }
   }
 
   changeColorHandler(updateColor: UpdateColor[]) {

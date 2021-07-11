@@ -64,7 +64,7 @@ namespace BI.Services.Folders
                 var foldersNotes = await foldersNotesRepository.GetWhere(x => x.FolderId == request.FolderId);
                 var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
 
-                var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id);
+                var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id, request.Settings);
 
                 if (string.IsNullOrEmpty(request.Search))
                 {

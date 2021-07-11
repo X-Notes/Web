@@ -88,7 +88,7 @@
                 <app-select
                   class="dropdown-button"
                   [translate]="'modal.ShareModal'"
-                  [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
+                  [selectValue]="refType[currentFolder?.refTypeId]"
                   (selectValueChange)="changeRefTypeFolder($event)"
                 >
                   <app-select-option
@@ -106,7 +106,7 @@
                 <app-select
                   class="dropdown-button"
                   [translate]="'modal.ShareModal'"
-                  [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
+                  [selectValue]="refType[currentFolder?.refTypeId]"
                   (selectValueChange)="changeRefTypeNote($event)"
                 >
                   <app-select-option
@@ -247,7 +247,7 @@
                   <app-select
                     class="dropdown-button"
                     [translate]="'modal.ShareModal'"
-                    [selectValue]="refType[currentFolder?.refTypeId].toLowerCase()"
+                    [selectValue]="refType[currentFolder?.refTypeId]"
                     (selectValueChange)="refTypeNotification($event)"
                   >
                     <app-select-option

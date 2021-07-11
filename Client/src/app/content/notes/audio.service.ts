@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import { StreamAudioState } from './models/stream-audio-state.model';
-import { AudioEvents } from './models/audio-events.enum';
+import { AudioEvents } from './models/enums/audio-events.enum';
 import { AudioModel } from './models/content-model.model';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';

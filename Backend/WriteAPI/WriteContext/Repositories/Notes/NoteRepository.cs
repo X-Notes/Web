@@ -62,23 +62,6 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContent(Guid userId, NoteTypeENUM typeId, bool isHistory)
-        {
-            return await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents)
-                .ThenInclude(z => (z as AlbumNote).Photos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideoNote).AppFile)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentNote).AppFile)
-                .OrderBy(x => x.Order)
-                .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == isHistory).ToListAsync();
-        }
-
-
         public List<int> GetFilterTypes(PersonalizationSettingDTO settings)
         {
             var types = new List<int>();
@@ -105,15 +88,9 @@ namespace WriteContext.Repositories.Notes
             return types;
         }
 
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
-            Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
+
+        public async Task<List<Note>> GetWithFilteredContent(List<Note> notes, PersonalizationSettingDTO settings)
         {
-            var notes = await context.Notes
-                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false)
-                    .ToListAsync();
-
-
             var types = GetFilterTypes(settings);
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();
@@ -131,110 +108,69 @@ namespace WriteContext.Repositories.Notes
             return notes;
         }
 
+        public async Task<List<Note>> GetNotesByUserIdAndTypeIdWithContentWithPersonalization(
+            Guid userId, NoteTypeENUM typeId, PersonalizationSettingDTO settings)
+        {
+            var notes = await context.Notes
+                    .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false)
+                    .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
+        }
+
         public async Task<List<Note>> GetNotesByNoteIdsIdWithContentWithPersonalization(
-            List<Guid> noteIds, PersonalizationSettingDTO settings)
+            IEnumerable<Guid> noteIds, PersonalizationSettingDTO settings)
         {
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                     .Where(x => noteIds.Contains(x.Id) && x.IsHistory == false)
-                    .OrderBy(x => x.Order).ToListAsync();
+                    .ToListAsync();
 
-            var types = GetFilterTypes(settings);
-
-            var contents = await context.BaseNoteContents
-                .Where(z => types.Contains((int)z.ContentTypeId) && noteIds.Contains(z.NoteId))
-                .Include(z => (z as AlbumNote).Photos)
-                .Include(x => (x as VideoNote).AppFile)
-                .Include(x => (x as AudiosPlaylistNote).Audios)
-                .Include(x => (x as DocumentNote).AppFile).ToListAsync();
-
-            var contentLookUp = contents.ToLookup(x => x.NoteId);
-            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(settings.ContentInNoteCount).OrderBy(z => z.Order).ToList());
-
-            return notes;
+            return await GetWithFilteredContent(notes, settings);
         }
 
-        public async Task<List<Note>> GetNotesByIdsWithContent(IEnumerable<Guid> ids)
+        public async Task<List<Note>> GetNotesByUserId(Guid userId, PersonalizationSettingDTO settings)
         {
-            return await context.Notes
+            var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Where(x => x.UserId == userId && x.IsHistory == false)
+                .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
+        }
+
+
+        public async Task<Note> GetNoteByIdForCopy(Guid noteId)
+        {
+            return await entities
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as AlbumNote).AlbumNoteAppFiles)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as AlbumNote).Photos)
                 .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideoNote).AppFile)
+                .ThenInclude(x => (x as AudiosPlaylistNote).AudioNoteAppFiles)
                 .Include(x => x.Contents)
                 .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentNote).AppFile)
-                .Where(x => ids.Contains(x.Id) && x.IsHistory == false).ToListAsync();
-        }
-
-
-
-        public async Task<List<Note>> GetNotesByUserIdAndTypeIdNoContent(Guid userId, NoteTypeENUM typeId)
-        {
-            return await context.Notes
-                .OrderBy(x => x.Order)
-                .Where(x => x.UserId == userId && x.NoteTypeId == typeId).ToListAsync();
-        }
-
-        public async Task<Note> GetNoteByUserIdAndTypeIdForCopy(Guid noteId)
-        {
-            return await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents)
-                .ThenInclude(z => (z as AlbumNote).Photos)
-                .Include(x => x.Contents)
                 .ThenInclude(x => (x as VideoNote).AppFile)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => x.Contents)
                 .ThenInclude(x => (x as DocumentNote).AppFile)
                 .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
 
-        public async Task<List<Note>> GetNotesByUserId(Guid userId)
+        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId, PersonalizationSettingDTO settings)
         {
-            return await context.Notes
+            var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents)
-                .ThenInclude(z => (z as AlbumNote).Photos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideoNote).AppFile)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentNote).AppFile)
-                .Where(x => x.UserId == userId && x.IsHistory == false)
-                .OrderBy(x => x.CreatedAt)
-                .ToListAsync();
-        }
-
-        public async Task<List<Note>> GetNotesByUserIdWithoutNote(Guid userId, Guid noteId)
-        {
-            return await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents)
-                .ThenInclude(z => (z as AlbumNote).Photos)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as VideoNote).AppFile)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
-                .Include(x => x.Contents)
-                .ThenInclude(x => (x as DocumentNote).AppFile)
                 .Where(x => x.UserId == userId && x.Id != noteId && x.IsHistory == false)
-                .OrderBy(x => x.CreatedAt)
                 .ToListAsync();
+
+            return await GetWithFilteredContent(notes, settings);
         }
 
-
-        public async Task<List<Note>> GetNotesWithLabelsByUserId(Guid userId)
-        {
-            return await context.Notes
-                .Include(x => x.LabelsNotes).ThenInclude(x => x.Label)
-                .Where(x => x.UserId == userId).ToListAsync();
-        }
 
         // UPPER MENU FUNCTIONS
 

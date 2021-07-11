@@ -67,7 +67,7 @@ import { TransformToFileContent } from '../models/transform-file-content.model';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { RemovePhotoFromAlbum } from '../models/remove-photo-from-album.model';
 import { SidebarNotesService } from '../sidebar-notes.service';
-import { TypeUploadFile } from '../models/type-upload-file.enum';
+import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
 import { ApiNoteHistoryService } from '../api-note-history.service';
 import { NoteHistory } from '../models/history/note-history.model';
 import { RemoveAudioFromPlaylist } from '../models/remove-audio-from-playlist.model';

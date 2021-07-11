@@ -24,6 +24,8 @@ import {
 } from './models/content-model.model';
 import { OperationResult } from './models/operation-result.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
+import { BottomNoteContent } from './models/bottom-note-content.model';
+import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -39,7 +41,7 @@ export class ApiServiceNotes {
     return this.httpClient
       .get<SmallNote[]>(`${environment.writeAPI}/api/note/type/${type}`, { params })
       .pipe(
-        map((z) => this.transformNotes(z)),
+        map((z) => TransformNoteUtil.transformNotes(z)),
         map((notes) => new Notes(type, notes)),
       );
   }
@@ -52,7 +54,17 @@ export class ApiServiceNotes {
 
     return this.httpClient
       .post<SmallNote[]>(`${environment.writeAPI}/api/note/many`, obj)
-      .pipe(map((z) => this.transformNotes(z)));
+      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
+  }
+
+  getAdditionalInfos(noteIds: string[]) {
+    const obj = {
+      noteIds,
+    };
+    return this.httpClient.post<BottomNoteContent[]>(
+      `${environment.writeAPI}/api/note/additional`,
+      obj,
+    );
   }
 
   addLabel(labelId: string, noteIds: string[]) {
@@ -97,7 +109,7 @@ export class ApiServiceNotes {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<SmallNote[]>(`${environment.writeAPI}/api/note/copy`, obj);
+    return this.httpClient.patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj);
   }
 
   deleteNotes(ids: string[]) {
@@ -118,10 +130,13 @@ export class ApiServiceNotes {
     return this.httpClient.get<RequestFullNote>(`${environment.writeAPI}/api/note/${id}`);
   }
 
-  getAll() {
+  getAll(settings: PersonalizationSetting) {
+    const obj = {
+      settings,
+    };
     return this.httpClient
-      .get<SmallNote[]>(`${environment.writeAPI}/api/note/all`)
-      .pipe(map((z) => this.transformNotes(z)));
+      .post<SmallNote[]>(`${environment.writeAPI}/api/note/all`, obj)
+      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
   new() {
@@ -284,29 +299,8 @@ export class ApiServiceNotes {
   getContents(noteId: string): Observable<ContentModel[]> {
     return this.httpClient
       .get<ContentModel[]>(`${environment.writeAPI}/api/fullnote/contents/${noteId}`)
-      .pipe(map((x) => this.transformContent(x)));
+      .pipe(map((x) => TransformNoteUtil.transformContent(x)));
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  transformNotes(notes: SmallNote[]) {
-    return notes.map((note) => {
-      // eslint-disable-next-line no-param-reassign
-      note.contents = this.transformContent(note.contents);
-      return note;
-    });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  transformContent(contents: ContentModel[]) {
-    return contents.map((z) => {
-      if (z.typeId === ContentTypeENUM.NoteAlbum) {
-        return new Album(z);
-      }
-      return z;
-    });
-  }
-
-  // ALBUMS
 
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
     return this.httpClient

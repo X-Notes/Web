@@ -9,11 +9,13 @@ using BI.Mapping;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
+using Common.DTO.Notes.AdditionalContent;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Queries.Notes;
 using Domain.Queries.Permissions;
 using MediatR;
+using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
@@ -21,6 +23,7 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Notes
 {
     public class NoteHandlerQuery :
+        IRequestHandler<GetAdditionalContentInfoQuery, List<BottomNoteContent>>,
         IRequestHandler<GetNotesByTypeQuery, List<SmallNote>>,
         IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
@@ -36,6 +39,7 @@ namespace BI.Services.Notes
         private readonly AppCustomMapper noteCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
+        private readonly FoldersNotesRepository foldersNotesRepository;
 
         public NoteHandlerQuery(
             IMapper mapper,
@@ -45,7 +49,8 @@ namespace BI.Services.Notes
             AppCustomMapper noteCustomMapper,
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
-            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository)
+            UsersOnPrivateNotesRepository usersOnPrivateNotesRepository,
+            FoldersNotesRepository foldersNotesRepository)
         {
             this.mapper = mapper;
             this.noteRepository = noteRepository;
@@ -55,6 +60,7 @@ namespace BI.Services.Notes
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
+            this.foldersNotesRepository = foldersNotesRepository;
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByTypeQuery request, CancellationToken cancellationToken)
@@ -69,7 +75,7 @@ namespace BI.Services.Notes
                 {
                     var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhere(x => x.UserId == user.Id);
                     var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
-                    var sharedNotes = await noteRepository.GetNotesByIdsWithContent(notesIds);
+                    var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
                     notes.AddRange(sharedNotes);
                     notes = notes.DistinctBy(x => x.Id).ToList();
                 }
@@ -79,7 +85,7 @@ namespace BI.Services.Notes
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
 
-            throw new System.Exception("User not found");
+            throw new Exception("User not found");
         }
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
@@ -136,13 +142,13 @@ namespace BI.Services.Notes
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var notes = await noteRepository.GetNotesByUserId(user.Id);
+                var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
                 return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
 
-            throw new System.Exception("User not found");
+            throw new Exception("User not found");
         }
 
         public async Task<List<SmallNote>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
@@ -162,6 +168,22 @@ namespace BI.Services.Notes
             var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
 
             return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
+        }
+
+        public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentInfoQuery request, CancellationToken cancellationToken)
+        {
+            var usersOnNotes = await usersOnPrivateNotesRepository.GetByNoteIdsWithUser(request.NoteIds);
+            var notesFolder = await foldersNotesRepository.GetByNoteIdsIncludeFolder(request.NoteIds);
+
+            var usersOnNotesDict = usersOnNotes.ToLookup(x => x.NoteId);
+            var notesFolderDict = notesFolder.ToLookup(x => x.NoteId);
+
+            return request.NoteIds.Select(noteId => new BottomNoteContent
+            {
+                IsHasUserOnNote = usersOnNotesDict.Contains(noteId),
+                NoteId = noteId,
+                NoteFolderInfos = notesFolderDict.Contains(noteId) ? notesFolderDict[noteId].Select(x => new NoteFolderInfo(x.FolderId, x.Folder.Title)).ToList() : null
+            }).ToList();
         }
     }
 

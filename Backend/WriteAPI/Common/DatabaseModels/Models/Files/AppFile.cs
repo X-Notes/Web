@@ -21,6 +21,7 @@ namespace Common.DatabaseModels.Models.Files
         public FileType FileType { set; get; }
 
         public string TextFromPhoto { set; get; }
+
         public string RecognizeObject { set; get; }
 
         public Guid UserId { set; get; }
@@ -64,6 +65,28 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+        }
+
+        public AppFile(string pathNoPhotoContent, AppFile appFile, Guid userId)
+        {
+            PathNonPhotoContent = pathNoPhotoContent;
+            ContentType = appFile.ContentType;
+            Size = appFile.Size;
+            FileTypeId = appFile.FileTypeId;
+            UserId = userId;
+            Name = appFile.Name;
+        }
+
+        public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, AppFile appFile, Guid userId)
+        {
+            PathPhotoSmall = pathPhotoSmall;
+            PathPhotoMedium = pathPhotoMedium;
+            PathPhotoBig = pathPhotoBig;
+            ContentType = appFile.ContentType;
+            Size = appFile.Size;
+            FileTypeId = appFile.FileTypeId;
+            UserId = userId;
+            Name = appFile.Name;
         }
 
         public string GetFromSmallPath

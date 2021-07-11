@@ -19,7 +19,7 @@ namespace WriteContext.Repositories.Users
         }
 
 
-        public async Task<User> GetUserByEmailWithPersonalization(string email)
+        public async Task<User> GetUserByEmailIncludeBackgroundAndPhoto(string email)
         {
             return await context.Users
                 .Include(x => x.CurrentBackground)

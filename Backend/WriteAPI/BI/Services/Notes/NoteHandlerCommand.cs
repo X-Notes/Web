@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BI.Helpers;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.ContentParts;
@@ -35,43 +37,34 @@ namespace BI.Services.Notes
         IRequestHandler<DeleteNotesCommand, Unit>,
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
-        IRequestHandler<CopyNoteCommand, List<SmallNote>>,
+        IRequestHandler<CopyNoteCommand, List<Guid>>,
         IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
         IRequestHandler<AddLabelOnNoteCommand, Unit>
     {
 
         private readonly UserRepository userRepository;
         private readonly NoteRepository noteRepository;
-        private readonly LabelRepository labelRepository;
-        private readonly AppRepository appRepository;
-        private readonly IFilesStorage filesStorage;
         private readonly AppCustomMapper noteCustomMapper;
         private readonly LabelsNotesRepository labelsNotesRepository;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly IMediator _mediator;
         private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
-        private readonly FileRepository fileRepository;
+
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository,
-            AppRepository appRepository, IFilesStorage filesStorage, AppCustomMapper noteCustomMapper,
-            IMediator _mediator, LabelRepository labelRepository, LabelsNotesRepository labelsNotesRepository,
+            AppCustomMapper noteCustomMapper, IMediator _mediator, LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService,
-            FileRepository fileRepository)
+            HistoryCacheService historyCacheService)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
-            this.appRepository = appRepository;
-            this.filesStorage = filesStorage;
             this.noteCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
-            this.labelRepository = labelRepository;
             this.labelsNotesRepository = labelsNotesRepository;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
-            this.fileRepository = fileRepository;
         }
 
 
@@ -157,18 +150,19 @@ namespace BI.Services.Notes
             if (selectdeletenotes.Count == request.Ids.Count)
             {
                 var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
-                var photos = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
+                var noteFiles = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
                 var documents = contents.Where(x => x is DocumentNote).Select(x => x as DocumentNote).Select(x => x.AppFile);
                 var audios = contents.Where(x => x is AudiosPlaylistNote).Select(x => x as AudiosPlaylistNote).SelectMany(x => x.Audios);
                 var videos = contents.Where(x => x is VideoNote).Select(x => x as VideoNote).Select(x => x.AppFile);
-                photos.AddRange(documents);
-                photos.AddRange(audios);
-                photos.AddRange(videos);
-                var pathes = photos.SelectMany(x => x.GetNotNullPathes()).ToList();
-                await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
+                noteFiles.AddRange(documents);
+                noteFiles.AddRange(audios);
+                noteFiles.AddRange(videos);
 
-                await fileRepository.RemoveRange(photos);
+                await baseNoteContentRepository.RemoveRange(contents);
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
+
+                noteFiles = noteFiles.DistinctBy(x => x.Id).ToList();
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), noteFiles));
             }
             else
             {
@@ -214,7 +208,7 @@ namespace BI.Services.Notes
             return Unit.Value;
         }
 
-        public async Task<List<SmallNote>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
+        public async Task<List<Guid>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var resultIds = new List<Guid>();
             var order = -1;
@@ -223,9 +217,9 @@ namespace BI.Services.Notes
                 var command = new GetUserPermissionsForNote(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
-                if (permissions.CanWrite)
+                if (permissions.CanRead)
                 {
-                    var noteForCopy = await noteRepository.GetNoteByUserIdAndTypeIdForCopy(id);
+                    var noteForCopy = await noteRepository.GetNoteByIdForCopy(id);
                     var newNote = new Note()
                     {
                         Title = noteForCopy.Title,
@@ -262,47 +256,72 @@ namespace BI.Services.Notes
                                 }
                             case AlbumNote album:
                                 {
-                                    var files = new List<FilesBytes>();
-                                    foreach (var photo in album.Photos)
-                                    {
-                                        var file = await _mediator.Send(new GetFileById(photo.Id, permissions.User.Id.ToString()));
-                                        files.Add(file);
-                                    }
-                                    var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.User.Id, files, dbNote.Entity.Id));
-                                    var dbFiles = fileList.Select(x => x.AppFile).ToList();
 
-                                    contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
+                                    if(permissions.IsOwner)
+                                    {
+                                        var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile
+                                        {
+                                            AlbumNoteId = dbNote.Entity.Id,
+                                            AppFileId = x.AppFileId
+                                        }).ToList();
+                                        contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommands = album.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Images));
+                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                        var copyPhotos = (await Task.WhenAll(tasks)).ToList();
+                                        contents.Add(new AlbumNote(album, copyPhotos, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case VideoNote videoNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(videoNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveVideosToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
-
-                                    contents.Add(new VideoNote(videoNote, newfile, dbNote.Entity.Id));
+                                    if (permissions.IsOwner)
+                                    {
+                                        contents.Add(new VideoNote(videoNote, videoNote.AppFileId, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, videoNote.AppFile, ContentTypesFile.Videos);
+                                        var fileCopy = await _mediator.Send(copyCommand);
+                                        contents.Add(new VideoNote(videoNote, fileCopy, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case AudiosPlaylistNote audioNote:
                                 {
-                                    var files = new List<FilesBytes>();
-
-                                    foreach (var audio in audioNote.Audios)
+                                    if(permissions.IsOwner)
                                     {
-                                        var file = await _mediator.Send(new GetFileById(audio.Id, permissions.User.Id.ToString()));
-                                        files.Add(file);
+                                        var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                        {
+                                            AudioNoteId = dbNote.Entity.Id,
+                                            AppFileId = x.AppFileId
+                                        }).ToList();
+
+                                        contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, dbNote.Entity.Id));
                                     }
-
-                                    var fileList = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, files, dbNote.Entity.Id));
-
-                                    contents.Add(new AudiosPlaylistNote(audioNote, fileList, dbNote.Entity.Id));
+                                    else
+                                    {
+                                        var copyCommands = audioNote.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Audios));
+                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                        var copyAudios = (await Task.WhenAll(tasks)).ToList();
+                                        contents.Add(new AudiosPlaylistNote(audioNote, copyAudios, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             case DocumentNote documentNote:
                                 {
-                                    var file = await _mediator.Send(new GetFileById(documentNote.AppFileId, permissions.User.Id.ToString()));
-                                    var newfile = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id, file, dbNote.Entity.Id));
-
-                                    contents.Add(new DocumentNote(documentNote, newfile, dbNote.Entity.Id));
+                                    if (permissions.IsOwner)
+                                    {
+                                        contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, dbNote.Entity.Id));
+                                    }
+                                    else
+                                    {
+                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, documentNote.AppFile, ContentTypesFile.Files);
+                                        var fileCopy = await _mediator.Send(copyCommand);
+                                        contents.Add(new DocumentNote(documentNote, fileCopy, dbNote.Entity.Id));
+                                    }
                                     continue;
                                 }
                             default:
@@ -316,21 +335,21 @@ namespace BI.Services.Notes
             }
 
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var dbNotes = await noteRepository.GetNotesByUserIdAndTypeIdWithContent(user.Id, NoteTypeENUM.Private, request.IsHistory);
+
+            var dbNotes = await noteRepository.GetWhere(x => 
+                x.UserId == user.Id 
+                && x.NoteTypeId == NoteTypeENUM.Private
+                && x.IsHistory == request.IsHistory);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
+
             dbNotes = dbNotes.Zip(orders, (note, order) =>
             {
                 note.Order = order;
                 return note;
             }).ToList();
 
-            await noteRepository.UpdateRange(dbNotes);
-
-            var resultNotes = dbNotes.Where(dbNote => resultIds.Contains(dbNote.Id)).ToList();
-
-            resultNotes.ForEach(note => note.Contents = note.Contents.OrderBy(x => x.Order).ToList());
-            return noteCustomMapper.MapNotesToSmallNotesDTO(resultNotes, takeContentLength: 2);
+            return resultIds;
         }
 
         public async Task<Unit> Handle(RemoveLabelFromNoteCommand request, CancellationToken cancellationToken)

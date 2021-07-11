@@ -37,7 +37,11 @@ export class ClearColorNotes {
 export class CopyNotes {
   static type = '[Notes] Copy notes';
 
-  constructor(public typeNote: NoteTypeENUM, public selectedIds: string[]) {}
+  constructor(
+    public typeNote: NoteTypeENUM,
+    public selectedIds: string[],
+    public pr: PersonalizationSetting,
+  ) {}
 }
 
 export class ClearAddedPrivateNotes {

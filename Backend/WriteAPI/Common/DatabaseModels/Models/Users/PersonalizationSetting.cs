@@ -38,6 +38,8 @@ namespace Common.DatabaseModels.Models.Users
             IsViewPhotosOnNote = true;
             IsViewTextOnNote = true;
             IsViewDocumentOnNote = true;
+            SortedNoteByTypeId = SortedByENUM.CustomOrder;
+            SortedFolderByTypeId = SortedByENUM.CustomOrder;
             UserId = userId;
 
             return this;

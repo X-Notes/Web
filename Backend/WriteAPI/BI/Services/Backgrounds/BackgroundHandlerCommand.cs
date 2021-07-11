@@ -54,18 +54,14 @@ namespace BI.Services.Backgrounds
             return Unit.Value;
         }
 
-        // TODO REMOVE FILES FROM STORAGE
         public async Task<Unit> Handle(RemoveBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithBackgrounds(request.Email);
             var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
             if (back != null)
             {
-                var pathes = back.File.GetNotNullPathes();
-                await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), pathes));
                 await backgroundRepository.Remove(back);
-                var dbFile = await fileRepository.FirstOrDefaultAsync(x => x.Id == back.FileId);
-                await fileRepository.Remove(dbFile);
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File).SetIsNoCheckDelete());
             }
             return Unit.Value;
         }
@@ -82,7 +78,7 @@ namespace BI.Services.Backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var photoType = FileHelper.GetPhotoType(request.File.ContentType);
+            var photoType = FileHelper.GetExtension(request.File.FileName);
 
             var ms = new MemoryStream();
             await request.File.CopyToAsync(ms);
@@ -129,7 +125,7 @@ namespace BI.Services.Backgrounds
 
             if (!success)
             {
-                await _mediator.Send(new RemoveFilesByPathesCommand(user.Id.ToString(), appFile.GetNotNullPathes()));
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), appFile));
                 return null;
             }
 

@@ -798,27 +798,18 @@ export class MenuButtonsService {
 
   deleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
 
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
-      const ids = [note.id];
-      this.store.dispatch(new DeleteNotesPermanently(ids, NoteTypeENUM.Deleted));
+      const idsInner = [note.id];
+      this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted));
+      this.deletePermSnackbar(language, 'Note', false);
     } else {
-      const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new DeleteNotesPermanently(ids, NoteTypeENUM.Deleted));
-      const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-
-      if (isInnerNote) {
-        const note = this.store.selectSnapshot(NoteStore.oneFull);
-        const idsInner = [note.id];
-        this.deletePermSnackbar(language, 'Note', false);
-        this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted));
-      } else {
-        const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
-        const isMany = idsOuter.length > 1;
-        this.deletePermSnackbar(language, 'Note', isMany);
-        this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted));
-      }
+      const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
+      const isMany = idsOuter.length > 1;
+      this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted));
+      this.deletePermSnackbar(language, 'Note', isMany);
     }
   }
 
@@ -838,14 +829,15 @@ export class MenuButtonsService {
   // COPY
   private copyNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const ids = [note.id];
-      this.store.dispatch(new CopyNotes(note.noteTypeId, ids));
+      this.store.dispatch(new CopyNotes(note.noteTypeId, ids, pr));
     } else {
       const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
       const ids = this.store.selectSnapshot(NoteStore.selectedIds);
-      this.store.dispatch(new CopyNotes(noteType, ids));
+      this.store.dispatch(new CopyNotes(noteType, ids, pr));
     }
   }
 

@@ -67,7 +67,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC
                 var bytes = await request.Audios.GetFilesBytesAsync();
-                var files = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, bytes, note.Id));
+                var files = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, bytes, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -101,8 +101,7 @@ namespace BI.Services.Notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
+                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), files));
                 }
             }
 
@@ -136,12 +135,10 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.Remove(contentForRemove);
                     await baseNoteContentRepository.UpdateRange(contents);
-                    await fileRepository.RemoveRange(contentForRemove.Audios);
 
                     await transaction.CommitAsync();
 
-                    var pathes = contentForRemove.Audios.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
+                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.Audios));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -175,39 +172,16 @@ namespace BI.Services.Notes
                 if (playlist.Audios.Count == 0)
                 {
                     var resp = await _mediator.Send(new RemovePlaylistCommand(note.Id, playlist.Id, request.Email));
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
                 }
                 else
                 {
-                    using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                    try
-                    {
-                        await baseNoteContentRepository.Update(playlist);
-                        await fileRepository.Remove(audioForRemove);
-
-                        await transaction.CommitAsync();
-
-                        var filesForRemove = audioForRemove.GetNotNullPathes().ToList();
-                        await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), filesForRemove));
-
-                        historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
-                        await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                        return new OperationResult<Unit>(Success: true, Unit.Value);
-                    }
-                    catch (Exception e)
-                    {
-                        await transaction.RollbackAsync();
-                        Console.WriteLine(e);
-                    }
+                    await baseNoteContentRepository.Update(playlist);
                 }
+
+                await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), audioForRemove));
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+                return new OperationResult<Unit>(Success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>(Success: false, Unit.Value);
@@ -248,7 +222,7 @@ namespace BI.Services.Notes
                 var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
 
                 var filebytes = await request.Audios.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.User.Id, filebytes, note.Id));
+                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -275,8 +249,7 @@ namespace BI.Services.Notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
+                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), dbFiles));
                 }
             }
 

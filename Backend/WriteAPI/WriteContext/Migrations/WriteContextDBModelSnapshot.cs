@@ -113,26 +113,21 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Text"
-                        },
-                        new
-                        {
-                            Id = 2,
                             Name = "Audio"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             Name = "Photo"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 3,
                             Name = "Video"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 4,
                             Name = "Document"
                         });
                 });

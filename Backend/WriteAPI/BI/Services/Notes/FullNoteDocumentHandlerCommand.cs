@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
+using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
@@ -65,7 +66,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC
                 var filebyte = await request.File.GetFilesBytesAsync();
-                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.User.Id, filebyte, note.Id));
+                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebyte, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -99,8 +100,7 @@ namespace BI.Services.Notes
                 {
                     await transaction.RollbackAsync();
                     Console.WriteLine(e);
-                    var pathes = new List<string> { file.PathNonPhotoContent };
-                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
+                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), file));
                 }
             }
 
@@ -134,12 +134,10 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.Remove(contentForRemove);
                     await baseNoteContentRepository.UpdateRange(contents);
-                    await fileRepository.Remove(contentForRemove.AppFile);
 
                     await transaction.CommitAsync();
 
-                    var pathes = contentForRemove.AppFile.GetNotNullPathes().ToList();
-                    await _mediator.Send(new RemoveFilesByPathesCommand(permissions.User.Id.ToString(), pathes));
+                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.AppFile));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

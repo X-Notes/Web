@@ -130,7 +130,7 @@ namespace BI.Mapping
             };
         }
 
-        public RelatedNote MapNoteToRelatedNoteDTO((Note note, bool isOpened) tuple, int? takeContentLength = null)
+        public RelatedNote MapNoteToRelatedNoteDTO((Note note, bool isOpened) tuple)
         {
             return new RelatedNote()
             {
@@ -138,11 +138,12 @@ namespace BI.Mapping
                 Color = tuple.note.Color,
                 Title = tuple.note.Title,
                 Order = tuple.note.Order,
+                UserId = tuple.note.UserId,
                 IsOpened = tuple.isOpened,
                 Labels = tuple.note.LabelsNotes != null ? MapLabelsToLabelsDTO(tuple.note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = tuple.note.NoteTypeId,
                 RefTypeId = tuple.note.RefTypeId,
-                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents, takeContentLength),
+                Contents = GetContentsDTOFromContents(tuple.note.IsLocked, tuple.note.Contents),
                 IsLocked = tuple.note.IsLocked,
                 DeletedAt = tuple.note.DeletedAt,
                 CreatedAt = tuple.note.CreatedAt,
@@ -150,17 +151,16 @@ namespace BI.Mapping
             };
         }
 
-        private List<BaseContentNoteDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents, int? takeContentLength = null)
+        private List<BaseContentNoteDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents)
         {
             if(!isLocked)
             {
-                return takeContentLength.HasValue ? MapContentsToContentsDTO(contents).Take(takeContentLength.Value).ToList() :
-                MapContentsToContentsDTO(contents).ToList();
+                return MapContentsToContentsDTO(contents).ToList();
             }
             return new List<BaseContentNoteDTO>();
         }
 
-        public SmallNote MapNoteToSmallNoteDTO(Note note, int? takeContentLength = null)
+        public SmallNote MapNoteToSmallNoteDTO(Note note)
         {
             return new SmallNote()
             {
@@ -168,10 +168,11 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Order = note.Order,
+                UserId = note.UserId,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
                 CreatedAt = note.CreatedAt,
@@ -197,7 +198,7 @@ namespace BI.Mapping
             return _fullNote;
         }
 
-        public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids , int? takeContentLength = null)
+        public PreviewNoteForSelection MapNoteToPreviewNoteDTO(Note note, IEnumerable<Guid> ids)
         {
             var result =  new PreviewNoteForSelection()
             {
@@ -205,10 +206,11 @@ namespace BI.Mapping
                 Color = note.Color,
                 Title = note.Title,
                 Order = note.Order,
+                UserId = note.UserId,
                 Labels = note.LabelsNotes != null ? MapLabelsToLabelsDTO(note.LabelsNotes?.GetLabelUnDesc()) : null,
                 NoteTypeId = note.NoteTypeId,
                 RefTypeId = note.RefTypeId,
-                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents, takeContentLength),
+                Contents = GetContentsDTOFromContents(note.IsLocked, note.Contents),
                 IsSelected = ids.Contains(note.Id),
                 IsLocked = note.IsLocked,
                 DeletedAt = note.DeletedAt,
@@ -221,21 +223,21 @@ namespace BI.Mapping
             return result;
         }
 
-        public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids, int? takeContentLength = null)
+        public List<PreviewNoteForSelection> MapNotesToPreviewNotesDTO(List<Note> notes, IEnumerable<Guid> ids)
         {
-            return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids, takeContentLength)).ToList();
+            return notes.Select((note) => MapNoteToPreviewNoteDTO(note, ids)).ToList();
         }
 
-        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes, int? takeContentLength = null)
+        public List<SmallNote> MapNotesToSmallNotesDTO(IEnumerable<Note> notes)
         {
-            return notes.Select(note => MapNoteToSmallNoteDTO(note, takeContentLength)).ToList();
+            return notes.Select(note => MapNoteToSmallNoteDTO(note)).ToList();
         }
 
-        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes, int? takeContentLength = null)
+        public List<RelatedNote> MapNotesToRelatedNotes(List<ReletatedNoteToInnerNote> notes)
         {
             var resultList = new List<(Note, bool)>();
             notes.ForEach(note => resultList.Add((note.RelatedNote, note.IsOpened)));
-            return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple, takeContentLength)).ToList();
+            return resultList.Select(tuple => MapNoteToRelatedNoteDTO(tuple)).ToList();
         }
 
         public List<SmallFolder> MapFoldersToSmallFolders(IEnumerable<Folder> folders)

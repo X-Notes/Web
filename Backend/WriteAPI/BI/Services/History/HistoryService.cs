@@ -49,7 +49,8 @@ namespace BI.Services.History
                 {
                     NoteId = history.NoteId,
                     SnapshotTime = DateTimeOffset.Now,
-                    NoteVersionId = result.Id
+                    // TODO
+                    // NoteVersionId = result.Id 
                 };
                 var dbNoteHistory = await noteHistoryRepository.Add(noteHistory);
                 var userHistories = history.UsersThatEditIds.Select(userId => new UserNoteHistoryManyToMany()

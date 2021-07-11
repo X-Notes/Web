@@ -8,7 +8,9 @@ namespace Common.DatabaseModels.Models.NoteContent
     public class DocumentNote : BaseNoteContent
     {
         public string Name { set; get; }
+
         public Guid AppFileId { get; set; }
+
         public AppFile AppFile { get; set; }
 
         public DocumentNote()
@@ -17,7 +19,7 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Document;
         }
 
-        public DocumentNote(DocumentNote entity, AppFile document, Guid NoteId)
+        public DocumentNote(DocumentNote entity, Guid AppFileId, Guid NoteId)
         {
             this.NoteId = NoteId;
             Order = entity.Order;
@@ -27,7 +29,20 @@ namespace Common.DatabaseModels.Models.NoteContent
 
             Name = entity.Name;
 
-            AppFile = document;
+            this.AppFileId = AppFileId;
+        }
+
+        public DocumentNote(DocumentNote entity, AppFile file, Guid NoteId)
+        {
+            this.NoteId = NoteId;
+            Order = entity.Order;
+
+            this.UpdatedAt = DateTimeOffset.Now;
+            this.ContentTypeId = ContentTypeENUM.Document;
+
+            Name = entity.Name;
+
+            this.AppFile = file;
         }
 
     }

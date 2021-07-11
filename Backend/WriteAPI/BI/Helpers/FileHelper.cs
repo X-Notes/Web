@@ -45,83 +45,10 @@ namespace BI.Helpers
             return base64;
         }
 
-        public static string GetPhotoType(string contentType)
+        public static string GetExtension(string filename)
         {
-            switch (contentType)
-            {
-                case "image/png":
-                    {
-                        return ".png";
-                    }
-                case "image/jpeg":
-                    {
-                        return ".jpg";
-                    }
-                default:
-                    {
-                        throw new Exception("Incorrect photo type");
-                    }
-            }
+            return Path.GetExtension(filename);        
         }
-
-        public static string GetAudioType(string contentType)
-        {
-            switch (contentType)
-            {
-                case "audio/mpeg":
-                    {
-                        return ".mp3";
-                    }
-                default:
-                    {
-                        throw new Exception("Incorrect audio type");
-                    }
-            }
-        }
-
-
-        public static string GetVideoType(string contentType)
-        {
-            switch (contentType)
-            {
-                case "video/mp4":
-                    {
-                        return ".mp4";
-                    }
-                default:
-                    {
-                        throw new Exception("Incorrect audio type");
-                    }
-            }
-        }
-
-        public static string GetDocumentType(string contentType)
-        {
-            switch (contentType)
-            {
-                case "application/pdf":
-                    {
-                        return ".pdf";
-                    }
-                case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-                    {
-                        return ".pptx";
-                    }
-                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-                    {
-                        return ".docx";
-                    }
-                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-                    {
-                        return ".xlsx";
-                    }
-                default:
-                    {
-                        throw new Exception("Incorrect document type");
-                    }
-            }
-        }
-
 
         public static async Task<FilesBytes> GetFilesBytesAsync(this IFormFile formFile)
         {
