@@ -7,7 +7,7 @@ using MediatR;
 using Storage;
 using WriteContext.Repositories.Users;
 
-namespace BI.Services.user
+namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
         IRequestHandler<GetShortUser, ShortUser>,
@@ -26,7 +26,7 @@ namespace BI.Services.user
         public async Task<ShortUser> Handle(GetShortUser request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
-            if(user != null)
+            if (user != null)
             {
                 return imapper.Map<ShortUser>(user);
             }
@@ -37,7 +37,7 @@ namespace BI.Services.user
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
             var totalSize = await fileStorage.GetUsedDiskSpace(user.Id.ToString());
-            return new GetUserMemoryResponse { TotalSize = totalSize }; 
+            return new GetUserMemoryResponse { TotalSize = totalSize };
         }
     }
 }

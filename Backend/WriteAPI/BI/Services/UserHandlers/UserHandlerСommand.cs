@@ -16,7 +16,7 @@ using Storage;
 using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 
-namespace BI.Services.user
+namespace BI.Services.UserHandlers
 {
     public class UserHandlerСommand :
         IRequestHandler<NewUserCommand, Unit>,
@@ -61,7 +61,8 @@ namespace BI.Services.user
         public async Task<Unit> Handle(NewUserCommand request, CancellationToken cancellationToken)
         {
 
-            var user = new User() {
+            var user = new User()
+            {
                 Name = request.Name,
                 LanguageId = LanguageENUM.English,
                 Email = request.Email,
@@ -119,7 +120,7 @@ namespace BI.Services.user
                 appFile = new AppFile(minFile, mediumFile, null, request.File.ContentType,
                     thumbs[superMinType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
-            else if(thumbs.ContainsKey(superMinType))
+            else if (thumbs.ContainsKey(superMinType))
             {
                 var minFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[superMinType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
                 var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
@@ -130,7 +131,7 @@ namespace BI.Services.user
             else
             {
                 var minFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                appFile = new AppFile(minFile, null, null, request.File.ContentType, 
+                appFile = new AppFile(minFile, null, null, request.File.ContentType,
                     thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
             }
 

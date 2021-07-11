@@ -9,7 +9,6 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Storage;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,6 @@ using BI.Services.Personalizations;
 using BI.Services.RelatedNotes;
 using BI.Services.Search;
 using BI.Services.Sharing;
-using BI.Services.user;
 using BI.SignalR;
 using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
@@ -85,6 +83,7 @@ using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
 using Common.DTO.Orders;
 using Common.DTO.Notes.AdditionalContent;
+using BI.Services.UserHandlers;
 
 namespace WriteAPI.ConfigureAPP
 {
