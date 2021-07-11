@@ -21,6 +21,7 @@ namespace Common.DatabaseModels.Models.Files
         public FileType FileType { set; get; }
 
         public string TextFromPhoto { set; get; }
+
         public string RecognizeObject { set; get; }
 
         public Guid UserId { set; get; }
