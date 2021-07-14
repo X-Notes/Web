@@ -8,9 +8,9 @@ import { Label } from './models/label.model';
 export class LabelsService implements OnDestroy {
   destroy = new Subject<void>();
 
-  public allLabels: Label[] = [];
-
   public labels: Label[] = [];
+
+  public labelsState: Record<string, Label> = {};
 
   firstInitedMurri = false;
 
@@ -28,12 +28,45 @@ export class LabelsService implements OnDestroy {
         this.murriService.initMurriLabel(isDeleted);
         await this.murriService.setOpacityFlagAsync();
         this.firstInitedMurri = true;
+      } else {
+        const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
+        this.newItemChecker(elements);
+        this.deleteItemChecker(elements);
       }
     });
   }
 
+  newItemChecker(elements: HTMLElement[]) {
+    for (const el of elements) {
+      if (!this.labelsState[el.id]) {
+        this.labelsState[el.id] = this.labels.find((x) => x.id === el.id);
+        this.murriService.grid.add(document.getElementById(el.id), {
+          index: 0,
+          layout: true,
+        });
+      }
+    }
+  }
+
+  deleteItemChecker(elements: HTMLElement[]) {
+    let flag = false;
+    for (const key in this.labelsState) {
+      const item = this.labelsState[key];
+      const htmlItem = elements.find((x) => x.id === item.id);
+
+      if (!htmlItem) {
+        flag = true;
+        delete this.labelsState[key];
+      }
+    }
+
+    if (flag) {
+      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+    }
+  }
+
   firstInit(labels: Label[]) {
-    this.allLabels = [...labels].map((label) => ({ ...label }));
-    this.labels = this.allLabels;
+    this.labels = [...labels].map((label) => ({ ...label }));
+    this.labels.forEach((label) => (this.labelsState[label.id] = label));
   }
 }

@@ -94,11 +94,6 @@ export class LabelComponent implements OnInit, OnDestroy {
     this.timeout(this.isUpdate);
   }
 
-  async restore() {
-    await this.store.dispatch(new RestoreLabel(this.label)).toPromise();
-    this.restoreLabel.emit(this.label);
-  }
-
   timeout(flag: boolean) {
     return new Promise((resolve) => {
       let count = 0;
@@ -123,10 +118,6 @@ export class LabelComponent implements OnInit, OnDestroy {
     this.isUpdate = false;
     await this.timeout(this.isUpdate);
     this.updateLabel.emit(this.label);
-  }
-
-  delete() {
-    this.deleteLabel.emit(this.label);
   }
 
   changed(text: string) {

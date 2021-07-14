@@ -9,10 +9,12 @@ namespace Domain.Commands.Labels
     {
         [ValidationGuid]
         public Guid Id { set; get; }
-        [Required]
+
         public string Name { set; get; }
+
         [Required]
         public string Color { set; get; }
+
         public UpdateLabelCommand(string email)
             :base(email)
         {

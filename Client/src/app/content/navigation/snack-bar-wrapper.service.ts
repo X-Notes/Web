@@ -50,6 +50,23 @@ export class SnackBarWrapperService {
     }
   }
 
+  getLabelsNaming(isMany: boolean, language: LanguagesENUM): string {
+    switch (language) {
+      case LanguagesENUM.English: {
+        return isMany ? 'Labels' : 'Label';
+      }
+      case LanguagesENUM.Russian: {
+        return isMany ? 'Ярлыки' : 'Ярлык';
+      }
+      case LanguagesENUM.Ukraine: {
+        return isMany ? 'Ярлики' : 'Ярлик';
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
+  }
+
   // eslint-disable-next-line class-methods-use-this
   getMoveToMessage(isMany: boolean, language: LanguagesENUM) {
     switch (language) {
@@ -154,61 +171,68 @@ export class SnackBarWrapperService {
     }
   }
 
-  buildArchive(
-    callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
+  getAllLabelsEntityName(isMany: boolean, language: LanguagesENUM) {
+    switch (language) {
+      case LanguagesENUM.English: {
+        return 'all';
+      }
+      case LanguagesENUM.Russian: {
+        return 'все';
+      }
+      case LanguagesENUM.Ukraine: {
+        return 'всі';
+      }
+      default: {
+        throw new Error('error');
+      }
+    }
+  }
+
+  build(
+    callback: () => void,
+    isMany: boolean,
     entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
+    destinationEntityOp: (isMany: boolean, language: LanguagesENUM) => string,
   ) {
     const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
     const message = this.concatMessages(
       lname,
-      callback.selectedIds.length > 1,
+      isMany,
       entityNameOp,
       this.getMoveToMessage,
-      this.getArchiveEntityName,
+      destinationEntityOp,
     );
-    this.buildNotification(message, this.getUndoMessage(lname), callback);
+    this.buildNotification(message, callback, this.getUndoMessage(lname));
   }
 
-  buildPrivate(
-    callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
+  buildLabel(
+    callback: () => void,
     entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
+    destinationEntityOp: (isMany: boolean, language: LanguagesENUM) => string,
+    isMany: boolean,
   ) {
     const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
     const message = this.concatMessages(
       lname,
-      callback.selectedIds.length > 1,
+      isMany,
       entityNameOp,
       this.getMoveToMessage,
-      this.getArchiveEntityName,
+      destinationEntityOp,
     );
-    this.buildNotification(message, this.getUndoMessage(lname), callback);
+
+    this.buildNotification(message, callback, this.getUndoMessage(lname));
   }
 
-  buildDelete(
-    callback: BaseChangeTypeSmallNote | BaseChangeTypeSmallFolder,
-    entityNameOp: (isMany: boolean, language: LanguagesENUM) => string,
-  ) {
-    const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-    const message = this.concatMessages(
-      lname,
-      callback.selectedIds.length > 1,
-      entityNameOp,
-      this.getMoveToMessage,
-      this.getDeleteEntityName,
-    );
-    this.buildNotification(message, this.getUndoMessage(lname), callback);
-  }
-
-  buildNotification(message: string, undoMessage?: string, callbackAction?: any) {
+  buildNotification(message: string, callback: () => void, undoMessage?: string) {
     const snackbarRef = this.buildSnackBarRef(message, undoMessage);
 
-    if (callbackAction) {
+    if (callback) {
       snackbarRef
         .afterDismissed()
         .pipe(take(1))
         .subscribe((x) => {
           if (x.dismissedByAction) {
-            this.store.dispatch(callbackAction);
+            callback();
           }
         });
     }

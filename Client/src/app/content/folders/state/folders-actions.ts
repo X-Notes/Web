@@ -19,6 +19,10 @@ export class BaseChangeTypeSmallFolder {
   public typeFolder: FolderTypeENUM;
 
   public selectedIds: string[];
+
+  get isMany() {
+    return this.selectedIds.length > 1;
+  }
 }
 
 export class ArchiveFolders extends BaseChangeTypeSmallFolder {

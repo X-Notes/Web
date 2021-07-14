@@ -60,6 +60,10 @@ export class BaseChangeTypeSmallNote {
   public typeNote: NoteTypeENUM;
 
   public selectedIds: string[];
+
+  get isMany() {
+    return this.selectedIds.length > 1;
+  }
 }
 
 export class SetDeleteNotes extends BaseChangeTypeSmallNote {

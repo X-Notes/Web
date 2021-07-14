@@ -21,8 +21,15 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { LabelStore } from '../state/labels-state';
 import { LabelsService } from '../labels.service';
-import { UpdateLabel, LoadLabels, DeleteLabel, SetDeleteLabel } from '../state/labels-actions';
+import {
+  UpdateLabel,
+  LoadLabels,
+  DeleteLabel,
+  SetDeleteLabel,
+  RestoreLabel,
+} from '../state/labels-actions';
 import { Label } from '../models/label.model';
+import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.service';
 
 @Component({
   selector: 'app-deleted',
@@ -44,7 +51,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     private store: Store,
     public murriService: MurriService,
     public labelService: LabelsService,
-    private snackService: SnackbarService,
+    private sbws: SnackBarWrapperService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -98,7 +105,6 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((labs) => {
         if (labs.length === 0) {
           this.labelService.labels = [];
-          setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
         }
       });
   }
@@ -107,62 +113,26 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.dispatch(new UpdateLabel(label));
   }
 
-  restoreLabel(label: Label) {
-    // TODO CHANGE
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+  async restoreLabel(label: Label) {
+    await this.store.dispatch(new RestoreLabel(label)).toPromise();
+
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
-    let snackbarRef;
-    switch (language) {
-      case LanguagesENUM.English:
-        snackbarRef = this.snackService.openSnackBar(`Label moved to bin`, 'Undo');
-        break;
-      case LanguagesENUM.Russian:
-        snackbarRef = this.snackService.openSnackBar(`Ярлык перенесен в корзину`, 'Отменить');
-        break;
-      case LanguagesENUM.Ukraine:
-        snackbarRef = this.snackService.openSnackBar(`Ярлик пересений в кошик`, 'Відмінити');
-        break;
-      default:
-        throw new Error('error');
-    }
-    snackbarRef
-      .afterDismissed()
-      .pipe(take(1))
-      .subscribe((x) => {
-        if (x.dismissedByAction) {
-          this.store.dispatch(new SetDeleteLabel(label));
-        }
-      });
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+    this.sbws.buildLabel(
+      () => this.callBackOnRestore(label),
+      this.sbws.getLabelsNaming,
+      this.sbws.getAllLabelsEntityName,
+      false,
+    );
+  }
+
+  async callBackOnRestore(label: Label) {
+    const callbackAction = new SetDeleteLabel(label);
+    await this.store.dispatch(callbackAction).toPromise();
+    this.labelService.labels.unshift(label);
   }
 
   async delete(label: Label) {
-    // TODO CHANGE
-    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
     this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
-    let snackbarRef;
-    switch (language) {
-      case LanguagesENUM.English:
-        snackbarRef = this.snackService.openSnackBar(`Label deleted permanently`, null);
-        break;
-      case LanguagesENUM.Russian:
-        snackbarRef = this.snackService.openSnackBar(`Ярлык удален безвозвратно`, null);
-        break;
-      case LanguagesENUM.Ukraine:
-        snackbarRef = this.snackService.openSnackBar(`Ярлык удален безповоротно`, null);
-        break;
-      default:
-        throw new Error('error');
-    }
-    snackbarRef
-      .afterDismissed()
-      .pipe(take(1))
-      .subscribe((x) => {
-        if (x.dismissedByAction) {
-          this.store.dispatch(new SetDeleteLabel(label));
-        }
-      });
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
   }
 }
