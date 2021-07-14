@@ -306,17 +306,4 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
   get isFiltedMode() {
     return this.store.selectSnapshot(NoteStore.getSelectedLabelFilter).length > 0;
   }
-
-  addToDom(notes: SmallNote[]) {
-    if (notes.length > 0) {
-      this.entities = [
-        ...notes
-          .map((note) => {
-            return { ...note };
-          })
-          .reverse(),
-        ...this.entities,
-      ];
-    }
-  }
 }
