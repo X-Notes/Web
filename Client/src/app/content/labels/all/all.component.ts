@@ -101,12 +101,12 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new AddLabel()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.all);
-    this.labelService.labels.unshift(labels[0]);
+    this.labelService.entities.unshift(labels[0]);
   }
 
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
-    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
+    this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
 
     this.sbws.buildLabel(
       () => this.callBackOnDelete(label),
@@ -119,7 +119,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
   async callBackOnDelete(label: Label) {
     const callbackAction = new RestoreLabel(label);
     await this.store.dispatch(callbackAction).toPromise();
-    this.labelService.labels.unshift(label);
+    this.labelService.entities.unshift(label);
   }
 
   ngOnDestroy(): void {

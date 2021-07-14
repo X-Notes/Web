@@ -104,7 +104,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy))
       .subscribe((labs) => {
         if (labs.length === 0) {
-          this.labelService.labels = [];
+          this.labelService.entities = [];
         }
       });
   }
@@ -116,7 +116,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async restoreLabel(label: Label) {
     await this.store.dispatch(new RestoreLabel(label)).toPromise();
 
-    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
+    this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
     this.sbws.buildLabel(
       () => this.callBackOnRestore(label),
       this.sbws.getLabelsNaming,
@@ -128,11 +128,11 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async callBackOnRestore(label: Label) {
     const callbackAction = new SetDeleteLabel(label);
     await this.store.dispatch(callbackAction).toPromise();
-    this.labelService.labels.unshift(label);
+    this.labelService.entities.unshift(label);
   }
 
   async delete(label: Label) {
     await this.store.dispatch(new DeleteLabel(label)).toPromise();
-    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
+    this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
   }
 }
