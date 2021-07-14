@@ -963,7 +963,6 @@ export class MenuButtonsService {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1;
     this.deletePermSnackbar(language, 'Folder', isMany);
-    this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted));
   }
 
   setItems(newItems: MenuItem[]) {

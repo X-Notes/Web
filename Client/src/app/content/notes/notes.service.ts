@@ -24,31 +24,32 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
 import { NotesUpdaterService } from './notes-updater.service';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import {
+  FeaturesEntitiesService,
+  OrderFilterEntity,
+} from 'src/app/shared/services/features-entities.service';
 
 @Injectable()
-export class NotesService implements OnDestroy {
+export class NotesService extends FeaturesEntitiesService<SmallNote> implements OnDestroy {
   // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   labelsIds: Subscription;
 
   destroy = new Subject<void>();
 
-  notes: SmallNote[] = [];
-
   firstInitFlag = false;
-
-  firstInitedMurri = false;
 
   sortedNoteByTypeId: SortedByENUM = null;
 
   constructor(
     public pService: PersonalizationService,
-    private store: Store,
-    private murriService: MurriService,
+    store: Store,
+    murriService: MurriService,
     private router: Router,
     private dialogsManageService: DialogsManageService,
     private apiService: ApiServiceNotes,
     private updateService: NotesUpdaterService,
   ) {
+    super(store, OrderFilterEntity.Note, murriService);
     this.store
       .select(NoteStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -57,7 +58,7 @@ export class NotesService implements OnDestroy {
     this.store
       .select(NoteStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
-      .subscribe(async (x) => this.delete(x));
+      .subscribe(async (x) => this.deleteFromDom(x));
 
     this.store
       .select(NoteStore.getIsCanceled)
@@ -68,8 +69,8 @@ export class NotesService implements OnDestroy {
           await this.murriService.wait(150);
           this.murriService.grid.destroy();
 
-          const tempNotes = this.transformNotes(this.getNotesByCurrentType);
-          this.notes = this.orderBy(tempNotes);
+          const tempNotes = this.transformSpread(this.getNotesByCurrentType);
+          this.entities = this.orderBy(tempNotes);
 
           const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
 
@@ -86,7 +87,7 @@ export class NotesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (values: UpdateLabelEvent[]) => {
         for (const valuee of values) {
-          const note = this.notes.find((x) => x.id === valuee.id);
+          const note = this.entities.find((x) => x.id === valuee.id);
           if (note !== undefined) {
             note.labels = valuee.labels;
           }
@@ -102,7 +103,7 @@ export class NotesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((ids) => {
         if (ids) {
-          for (const note of this.notes) {
+          for (const note of this.entities) {
             if (ids.some((x) => x === note.id)) {
               note.isSelected = true;
             } else {
@@ -117,11 +118,11 @@ export class NotesService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((x) => {
         if (x > 0) {
-          for (const note of this.notes) {
+          for (const note of this.entities) {
             note.lockRedirect = true;
           }
         } else {
-          for (const note of this.notes) {
+          for (const note of this.entities) {
             note.lockRedirect = false;
           }
         }
@@ -138,31 +139,6 @@ export class NotesService implements OnDestroy {
           this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
         }
       });
-  }
-
-  orderBy(notes: SmallNote[]) {
-    if (this.store.selectSnapshot(AppStore.getTypeNote) === NoteTypeENUM.Shared) {
-      return notes.sort(
-        (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-      );
-    }
-
-    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    switch (pr.sortedNoteByTypeId) {
-      case SortedByENUM.AscDate: {
-        return notes.sort(
-          (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-        );
-      }
-      case SortedByENUM.DescDate: {
-        return notes.sort(
-          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        );
-      }
-      case SortedByENUM.CustomOrder: {
-        return notes.sort((a, b) => a.order - b.order);
-      }
-    }
   }
 
   get getNotesByCurrentType() {
@@ -196,7 +172,7 @@ export class NotesService implements OnDestroy {
     await this.murriService.setOpacityFlagAsync(0, false);
     await this.murriService.wait(150);
     this.murriService.grid.destroy();
-    this.notes = this.orderBy(this.notes);
+    this.entities = this.orderBy(this.entities);
     const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
     const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
     this.murriService.initMurriNoteAsync(roadType, isDraggable);
@@ -205,16 +181,20 @@ export class NotesService implements OnDestroy {
 
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
+      if (
+        z.length === this.entities.length &&
+        this.entities.length !== 0 &&
+        !this.firstInitedMurri
+      ) {
         const isDraggable =
           !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
-        console.log(isDraggable);
         await this.murriService.initMurriNoteAsync(noteType, isDraggable);
 
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
+        await this.firstInitMurri();
+
         await this.loadNotesWithUpdates();
       }
+      await this.synchronizeState(refElements);
     });
   }
 
@@ -225,10 +205,10 @@ export class NotesService implements OnDestroy {
         const notes = await this.apiService.getNotesMany(ids, pr).toPromise();
         const actionsForUpdate = notes.map((note) => new UpdateOneNote(note, note.noteTypeId));
         this.store.dispatch(actionsForUpdate);
-        const transformNotes = this.transformNotes(notes);
+        const transformNotes = this.transformSpread(notes);
         transformNotes.forEach((note) => {
-          const index = this.notes.findIndex((x) => x.id === note.id);
-          this.notes[index].contents = note.contents;
+          const index = this.entities.findIndex((x) => x.id === note.id);
+          this.entities[index].contents = note.contents;
         });
         await this.murriService.refreshLayoutAsync();
         this.updateService.ids$.next([]);
@@ -274,24 +254,20 @@ export class NotesService implements OnDestroy {
     this.labelsIds?.unsubscribe();
   }
 
-  private transformNotes = (items: SmallNote[]): SmallNote[] => {
-    const notes = [...items];
-    return notes.map((note) => {
-      return { ...note, isSelected: false, lockRedirect: false };
-    });
-  };
-
   async firstInit() {
-    let tempNotes = this.transformNotes(this.getNotesByCurrentType);
+    let tempNotes = this.transformSpread(this.getNotesByCurrentType);
     tempNotes = this.orderBy(tempNotes);
     if (!this.isFiltedMode) {
-      this.notes = tempNotes;
+      this.entities = tempNotes;
     } else {
       const ids = this.store.selectSnapshot(NoteStore.getSelectedLabelFilter);
-      this.notes = tempNotes.filter((x) =>
+      this.entities = tempNotes.filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
     }
+
+    super.initState();
+
     this.labelsIds = this.store
       .select(NoteStore.getSelectedLabelFilter)
       .pipe(takeUntil(this.destroy))
@@ -302,26 +278,11 @@ export class NotesService implements OnDestroy {
       });
     this.firstInitFlag = true;
 
-    const noteIds = this.notes.map((x) => x.id);
+    const noteIds = this.entities.map((x) => x.id);
     const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
     for (const info of additionalInfo) {
-      const noteIndex = this.notes.findIndex((x) => x.id == info.noteId);
-      this.notes[noteIndex].additionalInfo = info;
-    }
-  }
-
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      if (this.notes.length > 0) {
-        this.notes.find((x) => x.id === update.id).color = update.color;
-      }
-    }
-  }
-
-  async delete(ids: string[]) {
-    if (ids.length > 0) {
-      this.notes = this.notes.filter((x) => !ids.some((z) => z === x.id));
-      await this.murriService.refreshLayoutAsync();
+      const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
+      this.entities[noteIndex].additionalInfo = info;
     }
   }
 
@@ -331,10 +292,10 @@ export class NotesService implements OnDestroy {
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
 
-      let tempNotes = this.transformNotes(this.getNotesByCurrentType).filter((x) =>
+      let tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
-      this.notes = this.orderBy(tempNotes);
+      this.entities = this.orderBy(tempNotes);
 
       const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(roadType, false);
@@ -348,21 +309,14 @@ export class NotesService implements OnDestroy {
 
   addToDom(notes: SmallNote[]) {
     if (notes.length > 0) {
-      this.notes = [
+      this.entities = [
         ...notes
           .map((note) => {
             return { ...note };
           })
           .reverse(),
-        ...this.notes,
+        ...this.entities,
       ];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < notes.length; i += 1) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, { index: 0, layout: true });
-        }
-      }, 0);
     }
   }
 }

@@ -27,18 +27,16 @@ export class LabelsService extends MurriEntityService<Label> implements OnDestro
         !this.firstInitedMurri
       ) {
         this.murriService.initMurriLabel(isDeleted);
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
-      } else {
-        const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-        this.newItemChecker(elements);
-        this.deleteItemChecker(elements);
+
+        await this.firstInitMurri();
       }
+      await this.synchronizeState(refElements);
     });
   }
 
+  // TODO REMOVE PARAMETR
   firstInit(labels: Label[]) {
     this.entities = [...labels].map((label) => ({ ...label }));
-    this.entities.forEach((label) => (this.state[label.id] = label));
+    super.initState();
   }
 }

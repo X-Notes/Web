@@ -115,7 +115,7 @@
           #item
           class="grid-item"
           id="{{item.id}}"
-          *ngFor="let item of ffnService.noteService.notes"
+          *ngFor="let item of ffnService.noteService.entities"
           [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
         >
           <app-note

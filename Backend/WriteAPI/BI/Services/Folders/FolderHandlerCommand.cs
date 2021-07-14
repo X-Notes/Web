@@ -206,7 +206,7 @@ namespace BI.Services.Folders
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Incorrect count");
             }
 
             return Unit.Value;
