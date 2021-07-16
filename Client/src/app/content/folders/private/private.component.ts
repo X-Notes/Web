@@ -72,9 +72,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent() {
     await this.folderService.loadFolders(FolderTypeENUM.Private);
 
-    let folders = this.store.selectSnapshot(FolderStore.privateFolders);
-    folders = this.folderService.transformFolders(folders);
-    this.folderService.firstInit(folders);
+    this.folderService.firstInit();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
@@ -88,10 +86,5 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.pService.setIllustrationState(true);
         }
       });
-
-    this.store
-      .select(FolderStore.foldersAddingPrivate)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.folderService.addToDom(x));
   }
 }

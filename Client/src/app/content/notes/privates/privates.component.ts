@@ -19,7 +19,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
-import { UnSelectAllNote } from '../state/notes-actions';
+import { ClearAddToDomNotes, UnSelectAllNote } from '../state/notes-actions';
 
 @Component({
   selector: 'app-privates',
@@ -79,11 +79,6 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
           this.pService.setIllustrationState(true);
         }
       });
-
-    this.store
-      .select(NoteStore.notesAddingPrivate)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.noteService.addToDom(x));
   }
 
   ngOnDestroy(): void {

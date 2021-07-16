@@ -24,12 +24,12 @@ export class FullFolderNotesService implements OnDestroy {
 
   async loadNotes(folderId: string) {
     if (!this.firstInitedMurri) {
-      this.noteService.notes = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
+      this.noteService.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
     } else {
       await this.murriService.setOpacityFlagAsync(0, false);
       await this.murriService.wait(150);
       this.murriService.grid.destroy();
-      this.noteService.notes = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
+      this.noteService.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
       await this.murriService.initFolderNotesAsync();
       await this.murriService.setOpacityFlagAsync();
     }
@@ -38,8 +38,8 @@ export class FullFolderNotesService implements OnDestroy {
   murriInitialise(refElements: QueryList<ElementRef>) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (
-        z.length === this.noteService.notes.length &&
-        this.noteService.notes.length !== 0 &&
+        z.length === this.noteService.entities.length &&
+        this.noteService.entities.length !== 0 &&
         !this.firstInitedMurri
       ) {
         await this.murriService.wait(100);

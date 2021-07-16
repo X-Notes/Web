@@ -5,6 +5,7 @@ import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { FullNote } from '../models/full-note.model';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export class LoadNotes {
   static type = '[Notes] Load private notes';
@@ -44,8 +45,13 @@ export class CopyNotes {
   ) {}
 }
 
-export class ClearAddedPrivateNotes {
+export class ClearAddToDomNotes {
   static type = '[Notes] ClearAddedPrivate notes';
+}
+
+export class AddToDomNotes {
+  static type = '[Notes] Add AddToDomNotes notes';
+  constructor(public notes: SmallNote[]) {}
 }
 
 // CHANGE STATE
@@ -57,20 +63,51 @@ export class DeleteNotesPermanently {
 }
 
 export class BaseChangeTypeSmallNote {
-  public typeNote: NoteTypeENUM;
-
   public selectedIds: string[];
+
+  public isAddingToDom: boolean;
+
+  get isMany() {
+    return this.selectedIds.length > 1;
+  }
+
+  constructor(isAddingToDom: boolean) {
+    this.isAddingToDom = isAddingToDom;
+  }
 }
 
 export class SetDeleteNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] SetDelete notes';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
 }
 export class ArchiveNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] Archive notes';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
 }
 
 export class MakePrivateNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] MakePrivate notes';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
+}
+
+export class MakeSharedNotes extends BaseChangeTypeSmallNote {
+  static type = '[Notes] MakeShared notes';
+
+  refTypeId: RefTypeENUM;
+
+  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
+    super(isAddingToDom);
+    this.refTypeId = refTypeId;
+  }
 }
 
 // Labels
@@ -214,9 +251,14 @@ export class ChangeIsLockedFullNote {
 export class TransformTypeNotes {
   static type = '[Notes] transform type notes';
 
+  refTypeId?: RefTypeENUM;
+
   constructor(
-    public typeFrom: NoteTypeENUM,
     public typeTo: NoteTypeENUM,
     public selectedIds: string[],
-  ) {}
+    public isAddToDom: boolean,
+    refTypeId?: RefTypeENUM,
+  ) {
+    this.refTypeId = refTypeId;
+  }
 }

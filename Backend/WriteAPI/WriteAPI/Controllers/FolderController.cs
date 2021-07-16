@@ -88,7 +88,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("copy")]
-        public async Task<List<SmallFolder>> CopyNote([FromBody]CopyFolderCommand command)
+        public async Task<List<SmallFolder>> CopyFolder([FromBody]CopyFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;

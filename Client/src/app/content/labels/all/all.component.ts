@@ -18,8 +18,15 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
-import { UpdateLabel, SetDeleteLabel, LoadLabels, AddLabel } from '../state/labels-actions';
+import {
+  UpdateLabel,
+  SetDeleteLabel,
+  LoadLabels,
+  AddLabel,
+  RestoreLabel,
+} from '../state/labels-actions';
 import { Label } from '../models/label.model';
+import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.service';
 
 @Component({
   selector: 'app-all',
@@ -41,6 +48,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     private store: Store,
     public murriService: MurriService,
     public labelService: LabelsService,
+    private sbws: SnackBarWrapperService,
   ) {}
 
   async ngOnInit() {
@@ -93,21 +101,25 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new AddLabel()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.all);
-    this.labelService.labels.unshift(labels[0]);
-    setTimeout(
-      () =>
-        this.murriService.grid.add(document.querySelector('.grid-item'), {
-          index: 0,
-          layout: true,
-        }),
-      0,
-    );
+    this.labelService.entities.unshift(labels[0]);
   }
 
   async setDelete(label: Label) {
     await this.store.dispatch(new SetDeleteLabel(label)).toPromise();
-    this.labelService.labels = this.labelService.labels.filter((x) => x.id !== label.id);
-    setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
+    this.labelService.entities = this.labelService.entities.filter((x) => x.id !== label.id);
+
+    this.sbws.buildLabel(
+      () => this.callBackOnDelete(label),
+      this.sbws.getLabelsNaming,
+      this.sbws.getAllLabelsEntityName,
+      false,
+    );
+  }
+
+  async callBackOnDelete(label: Label) {
+    const callbackAction = new RestoreLabel(label);
+    await this.store.dispatch(callbackAction).toPromise();
+    this.labelService.entities.unshift(label);
   }
 
   ngOnDestroy(): void {

@@ -19,6 +19,7 @@ import {
   MakePrivateFolders,
   ChangeTypeFullFolder,
   BaseChangeTypeSmallFolder,
+  MakeSharedFolders,
 } from '../folders/state/folders-actions';
 import {
   CopyNotes,
@@ -28,10 +29,12 @@ import {
   MakePrivateNotes,
   ChangeTypeFullNote,
   BaseChangeTypeSmallNote,
+  MakeSharedNotes,
 } from '../notes/state/notes-actions';
 import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from './snack-bar-wrapper.service';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -95,8 +98,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeNoteType(new ArchiveNotes(), NoteTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -105,8 +116,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -132,8 +151,16 @@ export class MenuButtonsService {
     {
       icon: 'private',
       operation: () => {
-        const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -182,8 +209,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeNoteType(new ArchiveNotes(), NoteTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -192,8 +227,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -259,8 +302,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeNoteType(new ArchiveNotes(), NoteTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new ArchiveNotes(false), NoteTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -276,8 +327,16 @@ export class MenuButtonsService {
     {
       icon: 'restore',
       operation: () => {
-        const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -303,8 +362,16 @@ export class MenuButtonsService {
     {
       icon: 'private',
       operation: () => {
-        const callback = this.changeNoteType(new MakePrivateNotes(), NoteTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new MakePrivateNotes(false), NoteTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -353,8 +420,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeNoteType(new SetDeleteNotes(), NoteTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getNotesNaming);
+        const action = this.changeNoteType(new SetDeleteNotes(false), NoteTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getNotesNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -398,8 +473,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeFolderType(new ArchiveFolders(), FolderTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -408,8 +491,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeFolderType(new SetDeleteFolders(), FolderTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -435,8 +526,16 @@ export class MenuButtonsService {
     {
       icon: 'privateFolder',
       operation: () => {
-        const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -463,8 +562,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeFolderType(new ArchiveFolders(), FolderTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -473,8 +580,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeFolderType(new SetDeleteFolders(), FolderTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -518,8 +633,16 @@ export class MenuButtonsService {
     {
       icon: 'archive',
       operation: () => {
-        const callback = this.changeFolderType(new ArchiveFolders(), FolderTypeENUM.Archive);
-        this.sbws.buildArchive(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new ArchiveFolders(false), FolderTypeENUM.Archive);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getArchiveEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -535,8 +658,16 @@ export class MenuButtonsService {
     {
       icon: 'restore',
       operation: () => {
-        const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -562,8 +693,16 @@ export class MenuButtonsService {
     {
       icon: 'privateFolder',
       operation: () => {
-        const callback = this.changeFolderType(new MakePrivateFolders(), FolderTypeENUM.Private);
-        this.sbws.buildPrivate(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new MakePrivateFolders(false), FolderTypeENUM.Private);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getPrivateEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -590,8 +729,16 @@ export class MenuButtonsService {
     {
       icon: 'delete',
       operation: () => {
-        const callback = this.changeFolderType(new SetDeleteFolders(), FolderTypeENUM.Deleted);
-        this.sbws.buildDelete(callback, this.sbws.getFoldersNaming);
+        const action = this.changeFolderType(new SetDeleteFolders(false), FolderTypeENUM.Deleted);
+        const func = () => {
+          this.store.dispatch(action);
+        };
+        this.sbws.build(
+          func,
+          action.isMany,
+          this.sbws.getFoldersNaming,
+          this.sbws.getDeleteEntityName,
+        );
       },
       isVisible: of(true),
       isNoOwnerCanSee: false,
@@ -612,23 +759,22 @@ export class MenuButtonsService {
     const types = NoteTypeENUM;
     switch (type) {
       case types.Private: {
-        const obj = new MakePrivateNotes();
-        obj.typeNote = type;
+        const obj = new MakePrivateNotes(true);
         obj.selectedIds = ids;
         return obj;
       }
       case types.Shared: {
-        throw new Error('no implimented');
+        const obj = new MakeSharedNotes(true, RefTypeENUM.Viewer);
+        obj.selectedIds = ids;
+        return obj;
       }
       case types.Archive: {
-        const obj = new ArchiveNotes();
-        obj.typeNote = type;
+        const obj = new ArchiveNotes(true);
         obj.selectedIds = ids;
         return obj;
       }
       case types.Deleted: {
-        const obj = new SetDeleteNotes();
-        obj.typeNote = type;
+        const obj = new SetDeleteNotes(true);
         obj.selectedIds = ids;
         return obj;
       }
@@ -663,23 +809,22 @@ export class MenuButtonsService {
     const types = FolderTypeENUM;
     switch (type) {
       case types.Private: {
-        const obj = new MakePrivateFolders();
-        obj.typeFolder = type;
+        const obj = new MakePrivateFolders(true);
         obj.selectedIds = ids;
         return obj;
       }
       case types.Shared: {
-        throw new Error('no implimented');
+        const obj = new MakeSharedFolders(true, RefTypeENUM.Viewer);
+        obj.selectedIds = ids;
+        return obj;
       }
       case types.Archive: {
-        const obj = new ArchiveFolders();
-        obj.typeFolder = type;
+        const obj = new ArchiveFolders(true);
         obj.selectedIds = ids;
         return obj;
       }
       case types.Deleted: {
-        const obj = new SetDeleteFolders();
-        obj.typeFolder = type;
+        const obj = new SetDeleteFolders(true);
         obj.selectedIds = ids;
         return obj;
       }
@@ -706,8 +851,6 @@ export class MenuButtonsService {
     }
 
     // eslint-disable-next-line no-param-reassign
-    changeAction.typeFolder = prevType;
-    // eslint-disable-next-line no-param-reassign
     changeAction.selectedIds = ids;
 
     this.store.dispatch(changeAction);
@@ -731,8 +874,6 @@ export class MenuButtonsService {
       ids = this.store.selectSnapshot(NoteStore.selectedIds);
     }
 
-    // eslint-disable-next-line no-param-reassign
-    changeAction.typeNote = prevType;
     // eslint-disable-next-line no-param-reassign
     changeAction.selectedIds = ids;
 
@@ -819,7 +960,6 @@ export class MenuButtonsService {
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1;
     this.deletePermSnackbar(language, 'Folder', isMany);
-    this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted));
   }
 
   setItems(newItems: MenuItem[]) {

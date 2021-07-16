@@ -23,14 +23,14 @@
       </div>
     </button>
 
-    <button type="button" *ngIf="label.isDeleted" (click)="restore()">
+    <button type="button" *ngIf="label.isDeleted" (click)="restoreLabel.emit(label)">
       <div class="icon">
         <mat-icon svgIcon="restore" [inline]="true"></mat-icon>
       </div>
     </button>
 
     <div class="separator-buttons"></div>
-    <button type="button" (click)="delete()">
+    <button type="button" (click)="deleteLabel.emit(label)">
       <div class="icon">
         <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
       </div>

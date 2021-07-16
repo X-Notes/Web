@@ -5,29 +5,26 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { LoadFolders } from './state/folders-actions';
+import { ClearAddToDomFolders, LoadFolders } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
 import { SmallFolder } from './models/folder.model';
-import { UpdateColor } from '../notes/state/update-color.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import {
+  FeaturesEntitiesService,
+  OrderFilterEntity,
+} from 'src/app/shared/services/features-entities.service';
 
 @Injectable()
-export class FolderService implements OnDestroy {
+export class FolderService extends FeaturesEntitiesService<SmallFolder> implements OnDestroy {
   destroy = new Subject<void>();
-
-  folders: SmallFolder[] = [];
-
-  firstInitedMurri = false;
 
   sortedFolderByTypeId: SortedByENUM = null;
 
-  constructor(
-    private store: Store,
-    public pService: PersonalizationService,
-    private murriService: MurriService,
-  ) {
+  constructor(store: Store, public pService: PersonalizationService, murriService: MurriService) {
+    super(store, OrderFilterEntity.Folder, murriService);
+
     this.store
       .select(FolderStore.updateColorEvent)
       .pipe(takeUntil(this.destroy))
@@ -36,14 +33,14 @@ export class FolderService implements OnDestroy {
     this.store
       .select(FolderStore.removeFromMurriEvent)
       .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.delete(x));
+      .subscribe((x) => this.deleteFromDom(x));
 
     this.store
       .select(FolderStore.selectedIds)
       .pipe(takeUntil(this.destroy))
       .subscribe((ids) => {
         if (ids) {
-          for (const folder of this.folders) {
+          for (const folder of this.entities) {
             if (ids.some((x) => x === folder.id)) {
               folder.isSelected = true;
             } else {
@@ -58,11 +55,11 @@ export class FolderService implements OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe((x) => {
         if (x > 0) {
-          for (const folder of this.folders) {
+          for (const folder of this.entities) {
             folder.lockRedirect = true;
           }
         } else {
-          for (const folder of this.folders) {
+          for (const folder of this.entities) {
             folder.lockRedirect = false;
           }
         }
@@ -79,6 +76,16 @@ export class FolderService implements OnDestroy {
           this.sortedFolderByTypeId = pr.sortedFolderByTypeId;
         }
       });
+
+    this.store
+      .select(FolderStore.foldersAddToDOM)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x.length > 0) {
+          this.addToDom(x);
+          this.store.dispatch(ClearAddToDomFolders);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -92,12 +99,17 @@ export class FolderService implements OnDestroy {
     isDragEnabled: boolean = true,
   ) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.folders.length && this.folders.length !== 0 && !this.firstInitedMurri) {
+      if (
+        z.length === this.entities.length &&
+        this.entities.length !== 0 &&
+        !this.firstInitedMurri
+      ) {
         isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(folderType, isDragEnabled);
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
+
+        await this.firstInitMurri();
       }
+      await this.synchronizeState(refElements);
     });
   }
 
@@ -105,7 +117,7 @@ export class FolderService implements OnDestroy {
     await this.murriService.setOpacityFlagAsync(0, false);
     await this.murriService.wait(150);
     this.murriService.grid.destroy();
-    this.folders = this.orderBy(this.folders);
+    this.entities = this.orderBy(this.entities);
     const roadType = this.store.selectSnapshot(AppStore.getTypeFolder);
     const isDraggable = roadType !== FolderTypeENUM.Shared && this.isSortable;
     this.murriService.initMurriFolderAsync(roadType, isDraggable);
@@ -129,68 +141,29 @@ export class FolderService implements OnDestroy {
     this.store.dispatch(actions);
   }
 
-  transformFolders = (items: SmallFolder[]) => {
-    const folders = [...items];
-    return folders.map((note) => {
-      return { ...note, isSelected: false, lockRedirect: false };
-    });
-  };
-
-  firstInit(folders: SmallFolder[]) {
-    folders = this.orderBy(folders);
-    this.folders = [...folders].map((note) => ({ ...note }));
-  }
-
-  orderBy(folders: SmallFolder[]) {
-    if (this.store.selectSnapshot(AppStore.getTypeFolder) === FolderTypeENUM.Shared) {
-      return folders.sort(
-        (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-      );
-    }
-
-    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    switch (pr.sortedFolderByTypeId) {
-      case SortedByENUM.AscDate: {
-        return folders.sort(
-          (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
-        );
+  get getByCurrentType() {
+    switch (this.store.selectSnapshot(AppStore.getTypeFolder)) {
+      case FolderTypeENUM.Private: {
+        return this.store.selectSnapshot(FolderStore.privateFolders);
       }
-      case SortedByENUM.DescDate: {
-        return folders.sort(
-          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        );
+      case FolderTypeENUM.Shared: {
+        return this.store.selectSnapshot(FolderStore.sharedFolders);
       }
-      case SortedByENUM.CustomOrder: {
-        return folders.sort((a, b) => a.order - b.order);
+      case FolderTypeENUM.Archive: {
+        return this.store.selectSnapshot(FolderStore.archiveFolders);
+      }
+      case FolderTypeENUM.Deleted: {
+        return this.store.selectSnapshot(FolderStore.deletedFolders);
+      }
+      default: {
+        throw new Error('Incorrect type');
       }
     }
   }
 
-  changeColorHandler(updateColor: UpdateColor[]) {
-    for (const update of updateColor) {
-      if (this.folders.length > 0) {
-        this.folders.find((x) => x.id === update.id).color = update.color;
-      }
-    }
-  }
-
-  delete(ids: string[]) {
-    if (ids.length > 0) {
-      this.folders = this.folders.filter((x) => ids.indexOf(x.id) === -1);
-      setTimeout(() => this.murriService.grid.refreshItems().layout(), 0);
-    }
-  }
-
-  addToDom(folders: SmallFolder[]) {
-    if (folders.length > 0) {
-      this.folders = [...folders.map((folder) => ({ ...folder })).reverse(), ...this.folders];
-      setTimeout(() => {
-        const DOMnodes = document.getElementsByClassName('grid-item');
-        for (let i = 0; i < folders.length; i += 1) {
-          const el = DOMnodes[i];
-          this.murriService.grid.add(el, { index: 0, layout: true });
-        }
-      }, 0);
-    }
+  firstInit() {
+    let tempNotes = this.transformSpread(this.getByCurrentType);
+    this.entities = this.orderBy(tempNotes);
+    super.initState();
   }
 }

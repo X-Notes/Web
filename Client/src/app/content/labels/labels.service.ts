@@ -1,20 +1,17 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MurriEntityService } from 'src/app/shared/services/murri-entity.service';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Label } from './models/label.model';
 
 @Injectable()
-export class LabelsService implements OnDestroy {
+export class LabelsService extends MurriEntityService<Label> implements OnDestroy {
   destroy = new Subject<void>();
 
-  public allLabels: Label[] = [];
-
-  public labels: Label[] = [];
-
-  firstInitedMurri = false;
-
-  constructor(private murriService: MurriService) {}
+  constructor(murriService: MurriService) {
+    super(murriService);
+  }
 
   ngOnDestroy(): void {
     console.log('destroy');
@@ -24,16 +21,22 @@ export class LabelsService implements OnDestroy {
 
   murriInitialise(refElements: QueryList<ElementRef>, isDeleted: boolean) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (z.length === this.labels.length && this.labels.length !== 0 && !this.firstInitedMurri) {
+      if (
+        z.length === this.entities.length &&
+        this.entities.length !== 0 &&
+        !this.firstInitedMurri
+      ) {
         this.murriService.initMurriLabel(isDeleted);
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
+
+        await this.firstInitMurri();
       }
+      await this.synchronizeState(refElements);
     });
   }
 
+  // TODO REMOVE PARAMETR
   firstInit(labels: Label[]) {
-    this.allLabels = [...labels].map((label) => ({ ...label }));
-    this.labels = this.allLabels;
+    this.entities = [...labels].map((label) => ({ ...label }));
+    super.initState();
   }
 }

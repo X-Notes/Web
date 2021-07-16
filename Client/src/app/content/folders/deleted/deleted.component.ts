@@ -72,9 +72,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent() {
     await this.folderService.loadFolders(FolderTypeENUM.Deleted);
 
-    let folders = this.store.selectSnapshot(FolderStore.deletedFolders);
-    folders = this.folderService.transformFolders(folders);
-    this.folderService.firstInit(folders);
+    this.folderService.firstInit();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

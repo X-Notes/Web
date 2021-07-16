@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Common.DTO.Notes;
 using MediatR;
 
 namespace Domain.Commands.Notes

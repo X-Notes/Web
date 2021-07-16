@@ -117,10 +117,10 @@ export class ApiFoldersService {
     return this.httpClient.patch(`${environment.writeAPI}/api/folder/ref/private`, obj);
   }
 
-  makePublic(refTypeId: RefTypeENUM, id: string) {
+  makePublic(refTypeId: RefTypeENUM, ids: string[]) {
     const obj = {
       refTypeId,
-      id,
+      ids,
     };
     return this.httpClient.post(`${environment.writeAPI}/api/share/folders/share`, obj);
   }

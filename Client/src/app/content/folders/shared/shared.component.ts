@@ -72,9 +72,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent() {
     await this.folderService.loadFolders(FolderTypeENUM.Shared);
 
-    let folders = this.store.selectSnapshot(FolderStore.sharedFolders);
-    folders = this.folderService.transformFolders(folders);
-    this.folderService.firstInit(folders);
+    this.folderService.firstInit();
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
