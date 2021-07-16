@@ -7,6 +7,7 @@ using BI.SignalR;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
+using Common.DTO.Permissions;
 using Domain.Commands.Share.Folders;
 using Domain.Commands.Share.Notes;
 using Domain.Queries.Permissions;
@@ -61,24 +62,38 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(ChangeRefTypeFolders request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
-            var folder = user.Folders.Where(x => request.Id == x.Id).FirstOrDefault();
-            if (folder != null)
+            var ownerdPermissions = new List<UserPermissionsForFolder>();
+            var rejectedPermissions = new List<UserPermissionsForFolder>();
+
+            foreach(var id in request.Ids)
             {
-                folder.RefTypeId = request.RefTypeId;
-                if (folder.FolderTypeId != FolderTypeENUM.Shared)
+                var command = new GetUserPermissionsForFolder(id, request.Email);
+                var permissions = await _mediator.Send(command);
+
+                if (permissions.IsOwner)
                 {
-                    var foldersList = new List<Folder>() { folder };
-                    await folderRepository.CastFolders(foldersList, user.Folders, folder.FolderTypeId, FolderTypeENUM.Shared);
+                    ownerdPermissions.Add(permissions);
                 }
                 else
                 {
-                    await folderRepository.Update(folder);
+                    rejectedPermissions.Add(permissions);
                 }
             }
-            else
+
+            // TODO CODE IMPROV
+            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
+            foreach (var perm in ownerdPermissions)
             {
-                throw new Exception();
+                perm.Folder.RefTypeId = request.RefTypeId;
+                if (perm.Folder.FolderTypeId != FolderTypeENUM.Shared)
+                {
+                    var foldersList = new List<Folder>() { perm.Folder };
+                    await folderRepository.CastFolders(foldersList, user.Folders, perm.Folder.FolderTypeId, FolderTypeENUM.Shared);
+                }
+                else
+                {
+                    await folderRepository.Update(perm.Folder);
+                }
             }
 
             return Unit.Value;
@@ -86,24 +101,39 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(ChangeRefTypeNotes request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
-            var note = user.Notes.Where(x => request.Id == x.Id).FirstOrDefault();
-            if (note != null)
+
+            var ownerdPermissions = new List<UserPermissionsForNote>();
+            var rejectedPermissions = new List<UserPermissionsForNote>();
+
+            foreach (var id in request.Ids)
             {
-                note.RefTypeId = request.RefTypeId;
-                if (note.NoteTypeId != NoteTypeENUM.Shared)
+                var command = new GetUserPermissionsForNote(id, request.Email);
+                var permissions = await _mediator.Send(command);
+
+                if (permissions.IsOwner)
                 {
-                    var notesList = new List<Note>() { note };
-                    await noteRepository.CastNotes(notesList, user.Notes, note.NoteTypeId, NoteTypeENUM.Shared);
+                    ownerdPermissions.Add(permissions);
                 }
                 else
                 {
-                    await noteRepository.Update(note);
+                    rejectedPermissions.Add(permissions);
                 }
             }
-            else
+
+            // TODO CODE IMPROV
+            var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
+            foreach (var perm in ownerdPermissions)
             {
-                throw new Exception();
+                perm.Note.RefTypeId = request.RefTypeId;
+                if (perm.Note.NoteTypeId != NoteTypeENUM.Shared)
+                {
+                    var notesList = new List<Note>() { perm.Note };
+                    await noteRepository.CastNotes(notesList, user.Notes, perm.Note.NoteTypeId, NoteTypeENUM.Shared);
+                }
+                else
+                {
+                    await noteRepository.Update(perm.Note);
+                }
             }
 
             return Unit.Value;

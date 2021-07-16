@@ -296,7 +296,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentNote.noteTypeId !== NoteTypeENUM.Shared) {
-      await this.apiNote.makePublic(RefTypeENUM.Viewer, this.currentNote.id).toPromise();
+      await this.apiNote.makePublic(RefTypeENUM.Viewer, [this.currentNote.id]).toPromise();
       this.currentNote.noteTypeId = NoteTypeENUM.Shared;
       this.notes.find((note) => note.id === this.currentNote.id).noteTypeId = NoteTypeENUM.Shared;
       this.store.dispatch([
@@ -320,7 +320,7 @@ export class ShareComponent implements OnInit, OnDestroy {
     }
 
     if (this.currentFolder.folderTypeId !== FolderTypeENUM.Shared) {
-      await this.apiFolder.makePublic(RefTypeENUM.Viewer, this.currentFolder.id).toPromise();
+      await this.apiFolder.makePublic(RefTypeENUM.Viewer, [this.currentFolder.id]).toPromise();
       this.currentFolder.folderTypeId = FolderTypeENUM.Shared;
       this.folders.find((note) => note.id === this.currentFolder.id).folderTypeId =
         FolderTypeENUM.Shared;
@@ -341,24 +341,22 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   factoryForCommandNote(id: string, typeTo: NoteTypeENUM): TransformTypeNotes {
-    const startType = this.startIdsType.find((x) => x.id == id).type as NoteTypeENUM;
-    return new TransformTypeNotes(startType, typeTo, [id]);
+    return new TransformTypeNotes(typeTo, [id], false);
   }
 
   factoryForCommandFolder(id: string, typeTo: FolderTypeENUM): TransformTypeFolders {
-    const startType = this.startIdsType.find((x) => x.id == id).type as FolderTypeENUM;
-    return new TransformTypeFolders(startType, typeTo, [id]);
+    return new TransformTypeFolders(typeTo, [id], false);
   }
 
   async changeRefTypeNote(refTypeId: RefTypeENUM) {
-    await this.apiNote.makePublic(refTypeId, this.currentNote.id).toPromise();
+    await this.apiNote.makePublic(refTypeId, [this.currentNote.id]).toPromise();
     this.currentNote.refTypeId = refTypeId;
     this.notes.find((note) => note.id === this.currentNote.id).refTypeId = refTypeId;
     this.store.dispatch(new UpdateOneNote(this.currentNote, this.currentNote.noteTypeId));
   }
 
   async changeRefTypeFolder(refTypeId: RefTypeENUM) {
-    await this.apiFolder.makePublic(refTypeId, this.currentFolder.id).toPromise();
+    await this.apiFolder.makePublic(refTypeId, [this.currentFolder.id]).toPromise();
     this.currentFolder.refTypeId = refTypeId;
     this.folders.find((folder) => folder.id === this.currentFolder.id).refTypeId = refTypeId;
     this.store.dispatch(new UpdateOneFolder(this.currentFolder, this.currentFolder.folderTypeId));

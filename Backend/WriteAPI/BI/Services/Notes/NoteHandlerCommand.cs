@@ -212,6 +212,7 @@ namespace BI.Services.Notes
         {
             var resultIds = new List<Guid>();
             var order = -1;
+            // TODO DO ONE QUERY
             foreach (var id in request.Ids)
             {
                 var command = new GetUserPermissionsForNote(id, request.Email);

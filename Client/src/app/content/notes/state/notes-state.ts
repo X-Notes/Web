@@ -20,7 +20,7 @@ import {
   RemoveFromDomMurri,
   MakePrivateNotes,
   CopyNotes,
-  ClearAddedPrivateNotes,
+  ClearAddToDomNotes,
   CancelAllSelectedLabels,
   UpdateSelectLabel,
   AddLabelOnNote,
@@ -40,6 +40,8 @@ import {
   LoadOnlineUsersOnNote,
   UpdateOneFullNote,
   ChangeIsLockedFullNote,
+  AddToDomNotes,
+  MakeSharedNotes,
 } from './notes-actions';
 import { UpdateColor } from './update-color.model';
 import { SmallNote } from '../models/small-note.model';
@@ -66,7 +68,7 @@ interface NoteState {
   updateColorEvent: UpdateColor[];
   updateLabelsOnNoteEvent: UpdateLabelEvent[];
   removeFromMurriEvent: string[];
-  notesAddingPrivate: SmallNote[];
+  notesAddingToDom: SmallNote[];
   selectedLabelsFilter: string[];
   isCanceled: boolean;
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
@@ -82,7 +84,7 @@ interface NoteState {
     updateColorEvent: [],
     updateLabelsOnNoteEvent: [],
     removeFromMurriEvent: [],
-    notesAddingPrivate: [],
+    notesAddingToDom: [],
     selectedLabelsFilter: [],
     isCanceled: false,
     InvitedUsersToNote: [],
@@ -154,8 +156,8 @@ export class NoteStore {
   }
 
   @Selector()
-  static notesAddingPrivate(state: NoteState): SmallNote[] {
-    return state.notesAddingPrivate;
+  static notesAddingToDOM(state: NoteState): SmallNote[] {
+    return state.notesAddingToDom;
   }
 
   @Selector()
@@ -343,8 +345,13 @@ export class NoteStore {
   @Action(TransformTypeNotes)
   tranformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
-    { typeFrom, typeTo, selectedIds }: TransformTypeNotes,
+    { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
   ) {
+    const typeFrom = getState()
+      .notes.map((x) => x.notes)
+      .flat()
+      .find((z) => selectedIds.some((x) => x === z.id)).noteTypeId;
+
     const notesFrom = this.getNotesByType(getState, typeFrom);
     const notesFromNew = notesFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
 
@@ -362,8 +369,10 @@ export class NoteStore {
     notesAdded = notesAdded.map((x) => {
       const note = { ...x };
       note.noteTypeId = typeTo;
+      note.refTypeId = refTypeId ?? note.refTypeId;
       return note;
     });
+
     const newNotesTo = [...notesAdded, ...notesTo];
     dispatch(new UpdateNotes(new Notes(typeTo, newNotesTo), typeTo));
 
@@ -371,34 +380,47 @@ export class NoteStore {
       removeFromMurriEvent: [...selectedIds],
     });
     dispatch([UnSelectAllNote, RemoveFromDomMurri]);
+
+    if (isAddToDom) {
+      dispatch(new AddToDomNotes(notesAdded));
+    }
   }
 
   // Set deleting
   @Action(SetDeleteNotes)
   async deleteNotes(
     { dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: SetDeleteNotes,
+    { selectedIds, isAddingToDom }: SetDeleteNotes,
   ) {
     await this.api.setDeleteNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Deleted, selectedIds));
+    dispatch(new TransformTypeNotes(NoteTypeENUM.Deleted, selectedIds, isAddingToDom));
   }
 
   @Action(ArchiveNotes)
   async archiveNotes(
     { dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: ArchiveNotes,
+    { selectedIds, isAddingToDom }: ArchiveNotes,
   ) {
     await this.api.archiveNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Archive, selectedIds));
+    dispatch(new TransformTypeNotes(NoteTypeENUM.Archive, selectedIds, isAddingToDom));
   }
 
   @Action(MakePrivateNotes)
   async makePrivateNotes(
     { dispatch }: StateContext<NoteState>,
-    { typeNote, selectedIds }: MakePrivateNotes,
+    { selectedIds, isAddingToDom }: MakePrivateNotes,
   ) {
     await this.api.makePrivateNotes(selectedIds).toPromise();
-    dispatch(new TransformTypeNotes(typeNote, NoteTypeENUM.Private, selectedIds));
+    dispatch(new TransformTypeNotes(NoteTypeENUM.Private, selectedIds, isAddingToDom));
+  }
+
+  @Action(MakeSharedNotes)
+  async makeSharedNotes(
+    { dispatch }: StateContext<NoteState>,
+    { selectedIds, isAddingToDom, refTypeId }: MakeSharedNotes,
+  ) {
+    await this.api.makePublic(refTypeId, selectedIds).toPromise();
+    dispatch(new TransformTypeNotes(NoteTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId));
   }
 
   // Color change
@@ -451,10 +473,7 @@ export class NoteStore {
     dispatch([UnSelectAllNote]);
 
     if (typeNote === NoteTypeENUM.Private) {
-      patchState({
-        notesAddingPrivate: [...newNotes],
-      });
-      dispatch(ClearAddedPrivateNotes);
+      dispatch(new AddToDomNotes([...newNotes]));
     }
   }
 
@@ -590,11 +609,19 @@ export class NoteStore {
     });
   }
 
-  @Action(ClearAddedPrivateNotes)
+  @Action(ClearAddToDomNotes)
   // eslint-disable-next-line class-methods-use-this
   clearAddedPrivateNotesEvent({ patchState }: StateContext<NoteState>) {
     patchState({
-      notesAddingPrivate: [],
+      notesAddingToDom: [],
+    });
+  }
+
+  @Action(AddToDomNotes)
+  // eslint-disable-next-line class-methods-use-this
+  addAddedPrivateNotes({ patchState }: StateContext<NoteState>, { notes }: AddToDomNotes) {
+    patchState({
+      notesAddingToDom: notes,
     });
   }
 

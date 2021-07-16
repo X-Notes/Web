@@ -5,10 +5,9 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { LoadFolders } from './state/folders-actions';
+import { ClearAddToDomFolders, LoadFolders } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
 import { SmallFolder } from './models/folder.model';
-import { UpdateColor } from '../notes/state/update-color.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
@@ -75,6 +74,16 @@ export class FolderService extends FeaturesEntitiesService<SmallFolder> implemen
           await this.changeOrderTypeHandler();
         } else {
           this.sortedFolderByTypeId = pr.sortedFolderByTypeId;
+        }
+      });
+
+    this.store
+      .select(FolderStore.foldersAddToDOM)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x.length > 0) {
+          this.addToDom(x);
+          this.store.dispatch(ClearAddToDomFolders);
         }
       });
   }

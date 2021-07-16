@@ -51,7 +51,7 @@ export class FeaturesEntitiesService<
   orderBy<T extends SmallNote | SmallFolder>(entities: T[]): T[] {
     if (this.isShared) {
       return entities.sort(
-        (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       );
     }
 

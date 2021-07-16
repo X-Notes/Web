@@ -20,7 +20,7 @@ import {
   SetDeleteFolders,
   DeleteFoldersPermanently,
   CopyFolders,
-  ClearAddedPrivateFolders,
+  ClearAddToDomFolders,
   MakePrivateFolders,
   PositionFolder,
   UpdateFolders,
@@ -31,6 +31,8 @@ import {
   ChangeTypeFullFolder,
   GetInvitedUsersToFolder,
   ChangeColorFullFolder,
+  AddToDomFolders,
+  MakeSharedFolders,
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/update-color.model';
 import { Folders } from '../models/folders.model';
@@ -49,7 +51,7 @@ interface FolderState {
   selectedIds: string[];
   removeFromMurriEvent: string[];
   updateColorEvent: UpdateColor[];
-  foldersAddingPrivate: SmallFolder[];
+  foldersAddToDOM: SmallFolder[];
   InvitedUsersToNote: InvitedUsersToNoteOrFolder[];
 }
 
@@ -61,7 +63,7 @@ interface FolderState {
     selectedIds: [],
     removeFromMurriEvent: [],
     updateColorEvent: [],
-    foldersAddingPrivate: [],
+    foldersAddToDOM: [],
     InvitedUsersToNote: [],
   },
 })
@@ -82,15 +84,15 @@ export class FolderStore {
   @Action(SetDeleteFolders)
   async setDeleteFolders(
     { dispatch }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: SetDeleteFolders,
+    { selectedIds, isAddingToDom }: SetDeleteFolders,
   ) {
     await this.api.setDeleteFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(typeFolder, FolderTypeENUM.Deleted, selectedIds));
+    dispatch(new TransformTypeFolders(FolderTypeENUM.Deleted, selectedIds, isAddingToDom));
   }
 
   @Action(CopyFolders)
   async copyFolders(
-    { getState, dispatch, patchState }: StateContext<FolderState>,
+    { getState, dispatch }: StateContext<FolderState>,
     { typeFolder, selectedIds }: CopyFolders,
   ) {
     const newFolders = await this.api.copyFolders(selectedIds).toPromise();
@@ -105,18 +107,23 @@ export class FolderStore {
     dispatch([UnSelectAllFolder]);
 
     if (typeFolder === FolderTypeENUM.Private) {
-      patchState({
-        foldersAddingPrivate: [...newFolders],
-      });
-      dispatch(ClearAddedPrivateFolders);
+      dispatch(new AddToDomFolders([...newFolders]));
     }
   }
 
-  @Action(ClearAddedPrivateFolders)
+  @Action(ClearAddToDomFolders)
   // eslint-disable-next-line class-methods-use-this
   clearAddedPrivateFoldersEvent({ patchState }: StateContext<FolderState>) {
     patchState({
-      foldersAddingPrivate: [],
+      foldersAddToDOM: [],
+    });
+  }
+
+  @Action(AddToDomFolders)
+  // eslint-disable-next-line class-methods-use-this
+  addAddedPrivateNotes({ patchState }: StateContext<FolderState>, { folders }: AddToDomFolders) {
+    patchState({
+      foldersAddToDOM: folders,
     });
   }
 
@@ -145,10 +152,21 @@ export class FolderStore {
   @Action(MakePrivateFolders)
   async MakePrivateFolder(
     { dispatch }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: MakePrivateFolders,
+    { selectedIds, isAddingToDom }: MakePrivateFolders,
   ) {
     await this.api.makePrivateFolders(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(typeFolder, FolderTypeENUM.Private, selectedIds));
+    dispatch(new TransformTypeFolders(FolderTypeENUM.Private, selectedIds, isAddingToDom));
+  }
+
+  @Action(MakeSharedFolders)
+  async makeSharedNotes(
+    { dispatch }: StateContext<FolderState>,
+    { selectedIds, isAddingToDom, refTypeId }: MakeSharedFolders,
+  ) {
+    await this.api.makePublic(refTypeId, selectedIds).toPromise();
+    dispatch(
+      new TransformTypeFolders(FolderTypeENUM.Shared, selectedIds, isAddingToDom, refTypeId),
+    );
   }
 
   @Action(PositionFolder)
@@ -172,13 +190,20 @@ export class FolderStore {
   @Action(TransformTypeFolders)
   tranformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
-    { typeFrom, typeTo, selectedIds }: TransformTypeFolders,
+    { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeFolders,
   ) {
+    const typeFrom = getState()
+      .folders.map((x) => x.folders)
+      .flat()
+      .find((z) => selectedIds.some((x) => x === z.id)).folderTypeId;
+
     const foldersFrom = this.getFoldersByType(getState, typeFrom);
     const foldersFromNew = foldersFrom.filter((x) => this.itemNoFromFilterArray(selectedIds, x));
 
     let foldersAdded = foldersFrom.filter((x) => this.itemsFromFilterArray(selectedIds, x));
     dispatch(new UpdateFolders(new Folders(typeFrom, foldersFromNew), typeFrom));
+
+    const foldersTo = this.getFoldersByType(getState, typeTo);
 
     foldersAdded = [
       ...foldersAdded.map((folder) => {
@@ -186,19 +211,25 @@ export class FolderStore {
         return newFolder;
       }),
     ];
-    foldersAdded.forEach((x) => {
+    foldersAdded = foldersAdded.map((x) => {
       const folder = { ...x };
       folder.folderTypeId = typeTo;
+      folder.refTypeId = refTypeId ?? folder.refTypeId;
+      return folder;
     });
 
-    const foldersTo = this.getFoldersByType(getState, typeTo);
     const newFoldersTo = [...foldersAdded, ...foldersTo];
     dispatch(new UpdateFolders(new Folders(typeTo, newFoldersTo), typeTo));
 
     patchState({
       removeFromMurriEvent: [...selectedIds],
     });
+
     dispatch([UnSelectAllFolder, RemoveFromDomMurri]);
+
+    if (isAddToDom) {
+      dispatch(new AddToDomFolders(foldersAdded));
+    }
   }
 
   // Murri
@@ -341,8 +372,8 @@ export class FolderStore {
   }
 
   @Selector()
-  static foldersAddingPrivate(state: FolderState): SmallFolder[] {
-    return state.foldersAddingPrivate;
+  static foldersAddToDOM(state: FolderState): SmallFolder[] {
+    return state.foldersAddToDOM;
   }
 
   // LOAD CONTENT
@@ -384,10 +415,10 @@ export class FolderStore {
   @Action(ArchiveFolders)
   async archiveFolders(
     { dispatch }: StateContext<FolderState>,
-    { typeFolder, selectedIds }: ArchiveFolders,
+    { selectedIds, isAddingToDom }: ArchiveFolders,
   ) {
     await this.api.archiveFolder(selectedIds).toPromise();
-    dispatch(new TransformTypeFolders(typeFolder, FolderTypeENUM.Archive, selectedIds));
+    dispatch(new TransformTypeFolders(FolderTypeENUM.Archive, selectedIds, isAddingToDom));
   }
 
   @Action(ChangeColorFolder)

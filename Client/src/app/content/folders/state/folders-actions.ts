@@ -2,6 +2,7 @@ import { Order } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { Folders } from '../models/folders.model';
 import { SmallFolder } from '../models/folder.model';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 
 export class LoadFolders {
   static type = '[Folders] Load private folders';
@@ -16,25 +17,52 @@ export class AddFolder {
 }
 
 export class BaseChangeTypeSmallFolder {
-  public typeFolder: FolderTypeENUM;
-
   public selectedIds: string[];
+
+  public isAddingToDom: boolean;
 
   get isMany() {
     return this.selectedIds.length > 1;
+  }
+
+  constructor(isAddingToDom: boolean) {
+    this.isAddingToDom = isAddingToDom;
   }
 }
 
 export class ArchiveFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] Archive folders';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
 }
 
 export class MakePrivateFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] MakePrivate folders';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
+}
+
+export class MakeSharedFolders extends BaseChangeTypeSmallFolder {
+  static type = '[Folders] MakeShared folders';
+
+  refTypeId: RefTypeENUM;
+
+  constructor(isAddingToDom: boolean, refTypeId: RefTypeENUM) {
+    super(isAddingToDom);
+    this.refTypeId = refTypeId;
+  }
 }
 
 export class SetDeleteFolders extends BaseChangeTypeSmallFolder {
   static type = '[Folders] SetDelete folder';
+
+  constructor(isAddingToDom: boolean) {
+    super(isAddingToDom);
+  }
 }
 
 // COLORS
@@ -72,8 +100,13 @@ export class DeleteFoldersPermanently {
   constructor(public selectedIds: string[], public typeNote: FolderTypeENUM) {}
 }
 
-export class ClearAddedPrivateFolders {
+export class ClearAddToDomFolders {
   static type = '[Folders] ClearAddedPrivate folders';
+}
+
+export class AddToDomFolders {
+  static type = '[Folders] Add AddToDomFolders folders';
+  constructor(public folders: SmallFolder[]) {}
 }
 
 export class CopyFolders {
@@ -137,11 +170,16 @@ export class LoadFullFolder {
 export class TransformTypeFolders {
   static type = '[Folders] transform type folders';
 
+  refTypeId?: RefTypeENUM;
+
   constructor(
-    public typeFrom: FolderTypeENUM,
     public typeTo: FolderTypeENUM,
     public selectedIds: string[],
-  ) {}
+    public isAddToDom: boolean,
+    refTypeId?: RefTypeENUM,
+  ) {
+    this.refTypeId = refTypeId;
+  }
 }
 
 export class ChangeTypeFullFolder {

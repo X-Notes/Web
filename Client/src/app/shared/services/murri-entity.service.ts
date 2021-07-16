@@ -61,7 +61,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
 
   addToDom(ents: Entity[]) {
     if (ents.length > 0) {
-      this.entities = [...ents.map((folder) => ({ ...folder })).reverse(), ...this.entities];
+      this.entities = [...ents.map((ent) => ({ ...ent })).reverse(), ...this.entities];
     }
   }
 

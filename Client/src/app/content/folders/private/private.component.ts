@@ -86,10 +86,5 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
           this.pService.setIllustrationState(true);
         }
       });
-
-    this.store
-      .select(FolderStore.foldersAddingPrivate)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.folderService.addToDom(x));
   }
 }

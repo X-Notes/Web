@@ -9,6 +9,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Router } from '@angular/router';
 import {
   CancelAllSelectedLabels,
+  ClearAddToDomNotes,
   ClearUpdatelabelEvent,
   LoadNotes,
   SelectIdNote,
@@ -139,6 +140,16 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
           this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
         }
       });
+
+    this.store
+      .select(NoteStore.notesAddingToDOM)
+      .pipe(takeUntil(this.destroy))
+      .subscribe((x) => {
+        if (x.length > 0) {
+          this.addToDom(x);
+          this.store.dispatch(ClearAddToDomNotes);
+        }
+      });
   }
 
   get getNotesByCurrentType() {
@@ -257,6 +268,7 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
   async firstInit() {
     let tempNotes = this.transformSpread(this.getNotesByCurrentType);
     tempNotes = this.orderBy(tempNotes);
+
     if (!this.isFiltedMode) {
       this.entities = tempNotes;
     } else {
