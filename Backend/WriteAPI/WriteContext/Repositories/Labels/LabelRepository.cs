@@ -56,7 +56,7 @@ namespace WriteContext.Repositories.Labels
         public async Task<int> GetNotesCountByLabelId(Guid id)
         {
             return await context.LabelsNotes.Include(x => x.Note)
-                .Where(x => x.LabelId == id && x.Note.IsHistory == false).CountAsync();
+                .Where(x => x.LabelId == id).CountAsync();
         }
 
 

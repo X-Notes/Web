@@ -113,7 +113,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId && x.IsHistory == false)
+                    .Where(x => x.UserId == userId && x.NoteTypeId == typeId)
                     .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
@@ -124,7 +124,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                     .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                    .Where(x => noteIds.Contains(x.Id) && x.IsHistory == false)
+                    .Where(x => noteIds.Contains(x.Id))
                     .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
@@ -134,7 +134,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.IsHistory == false)
+                .Where(x => x.UserId == userId)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);
@@ -165,7 +165,7 @@ namespace WriteContext.Repositories.Notes
         {
             var notes = await context.Notes
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Where(x => x.UserId == userId && x.Id != noteId && x.IsHistory == false)
+                .Where(x => x.UserId == userId && x.Id != noteId)
                 .ToListAsync();
 
             return await GetWithFilteredContent(notes, settings);

@@ -15,11 +15,11 @@ namespace BI.Services.History
     {
 
         private readonly IMediator _mediator;
-        private readonly NoteHistoryRepository noteHistoryRepository;
+        private readonly NoteSnapshotRepository noteHistoryRepository;
         private readonly AppCustomMapper noteCustomMapper;
         public HistoryHandlerQuery(
             IMediator _mediator, 
-            NoteHistoryRepository noteHistoryRepository,
+            NoteSnapshotRepository noteHistoryRepository,
             AppCustomMapper noteCustomMapper)
         {
             this._mediator = _mediator;

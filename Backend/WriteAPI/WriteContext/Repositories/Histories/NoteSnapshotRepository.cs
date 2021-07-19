@@ -6,19 +6,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.History;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.Notes;
 
 namespace WriteContext.Repositories.Histories
 {
-    public class NoteHistoryRepository : Repository<NoteHistory, Guid>
+    public class NoteSnapshotRepository : Repository<NoteSnapshot, Guid>
     {
-        public NoteHistoryRepository(WriteContextDB contextDB)
+        public NoteSnapshotRepository(WriteContextDB contextDB)
         : base(contextDB)
         {
 
         }
 
 
-        public async Task<List<NoteHistory>> GetNoteHistories(Guid noteId)
+        public async Task<List<NoteSnapshot>> GetNoteHistories(Guid noteId)
         {
             return await entities.Where(x => x.NoteId == noteId)
                 .Include(x => x.Users)

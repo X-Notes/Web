@@ -1,8 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Services.History;
@@ -12,11 +9,11 @@ namespace WriteAPI.Hosted
     public class HistoryHosted : IHostedService, IDisposable
     {
         private Timer _timer;
+
         private readonly HistoryService historyService;
-        private readonly IServiceScopeFactory serviceScopeFactory;
-        public HistoryHosted(IServiceScopeFactory serviceScopeFactory, HistoryService historyService)
+
+        public HistoryHosted(HistoryService historyService)
         {
-            this.serviceScopeFactory = serviceScopeFactory;
             this.historyService = historyService;
         }
 

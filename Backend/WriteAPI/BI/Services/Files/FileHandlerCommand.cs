@@ -135,10 +135,10 @@ namespace BI.Services.Files
 
                 var existIds = filesGroup.Key switch
                 {
-                    FileTypeEnum.Photo => await albumNoteAppFileRepository.GroupByContainsIds(fileIds),
-                    FileTypeEnum.Document => await documentNoteRepository.GroupByContainsIds(fileIds),
-                    FileTypeEnum.Audio => await audioNoteAppFileRepository.GroupByContainsIds(fileIds),
-                    FileTypeEnum.Video => await videoNoteRepository.GroupByContainsIds(fileIds),
+                    FileTypeEnum.Photo => await albumNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
+                    FileTypeEnum.Document => await documentNoteRepository.ExistGroupByContainsIds(fileIds),
+                    FileTypeEnum.Audio => await audioNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
+                    FileTypeEnum.Video => await videoNoteRepository.ExistGroupByContainsIds(fileIds),
                     _ => throw new Exception("Incorrect file type")
                 };
 

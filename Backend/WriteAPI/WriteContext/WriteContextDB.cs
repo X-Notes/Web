@@ -72,7 +72,7 @@ namespace WriteContext
         public DbSet<DocumentNote> DocumentsNote { set; get; }
 
         // NOTE HISTORY
-        public DbSet<NoteHistory> NoteHistories { set; get; }
+        public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
 
         public DbSet<UserNoteHistoryManyToMany> UserNoteHistoryManyToMany { set; get; }
 

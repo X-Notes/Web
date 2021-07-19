@@ -36,7 +36,7 @@ namespace BI.Services.Labels
 
                 foreach(var label in labels)
                 {
-                    label.LabelsNotes = label.LabelsNotes.Where(x => x.Note.IsHistory == false).ToList();
+                    label.LabelsNotes = label.LabelsNotes.ToList();
                 }
 
                 var labelsAll = labels.Where(x => x.IsDeleted == false).OrderBy(x => x.Order).ToList();

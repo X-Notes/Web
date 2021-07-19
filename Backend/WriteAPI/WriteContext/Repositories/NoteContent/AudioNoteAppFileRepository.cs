@@ -15,7 +15,7 @@ namespace WriteContext.Repositories.NoteContent
         {
         }
 
-        public async Task<List<Guid>> GroupByContainsIds(IEnumerable<Guid> ids)
+        public async Task<List<Guid>> ExistGroupByContainsIds(IEnumerable<Guid> ids)
         {
             return await entities.Where(x => ids.Contains(x.AppFileId))
                 .GroupBy(x => x.AppFileId).Select(x => x.Key).ToListAsync();

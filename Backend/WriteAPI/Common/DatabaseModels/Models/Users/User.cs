@@ -56,7 +56,7 @@ namespace Common.DatabaseModels.Models.Users
         public List<Notification> NotificationsFrom { set; get; }
         public List<Notification> NotificationsTo { set; get; }
 
-        public List<NoteHistory> NoteHistories { set; get; }
+        public List<NoteSnapshot> NoteHistories { set; get; }
 
         public List<UserNoteHistoryManyToMany> UserHistories { set; get; }
 

@@ -4,10 +4,11 @@ using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Labels;
 using Common.DTO.Notes.FullNoteContent;
+using Common.Interfaces;
 
 namespace Common.DTO.Notes
 {
-    public class SmallNote
+    public class SmallNote : IDateCreator, IDateUpdater, IDateDeleter
     {
         public Guid Id { get; set; }
 
@@ -29,7 +30,7 @@ namespace Common.DTO.Notes
 
         public bool IsLocked { set; get; }
 
-        public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset? DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
     }

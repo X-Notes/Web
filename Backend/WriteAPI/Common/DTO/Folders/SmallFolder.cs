@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Systems;
+using Common.Interfaces;
 
 namespace Common.DTO.Folders
 {
-    public class SmallFolder
+    public class SmallFolder : IDateCreator, IDateUpdater, IDateDeleter
     {
         public Guid Id { get; set; }
 
@@ -19,7 +20,7 @@ namespace Common.DTO.Folders
 
         public FolderTypeENUM FolderTypeId { set; get; }
 
-        public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset? DeletedAt { set; get; }
 
         public DateTimeOffset UpdatedAt { set; get; }
 

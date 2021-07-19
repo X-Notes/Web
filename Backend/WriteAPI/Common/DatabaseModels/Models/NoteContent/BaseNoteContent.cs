@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Common.DatabaseModels.Models.Notes;
+using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.NoteContent
 {
-    public class BaseNoteContent : BaseEntity<Guid>
+    public class BaseNoteContent : BaseEntity<Guid>, IDateUpdater
     {
         public Guid NoteId { set; get; }
 

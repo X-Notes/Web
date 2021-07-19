@@ -134,6 +134,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<ArchiveNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyNoteCommand, List<Guid>>, NoteHandlerCommand>();
+            services.AddScoped<IRequestHandler<MakeNoteHistoryCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveLabelFromNoteCommand, Unit>, NoteHandlerCommand>();
             services.AddScoped<IRequestHandler<AddLabelOnNoteCommand, Unit>, NoteHandlerCommand>();
 
@@ -304,7 +305,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<SearchRepository>();
 
             // History
-            services.AddScoped<NoteHistoryRepository>();
+            services.AddScoped<NoteSnapshotRepository>();
             services.AddScoped<UserNoteHistoryManyToManyRepository>();
 
             // Personalization

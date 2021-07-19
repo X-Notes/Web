@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.History
@@ -8,9 +9,11 @@ namespace Common.DatabaseModels.Models.History
     {
         [NotMapped]
         public override Guid Id { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
+
         public Guid NoteHistoryId { set; get; }
-        public NoteHistory NoteHistory { set; get; }
+        public NoteSnapshot NoteHistory { set; get; }
     }
 }

@@ -38,6 +38,7 @@ namespace BI.Services.Notes
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
         IRequestHandler<CopyNoteCommand, List<Guid>>,
+        IRequestHandler<MakeNoteHistoryCommand, Unit>,
         IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
         IRequestHandler<AddLabelOnNoteCommand, Unit>
     {
@@ -231,7 +232,6 @@ namespace BI.Services.Notes
                         RefTypeId = noteForCopy.RefTypeId,
                         Order = order--,
                         UserId = permissions.User.Id,
-                        IsHistory = request.IsHistory
                     };
                     var dbNote = await noteRepository.Add(newNote);
                     resultIds.Add(dbNote.Entity.Id);
@@ -339,8 +339,7 @@ namespace BI.Services.Notes
 
             var dbNotes = await noteRepository.GetWhere(x => 
                 x.UserId == user.Id 
-                && x.NoteTypeId == NoteTypeENUM.Private
-                && x.IsHistory == request.IsHistory);
+                && x.NoteTypeId == NoteTypeENUM.Private);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
 
@@ -413,6 +412,12 @@ namespace BI.Services.Notes
                 }
             }
             return Unit.Value;
+        }
+
+        public Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
+        {
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }

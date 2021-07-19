@@ -314,7 +314,7 @@ namespace BI.Mapping
             return users.Select(x => MapUserToUserNoteHistory(x)).ToList();
         }
 
-        public NoteHistoryDTO MapHistoryToHistoryDto(NoteHistory historyDTO)
+        public NoteHistoryDTO MapHistoryToHistoryDto(NoteSnapshot historyDTO)
         {
             return new NoteHistoryDTO()
             {
@@ -324,7 +324,7 @@ namespace BI.Mapping
             };
         }
 
-        public List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteHistory> histories)
+        public List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteSnapshot> histories)
         {
             return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
         }
