@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../export.service';
 import { DocumentModel } from '../../models/content-model.model';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { ParentInteraction } from '../../full-note/models/parent-interaction.interface';
 
 @Component({
   selector: 'app-document-note',

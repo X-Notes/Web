@@ -13,9 +13,9 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText } from '../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
-import { EnterEvent } from '../../../models/enter-event.model';
-import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { EditTextEventModel } from '../../../full-note/models/edit-text-event.model';
+import { EnterEvent } from '../../../full-note/models/enter-event.model';
+import { ParentInteraction } from '../../../full-note/models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
 import { DotListService } from '../../html-business-logic/dot-list.service';
 

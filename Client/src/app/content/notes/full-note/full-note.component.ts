@@ -41,7 +41,7 @@ import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { NotesService } from '../notes.service';
-import { FullNoteSliderService } from '../full-note-slider.service';
+import { FullNoteSliderService } from './services/full-note-slider.service';
 import {
   Album,
   BaseText,
@@ -53,16 +53,16 @@ import {
   PlaylistModel,
 } from '../models/content-model.model';
 import { LineBreakType } from '../html-models';
-import { ContentEditableService } from '../content-editable.service';
+import { ContentEditableService } from './services/content-editable.service';
 import { SelectionDirective } from './directives/selection.directive';
-import { EnterEvent } from '../models/enter-event.model';
-import { ParentInteraction } from '../models/parent-interaction.interface';
+import { EnterEvent } from './models/enter-event.model';
+import { ParentInteraction } from './models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { SelectionService } from '../selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { EditTextEventModel } from '../models/edit-text-event.model';
+import { EditTextEventModel } from './models/edit-text-event.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { RemovePhotoFromAlbum } from '../models/remove-photo-from-album.model';

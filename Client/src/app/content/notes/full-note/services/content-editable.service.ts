@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ApiBrowserTextService } from './api-browser-text.service';
-import { LineBreakType } from './html-models';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { LineBreakType } from '../../html-models';
 
 export interface BreakEnterModel {
   typeBreakLine: LineBreakType;

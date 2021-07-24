@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
 import { AudioService } from '../../audio.service';
 import { ExportService } from '../../export.service';
 import { AudioModel, ContentModel, PlaylistModel } from '../../models/content-model.model';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { ParentInteraction } from '../../full-note/models/parent-interaction.interface';
 import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';

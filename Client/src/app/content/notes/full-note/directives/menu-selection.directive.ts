@@ -10,7 +10,7 @@ import {
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../../menu-selection.service';
 import { BaseText, ContentTypeENUM } from '../../models/content-model.model';
-import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { ParentInteraction } from '../models/parent-interaction.interface';
 import { SelectionService } from '../../selection.service';
 
 @Directive({

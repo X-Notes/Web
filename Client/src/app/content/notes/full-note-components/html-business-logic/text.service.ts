@@ -1,6 +1,6 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from '../../models/content-model.model';
-import { EnterEvent } from '../../models/enter-event.model';
+import { EnterEvent } from '../../full-note/models/enter-event.model';
 import { HtmlService } from './html.service';
 
 @Injectable()
