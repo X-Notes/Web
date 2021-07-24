@@ -52,24 +52,24 @@ import {
   Photo,
   PlaylistModel,
 } from '../models/content-model.model';
-import { LineBreakType } from '../html-models';
+import { LineBreakType } from './models/html-models';
 import { ContentEditableService } from './services/content-editable.service';
 import { SelectionDirective } from './directives/selection.directive';
 import { EnterEvent } from './models/enter-event.model';
 import { ParentInteraction } from './models/parent-interaction.interface';
-import { TransformContent } from '../models/transform-content.model';
+import { TransformContent } from './models/transform-content.model';
 import { SelectionService } from './services/selection.service';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from './services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { EditTextEventModel } from './models/edit-text-event.model';
-import { TransformToFileContent } from '../models/transform-file-content.model';
-import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { TransformToFileContent } from './models/transform-file-content.model';
+import { UploadFileToEntity } from './models/upload-files-to-entity';
 import { RemovePhotoFromAlbum } from '../models/remove-photo-from-album.model';
 import { SidebarNotesService } from './services/sidebar-notes.service';
-import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
-import { ApiNoteHistoryService } from '../api-note-history.service';
-import { NoteHistory } from '../models/history/note-history.model';
+import { TypeUploadFile } from './models/enums/type-upload-file.enum';
+import { ApiNoteHistoryService } from './services/api-note-history.service';
+import { NoteHistory } from './models/history/note-history.model';
 import { RemoveAudioFromPlaylist } from '../models/remove-audio-from-playlist.model';
 import { NotesUpdaterService } from '../notes-updater.service';
 

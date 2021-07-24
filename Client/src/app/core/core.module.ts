@@ -22,7 +22,7 @@ import { ApiFoldersService } from '../content/folders/api-folders.service';
 import { ApiRelatedNotesService } from '../content/notes/api-related-notes.service';
 import { ApiFullFolderService } from '../content/folders/full-folder/services/api-full-folder.service';
 import { LockEncryptService } from '../content/notes/lock-encrypt.service';
-import { ApiNoteHistoryService } from '../content/notes/api-note-history.service';
+import { ApiNoteHistoryService } from '../content/notes/full-note/services/api-note-history.service';
 import { ApiPersonalizationSettingsService } from './api-personalization-settings.service';
 import { NotesUpdaterService } from '../content/notes/notes-updater.service';
 

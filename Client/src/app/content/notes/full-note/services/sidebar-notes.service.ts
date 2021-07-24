@@ -5,7 +5,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { DialogsManageService } from '../../../navigation/dialogs-manage.service';
 import { MenuButtonsService } from '../../../navigation/menu-buttons.service';
 import { ApiRelatedNotesService } from '../../api-related-notes.service';
-import { ChangeStateRelatedNote } from '../../models/change-state-related-note.model';
+import { ChangeStateRelatedNote } from '../models/change-state-related-note.model';
 import { RelatedNote } from '../../models/related-note.model';
 import { SmallNote } from '../../models/small-note.model';
 

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../api-browser-text.service';
 import { MenuSelectionService } from '../full-note/services/menu-selection.service';
 import { HeadingTypeENUM, NoteTextTypeENUM } from '../models/content-model.model';
-import { TransformContent } from '../models/transform-content.model';
+import { TransformContent } from '../full-note/models/transform-content.model';
 
 @Component({
   selector: 'app-text-edit-menu',
