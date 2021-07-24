@@ -8,11 +8,11 @@ import { ChangeStateRelatedNote } from '../models/change-state-related-note.mode
 import { ContentTypeENUM, NoteTextTypeENUM } from '../models/content-model.model';
 import { RelatedNote } from '../models/related-note.model';
 @Component({
-  selector: 'app-small-note',
-  templateUrl: './small-note.component.html',
-  styleUrls: ['./small-note.component.scss'],
+  selector: 'app-related-note',
+  templateUrl: './related-note.component.html',
+  styleUrls: ['./related-note.component.scss'],
 })
-export class SmallNoteComponent {
+export class RelatedNoteComponent {
   @Input() note: RelatedNote;
 
   @Select(UserStore.getUser)

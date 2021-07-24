@@ -209,11 +209,11 @@
               class="grid-item-small"
               *ngFor="let item of sideBarService.notes"
             >
-              <app-small-note
+              <app-related-note
                 [note]="item"
                 (deleteNote)="sideBarService.deleteSmallNote($event, id)"
                 (changeState)="sideBarService.changeState($event, id)"
-              ></app-small-note>
+              ></app-related-note>
             </div>
           </div>
         </div>

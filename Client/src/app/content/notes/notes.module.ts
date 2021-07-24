@@ -27,7 +27,7 @@ import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { PhotoComponent } from './full-note-components/photo/photo.component';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
-import { SmallNoteComponent } from './small-note/small-note.component';
+import { RelatedNoteComponent } from './related-note/related-note.component';
 import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
 import { HistoryRecordComponent } from './full-note-components/history-record/history-record.component';
 import { AudioNoteComponent } from './full-note-components/audio-note/audio-note.component';
@@ -58,7 +58,7 @@ import { NotesUpdaterService } from './notes-updater.service';
     PhotoComponent,
     ChangeSizeAlbumHeightDirective,
     ChangeSizeAlbumWidthDirective,
-    SmallNoteComponent,
+    RelatedNoteComponent,
     HtmlLinkComponent,
     HistoryRecordComponent,
     AudioNoteComponent,
