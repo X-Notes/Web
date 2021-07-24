@@ -68,7 +68,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private elRef: ElementRef,
     private selectionService: SelectionService,
     private api: ApiServiceNotes,
-    private store: Store,
     private exportService: ExportService,
   ) {}
 
