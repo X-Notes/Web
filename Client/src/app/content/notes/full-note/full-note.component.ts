@@ -54,7 +54,7 @@ import {
 } from '../models/content-model.model';
 import { LineBreakType } from '../html-models';
 import { ContentEditableService } from '../content-editable.service';
-import { SelectionDirective } from '../directives/selection.directive';
+import { SelectionDirective } from './directives/selection.directive';
 import { EnterEvent } from '../models/enter-event.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';

@@ -7,7 +7,7 @@ import {
   QueryList,
   Renderer2,
 } from '@angular/core';
-import { ApiBrowserTextService } from '../api-browser-text.service';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
 
 @Directive({
   selector: '[appCopy]',

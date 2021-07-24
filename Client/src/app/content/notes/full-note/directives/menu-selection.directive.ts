@@ -7,11 +7,11 @@ import {
   QueryList,
   Renderer2,
 } from '@angular/core';
-import { ApiBrowserTextService } from '../api-browser-text.service';
-import { MenuSelectionService } from '../menu-selection.service';
-import { BaseText, ContentTypeENUM } from '../models/content-model.model';
-import { ParentInteraction } from '../models/parent-interaction.interface';
-import { SelectionService } from '../selection.service';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { MenuSelectionService } from '../../menu-selection.service';
+import { BaseText, ContentTypeENUM } from '../../models/content-model.model';
+import { ParentInteraction } from '../../models/parent-interaction.interface';
+import { SelectionService } from '../../selection.service';
 
 @Directive({
   selector: '[appMenuSelection]',
