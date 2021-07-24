@@ -14,7 +14,7 @@ import { ArchiveComponent } from './archive/archive.component';
 import { PhotosComponent } from './full-note/full-note-components/photos/photos.component';
 import { SelectionDirective } from './full-note/directives/selection.directive';
 import { SelectionService } from './full-note/services/selection.service';
-import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
+import { TextEditMenuComponent } from './full-note/text-edit-menu/text-edit-menu.component';
 import { MenuSelectionService } from './full-note/services/menu-selection.service';
 import { HtmlTextPartComponent } from './full-note/full-note-components/html-components/html-text-part/html-text-part.component';
 import { HtmlNumberListComponent } from './full-note/full-note-components/html-components/html-number-list/html-number-list.component';
