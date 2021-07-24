@@ -27,14 +27,13 @@ import { TextEditMenuDirective } from './directives/text-edit-menu.directive';
 import { PhotoComponent } from './full-note-components/photo/photo.component';
 import { ChangeSizeAlbumHeightDirective } from './directives/change-size-album-height.directive';
 import { ChangeSizeAlbumWidthDirective } from './directives/change-size-album-width.directive';
-import { RelatedNoteComponent } from './related-note/related-note.component';
+import { RelatedNoteComponent } from './full-note/related-note/related-note.component';
 import { HtmlLinkComponent } from './full-note-components/html-components/html-link/html-link.component';
 import { HistoryRecordComponent } from './full-note-components/history-record/history-record.component';
 import { AudioNoteComponent } from './full-note-components/audio-note/audio-note.component';
 import { VideoNoteComponent } from './full-note-components/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
-import { NotesUpdaterService } from './notes-updater.service';
 
 @NgModule({
   declarations: [
