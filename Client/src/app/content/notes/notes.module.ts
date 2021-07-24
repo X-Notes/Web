@@ -13,9 +13,9 @@ import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { SelectionDirective } from './full-note/directives/selection.directive';
-import { SelectionService } from './selection.service';
+import { SelectionService } from './full-note/services/selection.service';
 import { TextEditMenuComponent } from './text-edit-menu/text-edit-menu.component';
-import { MenuSelectionService } from './menu-selection.service';
+import { MenuSelectionService } from './full-note/services/menu-selection.service';
 import { HtmlTextPartComponent } from './full-note-components/html-components/html-text-part/html-text-part.component';
 import { HtmlNumberListComponent } from './full-note-components/html-components/html-number-list/html-number-list.component';
 import { HtmlDotListComponent } from './full-note-components/html-components/html-dot-list/html-dot-list.component';
@@ -35,6 +35,7 @@ import { VideoNoteComponent } from './full-note-components/video-note/video-note
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
 
+// TODO MAKE MODULE FOR FULL NOTE
 @NgModule({
   declarations: [
     NotesComponent,

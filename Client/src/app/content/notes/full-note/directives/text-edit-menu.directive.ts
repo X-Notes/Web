@@ -1,5 +1,5 @@
 import { Directive, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { MenuSelectionService } from '../../menu-selection.service';
+import { MenuSelectionService } from '../services/menu-selection.service';
 
 @Directive({
   selector: '[appTextEditMenu]',

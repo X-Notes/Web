@@ -2,7 +2,7 @@ import { ElementRef, Injectable, QueryList } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ApiBrowserTextService } from './api-browser-text.service';
+import { ApiBrowserTextService } from '../../api-browser-text.service';
 
 @Injectable()
 export class SelectionService {

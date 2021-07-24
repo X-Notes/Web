@@ -4,10 +4,10 @@ import {
   BreakEnterModel,
   ContentEditableService,
 } from '../../full-note/services/content-editable.service';
-import { MenuSelectionService } from '../../menu-selection.service';
+import { MenuSelectionService } from '../../full-note/services/menu-selection.service';
 import { BaseText, NoteTextTypeENUM } from '../../models/content-model.model';
 import { EnterEvent } from '../../full-note/models/enter-event.model';
-import { SelectionService } from '../../selection.service';
+import { SelectionService } from '../../full-note/services/selection.service';
 
 @Injectable()
 export abstract class HtmlService {

@@ -19,7 +19,7 @@ import { Photo, Album } from '../../models/content-model.model';
 import { ParentInteraction } from '../../full-note/models/parent-interaction.interface';
 import { RemovePhotoFromAlbum } from '../../models/remove-photo-from-album.model';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
-import { SelectionService } from '../../selection.service';
+import { SelectionService } from '../../full-note/services/selection.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',

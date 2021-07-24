@@ -2,12 +2,12 @@ import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MurriService } from 'src/app/shared/services/murri.service';
-import { DialogsManageService } from '../navigation/dialogs-manage.service';
-import { MenuButtonsService } from '../navigation/menu-buttons.service';
-import { ApiRelatedNotesService } from './api-related-notes.service';
-import { ChangeStateRelatedNote } from './models/change-state-related-note.model';
-import { RelatedNote } from './models/related-note.model';
-import { SmallNote } from './models/small-note.model';
+import { DialogsManageService } from '../../../navigation/dialogs-manage.service';
+import { MenuButtonsService } from '../../../navigation/menu-buttons.service';
+import { ApiRelatedNotesService } from '../../api-related-notes.service';
+import { ChangeStateRelatedNote } from '../../models/change-state-related-note.model';
+import { RelatedNote } from '../../models/related-note.model';
+import { SmallNote } from '../../models/small-note.model';
 
 @Injectable()
 export class SidebarNotesService implements OnDestroy {

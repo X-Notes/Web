@@ -8,10 +8,10 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../../menu-selection.service';
+import { MenuSelectionService } from '../services/menu-selection.service';
 import { BaseText, ContentTypeENUM } from '../../models/content-model.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
-import { SelectionService } from '../../selection.service';
+import { SelectionService } from '../services/selection.service';
 
 @Directive({
   selector: '[appMenuSelection]',
