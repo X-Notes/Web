@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.History;
 using WriteContext.GenericRepositories;
-using Common.DatabaseModels.Models.Notes;
 
 namespace WriteContext.Repositories.Histories
 {

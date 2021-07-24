@@ -7,8 +7,11 @@ namespace Common.DTO.History
     public class NoteHistoryDTO
     {
         public DateTimeOffset SnapshotTime { set; get; }
+
         public List<UserNoteHistory> Users { set; get; }
+
         public Guid NoteVersionId { set; get; }
+
         public NoteHistoryDTO()
         {
 

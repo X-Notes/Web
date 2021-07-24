@@ -33,8 +33,8 @@ namespace BI.Services.RelatedNotes
 
             if (permissions.CanWrite)
             {
-                var currentRelateds = await relatedRepository.GetWhere(x => x.NoteId == request.NoteId);
-                await relatedRepository.RemoveRange(currentRelateds);
+                var currentRelateds = await relatedRepository.GetWhereAsync(x => x.NoteId == request.NoteId);
+                await relatedRepository.RemoveRangeAsync(currentRelateds);
 
                 var orders = Enumerable.Range(1, request.RelatedNoteIds.Count);
                 var nodes = request.RelatedNoteIds.Zip(orders, (id, order) =>
@@ -48,7 +48,7 @@ namespace BI.Services.RelatedNotes
                     };
                 }).ToList();
 
-                await relatedRepository.AddRange(nodes);
+                await relatedRepository.AddRangeAsync(nodes);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
@@ -65,7 +65,7 @@ namespace BI.Services.RelatedNotes
             {
                 var relatedNote = await relatedRepository.FirstOrDefaultAsync(x => x.NoteId == note.Id && x.RelatedNoteId == request.RelatedNoteId);
                 relatedNote.IsOpened = request.IsOpened;
-                await relatedRepository.Update(relatedNote);
+                await relatedRepository.UpdateAsync(relatedNote);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
@@ -104,7 +104,7 @@ namespace BI.Services.RelatedNotes
                     return node;
                 }).ToList();
 
-                await relatedRepository.UpdateRange(nodes);
+                await relatedRepository.UpdateRangeAsync(nodes);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

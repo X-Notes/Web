@@ -58,7 +58,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
@@ -70,9 +70,9 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    await fileRepository.Add(file);
+                    await fileRepository.AddAsync(file);
 
                     var videoNote = new VideoNote()
                     {
@@ -82,7 +82,7 @@ namespace BI.Services.Notes
                         Order = contentForRemove.Order,
                     };
 
-                    await videoNoteRepository.Add(videoNote);
+                    await videoNoteRepository.AddAsync(videoNote);
 
                     await transaction.CommitAsync();
 
@@ -130,8 +130,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
+                    await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 

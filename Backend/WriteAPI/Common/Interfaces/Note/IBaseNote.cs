@@ -21,7 +21,6 @@ namespace Common.Interfaces.Note
         public string Title { set; get; }
         public string Color { set; get; }
 
-        public List<LabelsNotes> LabelsNotes { get; set; }
         public List<BaseNoteContent> Contents { set; get; }
     }
 }

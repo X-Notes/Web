@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.Notes
@@ -9,9 +10,13 @@ namespace Domain.Commands.Notes
         [Required]
         public Guid Id { set; get; }
 
-        public MakeNoteHistoryCommand(Guid id)
+        [Required]
+        public List<Guid> UserIds { set; get; }
+
+        public MakeNoteHistoryCommand(Guid id, List<Guid> userIds)
         {
             this.Id = id;
+            this.UserIds = userIds;
         }
     }
 }

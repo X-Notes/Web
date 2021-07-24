@@ -20,9 +20,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.PlaylistAudios;
         }
 
-        public AudiosPlaylistNote(AudiosPlaylistNote entity, List<AudioNoteAppFile> audios, Guid NoteId)
+        public AudiosPlaylistNote(AudiosPlaylistNote entity, List<AudioNoteAppFile> audios, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             Order = entity.Order;
             Name = entity.Name;
@@ -33,9 +33,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             AudioNoteAppFiles = audios;
         }
 
-        public AudiosPlaylistNote(AudiosPlaylistNote entity, List<AppFile> audios, Guid NoteId)
+        public AudiosPlaylistNote(AudiosPlaylistNote entity, List<AppFile> audios, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             Order = entity.Order;
             Name = entity.Name;

@@ -320,7 +320,7 @@ namespace BI.Mapping
             {
                 SnapshotTime = historyDTO.SnapshotTime,
                 Users = MapUsersToUsersNoteHistory(historyDTO.Users),
-                NoteVersionId = historyDTO.NoteVersionId
+                NoteVersionId = historyDTO.Id
             };
         }
 

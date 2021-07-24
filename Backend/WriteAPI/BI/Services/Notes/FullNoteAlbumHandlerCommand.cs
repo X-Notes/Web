@@ -70,7 +70,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
@@ -95,9 +95,9 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    await fileRepository.AddRange(dbFiles);
+                    await fileRepository.AddRangeAsync(dbFiles);
 
                     var albumNote = new AlbumNote()
                     {
@@ -110,7 +110,7 @@ namespace BI.Services.Notes
                         Height = "auto",
                     };
 
-                    await albumNoteRepository.Add(albumNote);
+                    await albumNoteRepository.AddAsync(albumNote);
 
                     await transaction.CommitAsync();
 
@@ -163,8 +163,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
+                    await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 
@@ -195,7 +195,7 @@ namespace BI.Services.Notes
                 var album = await baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
                 album.CountInRow = request.Count;
                 album.UpdatedAt = DateTimeOffset.Now;
-                await baseNoteContentRepository.Update(album);
+                await baseNoteContentRepository.UpdateAsync(album);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
@@ -217,7 +217,7 @@ namespace BI.Services.Notes
                 album.Height = request.Height;
                 album.Width = request.Width;
                 album.UpdatedAt = DateTimeOffset.Now;
-                await baseNoteContentRepository.Update(album);
+                await baseNoteContentRepository.UpdateAsync(album);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
@@ -247,7 +247,7 @@ namespace BI.Services.Notes
                 }
                 else
                 {
-                    await baseNoteContentRepository.Update(album);
+                    await baseNoteContentRepository.UpdateAsync(album);
                 }
 
                 await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), photoForRemove));
@@ -291,12 +291,12 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await fileRepository.AddRange(dbFiles);
+                    await fileRepository.AddRangeAsync(dbFiles);
 
                     album.Photos.AddRange(dbFiles);
                     album.UpdatedAt = DateTimeOffset.Now;
 
-                    await albumNoteRepository.Update(album);
+                    await albumNoteRepository.UpdateAsync(album);
 
                     await transaction.CommitAsync();
 

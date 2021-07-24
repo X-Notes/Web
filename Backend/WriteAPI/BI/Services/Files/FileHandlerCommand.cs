@@ -156,7 +156,7 @@ namespace BI.Services.Files
 
         public async Task DeletePermanentlyFiles(List<AppFile> files, string userId)
         {
-            await fileRepository.RemoveRange(files);
+            await fileRepository.RemoveRangeAsync(files);
             await filesStorage.RemoveFiles(userId, files.SelectMany(x => x.GetNotNullPathes()).ToArray());
         }
 

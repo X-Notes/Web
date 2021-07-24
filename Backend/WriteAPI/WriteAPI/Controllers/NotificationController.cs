@@ -45,9 +45,9 @@ namespace WriteAPI.Controllers
             if (user != null)
             {
                 var notifs = await this.notificationRepository
-                    .GetWhere(x => x.UserToId == user.Id && x.IsRead == false);
+                    .GetWhereAsync(x => x.UserToId == user.Id && x.IsRead == false);
                 notifs.ForEach(x => x.IsRead = true);
-                await notificationRepository.UpdateRange(notifs);
+                await notificationRepository.UpdateRangeAsync(notifs);
                 return Ok();
             }
             throw new Exception("User not found");
@@ -61,7 +61,7 @@ namespace WriteAPI.Controllers
             {
                 var notif = await notificationRepository.FirstOrDefaultAsync(x => x.UserToId == user.Id && x.Id == id);
                 notif.IsRead = true;
-                await notificationRepository.Update(notif);
+                await notificationRepository.UpdateAsync(notif);
                 return Ok();
             }
             throw new Exception("User not found");

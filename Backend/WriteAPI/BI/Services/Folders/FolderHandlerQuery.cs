@@ -52,7 +52,7 @@ namespace BI.Services.Folders
 
                 if (FolderTypeENUM.Shared == request.TypeId)
                 {
-                    var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhere(x => x.UserId == user.Id);
+                    var usersOnPrivateFolders = await usersOnPrivateFoldersRepository.GetWhereAsync(x => x.UserId == user.Id);
                     var foldersIds = usersOnPrivateFolders.Select(x => x.FolderId);
                     var sharedFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(foldersIds);
                     folders.AddRange(sharedFolders);

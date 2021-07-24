@@ -39,7 +39,7 @@ namespace BI.Services.Folders
             {
                 folder.Title = request.Title;
                 folder.UpdatedAt = DateTimeOffset.Now;
-                await folderRepository.Update(folder);
+                await folderRepository.UpdateAsync(folder);
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
@@ -68,9 +68,9 @@ namespace BI.Services.Folders
 
                 folder.UpdatedAt = DateTimeOffset.Now;
 
-                await foldersNotesRepository.RemoveRange(foldersNotes);
-                await foldersNotesRepository.AddRange(newFoldersNotes);
-                await folderRepository.Update(folder);
+                await foldersNotesRepository.RemoveRangeAsync(foldersNotes);
+                await foldersNotesRepository.AddRangeAsync(newFoldersNotes);
+                await folderRepository.UpdateAsync(folder);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }
@@ -99,8 +99,8 @@ namespace BI.Services.Folders
                         return folderNote;
                     });
 
-                await foldersNotesRepository.RemoveRange(notesForDelete);
-                await foldersNotesRepository.UpdateRange(folderNotesForUpdating);
+                await foldersNotesRepository.RemoveRangeAsync(notesForDelete);
+                await foldersNotesRepository.UpdateRangeAsync(folderNotesForUpdating);
 
                 return new OperationResult<Unit>(true, Unit.Value);
             }

@@ -71,11 +71,11 @@ namespace BI.Services.UserHandlers
                 BillingPlanId = BillingPlanTypeENUM.Basic
             };
 
-            await userRepository.Add(user);
+            await userRepository.AddAsync(user);
 
             await filesStorage.CreateUserContainer(user.Id);
 
-            await personalizationSettingRepository.Add(new PersonalizationSetting().GetNewFactory(user.Id));
+            await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 
             return Unit.Value;
         }
@@ -84,7 +84,7 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.Name = request.Name;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
 
@@ -95,7 +95,7 @@ namespace BI.Services.UserHandlers
 
             if (userProfilePhoto != null)
             {
-                await userProfilePhotoRepository.Remove(userProfilePhoto);
+                await userProfilePhotoRepository.RemoveAsync(userProfilePhoto);
                 await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile).SetIsNoCheckDelete());
             }
 
@@ -152,7 +152,7 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.LanguageId = request.Id;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
 
@@ -160,7 +160,7 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.ThemeId = request.Id;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
 
@@ -168,7 +168,7 @@ namespace BI.Services.UserHandlers
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.FontSizeId = request.Id;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
     }

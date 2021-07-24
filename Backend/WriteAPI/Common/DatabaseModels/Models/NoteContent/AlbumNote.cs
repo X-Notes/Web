@@ -22,9 +22,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Album;
         }
 
-        public AlbumNote(AlbumNote entity, List<AlbumNoteAppFile> albumNoteAppFiles, Guid NoteId)
+        public AlbumNote(AlbumNote entity, List<AlbumNoteAppFile> albumNoteAppFiles, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             this.UpdatedAt = DateTimeOffset.Now;
             this.ContentTypeId = ContentTypeENUM.Album;
@@ -38,9 +38,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             AlbumNoteAppFiles = albumNoteAppFiles;
         }
 
-        public AlbumNote(AlbumNote entity, List<AppFile> files, Guid NoteId)
+        public AlbumNote(AlbumNote entity, List<AppFile> files, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             this.UpdatedAt = DateTimeOffset.Now;
             this.ContentTypeId = ContentTypeENUM.Album;

@@ -13,16 +13,16 @@ namespace WriteContext.GenericRepositories
     {
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
-        Task<EntityEntry<T>> Add(T entity);
-        Task AddRange(IEnumerable<T> ents);
+        Task<EntityEntry<T>> AddAsync(T entity);
+        Task AddRangeAsync(IEnumerable<T> ents);
 
-        Task Update(T entity);
-        Task UpdateRange(IEnumerable<T> entities);
+        Task UpdateAsync(T entity);
+        Task UpdateRangeAsync(IEnumerable<T> entities);
 
-        Task Remove(T entity);
-        Task RemoveRange(IEnumerable<T> entities);
+        Task RemoveAsync(T entity);
+        Task RemoveRangeAsync(IEnumerable<T> entities);
 
-        Task<List<T>> GetAll();
-        Task<List<T>> GetWhere(Expression<Func<T, bool>> predicate);
+        Task<List<T>> GetAllAsync();
+        Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate);
     }
 }

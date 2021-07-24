@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.History

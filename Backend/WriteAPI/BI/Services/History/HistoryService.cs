@@ -53,28 +53,10 @@ namespace BI.Services.History
             using var scope = serviceScopeFactory.CreateScope();
             var _mediator = scope.ServiceProvider.GetService<IMediator>();
             var noteHistoryRepository = scope.ServiceProvider.GetService<NoteSnapshotRepository>();
-            var userNoteHistoryManyToManyRepository = scope.ServiceProvider.GetService<UserNoteHistoryManyToManyRepository>();
             foreach (var history in histories)
             {
-                var command = new MakeNoteHistoryCommand(history.NoteId);
+                var command = new MakeNoteHistoryCommand(history.NoteId, history.UsersThatEditIds);
                 var results = await _mediator.Send(command);
-
-                var noteHistory = new NoteHistory() //  СКОМПЛИТЬ БД
-                {
-                    NoteId = history.NoteId,
-                    SnapshotTime = DateTimeOffset.Now,
-                    // TODO
-                    // NoteVersionId = result.Id 
-                };
-
-                var dbNoteHistory = await noteHistoryRepository.Add(noteHistory);
-                var userHistories = history.UsersThatEditIds.Select(userId => new UserNoteHistoryManyToMany()
-                {
-                    NoteHistoryId = dbNoteHistory.Entity.Id,
-                    UserId = userId
-                });
-
-                await userNoteHistoryManyToManyRepository.AddRange(userHistories);
             }
         }
 

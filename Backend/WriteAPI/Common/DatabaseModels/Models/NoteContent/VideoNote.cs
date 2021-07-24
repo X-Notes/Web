@@ -19,9 +19,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Video;
         }
 
-        public VideoNote(VideoNote entity, Guid appFileId, Guid NoteId)
+        public VideoNote(VideoNote entity, Guid appFileId, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             Order = entity.Order;
             Name = entity.Name;
@@ -32,9 +32,9 @@ namespace Common.DatabaseModels.Models.NoteContent
             AppFileId = appFileId;
         }
 
-        public VideoNote(VideoNote entity, AppFile file, Guid NoteId)
+        public VideoNote(VideoNote entity, AppFile file, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
 
             Order = entity.Order;
             Name = entity.Name;

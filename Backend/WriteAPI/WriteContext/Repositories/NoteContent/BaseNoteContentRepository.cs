@@ -47,7 +47,7 @@ namespace WriteContext.Repositories.NoteContent
                 .Include(x => (x as VideoNote).AppFile)
                 .Include(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => (x as DocumentNote).AppFile)
-                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
+                .Where(x => ids.Contains(x.NoteId.Value)).ToListAsync();
         }
 
     }

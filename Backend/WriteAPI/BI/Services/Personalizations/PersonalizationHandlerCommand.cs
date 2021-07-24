@@ -42,7 +42,7 @@ namespace BI.Services.Personalizations
                 pr.IsViewVideoOnNote = request.PersonalizationSetting.IsViewVideoOnNote;
                 pr.NotesInFolderCount = request.PersonalizationSetting.NotesInFolderCount;
 
-                await personalizationSettingRepository.Update(pr);
+                await personalizationSettingRepository.UpdateAsync(pr);
 
                 return Unit.Value;
             }

@@ -48,7 +48,7 @@ namespace BI.Services.Labels
                 label.Color = request.Color;
                 label.Name = request.Name;
                 label.UpdatedAt = DateTimeOffset.Now;
-                await labelRepository.Update(label);
+                await labelRepository.UpdateAsync(label);
             }
             return Unit.Value;
         }
@@ -95,8 +95,8 @@ namespace BI.Services.Labels
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var labels = await labelRepository.GetWhere(x => x.UserId == user.Id && x.IsDeleted == true);
-                await labelRepository.RemoveRange(labels);
+                var labels = await labelRepository.GetWhereAsync(x => x.UserId == user.Id && x.IsDeleted == true);
+                await labelRepository.RemoveRangeAsync(labels);
             }
             return Unit.Value;
         }

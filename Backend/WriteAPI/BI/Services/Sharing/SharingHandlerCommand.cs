@@ -92,7 +92,7 @@ namespace BI.Services.Sharing
                 }
                 else
                 {
-                    await folderRepository.Update(perm.Folder);
+                    await folderRepository.UpdateAsync(perm.Folder);
                 }
             }
 
@@ -132,7 +132,7 @@ namespace BI.Services.Sharing
                 }
                 else
                 {
-                    await noteRepository.Update(perm.Note);
+                    await noteRepository.UpdateAsync(perm.Note);
                 }
             }
 
@@ -151,7 +151,7 @@ namespace BI.Services.Sharing
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateFoldersRepository.Update(access);
+                    await usersOnPrivateFoldersRepository.UpdateAsync(access);
                 }
                 else
                 {
@@ -161,7 +161,7 @@ namespace BI.Services.Sharing
                         FolderId = request.FolderId,
                         UserId = request.UserId
                     };
-                    await usersOnPrivateFoldersRepository.Add(perm);
+                    await usersOnPrivateFoldersRepository.AddAsync(perm);
 
                 }
 
@@ -173,7 +173,7 @@ namespace BI.Services.Sharing
                     Date = DateTimeOffset.Now
                 };
 
-                await notificationRepository.Add(notification);
+                await notificationRepository.AddAsync(notification);
 
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
@@ -194,7 +194,7 @@ namespace BI.Services.Sharing
                 if (access != null)
                 {
                     access.AccessTypeId = request.AccessTypeId;
-                    await usersOnPrivateNotesRepository.Update(access);
+                    await usersOnPrivateNotesRepository.UpdateAsync(access);
                 }
                 else
                 {
@@ -204,7 +204,7 @@ namespace BI.Services.Sharing
                         FolderId = request.NoteId,
                         UserId = request.UserId
                     };
-                    await usersOnPrivateFoldersRepository.Add(perm);
+                    await usersOnPrivateFoldersRepository.AddAsync(perm);
                 }
 
 
@@ -216,7 +216,7 @@ namespace BI.Services.Sharing
                     Date = DateTimeOffset.Now
                 };
 
-                await notificationRepository.Add(notification);
+                await notificationRepository.AddAsync(notification);
 
                 var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                 await appSignalRHub.SendNewNotification(receiver.Email, true);
@@ -236,7 +236,7 @@ namespace BI.Services.Sharing
                     .FirstOrDefaultAsync(x => x.UserId == request.UserId && x.FolderId == request.FolderId);
                 if (access != null)
                 {
-                    await usersOnPrivateFoldersRepository.Remove(access);
+                    await usersOnPrivateFoldersRepository.RemoveAsync(access);
 
                     var notification = new Notification()
                     {
@@ -246,7 +246,7 @@ namespace BI.Services.Sharing
                         Date = DateTimeOffset.Now
                     };
 
-                    await notificationRepository.Add(notification);
+                    await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
@@ -266,7 +266,7 @@ namespace BI.Services.Sharing
                     .FirstOrDefaultAsync(x => x.NoteId == request.NoteId && x.UserId == request.UserId);
                 if (access != null)
                 {
-                    await usersOnPrivateNotesRepository.Remove(access);
+                    await usersOnPrivateNotesRepository.RemoveAsync(access);
 
                     var notification = new Notification()
                     {
@@ -276,7 +276,7 @@ namespace BI.Services.Sharing
                         Date = DateTimeOffset.Now
                     };
 
-                    await notificationRepository.Add(notification);
+                    await notificationRepository.AddAsync(notification);
 
                     var receiver = await userRepository.FirstOrDefaultAsync(x => x.Id == request.UserId);
                     await appSignalRHub.SendNewNotification(receiver.Email, true);
@@ -299,7 +299,7 @@ namespace BI.Services.Sharing
                     UserId = userId
                 }).ToList();
 
-                await usersOnPrivateFoldersRepository.AddRange(permissionsRequests);
+                await usersOnPrivateFoldersRepository.AddRangeAsync(permissionsRequests);
 
                 var notifications = request.UserIds.Select(userId => new Notification()
                 {
@@ -309,7 +309,7 @@ namespace BI.Services.Sharing
                     Date = DateTimeOffset.Now
                 });
 
-                await notificationRepository.AddRange(notifications);
+                await notificationRepository.AddRangeAsync(notifications);
 
                 foreach (var notification in notifications)
                 {
@@ -335,7 +335,7 @@ namespace BI.Services.Sharing
                     UserId = userId
                 }).ToList();
 
-                await usersOnPrivateNotesRepository.AddRange(permissionsRequests);
+                await usersOnPrivateNotesRepository.AddRangeAsync(permissionsRequests);
 
                 var notifications = request.UserIds.Select(userId => new Notification()
                 {
@@ -345,7 +345,7 @@ namespace BI.Services.Sharing
                     Date = DateTimeOffset.Now
                 });
 
-                await notificationRepository.AddRange(notifications);
+                await notificationRepository.AddRangeAsync(notifications);
 
                 foreach (var notification in notifications)
                 {

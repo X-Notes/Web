@@ -28,7 +28,7 @@ namespace WriteContext.Repositories.Notes
                     if (notes.Count() > 0)
                     {
                         notes.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRange(notes);
+                        await UpdateRangeAsync(notes);
                     }
 
                     await context.Notes.AddAsync(note);
@@ -96,7 +96,7 @@ namespace WriteContext.Repositories.Notes
             var notesIds = notes.Select(z => z.Id).ToHashSet();
 
             var contents = await context.BaseNoteContents
-                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId))
+                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId.Value))
                 .Include(z => (z as AlbumNote).Photos)
                 .Include(x => (x as VideoNote).AppFile)
                 .Include(x => (x as AudiosPlaylistNote).Audios)
@@ -190,7 +190,7 @@ namespace WriteContext.Repositories.Notes
 
                     deletednotes = deletednotes.OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(deletednotes);
-                    await UpdateRange(deletednotes);
+                    await UpdateRangeAsync(deletednotes);
 
                     await transaction.CommitAsync();
                 }
@@ -211,7 +211,7 @@ namespace WriteContext.Repositories.Notes
                 {
                     var notesTo = allUserNotes.Where(x => x.NoteTypeId == ToId).ToList();
                     notesTo.ForEach(x => x.Order = x.Order + notesForCasting.Count());
-                    await UpdateRange(notesTo);
+                    await UpdateRangeAsync(notesTo);
 
                     notesForCasting.ForEach(x =>
                     {
@@ -220,11 +220,11 @@ namespace WriteContext.Repositories.Notes
                     });
 
                     ChangeOrderHelper(notesForCasting);
-                    await UpdateRange(notesForCasting);
+                    await UpdateRangeAsync(notesForCasting);
 
                     var oldNotes = allUserNotes.Where(x => x.NoteTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldNotes);
-                    await UpdateRange(oldNotes);
+                    await UpdateRangeAsync(oldNotes);
 
                     await transaction.CommitAsync();
                 }

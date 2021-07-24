@@ -17,7 +17,7 @@ namespace FakeData
         public async Task SetUsers(int count)
         {
             var users = userGenerator.GetUsers(count);
-            await userRepository.AddRange(users);
+            await userRepository.AddRangeAsync(users);
         }
 
     }

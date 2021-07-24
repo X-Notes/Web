@@ -73,7 +73,7 @@ namespace BI.Services.Notes
 
                 if (NoteTypeENUM.Shared == request.TypeId)
                 {
-                    var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhere(x => x.UserId == user.Id);
+                    var usersOnPrivateNotes = await usersOnPrivateNotesRepository.GetWhereAsync(x => x.UserId == user.Id);
                     var notesIds = usersOnPrivateNotes.Select(x => x.NoteId);
                     var sharedNotes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
                     notes.AddRange(sharedNotes);

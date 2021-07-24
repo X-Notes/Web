@@ -27,7 +27,7 @@ namespace WriteContext.Repositories.Folders
                     if (folders.Count() > 0)
                     {
                         folders.ForEach(x => x.Order = x.Order + 1);
-                        await UpdateRange(folders);
+                        await UpdateRangeAsync(folders);
                     }
 
                     await context.Folders.AddAsync(folder);
@@ -51,7 +51,7 @@ namespace WriteContext.Repositories.Folders
                 {
                     var foldersTo = allUserFolders.Where(x => x.FolderTypeId == ToId).ToList();
                     foldersTo.ForEach(x => x.Order = x.Order + foldersForCasting.Count());
-                    await UpdateRange(foldersTo);
+                    await UpdateRangeAsync(foldersTo);
 
                     foldersForCasting.ForEach(x =>
                     {
@@ -60,11 +60,11 @@ namespace WriteContext.Repositories.Folders
                     });
 
                     ChangeOrderHelper(foldersForCasting);
-                    await UpdateRange(foldersForCasting);
+                    await UpdateRangeAsync(foldersForCasting);
 
                     var oldFolders = allUserFolders.Where(x => x.FolderTypeId == FromId).OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(oldFolders);
-                    await UpdateRange(oldFolders);
+                    await UpdateRangeAsync(oldFolders);
 
                     await transaction.CommitAsync();
                 }
@@ -102,7 +102,7 @@ namespace WriteContext.Repositories.Folders
 
                     deletedfolders = deletedfolders.OrderBy(x => x.Order).ToList();
                     ChangeOrderHelper(deletedfolders);
-                    await UpdateRange(deletedfolders);
+                    await UpdateRangeAsync(deletedfolders);
 
                     await transaction.CommitAsync();
                 }
