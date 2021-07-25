@@ -55,7 +55,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<AudiosPlaylistNoteDTO>> Handle(InsertAudiosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -111,7 +111,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -158,7 +158,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveAudioCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -189,7 +189,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(ChangeNamePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -213,7 +213,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<List<AudioNoteDTO>>> Handle(UploadAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 

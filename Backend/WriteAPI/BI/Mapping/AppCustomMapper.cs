@@ -344,5 +344,21 @@ namespace BI.Mapping
                 SortedFolderByTypeId = pr.SortedFolderByTypeId
             };
         }
+
+        public NoteSnapshotDTO MapNoteSnapshotToNoteSnapshotDTO(NoteSnapshot snapshot)
+        {
+            return new NoteSnapshotDTO()
+            {
+                Id = snapshot.Id,
+                Color = snapshot.Color,
+                SnapshotTime = snapshot.SnapshotTime,
+                Labels = snapshot.Labels.Select(x => new LabelDTO { Name = x.Name, Color = x.Color }).ToList(),
+                NoteId = snapshot.NoteId,
+                NoteTypeId = snapshot.NoteTypeId,
+                RefTypeId = snapshot.RefTypeId,
+                Title = snapshot.Title
+            };
+        }
+
     }
 }

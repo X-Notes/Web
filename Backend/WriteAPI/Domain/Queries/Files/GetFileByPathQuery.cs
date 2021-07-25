@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Domain.Queries.Files
 {
-    public class GetFileByPath : BaseQueryEntity, IRequest<FilesBytes>
+    public class GetFileByPathQuery : BaseQueryEntity, IRequest<FilesBytes>
     {
         public string Path { set; get; }
 
@@ -12,7 +12,7 @@ namespace Domain.Queries.Files
 
         public string UserId { set; get; }
 
-        public GetFileByPath(string path, string userId, string fileName)
+        public GetFileByPathQuery(string path, string userId, string fileName)
         {
             this.Path = path;
             UserId = userId;

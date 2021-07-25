@@ -67,7 +67,7 @@ namespace BI.Services.Folders
 
         public async Task<FullFolderAnswer> Handle(GetFullFolderQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolder(request.Id, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
             var folder = permissions.Folder;
 

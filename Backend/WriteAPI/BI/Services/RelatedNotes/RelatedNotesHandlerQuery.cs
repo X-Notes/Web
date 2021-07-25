@@ -49,7 +49,7 @@ namespace BI.Services.RelatedNotes
 
         public async Task<List<PreviewNoteForSelection>> Handle(GetNotesForPreviewWindowQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)

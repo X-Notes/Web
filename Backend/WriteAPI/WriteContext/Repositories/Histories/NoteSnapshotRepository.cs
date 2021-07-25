@@ -27,5 +27,10 @@ namespace WriteContext.Repositories.Histories
                 .OrderByDescending(x => x.SnapshotTime).ToListAsync();
         }
 
+        public async Task<NoteSnapshot> GetSnapshot(Guid snapshotId)
+        {
+            return await entities.FirstOrDefaultAsync(x => x.Id == snapshotId);
+        }
+
     }
 }

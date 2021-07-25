@@ -1,0 +1,32 @@
+@import 'submenu';
+
+.full-content {
+  flex-direction: row;
+
+  .wrapper-note {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 100%;
+    width: 100%;
+
+    app-content-editor {
+      width: 70%;
+    }
+  }
+
+  .wrapper {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .full-content {
+    flex-direction: column;
+    .wrapper-note {
+      width: 200%;
+    }
+  }
+}

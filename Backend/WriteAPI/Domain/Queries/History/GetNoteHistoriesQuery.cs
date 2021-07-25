@@ -5,10 +5,10 @@ using MediatR;
 
 namespace Domain.Queries.History
 {
-    public class GetNoteHistories : BaseQueryEntity, IRequest<List<NoteHistoryDTO>>
+    public class GetNoteHistoriesQuery : BaseQueryEntity, IRequest<List<NoteHistoryDTO>>
     {
         public Guid NoteId { set; get; }
-        public GetNoteHistories(Guid NoteId, string Email)
+        public GetNoteHistoriesQuery(Guid NoteId, string Email)
         {
             this.NoteId = NoteId;
             this.Email = Email;

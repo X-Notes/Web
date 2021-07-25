@@ -60,7 +60,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -82,7 +82,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -111,7 +111,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -141,7 +141,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -242,7 +242,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -269,7 +269,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -327,7 +327,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 

@@ -14,8 +14,8 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Permissions
 {
     public class PermissionHandlerQuery
-        : IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>,
-          IRequestHandler<GetUserPermissionsForFolder, UserPermissionsForFolder>
+        : IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>,
+          IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>
     {
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
@@ -30,7 +30,7 @@ namespace BI.Services.Permissions
             this.folderRepository = folderRepository;
         }
 
-        public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNote request, CancellationToken cancellationToken)
+        public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
@@ -83,7 +83,7 @@ namespace BI.Services.Permissions
             return new UserPermissionsForNote().SetUserNotFounded();
         }
 
-        public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolder request, CancellationToken cancellationToken)
+        public async Task<UserPermissionsForFolder> Handle(GetUserPermissionsForFolderQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Domain.Queries.Sharing
 {
-    public class GetUsersOnPrivateFolder : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
+    public class GetUsersOnPrivateFolderQuery : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
     {
         public Guid FolderId { set; get; }
     }

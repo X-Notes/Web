@@ -28,7 +28,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetNotesByNoteIdsQuery, List<SmallNote>>,
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
-        IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>,
+        IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
         IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>
     {
         private readonly IMapper mapper;
@@ -90,7 +90,7 @@ namespace BI.Services.Notes
 
         public async Task<FullNoteAnswer> Handle(GetFullNoteQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -110,9 +110,9 @@ namespace BI.Services.Notes
             return new FullNoteAnswer(permissions.IsOwner, false, false, null, null);
         }
 
-        public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNote request, CancellationToken cancellationToken)
+        public async Task<List<OnlineUserOnNote>> Handle(GetOnlineUsersOnNoteQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
             if (permissions.CanRead)
             {
@@ -124,7 +124,7 @@ namespace BI.Services.Notes
 
         public async Task<List<BaseContentNoteDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -156,7 +156,7 @@ namespace BI.Services.Notes
             var canReadIds = new List<Guid>();
             foreach (var noteId in request.NoteIds)
             {
-                var command = new GetUserPermissionsForNote(noteId, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(noteId, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanRead)
@@ -189,7 +189,6 @@ namespace BI.Services.Notes
 
     public static class LabelHelper
     {
-
         public static List<LabelsNotes> GetLabelUnDesc(this List<LabelsNotes> labels)
         {
             return labels.OrderBy(x => x.AddedAt).ToList();

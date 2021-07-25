@@ -17,7 +17,10 @@ const itemRoutes: Routes = [
 
 const routes: Routes = [
   { path: '', component: NotesComponent, children: itemRoutes },
-  { path: ':id', component: FullNoteComponent },
+  {
+    path: ':id',
+    loadChildren: () => import('./full-note/full-note.module').then((m) => m.FullNoteModule),
+  },
 ];
 
 @NgModule({

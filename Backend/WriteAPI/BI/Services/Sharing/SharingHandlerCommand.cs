@@ -67,7 +67,7 @@ namespace BI.Services.Sharing
 
             foreach(var id in request.Ids)
             {
-                var command = new GetUserPermissionsForFolder(id, request.Email);
+                var command = new GetUserPermissionsForFolderQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.IsOwner)
@@ -107,7 +107,7 @@ namespace BI.Services.Sharing
 
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.IsOwner)
@@ -141,7 +141,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(PermissionUserOnPrivateFolders request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
@@ -184,7 +184,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(PermissionUserOnPrivateNotes request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
@@ -227,7 +227,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(RemoveUserFromPrivateFolders request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
@@ -257,7 +257,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(RemoveUserFromPrivateNotes request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
@@ -287,7 +287,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(SendInvitesToUsersFolders request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)
@@ -323,7 +323,7 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(SendInvitesToUsersNotes request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.IsOwner)

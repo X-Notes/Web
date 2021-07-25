@@ -8,7 +8,7 @@ using Storage;
 namespace BI.Services.Files
 {
     public class FilesHandlerQuery :
-        IRequestHandler<GetFileByPath, FilesBytes>
+        IRequestHandler<GetFileByPathQuery, FilesBytes>
     {
         private readonly IFilesStorage filesStorage;
         public FilesHandlerQuery(IFilesStorage filesStorage)
@@ -16,7 +16,7 @@ namespace BI.Services.Files
             this.filesStorage = filesStorage;
         }
 
-        public async Task<FilesBytes> Handle(GetFileByPath request, CancellationToken cancellationToken)
+        public async Task<FilesBytes> Handle(GetFileByPathQuery request, CancellationToken cancellationToken)
         {
             var resp = await filesStorage.GetFile(request.UserId, request.Path);
             return new FilesBytes(resp.File, resp.ContentType, request.FileName);

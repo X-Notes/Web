@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Domain.Queries.Sharing
 {
-    public class GetUsersOnPrivateNote : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
+    public class GetUsersOnPrivateNoteQuery : BaseQueryEntity, IRequest<List<InvitedUsersToFoldersOrNote>>
     {
         public Guid NoteId { set; get; }
     }

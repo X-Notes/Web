@@ -27,7 +27,7 @@ namespace BI.Services.RelatedNotes
 
         public async Task<OperationResult<Unit>> Handle(UpdateRelatedNotesToNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -57,7 +57,7 @@ namespace BI.Services.RelatedNotes
 
         public async Task<OperationResult<Unit>> Handle(UpdateRelatedNoteStateCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -74,7 +74,7 @@ namespace BI.Services.RelatedNotes
 
         public async Task<OperationResult<Unit>> Handle(ChangeOrderRelatedNotesCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 

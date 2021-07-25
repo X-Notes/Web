@@ -95,8 +95,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddMediatR(typeof(Startup));
 
             // USER
-            services.AddScoped<IRequestHandler<GetShortUser, ShortUser>, UserHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserMemory, GetUserMemoryResponse>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetShortUserQuery, ShortUser>, UserHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>, UserHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
@@ -115,8 +115,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
 
             //Labels
-            services.AddScoped<IRequestHandler<GetLabelsByEmail, LabelsDTO>, LabelHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetCountNotesByLabel, int>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetLabelsByEmailQuery, LabelsDTO>, LabelHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteLabelCommand, Unit>, LabelHandlerCommand>();
@@ -144,7 +144,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetAllNotesQuery, List<SmallNote>>, NoteHandlerQuery>();
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetOnlineUsersOnNote, List<OnlineUserOnNote>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
 
             // RELATED NOTES
@@ -205,15 +205,15 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateNotesInFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveNotesFromFolderCommand, OperationResult<Unit>>, FullFolderHandlerCommand>();
 
-            services.AddScoped<IRequestHandler<GetFolderNotesByFolderId, List<SmallNote>>, FullFolderHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>, FullFolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>, FullFolderHandlerQuery>();
 
             //Order
             services.AddScoped<IRequestHandler<UpdateOrderCommand, List<UpdateOrderEntityResponse>>, OrderHandlerCommand>();
 
             //SHARE
-            services.AddScoped<IRequestHandler<GetUsersOnPrivateNote, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUsersOnPrivateFolder, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUsersOnPrivateNoteQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUsersOnPrivateFolderQuery, List<InvitedUsersToFoldersOrNote>>, SharingHandlerQuery>();
 
             services.AddScoped<IRequestHandler<ChangeRefTypeFolders, Unit>, SharingHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeRefTypeNotes, Unit>, SharingHandlerCommand>();
@@ -232,15 +232,16 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UnlockNoteQuery, OperationResult<bool>>, EncryptionHandlerQuery>();
 
             // HISTORY
-            services.AddScoped<IRequestHandler<GetNoteHistories, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();
-            services.AddScoped<IRequestHandler<GetNotesAndFolderForSearch, SearchNoteFolderResult>, SeachQueryHandler>();
+            services.AddScoped<IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>, SeachQueryHandler>();
 
 
             //Files
-            services.AddScoped<IRequestHandler<GetFileByPath, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetFileByPathQuery, FilesBytes>, FilesHandlerQuery>();
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
@@ -249,8 +250,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
-            services.AddScoped<IRequestHandler<GetUserPermissionsForNote, UserPermissionsForNote>, PermissionHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetUserPermissionsForFolder, UserPermissionsForFolder>, PermissionHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>, PermissionHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>, PermissionHandlerQuery>();
 
             // Personalizations
             services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();

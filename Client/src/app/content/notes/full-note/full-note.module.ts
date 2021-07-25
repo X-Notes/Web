@@ -23,8 +23,11 @@ import { VideoNoteComponent } from './full-note-components/video-note/video-note
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { RouterModule } from '@angular/router';
-
+import { NoteSnapshotComponent } from './note-snapshot/note-snapshot.component';
+import { FullNoteRouting } from './full-note-routing';
+import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
+import { LeftSectionContentComponent } from './left-section-content/left-section-content.component';
+import { ContentEditorComponent } from './content-editor/content-editor.component';
 @NgModule({
   declarations: [
     FullNoteComponent,
@@ -49,7 +52,11 @@ import { RouterModule } from '@angular/router';
     VideoNoteComponent,
     DocumentNoteComponent,
     AudioComponent,
+    NoteSnapshotComponent,
+    RightSectionContentComponent,
+    LeftSectionContentComponent,
+    ContentEditorComponent,
   ],
-  imports: [CommonModule, SharedModule, RouterModule],
+  imports: [CommonModule, SharedModule, FullNoteRouting],
 })
 export class FullNoteModule {}

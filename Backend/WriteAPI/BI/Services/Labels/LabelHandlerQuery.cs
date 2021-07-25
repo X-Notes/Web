@@ -13,8 +13,8 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.Labels
 {
     public class LabelHandlerQuery :
-        IRequestHandler<GetLabelsByEmail, LabelsDTO>,
-        IRequestHandler<GetCountNotesByLabel, int>
+        IRequestHandler<GetLabelsByEmailQuery, LabelsDTO>,
+        IRequestHandler<GetCountNotesByLabelQuery, int>
     {
         private readonly UserRepository userRepository;
         private readonly LabelRepository labelRepository;
@@ -27,7 +27,7 @@ namespace BI.Services.Labels
             this.appCustomMapper = appCustomMapper;
         }
 
-        public async Task<LabelsDTO> Handle(GetLabelsByEmail request, CancellationToken cancellationToken)
+        public async Task<LabelsDTO> Handle(GetLabelsByEmailQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
@@ -51,7 +51,7 @@ namespace BI.Services.Labels
             throw new Exception("User not found");
         }
 
-        public async Task<int> Handle(GetCountNotesByLabel request, CancellationToken cancellationToken)
+        public async Task<int> Handle(GetCountNotesByLabelQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)

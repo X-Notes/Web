@@ -11,7 +11,8 @@ using WriteContext.Repositories.Histories;
 namespace BI.Services.History
 {
     public class HistoryHandlerQuery:
-        IRequestHandler<GetNoteHistories, List<NoteHistoryDTO>>
+        IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>,
+        IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>
     {
 
         private readonly IMediator _mediator;
@@ -27,9 +28,9 @@ namespace BI.Services.History
             this.noteCustomMapper = noteCustomMapper;
         }
 
-        public async Task<List<NoteHistoryDTO>> Handle(GetNoteHistories request, CancellationToken cancellationToken)
+        public async Task<List<NoteHistoryDTO>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -39,6 +40,20 @@ namespace BI.Services.History
             }
 
             return new List<NoteHistoryDTO>();
+        }
+
+        public async Task<NoteHistoryDTOAnswer> Handle(GetNoteSnapshotQuery request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanRead)
+            {
+                var snapshot = await noteHistoryRepository.GetSnapshot(request.SnapshotId);
+                return new NoteHistoryDTOAnswer(true, noteCustomMapper.MapNoteSnapshotToNoteSnapshotDTO(snapshot));
+            }
+
+            return new NoteHistoryDTOAnswer(false, null);
         }
     }
 }

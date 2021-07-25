@@ -11,6 +11,7 @@ import { RelatedNote } from '../../models/related-note.model';
   selector: 'app-related-note',
   templateUrl: './related-note.component.html',
   styleUrls: ['./related-note.component.scss'],
+  providers: [MurriService],
 })
 export class RelatedNoteComponent {
   @Input() note: RelatedNote;

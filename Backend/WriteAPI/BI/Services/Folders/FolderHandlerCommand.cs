@@ -150,7 +150,7 @@ namespace BI.Services.Folders
 
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForFolder(id, request.Email);
+                var command = new GetUserPermissionsForFolderQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
          
                 if (permissions.CanWrite)

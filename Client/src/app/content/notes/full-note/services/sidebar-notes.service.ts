@@ -46,6 +46,7 @@ export class SidebarNotesService implements OnDestroy {
   murriInitialise(refElements: QueryList<ElementRef>, noteId: string) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
       if (z.length === this.notes.length && this.notes.length !== 0 && !this.firstInitedMurri) {
+        console.log('initing');
         await this.murriService.wait(100);
         await this.murriService.initSidebarNotesAsync(this.apiRelatedNotes, noteId);
         await this.murriService.setOpacityFlagAsync();

@@ -232,7 +232,7 @@ namespace WriteAPI.Controllers
         [HttpGet("users/{id}")]
         public async Task<List<OnlineUserOnNote>> GetOnlineUsersByNoteId(Guid id)
         {
-            var query = new GetOnlineUsersOnNote(id);
+            var query = new GetOnlineUsersOnNoteQuery(id);
             query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
         }

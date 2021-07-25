@@ -104,7 +104,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)
@@ -308,7 +308,7 @@ namespace BI.Services.Notes
             // TODO DO ONE QUERY
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanRead)
@@ -363,7 +363,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.NoteIds)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)
@@ -393,7 +393,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.NoteIds)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)

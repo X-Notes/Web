@@ -12,4 +12,5 @@ export enum EntityType {
   LabelPrivate,
   LabelDeleted,
   Profile,
+  History,
 }

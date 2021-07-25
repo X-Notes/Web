@@ -7,9 +7,9 @@ namespace Domain.Queries.Users
         public long TotalSize { set; get; }
     }
 
-    public class GetUserMemory : BaseQueryEntity, IRequest<GetUserMemoryResponse>
+    public class GetUserMemoryQuery : BaseQueryEntity, IRequest<GetUserMemoryResponse>
     {
-        public GetUserMemory(string Email) :base(Email)
+        public GetUserMemoryQuery(string Email) :base(Email)
         {
         }
     }

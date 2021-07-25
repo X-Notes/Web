@@ -5,10 +5,10 @@ using MediatR;
 
 namespace Domain.Queries.Notes
 {
-    public class GetOnlineUsersOnNote: BaseQueryEntity, IRequest<List<OnlineUserOnNote>>
+    public class GetOnlineUsersOnNoteQuery: BaseQueryEntity, IRequest<List<OnlineUserOnNote>>
     {
         public Guid Id { set; get; }
-        public GetOnlineUsersOnNote(Guid id)
+        public GetOnlineUsersOnNoteQuery(Guid id)
         {
             this.Id = id;
         }

@@ -10,8 +10,8 @@ using WriteContext.Repositories.Users;
 namespace BI.Services.UserHandlers
 {
     public class UserHandlerQuery :
-        IRequestHandler<GetShortUser, ShortUser>,
-        IRequestHandler<GetUserMemory, GetUserMemoryResponse>
+        IRequestHandler<GetShortUserQuery, ShortUser>,
+        IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
     {
         private readonly UserRepository userRepository;
         private readonly IMapper imapper;
@@ -23,7 +23,7 @@ namespace BI.Services.UserHandlers
             this.fileStorage = fileStorage;
         }
 
-        public async Task<ShortUser> Handle(GetShortUser request, CancellationToken cancellationToken)
+        public async Task<ShortUser> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
             if (user != null)
@@ -33,7 +33,7 @@ namespace BI.Services.UserHandlers
             return null;
         }
 
-        public async Task<GetUserMemoryResponse> Handle(GetUserMemory request, CancellationToken cancellationToken)
+        public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
             var totalSize = await fileStorage.GetUsedDiskSpace(user.Id.ToString());
