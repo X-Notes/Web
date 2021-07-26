@@ -44,6 +44,9 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   @Input()
   content: BaseText;
 
+  @Input()
+  isReadOnlyMode = false;
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();

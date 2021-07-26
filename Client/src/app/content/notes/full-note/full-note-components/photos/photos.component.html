@@ -9,6 +9,7 @@
         <app-photo
           *ngFor="let item of block"
           [photo]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
           (deleteEvent)="removePhotoHandler($event)"
           (downloadPhotoEvent)="exportPhoto($event)"
         ></app-photo>
@@ -23,6 +24,7 @@
         <app-photo
           *ngFor="let item of lastBlock"
           [photo]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
           (deleteEvent)="removePhotoHandler($event)"
           (downloadPhotoEvent)="exportPhoto($event)"
         >
@@ -33,13 +35,15 @@
       appChangeSizeAlbumWidth
       (mouseClick)="saveWidth()"
       (changeWeight)="changeWidth($event)"
-      class="slider-right slider"
+      class="slider-right"
+      [ngClass]="{'slider': !isReadOnlyMode}"
     ></div>
     <div
       appChangeSizeAlbumHeight
       (mouseClick)="saveHeight($event)"
       (changeHeight)="changeHeight($event)"
-      class="slider-bottom slider"
+      class="slider-bottom"
+      [ngClass]="{'slider': !isReadOnlyMode}"
     ></div>
   </div>
   <div class="action">
@@ -55,7 +59,13 @@
     attributeName="panelClass"
     [element]="menu"
   >
-    <button mat-menu-item type="button" name="Upload photo" (click)="uploadHandler()">
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Upload photo"
+      (click)="uploadHandler()"
+    >
       <mat-icon>add_photo_alternate</mat-icon>
       <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
     </button>
@@ -63,11 +73,23 @@
       <mat-icon>download</mat-icon>
       <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
     </button>
-    <button mat-menu-item type="button" name="Delete" (click)="removeHandler()">
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Delete"
+      (click)="removeHandler()"
+    >
       <mat-icon>delete</mat-icon>
       <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
     </button>
-    <button mat-menu-item type="button" name="Photo in row" [matMenuTriggerFor]="secondMenu">
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Photo in row"
+      [matMenuTriggerFor]="secondMenu"
+    >
       <mat-icon>art_track</mat-icon>
       <span> {{ 'innerNote.photoMenu.countRow' | translate }} </span>
     </button>

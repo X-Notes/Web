@@ -16,6 +16,9 @@ import { ApiServiceNotes } from '../../../../api-notes.service';
 export class HtmlLinkComponent implements OnInit, OnDestroy {
   @Input() link: string;
 
+  @Input()
+  isReadOnlyMode = false;
+
   @ViewChild(MatMenu) menu: MatMenu;
 
   destroy = new Subject<void>();

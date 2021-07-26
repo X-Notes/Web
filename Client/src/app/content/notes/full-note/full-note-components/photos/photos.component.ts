@@ -45,6 +45,9 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   @Input()
   content: Album;
 
+  @Input()
+  isReadOnlyMode = false;
+
   startWidth;
 
   startHeight;

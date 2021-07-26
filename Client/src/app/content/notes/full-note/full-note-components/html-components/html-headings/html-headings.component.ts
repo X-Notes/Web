@@ -40,6 +40,9 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
+  @Input()
+  isReadOnlyMode = false;
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   hType = HeadingTypeENUM;

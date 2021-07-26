@@ -24,7 +24,7 @@
           <mat-icon>content_copy</mat-icon>
           <span>{{ 'innerNote.menu.copy' | translate }}</span>
         </button>
-        <button mat-menu-item type="button" name="options">
+        <button *ngIf="!isReadOnlyMode" mat-menu-item type="button" name="options">
           <mat-icon>delete</mat-icon>
           <span>{{ 'innerNote.menu.delete' | translate }}</span>
         </button>

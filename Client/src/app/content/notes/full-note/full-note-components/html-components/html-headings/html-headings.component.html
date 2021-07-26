@@ -9,7 +9,7 @@
   <p
     #contentHtml
     class="block-generic"
-    contenteditable="true"
+    [attr.contenteditable]="!isReadOnlyMode"
     (input)="onInput($event)"
     [textContent]="content?.content"
   ></p>

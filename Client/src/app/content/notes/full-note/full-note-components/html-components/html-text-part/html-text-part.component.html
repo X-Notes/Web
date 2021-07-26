@@ -9,10 +9,10 @@
     #contentHtml
     class="block-generic default-text-size"
     (input)="onInput($event)"
-    contenteditable="true"
+    [attr.contenteditable]="!isReadOnlyMode"
     [textContent]="content?.content"
   ></p>
-  <div *ngIf="isActive" class="no-content">
+  <div *ngIf="isActive && !isReadOnlyMode" class="no-content">
     <p>Text</p>
     <div class="buttons" (mousedown)="preventClick($event)">
       <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
@@ -56,4 +56,8 @@
   hidden="true"
   (change)="uploadFiles($event)"
 />
-<app-html-link *ngIf="isLink" [link]="CurrentTextCotent"></app-html-link>
+<app-html-link
+  [isReadOnlyMode]="isReadOnlyMode"
+  *ngIf="isLink"
+  [link]="CurrentTextCotent"
+></app-html-link>

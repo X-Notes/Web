@@ -44,6 +44,9 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   @Input()
   content: BaseText;
 
+  @Input()
+  isReadOnlyMode = false;
+
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();
@@ -118,6 +121,12 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
+  }
+
+  clickHandler($event: Event) {
+    if (this.isReadOnlyMode) {
+      $event.preventDefault();
+    }
   }
 
   async changeCheckBox() {

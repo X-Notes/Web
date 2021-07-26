@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
 import { VideoModel } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { NoteStore } from '../../../state/notes-state';
 
 @Component({
   selector: 'app-video-note',
@@ -13,6 +10,9 @@ import { NoteStore } from '../../../state/notes-state';
 export class VideoNoteComponent implements ParentInteraction {
   @Input()
   content: VideoModel;
+
+  @Input()
+  isReadOnlyMode = false;
 
   @Output() deleteVideoEvent = new EventEmitter<string>();
 

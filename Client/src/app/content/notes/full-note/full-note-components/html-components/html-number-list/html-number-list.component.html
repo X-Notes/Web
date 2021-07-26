@@ -13,7 +13,7 @@
       <p
         class="block-generic default-text-size"
         #contentHtml
-        contenteditable="true"
+        [attr.contenteditable]="!isReadOnlyMode"
         (input)="onInput($event)"
         [textContent]="content?.content"
       ></p>

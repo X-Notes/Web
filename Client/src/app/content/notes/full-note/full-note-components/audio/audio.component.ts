@@ -21,6 +21,9 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   @Input() audio: AudioModel;
 
+  @Input()
+  isReadOnlyMode = false;
+
   destroy = new Subject();
 
   state: StreamAudioState;

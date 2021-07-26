@@ -30,6 +30,7 @@
           <span>{{ 'innerNote.menu.download' | translate }}</span>
         </button>
         <button
+          *ngIf="!isReadOnlyMode"
           mat-menu-item
           type="button"
           name="delete"

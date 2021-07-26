@@ -26,6 +26,7 @@
     <app-content-editor
       [note]="(snapshotState$ | async).noteSnapshot"
       [contents]="contents"
+      [isReadOnlyMode]="true"
     ></app-content-editor>
   </div>
   <div *ngIf="!(snapshotState$ | async)?.canView" class="wrapper">

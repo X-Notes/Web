@@ -61,6 +61,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   contents: ContentModel[];
 
   @Input()
+  isReadOnlyMode = false;
+
+  @Input()
   note: FullNote | NoteSnapshot;
 
   newLine: Subject<void> = new Subject();

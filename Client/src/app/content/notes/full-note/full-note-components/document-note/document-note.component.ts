@@ -13,6 +13,9 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   content: DocumentModel;
 
+  @Input()
+  isReadOnlyMode = false;
+
   @Output() deleteDocumentEvent = new EventEmitter<string>();
 
   constructor(

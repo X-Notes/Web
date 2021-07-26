@@ -21,7 +21,7 @@
   </div>
   <div class="title-section">
     <div
-      contenteditable="true"
+      [attr.contenteditable]="!isReadOnlyMode"
       (paste)="pasteCommandHandler($event)"
       [textContent]="note?.title"
       class="title"
@@ -38,6 +38,7 @@
             *ngIf="item.noteTextTypeId === textType.Default"
             #htmlComp
             [content]="item"
+            [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (deleteThis)="deleteHTMLHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
@@ -51,6 +52,7 @@
             [prevContent]="getTextContent(i - 1)"
             [prevType]="getTextContent(i - 1)?.noteTextTypeId"
             [content]="item"
+            [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteHTMLHandler($event)"
@@ -61,6 +63,7 @@
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Dotlist"
             [content]="item"
+            [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteHTMLHandler($event)"
@@ -71,6 +74,7 @@
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Checklist"
             [content]="item"
+            [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteHTMLHandler($event)"
@@ -81,6 +85,7 @@
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Heading"
             [content]="item"
+            [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (deleteThis)="deleteHTMLHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
@@ -92,6 +97,7 @@
           *ngSwitchCase="contentType.NoteAlbum"
           [content]="item"
           [noteId]="note.id"
+          [isReadOnlyMode]="isReadOnlyMode"
           (deleteEvent)="removeAlbumHandler($event)"
           (uploadEvent)="uploadPhotoToAlbumHandler($event)"
           (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
@@ -100,6 +106,7 @@
           #htmlComp
           *ngSwitchCase="contentType.Audio"
           [content]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
           (removePlaylist)="removePlaylistHandler($event)"
           (deleteAudio)="removeAudioFromPlaylistHandler($event)"
           (changeTitleEvent)="changePlaylistName($event)"
@@ -109,12 +116,14 @@
           #htmlComp
           *ngSwitchCase="contentType.Video"
           [content]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
           (deleteVideoEvent)="removeVideoHandler($event)"
         ></app-video-note>
         <app-document-note
           #htmlComp
           *ngSwitchCase="contentType.Document"
           [content]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
           (deleteDocumentEvent)="removeDocumentHandler($event)"
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>

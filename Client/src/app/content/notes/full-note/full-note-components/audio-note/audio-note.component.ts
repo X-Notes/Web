@@ -44,6 +44,9 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   destroy = new Subject<void>();
 
+  @Input()
+  isReadOnlyMode = false;
+
   constructor(private audioService: AudioService, private exportService: ExportService) {}
 
   ngOnDestroy(): void {

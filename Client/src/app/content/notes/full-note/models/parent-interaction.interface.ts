@@ -8,4 +8,5 @@ export interface ParentInteraction {
   getContent(): ContentModel;
   mouseEnter($event);
   mouseOut($event);
+  isReadOnlyMode: boolean;
 }

@@ -21,6 +21,9 @@ export class PhotoComponent implements OnInit {
   @Input()
   photo: Photo;
 
+  @Input()
+  isReadOnlyMode = false;
+
   destroy = new Subject<void>();
 
   constructor() {}

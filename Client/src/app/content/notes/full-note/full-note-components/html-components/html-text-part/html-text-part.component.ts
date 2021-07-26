@@ -58,6 +58,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   content: BaseText;
 
+  @Input()
+  isReadOnlyMode = false;
+
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;

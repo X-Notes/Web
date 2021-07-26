@@ -7,14 +7,18 @@
 >
   <div class="check-list">
     <div class="checkbox-container inner-box-list">
-      <mat-checkbox [ngModel]="content.checked" (change)="changeCheckBox()"></mat-checkbox>
+      <mat-checkbox
+        [ngModel]="content.checked"
+        (change)="changeCheckBox()"
+        (click)="clickHandler($event)"
+      ></mat-checkbox>
     </div>
     <div class="text-container">
       <p
         [ngClass]="{ 'checked-item': content.checked }"
         class="block-generic default-text-size"
         #contentHtml
-        contenteditable="true"
+        [attr.contenteditable]="!isReadOnlyMode"
         (input)="onInput($event)"
         [textContent]="content?.content"
       ></p>
