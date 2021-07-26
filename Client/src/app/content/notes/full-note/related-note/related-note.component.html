@@ -45,7 +45,7 @@
           </ng-container>
           <div *ngSwitchCase="contentType.NoteAlbum" class="album">
             <ng-container *ngFor="let item of content.photos">
-              <img [src]="item.photoFromSmall | getImage: (user$ | async).id" />
+              <img [src]="item.photoFromSmall | getImage: item.authorId" />
             </ng-container>
           </div>
           <div *ngSwitchDefault>Default</div>

@@ -4,6 +4,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Optional,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -32,11 +33,13 @@ import { SelectionDirective } from '../directives/selection.directive';
 import { EditTextEventModel } from '../models/edit-text-event.model';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
+import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { LineBreakType } from '../models/html-models';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { ContentEditableService } from '../services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
 import { SelectionService } from '../services/selection.service';
@@ -45,6 +48,7 @@ import { SelectionService } from '../services/selection.service';
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
+  providers: [ContentEditableService],
 })
 export class ContentEditorComponent implements OnInit, OnDestroy {
   @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
@@ -57,7 +61,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   contents: ContentModel[];
 
   @Input()
-  note: FullNote;
+  note: FullNote | NoteSnapshot;
 
   newLine: Subject<void> = new Subject();
 
@@ -71,7 +75,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private selectionService: SelectionService,
-    public sliderService: FullNoteSliderService,
+    @Optional() public sliderService: FullNoteSliderService,
     private api: ApiServiceNotes,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
@@ -320,7 +324,15 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       const index = this.contents.findIndex((x) => x.id === $event.id);
       const newPhotos: Photo[] = resp.data.map(
         (x) =>
-          new Photo(x.fileId, x.photoPathSmall, x.photoPathMedium, x.photoPathBig, false, x.name),
+          new Photo(
+            x.fileId,
+            x.photoPathSmall,
+            x.photoPathMedium,
+            x.photoPathBig,
+            false,
+            x.name,
+            x.authorId,
+          ),
       );
       const contentPhotos = (this.contents[index] as Album).photos;
       const resultPhotos = [...contentPhotos, ...newPhotos];

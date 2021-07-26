@@ -114,7 +114,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
+                    var resultPhotos = albumNote.Photos.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId)).ToList();
                     var result = new AlbumNoteDTO(resultPhotos, null, null,
                         albumNote.Id, albumNote.CountInRow, albumNote.UpdatedAt);
 
@@ -300,7 +300,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var photos = dbFiles.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig)).ToList();
+                    var photos = dbFiles.Select(x => new AlbumPhotoDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

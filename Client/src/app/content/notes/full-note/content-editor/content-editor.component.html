@@ -6,7 +6,7 @@
   [appCopy]="refElements"
   (selectionEvent)="selectionHandler($event)"
   (selectionStartEvent)="selectionStartHandler($event)"
-  [style.width.px]="sliderService.mainWidth"
+  [style.width.px]="sliderService?.mainWidth"
   class="main-content"
 >
   <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>

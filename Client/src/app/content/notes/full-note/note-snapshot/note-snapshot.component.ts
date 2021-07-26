@@ -17,6 +17,7 @@ import { ContentModel } from '../../models/content-model.model';
 import { LoadSnapshotNote } from '../../state/notes-actions';
 import { NoteStore } from '../../state/notes-state';
 import { NoteSnapshotState } from '../models/history/note-snapshot-state.model';
+import { ApiNoteHistoryService } from '../services/api-note-history.service';
 
 @Component({
   selector: 'app-note-snapshot',
@@ -49,6 +50,7 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
     private store: Store,
     private route: ActivatedRoute,
     private api: ApiServiceNotes,
+    private apiHistory: ApiNoteHistoryService,
   ) {
     this.routeSubscription = route.params.subscribe((params) => {
       this.noteId = params['id'];
@@ -61,7 +63,9 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
       .subscribe(async (x: boolean) => {
         if (x) {
           this.store.dispatch(new LoadSnapshotNote(this.snapshotId, this.noteId));
-          this.contents = await this.api.getContents(this.snapshotId).toPromise();
+          this.contents = await this.apiHistory
+            .getSnapshotContent(this.noteId, this.snapshotId)
+            .toPromise();
         }
       });
   }

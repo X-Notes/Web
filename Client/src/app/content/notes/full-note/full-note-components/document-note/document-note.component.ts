@@ -60,7 +60,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   openModal() {
-    const path = this.exportService.getPath(this.content.documentPath);
+    const path = this.exportService.getPath(this.content.documentPath, this.content.authorId);
     console.log(path);
     this.dialogsManageService.viewDock(path);
   }

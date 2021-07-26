@@ -3,29 +3,39 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Mapping;
 using Common.DTO.History;
+using Common.DTO.Notes.FullNoteContent;
 using Domain.Queries.History;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Histories;
+using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.History
 {
     public class HistoryHandlerQuery:
         IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>,
-        IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>
+        IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>,
+        IRequestHandler<GetSnapshotContentsQuery, List<BaseContentNoteDTO>>
     {
 
         private readonly IMediator _mediator;
+
         private readonly NoteSnapshotRepository noteHistoryRepository;
+
         private readonly AppCustomMapper noteCustomMapper;
+
+        private readonly BaseNoteContentRepository baseNoteContentRepository;
+
         public HistoryHandlerQuery(
             IMediator _mediator, 
             NoteSnapshotRepository noteHistoryRepository,
-            AppCustomMapper noteCustomMapper)
+            AppCustomMapper noteCustomMapper,
+            BaseNoteContentRepository baseNoteContentRepository)
         {
             this._mediator = _mediator;
             this.noteHistoryRepository = noteHistoryRepository;
             this.noteCustomMapper = noteCustomMapper;
+            this.baseNoteContentRepository = baseNoteContentRepository;
         }
 
         public async Task<List<NoteHistoryDTO>> Handle(GetNoteHistoriesQuery request, CancellationToken cancellationToken)
@@ -54,6 +64,21 @@ namespace BI.Services.History
             }
 
             return new NoteHistoryDTOAnswer(false, null);
+        }
+
+        public async Task<List<BaseContentNoteDTO>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanRead)
+            {
+                var contents = await baseNoteContentRepository.GetAllContentBySnapshotIdOrdered(request.SnapshotId);
+                return noteCustomMapper.MapContentsToContentsDTO(contents);
+            }
+
+            // TODO WHEN NO ACCESS
+            return null;
         }
     }
 }

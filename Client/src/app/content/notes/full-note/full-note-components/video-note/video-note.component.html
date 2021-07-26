@@ -1,3 +1,3 @@
 <video controls="controls">
-  <source [src]="content.videoPath | getVideo: (id$ | async)" />
+  <source [src]="content.videoPath | getVideo: content.authorId" />
 </video>

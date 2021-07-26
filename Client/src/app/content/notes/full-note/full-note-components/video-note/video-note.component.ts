@@ -14,9 +14,6 @@ export class VideoNoteComponent implements ParentInteraction {
   @Input()
   content: VideoModel;
 
-  @Select(NoteStore.authorId)
-  public id$: Observable<string>;
-
   @Output() deleteVideoEvent = new EventEmitter<string>();
 
   setFocus = ($event?: any) => {

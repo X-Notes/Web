@@ -45,27 +45,27 @@ namespace BI.Mapping
                         }
                     case AlbumNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
                     case AudiosPlaylistNote playlistNote:
                         {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent)).ToList();
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
                             var playlistDTO = new AudiosPlaylistNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(playlistDTO);
                             break;
                         }
                     case VideoNote videoNote:
                         {
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt, videoNote.AppFile.UserId);
                             resultList.Add(videoNoteDTO);
                             break;
                         }
                     case DocumentNote documentNote:
                         {
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
                             resultList.Add(documentNoteDTO);
                             break;
                         }

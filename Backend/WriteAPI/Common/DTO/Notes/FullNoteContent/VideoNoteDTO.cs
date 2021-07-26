@@ -6,14 +6,20 @@ namespace Common.DTO.Notes.FullNoteContent
     public class VideoNoteDTO : BaseContentNoteDTO
     {
         public string Name { set; get; }
+
         public Guid FileId { set; get; }
+
         public string VideoPath { set; get; }
-        public VideoNoteDTO(string Name, Guid fileId, string VideoPath, Guid Id, DateTimeOffset UpdatedAt)
-        : base(Id, ContentTypeENUM.Video, UpdatedAt)
+
+        public Guid AuthorId { set; get; }
+
+        public VideoNoteDTO(string name, Guid fileId, string videoPath, Guid id, DateTimeOffset updatedAt, Guid userId)
+        : base(id, ContentTypeENUM.Video, updatedAt)
         {
-            this.FileId = fileId;
-            this.Name = Name;
-            this.VideoPath = VideoPath;
+            FileId = fileId;
+            Name = name;
+            VideoPath = videoPath;
+            AuthorId = userId;
         }
     }
 }

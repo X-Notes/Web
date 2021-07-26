@@ -234,6 +234,7 @@ namespace WriteAPI.ConfigureAPP
             // HISTORY
             services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, List<BaseContentNoteDTO>>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();

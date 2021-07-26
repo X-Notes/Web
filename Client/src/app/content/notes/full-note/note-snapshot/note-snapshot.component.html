@@ -23,7 +23,10 @@
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
   <div *ngIf="(snapshotState$ | async)?.canView" class="wrapper-note">
-    <app-content-editor [note]="note" [contents]="contents"></app-content-editor>
+    <app-content-editor
+      [note]="(snapshotState$ | async).noteSnapshot"
+      [contents]="contents"
+    ></app-content-editor>
   </div>
   <div *ngIf="!(snapshotState$ | async)?.canView" class="wrapper">
     <app-no-results-illustration

@@ -16,9 +16,6 @@ import { RelatedNote } from '../../models/related-note.model';
 export class RelatedNoteComponent {
   @Input() note: RelatedNote;
 
-  @Select(UserStore.getUser)
-  public user$: Observable<ShortUser>;
-
   @Output() deleteNote = new EventEmitter<string>();
 
   @Output() changeState = new EventEmitter<ChangeStateRelatedNote>();

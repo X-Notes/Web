@@ -18,15 +18,12 @@ export class PhotoComponent implements OnInit {
   @Output()
   downloadPhotoEvent = new EventEmitter<Photo>();
 
-  @Select(NoteStore.authorId)
-  public id$: Observable<string>;
-
   @Input()
   photo: Photo;
 
   destroy = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor() {}
 
   ngOnInit(): void {}
 

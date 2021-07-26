@@ -78,6 +78,7 @@ namespace BI.Services.Notes
 
                     var documentNote = new DocumentNote()
                     {
+                        AppFile = file,
                         AppFileId = file.Id,
                         Name = request.File.FileName,
                         Note = note,
@@ -88,7 +89,8 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
+                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent,
+                        documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

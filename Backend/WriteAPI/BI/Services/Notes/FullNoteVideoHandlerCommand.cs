@@ -76,6 +76,7 @@ namespace BI.Services.Notes
 
                     var videoNote = new VideoNote()
                     {
+                        AppFile = file,
                         AppFileId = file.Id,
                         Name = request.Video.FileName,
                         Note = note,
@@ -86,7 +87,8 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, file.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
+                    var result = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, 
+                        file.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt, videoNote.AppFile.UserId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
