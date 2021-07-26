@@ -54,13 +54,13 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<DocumentNoteDTO>> Handle(InsertDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
@@ -72,23 +72,25 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    await fileRepository.Add(file);
+                    await fileRepository.AddAsync(file);
 
                     var documentNote = new DocumentNote()
                     {
+                        AppFile = file,
                         AppFileId = file.Id,
                         Name = request.File.FileName,
                         Note = note,
                         Order = contentForRemove.Order,
                     };
 
-                    await documentNoteRepository.Add(documentNote);
+                    await documentNoteRepository.AddAsync(documentNote);
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
+                    var result = new DocumentNoteDTO(documentNote.Name, file.PathNonPhotoContent,
+                        documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -110,7 +112,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveDocumentCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -132,8 +134,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
+                    await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 

@@ -9,9 +9,11 @@ using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Encryption;
 using Domain.Queries.Encryption;
 using WriteAPI.ControllerConfig;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LockController : ControllerBase

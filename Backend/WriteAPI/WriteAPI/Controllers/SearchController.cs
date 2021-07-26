@@ -32,7 +32,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<SearchNoteFolderResult> GetNoteAndFolders(GetNotesAndFolderForSearch command)
+        public async Task<SearchNoteFolderResult> GetNoteAndFolders(GetNotesAndFolderForSearchQuery command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

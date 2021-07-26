@@ -24,7 +24,7 @@ namespace WriteContext.Repositories
                 .Include(x => x.FoldersNotes).ThenInclude(z => z.Folder)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
-                .Where(x => x.UserId == userId && x.IsHistory == false).ToListAsync();
+                .Where(x => x.UserId == userId).ToListAsync();
         }
 
         // TODO MAKE FOR ALL FOLDERS

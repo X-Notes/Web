@@ -59,7 +59,7 @@ namespace BI.SignalR
                     UserId = userId,
                     NoteId = parsedNoteId
                 };
-                await userOnNoteRepository.Add(connectUser);
+                await userOnNoteRepository.AddAsync(connectUser);
             }
         }
 
@@ -77,7 +77,7 @@ namespace BI.SignalR
                     NoteId = parsedNoteId,
                     AccessTypeId = refTypeNote.RefTypeId
                 };
-                await usersOnPrivateNotesRepository.Add(connectUser);
+                await usersOnPrivateNotesRepository.AddAsync(connectUser);
             }
         }
 
@@ -87,10 +87,10 @@ namespace BI.SignalR
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
             if (user != null && Guid.TryParse(noteId, out var parsedNoteId))
             {
-                var users = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                var users = await userOnNoteRepository.GetWhereAsync(x => x.UserId == user.Id);
                 if(users.Any())
                 {
-                    await userOnNoteRepository.RemoveRange(users);
+                    await userOnNoteRepository.RemoveRangeAsync(users);
                 }
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, noteId);
                 await Clients.Group(noteId).SendAsync("updateOnlineUsers", noteId);
@@ -110,10 +110,10 @@ namespace BI.SignalR
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == Context.UserIdentifier);
             if (user != null)
             {
-                var connections = await userOnNoteRepository.GetWhere(x => x.UserId == user.Id);
+                var connections = await userOnNoteRepository.GetWhereAsync(x => x.UserId == user.Id);
                 if(connections.Any())
                 {
-                    await userOnNoteRepository.RemoveRange(connections);
+                    await userOnNoteRepository.RemoveRangeAsync(connections);
                     foreach(var connection in connections)
                     {
                         var stringConnection = connection.NoteId.ToString();

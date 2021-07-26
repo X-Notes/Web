@@ -14,13 +14,16 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public string Name { set; get; }
 
-        public AlbumPhotoDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig)
+        public Guid AuthorId { set; get; }
+
+        public AlbumPhotoDTO(Guid fileId, string name, string photoPathSmall, string photoPathMedium, string photoPathBig, Guid userId)
         {
-            this.Name = name;
-            this.FileId = fileId;
-            this.PhotoPathSmall = photoPathSmall;
-            this.PhotoPathMedium = photoPathMedium;
-            this.PhotoPathBig = photoPathBig;
+            Name = name;
+            FileId = fileId;
+            PhotoPathSmall = photoPathSmall;
+            PhotoPathMedium = photoPathMedium;
+            PhotoPathBig = photoPathBig;
+            AuthorId = userId;
         }
     }
 }

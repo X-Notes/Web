@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Labels;
+using Common.Interfaces;
 
 namespace Common.DTO.Notes
 {
-    public class FullNote
+    public class FullNote : IDateCreator, IDateUpdater, IDateDeleter
     {
         public Guid Id { get; set; }
         public string Title { set; get; }
@@ -16,7 +17,7 @@ namespace Common.DTO.Notes
         public NoteTypeENUM NoteTypeId { set; get; }
         public bool IsLocked { set; get; }
 
-        public DateTimeOffset DeletedAt { set; get; }
+        public DateTimeOffset? DeletedAt { set; get; }
         public DateTimeOffset UpdatedAt { set; get; }
         public DateTimeOffset CreatedAt { set; get; }
     }

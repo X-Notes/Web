@@ -45,7 +45,15 @@ export class Album extends ContentModel {
     this.photos = album.photos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
-        new Photo(z.fileId, z.photoPathSmall, z.photoPathMedium, z.photoPathBig, z.loaded, z.name),
+        new Photo(
+          z.fileId,
+          z.photoPathSmall,
+          z.photoPathMedium,
+          z.photoPathBig,
+          z.loaded,
+          z.name,
+          z.authorId,
+        ),
     );
   }
 }
@@ -62,6 +70,8 @@ export class AudioModel {
   name: string;
 
   audioPath: string;
+
+  authorId: string;
 }
 
 export class VideoModel extends ContentModel {
@@ -70,6 +80,8 @@ export class VideoModel extends ContentModel {
   videoPath: string;
 
   fileId: string;
+
+  authorId: string;
 }
 
 export class DocumentModel extends ContentModel {
@@ -78,6 +90,8 @@ export class DocumentModel extends ContentModel {
   documentPath: string;
 
   fileId: string;
+
+  authorId: string;
 }
 
 export class Photo {
@@ -90,6 +104,8 @@ export class Photo {
   photoPathMedium: string;
 
   photoPathBig: string;
+
+  authorId: string;
 
   loaded: boolean;
 
@@ -108,6 +124,7 @@ export class Photo {
     photoPathBig: string,
     loaded: boolean,
     name: string,
+    authorId: string,
   ) {
     this.fileId = fileId;
     this.photoPathSmall = photoPathSmall;
@@ -115,6 +132,7 @@ export class Photo {
     this.photoPathBig = photoPathBig;
     this.loaded = loaded;
     this.name = name;
+    this.authorId = authorId;
   }
 }
 

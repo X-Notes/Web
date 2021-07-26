@@ -1,0 +1,126 @@
+<div class="container" appTheme>
+  <div #album [style.width]="content.width" [style.height]="content.height" class="content-photos">
+    <div
+      *ngFor="let block of mainBlocks;let i = index"
+      class="blocks"
+      [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+    >
+      <div class="block" [ngClass]="getStyle(content.countInRow)">
+        <app-photo
+          *ngFor="let item of block"
+          [photo]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
+          (deleteEvent)="removePhotoHandler($event)"
+          (downloadPhotoEvent)="exportPhoto($event)"
+        ></app-photo>
+      </div>
+    </div>
+    <div
+      class="blocks"
+      *ngIf="lastBlock.length > 0"
+      [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+    >
+      <div class="block" [ngClass]="getStyle(countLastItems)">
+        <app-photo
+          *ngFor="let item of lastBlock"
+          [photo]="item"
+          [isReadOnlyMode]="isReadOnlyMode"
+          (deleteEvent)="removePhotoHandler($event)"
+          (downloadPhotoEvent)="exportPhoto($event)"
+        >
+        </app-photo>
+      </div>
+    </div>
+    <div
+      appChangeSizeAlbumWidth
+      (mouseClick)="saveWidth()"
+      (changeWeight)="changeWidth($event)"
+      class="slider-right"
+      [ngClass]="{'slider': !isReadOnlyMode}"
+    ></div>
+    <div
+      appChangeSizeAlbumHeight
+      (mouseClick)="saveHeight($event)"
+      (changeHeight)="changeHeight($event)"
+      class="slider-bottom"
+      [ngClass]="{'slider': !isReadOnlyMode}"
+    ></div>
+  </div>
+  <div class="action">
+    <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+      <mat-icon [inline]="true">more_vert</mat-icon>
+      <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
+    </button>
+  </div>
+  <mat-menu
+    #menu="matMenu"
+    appLazyTheme
+    themeClass="menu"
+    attributeName="panelClass"
+    [element]="menu"
+  >
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Upload photo"
+      (click)="uploadHandler()"
+    >
+      <mat-icon>add_photo_alternate</mat-icon>
+      <span> {{ 'innerNote.photoMenu.upload' | translate }} </span>
+    </button>
+    <button mat-menu-item type="button" name="Download" (click)="exportAlbum()">
+      <mat-icon>download</mat-icon>
+      <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
+    </button>
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Delete"
+      (click)="removeHandler()"
+    >
+      <mat-icon>delete</mat-icon>
+      <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>
+    </button>
+    <button
+      *ngIf="!isReadOnlyMode"
+      mat-menu-item
+      type="button"
+      name="Photo in row"
+      [matMenuTriggerFor]="secondMenu"
+    >
+      <mat-icon>art_track</mat-icon>
+      <span> {{ 'innerNote.photoMenu.countRow' | translate }} </span>
+    </button>
+  </mat-menu>
+
+  <mat-menu
+    #secondMenu="matMenu"
+    appLazyTheme
+    themeClass="menu"
+    attributeName="panelClass"
+    [element]="secondMenu"
+  >
+    <button mat-menu-item type="button" name="One row" (click)="setPhotosInRow(1)">
+      {{ 'innerNote.photoMenu.oneRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Two row" (click)="setPhotosInRow(2)">
+      {{ 'innerNote.photoMenu.twoRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Three row" (click)="setPhotosInRow(3)">
+      {{ 'innerNote.photoMenu.threeRow' | translate }}
+    </button>
+    <button mat-menu-item type="button" name="Four row" (click)="setPhotosInRow(4)">
+      {{ 'innerNote.photoMenu.fourRow' | translate }}
+    </button>
+  </mat-menu>
+</div>
+<input
+  #uploadPhotos
+  type="file"
+  multiple
+  accept="image/jpeg,image/png"
+  hidden="true"
+  (change)="uploadImages($event)"
+/>

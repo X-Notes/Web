@@ -29,7 +29,7 @@ namespace WriteAPI.Controllers
             var currentUserEmail = this.GetUserEmail();
             command.Email = currentUserEmail;
             await _mediator.Send(command);
-            return await _mediator.Send(new GetShortUser(currentUserEmail));
+            return await _mediator.Send(new GetShortUserQuery(currentUserEmail));
         }
 
 
@@ -37,14 +37,14 @@ namespace WriteAPI.Controllers
         public async Task<ShortUser> GetShort()
         {
             var currentUserEmail = this.GetUserEmail();
-            return await _mediator.Send(new GetShortUser(currentUserEmail));
+            return await _mediator.Send(new GetShortUserQuery(currentUserEmail));
         }
 
         [HttpGet("memory")]
         public async Task<GetUserMemoryResponse> GetUsedDiskSpace()
         {
             var currentUserEmail = this.GetUserEmail();
-            return await _mediator.Send(new GetUserMemory(currentUserEmail));
+            return await _mediator.Send(new GetUserMemoryQuery(currentUserEmail));
         }
 
         [HttpPut("username")]

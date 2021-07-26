@@ -46,16 +46,6 @@ namespace BI.Services.History
             }
         }
 
-        public CacheHistory GetUsersIds(Guid noteId)
-        {
-            if(Ids.TryGetValue(noteId, out var cacheHistory))
-            {
-                return cacheHistory;
-            }
-            return null;
-        }
-
-
         public List<CacheHistory> GetCacheHistoriesForSnapshotingByTime(int afterSeconds)
         {
             return Ids.Where(x => x.Value.UpdatedAt.AddSeconds(afterSeconds) < DateTimeOffset.Now)

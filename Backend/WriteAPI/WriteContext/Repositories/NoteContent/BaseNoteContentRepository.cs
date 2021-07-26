@@ -26,7 +26,18 @@ namespace WriteContext.Repositories.NoteContent
                 .Where(x => x.NoteId == id)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
+        }
 
+        public async Task<List<BaseNoteContent>> GetAllContentBySnapshotIdOrdered(Guid snapshotId)
+        {
+            return await entities
+                .Include(x => (x as AlbumNote).Photos)
+                .Include(x => (x as VideoNote).AppFile)
+                .Include(x => (x as AudiosPlaylistNote).Audios)
+                .Include(x => (x as DocumentNote).AppFile)
+                .Where(x => x.NoteSnapshotId == snapshotId)
+                .OrderBy(x => x.Order)
+                .ToListAsync();
         }
 
         public async Task<T> GetContentById<T>(Guid id) where T : BaseNoteContent
@@ -47,7 +58,7 @@ namespace WriteContext.Repositories.NoteContent
                 .Include(x => (x as VideoNote).AppFile)
                 .Include(x => (x as AudiosPlaylistNote).Audios)
                 .Include(x => (x as DocumentNote).AppFile)
-                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
+                .Where(x => ids.Contains(x.NoteId.Value)).ToListAsync();
         }
 
     }

@@ -254,6 +254,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
 
+      case EntityType.History: {
+        break;
+      }
+
       default: {
         throw new Error('error');
       }

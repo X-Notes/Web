@@ -23,48 +23,48 @@ namespace WriteContext.GenericRepositories
         public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
             => await entities.FirstOrDefaultAsync(predicate);
 
-        public async Task<EntityEntry<T>> Add(T entity)
+        public async Task<EntityEntry<T>> AddAsync(T entity)
         {
             var ent = await entities.AddAsync(entity);
             await context.SaveChangesAsync();
             return ent;
         }
 
-        public async Task Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             entities.Update(entity);
             await context.SaveChangesAsync();
         }
 
-        public async Task Remove(T entity)
+        public async Task RemoveAsync(T entity)
         {
             entities.Remove(entity);
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<T>> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
             return await entities.ToListAsync();
         }
 
-        public async Task<List<T>> GetWhere(Expression<Func<T, bool>> predicate)
+        public async Task<List<T>> GetWhereAsync(Expression<Func<T, bool>> predicate)
         {
             return await entities.Where(predicate).ToListAsync();
         }
 
-        public async Task UpdateRange(IEnumerable<T> ents)
+        public async Task UpdateRangeAsync(IEnumerable<T> ents)
         {
             this.entities.UpdateRange(ents);
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveRange(IEnumerable<T> ents)
+        public async Task RemoveRangeAsync(IEnumerable<T> ents)
         {
             this.entities.RemoveRange(ents);
             await context.SaveChangesAsync();
         }
 
-        public async Task AddRange(IEnumerable<T> ents)
+        public async Task AddRangeAsync(IEnumerable<T> ents)
         {
             await entities.AddRangeAsync(ents);
             await context.SaveChangesAsync();

@@ -1,0 +1,99 @@
+@import 'variables';
+
+.main-content {
+  position: relative;
+  z-index: $full-main-content;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(31, 33, 37, 0.9);
+  padding: 1.25rem 30px;
+  transition: 0.2s background-color ease;
+  overflow-y: scroll;
+  height: 100%;
+
+  .note-color {
+    width: 40px;
+    height: 40px;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  .labels-section {
+    margin-bottom: 1rem;
+  }
+
+  .title-section {
+    margin-left: 8px;
+    position: relative;
+    display: flex;
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: 700;
+
+    .title {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      padding-left: 0.625rem;
+      word-break: break-all;
+      white-space: pre-wrap;
+      outline: none;
+
+      &:empty {
+        padding-left: 0;
+      }
+    }
+
+    .title:empty + .placeholder {
+      display: block;
+    }
+
+    .title:empty ~ .left-border {
+      width: 0;
+      background-color: #7b7b7b;
+    }
+
+    .placeholder {
+      display: none;
+      position: absolute;
+      top: 0;
+      pointer-events: none;
+      user-select: none;
+      margin-left: 0.25rem;
+      color: #7b7b7b;
+    }
+  }
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    margin-top: 35px;
+    .empty {
+      height: 400px;
+    }
+  }
+}
+
+app-text-edit-menu {
+  z-index: 2;
+  position: fixed;
+}
+
+.light {
+  .main-content {
+    background-color: $light-color;
+
+    .title-section {
+      .title {
+        color: $text-color;
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    width: 100%;
+    padding: 1.25rem 4vw;
+  }
+}

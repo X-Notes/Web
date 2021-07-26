@@ -15,7 +15,7 @@ namespace BI.Services.Search
 {
     public class SeachQueryHandler
         : IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>,
-          IRequestHandler<GetNotesAndFolderForSearch, SearchNoteFolderResult>
+          IRequestHandler<GetNotesAndFolderForSearchQuery, SearchNoteFolderResult>
     {
         private readonly SearchRepository searchRepository;
         private readonly UserRepository userRepository;
@@ -38,7 +38,7 @@ namespace BI.Services.Search
             return mapper.Map<List<ShortUserForShareModal>>(users);
         }
 
-        public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearch request, CancellationToken cancellationToken)
+        public async Task<SearchNoteFolderResult> Handle(GetNotesAndFolderForSearchQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 

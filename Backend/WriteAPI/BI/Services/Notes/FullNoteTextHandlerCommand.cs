@@ -60,7 +60,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.Id, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -68,7 +68,7 @@ namespace BI.Services.Notes
                 var note = permissions.Note;
                 note.Title = request.Title;
                 note.UpdatedAt = DateTimeOffset.Now;
-                await noteRepository.Update(note);
+                await noteRepository.UpdateAsync(note);
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                 var fullNote = await noteRepository.GetFull(note.Id);
@@ -82,7 +82,7 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -96,7 +96,7 @@ namespace BI.Services.Notes
                     content.IsItalic = request.IsItalic ?? content.IsItalic;
                 }
                 content.UpdatedAt = DateTimeOffset.Now;
-                await textNotesRepository.Update(content);
+                await textNotesRepository.UpdateAsync(content);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -111,19 +111,19 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
                 var lastOrder = contents.Max(x => x.Order);
 
-                var text = new TextNote(note.Id, NoteTextTypeENUM.Default, lastOrder + 1);
+                var text = new TextNote(false, note.Id, NoteTextTypeENUM.Default, lastOrder + 1);
 
 
-                await baseNoteContentRepository.Add(text);
+                await baseNoteContentRepository.AddAsync(text);
 
                 var textResult = new TextNoteDTO(text.Content, text.Id,
                     text.NoteTextTypeId, text.HTypeId, text.Checked, text.IsBold, text.IsItalic, text.UpdatedAt);
@@ -141,7 +141,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -155,7 +155,7 @@ namespace BI.Services.Notes
                 {
                     case "NEXT":
                         {
-                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1,
+                            var newText = new TextNote(false, note.Id, request.NoteTextType, content.Order + 1,
                                                         Content: request.NextText);
 
                             contents.Insert(insertIndex + 1, newText);
@@ -171,8 +171,8 @@ namespace BI.Services.Notes
 
                             try
                             {
-                                await textNotesRepository.Add(newText);
-                                await baseNoteContentRepository.UpdateRange(contents);
+                                await textNotesRepository.AddAsync(newText);
+                                await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.NoteTextTypeId,
                                     newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
@@ -194,7 +194,7 @@ namespace BI.Services.Notes
                         }
                     case "PREV":
                         {
-                            var newText = new TextNote(NoteId: note.Id, request.NoteTextType, content.Order + 1, Content: request.NextText);
+                            var newText = new TextNote(false, note.Id, request.NoteTextType, content.Order + 1, Content: request.NextText);
 
                             contents.Insert(insertIndex, newText);
 
@@ -210,8 +210,8 @@ namespace BI.Services.Notes
 
                             try
                             {
-                                await textNotesRepository.Add(newText);
-                                await baseNoteContentRepository.UpdateRange(contents);
+                                await textNotesRepository.AddAsync(newText);
+                                await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                                 var textResult = new TextNoteDTO(newText.Content, newText.Id,
                                     newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
@@ -242,7 +242,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -253,7 +253,7 @@ namespace BI.Services.Notes
                     content.NoteTextTypeId = request.Type;
                     content.HTypeId = request.HeadingType;
                     content.UpdatedAt = DateTimeOffset.Now;
-                    await textNotesRepository.Update(content);
+                    await textNotesRepository.UpdateAsync(content);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -269,7 +269,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -300,8 +300,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForConcat);
-                    await textNotesRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForConcat);
+                    await textNotesRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 
@@ -327,7 +327,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -356,8 +356,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
+                    await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 

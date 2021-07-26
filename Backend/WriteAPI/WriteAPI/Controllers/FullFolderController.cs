@@ -30,7 +30,7 @@ namespace WriteAPI.Controllers
         [HttpGet("{id}")]
         public async Task<List<SmallNote>> GetNoteByFolderId(Guid id)
         {
-            var command = new GetFolderNotesByFolderId(id , this.GetUserEmail());
+            var command = new GetFolderNotesByFolderIdQuery(id , this.GetUserEmail());
             return await this._mediator.Send(command);
         }
 

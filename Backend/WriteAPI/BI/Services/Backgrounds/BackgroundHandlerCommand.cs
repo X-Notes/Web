@@ -50,7 +50,7 @@ namespace BI.Services.Backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.CurrentBackgroundId = null;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
 
@@ -60,7 +60,7 @@ namespace BI.Services.Backgrounds
             var back = user.Backgrounds.Where(x => x.Id == request.Id).FirstOrDefault();
             if (back != null)
             {
-                await backgroundRepository.Remove(back);
+                await backgroundRepository.RemoveAsync(back);
                 await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File).SetIsNoCheckDelete());
             }
             return Unit.Value;
@@ -70,7 +70,7 @@ namespace BI.Services.Backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             user.CurrentBackgroundId = request.Id;
-            await userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return Unit.Value;
         }
 

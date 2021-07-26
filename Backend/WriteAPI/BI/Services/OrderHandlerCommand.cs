@@ -53,7 +53,7 @@ namespace BI.Services
                                 label.Order = request.Position;
                             }
 
-                            await labelRepository.UpdateRange(tempLabels);
+                            await labelRepository.UpdateRangeAsync(tempLabels);
 
                             var result = tempLabels
                                             .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })
@@ -84,7 +84,7 @@ namespace BI.Services
                                 note.Order = request.Position;
                             }
 
-                            await noteRepository.UpdateRange(notesWithType);
+                            await noteRepository.UpdateRangeAsync(notesWithType);
 
                             var result = notesWithType
                                             .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })
@@ -116,7 +116,7 @@ namespace BI.Services
                                 folder.Order = request.Position;
                             }
 
-                            await folderRepository.UpdateRange(foldersWithType);
+                            await folderRepository.UpdateRangeAsync(foldersWithType);
 
                             var result = foldersWithType
                                             .Select(x => new UpdateOrderEntityResponse() { EntityId = x.Id, NewOrder = x.Order })

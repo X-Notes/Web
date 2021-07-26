@@ -55,13 +55,13 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<AudiosPlaylistNoteDTO>> Handle(InsertAudiosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetWhere(x => x.NoteId == note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
@@ -73,9 +73,9 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    await fileRepository.AddRange(files);
+                    await fileRepository.AddRangeAsync(files);
 
                     var audioNote = new AudiosPlaylistNote()
                     {
@@ -84,11 +84,11 @@ namespace BI.Services.Notes
                         Order = contentForRemove.Order,
                     };
 
-                    await audioNoteRepository.Add(audioNote);
+                    await audioNoteRepository.AddAsync(audioNote);
 
                     await transaction.CommitAsync();
 
-                    var resultAudios = audioNote.Audios.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent)).ToList();
+                    var resultAudios = audioNote.Audios.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId)).ToList();
                     var result = new AudiosPlaylistNoteDTO(audioNote.Id, audioNote.UpdatedAt, audioNote.Name, resultAudios);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
@@ -111,7 +111,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -133,8 +133,8 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await baseNoteContentRepository.Remove(contentForRemove);
-                    await baseNoteContentRepository.UpdateRange(contents);
+                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
+                    await baseNoteContentRepository.UpdateRangeAsync(contents);
 
                     await transaction.CommitAsync();
 
@@ -158,7 +158,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(RemoveAudioCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -175,7 +175,7 @@ namespace BI.Services.Notes
                 }
                 else
                 {
-                    await baseNoteContentRepository.Update(playlist);
+                    await baseNoteContentRepository.UpdateAsync(playlist);
                 }
 
                 await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), audioForRemove));
@@ -189,7 +189,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<Unit>> Handle(ChangeNamePlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -199,7 +199,7 @@ namespace BI.Services.Notes
                 playlist.Name = request.Name;
                 playlist.UpdatedAt = DateTimeOffset.Now;
 
-                await baseNoteContentRepository.Update(playlist);
+                await baseNoteContentRepository.UpdateAsync(playlist);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -213,7 +213,7 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<List<AudioNoteDTO>>> Handle(UploadAudiosToPlaylistCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
 
@@ -228,16 +228,16 @@ namespace BI.Services.Notes
 
                 try
                 {
-                    await fileRepository.AddRange(dbFiles);
+                    await fileRepository.AddRangeAsync(dbFiles);
 
                     playlist.Audios.AddRange(dbFiles);
                     playlist.UpdatedAt = DateTimeOffset.Now;
 
-                    await audioNoteRepository.Update(playlist);
+                    await audioNoteRepository.UpdateAsync(playlist);
 
                     await transaction.CommitAsync();
 
-                    var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent)).ToList();
+                    var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 

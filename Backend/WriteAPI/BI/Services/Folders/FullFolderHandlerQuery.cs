@@ -15,7 +15,7 @@ using WriteContext.Repositories.Notes;
 namespace BI.Services.Folders
 {
     public class FullFolderHandlerQuery :
-        IRequestHandler<GetFolderNotesByFolderId, List<SmallNote>>,
+        IRequestHandler<GetFolderNotesByFolderIdQuery, List<SmallNote>>,
         IRequestHandler<GetPreviewSelectedNotesForFolderQuery, List<PreviewNoteForSelection>>
     {
 
@@ -37,9 +37,9 @@ namespace BI.Services.Folders
             this.noteRepository = noteRepository;
         }
 
-        public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderId request, CancellationToken cancellationToken)
+        public async Task<List<SmallNote>> Handle(GetFolderNotesByFolderIdQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
@@ -56,12 +56,12 @@ namespace BI.Services.Folders
         public async Task<List<PreviewNoteForSelection>> Handle(GetPreviewSelectedNotesForFolderQuery request, CancellationToken cancellationToken)
         {
 
-            var command = new GetUserPermissionsForFolder(request.FolderId, request.Email);
+            var command = new GetUserPermissionsForFolderQuery(request.FolderId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
             {
-                var foldersNotes = await foldersNotesRepository.GetWhere(x => x.FolderId == request.FolderId);
+                var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
                 var folderdNotesIds = foldersNotes.Select(x => x.NoteId);
 
                 var allNotes = await noteRepository.GetNotesByUserId(permissions.User.Id, request.Settings);

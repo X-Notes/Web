@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 using Common.DTO.History;
 using Domain.Queries.History;
 using WriteAPI.ControllerConfig;
+using Microsoft.AspNetCore.Authorization;
+using Common.DTO.Notes.FullNoteContent;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HistoryController : ControllerBase
@@ -25,8 +28,22 @@ namespace WriteAPI.Controllers
         [HttpGet("{noteId}")]
         public async Task<List<NoteHistoryDTO>> GetHistories(Guid noteId)
         {
-            return await mediator.Send(new GetNoteHistories(noteId, this.GetUserEmail()));
+            return await mediator.Send(new GetNoteHistoriesQuery(noteId, this.GetUserEmail()));
         }
 
-    }
+        [HttpGet("snapshot/{noteId}/{snapshotId}")]
+        public async Task<NoteHistoryDTOAnswer> GetSnapshot(Guid noteId, Guid snapshotId)
+        {
+            var email = this.GetUserEmail();
+            return await mediator.Send(new GetNoteSnapshotQuery(snapshotId, noteId, email));
+        }
+
+        [HttpGet("snapshot/contents/{noteId}/{snapshotId}")]
+        public async Task<List<BaseContentNoteDTO>> GetSnapshotContent(Guid noteId, Guid snapshotId)
+        {
+            var email = this.GetUserEmail();
+            var command = new GetSnapshotContentsQuery(email, noteId, snapshotId);
+            return await mediator.Send(command);
+        }
+    } 
 }

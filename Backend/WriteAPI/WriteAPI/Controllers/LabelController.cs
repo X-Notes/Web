@@ -37,13 +37,13 @@ namespace WriteAPI.Controllers
         public async Task<LabelsDTO> GetUserLabels()
         {
             var email = this.GetUserEmail();
-            return await _mediator.Send(new GetLabelsByEmail(email));
+            return await _mediator.Send(new GetLabelsByEmailQuery(email));
         }
 
         [HttpGet("count/{id}")]
         public async Task<int> NotesCountByLabel(Guid id)
         {
-            var command = new GetCountNotesByLabel { LabelId = id };
+            var command = new GetCountNotesByLabelQuery { LabelId = id };
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }

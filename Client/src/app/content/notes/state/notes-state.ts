@@ -42,6 +42,7 @@ import {
   ChangeIsLockedFullNote,
   AddToDomNotes,
   MakeSharedNotes,
+  LoadSnapshotNote,
 } from './notes-actions';
 import { UpdateColor } from './update-color.model';
 import { SmallNote } from '../models/small-note.model';
@@ -52,6 +53,8 @@ import { FullNote } from '../models/full-note.model';
 import { UpdateLabelCount } from '../../labels/state/labels-actions';
 import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.model';
 import { OnlineUsersNote } from '../models/online-users-note.model';
+import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
+import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
 
 interface FullNoteState {
   note: FullNote;
@@ -64,6 +67,7 @@ interface FullNoteState {
 interface NoteState {
   notes: Notes[];
   fullNoteState: FullNoteState;
+  snapshotState: NoteSnapshotState;
   selectedIds: string[];
   updateColorEvent: UpdateColor[];
   updateLabelsOnNoteEvent: UpdateLabelEvent[];
@@ -80,6 +84,7 @@ interface NoteState {
   defaults: {
     notes: [],
     fullNoteState: null,
+    snapshotState: null,
     selectedIds: [],
     updateColorEvent: [],
     updateLabelsOnNoteEvent: [],
@@ -93,7 +98,11 @@ interface NoteState {
 })
 @Injectable()
 export class NoteStore {
-  constructor(private api: ApiServiceNotes, private orderService: OrderService) {}
+  constructor(
+    private api: ApiServiceNotes,
+    private orderService: OrderService,
+    private historyApi: ApiNoteHistoryService,
+  ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
     return state.notes.find((x) => x.typeNotes === type);
@@ -226,6 +235,11 @@ export class NoteStore {
   @Selector()
   static authorId(state: NoteState): string {
     return state.fullNoteState?.authorId;
+  }
+
+  @Selector()
+  static snapshotState(state: NoteState): NoteSnapshotState {
+    return state.snapshotState;
   }
 
   // Get notes
@@ -678,6 +692,20 @@ export class NoteStore {
         note: request.fullNote,
         isOwner: request.isOwner,
         authorId: request.authorId,
+      },
+    });
+  }
+
+  @Action(LoadSnapshotNote)
+  async loadSnapshot(
+    { patchState }: StateContext<NoteState>,
+    { snapshotId, noteId }: LoadSnapshotNote,
+  ) {
+    const request = await this.historyApi.getSnapshot(noteId, snapshotId).toPromise();
+    patchState({
+      snapshotState: {
+        canView: request.canView,
+        noteSnapshot: request.noteSnapshot,
       },
     });
   }

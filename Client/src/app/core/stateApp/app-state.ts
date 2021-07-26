@@ -235,6 +235,10 @@ export class AppStore {
         return 'profile';
       }
 
+      case EntityType.History: {
+        return 'history';
+      }
+
       default: {
         throw new Error('error');
       }

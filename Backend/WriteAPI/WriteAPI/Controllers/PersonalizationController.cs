@@ -9,9 +9,11 @@ using Common.DTO.Personalization;
 using Domain.Commands.Personalizations;
 using Domain.Queries.Personalization;
 using WriteAPI.ControllerConfig;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WriteAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonalizationController : ControllerBase

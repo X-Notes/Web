@@ -12,7 +12,6 @@ import {
   Photo,
   PlaylistModel,
 } from './models/content-model.model';
-import { NoteStore } from './state/notes-state';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
@@ -20,20 +19,19 @@ import * as moment from 'moment';
   providedIn: 'root',
 })
 export class ExportService {
-  constructor(private httpClient: HttpClient, private store: Store) {}
+  constructor(private httpClient: HttpClient) {}
 
   private getBlobFile(url: string) {
     return this.httpClient.get(url, { responseType: 'blob' });
   }
 
-  getPath(url: string) {
-    const authorNoteId = this.store.selectSnapshot(NoteStore.authorId);
+  getPath(url: string, authorNoteId: string) {
     return `${environment.storage}/${authorNoteId}/${escape(url)}`;
   }
 
   async exportAlbum(album: Album) {
     const tasks = album.photos.map((photo) => {
-      const path = this.getPath(photo.photoFromBig);
+      const path = this.getPath(photo.photoFromBig, photo.authorId);
       return this.getBlobFile(path).pipe(
         map((blob) => {
           return {
@@ -56,14 +54,14 @@ export class ExportService {
   }
 
   async exportPhoto(photo: Photo) {
-    const path = this.getPath(photo.photoFromBig);
+    const path = this.getPath(photo.photoFromBig, photo.authorId);
     const blob = await this.getBlobFile(path).toPromise();
     saveAs(blob, photo.name);
   }
 
   async exportPlaylist(playlist: PlaylistModel) {
     const tasks = playlist.audios.map((audio) => {
-      const path = this.getPath(audio.audioPath);
+      const path = this.getPath(audio.audioPath, audio.authorId);
       return this.getBlobFile(path).pipe(
         map((blob) => {
           return {
@@ -78,13 +76,13 @@ export class ExportService {
   }
 
   async exportAudio(audio: AudioModel) {
-    const path = this.getPath(audio.audioPath);
+    const path = this.getPath(audio.audioPath, audio.authorId);
     const blob = await this.getBlobFile(path).toPromise();
     saveAs(blob, audio.name);
   }
 
   async exportDocument(document: DocumentModel) {
-    const path = this.getPath(document.documentPath);
+    const path = this.getPath(document.documentPath, document.authorId);
     const blob = await this.getBlobFile(path).toPromise();
     saveAs(blob, document.name);
   }

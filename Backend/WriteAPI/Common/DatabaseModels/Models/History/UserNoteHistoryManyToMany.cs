@@ -8,9 +8,11 @@ namespace Common.DatabaseModels.Models.History
     {
         [NotMapped]
         public override Guid Id { set; get; }
+
         public Guid UserId { set; get; }
         public User User { set; get; }
+
         public Guid NoteHistoryId { set; get; }
-        public NoteHistory NoteHistory { set; get; }
+        public NoteSnapshot NoteHistory { set; get; }
     }
 }

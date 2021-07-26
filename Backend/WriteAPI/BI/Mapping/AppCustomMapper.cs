@@ -45,27 +45,27 @@ namespace BI.Mapping
                         }
                     case AlbumNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig)).ToList();
+                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
                             var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(aNDTO);
                             break;
                         }
                     case AudiosPlaylistNote playlistNote:
                         {
-                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent)).ToList();
+                            var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
                             var playlistDTO = new AudiosPlaylistNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(playlistDTO);
                             break;
                         }
                     case VideoNote videoNote:
                         {
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt);
+                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt, videoNote.AppFile.UserId);
                             resultList.Add(videoNoteDTO);
                             break;
                         }
                     case DocumentNote documentNote:
                         {
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt);
+                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
                             resultList.Add(documentNoteDTO);
                             break;
                         }
@@ -314,17 +314,17 @@ namespace BI.Mapping
             return users.Select(x => MapUserToUserNoteHistory(x)).ToList();
         }
 
-        public NoteHistoryDTO MapHistoryToHistoryDto(NoteHistory historyDTO)
+        public NoteHistoryDTO MapHistoryToHistoryDto(NoteSnapshot historyDTO)
         {
             return new NoteHistoryDTO()
             {
                 SnapshotTime = historyDTO.SnapshotTime,
                 Users = MapUsersToUsersNoteHistory(historyDTO.Users),
-                NoteVersionId = historyDTO.NoteVersionId
+                NoteVersionId = historyDTO.Id
             };
         }
 
-        public List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteHistory> histories)
+        public List<NoteHistoryDTO> MapHistoriesToHistoriesDto(IEnumerable<NoteSnapshot> histories)
         {
             return histories.Select(x => MapHistoryToHistoryDto(x)).ToList();
         }
@@ -344,5 +344,21 @@ namespace BI.Mapping
                 SortedFolderByTypeId = pr.SortedFolderByTypeId
             };
         }
+
+        public NoteSnapshotDTO MapNoteSnapshotToNoteSnapshotDTO(NoteSnapshot snapshot)
+        {
+            return new NoteSnapshotDTO()
+            {
+                Id = snapshot.Id,
+                Color = snapshot.Color,
+                SnapshotTime = snapshot.SnapshotTime,
+                Labels = snapshot.Labels.Select(x => new LabelDTO { Name = x.Name, Color = x.Color }).ToList(),
+                NoteId = snapshot.NoteId,
+                NoteTypeId = snapshot.NoteTypeId,
+                RefTypeId = snapshot.RefTypeId,
+                Title = snapshot.Title
+            };
+        }
+
     }
 }

@@ -1,0 +1,56 @@
+<div class="small-note" appTheme>
+  <div class="header">
+    <button type="button" (click)="turnUpSmallNote()">
+      <div class="icon" [ngStyle]="{'transform': note.isOpened == true ? '' : 'rotate(180deg)' }">
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
+      </div>
+    </button>
+    <button type="button" (click)="deleteSmallNote()">
+      <div class="icon">
+        <mat-icon svgIcon="cancel" [inline]="true"></mat-icon>
+      </div>
+    </button>
+  </div>
+  <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
+    <div class="note-color"></div>
+    <div class="labels-section" *ngIf="note.labels?.length">
+      <div class="label" *ngFor="let item of note.labels">
+        <p>{{item.name}}</p>
+      </div>
+    </div>
+    <div class="title-section">
+      <div class="left-border"></div>
+      <p class="title">{{note.title}}</p>
+      <div class="placeholder">Title</div>
+    </div>
+    <div class="content-note">
+      <ng-container *ngFor="let content of note.contents">
+        <div [ngSwitch]="content.typeId">
+          <ng-container *ngSwitchCase="contentType.Text">
+            <div *ngIf="content.noteTextTypeId === textType.Default" class="text">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Dotlist" class="dotlist">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Numberlist" class="numberList">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Checklist" class="checkList">
+              <p>{{content.content}}</p>
+            </div>
+            <div *ngIf="content.noteTextTypeId === textType.Heading" class="numberList">
+              <p>{{content.content}}</p>
+            </div>
+          </ng-container>
+          <div *ngSwitchCase="contentType.NoteAlbum" class="album">
+            <ng-container *ngFor="let item of content.photos">
+              <img [src]="item.photoFromSmall | getImage: item.authorId" />
+            </ng-container>
+          </div>
+          <div *ngSwitchDefault>Default</div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

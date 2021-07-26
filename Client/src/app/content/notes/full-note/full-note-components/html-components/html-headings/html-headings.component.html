@@ -1,0 +1,17 @@
+<div
+  appTheme
+  class="main-container"
+  (click)="setFocus($event)"
+  (mouseover)="mouseEnter($event)"
+  (mouseout)="mouseOut($event)"
+  [ngClass]="{'h1': content.headingTypeId === hType.H1, 'h2': content.headingTypeId === hType.H2, 'h3': content.headingTypeId === hType.H3}"
+>
+  <p
+    #contentHtml
+    class="block-generic"
+    [attr.contenteditable]="!isReadOnlyMode"
+    (input)="onInput($event)"
+    [textContent]="content?.content"
+  ></p>
+  <p class="no-content" *ngIf="isActive">Heading</p>
+</div>

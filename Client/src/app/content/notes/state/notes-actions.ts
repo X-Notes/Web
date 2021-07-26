@@ -214,6 +214,12 @@ export class LoadFullNote {
   constructor(public id: string) {}
 }
 
+export class LoadSnapshotNote {
+  static type = '[Notes] Load snapshot note';
+
+  constructor(public snapshotId: string, public noteId: string) {}
+}
+
 export class DeleteCurrentNote {
   static type = '[Notes] delete full note';
 }

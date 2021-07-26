@@ -27,9 +27,11 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Text;
         }
 
-        public TextNote(TextNote text, Guid NoteId)
+
+        public TextNote(TextNote text, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
+
             this.Order = text.Order;
 
             this.Content = text.Content;
@@ -41,10 +43,11 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Text;
         }
 
-        public TextNote(Guid NoteId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
+        public TextNote(bool isHistory, Guid entityId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
         {
+            this.SetId(isHistory, entityId);
+
             this.NoteTextTypeId = NoteTextTypeId;
-            this.NoteId = NoteId;
             this.Content = Content;
             this.Order = Order;
 

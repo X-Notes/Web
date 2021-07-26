@@ -60,7 +60,7 @@ namespace WriteAPI.Controllers
         [HttpGet("folders/user/invites/{folderId}")]
         public async Task<List<InvitedUsersToFoldersOrNote>> GetInvitedToFolderUsers(Guid folderId)
         {
-            var command = new GetUsersOnPrivateFolder { FolderId = folderId, Email = this.GetUserEmail() };
+            var command = new GetUsersOnPrivateFolderQuery { FolderId = folderId, Email = this.GetUserEmail() };
             return await this._mediator.Send(command);
         }
 
@@ -102,7 +102,7 @@ namespace WriteAPI.Controllers
         [HttpGet("notes/user/invites/{noteId}")]
         public async Task<List<InvitedUsersToFoldersOrNote>> GetInvitedToNoteUsers(Guid noteId)
         {
-            var command = new GetUsersOnPrivateNote { NoteId = noteId, Email = this.GetUserEmail() };
+            var command = new GetUsersOnPrivateNoteQuery { NoteId = noteId, Email = this.GetUserEmail() };
             return await this._mediator.Send(command);
         }
 

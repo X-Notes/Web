@@ -9,20 +9,19 @@ using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.ContentParts;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using Common.DTO.Files;
 using Common.DTO.Notes;
 using Domain.Commands.Files;
 using Domain.Commands.Notes;
-using Domain.Queries.Files;
 using Domain.Queries.Permissions;
 using MediatR;
 using Storage;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.Labels;
 using WriteContext.Repositories.NoteContent;
 using WriteContext.Repositories.Notes;
@@ -38,6 +37,7 @@ namespace BI.Services.Notes
         IRequestHandler<ArchiveNoteCommand, Unit>,
         IRequestHandler<MakePrivateNoteCommand, Unit>,
         IRequestHandler<CopyNoteCommand, List<Guid>>,
+        IRequestHandler<MakeNoteHistoryCommand, Unit>,
         IRequestHandler<RemoveLabelFromNoteCommand, Unit>,
         IRequestHandler<AddLabelOnNoteCommand, Unit>
     {
@@ -50,12 +50,13 @@ namespace BI.Services.Notes
         private readonly IMediator _mediator;
         private readonly AppSignalRService appSignalRService;
         private readonly HistoryCacheService historyCacheService;
+        private readonly NoteSnapshotRepository noteSnapshotRepository;
 
         public NoteHandlerCommand(
             UserRepository userRepository, NoteRepository noteRepository,
             AppCustomMapper noteCustomMapper, IMediator _mediator, LabelsNotesRepository labelsNotesRepository,
             BaseNoteContentRepository baseNoteContentRepository, AppSignalRService appSignalRService,
-            HistoryCacheService historyCacheService)
+            HistoryCacheService historyCacheService, NoteSnapshotRepository noteSnapshotRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
@@ -65,6 +66,7 @@ namespace BI.Services.Notes
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.appSignalRService = appSignalRService;
             this.historyCacheService = historyCacheService;
+            this.noteSnapshotRepository = noteSnapshotRepository;
         }
 
 
@@ -102,7 +104,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)
@@ -110,7 +112,7 @@ namespace BI.Services.Notes
                     var note = permissions.Note;
                     note.Color = request.Color;
                     note.UpdatedAt = DateTimeOffset.Now;
-                    await noteRepository.Update(note);
+                    await noteRepository.UpdateAsync(note);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
@@ -158,7 +160,7 @@ namespace BI.Services.Notes
                 noteFiles.AddRange(audios);
                 noteFiles.AddRange(videos);
 
-                await baseNoteContentRepository.RemoveRange(contents);
+                await baseNoteContentRepository.RemoveRangeAsync(contents);
                 await noteRepository.DeleteRangeDeleted(selectdeletenotes, deletednotes);
 
                 noteFiles = noteFiles.DistinctBy(x => x.Id).ToList();
@@ -208,6 +210,97 @@ namespace BI.Services.Notes
             return Unit.Value;
         }
 
+
+        public async Task<List<BaseNoteContent>> CopyContentAsync(List<BaseNoteContent> noteContents, bool isHistory, Guid entityId, bool isOwner, Guid? authorId, Guid? userId)
+        {
+            var contents = new List<BaseNoteContent>();
+
+            foreach (var contentForCopy in noteContents)
+            {
+                switch (contentForCopy)
+                {
+                    case TextNote textNote:
+                        {
+                            contents.Add(new TextNote(textNote, isHistory, entityId));
+                            continue;
+                        }
+                    case AlbumNote album:
+                        {
+
+                            if (isHistory || isOwner)
+                            {
+                                var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile
+                                {
+                                    AppFileId = x.AppFileId
+                                }).ToList();
+                                contents.Add(new AlbumNote(album, dbFiles, isHistory, entityId));
+                            }
+                            else
+                            {
+                                var copyCommands = album.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Images));
+                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                var copyPhotos = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new AlbumNote(album, copyPhotos, false, entityId));
+                            }
+                            continue;
+                        }
+                    case VideoNote videoNote:
+                        {
+                            if (isHistory || isOwner)
+                            {
+                                contents.Add(new VideoNote(videoNote, videoNote.AppFileId, isHistory, entityId));
+                            }
+                            else
+                            {
+                                var copyCommand = new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, videoNote.AppFile, ContentTypesFile.Videos);
+                                var fileCopy = await _mediator.Send(copyCommand);
+                                contents.Add(new VideoNote(videoNote, fileCopy, false, entityId));
+                            }
+                            continue;
+                        }
+                    case AudiosPlaylistNote audioNote:
+                        {
+                            if (isHistory || isOwner)
+                            {
+                                var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                {
+                                    AppFileId = x.AppFileId
+                                }).ToList();
+                                contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, isHistory, entityId));
+                            }
+                            else
+                            {
+                                var copyCommands = audioNote.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
+                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                var copyAudios = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new AudiosPlaylistNote(audioNote, copyAudios, false, entityId));
+                            }
+                            continue;
+                        }
+                    case DocumentNote documentNote:
+                        {
+                            if (isHistory || isOwner)
+                            {
+                                contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, isHistory, entityId));
+                            }
+                            else
+                            {
+                                var copyCommand = new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, documentNote.AppFile, ContentTypesFile.Files);
+                                var fileCopy = await _mediator.Send(copyCommand);
+                                contents.Add(new DocumentNote(documentNote, fileCopy, false, entityId));
+                            }
+                            continue;
+                        }
+                    default:
+                        {
+                            throw new Exception("Incorrect type");
+                        }
+                }
+            }
+
+            return contents;
+        }
+
         public async Task<List<Guid>> Handle(CopyNoteCommand request, CancellationToken cancellationToken)
         {
             var resultIds = new List<Guid>();
@@ -215,7 +308,7 @@ namespace BI.Services.Notes
             // TODO DO ONE QUERY
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanRead)
@@ -231,9 +324,8 @@ namespace BI.Services.Notes
                         RefTypeId = noteForCopy.RefTypeId,
                         Order = order--,
                         UserId = permissions.User.Id,
-                        IsHistory = request.IsHistory
                     };
-                    var dbNote = await noteRepository.Add(newNote);
+                    var dbNote = await noteRepository.AddAsync(newNote);
                     resultIds.Add(dbNote.Entity.Id);
                     var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
                     {
@@ -242,105 +334,19 @@ namespace BI.Services.Notes
                         AddedAt = DateTimeOffset.Now
                     });
 
-                    await labelsNotesRepository.AddRange(labels);
+                    await labelsNotesRepository.AddRangeAsync(labels);
 
-                    var contents = new List<BaseNoteContent>();
+                    var contents = await CopyContentAsync(noteForCopy.Contents, false, dbNote.Entity.Id, permissions.IsOwner, permissions.Author.Id, permissions.User.Id);
 
-                    foreach (var contentForCopy in noteForCopy.Contents)
-                    {
-                        switch (contentForCopy)
-                        {
-                            case TextNote textNote:
-                                {
-                                    contents.Add(new TextNote(textNote, dbNote.Entity.Id));
-                                    continue;
-                                }
-                            case AlbumNote album:
-                                {
-
-                                    if(permissions.IsOwner)
-                                    {
-                                        var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile
-                                        {
-                                            AlbumNoteId = dbNote.Entity.Id,
-                                            AppFileId = x.AppFileId
-                                        }).ToList();
-                                        contents.Add(new AlbumNote(album, dbFiles, dbNote.Entity.Id));
-                                    }
-                                    else
-                                    {
-                                        var copyCommands = album.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Images));
-                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                        var copyPhotos = (await Task.WhenAll(tasks)).ToList();
-                                        contents.Add(new AlbumNote(album, copyPhotos, dbNote.Entity.Id));
-                                    }
-                                    continue;
-                                }
-                            case VideoNote videoNote:
-                                {
-                                    if (permissions.IsOwner)
-                                    {
-                                        contents.Add(new VideoNote(videoNote, videoNote.AppFileId, dbNote.Entity.Id));
-                                    }
-                                    else
-                                    {
-                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, videoNote.AppFile, ContentTypesFile.Videos);
-                                        var fileCopy = await _mediator.Send(copyCommand);
-                                        contents.Add(new VideoNote(videoNote, fileCopy, dbNote.Entity.Id));
-                                    }
-                                    continue;
-                                }
-                            case AudiosPlaylistNote audioNote:
-                                {
-                                    if(permissions.IsOwner)
-                                    {
-                                        var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
-                                        {
-                                            AudioNoteId = dbNote.Entity.Id,
-                                            AppFileId = x.AppFileId
-                                        }).ToList();
-
-                                        contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, dbNote.Entity.Id));
-                                    }
-                                    else
-                                    {
-                                        var copyCommands = audioNote.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, file, ContentTypesFile.Audios));
-                                        var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                        var copyAudios = (await Task.WhenAll(tasks)).ToList();
-                                        contents.Add(new AudiosPlaylistNote(audioNote, copyAudios, dbNote.Entity.Id));
-                                    }
-                                    continue;
-                                }
-                            case DocumentNote documentNote:
-                                {
-                                    if (permissions.IsOwner)
-                                    {
-                                        contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, dbNote.Entity.Id));
-                                    }
-                                    else
-                                    {
-                                        var copyCommand = new CopyBlobFromContainerToContainerCommand(permissions.Author.Id, permissions.User.Id, documentNote.AppFile, ContentTypesFile.Files);
-                                        var fileCopy = await _mediator.Send(copyCommand);
-                                        contents.Add(new DocumentNote(documentNote, fileCopy, dbNote.Entity.Id));
-                                    }
-                                    continue;
-                                }
-                            default:
-                                {
-                                    throw new Exception("Incorrect type");
-                                }
-                        }
-                    }
-                    await baseNoteContentRepository.AddRange(contents);
+                    await baseNoteContentRepository.AddRangeAsync(contents);
                 }
             }
 
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var dbNotes = await noteRepository.GetWhere(x => 
+            var dbNotes = await noteRepository.GetWhereAsync(x => 
                 x.UserId == user.Id 
-                && x.NoteTypeId == NoteTypeENUM.Private
-                && x.IsHistory == request.IsHistory);
+                && x.NoteTypeId == NoteTypeENUM.Private);
 
             var orders = Enumerable.Range(1, dbNotes.Count);
 
@@ -357,7 +363,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.NoteIds)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)
@@ -368,7 +374,7 @@ namespace BI.Services.Notes
 
                     if (value != null)
                     {
-                        await labelsNotesRepository.Remove(value);
+                        await labelsNotesRepository.RemoveAsync(value);
 
                         // TODO  MAKE UPDATE NOTE DATE
 
@@ -387,7 +393,7 @@ namespace BI.Services.Notes
         {
             foreach (var id in request.NoteIds)
             {
-                var command = new GetUserPermissionsForNote(id, request.Email);
+                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
 
                 if (permissions.CanWrite)
@@ -400,7 +406,7 @@ namespace BI.Services.Notes
                     {
                         var noteLabel = new LabelsNotes() { LabelId = request.LabelId, NoteId = note.Id, AddedAt = DateTimeOffset.Now };
 
-                        await labelsNotesRepository.Add(noteLabel);
+                        await labelsNotesRepository.AddAsync(noteLabel);
 
                         // TODO  MAKE UPDATE NOTE DATE
 
@@ -412,6 +418,33 @@ namespace BI.Services.Notes
                     }
                 }
             }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
+        {
+            var noteForCopy = await noteRepository.GetNoteByIdForCopy(request.Id);
+
+            var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(z => new HistoryLabel { Name = z.Name, Color = z.Color }).ToList();
+
+            var snapshot = new NoteSnapshot()
+            {
+                NoteTypeId = noteForCopy.NoteTypeId,
+                RefTypeId = noteForCopy.RefTypeId,
+                Title = noteForCopy.Title,
+                Color = noteForCopy.Color,
+                SnapshotTime = DateTimeOffset.Now,
+                NoteId = noteForCopy.Id,
+                Labels = labels,
+                UserHistories = request.UserIds.Select(x => new UserNoteHistoryManyToMany { UserId = x }).ToList()
+            };
+
+            var dbSnapshot = await noteSnapshotRepository.AddAsync(snapshot);
+
+            var contents = await CopyContentAsync(noteForCopy.Contents, true, dbSnapshot.Entity.Id, true, null, null);
+
+            await baseNoteContentRepository.AddRangeAsync(contents);
+
             return Unit.Value;
         }
     }

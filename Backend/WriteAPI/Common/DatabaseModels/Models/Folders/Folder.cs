@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Folders
 {
-    public class Folder : BaseEntity<Guid>
+    public class Folder : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter
     {
         public FolderTypeENUM FolderTypeId { set; get; }
         public FolderType FolderType { set; get; }
@@ -19,11 +20,12 @@ namespace Common.DatabaseModels.Models.Folders
         public Guid UserId { set; get; }
         public User User { set; get; }
 
-        // TODO THIS MUST BE NULLABLE
-        public DateTimeOffset DeletedAt { set; get; }
-        public DateTimeOffset UpdatedAt { set; get; }
-        public DateTimeOffset CreatedAt { set; get; }
+
         public List<FoldersNotes> FoldersNotes { set; get; }
         public List<UsersOnPrivateFolders> UsersOnPrivateFolders { set; get; }
+
+        public DateTimeOffset? DeletedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
     }
 }

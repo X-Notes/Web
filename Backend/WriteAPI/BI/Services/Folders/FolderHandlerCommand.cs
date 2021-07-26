@@ -98,7 +98,7 @@ namespace BI.Services.Folders
                     x.UpdatedAt = DateTimeOffset.Now;
                 });
 
-                await folderRepository.UpdateRange(folders);
+                await folderRepository.UpdateRangeAsync(folders);
             }
             else
             {
@@ -150,7 +150,7 @@ namespace BI.Services.Folders
 
             foreach (var id in request.Ids)
             {
-                var command = new GetUserPermissionsForFolder(id, request.Email);
+                var command = new GetUserPermissionsForFolderQuery(id, request.Email);
                 var permissions = await _mediator.Send(command);
          
                 if (permissions.CanWrite)
@@ -167,14 +167,14 @@ namespace BI.Services.Folders
                         UpdatedAt = DateTimeOffset.Now,
                         UserId = permissions.User.Id
                     };
-                    var dbFolder = await folderRepository.Add(newFolder);
+                    var dbFolder = await folderRepository.AddAsync(newFolder);
                     resultIds.Add(dbFolder.Entity.Id);
                     var foldersNotes = folderForCopy.FoldersNotes.Select(note => new FoldersNotes()
                     {
                         FolderId = dbFolder.Entity.Id,
                         NoteId = note.NoteId
                     });
-                    await foldersNotesRepository.AddRange(foldersNotes);
+                    await foldersNotesRepository.AddRangeAsync(foldersNotes);
                 }
             }
 
@@ -187,7 +187,7 @@ namespace BI.Services.Folders
                 return folder;
             }).ToList();
 
-            await folderRepository.UpdateRange(dbFolders);
+            await folderRepository.UpdateRangeAsync(dbFolders);
 
             var resultFolders = dbFolders.Where(dbFolder => resultIds.Contains(dbFolder.Id)).ToList();
             return appCustomMapper.MapFoldersToSmallFolders(resultFolders);

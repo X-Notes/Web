@@ -19,9 +19,10 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.ContentTypeId = ContentTypeENUM.Document;
         }
 
-        public DocumentNote(DocumentNote entity, Guid AppFileId, Guid NoteId)
+        public DocumentNote(DocumentNote entity, Guid AppFileId, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
+
             Order = entity.Order;
 
             this.UpdatedAt = DateTimeOffset.Now;
@@ -32,9 +33,10 @@ namespace Common.DatabaseModels.Models.NoteContent
             this.AppFileId = AppFileId;
         }
 
-        public DocumentNote(DocumentNote entity, AppFile file, Guid NoteId)
+        public DocumentNote(DocumentNote entity, AppFile file, bool isHistory, Guid entityId)
         {
-            this.NoteId = NoteId;
+            this.SetId(isHistory, entityId);
+
             Order = entity.Order;
 
             this.UpdatedAt = DateTimeOffset.Now;

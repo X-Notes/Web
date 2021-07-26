@@ -24,7 +24,7 @@ namespace BI.Services.Encryption
 
         public async Task<OperationResult<bool>> Handle(EncryptionNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -35,7 +35,7 @@ namespace BI.Services.Encryption
                     var hash = appEncryptor.Encode(request.Password);
                     note.IsLocked = true;
                     note.Password = hash;
-                    await noteRepository.Update(note);
+                    await noteRepository.UpdateAsync(note);
                     return new OperationResult<bool>(true, true);
                 }
                 return new OperationResult<bool>(true, false);
@@ -46,7 +46,7 @@ namespace BI.Services.Encryption
 
         public async Task<OperationResult<bool>> Handle(DecriptionNoteCommand request, CancellationToken cancellationToken)
         {
-            var command = new GetUserPermissionsForNote(request.NoteId, request.Email);
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanWrite)
@@ -56,7 +56,7 @@ namespace BI.Services.Encryption
                     var note = permissions.Note;
                     note.IsLocked = false;
                     note.Password = null;
-                    await noteRepository.Update(note);
+                    await noteRepository.UpdateAsync(note);
                     return new OperationResult<bool>(true, true);
                 }
 
