@@ -3,11 +3,11 @@ import { PersonalizationService } from 'src/app/shared/services/personalization.
 import { SmallNote } from '../../models/small-note.model';
 
 @Component({
-  selector: 'app-left-section-content',
-  templateUrl: './left-section-content.component.html',
-  styleUrls: ['./left-section-content.component.scss'],
+  selector: 'app-left-section-content-notes-list',
+  templateUrl: './left-section-content-notes-list.component.html',
+  styleUrls: ['./left-section-content-notes-list.component.scss'],
 })
-export class LeftSectionContentComponent implements OnInit {
+export class LeftSectionContentNotesListComponent implements OnInit {
   @Input()
   public notesLink: SmallNote[];
 

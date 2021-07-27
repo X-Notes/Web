@@ -26,7 +26,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NoteSnapshotComponent } from './note-snapshot/note-snapshot.component';
 import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
-import { LeftSectionContentComponent } from './left-section-content/left-section-content.component';
+import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
 @NgModule({
   declarations: [
@@ -54,7 +54,7 @@ import { ContentEditorComponent } from './content-editor/content-editor.componen
     AudioComponent,
     NoteSnapshotComponent,
     RightSectionContentComponent,
-    LeftSectionContentComponent,
+    LeftSectionContentNotesListComponent,
     ContentEditorComponent,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
