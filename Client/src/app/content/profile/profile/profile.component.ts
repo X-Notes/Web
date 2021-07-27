@@ -1,9 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, Renderer2 } from '@angular/core';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-  showDropdown,
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { Observable, Subject } from 'rxjs';
@@ -14,15 +10,12 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   SetDefaultBackground,
-  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { takeUntil } from 'rxjs/operators';
-import { Background } from 'src/app/core/models/background.model';
-import { BackgroundStore } from 'src/app/core/backgrounds/background-state';
 import {
   LoadBackgrounds,
   NewBackground,
@@ -39,7 +32,6 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
-  animations: [sideBarCloseOpen, showDropdown],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserFontSize)
@@ -56,9 +48,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUserLanguage)
   public language$: Observable<LanguagesENUM>;
-
-  @Select(BackgroundStore.getUserBackgrounds)
-  public backgrounds$: Observable<Background[]>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 

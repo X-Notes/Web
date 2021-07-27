@@ -37,13 +37,12 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { NotesService } from '../../notes/notes.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
-import { LoadNotes, SelectIdNote } from '../../notes/state/notes-actions';
+import { SelectIdNote } from '../../notes/state/notes-actions';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  animations: [sideBarCloseOpen],
   providers: [FullFolderNotesService, NotesService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -65,8 +64,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
-
-  public photoError = false;
 
   fontSize = FontSizeENUM;
 
@@ -245,9 +242,5 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.foldersLink = folders.filter((z) => z.id !== this.id);
-  }
-
-  changeSource() {
-    this.photoError = true;
   }
 }
