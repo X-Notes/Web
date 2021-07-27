@@ -1,22 +1,6 @@
-<div appTheme class="sub-nav">
-  <div
-    class="sub-nav-section"
-    *ngIf="pService.stateSidebar"
-    [@sidebarCloseOpen]
-    [@.disabled]="pService.check()"
-  >
-    <div class="notes-section"></div>
-    <div class="information">
-      <div class="separator"></div>
-      <app-memory-indicator></app-memory-indicator>
-    </div>
-  </div>
-  <div
-    class="overlay"
-    (click)="pService.cancelSideBar()"
-    [ngClass]="pService.stateSidebar ? 'visible' : ''"
-  ></div>
-</div>
+<app-left-section-wrapper>
+  <div></div>
+</app-left-section-wrapper>
 <div
   appTheme
   class="content-generic-project full-content"

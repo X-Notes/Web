@@ -1,4 +1,6 @@
-@import 'submenu';
+:host {
+  display: flex;
+}
 
 .full-content {
   flex-direction: row;

@@ -1,49 +1,20 @@
-<div appTheme class="sub-nav">
-  <div
-    class="sub-nav-section"
-    *ngIf="pService.stateSidebar"
-    [@sidebarCloseOpen]
-    [@.disabled]="pService.check()"
-  >
-    <div class="sub-nav-item-section">
-      <div class="sub-nav-item" routerLink="/profile" #profile>
-        <div class="item">
-          <div class="photo">
-            <img
-              *ngIf="!photoError"
-              alt="photo"
-              [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
-              (error)="changeSource()"
-            />
-            <i *ngIf="photoError" class="icon-people"></i>
-          </div>
-          <p>{{(user$ | async).name}}</p>
-        </div>
-        <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
-      </div>
-      <div class="separator"></div>
-    </div>
-    <ng-scrollbar class="full-folder-section" [visibility]="'hover'" [appearance]="'compact'">
-      <div
-        class="folder"
-        *ngFor="let item of foldersLink"
-        [ngStyle]="{'backgroundColor': item.color}"
-        [routerLink]="['/folders/', item.id]"
-      >
-        <p>{{ item.title | replace: 'note' }}</p>
-      </div>
-    </ng-scrollbar>
-    <div class="information">
-      <div class="separator"></div>
-      <app-memory-indicator></app-memory-indicator>
-    </div>
+<app-left-section-wrapper>
+  <div>
+    <app-nav-profile-item></app-nav-profile-item>
+    <div class="separator"></div>
   </div>
-  <div
-    class="overlay"
-    (click)="pService.cancelSideBar()"
-    [ngClass]="pService.stateSidebar ? 'visible' : ''"
-  ></div>
-</div>
+  <ng-scrollbar class="full-folder-section" [visibility]="'hover'" [appearance]="'compact'">
+    <div
+      class="folder"
+      *ngFor="let item of foldersLink"
+      [ngStyle]="{'backgroundColor': item.color}"
+      [routerLink]="['/folders/', item.id]"
+    >
+      <p>{{ item.title | replace: 'note' }}</p>
+    </div>
+  </ng-scrollbar>
+</app-left-section-wrapper>
+
 <div
   *ngIf="loaded && (canView$ | async)"
   class="content-generic-project"
