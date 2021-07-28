@@ -1,8 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
@@ -16,7 +13,6 @@ import { FolderStore } from '../state/folders-state';
   selector: 'app-folders',
   templateUrl: './folders.component.html',
   styleUrls: ['./folders.component.scss'],
-  animations: [sideBarCloseOpen],
 })
 export class FoldersComponent implements OnInit, OnDestroy {
   @Select(FolderStore.privateCount)
@@ -39,8 +35,6 @@ export class FoldersComponent implements OnInit, OnDestroy {
 
   destroy = new Subject<void>();
 
-  public photoError = false;
-
   constructor(
     public pService: PersonalizationService,
     private store: Store,
@@ -62,9 +56,5 @@ export class FoldersComponent implements OnInit, OnDestroy {
       .select(FolderStore.privateFolders)
       .pipe(take(1))
       .subscribe((x) => this.router.navigate([`folders/${x[0].id}`]));
-  }
-
-  changeSource() {
-    this.photoError = true;
   }
 }

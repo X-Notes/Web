@@ -1,0 +1,15 @@
+<div appTheme>
+  <div
+    class="sub-nav-item"
+    [routerLink]="[routerLink]"
+    [routerLinkActiveOptions]="{exact:true}"
+    routerLinkActive="active"
+    #sub
+  >
+    <div class="item">
+      <p>{{ navName | translate }}</p>
+      <p>{{count}}</p>
+    </div>
+    <div class="ripple-container" matRipple [matRippleTrigger]="sub"></div>
+  </div>
+</div>

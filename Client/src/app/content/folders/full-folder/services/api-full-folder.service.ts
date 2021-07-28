@@ -15,7 +15,9 @@ export class ApiFullFolderService {
   constructor(private httpClient: HttpClient) {}
 
   getFolderNotes(folderId: string) {
-    return this.httpClient.get<SmallNote[]>(`${this.controllerApi}/${folderId}`);
+    return this.httpClient
+      .get<SmallNote[]>(`${this.controllerApi}/${folderId}`)
+      .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 
   getAllPreviewNotes(folderId: string, search: string, settings: PersonalizationSetting) {

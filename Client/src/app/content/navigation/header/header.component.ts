@@ -133,6 +133,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   routeChangeFullFolder(folder: FullFolder) {
+    // TODO REFACTOR
     if (!folder) {
       return;
     }
@@ -160,6 +161,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   routeChangeFullNote(note: FullNote) {
+    // TODO REFACTOR
     if (!note) {
       return;
     }
@@ -195,6 +197,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   routeChange(type: EntityType) {
+    // TODO REFACTOR
     if (!type) {
       return;
     }
@@ -217,6 +220,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         break;
       }
       case EntityType.FolderInner: {
+        break;
+      }
+      case EntityType.FolderInnerNote: {
         break;
       }
 

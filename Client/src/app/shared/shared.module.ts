@@ -59,6 +59,10 @@ import { DialogGenericSaveComponent } from './modal_components/dialog-generic-sa
 import { AudioControlsComponent } from './custom-components/audio-controls/audio-controls.component';
 import { AudioSmallComponent } from './custom-components/audio-small/audio-small.component';
 import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
+import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section-wrapper.component';
+import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
+import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -104,6 +108,9 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     AudioControlsComponent,
     AudioSmallComponent,
     ManageMenuButtonsPipe,
+    LeftSectionWrapperComponent,
+    NavMenuItemComponent,
+    NavProfileItemComponent,
   ],
   imports: [
     CommonModule,
@@ -123,6 +130,7 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     ReactiveFormsModule,
     NgxDocViewerModule,
     MatSliderModule,
+    RouterModule,
   ],
   exports: [
     TranslateModule,
@@ -172,6 +180,9 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
     MatSliderModule,
     AudioControlsComponent,
     ManageMenuButtonsPipe,
+    LeftSectionWrapperComponent,
+    NavMenuItemComponent,
+    NavProfileItemComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

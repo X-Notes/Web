@@ -1,0 +1,15 @@
+<app-left-section-wrapper>
+  <div>
+    <app-nav-profile-item></app-nav-profile-item>
+  </div>
+  <ng-scrollbar class="notes-section" [visibility]="'hover'" [appearance]="'compact'">
+    <div
+      class="note"
+      *ngFor="let item of notesLink"
+      [ngStyle]="{'backgroundColor': item.color}"
+      (click)="notesService.toNote(item)"
+    >
+      <p>{{ item.title | replace: 'note' }}</p>
+    </div>
+  </ng-scrollbar>
+</app-left-section-wrapper>

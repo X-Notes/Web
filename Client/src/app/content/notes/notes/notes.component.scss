@@ -1,7 +1,150 @@
-@import 'submenu';
+@import 'variables';
+
+:host {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
 
 .muuri-item-dragging {
   .note {
     box-shadow: 0 0 0 2px rgb(236, 236, 236);
+  }
+}
+
+.label-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 202px);
+
+  .label-cancel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    max-height: 0;
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem;
+    border-radius: 2px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s ease;
+    font-size: 0.75rem;
+  }
+
+  .label-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    .label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: calc(100% - 3rem);
+      margin: 0 1.5rem;
+      margin-bottom: 0.625rem;
+      cursor: pointer;
+
+      &:first-child {
+        margin-top: 0.625rem;
+      }
+
+      .dot {
+        position: absolute;
+        left: 0;
+        margin-right: 0.3125rem;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: $red-label;
+        transition: 0.2s ease;
+      }
+
+      .label-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 20px;
+        width: 100%;
+        padding: 0 0.5rem;
+        border-radius: 2px;
+        color: #393939;
+        background-color: $red-label;
+        font-size: 0.75rem;
+
+        p:first-child {
+          @include text-overflow;
+          width: calc(100% - 0.75rem);
+        }
+      }
+    }
+
+    .active-label {
+      margin: 0 0.875rem 0.625rem 1.5rem;
+      width: calc(100% - 2.375rem);
+      padding-left: 0.625rem;
+    }
+  }
+}
+
+.active-select {
+  .label-cancel {
+    max-height: 20px;
+    margin-top: 0.625rem;
+    margin-bottom: 0.625rem;
+  }
+
+  .label-container {
+    height: calc(100% - 40px);
+
+    .label:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.light {
+  .label-section {
+    .label-cancel {
+      background-color: $light-cancel-label;
+      color: $light-text-color;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .label-section {
+    height: calc(100% - 262px);
+
+    .label-cancel {
+      margin-right: 1rem;
+      margin-left: 1rem;
+      width: calc(100% - 2rem);
+    }
+
+    .label-container {
+      .label {
+        margin-right: 1rem;
+        margin-left: 1rem;
+        width: calc(100% - 2rem);
+      }
+
+      .active-label {
+        margin: 0 0.5rem 0.625rem 1rem;
+        width: calc(100% - 1.5rem);
+        padding-left: 0.625rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .label-section {
+    height: calc(100% - 256px);
   }
 }

@@ -131,7 +131,7 @@ namespace BI.Services.Notes
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                notes.ForEach(note => note.RefType = null);
+                notes.ForEach(note => note.DeletedAt = null);
                 user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
                 await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Deleted);
             }
@@ -181,7 +181,7 @@ namespace BI.Services.Notes
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                notes.ForEach(note => note.RefType = null);
+                notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Archived);
             }
             else
@@ -199,7 +199,7 @@ namespace BI.Services.Notes
             var note = notes.FirstOrDefault();
             if (notes.Count == request.Ids.Count)
             {
-                notes.ForEach(note => note.RefType = null);
+                notes.ForEach(note => note.DeletedAt = null);
                 await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Private);
             }
             else

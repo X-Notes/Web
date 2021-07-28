@@ -34,12 +34,6 @@ import { NotesUpdaterService } from '../notes-updater.service';
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
-  providers: [
-    NotesService, // TODO MAYBE NO NEED
-    FullNoteSliderService,
-    MurriService, // TODO CHECK WHY
-    SidebarNotesService,
-  ],
 })
 export class FullNoteComponent implements OnInit, OnDestroy {
   @ViewChild('fullWrap') wrap: ElementRef;
@@ -73,7 +67,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   private routeSubscription: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
+    route: ActivatedRoute,
     private store: Store,
     public pService: PersonalizationService,
     public menuSelectionService: MenuSelectionService,
@@ -87,11 +81,13 @@ export class FullNoteComponent implements OnInit, OnDestroy {
 
       this.store
         .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy))
+        .pipe(takeUntil(this.destroy)) // TODO REFACTOR
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.initNote();
             this.store.dispatch(new LoadLabels());
+            this.destroy.next();
+            this.destroy.complete();
           }
         });
     });
@@ -114,13 +110,8 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   async loadMain() {
     await this.store.dispatch(new LoadFullNote(this.id)).toPromise();
     await this.loadContent();
-    this.store
-      .select(NoteStore.oneFull)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((note) => {
-        this.note = note;
-        this.loaded = true;
-      });
+    this.note = this.store.selectSnapshot(NoteStore.oneFull);
+    this.loaded = true;
   }
 
   async loadLeftMenuWithNotes() {

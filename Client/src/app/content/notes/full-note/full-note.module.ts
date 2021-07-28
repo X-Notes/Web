@@ -26,8 +26,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NoteSnapshotComponent } from './note-snapshot/note-snapshot.component';
 import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
-import { LeftSectionContentComponent } from './left-section-content/left-section-content.component';
+import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
+import { MenuSelectionService } from './services/menu-selection.service';
+import { SelectionService } from './services/selection.service';
+import { SidebarNotesService } from './services/sidebar-notes.service';
+import { FullNoteSliderService } from './services/full-note-slider.service';
+import { MurriService } from 'src/app/shared/services/murri.service';
 @NgModule({
   declarations: [
     FullNoteComponent,
@@ -54,8 +59,20 @@ import { ContentEditorComponent } from './content-editor/content-editor.componen
     AudioComponent,
     NoteSnapshotComponent,
     RightSectionContentComponent,
-    LeftSectionContentComponent,
+    LeftSectionContentNotesListComponent,
     ContentEditorComponent,
+  ],
+  exports: [
+    LeftSectionContentNotesListComponent,
+    ContentEditorComponent,
+    RightSectionContentComponent,
+  ],
+  providers: [
+    MenuSelectionService,
+    SelectionService,
+    SidebarNotesService,
+    FullNoteSliderService,
+    MurriService, // MAYBE NO NEED
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

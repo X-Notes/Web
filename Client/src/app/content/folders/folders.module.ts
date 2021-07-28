@@ -10,6 +10,8 @@ import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
 import { FullFolderComponent } from './full-folder/full-folder.component';
+import { FullFolderNoteComponent } from './full-folder-note/full-folder-note.component';
+import { FullNoteModule } from '../notes/full-note/full-note.module';
 
 @NgModule({
   declarations: [
@@ -20,8 +22,9 @@ import { FullFolderComponent } from './full-folder/full-folder.component';
     DeletedComponent,
     ArchiveComponent,
     FullFolderComponent,
+    FullFolderNoteComponent,
   ],
-  imports: [CommonModule, FoldersRouting, SharedModule],
+  imports: [CommonModule, FoldersRouting, SharedModule, FullNoteModule],
   providers: [MurriService],
 })
 export class FoldersModule {}

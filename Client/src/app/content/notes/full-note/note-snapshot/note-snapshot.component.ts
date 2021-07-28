@@ -8,11 +8,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-} from 'src/app/shared/services/personalization.service';
-import { ApiServiceNotes } from '../../api-notes.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { ContentModel } from '../../models/content-model.model';
 import { LoadSnapshotNote } from '../../state/notes-actions';
 import { NoteStore } from '../../state/notes-state';
@@ -23,7 +19,6 @@ import { ApiNoteHistoryService } from '../services/api-note-history.service';
   selector: 'app-note-snapshot',
   templateUrl: './note-snapshot.component.html',
   styleUrls: ['./note-snapshot.component.scss'],
-  animations: [sideBarCloseOpen],
 })
 export class NoteSnapshotComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUser)
@@ -49,7 +44,6 @@ export class NoteSnapshotComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
     private store: Store,
     private route: ActivatedRoute,
-    private api: ApiServiceNotes,
     private apiHistory: ApiNoteHistoryService,
   ) {
     this.routeSubscription = route.params.subscribe((params) => {

@@ -1,8 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Subject, Observable } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
@@ -19,7 +16,6 @@ import { NoteStore } from '../state/notes-state';
   selector: 'app-notes',
   templateUrl: './notes.component.html',
   styleUrls: ['./notes.component.scss'],
-  animations: [sideBarCloseOpen],
 })
 export class NotesComponent implements OnInit, OnDestroy {
   @Select(NoteStore.privateCount)
@@ -43,8 +39,6 @@ export class NotesComponent implements OnInit, OnDestroy {
   destroy = new Subject<void>();
 
   loaded = false;
-
-  public photoError = false;
 
   public labelsFilters: LabelsForFiltersNotes[] = [];
 
@@ -120,9 +114,5 @@ export class NotesComponent implements OnInit, OnDestroy {
     this.destroy.next();
     this.destroy.complete();
     this.store.dispatch(new CancelAllSelectedLabels(false));
-  }
-
-  changeSource() {
-    this.photoError = true;
   }
 }

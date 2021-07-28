@@ -4,6 +4,7 @@ export enum EntityType {
   FolderDeleted,
   FolderArchive,
   FolderInner,
+  FolderInnerNote,
   NotePrivate,
   NoteShared,
   NoteDeleted,
