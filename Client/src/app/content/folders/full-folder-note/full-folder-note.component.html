@@ -1,1 +1,27 @@
-<p>full-folder-note works!</p>
+<app-left-section-content-notes-list [notesLink]="linkNotes"></app-left-section-content-notes-list>
+<div
+  appTheme
+  class="content-generic-project full-content"
+  [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
+>
+  <div
+    *ngIf="(canView$ | async) && loaded"
+    class="wrapper-note"
+    #fullWrap
+    (panstart)="sliderService.panStart()"
+    (panmove)="panMove($event)"
+    (panend)="panEnd($event)"
+  >
+    <app-content-editor [note]="note" [contents]="contents"></app-content-editor>
+    <app-right-section-content [note]="note" [wrap]="wrap"></app-right-section-content>
+  </div>
+  <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">
+    <app-no-results-illustration
+      [isShow]="true"
+      [message]="'noResult.noAccessView' | translate"
+      [illustration]="pService.icon.noAccessView"
+      typeClass="type-module"
+    ></app-no-results-illustration>
+  </div>
+  <app-spinner *ngIf="!loaded"></app-spinner>
+</div>

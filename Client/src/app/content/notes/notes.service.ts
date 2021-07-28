@@ -6,7 +6,7 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   CancelAllSelectedLabels,
   ClearAddToDomNotes,
@@ -29,6 +29,7 @@ import {
   FeaturesEntitiesService,
   OrderFilterEntity,
 } from 'src/app/shared/services/features-entities.service';
+import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 
 @Injectable()
 export class NotesService extends FeaturesEntitiesService<SmallNote> implements OnDestroy {
@@ -46,6 +47,7 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
     store: Store,
     murriService: MurriService,
     private router: Router,
+    private route: ActivatedRoute,
     private dialogsManageService: DialogsManageService,
     private apiService: ApiServiceNotes,
     private updateService: NotesUpdaterService,
@@ -254,7 +256,15 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
         this.dialogsManageService.lock(note.id);
         return;
       }
-      this.router.navigate([`notes/${note.id}`]);
+
+      const routing = this.store.selectSnapshot(AppStore.getRouting);
+      if (routing === EntityType.FolderInner) {
+        this.router.navigate([note.id], { relativeTo: this.route });
+      } else if (routing === EntityType.FolderInnerNote) {
+        this.router.navigate(['../', note.id], { relativeTo: this.route });
+      } else {
+        this.router.navigate(['/notes/', note.id]);
+      }
     }
   }
 

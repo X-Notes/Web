@@ -29,8 +29,6 @@ import { FullNoteModule } from './full-note/full-note.module';
       useClass: MyHammerConfig,
     },
     MurriService,
-    SelectionService,
-    MenuSelectionService,
   ],
 })
 export class NotesModule {}

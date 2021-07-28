@@ -16,6 +16,7 @@ import {
   PersonalizationService,
   showHistory,
 } from 'src/app/shared/services/personalization.service';
+import { SmallNote } from '../../models/small-note.model';
 import { NoteHistory } from '../models/history/note-history.model';
 import { ApiNoteHistoryService } from '../services/api-note-history.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
@@ -28,7 +29,7 @@ import { SidebarNotesService } from '../services/sidebar-notes.service';
   animations: [deleteSmallNote, showHistory],
 })
 export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() noteId: string;
+  @Input() note: SmallNote;
 
   @Input() wrap: ElementRef;
 
@@ -53,8 +54,8 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
     this.sliderService.rend = this.rend;
     this.sliderService.initWidthSlide();
 
-    await this.sideBarService.loadNotes(this.noteId);
-    this.histories = await this.apiHistory.getHistory(this.noteId).toPromise();
+    await this.sideBarService.loadNotes(this.note.id);
+    this.histories = await this.apiHistory.getHistory(this.note.id).toPromise();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -71,6 +72,6 @@ export class RightSectionContentComponent implements OnInit, AfterViewInit, OnDe
   ngAfterViewInit(): void {
     setTimeout(() => console.log('WRAp: ', this.wrap), 2000); // TODO CHANGE THIS
     setTimeout(() => this.sliderService.goTo(this.sliderService.active, this.wrap), 2000);
-    this.sideBarService.murriInitialise(this.refSideBarElements, this.noteId);
+    this.sideBarService.murriInitialise(this.refSideBarElements, this.note.id);
   }
 }

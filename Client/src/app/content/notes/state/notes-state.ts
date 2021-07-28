@@ -222,7 +222,7 @@ export class NoteStore {
     return state.fullNoteState?.canView;
   }
 
-  @Selector()
+  @Selector() // TODO REMOVE
   static canNoView(state: NoteState): boolean {
     return !state.fullNoteState?.canView;
   }

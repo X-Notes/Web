@@ -1,5 +1,5 @@
 <div appTheme class="secondary-content" [style.width.px]="sliderService.mainWidth">
-  <div class="open" #open (click)="sideBarService.openSideModal(noteId)">
+  <div class="open" #open (click)="sideBarService.openSideModal(note.id)">
     <div class="icon">
       <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
     </div>
@@ -36,8 +36,8 @@
         >
           <app-related-note
             [note]="item"
-            (deleteNote)="sideBarService.deleteSmallNote($event, noteId)"
-            (changeState)="sideBarService.changeState($event, noteId)"
+            (deleteNote)="sideBarService.deleteSmallNote($event, note.id)"
+            (changeState)="sideBarService.changeState($event, note.id)"
           ></app-related-note>
         </div>
       </div>

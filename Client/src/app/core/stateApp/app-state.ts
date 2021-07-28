@@ -133,6 +133,7 @@ export class AppStore {
 
   @Selector()
   static getName(state: AppState): string {
+    // TODO REFACTOR
     switch (state.routing) {
       case EntityType.FolderPrivate: {
         return 'folder';
@@ -145,6 +146,12 @@ export class AppStore {
       }
       case EntityType.FolderArchive: {
         return 'folder';
+      }
+      case EntityType.FolderInner: {
+        return 'inner-folder';
+      }
+      case EntityType.FolderInnerNote: {
+        return 'inner-note';
       }
 
       case EntityType.NotePrivate: {
@@ -159,6 +166,9 @@ export class AppStore {
       case EntityType.NoteShared: {
         return 'note';
       }
+      case EntityType.NoteInner: {
+        return 'inner-note';
+      }
 
       case EntityType.LabelPrivate: {
         return 'label';
@@ -171,14 +181,6 @@ export class AppStore {
         return 'background';
       }
 
-      case EntityType.NoteInner: {
-        return 'inner-note';
-      }
-
-      case EntityType.FolderInner: {
-        return 'inner-folder';
-      }
-
       default: {
         throw new Error('error');
       }
@@ -187,6 +189,7 @@ export class AppStore {
 
   @Selector()
   static getMenuSwitch(state: AppState): string {
+    // TODO REFACTOR
     switch (state.routing) {
       // FOLDERS
       case EntityType.FolderPrivate: {
@@ -203,6 +206,9 @@ export class AppStore {
       }
       case EntityType.FolderInner: {
         return 'folder-inner';
+      }
+      case EntityType.FolderInnerNote: {
+        return 'note-inner';
       }
 
       // NOTES

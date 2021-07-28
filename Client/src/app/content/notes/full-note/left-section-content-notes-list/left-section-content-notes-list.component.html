@@ -7,7 +7,7 @@
       class="note"
       *ngFor="let item of notesLink"
       [ngStyle]="{'backgroundColor': item.color}"
-      [routerLink]="['/notes/', item.id]"
+      (click)="notesService.toNote(item)"
     >
       <p>{{ item.title | replace: 'note' }}</p>
     </div>
