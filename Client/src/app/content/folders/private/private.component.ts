@@ -72,7 +72,7 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent() {
     await this.folderService.loadFolders(FolderTypeENUM.Private);
 
-    this.folderService.firstInit();
+    this.folderService.initializeEntities(this.folderService.getByCurrentType);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

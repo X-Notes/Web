@@ -65,7 +65,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent(typeENUM = NoteTypeENUM.Deleted) {
     await this.noteService.loadNotes(typeENUM);
 
-    await this.noteService.firstInit();
+    await this.noteService.initializeEntities(this.noteService.getNotesByCurrentType);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);

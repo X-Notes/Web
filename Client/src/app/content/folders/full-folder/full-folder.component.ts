@@ -19,10 +19,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
@@ -35,7 +32,6 @@ import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
-import { NotesService } from '../../notes/notes.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
 
@@ -43,7 +39,7 @@ import { SelectIdNote } from '../../notes/state/notes-actions';
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService, NotesService],
+  providers: [FullFolderNotesService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -88,7 +84,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
     public menuButtonService: MenuButtonsService,
-    public noteService: NotesService,
     public noteApiService: ApiServiceNotes,
   ) {}
 
@@ -113,13 +108,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.id = params.id;
       this.store
         .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy))
+        .pipe(takeUntil(this.destroy)) // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.loadFolder();
 
             if (this.folder) {
-              await this.ffnService.loadNotes(this.folder.id);
+              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              await this.ffnService.initializeEntities(notes);
             }
 
             await this.pService.waitPreloading();
@@ -173,6 +169,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initPanelClassStyleSubscribe() {
+    // TODO REMOVE KOSTIL
     this.store
       .select(UserStore.getUserTheme)
       .pipe(takeUntil(this.destroy))
@@ -197,7 +194,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           if (resp) {
             const ids = resp.map((x) => x.id);
             await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-            await this.ffnService.loadNotes(this.folder.id);
+            await this.ffnService.updateNotesLayout(this.folder.id);
           }
         });
     });

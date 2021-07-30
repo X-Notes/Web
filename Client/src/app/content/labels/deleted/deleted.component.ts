@@ -16,9 +16,6 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
-import { SnackbarService } from 'src/app/shared/services/snackbar.service';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { LabelStore } from '../state/labels-state';
 import { LabelsService } from '../labels.service';
 import {
@@ -84,7 +81,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.deleted);
-    this.labelService.firstInit(labels);
+    this.labelService.initializeEntities(labels);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
