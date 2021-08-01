@@ -35,8 +35,6 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
     this.pService.selectAllButton.next(true);
   }
 
-  settingsClick = () => {};
-
   newButton() {
     this.pService.newButtonSubject.next(true);
   }

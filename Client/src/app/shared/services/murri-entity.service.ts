@@ -9,37 +9,54 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
 
   private state: Record<string, Entity> = {};
 
-  protected firstInitedMurri = false;
+  private firstInitedMurri = false;
 
-  constructor(protected murriService: MurriService) {}
+  constructor(public murriService: MurriService) {}
 
   initState() {
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
   }
 
-  async synchronizeState(refElements: QueryList<ElementRef>) {
+  async synchronizeState(refElements: QueryList<ElementRef>, isAddToEnd: boolean) {
     if (this.firstInitedMurri) {
       const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-      this.newItemChecker(elements);
+      this.newItemChecker(elements, isAddToEnd);
       await this.deleteItemChecker(elements);
     }
   }
 
-  async firstInitMurri() {
+  async setInitMurriFlagShowLayout() {
     await this.murriService.setOpacityFlagAsync();
     this.firstInitedMurri = true;
   }
 
-  private newItemChecker(elements: HTMLElement[]) {
+  async destroyGridAsync(wait: number = 150) {
+    await this.murriService.setOpacityFlagAsync(0, false);
+    await this.murriService.wait(wait);
+    this.murriService.grid.destroy();
+  }
+
+  destroyLayout() {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
+  }
+
+  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {
     for (const el of elements) {
       if (!this.state[el.id]) {
         this.state[el.id] = this.entities.find((x) => x.id === el.id);
         this.murriService.grid.add(document.getElementById(el.id), {
-          index: 0,
+          index: isAddToEnd ? -1 : 0,
           layout: true,
         });
       }
     }
+  }
+
+  getIsFirstInit(z: any): boolean {
+    return (
+      z.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
+    );
   }
 
   private async deleteItemChecker(elements: HTMLElement[]) {

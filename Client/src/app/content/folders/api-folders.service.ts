@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { map } from 'rxjs/operators';
@@ -8,14 +8,23 @@ import { SmallFolder } from './models/folder.model';
 import { Folders } from './models/folders.model';
 import { RequestFullFolder } from './models/request-full-folder.model';
 import { InvitedUsersToNoteOrFolder } from '../notes/models/invited-users-to-note.model';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 
 @Injectable()
 export class ApiFoldersService {
   constructor(private httpClient: HttpClient) {}
 
-  getFolders(type: FolderTypeENUM) {
+  getFolders(type: FolderTypeENUM, settings: PersonalizationSetting) {
+    let params = new HttpParams();
+    if (settings) {
+      Object.keys(settings).forEach((key) => {
+        params = params.append(key, settings[key]);
+      });
+    }
+
     return this.httpClient
-      .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${type}`)
+      .get<SmallFolder[]>(`${environment.writeAPI}/api/folder/type/${type}`, { params })
       .pipe(map((folders) => new Folders(type, folders)));
   }
 
@@ -23,6 +32,14 @@ export class ApiFoldersService {
     return this.httpClient.get<InvitedUsersToNoteOrFolder[]>(
       `${environment.writeAPI}/api/share/folders/user/invites/${id}`,
     );
+  }
+
+  getFoldersMany(folderIds: string[], settings: PersonalizationSetting) {
+    const obj = {
+      folderIds,
+      settings,
+    };
+    return this.httpClient.post<SmallFolder[]>(`${environment.writeAPI}/api/folder/many`, obj);
   }
 
   changeUserPermission(folderId: string, userId: string, accessTypeId: RefTypeENUM) {

@@ -7,13 +7,11 @@ import {
   QueryList,
   AfterViewInit,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LabelsService } from '../labels.service';
@@ -34,19 +32,16 @@ import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.servi
   styleUrls: ['./all.component.scss'],
   providers: [LabelsService],
 })
-export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AllComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   fontSize = FontSizeENUM;
-
-  destroy = new Subject<void>();
 
   loaded = false;
 
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public murriService: MurriService,
     public labelService: LabelsService,
     private sbws: SnackBarWrapperService,
   ) {}
@@ -58,7 +53,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
@@ -74,7 +69,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.store.dispatch(new LoadLabels()).toPromise();
 
     const labels = this.store.selectSnapshot(LabelStore.all);
-    this.labelService.firstInit(labels);
+    this.labelService.initializeEntities(labels);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
@@ -82,7 +77,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(LabelStore.countAll)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe((x) => {
         if (!x) {
           this.pService.setSpinnerState(false);
@@ -90,7 +85,9 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.labelService.destroy))
+      .subscribe(() => this.newLabel());
   }
 
   async update(label: Label) {
@@ -120,12 +117,5 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
     const callbackAction = new RestoreLabel(label);
     await this.store.dispatch(callbackAction).toPromise();
     this.labelService.entities.unshift(label);
-  }
-
-  ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
   }
 }

@@ -1,52 +1,73 @@
 import { ElementRef, Injectable, OnDestroy, QueryList } from '@angular/core';
-import { Subject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
-import { NotesService } from 'src/app/content/notes/notes.service';
+import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
+import { SmallNote } from 'src/app/content/notes/models/small-note.model';
+import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { MurriService } from 'src/app/shared/services/murri.service';
+import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 import { ApiFullFolderService } from './api-full-folder.service';
 
 @Injectable()
-export class FullFolderNotesService implements OnDestroy {
-  firstInitedMurri = false;
-
-  destroy = new Subject<void>();
-
+export class FullFolderNotesService
+  extends NoteEntitiesService
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
   constructor(
-    public murriService: MurriService,
+    store: Store,
+    murriService: MurriService,
+    apiNoteService: ApiServiceNotes,
     private apiFullFolder: ApiFullFolderService,
-    public noteService: NotesService,
-  ) {}
+    dialogsManageService: DialogsManageService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {
+    super(dialogsManageService, store, murriService, apiNoteService);
+  }
 
   ngOnDestroy(): void {
+    console.log('full folder notes destroy');
+    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }
 
-  async loadNotes(folderId: string) {
-    if (!this.firstInitedMurri) {
-      this.noteService.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
-    } else {
-      await this.murriService.setOpacityFlagAsync(0, false);
-      await this.murriService.wait(150);
-      this.murriService.grid.destroy();
-      this.noteService.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
-      await this.murriService.initFolderNotesAsync();
-      await this.murriService.setOpacityFlagAsync();
-    }
+  async initializeEntities(notes: SmallNote[]) {
+    let tempNotes = this.transformSpread(notes);
+    tempNotes = this.orderBy(tempNotes, SortedByENUM.DescDate);
+
+    this.entities = tempNotes;
+
+    super.initState();
+
+    await super.loadAdditionNoteInformation();
+  }
+
+  async updateNotesLayout(folderId: string) {
+    await this.destroyGridAsync();
+    this.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
+    await this.murriService.initFolderNotesAsync();
+    await this.murriService.setOpacityFlagAsync();
   }
 
   murriInitialise(refElements: QueryList<ElementRef>) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (
-        z.length === this.noteService.entities.length &&
-        this.noteService.entities.length !== 0 &&
-        !this.firstInitedMurri
-      ) {
-        await this.murriService.wait(100);
+      if (this.getIsFirstInit(z)) {
         await this.murriService.initFolderNotesAsync();
-        await this.murriService.setOpacityFlagAsync();
-        this.firstInitedMurri = true;
+        await this.setInitMurriFlagShowLayout();
       }
+      await this.synchronizeState(refElements, false);
     });
+  }
+
+  navigateFunc(note: SmallNote) {
+    return this.router.navigate([note.id], { relativeTo: this.route });
+  }
+
+  toNote(note: SmallNote) {
+    super.baseToNote(note, () => this.navigateFunc(note));
   }
 }

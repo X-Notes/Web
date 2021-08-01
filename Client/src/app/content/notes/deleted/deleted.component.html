@@ -1,4 +1,8 @@
-<div *ngIf="loaded" class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+<div
+  *ngIf="loaded"
+  class="grid"
+  [ngStyle]="{'opacity': noteService.murriService.flagForOpacity ? '1' : '0'}"
+>
   <div
     #item
     class="grid-item"

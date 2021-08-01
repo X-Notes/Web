@@ -7,14 +7,12 @@ import {
   QueryList,
   AfterViewInit,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { NotesService } from '../notes.service';
@@ -32,14 +30,11 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   loaded = false;
 
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public murriService: MurriService,
     public noteService: NotesService,
   ) {}
 
@@ -54,7 +49,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.noteService.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
@@ -65,7 +60,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   async loadContent(typeENUM = NoteTypeENUM.Shared) {
     await this.noteService.loadNotes(typeENUM);
 
-    await this.noteService.firstInit();
+    await this.noteService.initializeEntities(this.noteService.getNotesByCurrentType);
 
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
@@ -73,7 +68,7 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(NoteStore.sharedCount)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.noteService.destroy))
       .subscribe((x) => {
         if (!x) {
           this.pService.setIllustrationState(true);
@@ -82,10 +77,6 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
   }
 }

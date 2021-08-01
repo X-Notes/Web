@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -22,13 +21,11 @@ import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
 import { MenuSelectionService } from './services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { SidebarNotesService } from './services/sidebar-notes.service';
-import { NotesUpdaterService } from '../notes-updater.service';
+import { UpdaterEntetiesService } from '../../../core/entities-updater.service';
 
 @Component({
   selector: 'app-full-note',
@@ -73,7 +70,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     private signalRService: SignalRService,
-    private updateNoteService: NotesUpdaterService,
+    private updateNoteService: UpdaterEntetiesService,
     public sliderService: FullNoteSliderService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
@@ -170,7 +167,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy() {
-    this.updateNoteService.ids$.next([...this.updateNoteService.ids$.getValue(), this.id]);
+    this.updateNoteService.notesIds$.next([
+      ...this.updateNoteService.notesIds$.getValue(),
+      this.id,
+    ]);
     await this.signalRService.leaveNote(this.id);
     this.destroy.next();
     this.destroy.complete();

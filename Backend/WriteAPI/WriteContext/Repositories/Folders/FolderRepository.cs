@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
 using WriteContext.GenericRepositories;
+using Common.DTO.Personalization;
 
 namespace WriteContext.Repositories.Folders
 {
@@ -115,7 +116,7 @@ namespace WriteContext.Repositories.Folders
         }
 
 
-        public async Task<Folder> GetForUpdateTitle(Guid id)
+        public async Task<Folder> GetWithUsersOnFolder(Guid id)
         {
             return await context.Folders
                 .Include(x => x.UsersOnPrivateFolders)
@@ -143,7 +144,7 @@ namespace WriteContext.Repositories.Folders
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(Guid userId, FolderTypeENUM typeId)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId)
         {
             return await context.Folders
                 .Include(x => x.FoldersNotes)
@@ -151,12 +152,21 @@ namespace WriteContext.Repositories.Folders
                 .Where(x => x.UserId == userId && x.FolderTypeId == typeId).ToListAsync();
         }
 
-        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesInclude(IEnumerable<Guid> folderIds)
+        public async Task<List<Folder>> GetFoldersByUserIdAndTypeIdNotesIncludeNote(Guid userId, FolderTypeENUM typeId, PersonalizationSettingDTO settings)
         {
-            return await context.Folders
+            var result = await GetFoldersByUserIdAndTypeIdNotesIncludeNote(userId, typeId);
+            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.Take(settings.NotesInFolderCount).ToList());
+            return result;
+        }
+
+        public async Task<List<Folder>> GetFoldersByFolderIdsIncludeNote(IEnumerable<Guid> folderIds, PersonalizationSettingDTO settings)
+        {
+            var result = await context.Folders
                 .Include(x => x.FoldersNotes)
                 .ThenInclude(x => x.Note)
                 .Where(x => folderIds.Contains(x.Id)).ToListAsync();
+            result.ForEach(x => x.FoldersNotes = x.FoldersNotes.Take(settings.NotesInFolderCount).ToList());
+            return result;
         }
 
         public async Task<Folder> GetOneById(Guid folderId)

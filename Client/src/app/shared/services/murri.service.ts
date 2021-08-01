@@ -14,7 +14,7 @@ import { NoteTypeENUM } from '../enums/note-types.enum';
 @Injectable()
 export class MurriService {
   // TODO REFACTOR SERVICE
-  grid;
+  grid; // TODO HIDE GRID
 
   public flagForOpacity = false;
 
@@ -41,7 +41,7 @@ export class MurriService {
     if (!gridElement) {
       return;
     }
-    this.gridSettings(gridItemName, gridElement, true);
+    this.gridSettings(gridItemName, gridElement, false);
   }
 
   /// SIDE BAR
@@ -87,7 +87,7 @@ export class MurriService {
   }
 
   initMurriNote(type: NoteTypeENUM, isDragEnabled: boolean) {
-    const gridItemName = '.grid-item';
+    const gridItemName = '.grid-item'; // TODO move to const
     const gridElement = document.querySelector('.grid') as HTMLElement;
     if (!gridElement) {
       return;

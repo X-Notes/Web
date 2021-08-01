@@ -3,11 +3,12 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { Folders } from '../models/folders.model';
 import { SmallFolder } from '../models/folder.model';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 
 export class LoadFolders {
   static type = '[Folders] Load private folders';
 
-  constructor(public type: FolderTypeENUM) {}
+  constructor(public type: FolderTypeENUM, public pr: PersonalizationSetting) {}
 }
 
 // FUNCTIONS

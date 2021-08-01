@@ -12,17 +12,13 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
-import {
-  PersonalizationService,
-  sideBarCloseOpen,
-} from 'src/app/shared/services/personalization.service';
+import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
@@ -35,15 +31,15 @@ import { FullFolderNotesService } from './services/full-folder-notes.service';
 import { DialogsManageService } from '../../navigation/dialogs-manage.service';
 import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
-import { NotesService } from '../../notes/notes.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
+import { UpdaterEntetiesService } from 'src/app/core/entities-updater.service';
 
 @Component({
   selector: 'app-full-folder',
   templateUrl: './full-folder.component.html',
   styleUrls: ['./full-folder.component.scss'],
-  providers: [FullFolderNotesService, NotesService],
+  providers: [FullFolderNotesService],
 })
 export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -67,8 +63,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   foldersLink: SmallFolder[] = [];
 
   public folder: FullFolder;
@@ -81,15 +75,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private store: Store,
-    public murriService: MurriService,
     private route: ActivatedRoute,
     public pService: PersonalizationService,
     public ffnService: FullFolderNotesService,
     public dialogsService: DialogsManageService,
     private apiFullFolder: ApiFullFolderService,
     public menuButtonService: MenuButtonsService,
-    public noteService: NotesService,
     public noteApiService: ApiServiceNotes,
+    private updateNoteService: UpdaterEntetiesService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -98,10 +91,10 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
+    this.updateNoteService.foldersIds$.next([
+      ...this.updateNoteService.foldersIds$.getValue(),
+      this.id,
+    ]);
     this.routeSubscription.unsubscribe();
   }
 
@@ -113,13 +106,14 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.id = params.id;
       this.store
         .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy))
+        .pipe(takeUntil(this.ffnService.destroy)) // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.loadFolder();
 
             if (this.folder) {
-              await this.ffnService.loadNotes(this.folder.id);
+              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              await this.ffnService.initializeEntities(notes);
             }
 
             await this.pService.waitPreloading();
@@ -129,9 +123,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.folder) {
               this.loadSideBar();
             }
-
+            const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
             const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
-            const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
+            const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
             this.store.dispatch(actions);
           }
         });
@@ -150,32 +144,37 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initHeaderButtonSubscribe() {
-    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
-      if (flag) {
-        const newNote = await this.noteApiService.new().toPromise();
-        const ids = [newNote.id, ...this.noteService.entities.map((z) => z.id)];
-        await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-        this.noteService.addToDom([newNote]);
-      }
-    });
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(async (flag) => {
+        if (flag) {
+          const newNote = await this.noteApiService.new().toPromise();
+          const ids = [newNote.id, ...this.ffnService.entities.map((z) => z.id)];
+          await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+          this.ffnService.addToDom([newNote]);
+        }
+      });
 
-    this.pService.selectAllButton.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
-      if (flag) {
-        const notes = this.noteService.entities.filter(
-          (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
-        );
-        // eslint-disable-next-line no-param-reassign
-        notes.forEach((x) => (x.isSelected = true));
-        const actions = notes.map((x) => new SelectIdNote(x.id));
-        this.store.dispatch(actions);
-      }
-    });
+    this.pService.selectAllButton
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(async (flag) => {
+        if (flag) {
+          const notes = this.ffnService.entities.filter(
+            (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
+          );
+          // eslint-disable-next-line no-param-reassign
+          notes.forEach((x) => (x.isSelected = true));
+          const actions = notes.map((x) => new SelectIdNote(x.id));
+          this.store.dispatch(actions);
+        }
+      });
   }
 
   initPanelClassStyleSubscribe() {
+    // TODO REMOVE KOSTIL
     this.store
       .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.ffnService.destroy))
       .subscribe((theme) => {
         if (theme) {
           if (theme === ThemeENUM.Dark) {
@@ -188,32 +187,35 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initManageButtonSubscribe() {
-    this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
-      const instanse = this.dialogsService.openManageNotesInFolder();
-      instanse
-        .afterClosed()
-        .pipe(takeUntil(this.destroy))
-        .subscribe(async (resp) => {
-          if (resp) {
-            const ids = resp.map((x) => x.id);
-            await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-            await this.ffnService.loadNotes(this.folder.id);
-          }
-        });
-    });
+    this.pService.manageNotesInFolderSubject
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(() => {
+        const instanse = this.dialogsService.openManageNotesInFolder();
+        instanse
+          .afterClosed()
+          .pipe(takeUntil(this.ffnService.destroy))
+          .subscribe(async (resp) => {
+            if (resp) {
+              const ids = resp.map((x) => x.id);
+              await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+              await this.ffnService.updateNotesLayout(this.folder.id);
+            }
+          });
+      });
   }
 
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
     this.store
       .select(FolderStore.full)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.ffnService.destroy))
       .subscribe((folder) => (this.folder = folder));
   }
 
   async loadSideBar() {
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
     const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
-    const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action));
+    const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
     await this.setSideBarNotes(this.folder.folderTypeId);
   }

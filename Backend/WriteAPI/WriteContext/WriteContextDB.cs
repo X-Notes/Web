@@ -104,6 +104,19 @@ namespace WriteContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // CONTENT
+
+            modelBuilder.Entity<BaseNoteContent>()
+                .HasOne(x => x.NoteSnapshot)
+                .WithMany(x => x.Contents)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BaseNoteContent>()
+                .HasOne(x => x.Note)
+                .WithMany(x => x.Contents)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // USER
 
             modelBuilder.Entity<User>().HasIndex(x => new { x.Email }).IsUnique();
 

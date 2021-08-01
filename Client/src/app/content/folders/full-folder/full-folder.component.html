@@ -80,18 +80,18 @@
   </div>
   <ng-scrollbar class="scroll-helper content" [visibility]="'hover'" [appearance]="'compact'">
     <div class="content-inner">
-      <div class="grid" [ngStyle]="{'opacity': murriService.flagForOpacity ? '1' : '0'}">
+      <div class="grid" [ngStyle]="{'opacity': ffnService.murriService.flagForOpacity ? '1' : '0'}">
         <div
           #item
           class="grid-item"
           id="{{item.id}}"
-          *ngFor="let item of ffnService.noteService.entities"
+          *ngFor="let item of ffnService.entities"
           [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
         >
           <app-note
             [note]="item"
-            (highlightNote)="noteService.highlightNote($event)"
-            (clickOnNote)="noteService.toNote($event)"
+            (highlightNote)="ffnService.highlightNote($event)"
+            (clickOnNote)="ffnService.toNote($event)"
             [ngStyle]="{'backgroundColor': item.color }"
             class="note"
           ></app-note>
