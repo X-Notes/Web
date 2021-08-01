@@ -5,7 +5,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { ClearAddToDomFolders, LoadFolders } from './state/folders-actions';
+import { ClearAddToDomFolders, LoadFolders, UpdateOneFolder } from './state/folders-actions';
 import { FolderStore } from './state/folders-state';
 import { SmallFolder } from './models/folder.model';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -13,6 +13,8 @@ import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FeaturesEntitiesService } from 'src/app/shared/services/features-entities.service';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
+import { UpdaterEntetiesService } from 'src/app/core/entities-updater.service';
+import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */
 @Injectable()
@@ -23,7 +25,13 @@ export class FolderService
 
   prevSortedFolderByTypeId: SortedByENUM = null;
 
-  constructor(store: Store, public pService: PersonalizationService, murriService: MurriService) {
+  constructor(
+    store: Store,
+    public pService: PersonalizationService,
+    murriService: MurriService,
+    private updateService: UpdaterEntetiesService,
+    private apiFolders: ApiFoldersService,
+  ) {
     super(store, murriService);
 
     this.store
@@ -89,8 +97,29 @@ export class FolderService
         isDragEnabled = isDragEnabled && this.isSortable;
         this.murriService.initMurriFolder(folderType, isDragEnabled);
         await this.setInitMurriFlagShowLayout();
+        await this.loadWithUpdates();
       }
       await this.synchronizeState(refElements, this.sortFolderType === SortedByENUM.AscDate);
+    });
+  }
+
+  async loadWithUpdates() {
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.updateService.foldersIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
+      if (ids.length > 0) {
+        const folders = await this.apiFolders.getFoldersMany(ids, pr).toPromise();
+        const actionsForUpdate = folders.map(
+          (folder) => new UpdateOneFolder(folder, folder.folderTypeId),
+        );
+        this.store.dispatch(actionsForUpdate);
+        const transformFolders = this.transformSpread(folders);
+        transformFolders.forEach((folder) => {
+          const index = this.entities.findIndex((x) => x.id === folder.id);
+          this.entities[index].previewNotes = folder.previewNotes;
+        });
+        await this.murriService.refreshLayoutAsync();
+        this.updateService.foldersIds$.next([]);
+      }
     });
   }
 
@@ -104,12 +133,13 @@ export class FolderService
   }
 
   async loadFolders(typeENUM: FolderTypeENUM) {
-    await this.store.dispatch(new LoadFolders(typeENUM)).toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    await this.store.dispatch(new LoadFolders(typeENUM, pr)).toPromise();
 
     const types = Object.values(FolderTypeENUM).filter(
       (z) => typeof z == 'number' && z !== typeENUM,
     );
-    const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t));
+    const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
     this.store.dispatch(actions);
   }
 

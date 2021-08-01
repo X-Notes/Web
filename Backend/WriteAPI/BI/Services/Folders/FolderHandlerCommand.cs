@@ -179,7 +179,7 @@ namespace BI.Services.Folders
             }
 
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesInclude(user.Id, FolderTypeENUM.Private);
+            var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(user.Id, FolderTypeENUM.Private);
 
             var orders = Enumerable.Range(1, dbFolders.Count);
             dbFolders = dbFolders.Zip(orders, (folder, order) => {

@@ -41,6 +41,7 @@ namespace BI.Services.Personalizations
                 pr.IsViewTextOnNote = request.PersonalizationSetting.IsViewTextOnNote;
                 pr.IsViewVideoOnNote = request.PersonalizationSetting.IsViewVideoOnNote;
                 pr.NotesInFolderCount = request.PersonalizationSetting.NotesInFolderCount;
+                pr.ContentInNoteCount = request.PersonalizationSetting.ContentInNoteCount;
 
                 await personalizationSettingRepository.UpdateAsync(pr);
 

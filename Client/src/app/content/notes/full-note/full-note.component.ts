@@ -25,7 +25,7 @@ import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
 import { MenuSelectionService } from './services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { NotesUpdaterService } from '../notes-updater.service';
+import { UpdaterEntetiesService } from '../../../core/entities-updater.service';
 
 @Component({
   selector: 'app-full-note',
@@ -70,7 +70,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     private signalRService: SignalRService,
-    private updateNoteService: NotesUpdaterService,
+    private updateNoteService: UpdaterEntetiesService,
     public sliderService: FullNoteSliderService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
@@ -167,7 +167,10 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy() {
-    this.updateNoteService.ids$.next([...this.updateNoteService.ids$.getValue(), this.id]);
+    this.updateNoteService.notesIds$.next([
+      ...this.updateNoteService.notesIds$.getValue(),
+      this.id,
+    ]);
     await this.signalRService.leaveNote(this.id);
     this.destroy.next();
     this.destroy.complete();

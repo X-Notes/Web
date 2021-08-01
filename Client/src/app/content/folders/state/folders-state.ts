@@ -380,10 +380,10 @@ export class FolderStore {
   @Action(LoadFolders)
   async loadPrivateFolders(
     { getState, patchState }: StateContext<FolderState>,
-    { type }: LoadFolders,
+    { type, pr }: LoadFolders,
   ) {
     if (!getState().folders.find((z) => z.typeFolders === type)) {
-      const folders = await this.api.getFolders(type).toPromise();
+      const folders = await this.api.getFolders(type, pr).toPromise();
       patchState({
         folders: [...getState().folders, folders],
       });

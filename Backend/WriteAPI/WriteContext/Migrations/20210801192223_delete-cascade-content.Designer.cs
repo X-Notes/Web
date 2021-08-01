@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Common.DatabaseModels.Models.History;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WriteContext;
@@ -11,9 +12,10 @@ using WriteContext;
 namespace WriteContext.Migrations
 {
     [DbContext(typeof(WriteContextDB))]
-    partial class WriteContextDBModelSnapshot : ModelSnapshot
+    [Migration("20210801192223_delete-cascade-content")]
+    partial class deletecascadecontent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

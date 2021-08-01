@@ -18,7 +18,7 @@ import { SmallNote } from './models/small-note.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
-import { NotesUpdaterService } from './notes-updater.service';
+import { UpdaterEntetiesService } from '../../core/entities-updater.service';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
@@ -43,7 +43,7 @@ export class NotesService
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
-    private updateService: NotesUpdaterService,
+    private updateService: UpdaterEntetiesService,
   ) {
     super(dialogsManageService, store, murriService, apiService);
 
@@ -165,7 +165,7 @@ export class NotesService
 
   async loadNotesWithUpdates() {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    this.updateService.ids$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
+    this.updateService.notesIds$.pipe(takeUntil(this.destroy)).subscribe(async (ids) => {
       if (ids.length > 0) {
         const notes = await this.apiService.getNotesMany(ids, pr).toPromise();
         const actionsForUpdate = notes.map((note) => new UpdateOneNote(note, note.noteTypeId));
@@ -176,7 +176,7 @@ export class NotesService
           this.entities[index].contents = note.contents;
         });
         await this.murriService.refreshLayoutAsync();
-        this.updateService.ids$.next([]);
+        this.updateService.notesIds$.next([]);
       }
     });
   }

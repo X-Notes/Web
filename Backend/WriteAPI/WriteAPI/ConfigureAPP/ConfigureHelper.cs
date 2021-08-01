@@ -197,6 +197,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<MakePrivateFolderCommand, Unit>, FolderHandlerCommand>();
 
+            services.AddScoped<IRequestHandler<GetFoldersByFolderIdsQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFoldersByTypeQuery, List<SmallFolder>>, FolderHandlerQuery>();
             services.AddScoped<IRequestHandler<GetFullFolderQuery, FullFolderAnswer>, FolderHandlerQuery>();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
 using Common.DTO.Folders;
+using Common.DTO.Personalization;
 using Domain.Commands.Folders;
 using Domain.Queries.Folders;
 using MediatR;
@@ -34,15 +35,20 @@ namespace WriteAPI.Controllers
         }
 
         [HttpGet("type/{id}")]
-        public async Task<List<SmallFolder>> GetPrivateFolders(FolderTypeENUM id)
+        public async Task<List<SmallFolder>> GetFolders(FolderTypeENUM id, [FromQuery] PersonalizationSettingDTO settings)
         {
             var email = this.GetUserEmail();
-            var query = new GetFoldersByTypeQuery(email, id);
+            var query = new GetFoldersByTypeQuery(email, id, settings);
             return await _mediator.Send(query);
         }
 
 
-
+        [HttpPost("many")]
+        public async Task<List<SmallFolder>> GetFoldersByIds(GetFoldersByFolderIdsQuery query)
+        {
+            query.Email = this.GetUserEmail();
+            return await _mediator.Send(query);
+        }
 
         [HttpGet("{id}")]
         public async Task<FullFolderAnswer> Get(Guid id)

@@ -88,7 +88,7 @@ namespace BI.Services.Permissions
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var folder = await folderRepository.GetForUpdateTitle(request.FolderId);
+                var folder = await folderRepository.GetWithUsersOnFolder(request.FolderId);
 
                 if (folder == null)
                 {

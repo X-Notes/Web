@@ -36,7 +36,7 @@ namespace BI.Services.Notes
         private readonly UserRepository userRepository;
         private readonly UserOnNoteRepository userOnNoteRepository;
         private readonly UsersOnPrivateNotesRepository usersOnPrivateNotesRepository;
-        private readonly AppCustomMapper noteCustomMapper;
+        private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
         private readonly BaseNoteContentRepository baseNoteContentRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
@@ -56,7 +56,7 @@ namespace BI.Services.Notes
             this.noteRepository = noteRepository;
             this.userRepository = userRepository;
             this.userOnNoteRepository = userOnNoteRepository;
-            this.noteCustomMapper = noteCustomMapper;
+            this.appCustomMapper = noteCustomMapper;
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
             this.usersOnPrivateNotesRepository = usersOnPrivateNotesRepository;
@@ -82,7 +82,7 @@ namespace BI.Services.Notes
 
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
 
-                return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
+                return appCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
 
             throw new Exception("User not found");
@@ -97,14 +97,14 @@ namespace BI.Services.Notes
             {
                 var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, true, note.UserId, noteCustomMapper.MapNoteToFullNote(note));
+                return new FullNoteAnswer(permissions.IsOwner, true, true, note.UserId, appCustomMapper.MapNoteToFullNote(note));
             }
 
             if (permissions.CanRead)
             {
                 var note = await noteRepository.GetFull(request.Id);
                 note.LabelsNotes = note.LabelsNotes.GetLabelUnDesc();
-                return new FullNoteAnswer(permissions.IsOwner, true, false, note.UserId, noteCustomMapper.MapNoteToFullNote(note));
+                return new FullNoteAnswer(permissions.IsOwner, true, false, note.UserId, appCustomMapper.MapNoteToFullNote(note));
             }
 
             return new FullNoteAnswer(permissions.IsOwner, false, false, null, null);
@@ -130,7 +130,7 @@ namespace BI.Services.Notes
             if (permissions.CanRead)
             {
                 var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(request.NoteId);
-                return noteCustomMapper.MapContentsToContentsDTO(contents);
+                return appCustomMapper.MapContentsToContentsDTO(contents);
             }
 
             // TODO WHEN NO ACCESS
@@ -145,7 +145,7 @@ namespace BI.Services.Notes
                 var notes = await noteRepository.GetNotesByUserId(user.Id, request.Settings);
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes.GetLabelUnDesc());
                 notes = notes.OrderBy(x => x.Order).ToList();
-                return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
+                return appCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
 
             throw new Exception("User not found");
@@ -154,10 +154,10 @@ namespace BI.Services.Notes
         public async Task<List<SmallNote>> Handle(GetNotesByNoteIdsQuery request, CancellationToken cancellationToken)
         {
             var canReadIds = new List<Guid>();
-            foreach (var noteId in request.NoteIds)
+            foreach (var noteId in request.NoteIds) // TODO REMOVE AWAIT FROM CYCLE
             {
                 var command = new GetUserPermissionsForNoteQuery(noteId, request.Email);
-                var permissions = await _mediator.Send(command);
+                var permissions = await _mediator.Send(command); 
 
                 if (permissions.CanRead)
                 {
@@ -167,7 +167,7 @@ namespace BI.Services.Notes
 
             var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(canReadIds, request.Settings);
 
-            return noteCustomMapper.MapNotesToSmallNotesDTO(notes);
+            return appCustomMapper.MapNotesToSmallNotesDTO(notes);
         }
 
         public async Task<List<BottomNoteContent>> Handle(GetAdditionalContentInfoQuery request, CancellationToken cancellationToken)
