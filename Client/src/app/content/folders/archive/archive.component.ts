@@ -7,14 +7,12 @@ import {
   QueryList,
   AfterViewInit,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { FolderService } from '../folder.service';
@@ -37,7 +35,6 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public murriService: MurriService,
     public folderService: FolderService,
   ) {}
 
@@ -46,8 +43,6 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
     this.store.dispatch(new UnSelectAllFolder());
   }
 

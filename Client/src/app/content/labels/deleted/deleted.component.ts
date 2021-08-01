@@ -9,11 +9,9 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LabelStore } from '../state/labels-state';
@@ -34,7 +32,7 @@ import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.servi
   styleUrls: ['./deleted.component.scss'],
   providers: [LabelsService],
 })
-export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DeletedComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   fontSize = FontSizeENUM;
@@ -44,18 +42,12 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    public murriService: MurriService,
     public labelService: LabelsService,
     private sbws: SnackBarWrapperService,
   ) {}
 
   ngAfterViewInit(): void {
     this.labelService.murriInitialise(this.refElements, true);
-  }
-
-  ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
   }
 
   async ngOnInit() {

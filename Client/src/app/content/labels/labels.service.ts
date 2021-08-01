@@ -19,6 +19,7 @@ export class LabelsService
 
   ngOnDestroy(): void {
     console.log('label destroy');
+    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }
@@ -33,7 +34,6 @@ export class LabelsService
     });
   }
 
-  // TODO REMOVE PARAMETR
   async initializeEntities(labels: Label[]) {
     this.entities = [...labels].map((label) => ({ ...label }));
     super.initState();

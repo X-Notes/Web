@@ -74,6 +74,7 @@ export class FolderService
 
   ngOnDestroy(): void {
     console.log('folder destroy');
+    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }

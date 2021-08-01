@@ -11,7 +11,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
 
   private firstInitedMurri = false;
 
-  constructor(protected murriService: MurriService) {}
+  constructor(public murriService: MurriService) {}
 
   initState() {
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
@@ -34,6 +34,11 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     await this.murriService.setOpacityFlagAsync(0, false);
     await this.murriService.wait(wait);
     this.murriService.grid.destroy();
+  }
+
+  destroyLayout() {
+    this.murriService.flagForOpacity = false;
+    this.murriService.muuriDestroy();
   }
 
   private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {

@@ -206,6 +206,7 @@ export class NotesService
 
   ngOnDestroy(): void {
     console.log('note destroy');
+    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
     this.labelsIds?.unsubscribe();
