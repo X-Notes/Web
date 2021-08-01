@@ -20,7 +20,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
   constructor(
     private dialogsManageService: DialogsManageService,
     public store: Store,
-    public murriService: MurriService,
+    murriService: MurriService,
     public apiService: ApiServiceNotes,
   ) {
     super(store, murriService);

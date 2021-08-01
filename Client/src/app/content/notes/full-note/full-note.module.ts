@@ -32,7 +32,6 @@ import { MenuSelectionService } from './services/menu-selection.service';
 import { SelectionService } from './services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
-import { MurriService } from 'src/app/shared/services/murri.service';
 @NgModule({
   declarations: [
     FullNoteComponent,
@@ -67,13 +66,7 @@ import { MurriService } from 'src/app/shared/services/murri.service';
     ContentEditorComponent,
     RightSectionContentComponent,
   ],
-  providers: [
-    MenuSelectionService,
-    SelectionService,
-    SidebarNotesService,
-    FullNoteSliderService,
-    MurriService, // MAYBE NO NEED
-  ],
+  providers: [MenuSelectionService, SelectionService, SidebarNotesService, FullNoteSliderService],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })
 export class FullNoteModule {}

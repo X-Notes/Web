@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs/operators';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
