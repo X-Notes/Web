@@ -29,6 +29,8 @@ export class FullFolderNotesService
   }
 
   ngOnDestroy(): void {
+    console.log('full folder notes destroy');
+    super.destroyLayout();
     this.destroy.next();
     this.destroy.complete();
   }

@@ -12,8 +12,7 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { MurriService } from 'src/app/shared/services/murri.service';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
@@ -63,8 +62,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   foldersLink: SmallFolder[] = [];
 
   public folder: FullFolder;
@@ -77,7 +74,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private store: Store,
-    public murriService: MurriService,
     private route: ActivatedRoute,
     public pService: PersonalizationService,
     public ffnService: FullFolderNotesService,
@@ -93,10 +89,6 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.murriService.flagForOpacity = false;
-    this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
     this.routeSubscription.unsubscribe();
   }
 
@@ -108,7 +100,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
       this.id = params.id;
       this.store
         .select(AppStore.appLoaded)
-        .pipe(takeUntil(this.destroy)) // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
+        .pipe(takeUntil(this.ffnService.destroy)) // TODO MEMORY OPTIMIZATION, DO LIKE IN FULL NOTE
         .subscribe(async (x: boolean) => {
           if (x) {
             await this.loadFolder();
@@ -146,33 +138,37 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initHeaderButtonSubscribe() {
-    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
-      if (flag) {
-        const newNote = await this.noteApiService.new().toPromise();
-        const ids = [newNote.id, ...this.ffnService.entities.map((z) => z.id)];
-        await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-        this.ffnService.addToDom([newNote]);
-      }
-    });
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(async (flag) => {
+        if (flag) {
+          const newNote = await this.noteApiService.new().toPromise();
+          const ids = [newNote.id, ...this.ffnService.entities.map((z) => z.id)];
+          await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+          this.ffnService.addToDom([newNote]);
+        }
+      });
 
-    this.pService.selectAllButton.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
-      if (flag) {
-        const notes = this.ffnService.entities.filter(
-          (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
-        );
-        // eslint-disable-next-line no-param-reassign
-        notes.forEach((x) => (x.isSelected = true));
-        const actions = notes.map((x) => new SelectIdNote(x.id));
-        this.store.dispatch(actions);
-      }
-    });
+    this.pService.selectAllButton
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(async (flag) => {
+        if (flag) {
+          const notes = this.ffnService.entities.filter(
+            (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
+          );
+          // eslint-disable-next-line no-param-reassign
+          notes.forEach((x) => (x.isSelected = true));
+          const actions = notes.map((x) => new SelectIdNote(x.id));
+          this.store.dispatch(actions);
+        }
+      });
   }
 
   initPanelClassStyleSubscribe() {
     // TODO REMOVE KOSTIL
     this.store
       .select(UserStore.getUserTheme)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.ffnService.destroy))
       .subscribe((theme) => {
         if (theme) {
           if (theme === ThemeENUM.Dark) {
@@ -185,26 +181,28 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initManageButtonSubscribe() {
-    this.pService.manageNotesInFolderSubject.pipe(takeUntil(this.destroy)).subscribe(() => {
-      const instanse = this.dialogsService.openManageNotesInFolder();
-      instanse
-        .afterClosed()
-        .pipe(takeUntil(this.destroy))
-        .subscribe(async (resp) => {
-          if (resp) {
-            const ids = resp.map((x) => x.id);
-            await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-            await this.ffnService.updateNotesLayout(this.folder.id);
-          }
-        });
-    });
+    this.pService.manageNotesInFolderSubject
+      .pipe(takeUntil(this.ffnService.destroy))
+      .subscribe(() => {
+        const instanse = this.dialogsService.openManageNotesInFolder();
+        instanse
+          .afterClosed()
+          .pipe(takeUntil(this.ffnService.destroy))
+          .subscribe(async (resp) => {
+            if (resp) {
+              const ids = resp.map((x) => x.id);
+              await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
+              await this.ffnService.updateNotesLayout(this.folder.id);
+            }
+          });
+      });
   }
 
   async loadFolder() {
     await this.store.dispatch(new LoadFullFolder(this.id)).toPromise();
     this.store
       .select(FolderStore.full)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.ffnService.destroy))
       .subscribe((folder) => (this.folder = folder));
   }
 
