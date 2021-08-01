@@ -149,15 +149,15 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
       if (flag) {
         const newNote = await this.noteApiService.new().toPromise();
-        const ids = [newNote.id, ...this.noteService.entities.map((z) => z.id)];
+        const ids = [newNote.id, ...this.ffnService.entities.map((z) => z.id)];
         await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
-        this.noteService.addToDom([newNote]);
+        this.ffnService.addToDom([newNote]);
       }
     });
 
     this.pService.selectAllButton.pipe(takeUntil(this.destroy)).subscribe(async (flag) => {
       if (flag) {
-        const notes = this.noteService.entities.filter(
+        const notes = this.ffnService.entities.filter(
           (x) => x.isSelected === false || x.isSelected === undefined, // TODO CHANGE
         );
         // eslint-disable-next-line no-param-reassign

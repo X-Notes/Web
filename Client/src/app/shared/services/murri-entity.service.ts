@@ -9,7 +9,7 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
 
   private state: Record<string, Entity> = {};
 
-  protected firstInitedMurri = false;
+  private firstInitedMurri = false;
 
   constructor(protected murriService: MurriService) {}
 
@@ -25,9 +25,15 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     }
   }
 
-  async firstInitMurri() {
+  async setInitMurriFlagShowLayout() {
     await this.murriService.setOpacityFlagAsync();
     this.firstInitedMurri = true;
+  }
+
+  async destroyGridAsync(wait: number = 150) {
+    await this.murriService.setOpacityFlagAsync(0, false);
+    await this.murriService.wait(wait);
+    this.murriService.grid.destroy();
   }
 
   private newItemChecker(elements: HTMLElement[]) {
@@ -40,6 +46,12 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
         });
       }
     }
+  }
+
+  getIsFirstInit(z: any): boolean {
+    return (
+      z.length === this.entities.length && this.entities.length !== 0 && !this.firstInitedMurri
+    );
   }
 
   private async deleteItemChecker(elements: HTMLElement[]) {

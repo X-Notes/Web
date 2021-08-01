@@ -10,37 +10,30 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   CancelAllSelectedLabels,
   ClearAddToDomNotes,
-  ClearUpdatelabelEvent,
   LoadNotes,
-  SelectIdNote,
-  UnSelectIdNote,
   UpdateOneNote,
 } from './state/notes-actions';
-import { UpdateLabelEvent } from './state/update-labels.model';
 import { NoteStore } from './state/notes-state';
 import { SmallNote } from './models/small-note.model';
-import { UpdateColor } from './state/update-color.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
 import { NotesUpdaterService } from './notes-updater.service';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
-import {
-  FeaturesEntitiesService,
-  OrderFilterEntity,
-} from 'src/app/shared/services/features-entities.service';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
+import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
+import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 
 @Injectable()
-export class NotesService extends FeaturesEntitiesService<SmallNote> implements OnDestroy {
+export class NotesService
+  extends NoteEntitiesService
+  implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
   // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   labelsIds: Subscription;
 
-  destroy = new Subject<void>();
-
   firstInitFlag = false;
 
-  sortedNoteByTypeId: SortedByENUM = null;
+  prevSortedNoteByTypeId: SortedByENUM = null;
 
   constructor(
     public pService: PersonalizationService,
@@ -48,15 +41,11 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
     murriService: MurriService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialogsManageService: DialogsManageService,
+    dialogsManageService: DialogsManageService,
     private apiService: ApiServiceNotes,
     private updateService: NotesUpdaterService,
   ) {
-    super(store, OrderFilterEntity.Note, murriService);
-    this.store
-      .select(NoteStore.updateColorEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => this.changeColorHandler(x));
+    super(dialogsManageService, store, murriService);
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
@@ -68,12 +57,10 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
       .pipe(takeUntil(this.destroy))
       .subscribe(async (x) => {
         if (x === true) {
-          await this.murriService.setOpacityFlagAsync(0, false);
-          await this.murriService.wait(150);
-          this.murriService.grid.destroy();
+          await this.destroyGridAsync();
 
           const tempNotes = this.transformSpread(this.getNotesByCurrentType);
-          this.entities = this.orderBy(tempNotes);
+          this.entities = this.orderBy(tempNotes, this.pageSortType);
 
           const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
 
@@ -86,60 +73,14 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
       });
 
     this.store
-      .select(NoteStore.updateLabelOnNoteEvent)
-      .pipe(takeUntil(this.destroy))
-      .subscribe(async (values: UpdateLabelEvent[]) => {
-        for (const valuee of values) {
-          const note = this.entities.find((x) => x.id === valuee.id);
-          if (note !== undefined) {
-            note.labels = valuee.labels;
-          }
-        }
-        if (values.length > 0) {
-          await this.store.dispatch(new ClearUpdatelabelEvent()).toPromise();
-          await this.murriService.refreshLayoutAsync();
-        }
-      });
-
-    this.store
-      .select(NoteStore.selectedIds)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((ids) => {
-        if (ids) {
-          for (const note of this.entities) {
-            if (ids.some((x) => x === note.id)) {
-              note.isSelected = true;
-            } else {
-              note.isSelected = false;
-            }
-          }
-        }
-      });
-
-    this.store
-      .select(NoteStore.selectedCount)
-      .pipe(takeUntil(this.destroy))
-      .subscribe((x) => {
-        if (x > 0) {
-          for (const note of this.entities) {
-            note.lockRedirect = true;
-          }
-        } else {
-          for (const note of this.entities) {
-            note.lockRedirect = false;
-          }
-        }
-      });
-
-    this.store
       .select(UserStore.getPersonalizationSettings)
       .pipe(takeUntil(this.destroy))
       .subscribe(async (pr) => {
-        if (this.sortedNoteByTypeId && this.sortedNoteByTypeId !== pr.sortedNoteByTypeId) {
-          this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
-          await this.changeOrderTypeHandler();
+        if (this.prevSortedNoteByTypeId && this.prevSortedNoteByTypeId !== pr.sortedNoteByTypeId) {
+          this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
+          await this.changeOrderTypeHandler(this.pageSortType);
         } else {
-          this.sortedNoteByTypeId = pr.sortedNoteByTypeId;
+          this.prevSortedNoteByTypeId = pr.sortedNoteByTypeId;
         }
       });
 
@@ -175,36 +116,47 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
   }
 
   get isSortable() {
-    return (
-      this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedNoteByTypeId ===
-      SortedByENUM.CustomOrder
-    );
+    return this.sortNoteType === SortedByENUM.CustomOrder;
   }
 
-  async changeOrderTypeHandler() {
-    await this.murriService.setOpacityFlagAsync(0, false);
-    await this.murriService.wait(150);
-    this.murriService.grid.destroy();
-    this.entities = this.orderBy(this.entities);
+  get isFiltedMode() {
+    return this.store.selectSnapshot(NoteStore.getSelectedLabelFilter).length > 0;
+  }
+
+  get sortNoteType(): SortedByENUM {
+    return this.store.selectSnapshot(UserStore.getPersonalizationSettings).sortedNoteByTypeId;
+  }
+
+  get pageSortType(): SortedByENUM {
+    const isFullFolder = this.store.selectSnapshot(AppStore.isFolderInner);
+    if (isFullFolder) {
+      return SortedByENUM.DescDate;
+    }
+    const isSharedType = this.store.selectSnapshot(AppStore.getTypeNote) === NoteTypeENUM.Shared;
+    if (isSharedType) {
+      return SortedByENUM.DescDate;
+    }
+    return this.sortNoteType;
+  }
+
+  async changeOrderTypeHandler(sortedType: SortedByENUM) {
+    await this.destroyGridAsync();
+    this.entities = this.orderBy(this.entities, sortedType);
     const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
     const isDraggable = roadType !== NoteTypeENUM.Shared && this.isSortable;
     this.murriService.initMurriNoteAsync(roadType, isDraggable);
     await this.murriService.setOpacityFlagAsync(0);
   }
 
+  getIsDraggable(noteType: NoteTypeENUM) {
+    return !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
+  }
+
   murriInitialise(refElements: QueryList<ElementRef>, noteType: NoteTypeENUM) {
     refElements.changes.pipe(takeUntil(this.destroy)).subscribe(async (z) => {
-      if (
-        z.length === this.entities.length &&
-        this.entities.length !== 0 &&
-        !this.firstInitedMurri
-      ) {
-        const isDraggable =
-          !this.isFiltedMode && noteType !== NoteTypeENUM.Shared && this.isSortable;
-        await this.murriService.initMurriNoteAsync(noteType, isDraggable);
-
-        await this.firstInitMurri();
-
+      if (this.getIsFirstInit(z)) {
+        await this.murriService.initMurriNoteAsync(noteType, this.getIsDraggable(noteType));
+        await this.setInitMurriFlagShowLayout();
         await this.loadNotesWithUpdates();
       }
       await this.synchronizeState(refElements);
@@ -239,33 +191,17 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
     this.store.dispatch(actions);
   }
 
-  highlightNote(note) {
-    if (!note.isSelected) {
-      this.store.dispatch(new SelectIdNote(note.id));
+  navigateFunc(note: SmallNote) {
+    const routing = this.store.selectSnapshot(AppStore.getRouting);
+    if (routing === EntityType.FolderInnerNote) {
+      return this.router.navigate(['../', note.id], { relativeTo: this.route });
     } else {
-      this.store.dispatch(new UnSelectIdNote(note.id));
+      return this.router.navigate(['/notes/', note.id]);
     }
   }
 
-  toNote(note) {
-    const isSelectedMode = this.store.selectSnapshot(NoteStore.selectedCount) > 0;
-    if (isSelectedMode) {
-      this.highlightNote(note);
-    } else {
-      if (note.isLocked) {
-        this.dialogsManageService.lock(note.id);
-        return;
-      }
-
-      const routing = this.store.selectSnapshot(AppStore.getRouting);
-      if (routing === EntityType.FolderInner) {
-        this.router.navigate([note.id], { relativeTo: this.route });
-      } else if (routing === EntityType.FolderInnerNote) {
-        this.router.navigate(['../', note.id], { relativeTo: this.route });
-      } else {
-        this.router.navigate(['/notes/', note.id]);
-      }
-    }
+  toNote(note: SmallNote) {
+    super.baseToNote(note, () => this.navigateFunc(note));
   }
 
   ngOnDestroy(): void {
@@ -275,9 +211,9 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
     this.labelsIds?.unsubscribe();
   }
 
-  async firstInit() {
-    let tempNotes = this.transformSpread(this.getNotesByCurrentType);
-    tempNotes = this.orderBy(tempNotes);
+  async initializeEntities(notes: SmallNote[]) {
+    let tempNotes = this.transformSpread(notes);
+    tempNotes = this.orderBy(tempNotes, this.pageSortType);
 
     if (!this.isFiltedMode) {
       this.entities = tempNotes;
@@ -310,22 +246,16 @@ export class NotesService extends FeaturesEntitiesService<SmallNote> implements 
 
   async updateLabelSelected(ids: string[]) {
     if (ids.length !== 0 && this.firstInitFlag) {
-      await this.murriService.setOpacityFlagAsync(0, false);
-      await this.murriService.wait(150);
-      this.murriService.grid.destroy();
+      await this.destroyGridAsync();
 
       let tempNotes = this.transformSpread(this.getNotesByCurrentType).filter((x) =>
         x.labels.some((label) => ids.some((z) => z === label.id)),
       );
-      this.entities = this.orderBy(tempNotes);
+      this.entities = this.orderBy(tempNotes, this.pageSortType);
 
       const roadType = this.store.selectSnapshot(AppStore.getTypeNote);
       await this.murriService.initMurriNoteAsync(roadType, false);
       await this.murriService.setOpacityFlagAsync(0);
     }
-  }
-
-  get isFiltedMode() {
-    return this.store.selectSnapshot(NoteStore.getSelectedLabelFilter).length > 0;
   }
 }
