@@ -42,10 +42,10 @@ export class NotesService
     private router: Router,
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
-    private apiService: ApiServiceNotes,
+    apiService: ApiServiceNotes,
     private updateService: NotesUpdaterService,
   ) {
-    super(dialogsManageService, store, murriService);
+    super(dialogsManageService, store, murriService, apiService);
 
     this.store
       .select(NoteStore.removeFromMurriEvent)
@@ -159,7 +159,7 @@ export class NotesService
         await this.setInitMurriFlagShowLayout();
         await this.loadNotesWithUpdates();
       }
-      await this.synchronizeState(refElements);
+      await this.synchronizeState(refElements, this.sortNoteType === SortedByENUM.AscDate);
     });
   }
 
@@ -236,12 +236,7 @@ export class NotesService
       });
     this.firstInitFlag = true;
 
-    const noteIds = this.entities.map((x) => x.id);
-    const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
-    for (const info of additionalInfo) {
-      const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
-      this.entities[noteIndex].additionalInfo = info;
-    }
+    await super.loadAdditionNoteInformation();
   }
 
   async updateLabelSelected(ids: string[]) {

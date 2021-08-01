@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
@@ -18,12 +19,13 @@ export class FullFolderNotesService
   constructor(
     store: Store,
     murriService: MurriService,
+    apiNoteService: ApiServiceNotes,
     private apiFullFolder: ApiFullFolderService,
     dialogsManageService: DialogsManageService,
     private route: ActivatedRoute,
     private router: Router,
   ) {
-    super(dialogsManageService, store, murriService);
+    super(dialogsManageService, store, murriService, apiNoteService);
   }
 
   ngOnDestroy(): void {
@@ -38,6 +40,8 @@ export class FullFolderNotesService
     this.entities = tempNotes;
 
     super.initState();
+
+    await super.loadAdditionNoteInformation();
   }
 
   async updateNotesLayout(folderId: string) {
@@ -53,7 +57,7 @@ export class FullFolderNotesService
         await this.murriService.initFolderNotesAsync();
         await this.setInitMurriFlagShowLayout();
       }
-      await this.synchronizeState(refElements);
+      await this.synchronizeState(refElements, false);
     });
   }
 

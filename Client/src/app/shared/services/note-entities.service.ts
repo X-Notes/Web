@@ -2,6 +2,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import {
   ClearUpdatelabelEvent,
@@ -20,6 +21,7 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
     private dialogsManageService: DialogsManageService,
     public store: Store,
     public murriService: MurriService,
+    public apiService: ApiServiceNotes,
   ) {
     super(store, murriService);
 
@@ -68,6 +70,15 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
         return;
       }
       navigateFunc();
+    }
+  }
+
+  async loadAdditionNoteInformation() {
+    const noteIds = this.entities.map((x) => x.id);
+    const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
+    for (const info of additionalInfo) {
+      const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
+      this.entities[noteIndex].additionalInfo = info;
     }
   }
 

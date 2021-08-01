@@ -17,10 +17,10 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     this.entities.forEach((ent) => (this.state[ent.id] = ent));
   }
 
-  async synchronizeState(refElements: QueryList<ElementRef>) {
+  async synchronizeState(refElements: QueryList<ElementRef>, isAddToEnd: boolean) {
     if (this.firstInitedMurri) {
       const elements = refElements.toArray().map((item) => item.nativeElement as HTMLElement);
-      this.newItemChecker(elements);
+      this.newItemChecker(elements, isAddToEnd);
       await this.deleteItemChecker(elements);
     }
   }
@@ -36,12 +36,12 @@ export class MurriEntityService<Entity extends Label | SmallNote | SmallFolder> 
     this.murriService.grid.destroy();
   }
 
-  private newItemChecker(elements: HTMLElement[]) {
+  private newItemChecker(elements: HTMLElement[], isAddToEnd: boolean) {
     for (const el of elements) {
       if (!this.state[el.id]) {
         this.state[el.id] = this.entities.find((x) => x.id === el.id);
         this.murriService.grid.add(document.getElementById(el.id), {
-          index: 0,
+          index: isAddToEnd ? -1 : 0,
           layout: true,
         });
       }

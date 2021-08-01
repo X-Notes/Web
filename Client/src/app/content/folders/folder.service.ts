@@ -87,7 +87,7 @@ export class FolderService
         this.murriService.initMurriFolder(folderType, isDragEnabled);
         await this.setInitMurriFlagShowLayout();
       }
-      await this.synchronizeState(refElements);
+      await this.synchronizeState(refElements, this.sortFolderType === SortedByENUM.AscDate);
     });
   }
 

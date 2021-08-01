@@ -28,7 +28,7 @@ export class LabelsService
         this.murriService.initMurriLabel(isDeleted);
         await this.setInitMurriFlagShowLayout();
       }
-      await this.synchronizeState(refElements);
+      await this.synchronizeState(refElements, false);
     });
   }
 
