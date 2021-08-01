@@ -24,11 +24,11 @@ import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { NoteEntitiesService } from 'src/app/shared/services/note-entities.service';
 
+/** Injection only in component */
 @Injectable()
 export class NotesService
   extends NoteEntitiesService
   implements OnDestroy, IMurriEntityService<SmallNote, NoteTypeENUM> {
-  // TODO TWO SEPARATE COMPONENTS FOR NOTES AND FOLDERS
   labelsIds: Subscription;
 
   firstInitFlag = false;

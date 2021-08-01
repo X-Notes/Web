@@ -32,8 +32,6 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   loaded = false;
 
   constructor(
@@ -50,7 +48,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.noteService.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
@@ -72,7 +70,7 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loaded = true;
     this.store
       .select(NoteStore.archiveCount)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.noteService.destroy))
       .subscribe((x) => {
         if (!x) {
           this.pService.setIllustrationState(true);
@@ -83,8 +81,6 @@ export class ArchiveComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
     this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
     this.store.dispatch(new UnSelectAllNote());
   }
 }

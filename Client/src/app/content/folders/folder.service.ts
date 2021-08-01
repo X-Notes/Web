@@ -14,6 +14,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FeaturesEntitiesService } from 'src/app/shared/services/features-entities.service';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 
+/** Injection only in component */
 @Injectable()
 export class FolderService
   extends FeaturesEntitiesService<SmallFolder>
@@ -72,6 +73,7 @@ export class FolderService
   }
 
   ngOnDestroy(): void {
+    console.log('folder destroy');
     this.destroy.next();
     this.destroy.complete();
   }

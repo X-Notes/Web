@@ -39,8 +39,6 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   loaded = false;
 
   constructor(
@@ -58,7 +56,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
@@ -82,7 +80,7 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(LabelStore.countAll)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe((x) => {
         if (!x) {
           this.pService.setSpinnerState(false);
@@ -90,7 +88,9 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
 
-    this.pService.newButtonSubject.pipe(takeUntil(this.destroy)).subscribe(() => this.newLabel());
+    this.pService.newButtonSubject
+      .pipe(takeUntil(this.labelService.destroy))
+      .subscribe(() => this.newLabel());
   }
 
   async update(label: Label) {
@@ -125,7 +125,5 @@ export class AllComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
     this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
   }
 }

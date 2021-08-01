@@ -22,12 +22,10 @@ import { NoteStore } from '../state/notes-state';
 import { FullNote } from '../models/full-note.model';
 import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
-import { NotesService } from '../notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
 import { MenuSelectionService } from './services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { SidebarNotesService } from './services/sidebar-notes.service';
 import { NotesUpdaterService } from '../notes-updater.service';
 
 @Component({

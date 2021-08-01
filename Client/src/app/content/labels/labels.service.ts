@@ -6,6 +6,7 @@ import { MurriEntityService } from 'src/app/shared/services/murri-entity.service
 import { MurriService } from 'src/app/shared/services/murri.service';
 import { Label } from './models/label.model';
 
+/** Injection only in component */
 @Injectable()
 export class LabelsService
   extends MurriEntityService<Label>
@@ -17,7 +18,7 @@ export class LabelsService
   }
 
   ngOnDestroy(): void {
-    console.log('destroy');
+    console.log('label destroy');
     this.destroy.next();
     this.destroy.complete();
   }

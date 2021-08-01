@@ -39,8 +39,6 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   fontSize = FontSizeENUM;
 
-  destroy = new Subject<void>();
-
   loaded = false;
 
   constructor(
@@ -58,8 +56,6 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy(): void {
     this.murriService.flagForOpacity = false;
     this.murriService.muuriDestroy();
-    this.destroy.next();
-    this.destroy.complete();
   }
 
   async ngOnInit() {
@@ -69,7 +65,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(AppStore.appLoaded)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe(async (x: boolean) => {
         if (x) {
           await this.loadContent();
@@ -89,7 +85,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(LabelStore.countDeleted)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe((x) => {
         if (!x) {
           this.pService.setIllustrationState(true);
@@ -98,7 +94,7 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.store
       .select(LabelStore.deleted)
-      .pipe(takeUntil(this.destroy))
+      .pipe(takeUntil(this.labelService.destroy))
       .subscribe((labs) => {
         if (labs.length === 0) {
           this.labelService.entities = [];
