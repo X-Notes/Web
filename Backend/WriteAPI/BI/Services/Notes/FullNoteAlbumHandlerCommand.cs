@@ -122,7 +122,7 @@ namespace BI.Services.Notes
 
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<AlbumNoteDTO>(Success: true, result);
+                    return new OperationResult<AlbumNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -132,8 +132,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new OperationResult<AlbumNoteDTO>(Success: false, null);
+            return new OperationResult<AlbumNoteDTO>().SetNoPermissions();
         }
 
         // TODO REMOVE WITHOUT ORDERING
@@ -174,7 +173,7 @@ namespace BI.Services.Notes
 
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -182,7 +181,8 @@ namespace BI.Services.Notes
                     Console.WriteLine(e);
                 }
             }
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeAlbumRowCountCommand request, CancellationToken cancellationToken)
@@ -200,10 +200,10 @@ namespace BI.Services.Notes
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                return new OperationResult<Unit>(Success: true, Unit.Value);
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeAlbumSizeCommand request, CancellationToken cancellationToken)
@@ -222,10 +222,10 @@ namespace BI.Services.Notes
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                return new OperationResult<Unit>(Success: true, Unit.Value);
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemovePhotoFromAlbumCommand request, CancellationToken cancellationToken)
@@ -256,10 +256,10 @@ namespace BI.Services.Notes
 
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                return new OperationResult<Unit>(Success: true, Unit.Value);
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
 
@@ -306,7 +306,7 @@ namespace BI.Services.Notes
 
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<List<AlbumPhotoDTO>>(Success: true, photos);
+                    return new OperationResult<List<AlbumPhotoDTO>>(success: true, photos);
                 }
                 catch (Exception e)
                 {
@@ -316,7 +316,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<List<AlbumPhotoDTO>>(Success: false, null);
+            return new OperationResult<List<AlbumPhotoDTO>>().SetNoPermissions();
         }
 
     }

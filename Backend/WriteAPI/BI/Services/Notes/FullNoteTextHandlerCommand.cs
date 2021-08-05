@@ -17,8 +17,8 @@ using WriteContext.Repositories.Notes;
 namespace BI.Services.Notes
 {
     public class FullNoteTextHandlerCommand :
-        IRequestHandler<UpdateTitleNoteCommand, Unit>,
-        IRequestHandler<UpdateTextNoteCommand, Unit>,
+        IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>,
         IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>,
         IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>,
         IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
@@ -58,7 +58,7 @@ namespace BI.Services.Notes
             this.baseNoteContentRepository = baseNoteContentRepository;
         }
 
-        public async Task<Unit> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UpdateTitleNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.Id, request.Email);
             var permissions = await _mediator.Send(command);
@@ -72,15 +72,15 @@ namespace BI.Services.Notes
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                 var fullNote = await noteRepository.GetFull(note.Id);
+
                 var noteForUpdating = appCustomMapper.MapNoteToFullNote(fullNote);
                 await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<Unit> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
@@ -99,14 +99,12 @@ namespace BI.Services.Notes
                 await textNotesRepository.UpdateAsync(content);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                 // TODO DEADLOCK
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return Unit.Value;
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
@@ -129,14 +127,12 @@ namespace BI.Services.Notes
                     text.NoteTextTypeId, text.HTypeId, text.Checked, text.IsBold, text.IsItalic, text.UpdatedAt);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                return new OperationResult<TextNoteDTO>(Success: true, textResult);
+                return new OperationResult<TextNoteDTO>(success: true, textResult);
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new OperationResult<TextNoteDTO>(Success: false, null);
+            return new OperationResult<TextNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
@@ -180,10 +176,9 @@ namespace BI.Services.Notes
                                 await transaction.CommitAsync();
 
                                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                                return new OperationResult<TextNoteDTO>(Success: true, textResult);
+                                return new OperationResult<TextNoteDTO>(success: true, textResult);
                             }
                             catch (Exception e)
                             {
@@ -219,10 +214,9 @@ namespace BI.Services.Notes
                                 await transaction.CommitAsync();
 
                                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                                return new OperationResult<TextNoteDTO>(Success: true, textResult);
+                                return new OperationResult<TextNoteDTO>(success: true, textResult);
                             }
                             catch (Exception e)
                             {
@@ -237,7 +231,8 @@ namespace BI.Services.Notes
                         }
                 }
             }
-            return new OperationResult<TextNoteDTO>(Success: false, null);
+
+            return new OperationResult<TextNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
@@ -256,15 +251,14 @@ namespace BI.Services.Notes
                     await textNotesRepository.UpdateAsync(content);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                     // TODO DEADLOCK
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
@@ -281,7 +275,7 @@ namespace BI.Services.Notes
 
                 if (contentForConcat == null || contentForConcat.Order <= 1)
                 {
-                    return new OperationResult<TextNoteDTO>(Success: false, null);
+                    return new OperationResult<TextNoteDTO>(success: false, null);
                 }
 
                 var contentPrev = contents.First(x => x.Order == contentForConcat.Order - 1);
@@ -310,10 +304,9 @@ namespace BI.Services.Notes
                         contentPrev.IsBold, contentPrev.IsItalic, contentPrev.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<TextNoteDTO>(Success: true, textResult);
+                    return new OperationResult<TextNoteDTO>(success: true, textResult);
                 }
                 catch (Exception e)
                 {
@@ -322,7 +315,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<TextNoteDTO>(Success: false, null);
+            return new OperationResult<TextNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
@@ -340,7 +333,7 @@ namespace BI.Services.Notes
 
                 if (contentForRemove == null || contentForRemove.Order <= 1)
                 {
-                    return new OperationResult<Unit>(Success: false, Unit.Value);
+                    return new OperationResult<Unit>(success: false, Unit.Value);
                 }
 
                 var orders = Enumerable.Range(1, contents.Count);
@@ -362,10 +355,9 @@ namespace BI.Services.Notes
                     await transaction.CommitAsync();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -373,7 +365,8 @@ namespace BI.Services.Notes
                     Console.WriteLine(e);
                 }
             }
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }
