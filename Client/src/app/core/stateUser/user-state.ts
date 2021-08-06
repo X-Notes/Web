@@ -187,13 +187,14 @@ export class UserStore {
 
   @Action(UpdateUserPhoto)
   async updateUserPhoto(
-    { patchState, getState }: StateContext<UserState>,
+    { patchState, getState, dispatch }: StateContext<UserState>,
     { photo }: UpdateUserPhoto,
   ) {
     const newPhoto = await this.api.updateUserPhoto(photo).toPromise();
     patchState({
       user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath },
     });
+    dispatch(LoadUsedDiskSpace);
   }
 
   @Action(LoadUsedDiskSpace)

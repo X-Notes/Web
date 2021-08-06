@@ -8,7 +8,7 @@ import {
   RemoveBackground,
 } from './background-action';
 import { Background } from '../models/background.model';
-import { SetCurrentBackground } from '../stateUser/user-action';
+import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-action';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -38,7 +38,7 @@ export class BackgroundStore {
     patchState({
       backgrounds: [background, ...getState().backgrounds],
     });
-    dispatch(new SetCurrentBackground(background));
+    dispatch([new SetCurrentBackground(background), LoadUsedDiskSpace]);
   }
 
   @Action(LoadBackgrounds)

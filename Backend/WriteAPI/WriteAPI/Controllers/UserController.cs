@@ -2,6 +2,7 @@
 using AutoMapper;
 using Common.DTO.Users;
 using Domain.Commands.Users;
+using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

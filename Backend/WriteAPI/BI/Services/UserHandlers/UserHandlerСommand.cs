@@ -1,20 +1,15 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
-using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
-using Common.DTO.Files;
 using Common.DTO.Users;
-using ContentProcessing;
 using Domain.Commands.Files;
 using Domain.Commands.Users;
 using MediatR;
 using Storage;
-using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers
@@ -29,8 +24,6 @@ namespace BI.Services.UserHandlers
     {
         private readonly UserRepository userRepository;
 
-        private readonly IFilesStorage filesStorage;
-
         private readonly UserProfilePhotoRepository userProfilePhotoRepository;
 
         private readonly IMediator _mediator;
@@ -39,13 +32,11 @@ namespace BI.Services.UserHandlers
 
         public UserHandlerСommand(
             UserRepository userRepository,
-            IFilesStorage filesStorage,
             UserProfilePhotoRepository userProfilePhotoRepository,
             IMediator _mediator,
             PersonalizationSettingRepository personalizationSettingRepository)
         {
             this.userRepository = userRepository;
-            this.filesStorage = filesStorage;
             this.userProfilePhotoRepository = userProfilePhotoRepository;
             this._mediator = _mediator;
             this.personalizationSettingRepository = personalizationSettingRepository;
@@ -66,7 +57,7 @@ namespace BI.Services.UserHandlers
 
             await userRepository.AddAsync(user);
 
-            await filesStorage.CreateUserContainer(user.Id);
+            await _mediator.Send(new CreateUserContainerCommand(user.Id));
 
             await personalizationSettingRepository.AddAsync(new PersonalizationSetting().GetNewFactory(user.Id));
 

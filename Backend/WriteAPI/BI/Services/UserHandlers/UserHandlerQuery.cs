@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Common.DTO.Users;
+using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
 using Storage;
+using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers
@@ -14,13 +16,16 @@ namespace BI.Services.UserHandlers
         IRequestHandler<GetUserMemoryQuery, GetUserMemoryResponse>
     {
         private readonly UserRepository userRepository;
+
         private readonly IMapper imapper;
-        private readonly IFilesStorage fileStorage;
-        public UserHandlerQuery(UserRepository userRepository, IMapper imapper, IFilesStorage fileStorage)
+
+        private readonly FileRepository fileRepository;
+
+        public UserHandlerQuery(UserRepository userRepository, IMapper imapper, FileRepository fileRepository)
         {
             this.userRepository = userRepository;
             this.imapper = imapper;
-            this.fileStorage = fileStorage;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<ShortUser> Handle(GetShortUserQuery request, CancellationToken cancellationToken)
@@ -35,9 +40,9 @@ namespace BI.Services.UserHandlers
 
         public async Task<GetUserMemoryResponse> Handle(GetUserMemoryQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetUserByEmailIncludeBackgroundAndPhoto(request.Email);
-            var totalSize = await fileStorage.GetUsedDiskSpace(user.Id.ToString());
-            return new GetUserMemoryResponse { TotalSize = totalSize };
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            var size = await fileRepository.GetTotalUserMemory(user.Id);
+            return new GetUserMemoryResponse { TotalSize = size };
         }
     }
 }

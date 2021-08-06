@@ -82,7 +82,7 @@ namespace Storage
         }
 
 
-        public async Task<string> SaveFile(string userId, byte[] file, string contentType, ContentTypesFile contentFolder, string fileTypeEnd)
+        public async Task<UploadFileResult> SaveFile(string userId, byte[] file, string contentType, ContentTypesFile contentFolder, string fileTypeEnd)
         {
             var blobContainer = blobServiceClient.GetBlobContainerClient(userId);
             var path = PathFactory(contentFolder, fileTypeEnd);
@@ -96,7 +96,12 @@ namespace Storage
             var resp = await blobClient.UploadAsync(stream, headers);
 
             await stream.DisposeAsync();
-            return blobClient.Name;
+
+            return new UploadFileResult {
+                FilePath = blobClient.Name,
+                StorageFileSize = blobClient.GetProperties().Value.ContentLength,
+                UploadedFileSize = file.Length
+            };
         }
 
         public async Task<string> CopyBlobAsync(string userFromId, string path, string userToId, ContentTypesFile contentFolder, string fileTypeEnd)

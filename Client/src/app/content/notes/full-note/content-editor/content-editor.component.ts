@@ -13,6 +13,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ApiServiceNotes } from '../../api-notes.service';
 import {
@@ -285,6 +286,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   }
 
@@ -312,12 +314,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     return this.contents[index] as BaseText;
   }
 
-  removeAlbumHandler = async (id: string) => {
-    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-    }
-  };
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
     const resp = await this.api
@@ -341,6 +337,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       const resultPhotos = [...contentPhotos, ...newPhotos];
       const newAlbum: Album = { ...(this.contents[index] as Album), photos: resultPhotos };
       this.contents[index] = newAlbum;
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 
@@ -360,15 +357,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         };
         this.contents[index] = newAlbum;
       }
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   }
-
-  removePlaylistHandler = async (id: string) => {
-    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-    }
-  };
 
   async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
     const resp = await this.api
@@ -386,6 +377,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         };
         this.contents[index] = newPlaylist;
       }
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   }
 
@@ -412,6 +404,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         audios: resultAudios,
       };
       this.contents[index] = newPlaylist;
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 
@@ -419,6 +412,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 
@@ -426,6 +420,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     const resp = await this.api.removeFileFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
+  };
+
+  removeAlbumHandler = async (id: string) => {
+    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
+  };
+
+  removePlaylistHandler = async (id: string) => {
+    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 
