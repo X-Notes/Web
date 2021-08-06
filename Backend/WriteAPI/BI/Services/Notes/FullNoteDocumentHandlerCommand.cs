@@ -64,7 +64,7 @@ namespace BI.Services.Notes
 
                 // FILES LOGIC
                 var filebyte = await request.File.GetFilesBytesAsync();
-                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebyte, note.Id));
+                var file = await _mediator.Send(new SaveDocumentToNoteCommand(permissions.Author.Id, filebyte, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

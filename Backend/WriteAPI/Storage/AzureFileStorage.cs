@@ -3,11 +3,9 @@ using Azure.Storage.Blobs.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Storage.Models;
 using Azure.Storage.Blobs.Specialized;
-using System.Linq;
 using Azure;
 
 namespace Storage
@@ -90,7 +88,7 @@ namespace Storage
             var path = PathFactory(contentFolder, fileTypeEnd);
             var blobClient = blobContainer.GetBlobClient(path);
 
-            var stream = new MemoryStream(file);
+            using var stream = new MemoryStream(file);
             stream.Position = 0;
 
             var headers = GetBlobHttpHeaders(contentType);

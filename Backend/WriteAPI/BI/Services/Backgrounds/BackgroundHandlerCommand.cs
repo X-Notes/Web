@@ -1,17 +1,13 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
-using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
 using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
 using MediatR;
-using Storage;
-using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Backgrounds
@@ -25,25 +21,20 @@ namespace BI.Services.Backgrounds
         private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
-        private readonly IFilesStorage filesStorage;
         private readonly IImageProcessor imageProcessor;
         private readonly IMediator _mediator;
-        private readonly FileRepository fileRepository;
+
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
                                         IMapper mapper,
-                                        IFilesStorage filesStorage,
                                         IImageProcessor imageProcessor,
-                                        IMediator _mediator,
-                                        FileRepository fileRepository)
+                                        IMediator _mediator)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
-            this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
             this._mediator = _mediator;
-            this.fileRepository = fileRepository;
         }
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
@@ -78,42 +69,8 @@ namespace BI.Services.Backgrounds
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var photoType = FileHelper.GetExtension(request.File.FileName);
-
-            var ms = new MemoryStream();
-            await request.File.CopyToAsync(ms);
-            ms.Position = 0;
-
-            var bigType = CopyType.Big;
-            var mediumType = CopyType.Medium;
-            var thumbs = await imageProcessor.ProcessCopies(ms, bigType, mediumType);
-
-            AppFile appFile;
-
-            if(thumbs.ContainsKey(bigType))
-            {
-                var bigFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[bigType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(null, mediumFile, bigFile, request.File.ContentType, 
-                    thumbs[bigType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
-            }
-            else if (thumbs.ContainsKey(mediumType))
-            {
-                var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(null, mediumFile, defaultFile, request.File.ContentType, 
-                    thumbs[CopyType.Default].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
-            }
-            else
-            {
-                var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(defaultFile, null, null, request.File.ContentType, 
-                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
-            }
-
+            var filebytes = await request.File.GetFilesBytesAsync();
+            var appFile = await _mediator.Send(new SaveBackgroundCommand(user.Id, filebytes));
 
             var item = new Common.DatabaseModels.Models.Users.Backgrounds()
             {
