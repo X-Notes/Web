@@ -5,8 +5,7 @@ using MediatR;
 
 namespace Domain.Commands.Files
 {
-
-    public class SaveVideosToNoteCommand : IRequest<AppFile>
+    public class SaveVideoToNoteCommand : IRequest<AppFile>
     {
         public FilesBytes FileBytes { set; get; }
 
@@ -14,7 +13,7 @@ namespace Domain.Commands.Files
 
         public Guid UserId { set; get; }
 
-        public SaveVideosToNoteCommand(Guid userId, FilesBytes FileBytes, Guid NoteId)
+        public SaveVideoToNoteCommand(Guid userId, FilesBytes FileBytes, Guid NoteId)
         {
             this.FileBytes = FileBytes;
             this.NoteId = NoteId;
