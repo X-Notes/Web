@@ -81,8 +81,8 @@ namespace BI.Services.Notes
                 // TODO MOVE THIS TO WORKER
                 foreach (var fileitem in fileList)
                 {
-                    var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
-                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+                    // var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
+                    // fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
 
                     // TODO MOVE TO API
                     // var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
@@ -276,11 +276,11 @@ namespace BI.Services.Notes
                 var filebytes = await request.Photos.GetFilesBytesAsync();
                 var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
-                foreach (var fileitem in fileList)
-                {
-                    var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
-                    fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
-                }
+                // foreach (var fileitem in fileList)
+                // {
+                //     var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
+                //     fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
+                // }
 
                 var dbFiles = fileList.Select(x => x.AppFile).ToList();
 

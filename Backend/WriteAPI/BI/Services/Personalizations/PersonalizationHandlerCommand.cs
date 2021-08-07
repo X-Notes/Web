@@ -34,7 +34,6 @@ namespace BI.Services.Personalizations
             if (user != null)
             {
                 var pr = await personalizationSettingRepository.FirstOrDefaultAsync(x => x.UserId == user.Id);
-
                 pr.IsViewAudioOnNote = request.PersonalizationSetting.IsViewAudioOnNote;
                 pr.IsViewDocumentOnNote = request.PersonalizationSetting.IsViewDocumentOnNote;
                 pr.IsViewPhotosOnNote = request.PersonalizationSetting.IsViewPhotosOnNote;

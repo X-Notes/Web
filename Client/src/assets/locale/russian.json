@@ -90,7 +90,15 @@
       "genericPreview": "предварительном просмотре",
       "noteSize": "Размер заметки",
       "noteDefault": "Обычный",
-      "noteBig": "Большой"
+      "noteBig": "Большой",
+      "isViewAudioOnNote": "Отображать аудио",
+      "isViewDocumentOnNote": "Отображать документы",
+      "isViewPhotosOnNote": "Отображать фото",
+      "isViewTextOnNote": "Отображать текст",
+      "isViewVideoOnNote": "Отображать видео",
+      "contentInNoteCount": "Количество отображаемого контента на заметке",
+      "notesInFolderCount": "Количество отображаемых заметок на папке",
+      "countCurrent": "Текущее: "
     },
     "modal": {
       "labelModal": {
