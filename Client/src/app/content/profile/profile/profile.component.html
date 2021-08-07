@@ -116,7 +116,7 @@
               <app-select
                 class="dropdown-button"
                 [translate]="'languages'"
-                [selectValue]="(language$ | async)"
+                [selectValue]="language[(language$ | async)].toLowerCase()"
                 [selectObjectProperty]="'name'"
                 (selectValueChange)="setLanguage($event)"
               >
@@ -213,7 +213,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list slider-row general-column">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.contentInNoteCount' | translate }}</p>
                   </div>
                   <div class="field-content">
@@ -241,7 +241,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list slider-row general-column">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.notesInFolderCount' | translate }}</p>
                   </div>
                   <div class="field-content">
@@ -269,7 +269,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.isViewAudioOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
@@ -287,7 +287,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.isViewDocumentOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
@@ -305,7 +305,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.isViewPhotosOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
@@ -323,7 +323,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.isViewTextOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox
@@ -341,7 +341,7 @@
               </div>
               <div class="field">
                 <div class="general-row inner-box-list">
-                  <div class="field-name">
+                  <div class="field-name field-name-full">
                     <p>{{ 'profile.isViewVideoOnNote' | translate }}</p>
                   </div>
                   <mat-checkbox

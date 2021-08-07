@@ -65,6 +65,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   pSettings =Personalization;
 
+  language = LanguagesENUM;
+
   languages = Object.values(LanguagesENUM)
     .filter((x) => typeof x === 'string')
     .map((z: string) => z.toLowerCase());
@@ -100,8 +102,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(() => this.newBackground());
   }
 
-  setLanguage(item: LanguagesENUM): void {
-    this.store.dispatch(new ChangeLanguage(item));
+  setLanguage(item: string): void {
+    const language = item.charAt(0).toUpperCase() + item.slice(1);
+    this.store.dispatch(new ChangeLanguage(LanguagesENUM[language]));
   }
 
   setCurrent(id: string) {
