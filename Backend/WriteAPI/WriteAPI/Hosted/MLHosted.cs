@@ -29,7 +29,7 @@ namespace WriteAPI.Hosted
             {
                 var ORS = scope.ServiceProvider.GetService<ObjectRecognizeService>();
                 // TODO MOVE TO API
-                ORS.Init();
+                // ORS.Init();
             }
             return Task.CompletedTask;
         }

@@ -16,8 +16,10 @@
 }
 
 .slider-controls,
-.volume-slider {
-  .slider {
+.volume-slider,
+.slider-row
+ {
+  .slider, .slider-profile {
     .mat-slider-wrapper {
       background-color: white;
 
@@ -25,6 +27,13 @@
         background-color: #0887a7;
         border: none;
         transform: scale(0.7) !important;
+      }
+
+      .mat-slider-thumb-label {
+        background-color: #0887a7;
+        .mat-slider-thumb-label-text {
+          color: white;
+        }
       }
 
       .mat-slider-track-fill {

@@ -10,6 +10,7 @@ import {
   UpdateUserName,
   UpdateUserPhoto,
   SetDefaultBackground,
+  UpdatePersonalization,
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
@@ -27,6 +28,8 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { hideForDemo } from 'src/environments/demo';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
+import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { Personalization } from 'src/app/shared/enums/personalization.enum';
 
 @Component({
   selector: 'app-profile',
@@ -49,6 +52,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   @Select(UserStore.getUserLanguage)
   public language$: Observable<LanguagesENUM>;
 
+  @Select(UserStore.getPersonalizationSettings)
+  public pSettings$: Observable<PersonalizationSetting>
+
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
   hideFor = hideForDemo;
@@ -56,6 +62,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   fontSize = FontSizeENUM;
 
   themes = ThemeENUM;
+
+  pSettings =Personalization;
+
+  language = LanguagesENUM;
 
   languages = Object.values(LanguagesENUM)
     .filter((x) => typeof x === 'string')
@@ -92,8 +102,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(() => this.newBackground());
   }
 
-  setLanguage(item: LanguagesENUM): void {
-    this.store.dispatch(new ChangeLanguage(item));
+  setLanguage(item: string): void {
+    const language = item.charAt(0).toUpperCase() + item.slice(1);
+    this.store.dispatch(new ChangeLanguage(LanguagesENUM[language]));
   }
 
   setCurrent(id: string) {
@@ -121,6 +132,38 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (oldName !== this.userName) {
       this.store.dispatch(new UpdateUserName(this.userName));
     }
+  }
+
+  async changePersonalizationSettings(value: any, type: Personalization) {
+    const types = Personalization
+    console.log(value, type);
+    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings)}
+    switch (type) {
+      case types.isViewVideoOnNote:
+        settings.isViewVideoOnNote = value;
+        break;
+      case types.isViewTextOnNote:
+        settings.isViewTextOnNote = value;
+        break;
+      case types.isViewPhotosOnNote:
+        settings.isViewPhotosOnNote = value;
+        break;
+      case types.isViewDocumentOnNote:
+        settings.isViewDocumentOnNote = value;
+        break;
+      case types.isViewAudioOnNote:
+        settings.isViewAudioOnNote = value;
+        break;
+      case types.contentInNoteCount:
+        settings.contentInNoteCount = value;
+        break;
+      case types.notesInFolderCount:
+        settings.notesInFolderCount = value;
+        break;
+      default:
+        throw new Error('Incorrect personalization setting');
+    }
+    this.store.dispatch(new UpdatePersonalization(settings));
   }
 
   changeTheme(value: boolean) {
