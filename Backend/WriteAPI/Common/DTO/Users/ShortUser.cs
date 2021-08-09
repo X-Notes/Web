@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Backgrounds;
 
@@ -15,5 +16,6 @@ namespace Common.DTO.Users
         public LanguageENUM LanguageId { set; get; }
         public ThemeENUM ThemeId { set; get; }
         public FontSizeENUM FontSizeId { set; get; }
+        public BillingPlanTypeENUM BillingPlanId { set; get; }
     }
 }

@@ -3,14 +3,15 @@ namespace Common.DTO.Notes.FullNoteContent
 {
     public enum OperationResultAdditionalInfo
     {
-        NoAccessRights
+        NoAccessRights,
+        NotEnoughMemory
     }
 
     public class OperationResult<T>
     {
         public bool Success { set; get; }
 
-        public OperationResultAdditionalInfo Message { set; get; }
+        public OperationResultAdditionalInfo? Message { set; get; }
 
         public T Data { set; get; }
 
@@ -36,6 +37,13 @@ namespace Common.DTO.Notes.FullNoteContent
         {
             Success = false;
             Message = OperationResultAdditionalInfo.NoAccessRights;
+            return this;
+        }
+
+        public OperationResult<T> SetNoEnougnMemory()
+        {
+            Success = false;
+            Message = OperationResultAdditionalInfo.NotEnoughMemory;
             return this;
         }
 

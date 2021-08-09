@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Backgrounds;
+using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Backgrounds;
 using Domain.Queries.Backgrounds;
 using MediatR;
@@ -47,7 +48,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<BackgroundDTO> NewBackgroundPhoto(IFormFile photo)
+        public async Task<OperationResult<BackgroundDTO>> NewBackgroundPhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new NewBackgroundCommand(email, photo));

@@ -34,7 +34,8 @@ export class BackgroundStore {
     { patchState, getState, dispatch }: StateContext<BackgroundState>,
     { photo }: NewBackground,
   ) {
-    const background = await this.backgroundAPI.newBackground(photo).toPromise();
+    const resp = await this.backgroundAPI.newBackground(photo).toPromise();
+    const background = resp.data;
     patchState({
       backgrounds: [background, ...getState().backgrounds],
     });
