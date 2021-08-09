@@ -58,6 +58,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Video.Length, permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<VideoNoteDTO>().SetNoEnougnMemory();
+                }
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);

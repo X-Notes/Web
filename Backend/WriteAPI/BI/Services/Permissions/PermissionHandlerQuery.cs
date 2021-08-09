@@ -7,6 +7,7 @@ using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Permissions;
 using Domain.Queries.Permissions;
 using MediatR;
+using WriteContext.Repositories;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;
@@ -15,19 +16,23 @@ namespace BI.Services.Permissions
 {
     public class PermissionHandlerQuery
         : IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>,
-          IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>
+          IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,
+          IRequestHandler<GetPermissionUploadFileQuery, PermissionUploadFileEnum>
     {
         private readonly NoteRepository noteRepository;
         private readonly UserRepository userRepository;
+        private readonly FileRepository fileRepository;
         private readonly FolderRepository folderRepository;
         public PermissionHandlerQuery(
             UserRepository userRepository,
             NoteRepository noteRepository,
-            FolderRepository folderRepository)
+            FolderRepository folderRepository,
+            FileRepository fileRepository)
         {
             this.userRepository = userRepository;
             this.noteRepository = noteRepository;
             this.folderRepository = folderRepository;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<UserPermissionsForNote> Handle(GetUserPermissionsForNoteQuery request, CancellationToken cancellationToken)
@@ -133,6 +138,17 @@ namespace BI.Services.Permissions
                 }
             }
             return new UserPermissionsForFolder().GetUserNotFounded();
+        }
+
+        public async Task<PermissionUploadFileEnum> Handle(GetPermissionUploadFileQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserByIdIncludeBilling(request.UserId);
+            var currentMemory = await fileRepository.GetTotalUserMemory(user.Id);
+            if ( (currentMemory + request.FileSize) < user.BillingPlan.MaxSize)
+            {
+                return PermissionUploadFileEnum.CanUpload;
+            }
+            return PermissionUploadFileEnum.NoCanUpload;
         }
     }
 }

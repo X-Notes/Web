@@ -70,6 +70,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Photos.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<AlbumNoteDTO>().SetNoEnougnMemory();
+                }
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
@@ -271,6 +278,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Photos.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<List<AlbumPhotoDTO>>().SetNoEnougnMemory();
+                }
+
                 var album = await baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
 
                 var filebytes = await request.Photos.GetFilesBytesAsync();

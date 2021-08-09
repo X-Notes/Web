@@ -61,6 +61,14 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Audios.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<AudiosPlaylistNoteDTO>().SetNoEnougnMemory();
+                }
+
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
@@ -217,6 +225,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Audios.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<List<AudioNoteDTO>>().SetNoEnougnMemory();
+                }
+
                 var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
 
                 var filebytes = await request.Audios.GetFilesBytesAsync();

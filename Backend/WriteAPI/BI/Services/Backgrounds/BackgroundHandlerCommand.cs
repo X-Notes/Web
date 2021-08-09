@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
 using Common.DTO.Backgrounds;
+using Common.DTO.Notes.FullNoteContent;
 using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
+using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.Users;
 
@@ -16,24 +18,21 @@ namespace BI.Services.Backgrounds
         IRequestHandler<DefaultBackgroundCommand, Unit>,
         IRequestHandler<RemoveBackgroundCommand, Unit>,
         IRequestHandler<UpdateBackgroundCommand, Unit>,
-        IRequestHandler<NewBackgroundCommand, BackgroundDTO>
+        IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>
     {
         private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
-        private readonly IImageProcessor imageProcessor;
         private readonly IMediator _mediator;
 
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
                                         IMapper mapper,
-                                        IImageProcessor imageProcessor,
                                         IMediator _mediator)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
-            this.imageProcessor = imageProcessor;
             this._mediator = _mediator;
         }
 
@@ -65,9 +64,16 @@ namespace BI.Services.Backgrounds
             return Unit.Value;
         }
 
-        public async Task<BackgroundDTO> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<BackgroundDTO>> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+
+            var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
+            if(uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+            {
+                return new OperationResult<BackgroundDTO>().SetNoEnougnMemory();
+            }
+
 
             var filebytes = await request.File.GetFilesBytesAsync();
             var appFile = await _mediator.Send(new SaveBackgroundCommand(user.Id, filebytes));
@@ -87,7 +93,8 @@ namespace BI.Services.Backgrounds
             }
 
             await Handle(new UpdateBackgroundCommand(request.Email, item.Id), CancellationToken.None);
-            return mapper.Map<BackgroundDTO>(item);
+            var ent = mapper.Map<BackgroundDTO>(item);
+            return new OperationResult<BackgroundDTO>(success: true, ent);
         }
     }
 }

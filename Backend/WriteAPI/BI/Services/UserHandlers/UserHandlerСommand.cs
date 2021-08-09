@@ -5,9 +5,12 @@ using BI.Helpers;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DTO.Backgrounds;
+using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.Files;
 using Domain.Commands.Users;
+using Domain.Queries.Permissions;
 using MediatR;
 using Storage;
 using WriteContext.Repositories.Users;
@@ -17,7 +20,7 @@ namespace BI.Services.UserHandlers
     public class UserHandlerСommand :
         IRequestHandler<NewUserCommand, Unit>,
         IRequestHandler<UpdateMainUserInfoCommand, Unit>,
-        IRequestHandler<UpdatePhotoCommand, AnswerChangeUserPhoto>,
+        IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>,
         IRequestHandler<UpdateLanguageCommand, Unit>,
         IRequestHandler<UpdateThemeCommand, Unit>,
         IRequestHandler<UpdateFontSizeCommand, Unit>
@@ -52,7 +55,7 @@ namespace BI.Services.UserHandlers
                 Email = request.Email,
                 FontSizeId = FontSizeENUM.Medium,
                 ThemeId = ThemeENUM.Dark,
-                BillingPlanId = BillingPlanTypeENUM.Basic
+                BillingPlanId = BillingPlanTypeENUM.Free
             };
 
             await userRepository.AddAsync(user);
@@ -72,9 +75,16 @@ namespace BI.Services.UserHandlers
             return Unit.Value;
         }
 
-        public async Task<AnswerChangeUserPhoto> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<AnswerChangeUserPhoto>> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+
+            var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
+            if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+            {
+                return new OperationResult<AnswerChangeUserPhoto>().SetNoEnougnMemory();
+            }
+
             var userProfilePhoto = await userProfilePhotoRepository.GetWithFile(user.Id);
 
             if (userProfilePhoto != null)
@@ -89,12 +99,13 @@ namespace BI.Services.UserHandlers
             var success = await userRepository.UpdatePhoto(user, appFile);
             if (success)
             {
-                return new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = appFile.GetNotNullPathes().Last() };
+                var result = new AnswerChangeUserPhoto() { Success = true, Id = appFile.Id, PhotoPath = appFile.GetNotNullPathes().Last() };
+                return new OperationResult<AnswerChangeUserPhoto>(true, result);
             }
             else
             {
                 await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), appFile));
-                return new AnswerChangeUserPhoto { Success = false };
+                return new OperationResult<AnswerChangeUserPhoto>(false, null);
             }
         }
 

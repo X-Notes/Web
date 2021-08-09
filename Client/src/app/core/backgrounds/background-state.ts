@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { State, Selector, Action, StateContext } from '@ngxs/store';
+import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import {
   NewBackground,
@@ -9,6 +9,10 @@ import {
 } from './background-action';
 import { Background } from '../models/background.model';
 import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-action';
+import { OperationResultAdditionalInfo } from 'src/app/content/notes/models/operation-result.model';
+import { UserStore } from '../stateUser/user-state';
+import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
+import { ShowSnackNotification } from '../stateApp/app-action';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -22,7 +26,10 @@ interface BackgroundState {
 })
 @Injectable()
 export class BackgroundStore {
-  constructor(private backgroundAPI: BackgroundService) {}
+  constructor(
+    private backgroundAPI: BackgroundService, 
+    private store: Store,
+    private snackbarTranlateHelper: SnackBarTranlateHelperService) {}
 
   @Selector()
   static getUserBackgrounds(state: BackgroundState): Background[] {
@@ -34,8 +41,16 @@ export class BackgroundStore {
     { patchState, getState, dispatch }: StateContext<BackgroundState>,
     { photo }: NewBackground,
   ) {
-    const resp = await this.backgroundAPI.newBackground(photo).toPromise();
-    const background = resp.data;
+    const result = await this.backgroundAPI.newBackground(photo).toPromise();
+
+    if(result.message === OperationResultAdditionalInfo.NotEnoughMemory){
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      const message = this.snackbarTranlateHelper.getNoEnoughMemoryTranslate(lname); 
+      this.store.dispatch(new ShowSnackNotification(message));
+      return;
+    }
+
+    const background = result.data;
     patchState({
       backgrounds: [background, ...getState().backgrounds],
     });
