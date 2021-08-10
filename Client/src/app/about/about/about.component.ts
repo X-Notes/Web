@@ -3,6 +3,7 @@ import { AuthService } from 'src/app/core/auth.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
+import { TypeAuthEnum } from '../models/type.auth.enum';
 
 @Component({
   selector: 'app-about',
@@ -12,10 +13,30 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 export class AboutComponent {
   constructor(private authService: AuthService, private router: Router, private store: Store) {}
 
-  login() {
+  authType = TypeAuthEnum;
+
+  login(typeAuth: TypeAuthEnum) {
     const flag = this.store.selectSnapshot(AppStore.appLoaded);
     if (!flag) {
-      this.authService.GoogleAuth();
+      switch(typeAuth){
+        case TypeAuthEnum.Google:{
+          this.authService.authGoogle();
+          break;
+        }
+        case TypeAuthEnum.Facebook:{
+          // this.authService.authFacebook();
+          break;
+        }
+        case TypeAuthEnum.Git:{
+          break;
+        }
+        case TypeAuthEnum.Twitter:{
+          break;
+        }
+        default:{
+          throw new Error('Incorrec type');
+        }
+      }
     } else {
       this.router.navigate(['/notes']);
     }
