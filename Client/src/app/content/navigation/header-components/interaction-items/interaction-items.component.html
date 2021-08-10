@@ -17,6 +17,7 @@
 ></app-general-header-button>
 
 <app-general-header-button
+  *ngIf="isAnyItemOnPage"
   (clickEvent)="selectAll()"
   [isClassOnSize]="(pService.isMenuActive$ | async) === (true) && (pService.isHideTextOnSmall$ | async) === (true)"
   [classOnSize]="'hide-tag-text'"
@@ -26,7 +27,7 @@
 ></app-general-header-button>
 
 <app-general-header-button
-  *ngIf="(isActionFilterButton$ | async)"
+  *ngIf="(isActionFilterButton$ | async) && isAnyItemOnPage"
   [matMenuTriggerFor]="menu"
   [tooltipMessage]="('header.filter' | translate)"
   [tooltipPosition]="'Bottom'"
