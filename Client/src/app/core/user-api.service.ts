@@ -8,6 +8,7 @@ import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
 import { ThemeENUM } from '../shared/enums/theme.enum';
 import { FontSizeENUM } from '../shared/enums/font-size.enum';
 import { LanguagesENUM } from '../shared/enums/languages.enum';
+import { OperationResult } from '../content/notes/models/operation-result.model';
 
 export interface Token {
   token: string;
@@ -69,7 +70,7 @@ export class UserAPIService {
   }
 
   updateUserPhoto(photo: FormData) {
-    return this.httpClient.post<AnswerChangePhoto>(`${environment.writeAPI}/api/user/photo`, photo);
+    return this.httpClient.post<OperationResult<AnswerChangePhoto>>(`${environment.writeAPI}/api/user/photo`, photo);
   }
 
   async getImageFromGoogle(imageUrl): Promise<FormData> {
@@ -79,6 +80,7 @@ export class UserAPIService {
     return form;
   }
 
+  // TODO REMOVE IF NO NEED
   // private async getBase64FromBlob(blob: Blob) {
   //   return new Promise<string>((resolve, reject) => {
   //     const reader = new FileReader();

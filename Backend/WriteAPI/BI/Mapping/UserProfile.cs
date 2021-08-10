@@ -20,7 +20,8 @@ namespace BI.Mapping
                 .ForMember(x => x.CurrentBackground, dest => dest.MapFrom(d => d.CurrentBackground))
                 .ForMember(x => x.LanguageId, dest => dest.MapFrom(d => d.LanguageId))
                 .ForMember(x => x.ThemeId, dest => dest.MapFrom(d => d.ThemeId))
-                .ForMember(x => x.FontSizeId, dest => dest.MapFrom(d => d.FontSizeId));
+                .ForMember(x => x.FontSizeId, dest => dest.MapFrom(d => d.FontSizeId))
+                .ForMember(x => x.BillingPlanId , dest => dest.MapFrom(d => d.BillingPlanId));
 
             CreateMap<User, OnlineUserOnNote>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(d => d.Id))

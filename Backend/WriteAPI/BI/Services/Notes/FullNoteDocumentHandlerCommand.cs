@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
-using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
@@ -60,13 +58,20 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<DocumentNoteDTO>().SetNoEnougnMemory();
+                }
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
                 var filebyte = await request.File.GetFilesBytesAsync();
-                var file = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebyte, note.Id));
+                var file = await _mediator.Send(new SaveDocumentToNoteCommand(permissions.Author.Id, filebyte, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -93,10 +98,9 @@ namespace BI.Services.Notes
                         documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<DocumentNoteDTO>(Success: true, result);
+                    return new OperationResult<DocumentNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -106,8 +110,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new OperationResult<DocumentNoteDTO>(Success: false, null);
+            return new OperationResult<DocumentNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveDocumentCommand request, CancellationToken cancellationToken)
@@ -140,12 +143,11 @@ namespace BI.Services.Notes
                     await transaction.CommitAsync();
 
                     await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.AppFile));
-
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -154,7 +156,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

@@ -58,13 +58,20 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Video.Length, permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<VideoNoteDTO>().SetNoEnougnMemory();
+                }
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 // FILES LOGIC
                 var filebyte = await request.Video.GetFilesBytesAsync();
-                var file = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebyte, note.Id));
+                var file = await _mediator.Send(new SaveVideoToNoteCommand(permissions.Author.Id, filebyte, note.Id));
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -91,10 +98,9 @@ namespace BI.Services.Notes
                         file.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt, videoNote.AppFile.UserId);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<VideoNoteDTO>(Success: true, result);
+                    return new OperationResult<VideoNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -104,8 +110,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new OperationResult<VideoNoteDTO>(Success: false, null);
+            return new OperationResult<VideoNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveVideoCommand request, CancellationToken cancellationToken)
@@ -140,10 +145,9 @@ namespace BI.Services.Notes
                     await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.AppFile));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -152,7 +156,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
     }
 }

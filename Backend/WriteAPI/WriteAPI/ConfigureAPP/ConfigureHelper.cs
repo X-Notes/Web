@@ -100,7 +100,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<NewUserCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateMainUserInfoCommand, Unit>, UserHandlerСommand>();
-            services.AddScoped<IRequestHandler<UpdatePhotoCommand, AnswerChangeUserPhoto>, UserHandlerСommand>();
+            services.AddScoped<IRequestHandler<UpdatePhotoCommand, OperationResult<AnswerChangeUserPhoto>>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateLanguageCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateThemeCommand, Unit>, UserHandlerСommand>();
             services.AddScoped<IRequestHandler<UpdateFontSizeCommand, Unit>, UserHandlerСommand>();
@@ -110,7 +110,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveBackgroundCommand, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<DefaultBackgroundCommand, Unit>, BackgroundHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateBackgroundCommand, Unit>, BackgroundHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewBackgroundCommand, BackgroundDTO>, BackgroundHandlerCommand>();
+            services.AddScoped<IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>, BackgroundHandlerCommand>();
 
             services.AddScoped<IRequestHandler<GetUserBackgroundsQuery, List<BackgroundDTO>>, BackgroundHandlerQuery>();
 
@@ -155,10 +155,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE
-            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, Unit>, FullNoteTextHandlerCommand>();           
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();           
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, Unit>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
@@ -244,16 +244,22 @@ namespace WriteAPI.ConfigureAPP
 
             //Files
             services.AddScoped<IRequestHandler<GetFileByPathQuery, FilesBytes>, FilesHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetUserStorageMemoryQuery, GetUserMemoryResponse>, FilesHandlerQuery>();
+
             services.AddScoped<IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveVideosToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveVideoToNoteCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>, FileHandlerCommand>();
-            services.AddScoped<IRequestHandler<SaveDocumentsToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveDocumentToNoteCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveBackgroundCommand, AppFile>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<SaveUserPhotoCommand, AppFile>, FileHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveFilesCommand, Unit>, FileHandlerCommand>();
+            services.AddScoped<IRequestHandler<CreateUserContainerCommand, Unit>, FileHandlerCommand>();
 
             // Permissions
             services.AddScoped<IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>, PermissionHandlerQuery>();
             services.AddScoped<IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>, PermissionHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetPermissionUploadFileQuery, PermissionUploadFileEnum>, PermissionHandlerQuery>();
 
             // Personalizations
             services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
@@ -273,6 +279,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<UserRepository>();
             services.AddScoped<BackgroundRepository>();
             services.AddScoped<UserProfilePhotoRepository>();
+            services.AddScoped<BillingPlanRepository>();
 
             // FILES
             services.AddScoped<FileRepository>();

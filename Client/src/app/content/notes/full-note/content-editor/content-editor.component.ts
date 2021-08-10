@@ -12,7 +12,11 @@ import {
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ApiServiceNotes } from '../../api-notes.service';
 import {
@@ -26,6 +30,7 @@ import {
   PlaylistModel,
 } from '../../models/content-model.model';
 import { FullNote } from '../../models/full-note.model';
+import { OperationResultAdditionalInfo } from '../../models/operation-result.model';
 import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
 import { RemovePhotoFromAlbum } from '../../models/remove-photo-from-album.model';
 import { UpdateTitle } from '../../state/notes-actions';
@@ -83,6 +88,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
+    private snackBarTranslateService: SnackBarTranlateHelperService
   ) {}
 
   ngOnDestroy(): void {
@@ -285,6 +291,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === event.id);
       this.contents[index] = resp.data;
+      this.store.dispatch(LoadUsedDiskSpace);
+    }else{
+      this.handleNotEnoughMemoryForUpload(resp.message);
     }
   }
 
@@ -312,12 +321,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     return this.contents[index] as BaseText;
   }
 
-  removeAlbumHandler = async (id: string) => {
-    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-    }
-  };
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
     const resp = await this.api
@@ -341,6 +344,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       const resultPhotos = [...contentPhotos, ...newPhotos];
       const newAlbum: Album = { ...(this.contents[index] as Album), photos: resultPhotos };
       this.contents[index] = newAlbum;
+      this.store.dispatch(LoadUsedDiskSpace);
+    }else{
+      this.handleNotEnoughMemoryForUpload(resp.message);
     }
   };
 
@@ -360,15 +366,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         };
         this.contents[index] = newAlbum;
       }
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   }
-
-  removePlaylistHandler = async (id: string) => {
-    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-    }
-  };
 
   async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
     const resp = await this.api
@@ -386,6 +386,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         };
         this.contents[index] = newPlaylist;
       }
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   }
 
@@ -412,13 +413,25 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         audios: resultAudios,
       };
       this.contents[index] = newPlaylist;
+      this.store.dispatch(LoadUsedDiskSpace);
+    }else{
+      this.handleNotEnoughMemoryForUpload(resp.message);
     }
   };
+
+  handleNotEnoughMemoryForUpload(info: OperationResultAdditionalInfo){
+    if(info === OperationResultAdditionalInfo.NotEnoughMemory){
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      const message = this.snackBarTranslateService.getNoEnoughMemoryTranslate(lname); 
+      this.store.dispatch(new ShowSnackNotification(message));
+    }
+  }
 
   removeVideoHandler = async (id: string) => {
     const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 
@@ -426,6 +439,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     const resp = await this.api.removeFileFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
+  };
+
+  removeAlbumHandler = async (id: string) => {
+    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
+  };
+
+  removePlaylistHandler = async (id: string) => {
+    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
+    if (resp.success) {
+      this.contents = this.contents.filter((x) => x.id !== id);
+      this.store.dispatch(LoadUsedDiskSpace);
     }
   };
 

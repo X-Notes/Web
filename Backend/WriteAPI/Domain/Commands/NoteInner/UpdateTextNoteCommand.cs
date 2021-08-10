@@ -1,10 +1,11 @@
 ﻿using System;
 using Common.Attributes;
+using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
 namespace Domain.Commands.NoteInner
 {
-    public class UpdateTextNoteCommand : BaseCommandEntity, IRequest<Unit>
+    public class UpdateTextNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

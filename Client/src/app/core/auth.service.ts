@@ -8,6 +8,7 @@ import { User } from './models/user.model';
 import { LoadPersonalization, Login, Logout } from './stateUser/user-action';
 import { UserStore } from './stateUser/user-state';
 import { SetToken } from './stateApp/app-action';
+import { TypeAuthEnum } from '../about/models/type.auth.enum';
 
 @Injectable()
 export class AuthService {
@@ -24,8 +25,22 @@ export class AuthService {
 
   init = () => null;
 
-  GoogleAuth() {
-    return this.AuthLogin(new firebase.default.auth.GoogleAuthProvider());
+  authGoogle() {
+    return this.afAuth
+    .signInWithRedirect(new firebase.default.auth.GoogleAuthProvider())
+    .then((result) => {console.log('result: ', result)})
+    .catch((error) => {
+      window.alert(error);
+    });
+  }
+
+  authFacebook() {
+    return this.afAuth
+    .signInWithRedirect(new firebase.default.auth.FacebookAuthProvider())
+    .then((result) => {console.log('result: ', result)})
+    .catch((error) => {
+      window.alert(error);
+    });
   }
 
   logout = async () => {
@@ -72,13 +87,4 @@ export class AuthService {
     return temp;
   };
 
-  private AuthLogin(provider: firebase.default.auth.GoogleAuthProvider) {
-    return this.afAuth
-      .signInWithRedirect(provider)
-      .then(() => {})
-      .catch((error) => {
-        // eslint-disable-next-line no-alert
-        window.alert(error);
-      });
-  }
 }

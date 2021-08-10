@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
+using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.Users;
+using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ namespace WriteAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public UserController(IMediator _mediator, IMapper mapper)
+        public UserController(IMediator _mediator)
         {
             this._mediator = _mediator;
         }
@@ -56,7 +57,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("photo")]
-        public async Task<AnswerChangeUserPhoto> ChangeProfilePhoto(IFormFile photo)
+        public async Task<OperationResult<AnswerChangeUserPhoto>> ChangeProfilePhoto(IFormFile photo)
         {
             var email = this.GetUserEmail();
             return await _mediator.Send(new UpdatePhotoCommand(photo, email));

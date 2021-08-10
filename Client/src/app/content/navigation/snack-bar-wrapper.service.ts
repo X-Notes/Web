@@ -2,17 +2,25 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { take } from 'rxjs/operators';
+import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
+import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
-import { BaseChangeTypeSmallFolder } from '../folders/state/folders-actions';
-import { BaseChangeTypeSmallNote } from '../notes/state/notes-actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SnackBarWrapperService {
-  constructor(private snackService: SnackbarService, private store: Store) {}
+  constructor(private snackService: SnackbarService, private store: Store) {
+    this.store.select(AppStore.getSnackBarNotification)
+    .subscribe(message => {
+      if(message){
+        this.buildNotification(message, null, null);
+        this.store.dispatch(new ShowSnackNotification(null));
+      }
+    })
+  }
 
   // eslint-disable-next-line class-methods-use-this
   getNotesNaming(isMany: boolean, language: LanguagesENUM) {

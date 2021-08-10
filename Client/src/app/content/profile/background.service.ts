@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Background } from 'src/app/core/models/background.model';
+import { OperationResult } from '../notes/models/operation-result.model';
 
 @Injectable()
 export class BackgroundService {
@@ -12,7 +13,7 @@ export class BackgroundService {
   }
 
   newBackground(photo: FormData) {
-    return this.httpClient.post<Background>(`${environment.writeAPI}/api/backgrounds/new`, photo);
+    return this.httpClient.post<OperationResult<Background>>(`${environment.writeAPI}/api/backgrounds/new`, photo);
   }
 
   setBackground(id: string) {

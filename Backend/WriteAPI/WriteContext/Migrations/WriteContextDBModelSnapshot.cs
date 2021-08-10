@@ -662,7 +662,7 @@ namespace WriteContext.Migrations
                         {
                             Id = 1,
                             MaxSize = 100000000L,
-                            Name = "Basic"
+                            Name = "Free"
                         },
                         new
                         {

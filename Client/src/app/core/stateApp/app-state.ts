@@ -14,6 +14,7 @@ import {
   ReadAllNotifications,
   ReadNotification,
   NewNotification,
+  ShowSnackNotification,
 } from './app-action';
 import { NotificationServiceAPI } from '../notification.api.service';
 import { AppNotification } from '../models/app-notification.model';
@@ -23,6 +24,7 @@ interface AppState {
   token: string;
   tokenUpdated: boolean;
   notifications: AppNotification[];
+  snackNotification: string;
 }
 
 @State<AppState>({
@@ -32,12 +34,18 @@ interface AppState {
     token: null,
     tokenUpdated: false,
     notifications: [],
+    snackNotification: null,
   },
 })
 @Injectable()
 export class AppStore {
   constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
     authService.init();
+  }
+
+  @Selector()
+  static getSnackBarNotification(state: AppState): string {
+    return state.snackNotification;
   }
 
   @Selector()
@@ -365,6 +373,13 @@ export class AppStore {
   ) {
     patchState({
       notifications: [notification, ...getState().notifications],
+    });
+  }
+
+  @Action(ShowSnackNotification)
+  async showSnackNotifications({ getState, patchState }: StateContext<AppState>, {notification}: ShowSnackNotification){
+    patchState({
+      snackNotification: notification
     });
   }
 }

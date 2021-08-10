@@ -1,13 +1,13 @@
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
-import { State, Selector, Action, StateContext } from '@ngxs/store';
+import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
+import { SetToken, ShowSnackNotification, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,
   Logout,
@@ -25,6 +25,8 @@ import {
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
+import { OperationResultAdditionalInfo } from 'src/app/content/notes/models/operation-result.model';
+import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
 
 interface UserState {
   user: ShortUser;
@@ -49,6 +51,8 @@ export class UserStore {
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
+    private snackbarTranlateHelper: SnackBarTranlateHelperService,
+    private store: Store
   ) {}
 
   @Selector()
@@ -187,13 +191,23 @@ export class UserStore {
 
   @Action(UpdateUserPhoto)
   async updateUserPhoto(
-    { patchState, getState }: StateContext<UserState>,
+    { patchState, getState, dispatch }: StateContext<UserState>,
     { photo }: UpdateUserPhoto,
   ) {
-    const newPhoto = await this.api.updateUserPhoto(photo).toPromise();
+    const result = await this.api.updateUserPhoto(photo).toPromise();
+
+    if(result.message === OperationResultAdditionalInfo.NotEnoughMemory){
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      const message = this.snackbarTranlateHelper.getNoEnoughMemoryTranslate(lname); 
+      this.store.dispatch(new ShowSnackNotification(message));
+      return;
+    }
+
+    const newPhoto = result.data;
     patchState({
       user: { ...getState().user, photoId: newPhoto.id, photoPath: newPhoto.photoPath },
     });
+    dispatch(LoadUsedDiskSpace);
   }
 
   @Action(LoadUsedDiskSpace)

@@ -1,17 +1,15 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
-using Common.DatabaseModels.Models.Files;
 using Common.DTO.Backgrounds;
+using Common.DTO.Notes.FullNoteContent;
 using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
+using Domain.Queries.Permissions;
 using MediatR;
-using Storage;
-using WriteContext.Repositories;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.Backgrounds
@@ -20,30 +18,22 @@ namespace BI.Services.Backgrounds
         IRequestHandler<DefaultBackgroundCommand, Unit>,
         IRequestHandler<RemoveBackgroundCommand, Unit>,
         IRequestHandler<UpdateBackgroundCommand, Unit>,
-        IRequestHandler<NewBackgroundCommand, BackgroundDTO>
+        IRequestHandler<NewBackgroundCommand, OperationResult<BackgroundDTO>>
     {
         private readonly IMapper mapper;
         private readonly UserRepository userRepository;
         private readonly BackgroundRepository backgroundRepository;
-        private readonly IFilesStorage filesStorage;
-        private readonly IImageProcessor imageProcessor;
         private readonly IMediator _mediator;
-        private readonly FileRepository fileRepository;
+
         public BackgroundHandlerCommand(BackgroundRepository backgroundRepository,
                                         UserRepository userRepository,
                                         IMapper mapper,
-                                        IFilesStorage filesStorage,
-                                        IImageProcessor imageProcessor,
-                                        IMediator _mediator,
-                                        FileRepository fileRepository)
+                                        IMediator _mediator)
         {
             this.backgroundRepository = backgroundRepository;
             this.userRepository = userRepository;
             this.mapper = mapper;
-            this.filesStorage = filesStorage;
-            this.imageProcessor = imageProcessor;
             this._mediator = _mediator;
-            this.fileRepository = fileRepository;
         }
 
         public async Task<Unit> Handle(DefaultBackgroundCommand request, CancellationToken cancellationToken)
@@ -74,46 +64,19 @@ namespace BI.Services.Backgrounds
             return Unit.Value;
         }
 
-        public async Task<BackgroundDTO> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<BackgroundDTO>> Handle(NewBackgroundCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
 
-            var photoType = FileHelper.GetExtension(request.File.FileName);
-
-            var ms = new MemoryStream();
-            await request.File.CopyToAsync(ms);
-            ms.Position = 0;
-
-            var bigType = CopyType.Big;
-            var mediumType = CopyType.Medium;
-            var thumbs = await imageProcessor.ProcessCopies(ms, bigType, mediumType);
-
-            AppFile appFile;
-
-            if(thumbs.ContainsKey(bigType))
+            var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.File.Length, user.Id));
+            if(uploadPermission == PermissionUploadFileEnum.NoCanUpload)
             {
-                var bigFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[bigType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(null, mediumFile, bigFile, request.File.ContentType, 
-                    thumbs[bigType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
-            }
-            else if (thumbs.ContainsKey(mediumType))
-            {
-                var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-                var mediumFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[mediumType].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(null, mediumFile, defaultFile, request.File.ContentType, 
-                    thumbs[CopyType.Default].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
-            }
-            else
-            {
-                var defaultFile = await filesStorage.SaveFile(user.Id.ToString(), thumbs[CopyType.Default].Bytes, request.File.ContentType, ContentTypesFile.Images, photoType);
-
-                appFile = new AppFile(defaultFile, null, null, request.File.ContentType, 
-                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, user.Id, request.File.FileName);
+                return new OperationResult<BackgroundDTO>().SetNoEnougnMemory();
             }
 
+
+            var filebytes = await request.File.GetFilesBytesAsync();
+            var appFile = await _mediator.Send(new SaveBackgroundCommand(user.Id, filebytes));
 
             var item = new Common.DatabaseModels.Models.Users.Backgrounds()
             {
@@ -130,7 +93,8 @@ namespace BI.Services.Backgrounds
             }
 
             await Handle(new UpdateBackgroundCommand(request.Email, item.Id), CancellationToken.None);
-            return mapper.Map<BackgroundDTO>(item);
+            var ent = mapper.Map<BackgroundDTO>(item);
+            return new OperationResult<BackgroundDTO>(success: true, ent);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Core;
 using BI.Helpers;
 using Common.DatabaseModels.Models.Files;
 using ContentProcessing;
@@ -17,11 +18,14 @@ namespace BI.Services.Files
 {
     public class FileHandlerCommand :
         IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>,
-        IRequestHandler<SaveDocumentsToNoteCommand, AppFile>,
-        IRequestHandler<SaveVideosToNoteCommand, AppFile>,
-        IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
         IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>,
-        IRequestHandler<RemoveFilesCommand, Unit>
+        IRequestHandler<SaveDocumentToNoteCommand, AppFile>,
+        IRequestHandler<SaveVideoToNoteCommand, AppFile>,
+        IRequestHandler<SaveBackgroundCommand, AppFile>,
+        IRequestHandler<SaveUserPhotoCommand, AppFile>,
+        IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
+        IRequestHandler<RemoveFilesCommand, Unit>,
+        IRequestHandler<CreateUserContainerCommand, Unit>
     {
         private readonly IFilesStorage filesStorage;
 
@@ -56,7 +60,7 @@ namespace BI.Services.Files
         }
 
 
-        public async Task<AppFile> ProcessPhoto(Guid userId, byte[] bytes, string contentType, string fileName)
+        public async Task<AppFile> ProcessNotePhotos(Guid userId, byte[] bytes, string contentType, string fileName)
         {
             var photoType = FileHelper.GetExtension(fileName);
 
@@ -75,7 +79,7 @@ namespace BI.Services.Files
                 var mediumFile = await filesStorage.SaveFile(userId.ToString(), thumbs[mediumType].Bytes, contentType, ContentTypesFile.Images, photoType);
                 var minFile = await filesStorage.SaveFile(userId.ToString(), thumbs[minType].Bytes, contentType, ContentTypesFile.Images, photoType);
 
-                return new AppFile(minFile, mediumFile, bigFile, contentType,
+                return new AppFile(minFile.FilePath, mediumFile.FilePath, bigFile.FilePath, contentType,
                     thumbs[bigType].Bytes.Length + thumbs[minType].Bytes.Length + thumbs[mediumType].Bytes.Length,
                     FileTypeEnum.Photo, userId, fileName);
             }
@@ -85,7 +89,7 @@ namespace BI.Services.Files
                 var mediumFile = await filesStorage.SaveFile(userId.ToString(), thumbs[mediumType].Bytes, contentType, ContentTypesFile.Images, photoType);
                 var minFile = await filesStorage.SaveFile(userId.ToString(), thumbs[minType].Bytes, contentType, ContentTypesFile.Images, photoType);
 
-                return new AppFile(minFile, mediumFile, defaultFile, contentType,
+                return new AppFile(minFile.FilePath, mediumFile.FilePath, defaultFile.FilePath, contentType,
                     thumbs[CopyType.Default].Bytes.Length + thumbs[minType].Bytes.Length + thumbs[mediumType].Bytes.Length,
                     FileTypeEnum.Photo, userId, fileName);
             }
@@ -94,14 +98,14 @@ namespace BI.Services.Files
                 var defaultFile = await filesStorage.SaveFile(userId.ToString(), thumbs[CopyType.Default].Bytes, contentType, ContentTypesFile.Images, photoType);
                 var minFile = await filesStorage.SaveFile(userId.ToString(), thumbs[minType].Bytes, contentType, ContentTypesFile.Images, photoType);
 
-                return new AppFile(minFile, defaultFile, null, contentType,
+                return new AppFile(minFile.FilePath, defaultFile.FilePath, null, contentType,
                     thumbs[CopyType.Default].Bytes.Length + thumbs[minType].Bytes.Length,
                     FileTypeEnum.Photo, userId, fileName);
             }
             else
             {
                 var defaultFile = await filesStorage.SaveFile(userId.ToString(), thumbs[CopyType.Default].Bytes, contentType, ContentTypesFile.Images, photoType);
-                return new AppFile(defaultFile, null, null, contentType,
+                return new AppFile(defaultFile.FilePath, null, null, contentType,
                     thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, userId, fileName);
             }
         }
@@ -111,7 +115,7 @@ namespace BI.Services.Files
             var fileList = new List<SavePhotosToNoteResponse>();
             foreach (var photoFile in request.FilesBytes)
             {
-                var fileDB = await ProcessPhoto(request.UserId, photoFile.Bytes, photoFile.ContentType, photoFile.FileName);
+                var fileDB = await ProcessNotePhotos(request.UserId, photoFile.Bytes, photoFile.ContentType, photoFile.FileName);
                 fileList.Add(new SavePhotosToNoteResponse(fileDB, photoFile));
             }
             return fileList;
@@ -160,18 +164,18 @@ namespace BI.Services.Files
             await filesStorage.RemoveFiles(userId, files.SelectMany(x => x.GetNotNullPathes()).ToArray());
         }
 
-        public async Task<AppFile> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<AppFile> Handle(SaveDocumentToNoteCommand request, CancellationToken cancellationToken)
         {
             var file = request.FileBytes;
-            var pathToCreatedFile = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Files, FileHelper.GetExtension(file.FileName));
-            return new AppFile(pathToCreatedFile, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName);
+            var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Files, FileHelper.GetExtension(file.FileName));
+            return new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName);
         }
 
-        public async Task<AppFile> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<AppFile> Handle(SaveVideoToNoteCommand request, CancellationToken cancellationToken)
         {
             var file = request.FileBytes;
-            var pathToCreatedFile = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtension(file.FileName));
-            return new AppFile(pathToCreatedFile, file.ContentType, file.Bytes.Length, FileTypeEnum.Video, request.UserId, file.FileName);
+            var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtension(file.FileName));
+            return new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Video, request.UserId, file.FileName);
         }
 
         public async Task<List<AppFile>> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)
@@ -179,8 +183,8 @@ namespace BI.Services.Files
             var files = new List<AppFile>();
             foreach (var audio in request.FileBytes)
             {
-                var pathToCreatedFile = await filesStorage.SaveFile(request.UserId.ToString(), audio.Bytes, audio.ContentType, ContentTypesFile.Audios, FileHelper.GetExtension(audio.FileName));
-                files.Add(new AppFile(pathToCreatedFile, audio.ContentType, audio.Bytes.Length,
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), audio.Bytes, audio.ContentType, ContentTypesFile.Audios, FileHelper.GetExtension(audio.FileName));
+                files.Add(new AppFile(blob.FilePath, audio.ContentType, audio.Bytes.Length,
                     FileTypeEnum.Audio, request.UserId, audio.FileName));
             }
             return files;
@@ -216,6 +220,84 @@ namespace BI.Services.Files
                 var pathToCreatedFile = await filesStorage.CopyBlobAsync(request.UserFromId.ToString(), request.AppFile.PathNonPhotoContent, request.UserToId.ToString(), request.ContentTypesFile, FileHelper.GetExtension(request.AppFile.Name));
                 return new AppFile(pathToCreatedFile, request.AppFile, request.UserToId);
             }
+        }
+
+        public async Task<AppFile> Handle(SaveBackgroundCommand request, CancellationToken cancellationToken)
+        {
+            var photoType = FileHelper.GetExtension(request.FileBytes.FileName);
+
+            using var ms = new MemoryStream(request.FileBytes.Bytes);
+            ms.Position = 0;
+
+            var bigType = CopyType.Big;
+            var mediumType = CopyType.Medium;
+            var thumbs = await imageProcessor.ProcessCopies(ms, bigType, mediumType);
+
+            if (thumbs.ContainsKey(bigType))
+            {
+                var bigFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[bigType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+                var mediumFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[mediumType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+
+                return new AppFile(null, mediumFile.FilePath, bigFile.FilePath, request.FileBytes.ContentType,
+                    thumbs[bigType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+            else if (thumbs.ContainsKey(mediumType))
+            {
+                var defaultFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[CopyType.Default].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+                var mediumFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[mediumType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+
+                return new AppFile(null, mediumFile.FilePath, defaultFile.FilePath, request.FileBytes.ContentType,
+                    thumbs[CopyType.Default].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+            else
+            {
+                var defaultFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[CopyType.Default].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+
+                return new AppFile(defaultFile.FilePath, null, null, request.FileBytes.ContentType,
+                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+        }
+
+        public async Task<AppFile> Handle(SaveUserPhotoCommand request, CancellationToken cancellationToken)
+        {
+            var photoType = FileHelper.GetExtension(request.FileBytes.FileName);
+
+            using var ms = new MemoryStream(request.FileBytes.Bytes);
+            ms.Position = 0;
+
+            var superMinType = CopyType.SuperMin;
+            var mediumType = CopyType.Medium;
+
+            var thumbs = await imageProcessor.ProcessCopies(ms, superMinType, mediumType);
+
+            if (thumbs.ContainsKey(mediumType))
+            {
+                var minFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[superMinType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+                var mediumFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[mediumType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+
+                return new AppFile(minFile.FilePath, mediumFile.FilePath, null, request.FileBytes.ContentType,
+                    thumbs[superMinType].Bytes.Length + thumbs[mediumType].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+            else if (thumbs.ContainsKey(superMinType))
+            {
+                var minFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[superMinType].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+                var defaultFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[CopyType.Default].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+
+                return new AppFile(minFile.FilePath, defaultFile.FilePath, null, request.FileBytes.ContentType,
+                    thumbs[superMinType].Bytes.Length + thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+            else
+            {
+                var minFile = await filesStorage.SaveFile(request.UserId.ToString(), thumbs[CopyType.Default].Bytes, request.FileBytes.ContentType, ContentTypesFile.Images, photoType);
+                return new AppFile(minFile.FilePath, null, null, request.FileBytes.ContentType,
+                    thumbs[CopyType.Default].Bytes.Length, FileTypeEnum.Photo, request.UserId, request.FileBytes.FileName);
+            }
+        }
+
+        public async Task<Unit> Handle(CreateUserContainerCommand request, CancellationToken cancellationToken)
+        {
+            await filesStorage.CreateUserContainer(request.UserId);
+            return Unit.Value;
         }
     }
 }

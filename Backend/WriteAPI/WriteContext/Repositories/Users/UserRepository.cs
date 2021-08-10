@@ -18,6 +18,12 @@ namespace WriteContext.Repositories.Users
         {
         }
 
+        public async Task<User> GetUserByIdIncludeBilling(Guid id)
+        {
+            return await context.Users
+                .Include(x => x.BillingPlan)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
 
         public async Task<User> GetUserByEmailIncludeBackgroundAndPhoto(string email)
         {

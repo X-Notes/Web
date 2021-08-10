@@ -6,6 +6,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
@@ -15,7 +16,6 @@ import {
   AudioModel,
   BaseText,
   ContentModel,
-  ContentTypeENUM,
   DocumentModel,
   HeadingTypeENUM,
   NoteTextTypeENUM,
@@ -25,7 +25,6 @@ import {
 import { OperationResult } from './models/operation-result.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
-import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
 
 @Injectable()
 export class ApiServiceNotes {
@@ -204,7 +203,10 @@ export class ApiServiceNotes {
       title,
       id,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/title`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/title`,
+      obj,
+    );
   }
 
   newLine(noteId: string) {
@@ -264,7 +266,10 @@ export class ApiServiceNotes {
       isBold,
       isItalic,
     };
-    return this.httpClient.patch(`${environment.writeAPI}/api/fullnote/text`, obj);
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/fullnote/text`,
+      obj,
+    );
   }
 
   concatWithPrevious(noteId: string, contentId: string) {

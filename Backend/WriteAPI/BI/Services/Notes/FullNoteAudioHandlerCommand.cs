@@ -61,6 +61,14 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Audios.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<AudiosPlaylistNoteDTO>().SetNoEnougnMemory();
+                }
+
+
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 var contentForRemove = contents.First(x => x.Id == request.ContentId);
@@ -92,10 +100,9 @@ namespace BI.Services.Notes
                     var result = new AudiosPlaylistNoteDTO(audioNote.Id, audioNote.UpdatedAt, audioNote.Name, resultAudios);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<AudiosPlaylistNoteDTO>(Success: true, result);
+                    return new OperationResult<AudiosPlaylistNoteDTO>(success: true, result);
                 }
                 catch (Exception e)
                 {
@@ -105,8 +112,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            // TODO MAKE LOGIC FOR HANDLE UNATHORIZE UPDATING
-            return new OperationResult<AudiosPlaylistNoteDTO>(Success: false, null);
+            return new OperationResult<AudiosPlaylistNoteDTO>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemovePlaylistCommand request, CancellationToken cancellationToken)
@@ -141,10 +147,9 @@ namespace BI.Services.Notes
                     await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.Audios));
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<Unit>(Success: true, Unit.Value);
+                    return new OperationResult<Unit>(success: true, Unit.Value);
                 }
                 catch (Exception e)
                 {
@@ -153,7 +158,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(RemoveAudioCommand request, CancellationToken cancellationToken)
@@ -179,12 +184,14 @@ namespace BI.Services.Notes
                 }
 
                 await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), audioForRemove));
+
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-                return new OperationResult<Unit>(Success: true, Unit.Value);
+
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(ChangeNamePlaylistCommand request, CancellationToken cancellationToken)
@@ -202,13 +209,12 @@ namespace BI.Services.Notes
                 await baseNoteContentRepository.UpdateAsync(playlist);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                return new OperationResult<Unit>(Success: true, Unit.Value);
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
-            return new OperationResult<Unit>(Success: false, Unit.Value);
+            return new OperationResult<Unit>().SetNoPermissions();
         }
 
         public async Task<OperationResult<List<AudioNoteDTO>>> Handle(UploadAudiosToPlaylistCommand request, CancellationToken cancellationToken)
@@ -219,6 +225,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                // PERMISSION MEMORY
+                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Audios.Sum(x => x.Length), permissions.Author.Id));
+                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
+                {
+                    return new OperationResult<List<AudioNoteDTO>>().SetNoEnougnMemory();
+                }
+
                 var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
 
                 var filebytes = await request.Audios.GetFilesBytesAsync();
@@ -240,10 +253,9 @@ namespace BI.Services.Notes
                     var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    return new OperationResult<List<AudioNoteDTO>>(Success: true, audios);
+                    return new OperationResult<List<AudioNoteDTO>>(success: true, audios);
                 }
                 catch (Exception e)
                 {
@@ -253,7 +265,7 @@ namespace BI.Services.Notes
                 }
             }
 
-            return new OperationResult<List<AudioNoteDTO>>(Success: false, null);
+            return new OperationResult<List<AudioNoteDTO>>().SetNoPermissions();
         }
     }
 }
