@@ -87,6 +87,7 @@ using BI.Services.UserHandlers;
 using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.PostgreSql;
+using BI.JobsHandlers;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -122,7 +123,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetCountNotesByLabelQuery, int>, LabelHandlerQuery>();
 
             services.AddScoped<IRequestHandler<NewLabelCommand, Guid>, LabelHandlerCommand>();
-            services.AddScoped<IRequestHandler<SetDeleteLabelCommand, Unit>, LabelHandlerCommand>();
+            services.AddScoped<IRequestHandler<DeleteLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeletedLabelCommand, Unit>, LabelHandlerCommand>();
             services.AddScoped<IRequestHandler<RestoreLabelCommand, Unit>, LabelHandlerCommand>();
@@ -194,7 +195,6 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ArchiveFolderCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeColorFolderCommand, Unit>, FolderHandlerCommand>();
-            services.AddScoped<IRequestHandler<RestoreFolderCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<SetDeleteFolderCommand, Unit>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<CopyFolderCommand, List<SmallFolder>>, FolderHandlerCommand>();
             services.AddScoped<IRequestHandler<DeleteFoldersCommand, Unit>, FolderHandlerCommand>();
@@ -387,6 +387,7 @@ namespace WriteAPI.ConfigureAPP
                     };
                 });
         }
+
         public static void BI(this IServiceCollection services)
         {
             services.AddScoped<UserGenerator>();
@@ -402,7 +403,10 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryService>();
 
+
             services.AddScoped<IImageProcessor, ImageProcessor>();
+
+            services.AddScoped<EntitiesRemoveHandler>();
         }
 
         public static void FileStorage(this IServiceCollection services)

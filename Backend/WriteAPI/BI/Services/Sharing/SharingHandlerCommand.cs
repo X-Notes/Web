@@ -87,6 +87,7 @@ namespace BI.Services.Sharing
                 perm.Folder.RefTypeId = request.RefTypeId;
                 if (perm.Folder.FolderTypeId != FolderTypeENUM.Shared)
                 {
+                    perm.Folder.DeletedAt = null;
                     var foldersList = new List<Folder>() { perm.Folder };
                     await folderRepository.CastFolders(foldersList, user.Folders, perm.Folder.FolderTypeId, FolderTypeENUM.Shared);
                 }
@@ -127,6 +128,7 @@ namespace BI.Services.Sharing
                 perm.Note.RefTypeId = request.RefTypeId;
                 if (perm.Note.NoteTypeId != NoteTypeENUM.Shared)
                 {
+                    perm.Note.DeletedAt = null;
                     var notesList = new List<Note>() { perm.Note };
                     await noteRepository.CastNotes(notesList, user.Notes, perm.Note.NoteTypeId, NoteTypeENUM.Shared);
                 }

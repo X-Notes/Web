@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
 using WriteContext.GenericRepositories;
 using Common.DTO.Personalization;
+using Common.DatabaseModels.Models.Notes;
 
 namespace WriteContext.Repositories.Folders
 {
@@ -44,6 +45,13 @@ namespace WriteContext.Repositories.Folders
                 }
             }
         }
+
+        public async Task<List<Folder>> GetFoldersThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        {
+            return await entities.Where(x => x.FolderTypeId == FolderTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
+        }
+
+
         public async Task CastFolders(List<Folder> foldersForCasting, List<Folder> allUserFolders, FolderTypeENUM FromId, FolderTypeENUM ToId)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())

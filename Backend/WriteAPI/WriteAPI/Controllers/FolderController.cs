@@ -78,7 +78,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("restore")]
-        public async Task RestoreNotes([FromBody]RestoreFolderCommand command)
+        public async Task RestoreNotes([FromBody] MakePrivateFolderCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;

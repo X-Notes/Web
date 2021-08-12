@@ -13,7 +13,7 @@ namespace BI.Services.Labels
 {
     public class LabelHandlerCommand :
         IRequestHandler<NewLabelCommand, Guid>,
-        IRequestHandler<SetDeleteLabelCommand, Unit>,
+        IRequestHandler<DeleteLabelCommand, Unit>,
         IRequestHandler<UpdateLabelCommand, Unit>,
         IRequestHandler<SetDeletedLabelCommand, Unit>,
         IRequestHandler<RestoreLabelCommand, Unit>,
@@ -28,16 +28,28 @@ namespace BI.Services.Labels
         }
 
 
-        public async Task<Unit> Handle(SetDeleteLabelCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithLabels(request.Email);
             var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
             if (label != null)
             {
-                await labelRepository.SetDeleteLabel(label, user.Labels);
+                await labelRepository.DeleteLabel(label, user.Labels);
             }
             return Unit.Value;
         }
+
+        public async Task<Unit> Handle(SetDeletedLabelCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.GetUserWithLabels(request.Email);
+            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
+            if (label != null)
+            {
+                await labelRepository.SetDeletedLabel(label, user.Labels);
+            }
+            return Unit.Value;
+        }
+
 
         public async Task<Unit> Handle(UpdateLabelCommand request, CancellationToken cancellationToken)
         {
@@ -68,16 +80,6 @@ namespace BI.Services.Labels
             return label.Id;
         }
 
-        public async Task<Unit> Handle(SetDeletedLabelCommand request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserWithLabels(request.Email);
-            var label = user.Labels.Where(x => x.Id == request.Id).FirstOrDefault();
-            if (label != null)
-            {
-                await labelRepository.SetDeletedLabel(label, user.Labels);
-            }
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(RestoreLabelCommand request, CancellationToken cancellationToken)
         {

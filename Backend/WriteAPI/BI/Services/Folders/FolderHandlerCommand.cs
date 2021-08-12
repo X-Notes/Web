@@ -11,7 +11,6 @@ using Common.DTO.Folders;
 using Domain.Commands.Folders;
 using Domain.Queries.Permissions;
 using MediatR;
-using WriteContext.Repositories;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Users;
 
@@ -21,7 +20,6 @@ namespace BI.Services.Folders
         IRequestHandler<NewFolderCommand, SmallFolder>,
         IRequestHandler<ArchiveFolderCommand, Unit>,
         IRequestHandler<ChangeColorFolderCommand, Unit>,
-        IRequestHandler<RestoreFolderCommand, Unit>,
         IRequestHandler<SetDeleteFolderCommand, Unit>,
         IRequestHandler<CopyFolderCommand, List<SmallFolder>>,
         IRequestHandler<DeleteFoldersCommand, Unit>,
@@ -30,16 +28,17 @@ namespace BI.Services.Folders
         private readonly FolderRepository folderRepository;
         private readonly FoldersNotesRepository foldersNotesRepository;
         private readonly UserRepository userRepository;
-        private readonly AppRepository appRepository;
         private readonly AppCustomMapper appCustomMapper;
         private readonly IMediator _mediator;
-        public FolderHandlerCommand(FolderRepository folderRepository, UserRepository userRepository,
-            AppRepository appRepository, AppCustomMapper appCustomMapper, IMediator _mediator,
+        public FolderHandlerCommand(
+            FolderRepository folderRepository,
+            UserRepository userRepository, 
+            AppCustomMapper appCustomMapper, 
+            IMediator _mediator,
             FoldersNotesRepository foldersNotesRepository)
         {
             this.folderRepository = folderRepository;
             this.userRepository = userRepository;
-            this.appRepository = appRepository;
             this.appCustomMapper = appCustomMapper;
             this._mediator = _mediator;
             this.foldersNotesRepository = foldersNotesRepository;
@@ -76,6 +75,7 @@ namespace BI.Services.Folders
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
+                folders.ForEach(folder => folder.DeletedAt = null);
                 await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Archived);
             }
             else
@@ -108,22 +108,6 @@ namespace BI.Services.Folders
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(RestoreFolderCommand request, CancellationToken cancellationToken)
-        {
-            var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
-
-            var folders = user.Folders.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var folder = folders.FirstOrDefault();
-            if (folders.Count == request.Ids.Count)
-            {
-                await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Private);
-            }
-            else
-            {
-                throw new Exception();
-            }
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(SetDeleteFolderCommand request, CancellationToken cancellationToken)
         {
@@ -133,6 +117,7 @@ namespace BI.Services.Folders
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
+                folders.ForEach(folder => folder.DeletedAt = DateTimeOffset.UtcNow);
                 await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Deleted);
             }
             else
@@ -212,6 +197,7 @@ namespace BI.Services.Folders
             return Unit.Value;
         }
 
+
         public async Task<Unit> Handle(MakePrivateFolderCommand request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetUserWithFoldersIncludeFolderType(request.Email);
@@ -219,6 +205,7 @@ namespace BI.Services.Folders
             var folder = folders.FirstOrDefault();
             if (folders.Count == request.Ids.Count)
             {
+                folders.ForEach(folder => folder.DeletedAt = null);
                 await folderRepository.CastFolders(folders, user.Folders, folder.FolderTypeId, FolderTypeENUM.Private);
             }
             else
