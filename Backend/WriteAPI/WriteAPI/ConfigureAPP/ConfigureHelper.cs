@@ -406,7 +406,8 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IImageProcessor, ImageProcessor>();
 
-            services.AddScoped<EntitiesRemoveHandler>();
+            services.AddSingleton<ConfigForEntitesDeliting>();
+            services.AddScoped<EntitiesDeleteHandler>();
         }
 
         public static void FileStorage(this IServiceCollection services)
