@@ -69,10 +69,115 @@ interface FolderState {
 })
 @Injectable()
 export class FolderStore {
-  constructor(private api: ApiFoldersService, private orderService: OrderService) {}
+  constructor(private api: ApiFoldersService, private orderService: OrderService) { }
 
   static getFoldersByTypeStatic(state: FolderState, type: FolderTypeENUM) {
     return state.folders.find((x) => x.typeFolders === type);
+  }
+
+  @Selector()
+  static getUsersOnPrivateFolder(state: FolderState): InvitedUsersToNoteOrFolder[] {
+    return state.InvitedUsersToNote;
+  }
+
+  @Selector()
+  static full(state: FolderState) {
+    return state.fullFolderState.folder;
+  }
+
+  @Selector()
+  static canView(state: FolderState): boolean {
+    return state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static canNoView(state: FolderState): boolean {
+    return !state.fullFolderState?.canView;
+  }
+
+  @Selector()
+  static isOwner(state: FolderState): boolean {
+    return state.fullFolderState?.isOwner;
+  }
+
+  @Selector()
+  static selectedCount(state: FolderState): number {
+    return state.selectedIds.length;
+  }
+
+  @Selector()
+  static activeMenu(state: FolderState): boolean {
+    return state.selectedIds?.length > 0;
+  }
+
+  // Get folders
+  @Selector()
+  static privateFolders(state: FolderState): SmallFolder[] {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Private).folders;
+  }
+
+  @Selector()
+  static sharedFolders(state: FolderState): SmallFolder[] {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Shared).folders;
+  }
+
+  @Selector()
+  static deletedFolders(state: FolderState): SmallFolder[] {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Deleted).folders;
+  }
+
+  @Selector()
+  static archiveFolders(state: FolderState): SmallFolder[] {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Archive).folders;
+  }
+
+  @Selector()
+  static privateCount(state: FolderState): number {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Private).count;
+  }
+
+  @Selector()
+  static archiveCount(state: FolderState): number {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Archive).count;
+  }
+
+  @Selector()
+  static deletedCount(state: FolderState): number {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Deleted).count;
+  }
+
+  @Selector()
+  static sharedCount(state: FolderState): number {
+    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Shared).count;
+  }
+
+  @Selector()
+  static getFolders(state: FolderState): Folders[] {
+    return state.folders;
+  }
+
+  // Get selected Ids
+
+  @Selector()
+  static selectedIds(state: FolderState): string[] {
+    return state.selectedIds;
+  }
+
+  // Murri Get REMOVE
+  @Selector()
+  static removeFromMurriEvent(state: FolderState): string[] {
+    return state.removeFromMurriEvent;
+  }
+
+  // COLOR
+  @Selector()
+  static updateColorEvent(state: FolderState): UpdateColor[] {
+    return state.updateColorEvent;
+  }
+
+  @Selector()
+  static foldersAddToDOM(state: FolderState): SmallFolder[] {
+    return state.foldersAddToDOM;
   }
 
   @Action(ClearColorFolders)
@@ -269,111 +374,6 @@ export class FolderStore {
     const ids = folders.map((z) => z.id);
 
     patchState({ selectedIds: [...ids] });
-  }
-
-  @Selector()
-  static getUsersOnPrivateFolder(state: FolderState): InvitedUsersToNoteOrFolder[] {
-    return state.InvitedUsersToNote;
-  }
-
-  @Selector()
-  static full(state: FolderState) {
-    return state.fullFolderState.folder;
-  }
-
-  @Selector()
-  static canView(state: FolderState): boolean {
-    return state.fullFolderState?.canView;
-  }
-
-  @Selector()
-  static canNoView(state: FolderState): boolean {
-    return !state.fullFolderState?.canView;
-  }
-
-  @Selector()
-  static isOwner(state: FolderState): boolean {
-    return state.fullFolderState?.isOwner;
-  }
-
-  @Selector()
-  static selectedCount(state: FolderState): number {
-    return state.selectedIds.length;
-  }
-
-  @Selector()
-  static activeMenu(state: FolderState): boolean {
-    return state.selectedIds?.length > 0;
-  }
-
-  // Get folders
-  @Selector()
-  static privateFolders(state: FolderState): SmallFolder[] {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Private).folders;
-  }
-
-  @Selector()
-  static sharedFolders(state: FolderState): SmallFolder[] {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Shared).folders;
-  }
-
-  @Selector()
-  static deletedFolders(state: FolderState): SmallFolder[] {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Deleted).folders;
-  }
-
-  @Selector()
-  static archiveFolders(state: FolderState): SmallFolder[] {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Archive).folders;
-  }
-
-  @Selector()
-  static privateCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Private).count;
-  }
-
-  @Selector()
-  static archiveCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Archive).count;
-  }
-
-  @Selector()
-  static deletedCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Deleted).count;
-  }
-
-  @Selector()
-  static sharedCount(state: FolderState): number {
-    return this.getFoldersByTypeStatic(state, FolderTypeENUM.Shared).count;
-  }
-
-  @Selector()
-  static getFolders(state: FolderState): Folders[] {
-    return state.folders;
-  }
-
-  // Get selected Ids
-
-  @Selector()
-  static selectedIds(state: FolderState): string[] {
-    return state.selectedIds;
-  }
-
-  // Murri Get REMOVE
-  @Selector()
-  static removeFromMurriEvent(state: FolderState): string[] {
-    return state.removeFromMurriEvent;
-  }
-
-  // COLOR
-  @Selector()
-  static updateColorEvent(state: FolderState): UpdateColor[] {
-    return state.updateColorEvent;
-  }
-
-  @Selector()
-  static foldersAddToDOM(state: FolderState): SmallFolder[] {
-    return state.foldersAddToDOM;
   }
 
   // LOAD CONTENT

@@ -3,6 +3,7 @@ using BI.Mapping;
 using BI.SignalR;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -59,7 +60,10 @@ namespace WriteAPI
             services.AddSingleton<IUserIdProvider, IdProvider>();
 
             services.Mediatr();
+
+            services.HangFireConfig(Configuration);
             services.DataBase(Configuration);
+
             services.BI();
             services.FileStorage();
 
@@ -67,6 +71,7 @@ namespace WriteAPI
 
             services.AddHostedService<HistoryHosted>();
             services.AddHostedService<MLHosted>();
+            services.AddHostedService<JobRegisterHosted>();
 
             services.AddHttpClient();
 
@@ -111,6 +116,7 @@ namespace WriteAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
                 endpoints.MapHub<AppSignalRHub>("/hub");
             });
         }

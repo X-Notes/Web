@@ -22,6 +22,7 @@ import { FullNote } from '../../notes/models/full-note.model';
 import { DeleteAllFromBin } from '../../labels/state/labels-actions';
 import { FolderStore } from '../../folders/state/folders-state';
 import { FullFolder } from '../../folders/models/full-folder.model';
+import { LabelStore } from '../../labels/state/labels-state';
 
 @Component({
   selector: 'app-header',
@@ -52,6 +53,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
+
+  @Select(LabelStore.countDeleted)
+  countDeleted$: Observable<number>;
 
   destroy = new Subject<void>();
 

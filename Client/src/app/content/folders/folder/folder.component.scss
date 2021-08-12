@@ -104,6 +104,15 @@
         }
       }
     }
+
+    .bottom-section{
+      margin-bottom: 0.75rem;
+      .date {
+        display: flex;
+        color: #a1a1a1;
+        font-size: 0.875rem;
+      }
+    }
   }
 }
 

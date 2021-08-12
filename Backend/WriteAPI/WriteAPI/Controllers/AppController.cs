@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.App;
 using WriteContext.Repositories;
+using BI.JobsHandlers;
 
 namespace WriteAPI.Controllers
 {
@@ -14,11 +15,22 @@ namespace WriteAPI.Controllers
     public class AppController : ControllerBase
     {
         private readonly AppRepository appRepository;
+
         private readonly IMapper mapper;
-        public AppController(AppRepository appRepository, IMapper mapper)
+
+        private readonly ConfigForEntitesDeliting configForEntitesDeliting;
+
+        public AppController(AppRepository appRepository, IMapper mapper, ConfigForEntitesDeliting configForEntitesDeliting)
         {
             this.appRepository = appRepository;
             this.mapper = mapper;
+            this.configForEntitesDeliting = configForEntitesDeliting;
+        }
+
+        [HttpGet("config/n/delete")]
+        public ConfigForEntitesDeliting GetConfigForDelete()
+        {
+            return configForEntitesDeliting;
         }
 
         [HttpGet("languages")]

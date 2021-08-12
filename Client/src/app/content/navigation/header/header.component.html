@@ -78,13 +78,15 @@
     <!-- LABEL DEFAULT END -->
 
     <!-- LABEL DELETE START -->
-    <app-general-header-button
-      (click)="deleteAllFromBin()"
-      *ngSwitchCase="'label-delete'"
-      [message]="('header.emptyTrash' | translate)"
-      [iconClass]="'delete'"
-      [styleClasses]="'generic-2 generic-unfixed'"
-    ></app-general-header-button>
+    <ng-container *ngSwitchCase="'label-delete'">
+      <app-general-header-button
+        *ngIf="(countDeleted$ | async) > 0"
+        (click)="deleteAllFromBin()"
+        [message]="('header.emptyTrash' | translate)"
+        [iconClass]="'delete'"
+        [styleClasses]="'generic-2 generic-unfixed'"
+      ></app-general-header-button>
+    </ng-container>
     <!-- LABEL DELETE END -->
 
     <!-- INNER NOTE START -->

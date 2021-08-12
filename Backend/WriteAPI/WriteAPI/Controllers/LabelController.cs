@@ -60,7 +60,7 @@ namespace WriteAPI.Controllers
         public async Task DeletePerm(Guid id)
         {
             var email = this.GetUserEmail();
-            await _mediator.Send(new SetDeleteLabelCommand(email, id));
+            await _mediator.Send(new DeleteLabelCommand(email, id));
         }
 
         [HttpDelete("{id}")]

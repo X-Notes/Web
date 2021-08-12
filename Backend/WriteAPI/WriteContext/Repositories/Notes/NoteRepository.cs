@@ -45,6 +45,10 @@ namespace WriteContext.Repositories.Notes
             }
         }
 
+        public async Task<List<Note>> GetNotesThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        {
+            return await entities.Where(x => x.NoteTypeId == NoteTypeENUM.Deleted && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
+        }
 
         public async Task<Note> GetForCheckPermission(Guid id)
         {

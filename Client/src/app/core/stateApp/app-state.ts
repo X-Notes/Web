@@ -280,7 +280,10 @@ export class AppStore {
         return NoteTypeENUM.Shared;
       }
       default: {
-        throw new Error('Incorrect type');
+        if(state.routing){
+          console.log(state.routing);
+          throw new Error('Incorrect type');
+        }
       }
     }
   }
@@ -301,7 +304,9 @@ export class AppStore {
         return FolderTypeENUM.Archive;
       }
       default: {
-        throw new Error('Incorrect type');
+        if(state.routing){
+          throw new Error('Incorrect type');
+        }
       }
     }
   }

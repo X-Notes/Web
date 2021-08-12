@@ -89,12 +89,11 @@ namespace BI.Services.Notes
             {
                 var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 content.Content = request.Content;
-                if (request.Checked.HasValue)
-                {
-                    content.Checked = request.Checked.Value;
-                    content.IsBold = request.IsBold ?? content.IsBold;
-                    content.IsItalic = request.IsItalic ?? content.IsItalic;
-                }
+
+                content.Checked = request.Checked.HasValue ? request.Checked.Value : null;
+                content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : false;
+                content.IsItalic = request.IsItalic.HasValue ? request.IsBold.Value : false;
+
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.UpdateAsync(content);
 

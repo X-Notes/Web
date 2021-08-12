@@ -14,6 +14,8 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { UpdatePersonalization } from 'src/app/core/stateUser/user-action';
+import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
+import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 
 @Component({
   selector: 'app-interaction-items',
@@ -73,6 +75,18 @@ export class InteractionItemsComponent implements OnInit, OnDestroy {
           this.countSelected = x;
         }
       });
+  }
+
+  get isAnyItemOnPage(){
+    if(this.store.selectSnapshot(AppStore.isNote)){
+      const noteType = this.store.selectSnapshot(AppStore.getTypeNote);
+      return this.store.selectSnapshot(NoteStore.getNotes).find(x => x.typeNotes === noteType)?.count > 0;
+    }
+    if(this.store.selectSnapshot(AppStore.isFolder)){
+      const folderType = this.store.selectSnapshot(AppStore.getTypeFolder);
+      return this.store.selectSnapshot(FolderStore.getFolders).find(x => x.typeFolders === folderType)?.count > 0;
+    }
+    return false;
   }
 
   // Selection

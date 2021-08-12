@@ -128,12 +128,11 @@ namespace BI.Services.Notes
         {
             var user = await userRepository.GetUserWithNotesIncludeNoteType(request.Email);
             var notes = user.Notes.Where(x => request.Ids.Any(z => z == x.Id)).ToList();
-            var note = notes.FirstOrDefault();
+
             if (notes.Count == request.Ids.Count)
             {
-                notes.ForEach(note => note.DeletedAt = null);
-                user.Notes.ForEach(x => x.DeletedAt = DateTimeOffset.Now);
-                await noteRepository.CastNotes(notes, user.Notes, note.NoteTypeId, NoteTypeENUM.Deleted);
+                notes.ForEach(note => note.DeletedAt = DateTimeOffset.Now);
+                await noteRepository.CastNotes(notes, user.Notes, notes.FirstOrDefault().NoteTypeId, NoteTypeENUM.Deleted);
             }
             else
             {

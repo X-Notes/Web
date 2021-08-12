@@ -17,7 +17,7 @@ namespace WriteContext.Repositories.Labels
 
         }
 
-        public async Task SetDeleteLabel(Label label, List<Label> labels)
+        public async Task DeleteLabel(Label label, List<Label> labels)
         {
             using (var transaction = await context.Database.BeginTransactionAsync())
             {
@@ -43,6 +43,10 @@ namespace WriteContext.Repositories.Labels
 
         }
 
+        public async Task<List<Label>> GetLabelsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        {
+            return await entities.Where(x => x.IsDeleted == true && x.DeletedAt.HasValue && x.DeletedAt.Value < earliestTimestamp).ToListAsync();
+        }
 
         public async Task<List<Label>> GetAllByUserID(Guid id)
         {
@@ -137,7 +141,8 @@ namespace WriteContext.Repositories.Labels
                     allLabels.ForEach(x => x.Order = x.Order + 1);
                     label.Order = 1;
                     label.IsDeleted = false;
-                    label.UpdatedAt = DateTimeOffset.Now;
+                    label.UpdatedAt = DateTimeOffset.Now; // TODO MOVE TO CLASS
+                    label.DeletedAt = null;
                     allLabels.Add(label);
                     await UpdateRangeAsync(allLabels);
 

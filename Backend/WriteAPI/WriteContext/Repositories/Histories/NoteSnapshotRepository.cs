@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.History;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.Notes;
 
 namespace WriteContext.Repositories.Histories
 {
@@ -31,6 +32,11 @@ namespace WriteContext.Repositories.Histories
         {
             return await entities.FirstOrDefaultAsync(x => x.Id == snapshotId);
         }
+
+        public async Task<List<NoteSnapshot>> GetSnapshotsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
+        {
+            return await entities.Where(x => x.SnapshotTime < earliestTimestamp).ToListAsync();
+        } // TODO CASE ERROR
 
     }
 }
