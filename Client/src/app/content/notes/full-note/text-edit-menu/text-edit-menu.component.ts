@@ -57,14 +57,16 @@ export class TextEditMenuComponent {
   async editContentStyle(e, type: NoteStyleTypeENUM) {
     const item = this.menuSelectionService.currentItem;
     if (type === this.styleType.Bold) {
-      console.log(item);
+      console.log(item, !item.isBold);
       this.updateText.emit({
         contentId: item.id,
+        content: item.content,
         isBold: !item.isBold,
       });
     } else {
       this.updateText.emit({
         contentId: item.id,
+        content: item.content,
         isItalic: !item.isItalic,
       });
     }

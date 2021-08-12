@@ -196,7 +196,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     let indexOf;
 
     const resp = await this.api
-      .updateContentType(this.note.id, value.id, value.textType, value.headingType, value.isBold, value.isItalic)
+      .updateContentType(this.note.id, value.id, value.textType, value.headingType)
       .toPromise();
 
     if (!resp.success) {

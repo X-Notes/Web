@@ -10,6 +10,7 @@
     class="block-generic default-text-size"
     (input)="onInput($event)"
     [attr.contenteditable]="!isReadOnlyMode"
+    [ngStyle]="{'font-weight': content.isBold ? '700' : '400', 'font-style': content.isItalic ? 'italic': 'normal'}"
     [textContent]="content?.content"
   ></p>
   <div *ngIf="isActive && !isReadOnlyMode" class="no-content">
