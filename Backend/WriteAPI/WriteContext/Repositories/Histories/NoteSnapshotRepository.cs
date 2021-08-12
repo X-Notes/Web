@@ -36,7 +36,7 @@ namespace WriteContext.Repositories.Histories
         public async Task<List<NoteSnapshot>> GetSnapshotsThatNeedDeleteAfterTime(DateTimeOffset earliestTimestamp)
         {
             return await entities.Where(x => x.SnapshotTime < earliestTimestamp).ToListAsync();
-        }
+        } // TODO CASE ERROR
 
     }
 }

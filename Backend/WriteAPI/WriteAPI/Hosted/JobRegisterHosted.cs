@@ -14,7 +14,7 @@ namespace WriteAPI.Hosted
 
         public JobRegisterHosted()
         {
-            Delay = Cron.Hourly;
+            Delay = Cron.Minutely; // TODO REMOVE AFTER TESTING
         }
 
         public void DeleteNotes()
