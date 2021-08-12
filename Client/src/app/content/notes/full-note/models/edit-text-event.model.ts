@@ -1,5 +1,5 @@
 export interface EditTextEventModel {
-  content: string;
+  content?: string;
   contentId: string;
   checked?: boolean;
   isBold?: boolean;

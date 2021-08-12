@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
-import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
+import { HeadingTypeENUM, NoteStyleTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
+import { EditTextEventModel } from '../models/edit-text-event.model';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -13,7 +14,12 @@ export class TextEditMenuComponent {
   @Output()
   eventTransform = new EventEmitter<TransformContent>();
 
+  @Output()
+  updateText = new EventEmitter<EditTextEventModel>();
+
   textType = NoteTextTypeENUM;
+
+  styleType = NoteStyleTypeENUM;
 
   headingType = HeadingTypeENUM;
 
@@ -42,6 +48,24 @@ export class TextEditMenuComponent {
         textType: type,
         headingType: heading,
         setFocusToEnd: true,
+      });
+    }
+    const selection = this.apiBrowserService.getSelection();
+    selection.removeAllRanges();
+  }
+
+  async editContentStyle(e, type: NoteStyleTypeENUM) {
+    const item = this.menuSelectionService.currentItem;
+    if (type === this.styleType.Bold) {
+      console.log(item);
+      this.updateText.emit({
+        contentId: item.id,
+        isBold: !item.isBold,
+      });
+    } else {
+      this.updateText.emit({
+        contentId: item.id,
+        isItalic: !item.isItalic,
       });
     }
     const selection = this.apiBrowserService.getSelection();
