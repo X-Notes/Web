@@ -84,6 +84,9 @@ using WriteContext.Repositories.Users;
 using Common.DTO.Orders;
 using Common.DTO.Notes.AdditionalContent;
 using BI.Services.UserHandlers;
+using Hangfire;
+using Hangfire.SqlServer;
+using Hangfire.PostgreSql;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -155,7 +158,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
             // FULL NOTE
-            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();           
+            services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
@@ -265,10 +268,26 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetUserPersonalizationSettingsQuery, PersonalizationSettingDTO>, PersonalizationHandlerQuery>();
             services.AddScoped<IRequestHandler<UpdatePersonalizationSettingsCommand, Unit>, PersonalizationHandlerCommand>();
         }
+
+        public static void HangFireConfig(this IServiceCollection services, IConfiguration Configuration)
+        {
+            string connectionString = Configuration.GetSection("WriteDB").Value;
+
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(connectionString));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+        }
+
+
         public static void DataBase(this IServiceCollection services, IConfiguration Configuration)
         {
             string writeConnection = Configuration.GetSection("WriteDB").Value;
-            Console.WriteLine(writeConnection);
 
             services.AddDbContext<WriteContextDB>(options => options.UseNpgsql(writeConnection));
 
