@@ -94,7 +94,7 @@ namespace BI.Services.Notes
 
                 content.Checked = request.Checked ?? content.Checked;
                 content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
-                content.IsItalic = request.IsItalic.HasValue ? request.IsBold.Value : content.IsItalic;
+                content.IsItalic = request.IsItalic.HasValue ? request.IsItalic.Value : content.IsItalic;
 
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.UpdateAsync(content);

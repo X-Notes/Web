@@ -205,23 +205,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
     switch (value.textType) {
       case NoteTextTypeENUM.Default: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
+        indexOf = this.tranformTextTo(value.id, value.textType, value.isBold, value.isItalic);
         break;
       }
       case NoteTextTypeENUM.Checklist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
+        indexOf = this.tranformTextTo(value.id, value.textType, value.isBold, value.isItalic);
         break;
       }
       case NoteTextTypeENUM.Dotlist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
+        indexOf = this.tranformTextTo(value.id, value.textType, value.isBold, value.isItalic);
         break;
       }
       case NoteTextTypeENUM.Heading: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType, value.headingType);
+        indexOf = this.tranformTextTo(value.id, value.textType, value.isBold, value.isItalic, value.headingType);
         break;
       }
       case NoteTextTypeENUM.Numberlist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
+        indexOf = this.tranformTextTo(value.id, value.textType, value.isBold, value.isItalic);
         break;
       }
       default: {
@@ -242,14 +242,18 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     console.log(index);
   };
 
-  defaultTextFocusClick(
+  tranformTextTo(
     id: string,
     textTypeId: NoteTextTypeENUM,
+    isBold: boolean,
+    isItalic: boolean,
     headingType?: HeadingTypeENUM,
   ): number {
     const item = this.contents.find((z) => z.id === id) as BaseText;
     const indexOf = this.contents.indexOf(item);
     item.noteTextTypeId = textTypeId;
+    item.isBold = isBold;
+    item.isItalic = isItalic;
     if (headingType) {
       item.headingTypeId = headingType;
     }
@@ -298,7 +302,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    this.api
+     const prom = this.api
       .updateContentText(
         this.note.id,
         event.contentId,
@@ -310,6 +314,17 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       .toPromise();
     if (isLast) {
       this.addNewElementToEnd();
+    }
+    return await prom;
+  }
+
+  async updateTextHandlerBoldItalic(event: EditTextEventModel, isLast: boolean) { // TODO REFACTOR
+    const resp = await this.updateTextHandler(event, isLast);
+    if(resp.success){
+      const item = this.contents.find((z) => z.id === event.contentId) as BaseText;
+      // const indexOf = this.contents.indexOf(item);
+      item.isBold = event.isBold ?? item.isBold;
+      item.isItalic = event.isItalic ?? item.isItalic;
     }
   }
 

@@ -142,6 +142,6 @@
   [style.left.px]="menuSelectionService.left"
   [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'"
   (eventTransform)="transformToTypeText($event)"
-  (updateText)="updateTextHandler($event, false)"
+  (updateText)="updateTextHandlerBoldItalic($event, false)"
 >
 </app-text-edit-menu>
