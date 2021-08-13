@@ -30,11 +30,11 @@ namespace WriteAPI.Controllers
 
 
         [HttpPatch("title")]
-        public async Task ChangeColor([FromBody]UpdateTitleNoteCommand command)
+        public async Task<OperationResult<Unit>> ChangeColor([FromBody]UpdateTitleNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
 
@@ -46,10 +46,10 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("text")]
-        public async Task UpdateText(UpdateTextNoteCommand command)
+        public async Task<OperationResult<Unit>> UpdateText(UpdateTextNoteCommand command)
         {
             command.Email = this.GetUserEmail();
-            await this._mediator.Send(command);
+            return await this._mediator.Send(command);
         }
 
 
@@ -103,7 +103,7 @@ namespace WriteAPI.Controllers
                 command.Email = this.GetUserEmail();
                 return await this._mediator.Send(command);
             }
-            throw new Exception("Files can`t be empty");
+            throw new Exception("Files can`t be empty"); // TODO REMOVE
         }
 
         [HttpPost("album/remove")]
@@ -122,7 +122,7 @@ namespace WriteAPI.Controllers
                 command.Email = this.GetUserEmail();
                 return await _mediator.Send(command);
             }
-            throw new Exception("Files can`t be empty");
+            throw new Exception("Files can`t be empty"); // TODO REMOVE
         }
 
         [HttpDelete("album/photo/{noteId}/{contentId}/{photoId}")]
@@ -182,7 +182,7 @@ namespace WriteAPI.Controllers
                 command.Email = this.GetUserEmail();
                 return await _mediator.Send(command);
             }
-            throw new Exception("Files can`t be empty");
+            throw new Exception("Files can`t be empty"); // TODO REMOVE
         }
 
         [HttpPatch("audios/name")]

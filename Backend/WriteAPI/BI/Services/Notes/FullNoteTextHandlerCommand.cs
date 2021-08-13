@@ -75,6 +75,8 @@ namespace BI.Services.Notes
 
                 var noteForUpdating = appCustomMapper.MapNoteToFullNote(fullNote);
                 await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
+
+                return new OperationResult<Unit>(true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -90,9 +92,9 @@ namespace BI.Services.Notes
                 var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
                 content.Content = request.Content;
 
-                content.Checked = request.Checked.HasValue ? request.Checked.Value : null;
-                content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : false;
-                content.IsItalic = request.IsItalic.HasValue ? request.IsBold.Value : false;
+                content.Checked = request.Checked ?? content.Checked;
+                content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
+                content.IsItalic = request.IsItalic.HasValue ? request.IsBold.Value : content.IsItalic;
 
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.UpdateAsync(content);
@@ -100,6 +102,7 @@ namespace BI.Services.Notes
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
+                return new OperationResult<Unit>(true, Unit.Value);
                 // TODO DEADLOCK
             }
 
