@@ -4,7 +4,13 @@
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
   (mouseout)="mouseOut($event)"
-  [ngClass]="{'h1': content.headingTypeId === hType.H1, 'h2': content.headingTypeId === hType.H2, 'h3': content.headingTypeId === hType.H3}"
+  [ngClass]="{
+    h1: content.headingTypeId === hType.H1,
+    h2: content.headingTypeId === hType.H2,
+    h3: content.headingTypeId === hType.H3,
+    bold: content.isBold,
+    italic: content.isItalic
+  }"
 >
   <p
     #contentHtml

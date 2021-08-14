@@ -15,12 +15,16 @@
     </div>
     <div class="text-container">
       <p
-        [ngClass]="{ 'checked-item': content.checked }"
         class="block-generic default-text-size"
         #contentHtml
         [attr.contenteditable]="!isReadOnlyMode"
         (input)="onInput($event)"
         [textContent]="content?.content"
+        [ngClass]="{
+          bold: content.isBold,
+          italic: content.isItalic,
+          'checked-item': content.checked
+        }"
       ></p>
       <p class="no-content-list" *ngIf="isActive">Item</p>
     </div>

@@ -1,7 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
-import { HeadingTypeENUM, NoteStyleTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
+import {
+  HeadingTypeENUM,
+  NoteStyleTypeENUM,
+  NoteTextTypeENUM,
+} from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
 import { EditTextEventModel } from '../models/edit-text-event.model';
 
@@ -57,7 +61,6 @@ export class TextEditMenuComponent {
   async editContentStyle(e, type: NoteStyleTypeENUM) {
     const item = this.menuSelectionService.currentItem;
     if (type === this.styleType.Bold) {
-      console.log(item, !item.isBold);
       this.updateText.emit({
         contentId: item.id,
         content: item.content,
