@@ -69,7 +69,6 @@ namespace WriteAPI
 
             services.AddMemoryCache();
 
-            services.AddHostedService<HistoryHosted>();
             services.AddHostedService<MLHosted>();
             services.AddHostedService<JobRegisterHosted>();
 

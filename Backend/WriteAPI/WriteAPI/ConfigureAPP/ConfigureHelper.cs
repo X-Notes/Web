@@ -400,14 +400,14 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<AppEncryptor>();
 
-            services.AddSingleton<HistoryCacheService>();
-            services.AddSingleton<HistoryService>();
-
-
             services.AddScoped<IImageProcessor, ImageProcessor>();
 
             services.AddSingleton<ConfigForEntitesDeliting>();
-            services.AddScoped<EntitiesDeleteHandler>();
+            services.AddScoped<EntitiesDeleteJobHandler>();
+
+            services.AddSingleton<ConfigForHistoryMaker>();
+            services.AddSingleton<HistoryCacheService>();
+            services.AddSingleton<HistoryJobHandler>();
         }
 
         public static void FileStorage(this IServiceCollection services)

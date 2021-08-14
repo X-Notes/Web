@@ -63,7 +63,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @Input()
-  contents: ContentModel[];
+  contents: ContentModel[]; // TODO MAKE DICTIONARY
 
   @Input()
   isReadOnlyMode = false;

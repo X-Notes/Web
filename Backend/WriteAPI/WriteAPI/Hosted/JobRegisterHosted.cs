@@ -1,4 +1,5 @@
 ﻿using BI.JobsHandlers;
+using BI.Services.History;
 using Hangfire;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -19,26 +20,32 @@ namespace WriteAPI.Hosted
 
         public void DeleteNotes()
         {
-            BackgroundJob.Enqueue<EntitiesDeleteHandler>(x => x.DeleteNotesHandler());
-            RecurringJob.AddOrUpdate<EntitiesDeleteHandler>(JobNames.NotesDelete, x => x.DeleteNotesHandler(), Delay);
+            BackgroundJob.Enqueue<EntitiesDeleteJobHandler>(x => x.DeleteNotesHandler());
+            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.NotesDelete, x => x.DeleteNotesHandler(), Delay);
         }
 
         public void DeleteLabels()
         {
-            BackgroundJob.Enqueue<EntitiesDeleteHandler>(x => x.DeleteLabelsHandler());
-            RecurringJob.AddOrUpdate<EntitiesDeleteHandler>(JobNames.LabelsDelete, x => x.DeleteLabelsHandler(), Delay);
+            BackgroundJob.Enqueue<EntitiesDeleteJobHandler>(x => x.DeleteLabelsHandler());
+            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.LabelsDelete, x => x.DeleteLabelsHandler(), Delay);
         }
 
         public void DeleteFolders()
         {
-            BackgroundJob.Enqueue<EntitiesDeleteHandler>(x => x.DeleteFoldersHandler());
-            RecurringJob.AddOrUpdate<EntitiesDeleteHandler>(JobNames.FoldersDelete, x => x.DeleteFoldersHandler(), Delay);
+            BackgroundJob.Enqueue<EntitiesDeleteJobHandler>(x => x.DeleteFoldersHandler());
+            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.FoldersDelete, x => x.DeleteFoldersHandler(), Delay);
         }
 
         public void DeleteHistory()
         {
-            BackgroundJob.Enqueue<EntitiesDeleteHandler>(x => x.DeleteHistoryHandler());
-            RecurringJob.AddOrUpdate<EntitiesDeleteHandler>(JobNames.FoldersDelete, x => x.DeleteHistoryHandler(), Delay);
+            BackgroundJob.Enqueue<EntitiesDeleteJobHandler>(x => x.DeleteHistoryHandler());
+            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.FoldersDelete, x => x.DeleteHistoryHandler(), Delay);
+        }
+
+        public void MakeHistory()
+        {
+            BackgroundJob.Enqueue<HistoryJobHandler>(x => x.MakeHistoryHandler());
+            RecurringJob.AddOrUpdate<HistoryJobHandler>(JobNames.HistoryMake, x => x.MakeHistoryHandler(), Delay);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -47,6 +54,7 @@ namespace WriteAPI.Hosted
             DeleteNotes();
             DeleteFolders();
             DeleteHistory();
+            MakeHistory();
 
             return Task.CompletedTask;
         }

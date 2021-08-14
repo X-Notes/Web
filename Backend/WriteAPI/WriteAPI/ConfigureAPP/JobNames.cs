@@ -9,5 +9,7 @@ namespace WriteAPI.ConfigureAPP
 
         public static string FoldersDelete = "FoldersDelete";
 
+        public static string HistoryMake = "HistoryMake";
+
     }
 }
