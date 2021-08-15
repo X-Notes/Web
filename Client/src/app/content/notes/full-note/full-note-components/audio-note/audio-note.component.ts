@@ -67,12 +67,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   };
 
   async uploadAudios(event) {
-    const data = new FormData();
-    const { files } = event.target;
-    for (const file of files) {
-      data.append('audios', file);
+    const files = event.target.files as File[];
+    if(files?.length > 0){
+      this.uploadEvent.emit({ id: this.content.id, files });
     }
-    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   openFile(audio: AudioModel) {

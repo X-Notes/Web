@@ -36,20 +36,24 @@ namespace WriteAPI.Controllers
             return new FileSizeConstraintsDTO(FileSizeConstraints.MaxProfilePhotoSize, FileSizeConstraints.MaxBackgroundPhotoSize);
         }
 
-        [HttpGet("upload/canload")]
-        public async Task<OperationResult<bool>> GetCanUserUploadFile([FromQuery] long size, [FromQuery] string type)
+        [HttpPost("upload/canload")]
+        public async Task<OperationResult<bool>> GetCanUserUploadFile(CanUploadFilesModel model)
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
 
-            if(user != null && SupportFileContentTypes.IsFileSupport(type))
+            if(user != null)
             {
-                if(await _mediator.Send(new GetPermissionUploadFileQuery(size, user.Id)) == PermissionUploadFileEnum.CanUpload)
+                if (!SupportFileContentTypes.IsFileSupport(model.Types)) {
+                    return new OperationResult<bool>().SetNoSupportExtension();
+                }
+
+                if(await _mediator.Send(new GetPermissionUploadFileQuery(model.Size, user.Id)) == PermissionUploadFileEnum.NoCanUpload)
                 {
-                    return new OperationResult<bool>(true, true);
+                    return new OperationResult<bool>().SetNoEnougnMemory();
                 }
             }
 
-            return new OperationResult<bool>(false, false);
+            return new OperationResult<bool>(true, true);
         }
     }
 }

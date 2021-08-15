@@ -182,7 +182,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   async uploadFiles(event) {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
-    const { files } = event.target;
+    const files = event.target.files as File[];
     let data;
     switch (type) {
       case TypeUploadFile.PHOTOS: {
@@ -205,7 +205,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
         throw new Error('Incorrect type');
       }
     }
-    this.transformToFile.emit({ id: this.content.id, formData: data, typeFile: type });
+    this.transformToFile.emit({ id: this.content.id, formData: data, typeFile: type, files: [...files] });
   }
 
   // eslint-disable-next-line class-methods-use-this

@@ -53,5 +53,9 @@ namespace WriteAPI.ConstraintsUploadFiles
             return Photos.Contains(mimiType) || Videos.Contains(mimiType) || Audios.Contains(mimiType) || Documents.Contains(mimiType);
         }
 
+        public static bool IsFileSupport(List<string> types)
+        {
+            return types.Any(x => IsFileSupport(x));
+        }
     }
 }

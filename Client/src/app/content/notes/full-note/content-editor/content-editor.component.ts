@@ -47,6 +47,10 @@ import { MenuSelectionService } from '../services/menu-selection.service';
 import { SelectionService } from '../services/selection.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
+import { byteToMB } from 'src/app/core/defaults/byte-convert';
+import { fileSizeForCheck, maxRequestFileSize } from 'src/app/core/defaults/constraints';
+import { FileApiService } from 'src/app/core/file-api.service';
+import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -87,7 +91,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    private snackBarStatusTranslateService: SnackBarHandlerStatusService
+    private uploadFilesService: UploadFilesService,
+    private snackBarStatusTranslateService: SnackBarHandlerStatusService,
   ) {}
 
   ngOnDestroy(): void {
@@ -260,6 +265,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
+
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles(event.files)
+    if(!isCan){
+      return;
+    }
+
     let resp;
     switch (event.typeFile) {
       case TypeUploadFile.PHOTOS: {
@@ -293,7 +304,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
     }
   }
 
@@ -323,9 +334,21 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
+
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files)
+    if(!isCan){
+      return;
+    }
+
+    const data = new FormData();
+    for (const file of $event.files) {
+      data.append('photos', file);
+    }
+
     const resp = await this.api
-      .uploadPhotosToAlbum($event.formData, this.note.id, $event.id)
+      .uploadPhotosToAlbum(data, this.note.id, $event.id)
       .toPromise();
+
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === $event.id);
       const newPhotos: Photo[] = resp.data.map(
@@ -347,7 +370,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
     }
   };
 
@@ -402,9 +425,21 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   uploadAudiosToPlaylistHandler = async ($event: UploadFileToEntity) => {
+
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files)
+    if(!isCan){
+      return;
+    }
+
+    const data = new FormData();
+    for (const file of $event.files) {
+      data.append('audios', file);
+    }
+
     const resp = await this.api
-      .uploadAudiosToPlaylist($event.formData, this.note.id, $event.id)
+      .uploadAudiosToPlaylist(data, this.note.id, $event.id)
       .toPromise();
+
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === $event.id);
       const { audios } = this.contents[index] as PlaylistModel;
@@ -417,7 +452,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
     }
   };
 

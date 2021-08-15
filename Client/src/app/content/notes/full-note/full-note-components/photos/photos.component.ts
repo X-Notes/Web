@@ -92,12 +92,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   };
 
   async uploadImages(event) {
-    const data = new FormData();
-    const { files } = event.target;
-    for (const file of files) {
-      data.append('photos', file);
+    const files = event.target.files as File[];
+    if(files?.length > 0){
+      this.uploadEvent.emit({ id: this.content.id, files });
     }
-    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   changeWidth(diffrence: number) {
