@@ -4,7 +4,7 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { SnackbarService } from 'src/app/shared/services/snackbar.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { map, take } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -33,7 +33,7 @@ import {
 } from '../notes/state/notes-actions';
 import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
-import { SnackBarWrapperService } from './snack-bar-wrapper.service';
+import { SnackBarWrapperService } from '../../shared/services/snackbar/snack-bar-wrapper.service';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 

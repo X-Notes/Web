@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { DocumentModel } from '../../../models/content-model.model';
+import { docFormats, excelFormats, pdfFormats, presentationFormats } from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -45,21 +46,24 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   documentIcon() {
     const type = this.content.name.split('.').pop().toLowerCase();
-    switch (type) {
-      case 'doc':
-      case 'docx':
-        return 'microsoftWord';
-      case 'xls':
-      case 'xlsx':
-        return 'microsoftExcel';
-      case 'ppt':
-      case 'pptx':
-        return 'microsoftPowerpoint';
-      case 'pdf':
-        return 'pdf';
-      default:
-        return 'fileInner';
+
+    if(docFormats.some(format =>  format === type)){
+      return 'microsoftWord';
     }
+
+    if(excelFormats.some(format => format === type)){
+      return 'microsoftExcel';
+    }
+
+    if(presentationFormats.some(format => format === type)){
+      return 'microsoftPowerpoint';
+    }
+
+    if(pdfFormats.some(format => format === type)){
+      return 'pdf';
+    }
+
+    return 'fileInner';
   }
 
   openModal() {

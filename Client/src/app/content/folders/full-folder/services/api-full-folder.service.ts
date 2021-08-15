@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { OperationResult } from 'src/app/content/notes/models/operation-result.model';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';

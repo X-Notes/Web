@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Background } from 'src/app/core/models/background.model';
-import { OperationResult } from '../notes/models/operation-result.model';
+import { OperationResult } from '../../shared/models/operation-result.model';
 
 @Injectable()
 export class BackgroundService {

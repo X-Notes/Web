@@ -22,7 +22,7 @@ import {
   Photo,
   VideoModel,
 } from './models/content-model.model';
-import { OperationResult } from './models/operation-result.model';
+import { OperationResult } from '../../shared/models/operation-result.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
 

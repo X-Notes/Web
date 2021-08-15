@@ -12,7 +12,7 @@ import {
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
+import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
@@ -30,7 +30,7 @@ import {
   PlaylistModel,
 } from '../../models/content-model.model';
 import { FullNote } from '../../models/full-note.model';
-import { OperationResultAdditionalInfo } from '../../models/operation-result.model';
+import { OperationResultAdditionalInfo } from '../../../../shared/models/operation-result.model';
 import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
 import { RemovePhotoFromAlbum } from '../../models/remove-photo-from-album.model';
 import { UpdateTitle } from '../../state/notes-actions';
@@ -346,7 +346,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.contents[index] = newAlbum;
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
-      this.handleNotEnoughMemoryForUpload(resp.message);
+      this.handleNotEnoughMemoryForUpload(resp.status);
     }
   };
 
@@ -415,7 +415,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.contents[index] = newPlaylist;
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
-      this.handleNotEnoughMemoryForUpload(resp.message);
+      this.handleNotEnoughMemoryForUpload(resp.status);
     }
   };
 

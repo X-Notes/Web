@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { SnackbarService } from 'src/app/shared/services/snackbar.service';
+import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
 import { ApiServiceNotes } from '../../../../api-notes.service';
 

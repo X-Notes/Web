@@ -8,7 +8,7 @@ import { UserUsedDiskSpace } from './models/search/UserDiskSpace';
 import { ThemeENUM } from '../shared/enums/theme.enum';
 import { FontSizeENUM } from '../shared/enums/font-size.enum';
 import { LanguagesENUM } from '../shared/enums/languages.enum';
-import { OperationResult } from '../content/notes/models/operation-result.model';
+import { OperationResult } from '../shared/models/operation-result.model';
 
 export interface Token {
   token: string;

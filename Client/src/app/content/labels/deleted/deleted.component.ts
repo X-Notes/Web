@@ -24,7 +24,7 @@ import {
   RestoreLabel,
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
-import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.service';
+import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
 
 @Component({
   selector: 'app-deleted',

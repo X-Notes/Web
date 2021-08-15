@@ -1,10 +1,14 @@
 export enum OperationResultAdditionalInfo {
   NoAccessRights,
-  NotEnoughMemory
+  NotEnoughMemory,
+  FileSizeTooLarge,
+  NoSupportExtension,
+  NoAnyFile
 }
 
 export interface OperationResult<T> {
   data: T;
   success: boolean;
-  message?: OperationResultAdditionalInfo;
+  status?: OperationResultAdditionalInfo;
+  message: string;
 }
