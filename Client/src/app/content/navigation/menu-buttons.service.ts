@@ -6,7 +6,7 @@ import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar.service';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { FolderStore } from '../folders/state/folders-state';
@@ -35,6 +35,7 @@ import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from './snack-bar-wrapper.service';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -949,7 +950,10 @@ export class MenuButtonsService {
     } else {
       const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
       const isMany = idsOuter.length > 1;
-      this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted));
+
+      this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted))
+      .pipe(take(1)).subscribe(x => this.store.dispatch(LoadUsedDiskSpace));
+      
       this.deletePermSnackbar(language, 'Note', isMany);
     }
   }

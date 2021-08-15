@@ -343,9 +343,9 @@ namespace WriteContext
                 new RefType  { Id = RefTypeENUM.Editor, Name = nameof(RefTypeENUM.Editor) });
 
             modelBuilder.Entity<BillingPlan>().HasData(
-                new BillingPlan  { Id = BillingPlanTypeENUM.Free, Name = nameof(BillingPlanTypeENUM.Free), MaxSize = 100000000 },
-                new BillingPlan  { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 500000000 },
-                new BillingPlan  { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 1000000000 });
+                new BillingPlan  { Id = BillingPlanTypeENUM.Free, Name = nameof(BillingPlanTypeENUM.Free), MaxSize = 1048576000 }, // 1000 MB
+                new BillingPlan  { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 5242880000 }, // 5000 MB
+                new BillingPlan  { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 20971520000 }); // 20000 MB
 
 
             modelBuilder.Entity<HType>().HasData(

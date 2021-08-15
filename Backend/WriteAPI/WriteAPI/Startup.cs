@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
 using WriteAPI.Filters;
 using WriteAPI.Hosted;
+using WriteAPI.Middlewares;
 
 namespace WriteAPI
 {

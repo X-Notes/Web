@@ -1,5 +1,4 @@
-﻿
-namespace WriteAPI.ConfigureAPP
+﻿namespace WriteAPI.Hosted
 {
     public static class JobNames
     {

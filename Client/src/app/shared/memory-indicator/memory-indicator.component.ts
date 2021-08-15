@@ -56,13 +56,13 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   get userMemory(){
     switch(this.billing){
       case BillingENUM.Free:{
-        return 100;
+        return 1000; // TODO LOAD THIS DATA FROM SERVER
       }
       case BillingENUM.Standart: {
-        return 500;
+        return 5000;
       }
       case BillingENUM.Business:{
-        return 1000
+        return 20000;
       }
       default:{
         return 9999999; // IT`S OK

@@ -662,19 +662,19 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = 1,
-                            MaxSize = 100000000L,
+                            MaxSize = 1048576000L,
                             Name = "Free"
                         },
                         new
                         {
                             Id = 2,
-                            MaxSize = 500000000L,
+                            MaxSize = 5242880000L,
                             Name = "Standart"
                         },
                         new
                         {
                             Id = 3,
-                            MaxSize = 1000000000L,
+                            MaxSize = 20971520000L,
                             Name = "Business"
                         });
                 });
