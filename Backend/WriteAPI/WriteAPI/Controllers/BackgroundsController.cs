@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Backgrounds;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Users;
 using Domain.Commands.Backgrounds;
 using Domain.Queries.Backgrounds;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers
@@ -50,6 +52,12 @@ namespace WriteAPI.Controllers
         [HttpPost("new")]
         public async Task<OperationResult<BackgroundDTO>> NewBackgroundPhoto(IFormFile photo)
         {
+            var validatioResult = this.ValidateFile<BackgroundDTO>(photo, SupportFileContentTypes.Photos, FileSizeConstraints.MaxBackgroundPhotoSize);
+            if (!validatioResult.Success)
+            {
+                return validatioResult;
+            }
+
             var email = this.GetUserEmail();
             return await _mediator.Send(new NewBackgroundCommand(email, photo));
         }

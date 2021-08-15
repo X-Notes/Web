@@ -12,11 +12,8 @@ import {
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { ShowSnackNotification } from 'src/app/core/stateApp/app-action';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ApiServiceNotes } from '../../api-notes.service';
 import {
@@ -48,6 +45,8 @@ import { ContentEditableService } from '../services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
 import { SelectionService } from '../services/selection.service';
+import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 
 @Component({
   selector: 'app-content-editor',
@@ -88,7 +87,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    private snackBarTranslateService: SnackBarTranlateHelperService
+    private snackBarStatusTranslateService: SnackBarHandlerStatusService
   ) {}
 
   ngOnDestroy(): void {
@@ -293,7 +292,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.contents[index] = resp.data;
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
-      this.handleNotEnoughMemoryForUpload(resp.message);
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
     }
   }
 
@@ -346,7 +346,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.contents[index] = newAlbum;
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
-      this.handleNotEnoughMemoryForUpload(resp.status);
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
     }
   };
 
@@ -415,17 +416,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       this.contents[index] = newPlaylist;
       this.store.dispatch(LoadUsedDiskSpace);
     }else{
-      this.handleNotEnoughMemoryForUpload(resp.status);
+      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
+      this.snackBarStatusTranslateService.validateStatus(lname, resp, -1);
     }
   };
 
-  handleNotEnoughMemoryForUpload(info: OperationResultAdditionalInfo){
-    if(info === OperationResultAdditionalInfo.NotEnoughMemory){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      const message = this.snackBarTranslateService.getNoEnoughMemoryTranslate(lname); 
-      this.store.dispatch(new ShowSnackNotification(message));
-    }
-  }
+
 
   removeVideoHandler = async (id: string) => {
     const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.Users;
@@ -8,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
 namespace WriteAPI.Controllers
@@ -59,6 +61,12 @@ namespace WriteAPI.Controllers
         [HttpPost("photo")]
         public async Task<OperationResult<AnswerChangeUserPhoto>> ChangeProfilePhoto(IFormFile photo)
         {
+            var validatioResult = this.ValidateFile<AnswerChangeUserPhoto>(photo, SupportFileContentTypes.Photos, FileSizeConstraints.MaxProfilePhotoSize);
+            if (!validatioResult.Success)
+            {
+                return validatioResult;
+            }
+
             var email = this.GetUserEmail();
             return await _mediator.Send(new UpdatePhotoCommand(photo, email));
         }

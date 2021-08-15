@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO.Backgrounds;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.NoteInner;
@@ -13,8 +15,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
-
 namespace WriteAPI.Controllers
 {
     [Authorize]
@@ -97,13 +99,21 @@ namespace WriteAPI.Controllers
         [HttpPost("album/{id}/{contentId}")]
         public async Task<OperationResult<AlbumNoteDTO>> InsertAlbum(List<IFormFile> photos, Guid id, Guid contentId)
         {
-            if (photos.Count > 0)
+            if (photos.Count == 0)
             {
-                var command = new InsertAlbumToNoteCommand(photos, id, contentId);
-                command.Email = this.GetUserEmail();
-                return await this._mediator.Send(command);
+                return new OperationResult<AlbumNoteDTO>().SetNoAnyFile();
             }
-            throw new Exception("Files can`t be empty"); // TODO REMOVE
+
+            var results = photos.Select(photo => this.ValidateFile<AlbumNoteDTO>(photo, SupportFileContentTypes.Photos));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var command = new InsertAlbumToNoteCommand(photos, id, contentId);
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
 
         [HttpPost("album/remove")]
@@ -116,13 +126,21 @@ namespace WriteAPI.Controllers
         [HttpPost("album/upload/{id}/{contentId}")]
         public async Task<OperationResult<List<AlbumPhotoDTO>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
         {
-            if (photos.Count > 0)
+            if (photos.Count == 0)
             {
-                var command = new UploadPhotosToAlbumCommand(id, contentId, photos);
-                command.Email = this.GetUserEmail();
-                return await _mediator.Send(command);
+                return new OperationResult<List<AlbumPhotoDTO>>().SetNoAnyFile();
             }
-            throw new Exception("Files can`t be empty"); // TODO REMOVE
+
+            var results = photos.Select(photo => this.ValidateFile<List<AlbumPhotoDTO>>(photo, SupportFileContentTypes.Photos));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var command = new UploadPhotosToAlbumCommand(id, contentId, photos);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
 
         [HttpDelete("album/photo/{noteId}/{contentId}/{photoId}")]
@@ -153,6 +171,18 @@ namespace WriteAPI.Controllers
         [HttpPost("audios/{id}/{contentId}")]
         public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
         {
+            if (audios.Count == 0)
+            {
+                return new OperationResult<AudiosPlaylistNoteDTO>().SetNoAnyFile();
+            }
+
+            var results = audios.Select(audio => this.ValidateFile<AudiosPlaylistNoteDTO>(audio, SupportFileContentTypes.Audios));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
             var command = new InsertAudiosToNoteCommand(audios, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
@@ -176,13 +206,21 @@ namespace WriteAPI.Controllers
         [HttpPost("audios/upload/{id}/{contentId}")]
         public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToPlaylist(List<IFormFile> audios, Guid id, Guid contentId)
         {
-            if (audios.Count > 0)
+            if (audios.Count == 0)
             {
-                var command = new UploadAudiosToPlaylistCommand(id, contentId, audios);
-                command.Email = this.GetUserEmail();
-                return await _mediator.Send(command);
+                return new OperationResult<List<AudioNoteDTO>>().SetNoAnyFile();
             }
-            throw new Exception("Files can`t be empty"); // TODO REMOVE
+
+            var results = audios.Select(audio => this.ValidateFile<List<AudioNoteDTO>>(audio, SupportFileContentTypes.Audios));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var command = new UploadAudiosToPlaylistCommand(id, contentId, audios);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);        
         }
 
         [HttpPatch("audios/name")]
@@ -197,6 +235,12 @@ namespace WriteAPI.Controllers
         [HttpPost("videos/{id}/{contentId}")]
         public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId)
         {
+            var validatioResult = this.ValidateFile<VideoNoteDTO>(video, SupportFileContentTypes.Videos);
+            if (!validatioResult.Success)
+            {
+                return validatioResult;
+            }
+
             var command = new InsertVideosToNoteCommand(video, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
@@ -216,6 +260,12 @@ namespace WriteAPI.Controllers
         [HttpPost("files/{id}/{contentId}")]
         public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
         {
+            var validatioResult = this.ValidateFile<DocumentNoteDTO>(file, SupportFileContentTypes.Documents);
+            if (!validatioResult.Success)
+            {
+                return validatioResult;
+            }
+
             var command = new InsertDocumentsToNoteCommand(file, id, contentId);
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);

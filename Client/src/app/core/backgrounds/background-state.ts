@@ -9,10 +9,8 @@ import {
 } from './background-action';
 import { Background } from '../models/background.model';
 import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-action';
-import { OperationResultAdditionalInfo } from 'src/app/content/notes/models/operation-result.model';
+import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UserStore } from '../stateUser/user-state';
-import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
-import { ShowSnackNotification } from '../stateApp/app-action';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -28,8 +26,8 @@ interface BackgroundState {
 export class BackgroundStore {
   constructor(
     private backgroundAPI: BackgroundService, 
-    private store: Store,
-    private snackbarTranlateHelper: SnackBarTranlateHelperService) {}
+    private snackbarStatusHandler: SnackBarHandlerStatusService,
+    private store: Store) {}
 
   @Selector()
   static getUserBackgrounds(state: BackgroundState): Background[] {
@@ -43,10 +41,9 @@ export class BackgroundStore {
   ) {
     const result = await this.backgroundAPI.newBackground(photo).toPromise();
 
-    if(result.message === OperationResultAdditionalInfo.NotEnoughMemory){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      const message = this.snackbarTranlateHelper.getNoEnoughMemoryTranslate(lname); 
-      this.store.dispatch(new ShowSnackNotification(message));
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(language, result, 40);
+    if(isNeedInterrupt){
       return;
     }
 

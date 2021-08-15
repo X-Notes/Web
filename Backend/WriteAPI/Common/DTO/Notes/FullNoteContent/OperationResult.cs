@@ -4,14 +4,19 @@ namespace Common.DTO.Notes.FullNoteContent
     public enum OperationResultAdditionalInfo
     {
         NoAccessRights,
-        NotEnoughMemory
+        NotEnoughMemory,
+        FileSizeTooLarge,
+        NoSupportExtension,
+        NoAnyFile
     }
 
     public class OperationResult<T>
     {
         public bool Success { set; get; }
 
-        public OperationResultAdditionalInfo? Message { set; get; }
+        public OperationResultAdditionalInfo? Status { set; get; }
+
+        public string Message{ set; get; }
 
         public T Data { set; get; }
 
@@ -25,7 +30,7 @@ namespace Common.DTO.Notes.FullNoteContent
         {
             this.Success = success;
             this.Data = data;
-            Message = message;
+            Status = message;
         }
 
         public OperationResult()
@@ -36,16 +41,36 @@ namespace Common.DTO.Notes.FullNoteContent
         public OperationResult<T> SetNoPermissions()
         {
             Success = false;
-            Message = OperationResultAdditionalInfo.NoAccessRights;
+            Status = OperationResultAdditionalInfo.NoAccessRights;
             return this;
         }
 
         public OperationResult<T> SetNoEnougnMemory()
         {
             Success = false;
-            Message = OperationResultAdditionalInfo.NotEnoughMemory;
+            Status = OperationResultAdditionalInfo.NotEnoughMemory;
             return this;
         }
 
+        public OperationResult<T> SetFileSizeTooLarge()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.FileSizeTooLarge;
+            return this;
+        }
+
+        public OperationResult<T> SetNoSupportExtension()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.NoSupportExtension;
+            return this;
+        }
+
+        public OperationResult<T> SetNoAnyFile()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.NoAnyFile;
+            return this;
+        }
     }
 }
