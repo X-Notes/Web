@@ -16,7 +16,7 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public OperationResultAdditionalInfo? Status { set; get; }
 
-        public string Message{ set; get; }
+        public string Message { set; get; }
 
         public T Data { set; get; }
 

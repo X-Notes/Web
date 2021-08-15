@@ -25,6 +25,7 @@ import { LockEncryptService } from '../content/notes/lock-encrypt.service';
 import { ApiNoteHistoryService } from '../content/notes/full-note/services/api-note-history.service';
 import { ApiPersonalizationSettingsService } from './api-personalization-settings.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
+import { FileApiService } from './file-api.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './assets/locale/', '.json');
@@ -71,6 +72,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     LockEncryptService,
     ApiNoteHistoryService,
     ApiPersonalizationSettingsService,
+    FileApiService,
     UpdaterEntitiesService,
   ],
 })

@@ -1,6 +1,6 @@
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
-import { State, Selector, Action, StateContext } from '@ngxs/store';
+import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BackgroundService } from 'src/app/content/profile/background.service';
 import { environment } from 'src/environments/environment';
@@ -26,6 +26,9 @@ import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { AppStore } from '../stateApp/app-state';
+import { byteToMB } from '../defaults/byte-convert';
+import { maxProfilePhotoSize } from '../defaults/constraints';
 
 interface UserState {
   user: ShortUser;
@@ -50,7 +53,8 @@ export class UserStore {
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
-    private snackbarStatusHandler: SnackBarHandlerStatusService
+    private snackbarStatusHandler: SnackBarHandlerStatusService,
+    private store: Store
   ) {}
 
   @Selector()
@@ -194,7 +198,7 @@ export class UserStore {
   ) {
     const result = await this.api.updateUserPhoto(photo).toPromise();
 
-    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(getState().user.languageId, result, 8,);
+    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(getState().user.languageId, result, byteToMB(maxProfilePhotoSize));
     if(isNeedInterrupt){
       return;
     }

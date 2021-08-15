@@ -42,7 +42,7 @@ export class SnackBarTranlateHelperService {
     }
   }
 
-  getFileTooLargeTranslate(lname: LanguagesENUM, sizeMB: number): string{
+  getFileTooLargeTranslate(lname: LanguagesENUM, sizeMB: string): string{
     switch(lname) {
       case LanguagesENUM.English:{
         return `File size must not exceed ${sizeMB} MB `;

@@ -14,7 +14,7 @@ import {
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { ShowSnackNotification, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -30,6 +30,9 @@ import { hideForDemo } from 'src/environments/demo';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Personalization } from 'src/app/shared/enums/personalization.enum';
+import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
+import { byteToMB } from 'src/app/core/defaults/byte-convert';
+import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
 
 @Component({
   selector: 'app-profile',
@@ -82,6 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private store: Store,
     private rend: Renderer2,
     private authService: AuthService,
+    private snackbarTranslateHelper: SnackBarTranlateHelperService
   ) {}
 
   async ngOnInit() {
@@ -187,20 +191,36 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   uploadImage(event) {
-    const file = event.target.files[0];
+    const file = event.target.files[0] as File;
     if (file) {
-      const formDate = new FormData();
-      formDate.append('photo', file);
-      this.store.dispatch(new NewBackground(formDate));
+      if(file.size > maxBackgroundPhotoSize) 
+      {
+        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(language, byteToMB(maxBackgroundPhotoSize)); 
+        this.store.dispatch(new ShowSnackNotification(message));
+      } else 
+      {
+        const formDate = new FormData();
+        formDate.append('photo', file);
+        this.store.dispatch(new NewBackground(formDate));
+      }
     }
   }
 
   uploadImageUserPhoto(event) {
-    const file = event.target.files[0];
+    const file = event.target.files[0] as File;
     if (file) {
-      const formDate = new FormData();
-      formDate.append('photo', file);
-      this.store.dispatch(new UpdateUserPhoto(formDate));
+      if(file.size > maxProfilePhotoSize)
+      {
+        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(language, byteToMB(maxProfilePhotoSize)); 
+        this.store.dispatch(new ShowSnackNotification(message));
+      }else
+      {
+        const formDate = new FormData();
+        formDate.append('photo', file);
+        this.store.dispatch(new UpdateUserPhoto(formDate));
+      }
     }
   }
 

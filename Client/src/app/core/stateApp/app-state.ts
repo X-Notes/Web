@@ -39,7 +39,9 @@ interface AppState {
 })
 @Injectable()
 export class AppStore {
-  constructor(authService: AuthService, public notificationService: NotificationServiceAPI) {
+  constructor(
+    authService: AuthService, 
+    public notificationService: NotificationServiceAPI) {
     authService.init();
   }
 

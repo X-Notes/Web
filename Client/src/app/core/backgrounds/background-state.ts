@@ -11,6 +11,9 @@ import { Background } from '../models/background.model';
 import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-action';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UserStore } from '../stateUser/user-state';
+import { AppStore } from '../stateApp/app-state';
+import { byteToMB } from '../defaults/byte-convert';
+import { maxBackgroundPhotoSize } from '../defaults/constraints';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -42,7 +45,7 @@ export class BackgroundStore {
     const result = await this.backgroundAPI.newBackground(photo).toPromise();
 
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(language, result, 40);
+    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(language, result, byteToMB(maxBackgroundPhotoSize));
     if(isNeedInterrupt){
       return;
     }

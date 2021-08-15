@@ -14,19 +14,19 @@ namespace WriteAPI.ConstraintsUploadFiles
         };
 
 
-        public static List<string> Videos { get; set; } = new List<string>() { 
+        public static List<string> Videos { get; set; } = new List<string>() {
             "video/mp4"    // .mp4
         };
 
 
-        public static List<string> Audios { get; set; } = new List<string>() { 
+        public static List<string> Audios { get; set; } = new List<string>() {
             "audio/mpeg",  // .mp3
             "audio/wav",   // .wav
             "audio/ogg"    // .ogg
         };
 
 
-        public static List<string> Documents { get; set; } = new List<string>() { 
+        public static List<string> Documents { get; set; } = new List<string>() {
             "application/pdf",      // .pdf
 
             "application/msword",   // .doc
@@ -47,6 +47,11 @@ namespace WriteAPI.ConstraintsUploadFiles
             "application/vnd.ms-powerpoint.slideshow.macroEnabled.12", // .ppsm
             "application/vnd.openxmlformats-officedocument.presentationml.slideshow", // .ppsx
         };
+
+        public static bool IsFileSupport(string mimiType)
+        {
+            return Photos.Contains(mimiType) || Videos.Contains(mimiType) || Audios.Contains(mimiType) || Documents.Contains(mimiType);
+        }
 
     }
 }
