@@ -18,7 +18,7 @@ import { SmallNote } from './models/small-note.model';
 import { DialogsManageService } from '../navigation/dialogs-manage.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ApiServiceNotes } from './api-notes.service';
-import { UpdaterEntetiesService } from '../../core/entities-updater.service';
+import { UpdaterEntitiesService } from '../../core/entities-updater.service';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
@@ -43,7 +43,7 @@ export class NotesService
     private route: ActivatedRoute,
     dialogsManageService: DialogsManageService,
     apiService: ApiServiceNotes,
-    private updateService: UpdaterEntetiesService,
+    private updateService: UpdaterEntitiesService,
   ) {
     super(dialogsManageService, store, murriService, apiService);
 

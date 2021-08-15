@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
-export class UpdaterEntetiesService {
+export class UpdaterEntitiesService {
   notesIds$ = new BehaviorSubject<string[]>([]);
   foldersIds$ = new BehaviorSubject<string[]>([]);
 }

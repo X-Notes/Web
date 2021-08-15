@@ -33,7 +33,7 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
-import { UpdaterEntetiesService } from 'src/app/core/entities-updater.service';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -82,7 +82,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiFullFolder: ApiFullFolderService,
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
-    private updateNoteService: UpdaterEntetiesService,
+    private updateNoteService: UpdaterEntitiesService,
   ) {}
 
   ngAfterViewInit(): void {
