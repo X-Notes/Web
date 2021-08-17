@@ -8,7 +8,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -18,6 +18,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-deleted',
@@ -27,6 +28,9 @@ import { UnSelectAllFolder } from '../state/folders-actions';
 })
 export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(FolderStore.deletedCount)
+  deletedCount$: Observable<number>;
 
   fontSize = FontSizeENUM;
 
@@ -49,7 +53,6 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderDeleted)).toPromise();
     this.pService.setSpinnerState(true);
-    this.pService.setIllustrationState(false);
     this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.folderService.destroy))
@@ -68,14 +71,5 @@ export class DeletedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-
-    this.store
-      .select(FolderStore.deletedCount)
-      .pipe(takeUntil(this.folderService.destroy))
-      .subscribe((x) => {
-        if (!x) {
-          this.pService.setIllustrationState(true);
-        }
-      });
   }
 }

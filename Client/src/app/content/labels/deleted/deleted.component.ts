@@ -7,7 +7,7 @@ import {
   ElementRef,
   QueryList,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -25,6 +25,7 @@ import {
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
 import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-deleted',
@@ -34,6 +35,9 @@ import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.servi
 })
 export class DeletedComponent implements OnInit, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(LabelStore.countDeleted)
+  countDeleted$: Observable<number>;
 
   fontSize = FontSizeENUM;
 
@@ -53,7 +57,6 @@ export class DeletedComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.LabelDeleted)).toPromise();
     this.pService.setSpinnerState(true);
-    this.pService.setIllustrationState(false);
 
     this.store
       .select(AppStore.appLoaded)
@@ -74,15 +77,6 @@ export class DeletedComponent implements OnInit, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-
-    this.store
-      .select(LabelStore.countDeleted)
-      .pipe(takeUntil(this.labelService.destroy))
-      .subscribe((x) => {
-        if (!x) {
-          this.pService.setIllustrationState(true);
-        }
-      });
 
     this.store
       .select(LabelStore.deleted)
