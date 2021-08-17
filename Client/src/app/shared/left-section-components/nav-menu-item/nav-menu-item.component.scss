@@ -1,9 +1,5 @@
 @import 'variables';
 
-.active {
-  background-color: $dark-nav-backlight;
-}
-
 .sub-nav-item {
   outline: none;
   position: relative;
@@ -40,6 +36,9 @@
 }
 
 .light {
+  .active {
+    background-color: $light-nav-backlight;
+  }
   .sub-nav-item {
     border-color: $light-theme-separator;
     color: $light-text-color;
@@ -50,10 +49,13 @@
   }
 }
 
-@media (max-width: 1024px) {
+.dark {
   .active {
-    background-color: $light-nav-backlight;
+    background-color: $dark-nav-backlight;
   }
+}
+
+@media (max-width: 1024px) {
   .sub-nav-item {
     .item {
       padding: 0 1rem;

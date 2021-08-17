@@ -10,7 +10,6 @@ import { BillingENUM } from '../enums/billing.enum';
   styleUrls: ['./memory-indicator.component.scss'],
 })
 export class MemoryIndicatorComponent implements OnInit, OnDestroy {
-
   destroy = new Subject<void>();
 
   memory: number;
@@ -28,43 +27,43 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
-      .subscribe((space) => this.memory = Math.ceil(space));
+      .subscribe((space) => (this.memory = Math.ceil(space)));
 
-      this.store
+    this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
-      .subscribe((user) => this.billing = user.billingPlanId);
+      .subscribe((user) => (this.billing = user.billingPlanId));
   }
 
-  get userBillingPlan(){
-    switch(this.billing){
-      case BillingENUM.Free:{
+  get userBillingPlan() {
+    switch (this.billing) {
+      case BillingENUM.Free: {
         return 'F';
       }
       case BillingENUM.Standart: {
         return 'S';
       }
-      case BillingENUM.Business:{
-        return 'B'
+      case BillingENUM.Business: {
+        return 'B';
       }
-      default:{
+      default: {
         return '';
       }
     }
   }
 
-  get userMemory(){
-    switch(this.billing){
-      case BillingENUM.Free:{
+  get userMemory() {
+    switch (this.billing) {
+      case BillingENUM.Free: {
         return 100;
       }
       case BillingENUM.Standart: {
         return 500;
       }
-      case BillingENUM.Business:{
-        return 1000
+      case BillingENUM.Business: {
+        return 1000;
       }
-      default:{
+      default: {
         return 9999999; // IT`S OK
       }
     }
