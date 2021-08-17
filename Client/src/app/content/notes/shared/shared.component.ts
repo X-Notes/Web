@@ -8,7 +8,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
@@ -18,6 +18,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shared',
@@ -27,6 +28,9 @@ import { UnSelectAllNote } from '../state/notes-actions';
 })
 export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(NoteStore.sharedCount)
+  sharedCount$: Observable<number>;
 
   fontSize = FontSizeENUM;
 
@@ -45,7 +49,6 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NoteShared)).toPromise();
     this.pService.setSpinnerState(true);
-    this.pService.setIllustrationState(false);
 
     this.store
       .select(AppStore.appLoaded)
@@ -65,15 +68,6 @@ export class SharedComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-
-    this.store
-      .select(NoteStore.sharedCount)
-      .pipe(takeUntil(this.noteService.destroy))
-      .subscribe((x) => {
-        if (!x) {
-          this.pService.setIllustrationState(true);
-        }
-      });
   }
 
   ngOnDestroy(): void {

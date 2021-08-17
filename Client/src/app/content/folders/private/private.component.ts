@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
 import { takeUntil } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
@@ -18,6 +18,7 @@ import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { FolderService } from '../folder.service';
 import { FolderStore } from '../state/folders-state';
 import { UnSelectAllFolder } from '../state/folders-actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-private',
@@ -27,6 +28,9 @@ import { UnSelectAllFolder } from '../state/folders-actions';
 })
 export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(FolderStore.privateCount)
+  privateCount$: Observable<number>;
 
   fontSize = FontSizeENUM;
 
@@ -49,7 +53,6 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.FolderPrivate)).toPromise();
     this.pService.setSpinnerState(true);
-    this.pService.setIllustrationState(false);
     this.store
       .select(AppStore.appLoaded)
       .pipe(takeUntil(this.folderService.destroy))
@@ -68,14 +71,5 @@ export class PrivateComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-
-    this.store
-      .select(FolderStore.privateCount)
-      .pipe(takeUntil(this.folderService.destroy))
-      .subscribe((x) => {
-        if (!x) {
-          this.pService.setIllustrationState(true);
-        }
-      });
   }
 }

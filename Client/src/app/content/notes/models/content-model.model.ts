@@ -157,3 +157,8 @@ export enum NoteTextTypeENUM {
   Numberlist = 4,
   Checklist = 5,
 }
+
+export enum NoteStyleTypeENUM {
+  Bold = 1,
+  Italic = 2,
+}

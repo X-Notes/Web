@@ -90,11 +90,11 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                content.Content = request.Content;
 
+                content.Content = request.Content ?? content.Content;
                 content.Checked = request.Checked ?? content.Checked;
                 content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
-                content.IsItalic = request.IsItalic.HasValue ? request.IsBold.Value : content.IsItalic;
+                content.IsItalic = request.IsItalic.HasValue ? request.IsItalic.Value : content.IsItalic;
 
                 content.UpdatedAt = DateTimeOffset.Now;
                 await textNotesRepository.UpdateAsync(content);

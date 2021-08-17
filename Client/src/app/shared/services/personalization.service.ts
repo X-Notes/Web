@@ -12,10 +12,12 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { Icons } from '../enums/icons.enum';
 import { FontSizeENUM } from '../enums/font-size.enum';
 
+export const timeSidenavAnimation = 200; // TODO move to constant file
+
 export const sideBarCloseOpen = trigger('sidebarCloseOpen', [
   state('in', style({ transform: 'translateX(0)' })),
-  transition(':enter', [style({ transform: 'translateX(-100%)' }), animate('200ms ease')]),
-  transition(':leave', [animate('200ms ease', style({ transform: 'translateX(-100%)' }))]),
+  transition(':enter', [style({ transform: 'translateX(-100%)' }), animate(`${timeSidenavAnimation}ms ease`)]),
+  transition(':leave', [animate(`${timeSidenavAnimation}ms ease`, style({ transform: 'translateX(-100%)' }))]),
 ]);
 
 export const changeColorLabel = trigger('changeColorLabel', [
@@ -120,8 +122,6 @@ export class PersonalizationService {
   public fontSize$: Observable<FontSizeENUM>;
 
   spinnerActive = false;
-
-  illustrationActive = false;
 
   timeForSpinnerLoading = 150;
 
@@ -251,10 +251,6 @@ export class PersonalizationService {
 
   setSpinnerState(flag: boolean) {
     this.spinnerActive = flag;
-  }
-
-  setIllustrationState(flag: boolean) {
-    this.illustrationActive = flag;
   }
 
   cancelSideBar() {

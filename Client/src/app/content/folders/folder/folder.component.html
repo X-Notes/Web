@@ -25,20 +25,22 @@
       (ngModelChange)="changed($event)"
     />
     <div
-      class="notes"
+      class="folder-content"
       (click)="toFolder()"
       [ngStyle]="{'cursor': folder.lockRedirect ? 'pointer' : ''}"
     >
-      <div *ngFor="let note of folder.previewNotes" class="note">
-        <div class="icon">
-          <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+      <div class="notes">
+        <div *ngFor="let note of folder.previewNotes" class="note">
+          <div class="icon">
+            <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
+          </div>
+          <p>{{note.title}}</p>
         </div>
-        <p>{{note.title}}</p>
       </div>
-    </div>
-    <div class="bottom-section">
-      <div class="date">
-        <p>{{folder.updatedAt | date: 'medium' }}</p>
+      <div class="bottom-section">
+        <div class="date">
+          <p>{{folder.updatedAt | date: 'medium' }}</p>
+        </div>
       </div>
     </div>
   </div>

@@ -5,7 +5,13 @@
   (mouseover)="mouseEnter($event)"
   (mouseout)="mouseOut($event)"
 >
-  <div class="dot-list">
+  <div
+    class="dot-list"
+    [ngClass]="{
+      bold: content.isBold,
+      italic: content.isItalic
+    }"
+  >
     <div class="dot-container">
       <div class="dot"></div>
     </div>

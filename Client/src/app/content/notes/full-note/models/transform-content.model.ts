@@ -2,7 +2,9 @@ import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.mo
 
 export interface TransformContent {
   id: string;
-  textType: NoteTextTypeENUM;
+  textType?: NoteTextTypeENUM;
   headingType?: HeadingTypeENUM;
   setFocusToEnd: boolean;
+  isBold?: boolean;
+  isItalic?: boolean;
 }

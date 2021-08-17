@@ -15,6 +15,7 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import {
   BaseText,
   HeadingTypeENUM,
+  NoteStyleTypeENUM,
   NoteTextTypeENUM,
 } from '../../../../models/content-model.model';
 import { EditTextEventModel } from '../../../models/edit-text-event.model';
@@ -71,6 +72,8 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   typeUpload = TypeUploadFile;
 
+  styleType = NoteStyleTypeENUM;
+
   formats: string;
 
   isMulptiply = false;
@@ -122,6 +125,24 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.uploadFile.nativeElement.uploadType = type;
     this.formats = TypeUploadFormats[TypeUploadFile[type]];
     setTimeout(() => this.uploadFile.nativeElement.click());
+  }
+
+  editContentStyle($event, type: NoteStyleTypeENUM) {
+    $event.preventDefault();
+    console.log(type, this.content);
+    if (type === this.styleType.Bold) {
+      this.updateText.emit({
+        contentId: this.content.id,
+        content: this.content.content,
+        isBold: !this.content.isBold,
+      });
+    } else {
+      this.updateText.emit({
+        contentId: this.content.id,
+        content: this.content.content,
+        isItalic: !this.content.isItalic,
+      });
+    }
   }
 
   preventClick = ($event) => {

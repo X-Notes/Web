@@ -6,7 +6,7 @@
   <div
     #item
     class="grid-item"
-    id="{{item.id}}"
+    [id]="item.id"
     *ngFor="let item of noteService.entities"
     [ngClass]="[pService.orientationMobile? 'grid-plus' : '', (pService.fontSize$ | async) === fontSize.Big ? 'big-size' : '']"
   >
@@ -20,8 +20,8 @@
   </div>
 </div>
 <app-no-results-illustration
-  *ngIf="pService.illustrationActive"
-  [isShow]="pService.illustrationActive"
+  *ngIf="loaded && ((deletedCount$ | async) ? false : true)"
+  [isShow]="loaded && ((deletedCount$ | async) ? false : true)"
   [message]="'noResult.deletedNotes' | translate"
   [illustration]="pService.icon.deletedIllustration"
   typeClass="type-module"
