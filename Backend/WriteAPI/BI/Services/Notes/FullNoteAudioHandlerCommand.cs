@@ -68,14 +68,20 @@ namespace BI.Services.Notes
                     return new OperationResult<AudiosPlaylistNoteDTO>().SetNoEnougnMemory();
                 }
 
-
-                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
-
-                var contentForRemove = contents.First(x => x.Id == request.ContentId);
-
                 // FILES LOGIC
                 var bytes = await request.Audios.GetFilesBytesAsync();
                 var files = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, bytes, note.Id));
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                    return new OperationResult<AudiosPlaylistNoteDTO>().SetRequestCancelled();
+                }
+
+                // UPDATING
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -232,11 +238,19 @@ namespace BI.Services.Notes
                     return new OperationResult<List<AudioNoteDTO>>().SetNoEnougnMemory();
                 }
 
-                var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
-
+                // FILE LOGIC
                 var filebytes = await request.Audios.GetFilesBytesAsync();
                 var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                    return new OperationResult<List<AudioNoteDTO>>().SetRequestCancelled();
+                }
+
+                // UPDATING
+                var playlist = await baseNoteContentRepository.GetContentById<AudiosPlaylistNote>(request.ContentId);
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try

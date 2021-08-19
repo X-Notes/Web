@@ -17,7 +17,7 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Files
 {
     public class FileHandlerCommand :
-        IRequestHandler<SavePhotosToNoteCommand, List<SavePhotosToNoteResponse>>,
+        IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveDocumentToNoteCommand, AppFile>,
         IRequestHandler<SaveVideoToNoteCommand, AppFile>,
@@ -25,6 +25,7 @@ namespace BI.Services.Files
         IRequestHandler<SaveUserPhotoCommand, AppFile>,
         IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
         IRequestHandler<RemoveFilesCommand, Unit>,
+        IRequestHandler<RemoveFilesFromStorageCommand, Unit>,
         IRequestHandler<CreateUserContainerCommand, Unit>
     {
         private readonly IFilesStorage filesStorage;
@@ -110,13 +111,13 @@ namespace BI.Services.Files
             }
         }
 
-        public async Task<List<SavePhotosToNoteResponse>> Handle(SavePhotosToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<List<AppFile>> Handle(SavePhotosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var fileList = new List<SavePhotosToNoteResponse>();
+            var fileList = new List<AppFile>();
             foreach (var photoFile in request.FilesBytes)
             {
                 var fileDB = await ProcessNotePhotos(request.UserId, photoFile.Bytes, photoFile.ContentType, photoFile.FileName);
-                fileList.Add(new SavePhotosToNoteResponse(fileDB, photoFile));
+                fileList.Add(fileDB);
             }
             return fileList;
         }
@@ -161,7 +162,9 @@ namespace BI.Services.Files
         public async Task DeletePermanentlyFiles(List<AppFile> files, string userId)
         {
             await fileRepository.RemoveRangeAsync(files);
-            await filesStorage.RemoveFiles(userId, files.SelectMany(x => x.GetNotNullPathes()).ToArray());
+
+            var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
+            await Handle(new RemoveFilesFromStorageCommand(pathes, userId), CancellationToken.None);
         }
 
         public async Task<AppFile> Handle(SaveDocumentToNoteCommand request, CancellationToken cancellationToken)
@@ -297,6 +300,12 @@ namespace BI.Services.Files
         public async Task<Unit> Handle(CreateUserContainerCommand request, CancellationToken cancellationToken)
         {
             await filesStorage.CreateUserContainer(request.UserId);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(RemoveFilesFromStorageCommand request, CancellationToken cancellationToken)
+        {
+            await filesStorage.RemoveFiles(request.UserId, request.Pathes.ToArray());
             return Unit.Value;
         }
     }

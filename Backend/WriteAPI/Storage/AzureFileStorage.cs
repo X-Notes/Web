@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Storage.Models;
 using Azure.Storage.Blobs.Specialized;
 using Azure;
+using Azure.Storage;
 
 namespace Storage
 {
@@ -93,7 +94,13 @@ namespace Storage
 
             var headers = GetBlobHttpHeaders(contentType);
 
-            var resp = await blobClient.UploadAsync(stream, headers);
+            var options = new StorageTransferOptions() // TODO fragile configuration, need to be careful these settings affect performance
+            {
+                MaximumConcurrency = 4,
+                InitialTransferSize = 20971520
+            };
+
+            var resp = await blobClient.UploadAsync(stream, headers, transferOptions: options);
 
             await stream.DisposeAsync();
 

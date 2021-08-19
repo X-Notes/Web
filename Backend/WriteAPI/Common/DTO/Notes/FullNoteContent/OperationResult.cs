@@ -7,7 +7,8 @@ namespace Common.DTO.Notes.FullNoteContent
         NotEnoughMemory,
         FileSizeTooLarge,
         NoSupportExtension,
-        NoAnyFile
+        NoAnyFile,
+        RequestCancelled
     }
 
     public class OperationResult<T>
@@ -70,6 +71,13 @@ namespace Common.DTO.Notes.FullNoteContent
         {
             Success = false;
             Status = OperationResultAdditionalInfo.NoAnyFile;
+            return this;
+        }
+
+        public OperationResult<T> SetRequestCancelled()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.RequestCancelled;
             return this;
         }
     }

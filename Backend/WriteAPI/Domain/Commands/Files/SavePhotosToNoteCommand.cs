@@ -6,19 +6,7 @@ using MediatR;
 
 namespace Domain.Commands.Files
 {
-    public class SavePhotosToNoteResponse {
-        public AppFile AppFile { set; get; }
-        public FilesBytes FilesBytes { set; get; }
-
-        public SavePhotosToNoteResponse(AppFile AppFile, FilesBytes FilesBytes)
-        {
-            this.AppFile = AppFile;
-            this.FilesBytes = FilesBytes;
-        }
-    }
-
-
-    public class SavePhotosToNoteCommand : IRequest<List<SavePhotosToNoteResponse>>
+    public class SavePhotosToNoteCommand : IRequest<List<AppFile>>
     {
 
         public List<FilesBytes> FilesBytes { set; get; }

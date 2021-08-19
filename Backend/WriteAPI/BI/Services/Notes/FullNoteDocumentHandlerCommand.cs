@@ -65,13 +65,19 @@ namespace BI.Services.Notes
                     return new OperationResult<DocumentNoteDTO>().SetNoEnougnMemory();
                 }
 
-                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
-
-                var contentForRemove = contents.First(x => x.Id == request.ContentId);
-
                 // FILES LOGIC
                 var filebyte = await request.File.GetFilesBytesAsync();
                 var file = await _mediator.Send(new SaveDocumentToNoteCommand(permissions.Author.Id, filebyte, note.Id));
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(file.GetNotNullPathes(), permissions.Author.Id.ToString()));
+                    return new OperationResult<DocumentNoteDTO>().SetRequestCancelled();
+                }
+
+                // UPDATING
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

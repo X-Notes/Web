@@ -77,26 +77,20 @@ namespace BI.Services.Notes
                     return new OperationResult<AlbumNoteDTO>().SetNoEnougnMemory();
                 }
 
-                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
-
-                var contentForRemove = contents.First(x => x.Id == request.ContentId);
-
                 // FILES LOGIC 
                 var filebytes = await request.Photos.GetFilesBytesAsync();
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                var dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
-                // TODO MOVE THIS TO WORKER
-                foreach (var fileitem in fileList)
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    // var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
-                    // fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
-
-                    // TODO MOVE TO API
-                    // var RecognizeObject = objectRecognizeService.ClassifySingleImage(fileitem.Path).GetFormatedString;
-                    // fileitem.RecognizeObject = RecognizeObject;
+                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                    return new OperationResult<AlbumNoteDTO>().SetRequestCancelled();
                 }
 
-                var dbFiles = fileList.Select(x => x.AppFile).ToList();
+                // UPDATING
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+                var contentForRemove = contents.First(x => x.Id == request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -285,21 +279,19 @@ namespace BI.Services.Notes
                     return new OperationResult<List<AlbumPhotoDTO>>().SetNoEnougnMemory();
                 }
 
-                var album = await baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
-
+                // FILE LOGIC
                 var filebytes = await request.Photos.GetFilesBytesAsync();
-                var fileList = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                var dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
-                // foreach (var fileitem in fileList)
-                // {
-                //     var textFromPhoto = ocrService.GetText(fileitem.FilesBytes.Bytes);
-                //     fileitem.AppFile.TextFromPhoto = RemoveSpecialCharacters(textFromPhoto);
-                // }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                    return new OperationResult<List<AlbumPhotoDTO>>().SetRequestCancelled();
+                }
 
-                var dbFiles = fileList.Select(x => x.AppFile).ToList();
-
-                // TODO MOVE TO API
-                // fileList.ForEach(file => file.RecognizeObject = objectRecognizeService.ClassifySingleImage(file.Path).GetFormatedString);
+                // UPDATING
+                var album = await baseNoteContentRepository.GetContentById<AlbumNote>(request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

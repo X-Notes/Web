@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Backgrounds;
 using Common.DTO.Notes.FullNoteContent;
@@ -97,7 +98,7 @@ namespace WriteAPI.Controllers
         // ALBUM
 
         [HttpPost("album/{id}/{contentId}")]
-        public async Task<OperationResult<AlbumNoteDTO>> InsertAlbum(List<IFormFile> photos, Guid id, Guid contentId)
+        public async Task<OperationResult<AlbumNoteDTO>> InsertAlbum(List<IFormFile> photos, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             if (photos.Count == 0)
             {
@@ -113,7 +114,7 @@ namespace WriteAPI.Controllers
 
             var command = new InsertAlbumToNoteCommand(photos, id, contentId);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await this._mediator.Send(command, cancellationToken);
         }
 
         [HttpPost("album/remove")]
@@ -124,7 +125,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("album/upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<AlbumPhotoDTO>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId)
+        public async Task<OperationResult<List<AlbumPhotoDTO>>> UploadPhotoToAlbum(List<IFormFile> photos, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             if (photos.Count == 0)
             {
@@ -140,7 +141,7 @@ namespace WriteAPI.Controllers
 
             var command = new UploadPhotosToAlbumCommand(id, contentId, photos);
             command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);
+            return await _mediator.Send(command, cancellationToken);
         }
 
         [HttpDelete("album/photo/{noteId}/{contentId}/{photoId}")]
@@ -169,7 +170,7 @@ namespace WriteAPI.Controllers
         // AUDIO
 
         [HttpPost("audios/{id}/{contentId}")]
-        public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId)
+        public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             if (audios.Count == 0)
             {
@@ -185,7 +186,7 @@ namespace WriteAPI.Controllers
 
             var command = new InsertAudiosToNoteCommand(audios, id, contentId);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await this._mediator.Send(command, cancellationToken);
         }
 
         [HttpPost("audios/remove")]
@@ -204,7 +205,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("audios/upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToPlaylist(List<IFormFile> audios, Guid id, Guid contentId)
+        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToPlaylist(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             if (audios.Count == 0)
             {
@@ -220,7 +221,7 @@ namespace WriteAPI.Controllers
 
             var command = new UploadAudiosToPlaylistCommand(id, contentId, audios);
             command.Email = this.GetUserEmail();
-            return await _mediator.Send(command);        
+            return await _mediator.Send(command, cancellationToken);        
         }
 
         [HttpPatch("audios/name")]
@@ -233,7 +234,7 @@ namespace WriteAPI.Controllers
         // VIDEOS
 
         [HttpPost("videos/{id}/{contentId}")]
-        public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId)
+        public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             var validatioResult = this.ValidateFile<VideoNoteDTO>(video, SupportFileContentTypes.Videos);
             if (!validatioResult.Success)
@@ -243,7 +244,7 @@ namespace WriteAPI.Controllers
 
             var command = new InsertVideosToNoteCommand(video, id, contentId);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await this._mediator.Send(command, cancellationToken);
         }
 
 
@@ -258,7 +259,7 @@ namespace WriteAPI.Controllers
         // DOCUMENTS
 
         [HttpPost("files/{id}/{contentId}")]
-        public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId)
+        public async Task<OperationResult<DocumentNoteDTO>> InsertFiles(IFormFile file, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             var validatioResult = this.ValidateFile<DocumentNoteDTO>(file, SupportFileContentTypes.Documents);
             if (!validatioResult.Success)
@@ -268,7 +269,7 @@ namespace WriteAPI.Controllers
 
             var command = new InsertDocumentsToNoteCommand(file, id, contentId);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await this._mediator.Send(command, cancellationToken);
         }
 
 
