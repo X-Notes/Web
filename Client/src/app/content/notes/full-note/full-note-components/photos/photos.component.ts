@@ -20,6 +20,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemovePhotoFromAlbum } from '../../../models/remove-photo-from-album.model';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../services/selection.service';
+import { ApiAlbumService } from '../../services/api-album.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -70,7 +71,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
-    private api: ApiServiceNotes,
+    private api: ApiAlbumService,
     private exportService: ExportService,
   ) {}
 

@@ -55,6 +55,7 @@ import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.mode
 import { OnlineUsersNote } from '../models/online-users-note.model';
 import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
 import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
+import { ApiTextService } from '../full-note/services/api-text.service';
 
 interface FullNoteState {
   note: FullNote;
@@ -100,6 +101,7 @@ interface NoteState {
 export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
+    private apiText: ApiTextService,
     private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
   ) {}
@@ -744,7 +746,7 @@ export class NoteStore {
     const { note } = getState().fullNoteState;
     const newNote: FullNote = { ...note, title: str };
     patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    await this.api.updateTitle(str, note.id).toPromise();
+    await this.apiText.updateTitle(str, note.id).toPromise();
     const noteUpdate = newNote as SmallNote;
     dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
   }

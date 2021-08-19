@@ -938,29 +938,29 @@ export class MenuButtonsService {
 
   // DELETE PERMANENTLY
 
-  deleteNotes() {
+  async deleteNotes() {
     const isInnerNote = this.store.selectSnapshot(AppStore.isNoteInner);
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
 
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const idsInner = [note.id];
-      this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted));
+      await this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted)).toPromise();
       this.deletePermSnackbar(language, 'Note', false);
     } else {
       const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
       const isMany = idsOuter.length > 1;
 
-      this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted))
-      .pipe(take(1)).subscribe(x => this.store.dispatch(LoadUsedDiskSpace));
-      
+      await this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted)).toPromise();
+
+      this.store.dispatch(LoadUsedDiskSpace)   
       this.deletePermSnackbar(language, 'Note', isMany);
     }
   }
 
-  deleteFolders() {
+  async deleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted));
+    await this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted)).toPromise();
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1;
     this.deletePermSnackbar(language, 'Folder', isMany);
