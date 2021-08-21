@@ -13,7 +13,7 @@ import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
@@ -85,6 +85,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntetiesService,
+    private router: Router
   ) {}
 
   ngAfterViewInit(): void {
@@ -101,6 +102,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
