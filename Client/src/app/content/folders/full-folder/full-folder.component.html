@@ -94,6 +94,7 @@
         >
           <app-note
             [note]="item"
+            [currentFolderId]="folder.id"
             (highlightNote)="ffnService.highlightNote($event)"
             (clickOnNote)="ffnService.toNote($event)"
             [ngStyle]="{'backgroundColor': item.color }"

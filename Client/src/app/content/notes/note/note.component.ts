@@ -12,6 +12,8 @@ import { ContentTypeENUM } from '../models/content-model.model';
 export class NoteComponent {
   @Input() note: SmallNote;
 
+  @Input() currentFolderId: string;
+
   @Output() highlightNote = new EventEmitter<SmallNote>();
 
   @Output() clickOnNote = new EventEmitter<SmallNote>();
@@ -28,5 +30,9 @@ export class NoteComponent {
 
   toNote(note: SmallNote) {
     this.clickOnNote.emit(note);
+  }
+
+  get noteFolders() {
+    return this.note.additionalInfo?.noteFolderInfos.filter(folder => folder.folderId !== this.currentFolderId)
   }
 }
