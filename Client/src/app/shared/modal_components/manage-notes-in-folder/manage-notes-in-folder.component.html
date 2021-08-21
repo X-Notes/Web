@@ -61,7 +61,7 @@
         </div>
       </div>
     </div>
-    <app-spinner *ngIf="pService.spinnerActive"></app-spinner>
+    <app-spinner [size]="35" *ngIf="pService.spinnerActive"></app-spinner>
     <div class="dialog-actions" mat-dialog-actions>
       <div class="actions">
         <div class="save-button" #saveButton [mat-dialog-close]="selectedNotesChips">

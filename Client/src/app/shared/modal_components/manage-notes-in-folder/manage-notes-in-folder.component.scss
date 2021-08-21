@@ -1,12 +1,13 @@
 :host {
   display: flex;
-  flex-direction: column;
+  width: 100%;
 }
 
 .wrapper {
   display: flex;
   flex-direction: column;
   width: 750px;
+
   .dialog-content {
     display: flex;
     flex-direction: column;
@@ -125,6 +126,12 @@
     &:hover {
       background-color: #3a3e46;
     }
+  }
+}
+
+@media (max-width: 1024px) {
+  .wrapper {
+    width: 650px;
   }
 }
 

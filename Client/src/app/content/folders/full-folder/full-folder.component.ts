@@ -69,6 +69,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
+  isHaveNotes = false;
+
   private routeSubscription: Subscription;
 
   private id: string;
@@ -113,6 +115,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
             if (this.folder) {
               const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              if (notes && notes.length) {
+                this.isHaveNotes = true;
+              }
               await this.ffnService.initializeEntities(notes);
             }
 
@@ -197,6 +202,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe(async (resp) => {
             if (resp) {
               const ids = resp.map((x) => x.id);
+              ids.length ? this.isHaveNotes = true : this.isHaveNotes = false;
               await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
               await this.ffnService.updateNotesLayout(this.folder.id);
             }
