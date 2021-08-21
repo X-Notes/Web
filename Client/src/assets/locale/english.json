@@ -49,9 +49,9 @@
       "emptyTrash": "Empty Trash",
       "manage": "Manage",
       "filterMenu": {
-        "dateAsc": "Sort by asc",
-        "dateDesc": "Sort by desc",
-        "order": "Custom order"
+        "dateAsc": "From old to new",
+        "dateDesc": "From new to old",
+        "order": "Custom draggable order"
       }
     },
     "menu": {

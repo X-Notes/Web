@@ -33,6 +33,6 @@ export class NoteComponent {
   }
 
   get noteFolders() {
-    return this.note.additionalInfo?.noteFolderInfos.filter(folder => folder.folderId !== this.currentFolderId)
+    return this.note.additionalInfo?.noteFolderInfos?.filter(folder => folder.folderId !== this.currentFolderId)
   }
 }
