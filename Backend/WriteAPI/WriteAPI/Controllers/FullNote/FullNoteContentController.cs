@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner;
+using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

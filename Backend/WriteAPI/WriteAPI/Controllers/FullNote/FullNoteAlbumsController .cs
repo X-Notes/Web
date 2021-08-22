@@ -96,6 +96,13 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
+
+        [HttpPost("tranform")]
+        public async Task<OperationResult<AlbumNoteDTO>> TransformToAlbum(TransformToAlbumCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
     }
 
 }

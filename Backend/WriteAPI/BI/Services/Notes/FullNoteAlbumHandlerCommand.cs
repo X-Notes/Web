@@ -25,7 +25,8 @@ namespace BI.Services.Notes
         IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<AlbumPhotoDTO>>>,
         IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>,
         IRequestHandler<ChangeAlbumRowCountCommand, OperationResult<Unit>>,
-        IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>
+        IRequestHandler<ChangeAlbumSizeCommand, OperationResult<Unit>>,
+        IRequestHandler<TransformToAlbumCommand, OperationResult<AlbumNoteDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -325,5 +326,9 @@ namespace BI.Services.Notes
             return new OperationResult<List<AlbumPhotoDTO>>().SetNoPermissions();
         }
 
+        public async Task<OperationResult<AlbumNoteDTO>> Handle(TransformToAlbumCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

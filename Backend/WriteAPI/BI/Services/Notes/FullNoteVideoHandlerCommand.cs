@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,7 +18,8 @@ namespace BI.Services.Notes
 {
     public class FullNoteVideoHandlerCommand :
         IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>,
-        IRequestHandler<RemoveVideoCommand, OperationResult<Unit>>
+        IRequestHandler<RemoveVideoCommand, OperationResult<Unit>>,
+        IRequestHandler<TransformToVideosCommand, OperationResult<VideoNoteDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -163,6 +163,11 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public Task<OperationResult<VideoNoteDTO>> Handle(TransformToVideosCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

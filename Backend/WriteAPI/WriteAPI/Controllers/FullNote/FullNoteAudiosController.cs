@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.NoteInner.FileContent.Albums;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -89,6 +90,13 @@ namespace WriteAPI.Controllers
 
         [HttpPatch("name")]
         public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNamePlaylistCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("tranform")]
+        public async Task<OperationResult<AudiosPlaylistNoteDTO>> TransformToPlaylist(TransformToPlaylistCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

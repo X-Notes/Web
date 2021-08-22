@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,13 @@ namespace WriteAPI.Controllers
 
         [HttpPost("remove")]
         public async Task<OperationResult<Unit>> RemoveDocument(RemoveDocumentCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
+        [HttpPost("tranform")]
+        public async Task<OperationResult<DocumentNoteDTO>> TransformToDocuments(TransformToDocumentsCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

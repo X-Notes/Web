@@ -45,7 +45,6 @@ using Domain.Commands.Files;
 using Domain.Commands.FolderInner;
 using Domain.Commands.Folders;
 using Domain.Commands.Labels;
-using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Albums;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
@@ -87,6 +86,8 @@ using BI.Services.UserHandlers;
 using Hangfire;
 using Hangfire.PostgreSql;
 using BI.JobsHandlers;
+using Domain.Commands.NoteInner.FileContent.Texts;
+using Domain.Commands.NoteInner.FileContent.Contents;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -176,6 +177,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemovePhotoFromAlbumCommand, OperationResult<Unit>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadPhotosToAlbumCommand, OperationResult<List<AlbumPhotoDTO>>>, FullNoteAlbumHandlerCommand>();
             services.AddScoped<IRequestHandler<InsertAlbumToNoteCommand, OperationResult<AlbumNoteDTO>>, FullNoteAlbumHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformToAlbumCommand, OperationResult<AlbumNoteDTO>>, FullNoteAlbumHandlerCommand>();
 
             // FULL NOTE AUDIOS
             services.AddScoped<IRequestHandler<InsertAudiosToNoteCommand, OperationResult<AudiosPlaylistNoteDTO>>, FullNoteAudioHandlerCommand>();
@@ -183,14 +185,17 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<RemoveAudioCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
             services.AddScoped<IRequestHandler<ChangeNamePlaylistCommand, OperationResult<Unit>>, FullNoteAudioHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadAudiosToPlaylistCommand, OperationResult<List<AudioNoteDTO>>>, FullNoteAudioHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformToPlaylistCommand, OperationResult<AudiosPlaylistNoteDTO>>, FullNoteAudioHandlerCommand>();
 
             // FULL NOTE VIDEOS
             services.AddScoped<IRequestHandler<InsertVideosToNoteCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveVideoCommand, OperationResult<Unit>>, FullNoteVideoHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformToVideosCommand, OperationResult<VideoNoteDTO>>, FullNoteVideoHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
             services.AddScoped<IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveDocumentCommand, OperationResult<Unit>>, FullNoteDocumentHandlerCommand>();
+            services.AddScoped<IRequestHandler<TransformToDocumentsCommand, OperationResult<DocumentNoteDTO>>, FullNoteDocumentHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

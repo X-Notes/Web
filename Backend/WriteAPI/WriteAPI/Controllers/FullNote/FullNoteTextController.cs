@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner;
+using Domain.Commands.NoteInner.FileContent.Texts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -5,7 +5,7 @@ using Common.DatabaseModels.Models.NoteContent.ContentParts;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
-namespace Domain.Commands.NoteInner
+namespace Domain.Commands.NoteInner.FileContent.Contents
 {
     public class InsertLineCommand : BaseCommandEntity, IRequest<OperationResult<TextNoteDTO>>
     {

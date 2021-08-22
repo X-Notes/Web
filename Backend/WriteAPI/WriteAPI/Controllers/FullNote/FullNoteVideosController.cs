@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,15 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
+
+
+        [HttpPost("tranform")]
+        public async Task<OperationResult<VideoNoteDTO>> TransformToVideos(TransformToVideosCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
+        }
+
     }
 
 }

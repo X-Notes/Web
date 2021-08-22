@@ -8,7 +8,7 @@ using BI.SignalR;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.ContentParts;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner;
+using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
 using WriteContext.Repositories.NoteContent;

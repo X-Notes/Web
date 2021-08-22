@@ -18,7 +18,8 @@ namespace BI.Services.Notes
 {
     public class FullNoteDocumentHandlerCommand :
         IRequestHandler<InsertDocumentsToNoteCommand, OperationResult<DocumentNoteDTO>>,
-        IRequestHandler<RemoveDocumentCommand, OperationResult<Unit>>
+        IRequestHandler<RemoveDocumentCommand, OperationResult<Unit>>,
+        IRequestHandler<TransformToDocumentsCommand,  OperationResult<DocumentNoteDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -163,6 +164,11 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<DocumentNoteDTO>> Handle(TransformToDocumentsCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

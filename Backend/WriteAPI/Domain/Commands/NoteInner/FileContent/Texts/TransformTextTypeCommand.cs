@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.NoteContent.ContentParts;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
-namespace Domain.Commands.NoteInner
+namespace Domain.Commands.NoteInner.FileContent.Texts
 {
     public class TransformTextTypeCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {

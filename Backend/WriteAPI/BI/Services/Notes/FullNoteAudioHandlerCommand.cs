@@ -22,7 +22,8 @@ namespace BI.Services.Notes
                 IRequestHandler<RemovePlaylistCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudioCommand, OperationResult<Unit>>,
                 IRequestHandler<ChangeNamePlaylistCommand, OperationResult<Unit>>,
-                IRequestHandler<UploadAudiosToPlaylistCommand, OperationResult<List<AudioNoteDTO>>>
+                IRequestHandler<UploadAudiosToPlaylistCommand, OperationResult<List<AudioNoteDTO>>>,
+                IRequestHandler<TransformToPlaylistCommand, OperationResult<AudiosPlaylistNoteDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -280,6 +281,11 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<List<AudioNoteDTO>>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<AudiosPlaylistNoteDTO>> Handle(TransformToPlaylistCommand request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

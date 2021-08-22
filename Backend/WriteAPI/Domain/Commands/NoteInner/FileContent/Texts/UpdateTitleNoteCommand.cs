@@ -3,7 +3,7 @@ using Common.Attributes;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
-namespace Domain.Commands.NoteInner
+namespace Domain.Commands.NoteInner.FileContent.Texts
 {
     public class UpdateTitleNoteCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
