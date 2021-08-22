@@ -58,6 +58,7 @@ import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snack
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { LongTermOperation, OperationDetailMini } from 'src/app/content/long-term-operations-handler/models/long-term-operation';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
+import { ApiNoteContentService } from '../services/api-note-content.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -105,7 +106,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     public menuSelectionService: MenuSelectionService,
     private uploadFilesService: UploadFilesService,
     private snackBarStatusTranslateService: SnackBarHandlerStatusService,
-    private longTermOperationsHandler: LongTermOperationsHandlerService
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+    private apiNoteContent: ApiNoteContentService
   ) {}
 
   ngOnDestroy(): void {
@@ -117,7 +119,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     this.newLine
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe(async () => {
-        const resp = await this.apiText.newLine(this.note.id).toPromise();
+        const resp = await this.apiNoteContent.newLine(this.note.id).toPromise();
         if (resp.success) {
           this.contents.push(resp.data);
         }
@@ -156,7 +158,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   ) {
     const breakLineType = value.breakModel.typeBreakLine;
     const { nextText } = value.breakModel;
-    const newElement = await this.apiText
+    const newElement = await this.apiNoteContent
       .insertLine(this.note.id, value.contentId, value.nextItemType, breakLineType, nextText)
       .toPromise();
 
@@ -180,7 +182,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async deleteHTMLHandler(
     id: string, // TODO SETTIMEOUT AND CHANGE LOGIC
   ) {
-    const resp = await this.apiText.removeContent(this.note.id, id).toPromise();
+    const resp = await this.apiNoteContent.removeContent(this.note.id, id).toPromise();
 
     if (resp.success) {
       const item = this.contents.find((x) => x.id === id);
@@ -194,7 +196,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async concatThisWithPrev(id: string) {
     // TODO SETTIMEOUT
 
-    const resp = await this.apiText.concatWithPrevious(this.note.id, id).toPromise();
+    const resp = await this.apiNoteContent.concatWithPrevious(this.note.id, id).toPromise();
 
     if (resp.success) {
       const item = this.contents.find((x) => x.id === resp.data.id) as BaseText;
@@ -213,7 +215,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     let indexOf;
 
     const resp = await this.apiText
-      .updateContentType(this.note.id, value.id, value.textType, value.headingType)
+      .updateTextType(this.note.id, value.id, value.textType, value.headingType)
       .toPromise();
 
     if (!resp.success) {

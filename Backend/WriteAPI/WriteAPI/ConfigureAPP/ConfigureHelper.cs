@@ -85,7 +85,6 @@ using Common.DTO.Orders;
 using Common.DTO.Notes.AdditionalContent;
 using BI.Services.UserHandlers;
 using Hangfire;
-using Hangfire.SqlServer;
 using Hangfire.PostgreSql;
 using BI.JobsHandlers;
 
@@ -158,14 +157,16 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<GetNotesForPreviewWindowQuery, List<PreviewNoteForSelection>>, RelatedNotesHandlerQuery>();
             services.AddScoped<IRequestHandler<GetRelatedNotesQuery, List<RelatedNote>>, RelatedNotesHandlerQuery>();
 
-            // FULL NOTE
+            // FULL NOTE TEXT
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteTextHandlerCommand>();
+
+            // FULL NOTE CONTENT
+            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
 
 
             // FULL NOTE ALBUM

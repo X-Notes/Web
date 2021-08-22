@@ -95,6 +95,7 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
+
     }
 
 }

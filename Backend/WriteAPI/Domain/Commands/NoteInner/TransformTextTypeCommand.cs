@@ -14,7 +14,7 @@ namespace Domain.Commands.NoteInner
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        [RequiredEnumField(ErrorMessage = "NoteTextType is required.")]
+        [RequiredEnumField(ErrorMessage = "Note text type is required.")]
         public NoteTextTypeENUM Type { set; get; }
 
         public HTypeENUM? HeadingType { set; get; }

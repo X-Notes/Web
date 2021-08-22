@@ -53,6 +53,7 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+
         [HttpGet("{noteId}")]
         public async Task<List<BaseContentNoteDTO>> GetNoteContents(Guid noteId)
         {
