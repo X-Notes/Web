@@ -12,7 +12,7 @@ export class ApiPlaylistService {
   
   insertAudiosToNote(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<PlaylistModel>>(
-      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
+      `${environment.writeAPI}/api/note/inner/audios/${id}/${contentId}`,
       data, { reportProgress: true, observe: 'events' }
     );
   }
@@ -23,14 +23,14 @@ export class ApiPlaylistService {
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/remove`,
+      `${environment.writeAPI}/api/note/inner/audios/remove`,
       obj,
     );
   }
 
   removeAudioFromPlaylist(noteId: string, contentId: string, audioId: string) {
     return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/${noteId}/${contentId}/${audioId}`,
+      `${environment.writeAPI}/api/note/inner/audios/${noteId}/${contentId}/${audioId}`,
     );
   }
 
@@ -41,14 +41,14 @@ export class ApiPlaylistService {
       name,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/name`,
+      `${environment.writeAPI}/api/note/inner/audios/name`,
       obj,
     );
   }
 
   uploadAudiosToPlaylist(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<AudioModel[]>>(
-      `${environment.writeAPI}/api/fullnote/audios/upload/${id}/${contentId}`,
+      `${environment.writeAPI}/api/note/inner/audios/upload/${id}/${contentId}`,
       data,
     );
   }

@@ -141,7 +141,7 @@ export class ApiServiceNotes {
 
   getOnlineUsersOnNote(id: string) {
     return this.httpClient.get<OnlineUsersNote[]>(
-      `${environment.writeAPI}/api/fullnote/users/${id}`,
+      `${environment.writeAPI}/api/note/inner/users/${id}`,
     );
   }
 
@@ -191,7 +191,7 @@ export class ApiServiceNotes {
 
   getContents(noteId: string): Observable<ContentModel[]> {
     return this.httpClient
-      .get<ContentModel[]>(`${environment.writeAPI}/api/fullnote/contents/${noteId}`)
+      .get<ContentModel[]>(`${environment.writeAPI}/api/note/inner/contents/${noteId}`)
       .pipe(map((x) => TransformNoteUtil.transformContent(x)));
   }
 

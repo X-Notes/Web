@@ -1,0 +1,10 @@
+.container{
+    position: absolute;
+    bottom: 42px;
+    right: 2vw;
+    z-index: 500;
+    width: 22%;
+
+    display: flex;
+    flex-direction: column;
+}

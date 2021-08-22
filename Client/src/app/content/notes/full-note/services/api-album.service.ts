@@ -13,7 +13,7 @@ export class ApiAlbumService {
   insertAlbumToNote(data: FormData, id: string, contentId: string) {
     return this.httpClient
       .post<OperationResult<Album>>(
-        `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
+        `${environment.writeAPI}/api/note/inner/album/${id}/${contentId}`,
         data, { reportProgress: true, observe: 'events' }
       );
   }
@@ -24,21 +24,21 @@ export class ApiAlbumService {
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/remove`,
+      `${environment.writeAPI}/api/note/inner/album/remove`,
       obj,
     );
   }
 
   uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<Photo[]>>(
-      `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
+      `${environment.writeAPI}/api/note/inner/album/upload/${id}/${contentId}`,
       data,
     );
   }
 
   removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
     return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
+      `${environment.writeAPI}/api/note/inner/album/photo/${noteId}/${contentId}/${photoId}`,
     );
   }
 
@@ -49,7 +49,7 @@ export class ApiAlbumService {
       count,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/row/count`,
+      `${environment.writeAPI}/api/note/inner/album/row/count`,
       obj,
     );
   }
@@ -62,7 +62,7 @@ export class ApiAlbumService {
       height,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/size`,
+      `${environment.writeAPI}/api/note/inner/album/size`,
       obj,
     );
   }

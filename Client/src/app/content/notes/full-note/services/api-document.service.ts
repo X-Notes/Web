@@ -10,20 +10,20 @@ export class ApiDocumentService {
   constructor(private httpClient: HttpClient) { }
 
   
-  insertFilesToNote(data: FormData, id: string, contentId: string) {
+  insertDocumentsToNote(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<DocumentModel>>(
-      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
+      `${environment.writeAPI}/api/note/inner/documents/${id}/${contentId}`,
       data, { reportProgress: true, observe: 'events' }
     );
   }
 
-  removeFileFromNote(noteId: string, contentId: string) {
+  removeDocumentFromNote(noteId: string, contentId: string) {
     const obj = {
       noteId,
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/files/remove`,
+      `${environment.writeAPI}/api/note/inner/documents/remove`,
       obj,
     );
   }

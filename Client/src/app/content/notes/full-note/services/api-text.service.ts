@@ -15,7 +15,7 @@ export class ApiTextService {
       id,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/title`,
+      `${environment.writeAPI}/api/note/inner/title`,
       obj,
     );
   }
@@ -25,7 +25,7 @@ export class ApiTextService {
       noteId,
     };
     return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/new`,
+      `${environment.writeAPI}/api/note/inner/contents/new`,
       obj,
     );
   }
@@ -45,7 +45,7 @@ export class ApiTextService {
       noteTextType,
     };
     return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/insert`,
+      `${environment.writeAPI}/api/note/inner/contents/insert`,
       obj,
     );
   }
@@ -56,7 +56,7 @@ export class ApiTextService {
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/content/remove`,
+      `${environment.writeAPI}/api/note/inner/contents/remove`,
       obj,
     );
   }
@@ -78,7 +78,7 @@ export class ApiTextService {
       isItalic,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/text`,
+      `${environment.writeAPI}/api/note/inner/text`,
       obj,
     );
   }
@@ -89,7 +89,7 @@ export class ApiTextService {
       noteId,
     };
     return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/concat`,
+      `${environment.writeAPI}/api/note/inner/contents/concat`,
       obj,
     );
   }
@@ -107,7 +107,7 @@ export class ApiTextService {
       headingType,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/text/type`,
+      `${environment.writeAPI}/api/note/inner/text/type`,
       obj,
     );
   }

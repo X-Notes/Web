@@ -1,0 +1,48 @@
+<div class="container">
+  <div
+    class="message-header"
+    [ngStyle]="{'border-radius':  operation.isDetailViewOpened ? '5px 5px 0 0' : '5px'}"
+  >
+    <p>{{operation?.title}}</p>
+    <div class="buttons">
+      <div
+        *ngIf="operation.isDetailViewActive"
+        (click)="toogleIsDetailViewActive()"
+        [ngStyle]="{'transform': operation.isDetailViewOpened == true ? 'rotate(180deg)' : '' }"
+        class="icon"
+      >
+        <mat-icon svgIcon="selectLabel" [inline]="true"></mat-icon>
+      </div>
+      <ng-container
+        *ngIf="!operation.isDetailViewActive && firstItem && operation.isDetailViewOpened"
+      >
+        <p>{{firstItem.procent}}%</p>
+        <app-spinner [size]="16"></app-spinner>
+      </ng-container>
+      <div class="icon" style="transform: rotate(45deg)">
+        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="operation.isDetailViewOpened" class="operations-container">
+    <div *ngFor="let item of operation.details" class="progress-item">
+      <div class="left-section">
+        <div class="icon">
+          <mat-icon [svgIcon]="item.icon" [inline]="true"></mat-icon>
+        </div>
+        <p class="name">{{item.name}}</p>
+      </div>
+      <div class="right-section">
+        <p class="procent">{{item.procent}}%</p>
+        <div class="spinner-container">
+          <app-spinner [size]="16"></app-spinner>
+        </div>
+        <div class="cancel-button">
+          <div class="icon" style="transform: rotate(45deg)">
+            <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

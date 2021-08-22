@@ -15,7 +15,6 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { ApiServiceNotes } from '../../api-notes.service';
 import {
   Album,
   BaseText,
@@ -27,7 +26,6 @@ import {
   PlaylistModel,
 } from '../../models/content-model.model';
 import { FullNote } from '../../models/full-note.model';
-import { OperationResultAdditionalInfo } from '../../../../shared/models/operation-result.model';
 import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
 import { RemovePhotoFromAlbum } from '../../models/remove-photo-from-album.model';
 import { UpdateTitle } from '../../state/notes-actions';
@@ -48,9 +46,18 @@ import { SelectionService } from '../services/selection.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
-import { fileSizeForCheck, maxRequestFileSize } from 'src/app/core/defaults/constraints';
-import { FileApiService } from 'src/app/core/file-api.service';
+import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
+import { ApiAlbumService } from '../services/api-album.service';
+import { ApiPlaylistService } from '../services/api-playlist.service';
+import { ApiVideoService } from '../services/api-video.service';
+import { ApiDocumentService } from '../services/api-document.service';
+import { ApiTextService } from '../services/api-text.service';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
+import { LongTermOperation, OperationDetailMini } from 'src/app/content/long-term-operations-handler/models/long-term-operation';
+import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -87,12 +94,18 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   constructor(
     private selectionService: SelectionService,
     @Optional() public sliderService: FullNoteSliderService,
-    private api: ApiServiceNotes,
+    private apiAlbum: ApiAlbumService,
+    private apiPlaylist: ApiPlaylistService,
+    private apiVideo: ApiVideoService,
+    private apiDocument: ApiDocumentService,
+    private apiText: ApiTextService,
+    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
     private uploadFilesService: UploadFilesService,
     private snackBarStatusTranslateService: SnackBarHandlerStatusService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService
   ) {}
 
   ngOnDestroy(): void {
@@ -104,7 +117,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     this.newLine
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe(async () => {
-        const resp = await this.api.newLine(this.note.id).toPromise();
+        const resp = await this.apiText.newLine(this.note.id).toPromise();
         if (resp.success) {
           this.contents.push(resp.data);
         }
@@ -143,7 +156,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   ) {
     const breakLineType = value.breakModel.typeBreakLine;
     const { nextText } = value.breakModel;
-    const newElement = await this.api
+    const newElement = await this.apiText
       .insertLine(this.note.id, value.contentId, value.nextItemType, breakLineType, nextText)
       .toPromise();
 
@@ -167,7 +180,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async deleteHTMLHandler(
     id: string, // TODO SETTIMEOUT AND CHANGE LOGIC
   ) {
-    const resp = await this.api.removeContent(this.note.id, id).toPromise();
+    const resp = await this.apiText.removeContent(this.note.id, id).toPromise();
 
     if (resp.success) {
       const item = this.contents.find((x) => x.id === id);
@@ -181,7 +194,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async concatThisWithPrev(id: string) {
     // TODO SETTIMEOUT
 
-    const resp = await this.api.concatWithPrevious(this.note.id, id).toPromise();
+    const resp = await this.apiText.concatWithPrevious(this.note.id, id).toPromise();
 
     if (resp.success) {
       const item = this.contents.find((x) => x.id === resp.data.id) as BaseText;
@@ -199,7 +212,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async transformToTypeText(value: TransformContent) {
     let indexOf;
 
-    const resp = await this.api
+    const resp = await this.apiText
       .updateContentType(this.note.id, value.id, value.textType, value.headingType)
       .toPromise();
 
@@ -271,45 +284,79 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let resp;
     switch (event.typeFile) {
       case TypeUploadFile.PHOTOS: {
-        resp = await this.api.insertAlbumToNote(event.formData, this.note.id, event.id).toPromise();
+        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
+        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
+        this.apiAlbum
+              .insertAlbumToNote(event.formData, this.note.id, event.id)
+              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
+              .subscribe(resp => {
+                if(resp.isUploaded){
+                  resp.eventBody.data = new Album(resp.eventBody.data);
+                  this.insertingFileHandle(resp.eventBody, event);
+                }
+              });
         break;
       }
       case TypeUploadFile.AUDIOS: {
-        resp = await this.api
-          .insertAudiosToNote(event.formData, this.note.id, event.id)
-          .toPromise();
+        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
+        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
+        this.apiPlaylist
+              .insertAudiosToNote(event.formData, this.note.id, event.id)
+              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
+              .subscribe(resp => {
+                if(resp.isUploaded){
+                  this.insertingFileHandle(resp.eventBody, event);
+                }
+              });
         break;
       }
       case TypeUploadFile.FILES: {
-        resp = await this.api.insertFilesToNote(event.formData, this.note.id, event.id).toPromise();
+        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
+        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
+        this.apiDocument
+              .insertDocumentsToNote(event.formData, this.note.id, event.id)
+              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
+              .subscribe(resp => {
+                if(resp.isUploaded){
+                  this.insertingFileHandle(resp.eventBody, event);
+                }
+              });
         break;
       }
       case TypeUploadFile.VIDEOS: {
-        resp = await this.api
-          .insertVideosToNote(event.formData, this.note.id, event.id)
-          .toPromise();
+        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
+        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
+        this.apiVideo
+              .insertVideosToNote(event.formData, this.note.id, event.id)
+              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
+              .subscribe(resp => {
+                if(resp.isUploaded){
+                  this.insertingFileHandle(resp.eventBody, event);
+                }
+              });
         break;
       }
       default: {
         throw new Error('incorrect type');
       }
     }
-
-    if (resp.success) {
+  }
+  
+  insertingFileHandle<T extends ContentModel>(result: OperationResult<T>, event: TransformToFileContent): void {
+    if (result.success) {
       const index = this.contents.findIndex((x) => x.id === event.id);
-      this.contents[index] = resp.data;
+      this.contents[index] = result.data;
       this.store.dispatch(LoadUsedDiskSpace);
-    }else{
+    }else {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
+      this.snackBarStatusTranslateService.validateStatus(lname, result, byteToMB(maxRequestFileSize));
     }
   }
 
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    this.api
+    this.apiText
       .updateContentText(
         this.note.id,
         event.contentId,
@@ -345,7 +392,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       data.append('photos', file);
     }
 
-    const resp = await this.api
+    const resp = await this.apiAlbum
       .uploadPhotosToAlbum(data, this.note.id, $event.id)
       .toPromise();
 
@@ -375,7 +422,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   };
 
   async removePhotoFromAlbumHandler(event: RemovePhotoFromAlbum) {
-    const resp = await this.api
+    const resp = await this.apiAlbum
       .removePhotoFromAlbum(this.note.id, event.contentId, event.photoId)
       .toPromise();
     if (resp.success) {
@@ -395,7 +442,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
-    const resp = await this.api
+    const resp = await this.apiPlaylist
       .removeAudioFromPlaylist(this.note.id, event.contentId, event.audioId)
       .toPromise();
     if (resp.success) {
@@ -417,7 +464,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async changePlaylistName(contentId: string) {
     // TODO
     const name = 'any name';
-    const resp = await this.api.changePlaylistName(this.note.id, contentId, name).toPromise();
+    const resp = await this.apiPlaylist.changePlaylistName(this.note.id, contentId, name).toPromise();
     if (resp.success) {
       const index = this.contents.findIndex((x) => x.id === contentId);
       (this.contents[index] as PlaylistModel).name = name;
@@ -436,7 +483,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       data.append('audios', file);
     }
 
-    const resp = await this.api
+    const resp = await this.apiPlaylist
       .uploadAudiosToPlaylist(data, this.note.id, $event.id)
       .toPromise();
 
@@ -459,7 +506,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
 
   removeVideoHandler = async (id: string) => {
-    const resp = await this.api.removeVideoFromNote(this.note.id, id).toPromise();
+    const resp = await this.apiVideo.removeVideoFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
       this.store.dispatch(LoadUsedDiskSpace);
@@ -467,7 +514,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   };
 
   removeDocumentHandler = async (id: string) => {
-    const resp = await this.api.removeFileFromNote(this.note.id, id).toPromise();
+    const resp = await this.apiDocument.removeDocumentFromNote(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
       this.store.dispatch(LoadUsedDiskSpace);
@@ -475,7 +522,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   };
 
   removeAlbumHandler = async (id: string) => {
-    const resp = await this.api.removeAlbum(this.note.id, id).toPromise();
+    const resp = await this.apiAlbum.removeAlbum(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
       this.store.dispatch(LoadUsedDiskSpace);
@@ -483,7 +530,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   };
 
   removePlaylistHandler = async (id: string) => {
-    const resp = await this.api.removePlaylist(this.note.id, id).toPromise();
+    const resp = await this.apiPlaylist.removePlaylist(this.note.id, id).toPromise();
     if (resp.success) {
       this.contents = this.contents.filter((x) => x.id !== id);
       this.store.dispatch(LoadUsedDiskSpace);

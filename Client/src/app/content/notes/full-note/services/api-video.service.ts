@@ -10,7 +10,7 @@ export class ApiVideoService {
   constructor(private httpClient: HttpClient) { }
 
   insertVideosToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<VideoModel>>(`${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`, 
+    return this.httpClient.post<OperationResult<VideoModel>>(`${environment.writeAPI}/api/note/inner/videos/${id}/${contentId}`, 
                                     data, { reportProgress: true, observe: 'events' });
   }
 
@@ -20,7 +20,7 @@ export class ApiVideoService {
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/videos/remove`,
+      `${environment.writeAPI}/api/note/inner/videos/remove`,
       obj,
     );
   }

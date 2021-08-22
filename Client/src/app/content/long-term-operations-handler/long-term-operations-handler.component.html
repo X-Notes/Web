@@ -1,0 +1,7 @@
+<div class="container">
+  <app-long-term-operation
+    *ngFor="let item of longTermOperations.operations"
+    [operation]="item"
+    (cancelEvent)="longTermOperations.removeItem($event)"
+  ></app-long-term-operation>
+</div>
