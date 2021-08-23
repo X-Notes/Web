@@ -1,5 +1,6 @@
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from 'src/app/content/notes/audio.service';
@@ -20,6 +21,11 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   isOpen = false;
 
+  metadataParsed: Record<string, SafeUrl> = {
+    duration: '',
+    imageUrl: ''
+  }
+
   public positions = [
     new ConnectionPositionPair(
       {
@@ -38,7 +44,10 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     this.audioService
       .getState()
       .pipe(takeUntil(this.destroy))
-      .subscribe((state) => {
+      .subscribe(async (state) => {
+        if (this.state?.id !== this.audioService.currentFile.fileId) {
+          this.metadataParsed = await this.audioService.getMetadata(this.audioService.currentFile.audioPath)
+        }
         this.state = state;
       });
   }

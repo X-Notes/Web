@@ -92,12 +92,20 @@
 
     .content-note {
       width: 100%;
-      .album {
-        img {
-          max-height: 150px;
-          width: 100%;
-          border-radius: 4px;
-          object-fit: cover;
+
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: 0.25rem 0;
+
+        .album {
+          img {
+            max-height: 150px;
+            width: 100%;
+            border-radius: 4px;
+            object-fit: cover;
+          }
         }
       }
 

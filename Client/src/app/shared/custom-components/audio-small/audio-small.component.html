@@ -1,7 +1,7 @@
 <div class="audio-small" appTheme>
   <div class="preview">
-    <img *ngIf="false" />
-    <div class="no-preview">{{ audio.name[0] }}</div>
+    <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
+    <div *ngIf="!metadataParsed.imageUrl" class="no-preview">{{ audio.name[0] }}</div>
   </div>
   <div class="audio-info">
     <p>{{ audio.name }}</p>
