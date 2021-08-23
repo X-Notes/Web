@@ -109,6 +109,12 @@
             margin-left: 0.5rem;
           }
         }
+
+        .no-title {
+          .icon, .placeholder {
+            color: #808080;
+          }
+        }
       }
   
       .bottom-section{

@@ -2,7 +2,7 @@
   <div class="playlist-options">
     <div class="title">
       <p (input)="onInput($event)" [attr.contenteditable]="!isReadOnlyMode">{{content?.name}}</p>
-      <div class="placeholder">Name your playlist</div>
+      <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
     </div>
     <button
       class="audio-button"

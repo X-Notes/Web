@@ -20,7 +20,7 @@
   <div class="folder-inner">
     <input
       type="text"
-      placeholder="Folder name"
+      [placeholder]="'placeholder.folderSmall' | translate"
       [ngModel]="folder.title"
       (ngModelChange)="changed($event)"
     />
@@ -30,11 +30,16 @@
       [ngStyle]="{'cursor': folder.lockRedirect ? 'pointer' : ''}"
     >
       <div class="notes">
-        <div *ngFor="let note of folder.previewNotes" class="note">
+        <div
+          *ngFor="let note of folder.previewNotes"
+          class="note"
+          [ngClass]="{ 'no-title': !note.title }"
+        >
           <div class="icon">
             <mat-icon svgIcon="notes" [inline]="true"></mat-icon>
           </div>
-          <p>{{note.title}}</p>
+          <p *ngIf="note.title">{{ note.title }}</p>
+          <p *ngIf="!note.title" class="placeholder">{{ 'placeholder.folderNote' | translate }}</p>
         </div>
       </div>
       <div class="bottom-section">

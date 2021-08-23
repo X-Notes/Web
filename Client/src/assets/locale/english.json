@@ -198,5 +198,12 @@
       "newMessage": "New",
       "readMessage": "Read message",
       "ChangeUserPermissionNote": "Change user permission note"
+    },
+    "placeholder": {
+      "folderNote": "Note without title",
+      "folderSmall": "Folder title",
+      "noteSmall": "Add title to your note",
+      "playlist": "Name your playlist",
+      "labelPage": "Label name"
     }
   }

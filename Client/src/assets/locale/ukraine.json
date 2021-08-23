@@ -199,5 +199,12 @@
       "newMessage": "Нове",
       "readMessage": "Прочитане",
       "ChangeUserPermissionNote": "Доступ користувача до нотатка змінений"
+    },
+    "placeholder": {
+      "folderNote": "Нотаток без назви",
+      "folderSmall": "Назва папки",
+      "noteSmall": "Додайте назву до нотатку",
+      "playlist": "Назва плейлиста",
+      "labelPage": "Назва ярлика"
     }
   }

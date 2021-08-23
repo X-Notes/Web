@@ -199,5 +199,12 @@
       "newMessage": "Новое",
       "readMessage": "Прочитанное",
       "ChangeUserPermissionNote": "Доступ пользователя к заметке изменен"
+    },
+    "placeholder": {
+      "folderNote": "Заметка без названия",
+      "folderSmall": "Название папки",
+      "noteSmall": "Добавьте название к заметке",
+      "playlist": "Название плейлиста",
+      "labelPage": "Название ярлыка"
     }
   }
