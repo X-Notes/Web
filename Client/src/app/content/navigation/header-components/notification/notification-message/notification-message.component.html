@@ -1,6 +1,14 @@
 <div class="notification-message" appTheme>
   <div class="avatar">
-    <img alt="user image" [src]="message.userFromPhotoId | getImage: message.userFromPhotoId" />
+    <img
+      *ngIf="!photoError"
+      alt="user image"
+      (error)="photoError = true;"
+      [src]="message.userFromPhotoId | getImage: message.userFromPhotoId"
+    />
+    <div *ngIf="photoError" class="photo-error">
+      <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+    </div>
   </div>
   <div class="message">
     <div class="info-message">
