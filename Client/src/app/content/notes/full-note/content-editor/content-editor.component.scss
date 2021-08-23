@@ -79,14 +79,13 @@ app-text-edit-menu {
   position: fixed;
 }
 
-.light {
-  .main-content {
-    background-color: $light-color;
 
-    .title-section {
-      .title {
-        color: $text-color;
-      }
+.light {
+  background-color: rgb(250, 250, 250, 0.9);
+
+  .title-section {
+    .title {
+      color: $text-color;
     }
   }
 }
