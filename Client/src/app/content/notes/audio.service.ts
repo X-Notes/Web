@@ -140,6 +140,9 @@ export class AudioService {
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
+      case this.audioEvents.play:
+      case this.audioEvents.loadstart:
+      case this.audioEvents.loadedmetadata:
       case this.audioEvents.canplay:
         this.state.duration = this.audioObj.duration;
         this.state.readableDuration = this.formatTime(this.state.duration);
