@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { AudioService } from 'src/app/content/notes/audio.service';
+import { AudioModel } from 'src/app/content/notes/models/content-model.model';
 
 @Component({
   selector: 'app-audio-small',
@@ -6,5 +8,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./audio-small.component.scss'],
 })
 export class AudioSmallComponent {
-  @Input() name: string;
+  @Input() audio: AudioModel;
+
+  constructor(public audioService: AudioService) {}
 }

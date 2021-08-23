@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AudioService } from 'src/app/content/notes/audio.service';
+import { AudioModel } from 'src/app/content/notes/models/content-model.model';
 import { StreamAudioState } from 'src/app/content/notes/models/stream-audio-state.model';
 import { showDropdown } from '../../services/personalization.service';
 
@@ -54,7 +55,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   openFile(item) {
     this.audioService.currentFile = item;
     this.audioService.stop();
-    this.playStream(item.url, item.id);
+    this.playStream(item.audioPath, item.id);
   }
 
   pause() {
@@ -62,6 +63,13 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
   }
 
   play() {
+    this.audioService.play();
+  }
+
+  play2(audio: AudioModel) {
+    if (this.audioService.currentFile?.fileId !== audio.fileId) {
+      this.openFile(audio);
+    }
     this.audioService.play();
   }
 

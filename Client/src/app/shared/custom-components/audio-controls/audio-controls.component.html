@@ -35,7 +35,8 @@
       >
         <app-audio-small
           *ngFor="let item of audioService.playlist; let i = index"
-          [name]="item.name"
+          (click)="play2(item)"
+          [audio]="item"
         ></app-audio-small>
       </div>
     </ng-template>

@@ -147,6 +147,7 @@ export class AudioService {
         this.state.duration = this.audioObj.duration;
         this.state.readableDuration = this.formatTime(this.state.duration);
         this.state.canplay = true;
+        this.play();
         break;
       case this.audioEvents.playing:
         this.state.playing = true;
