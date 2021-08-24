@@ -99,7 +99,7 @@ export class AppStore {
 
   @Selector()
   static isNoteInner(state: AppState): boolean {
-    return state.routing === EntityType.NoteInner;
+    return state.routing === EntityType.NoteInner || state.routing === EntityType.FolderInnerNote;
   }
 
   @Selector()
