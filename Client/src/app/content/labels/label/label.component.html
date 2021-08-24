@@ -12,7 +12,7 @@
   <input
     type="text"
     [disabled]="label.isDeleted"
-    placeholder="Label name"
+    [placeholder]="'placeholder.labelPage' | translate"
     [ngModel]="label.name"
     (ngModelChange)="changed($event)"
   />

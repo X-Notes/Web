@@ -85,15 +85,13 @@
 }
 
 .light {
-  .secondary-content {
-    .open {
-      background-color: $light-color;
-      color: $text-color;
-    }
+  .open {
+    background-color: $light-color;
+    color: $text-color;
+  }
 
-    .history-section {
-      background-color: $light-color;
-    }
+  .history-section {
+    background-color: $light-color;
   }
 }
 

@@ -16,6 +16,8 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemoveAudioFromPlaylist } from '../../../models/remove-audio-from-playlist.model';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-audio-note',
@@ -34,7 +36,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   removePlaylist = new EventEmitter<string>();
 
   @Output()
-  changeTitleEvent = new EventEmitter<string>();
+  changeTitleEvent = new EventEmitter<Record<string, string>>();
 
   @Output()
   deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
@@ -42,10 +44,12 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 
-  destroy = new Subject<void>();
-
   @Input()
   isReadOnlyMode = false;
+
+  namePlaylistChanged: Subject<string> = new Subject<string>();
+
+  destroy = new Subject<void>();
 
   constructor(private audioService: AudioService, private exportService: ExportService) {}
 
@@ -54,7 +58,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.destroy.complete();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.namePlaylistChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((name) => this.changeTitleEvent.emit({contentId: this.content.id, name}));
+  }
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
@@ -133,4 +141,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   mouseOut = ($event: any) => {
     console.log($event);
   };
+
+  onInput($event) {
+    this.namePlaylistChanged.next($event.target.innerText);
+  }
 }

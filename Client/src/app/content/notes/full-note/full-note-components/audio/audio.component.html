@@ -1,6 +1,6 @@
 <div class="preview" appTheme>
-  <img *ngIf="false" />
-  <div class="no-preview">{{ audio.name[0] }}</div>
+  <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
+  <div *ngIf="!metadataParsed.imageUrl" class="no-preview">{{ audio.name[0] }}</div>
   <div class="controls">
     <button
       class="interaction audio-button"
@@ -42,8 +42,11 @@
     </div>
     <div class="audio-time">
       <p>{{ state?.readableCurrentTime }}</p>
-      <span>/</span>
-      <p>{{ state?.readableDuration }}</p>
+      <span
+        *ngIf="state?.readableCurrentTime && (metadataParsed.duration || state?.readableDuration)"
+        >/</span
+      >
+      <p>{{ metadataParsed.duration || state?.readableDuration }}</p>
     </div>
   </div>
   <button class="audio-button" type="button" name="more" #more [matMenuTriggerFor]="menu">

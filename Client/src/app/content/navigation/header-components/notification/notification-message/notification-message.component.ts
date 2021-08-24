@@ -10,6 +10,8 @@ export class NotificationMessageComponent {
 
   @Input() isRead: boolean;
 
+  photoError = false;
+
   get typeMessage() {
     switch (this.message.message) {
       case 'notification.ChangeUserPermissionNote':

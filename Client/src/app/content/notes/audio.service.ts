@@ -8,6 +8,8 @@ import { AudioModel } from './models/content-model.model';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
 import { NoteStore } from './state/notes-state';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import * as mm from 'music-metadata-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +42,7 @@ export class AudioService {
 
   private stateChange: BehaviorSubject<StreamAudioState> = new BehaviorSubject(this.state);
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private domSanitizer: DomSanitizer) {}
 
   getState(): Observable<StreamAudioState> {
     return this.stateChange;
@@ -140,10 +142,14 @@ export class AudioService {
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
+      case this.audioEvents.play:
+      case this.audioEvents.loadstart:
+      case this.audioEvents.loadedmetadata:
       case this.audioEvents.canplay:
         this.state.duration = this.audioObj.duration;
         this.state.readableDuration = this.formatTime(this.state.duration);
         this.state.canplay = true;
+        this.play();
         break;
       case this.audioEvents.playing:
         this.state.playing = true;
@@ -177,6 +183,27 @@ export class AudioService {
         throw new Error('Error in audio player');
     }
     this.stateChange.next(this.state);
+  }
+
+  async getMetadata(audioPath): Promise<Record<string, SafeUrl>> {
+    let result = {
+      duration: '',
+      imageUrl: '' as SafeUrl
+    };
+    const metadata = await mm.fetchFromUrl(this.getAudioUrl(audioPath),
+      { skipPostHeaders: true, includeChapters: false, duration: false });
+    
+    if (metadata && metadata.format && metadata.format.duration) {
+      result.duration = this.formatTime(metadata.format.duration)
+    }
+
+    if (metadata && metadata.common && metadata.common && metadata.common.picture) {
+      const arrayBufferView = new Uint8Array( metadata.common.picture[0].data.buffer );
+      const blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+      const url = URL.createObjectURL( blob );
+      result.imageUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
+    }
+    return result;
   }
 
   private resetState() {

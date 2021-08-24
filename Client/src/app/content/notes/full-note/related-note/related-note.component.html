@@ -14,7 +14,11 @@
   <div class="content-small-note" [ngClass]="!note.isOpened ? 'turn-up-note' : ''">
     <div class="note-color"></div>
     <div class="labels-section" *ngIf="note.labels?.length">
-      <div class="label" *ngFor="let item of note.labels">
+      <div
+        class="label"
+        *ngFor="let item of note.labels"
+        [ngStyle]="{ backgroundColor: item.color }"
+      >
         <p>{{item.name}}</p>
       </div>
     </div>
@@ -25,7 +29,7 @@
     </div>
     <div class="content-note">
       <ng-container *ngFor="let content of note.contents">
-        <div [ngSwitch]="content.typeId">
+        <div class="content-wrapper" [ngSwitch]="content.typeId">
           <ng-container *ngSwitchCase="contentType.Text">
             <div *ngIf="content.noteTextTypeId === textType.Default" class="text">
               <p>{{content.content}}</p>

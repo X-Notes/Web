@@ -43,6 +43,16 @@
   [element]="menu"
 >
   <button
+    (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"
+    [ngStyle]="prMenuStyle(sortedTypes.CustomOrder, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
+    mat-menu-item
+    type="button"
+    [name]="'header.filterMenu.order' | translate"
+  >
+    <mat-icon>reorder</mat-icon>
+    <span> {{ 'header.filterMenu.order' | translate }} </span>
+  </button>
+  <button
     (click)="updatePrMenuHandler(sortedTypes.AscDate)"
     [ngStyle]="prMenuStyle(sortedTypes.AscDate, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
     mat-menu-item
@@ -61,15 +71,5 @@
   >
     <mat-icon>south</mat-icon>
     <span> {{ 'header.filterMenu.dateDesc' | translate }} </span>
-  </button>
-  <button
-    (click)="updatePrMenuHandler(sortedTypes.CustomOrder)"
-    [ngStyle]="prMenuStyle(sortedTypes.CustomOrder, (personalizationSetting$ | async), (isFolder$ | async), (isNote$ | async))"
-    mat-menu-item
-    type="button"
-    [name]="'header.filterMenu.order' | translate"
-  >
-    <mat-icon>reorder</mat-icon>
-    <span> {{ 'header.filterMenu.order' | translate }} </span>
   </button>
 </mat-menu>

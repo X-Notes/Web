@@ -13,7 +13,7 @@ import { Select, Store } from '@ngxs/store';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { Observable, Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { takeUntil } from 'rxjs/operators';
 import { ShortUser } from 'src/app/core/models/short-user.model';
@@ -69,6 +69,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded = false;
 
+  isHaveNotes = false;
+
   private routeSubscription: Subscription;
 
   private id: string;
@@ -83,6 +85,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
     private updateNoteService: UpdaterEntetiesService,
+    private router: Router
   ) {}
 
   ngAfterViewInit(): void {
@@ -99,6 +102,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.pService.setSpinnerState(true);
     this.store.dispatch(new UpdateRoute(EntityType.FolderInner));
 
@@ -113,6 +117,9 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
             if (this.folder) {
               const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              if (notes && notes.length) {
+                this.isHaveNotes = true;
+              }
               await this.ffnService.initializeEntities(notes);
             }
 
@@ -197,6 +204,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe(async (resp) => {
             if (resp) {
               const ids = resp.map((x) => x.id);
+              ids.length ? this.isHaveNotes = true : this.isHaveNotes = false;
               await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
               await this.ffnService.updateNotesLayout(this.folder.id);
             }

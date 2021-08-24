@@ -18,16 +18,17 @@
 
   &::-webkit-scrollbar {
     display: none;
+    scrollbar-width: none;
+    width: 0;
   }
   .labels-section {
     margin-bottom: 1rem;
   }
 
   .title-section {
-    margin-left: 8px;
     position: relative;
     display: flex;
-    width: 100%;
+    margin-left: 0.5rem;
     font-size: 2.5rem;
     font-weight: 700;
 
@@ -79,14 +80,13 @@ app-text-edit-menu {
   position: fixed;
 }
 
-.light {
-  .main-content {
-    background-color: $light-color;
 
-    .title-section {
-      .title {
-        color: $text-color;
-      }
+.light {
+  background-color: rgb(250, 250, 250, 0.9);
+
+  .title-section {
+    .title {
+      color: $text-color;
     }
   }
 }

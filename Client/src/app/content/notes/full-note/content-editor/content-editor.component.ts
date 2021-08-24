@@ -405,14 +405,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async changePlaylistName(contentId: string) {
-    // TODO
-    const name = 'any name';
-    const resp = await this.api.changePlaylistName(this.note.id, contentId, name).toPromise();
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === contentId);
-      (this.contents[index] as PlaylistModel).name = name;
-    }
+  async changePlaylistName($event: Record<string, string>) {
+    await this.api.changePlaylistName(this.note.id, $event.contentId, $event.name).toPromise();
   }
 
   uploadAudiosToPlaylistHandler = async ($event: UploadFileToEntity) => {

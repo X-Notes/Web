@@ -4,6 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AudioService } from '../../../audio.service';
 import { AudioModel } from '../../../models/content-model.model';
 import { StreamAudioState } from '../../../models/stream-audio-state.model';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-audio',
@@ -28,9 +29,14 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   state: StreamAudioState;
 
+  metadataParsed: Record<string, SafeUrl> = {
+    duration: '',
+    imageUrl: ''
+  }
+
   constructor(public audioService: AudioService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.audioService
       .getState()
       .pipe(takeUntil(this.destroy))
@@ -41,6 +47,7 @@ export class AudioComponent implements OnInit, OnDestroy {
           this.state = null;
         }
       });
+    this.metadataParsed = await this.audioService.getMetadata(this.audio.audioPath);
   }
 
   ngOnDestroy(): void {

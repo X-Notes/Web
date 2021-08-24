@@ -1,6 +1,9 @@
 <div class="card" appTheme>
   <div class="preview">
-    <img [src]="data.image" (load)="isLoaded = true" [hidden]="!isLoaded" />
+    <img *ngIf="data.image" [src]="data.image" (load)="isLoaded = true" [hidden]="!isLoaded" />
+    <div *ngIf="isLoaded && !data.image" class="photo-error">
+      <mat-icon [inline]="true">error_outline</mat-icon>
+    </div>
     <app-spinner size="25" *ngIf="!isLoaded"></app-spinner>
   </div>
   <div class="card-body">
