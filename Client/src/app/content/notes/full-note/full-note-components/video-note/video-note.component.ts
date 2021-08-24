@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { VideoModel } from '../../../models/content-model.model';
+import { VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -8,8 +8,9 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
   styleUrls: ['./video-note.component.scss'],
 })
 export class VideoNoteComponent implements ParentInteraction {
+  
   @Input()
-  content: VideoModel;
+  content: VideosCollection;
 
   @Input()
   isReadOnlyMode = false;
@@ -30,6 +31,10 @@ export class VideoNoteComponent implements ParentInteraction {
 
   getContent() {
     return this.content;
+  }
+
+  get getFirst(){
+    return this.content.videos[0];
   }
 
   mouseEnter = ($event: any) => {

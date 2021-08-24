@@ -2,8 +2,7 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LongTermOperation, OperationDetailMini } from 'src/app/content/long-term-operations-handler/models/long-term-operation';
-import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
+import { OperationDetailMini } from 'src/app/content/long-term-operations-handler/models/long-term-operation';
 
 export class FileProcessTracker<T>{
   isUploaded: boolean;

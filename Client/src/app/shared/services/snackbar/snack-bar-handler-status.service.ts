@@ -12,7 +12,7 @@ export class SnackBarHandlerStatusService {
 
   constructor(private store: Store, private snackbarTranslateHelper: SnackBarTranlateHelperService) { }
 
-  validateStatus(lname: LanguagesENUM,result: OperationResult<any>, fileSize: string){
+  validateStatus(lname: LanguagesENUM, result: OperationResult<any>, fileSize: string){
 
     if(result.status === OperationResultAdditionalInfo.NoAccessRights){
       const message = this.snackbarTranslateHelper.getNoAccessRightsTranslate(lname); 

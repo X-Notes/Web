@@ -28,7 +28,56 @@ export class BaseText extends ContentModel {
   number?: number;
 }
 
-export class Album extends ContentModel {
+export class AudiosCollection extends ContentModel {
+  name: string;
+
+  audios: AudioModel[];
+}
+
+export class AudioModel {
+  fileId: string;
+
+  name: string;
+
+  audioPath: string;
+
+  authorId: string;
+}
+
+
+export class VideosCollection extends ContentModel {
+  name: string;
+
+  videos: VideoModel[];
+}
+
+export class VideoModel {
+  name: string;
+
+  videoPath: string;
+
+  fileId: string;
+
+  authorId: string;
+}
+
+export class DocumentsCollection extends ContentModel {
+  name: string;
+
+  documents: DocumentModel[];
+}
+
+export class DocumentModel {
+  name: string;
+
+  documentPath: string;
+
+  fileId: string;
+
+  authorId: string;
+}
+
+export class PhotosCollection extends ContentModel {
   photos: Photo[];
 
   height: string;
@@ -37,7 +86,7 @@ export class Album extends ContentModel {
 
   countInRow: number;
 
-  constructor(album: Partial<Album>) {
+  constructor(album: Partial<PhotosCollection>) {
     super(album.typeId, album.id, album.updatedAt);
     this.countInRow = album.countInRow;
     this.height = album.height;
@@ -56,42 +105,6 @@ export class Album extends ContentModel {
         ),
     );
   }
-}
-
-export class PlaylistModel extends ContentModel {
-  name: string;
-
-  audios: AudioModel[];
-}
-
-export class AudioModel {
-  fileId: string;
-
-  name: string;
-
-  audioPath: string;
-
-  authorId: string;
-}
-
-export class VideoModel extends ContentModel {
-  name: string;
-
-  videoPath: string;
-
-  fileId: string;
-
-  authorId: string;
-}
-
-export class DocumentModel extends ContentModel {
-  name: string;
-
-  documentPath: string;
-
-  fileId: string;
-
-  authorId: string;
 }
 
 export class Photo {

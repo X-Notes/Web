@@ -9,10 +9,6 @@ export class LongTermOperationsHandlerService {
   public operations: LongTermOperation[] = [];
 
   constructor() {
-    [1, 2, 3, 4].forEach(x => {
-      const op = this.getNewUploadToNoteOperation();
-      const im = this.getOperationDetailMiniUploadToNoteOperation(op);
-    });
   }
 
   removeItem(operation: LongTermOperation) {

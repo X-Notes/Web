@@ -6,7 +6,7 @@
   </div>
   <div class="card-body">
     <div class="card-info">
-      <div class="title">{{ content.name }}</div>
+      <div class="title">{{ getFirst.name }}</div>
       <div class="link">{{ content.updatedAt | date: 'medium' }}</div>
     </div>
     <div class="card-action">
@@ -21,7 +21,7 @@
         attributeName="panelClass"
         [element]="menu"
       >
-        <button mat-menu-item type="button" name="review" (click)="openModal()">
+        <button mat-menu-item type="button" name="review" (click)="openModal(getFirst)">
           <mat-icon>wysiwyg</mat-icon>
           <span>{{ 'innerNote.menu.review' | translate }}</span>
         </button>

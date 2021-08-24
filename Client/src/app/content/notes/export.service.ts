@@ -1,16 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngxs/store';
 import * as JSZip from 'jszip';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import {
-  Album,
+  PhotosCollection,
   AudioModel,
-  DocumentModel,
+  DocumentsCollection,
   Photo,
-  PlaylistModel,
+  AudiosCollection,
 } from './models/content-model.model';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
@@ -29,7 +28,7 @@ export class ExportService {
     return `${environment.storage}/${authorNoteId}/${escape(url)}`;
   }
 
-  async exportAlbum(album: Album) {
+  async exportAlbum(album: PhotosCollection) {
     const tasks = album.photos.map((photo) => {
       const path = this.getPath(photo.photoFromBig, photo.authorId);
       return this.getBlobFile(path).pipe(
@@ -59,7 +58,7 @@ export class ExportService {
     saveAs(blob, photo.name);
   }
 
-  async exportPlaylist(playlist: PlaylistModel) {
+  async exportPlaylist(playlist: AudiosCollection) {
     const tasks = playlist.audios.map((audio) => {
       const path = this.getPath(audio.audioPath, audio.authorId);
       return this.getBlobFile(path).pipe(
@@ -81,9 +80,20 @@ export class ExportService {
     saveAs(blob, audio.name);
   }
 
-  async exportDocument(document: DocumentModel) {
-    const path = this.getPath(document.documentPath, document.authorId);
-    const blob = await this.getBlobFile(path).toPromise();
-    saveAs(blob, document.name);
+  async exportDocument(collection: DocumentsCollection) {
+
+    const tasks = collection.documents.map((audio) => {
+      const path = this.getPath(audio.documentPath, audio.authorId);
+      return this.getBlobFile(path).pipe(
+        map((blob) => {
+          return {
+            blob,
+            name: audio.name,
+          };
+        }),
+      );
+    });
+
+    await this.zipFiles(tasks);
   }
 }

@@ -359,7 +359,7 @@ export class NoteStore {
   }
 
   @Action(TransformTypeNotes)
-  tranformFromTo(
+  transformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
   ) {

@@ -13,21 +13,15 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import {
-  Album,
   BaseText,
   ContentModel,
   ContentTypeENUM,
   HeadingTypeENUM,
   NoteTextTypeENUM,
-  Photo,
-  PlaylistModel,
 } from '../../models/content-model.model';
 import { FullNote } from '../../models/full-note.model';
-import { RemoveAudioFromPlaylist } from '../../models/remove-audio-from-playlist.model';
-import { RemovePhotoFromAlbum } from '../../models/remove-photo-from-album.model';
 import { UpdateTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
 import { EditTextEventModel } from '../models/edit-text-event.model';
@@ -38,27 +32,17 @@ import { LineBreakType } from '../models/html-models';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { UploadFileToEntity } from '../models/upload-files-to-entity';
 import { ContentEditableService } from '../services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
 import { SelectionService } from '../services/selection.service';
-import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { byteToMB } from 'src/app/core/defaults/byte-convert';
-import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
-import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
-import { ApiAlbumService } from '../services/api-album.service';
-import { ApiPlaylistService } from '../services/api-playlist.service';
-import { ApiVideoService } from '../services/api-video.service';
-import { ApiDocumentService } from '../services/api-document.service';
 import { ApiTextService } from '../services/api-text.service';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { LongTermOperation, OperationDetailMini } from 'src/app/content/long-term-operations-handler/models/long-term-operation';
-import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { ApiNoteContentService } from '../services/api-note-content.service';
+import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
+import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
+import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
+import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
+import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -73,8 +57,13 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
-  @Input()
-  contents: ContentModel[]; // TODO MAKE DICTIONARY
+  @Input() set contents(contents: ContentModel[]) {
+    this.contentEditorContentsService.contents = contents;
+  }
+
+  get contents() {
+    return this.contentEditorContentsService.contents;
+  }
 
   @Input()
   isReadOnlyMode = false;
@@ -95,19 +84,16 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   constructor(
     private selectionService: SelectionService,
     @Optional() public sliderService: FullNoteSliderService,
-    private apiAlbum: ApiAlbumService,
-    private apiPlaylist: ApiPlaylistService,
-    private apiVideo: ApiVideoService,
-    private apiDocument: ApiDocumentService,
     private apiText: ApiTextService,
-    private snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    private uploadFilesService: UploadFilesService,
-    private snackBarStatusTranslateService: SnackBarHandlerStatusService,
-    private longTermOperationsHandler: LongTermOperationsHandlerService,
-    private apiNoteContent: ApiNoteContentService
+    private apiNoteContent: ApiNoteContentService,
+    public contentEditorContentsService: ContentEditorContentsService,
+    public contentEditorAlbumService: ContentEditorPhotosCollectionService,
+    public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
+    public contentEditorVideosService: ContentEditorVideosCollectionService,
+    public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
   ) {}
 
   ngOnDestroy(): void {
@@ -211,6 +197,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
+  getTextContent(index: number): BaseText {
+    return this.contents[index] as BaseText;
+  }
+
   async transformToTypeText(value: TransformContent) {
     let indexOf;
 
@@ -281,63 +271,21 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
 
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles(event.files)
-    if(!isCan){
-      return;
-    }
-
     switch (event.typeFile) {
-      case TypeUploadFile.PHOTOS: {
-        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
-        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
-        this.apiAlbum
-              .insertAlbumToNote(event.formData, this.note.id, event.id)
-              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
-              .subscribe(resp => {
-                if(resp.isUploaded){
-                  resp.eventBody.data = new Album(resp.eventBody.data);
-                  this.insertingFileHandle(resp.eventBody, event);
-                }
-              });
+      case TypeUploadFile.Photos: {
+        await this.contentEditorAlbumService.transformToAlbum(this.note.id, event.contentId, event.files);
         break;
       }
-      case TypeUploadFile.AUDIOS: {
-        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
-        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
-        this.apiPlaylist
-              .insertAudiosToNote(event.formData, this.note.id, event.id)
-              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
-              .subscribe(resp => {
-                if(resp.isUploaded){
-                  this.insertingFileHandle(resp.eventBody, event);
-                }
-              });
+      case TypeUploadFile.Audios: {
+        await this.contentEditorPlaylistService.transformToAudiosCollection(this.note.id, event.contentId, event.files);
         break;
       }
-      case TypeUploadFile.FILES: {
-        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
-        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
-        this.apiDocument
-              .insertDocumentsToNote(event.formData, this.note.id, event.id)
-              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
-              .subscribe(resp => {
-                if(resp.isUploaded){
-                  this.insertingFileHandle(resp.eventBody, event);
-                }
-              });
+      case TypeUploadFile.Documents: {
+        await this.contentEditorDocumentsService.transformToDocuments(this.note.id, event.contentId, event.files);
         break;
       }
-      case TypeUploadFile.VIDEOS: {
-        const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
-        const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
-        this.apiVideo
-              .insertVideosToNote(event.formData, this.note.id, event.id)
-              .pipe(takeUntil(this.destroy), x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini))
-              .subscribe(resp => {
-                if(resp.isUploaded){
-                  this.insertingFileHandle(resp.eventBody, event);
-                }
-              });
+      case TypeUploadFile.Videos: {
+        await this.contentEditorVideosService.transformToVideos(this.note.id, event.contentId, event.files);
         break;
       }
       default: {
@@ -346,17 +294,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
   
-  insertingFileHandle<T extends ContentModel>(result: OperationResult<T>, event: TransformToFileContent): void {
-    if (result.success) {
-      const index = this.contents.findIndex((x) => x.id === event.id);
-      this.contents[index] = result.data;
-      this.store.dispatch(LoadUsedDiskSpace);
-    }else {
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, result, byteToMB(maxRequestFileSize));
-    }
-  }
-
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
     this.apiText
       .updateContentText(
@@ -376,168 +313,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   addNewElementToEnd() {
     this.newLine.next();
   }
-
-  getTextContent(index: number): BaseText {
-    return this.contents[index] as BaseText;
-  }
-
-
-  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity) => {
-
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files)
-    if(!isCan){
-      return;
-    }
-
-    const data = new FormData();
-    for (const file of $event.files) {
-      data.append('photos', file);
-    }
-
-    const resp = await this.apiAlbum
-      .uploadPhotosToAlbum(data, this.note.id, $event.id)
-      .toPromise();
-
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === $event.id);
-      const newPhotos: Photo[] = resp.data.map(
-        (x) =>
-          new Photo(
-            x.fileId,
-            x.photoPathSmall,
-            x.photoPathMedium,
-            x.photoPathBig,
-            false,
-            x.name,
-            x.authorId,
-          ),
-      );
-      const contentPhotos = (this.contents[index] as Album).photos;
-      const resultPhotos = [...contentPhotos, ...newPhotos];
-      const newAlbum: Album = { ...(this.contents[index] as Album), photos: resultPhotos };
-      this.contents[index] = newAlbum;
-      this.store.dispatch(LoadUsedDiskSpace);
-    }else{
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
-    }
-  };
-
-  async removePhotoFromAlbumHandler(event: RemovePhotoFromAlbum) {
-    const resp = await this.apiAlbum
-      .removePhotoFromAlbum(this.note.id, event.contentId, event.photoId)
-      .toPromise();
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === event.contentId);
-      const contentPhotos = (this.contents[index] as Album).photos;
-      if (contentPhotos.length === 1) {
-        this.contents = this.contents.filter((x) => x.id !== event.contentId);
-      } else {
-        const newAlbum: Album = {
-          ...(this.contents[index] as Album),
-          photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
-        };
-        this.contents[index] = newAlbum;
-      }
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  }
-
-  async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist) {
-    const resp = await this.apiPlaylist
-      .removeAudioFromPlaylist(this.note.id, event.contentId, event.audioId)
-      .toPromise();
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === event.contentId);
-      const { audios } = this.contents[index] as PlaylistModel;
-      if (audios.length === 1) {
-        this.contents = this.contents.filter((x) => x.id !== event.contentId);
-      } else {
-        const newPlaylist: PlaylistModel = {
-          ...(this.contents[index] as PlaylistModel),
-          audios: audios.filter((x) => x.fileId !== event.audioId),
-        };
-        this.contents[index] = newPlaylist;
-      }
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  }
-
-  async changePlaylistName(contentId: string) {
-    // TODO
-    const name = 'any name';
-    const resp = await this.apiPlaylist.changePlaylistName(this.note.id, contentId, name).toPromise();
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === contentId);
-      (this.contents[index] as PlaylistModel).name = name;
-    }
-  }
-
-  uploadAudiosToPlaylistHandler = async ($event: UploadFileToEntity) => {
-
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files)
-    if(!isCan){
-      return;
-    }
-
-    const data = new FormData();
-    for (const file of $event.files) {
-      data.append('audios', file);
-    }
-
-    const resp = await this.apiPlaylist
-      .uploadAudiosToPlaylist(data, this.note.id, $event.id)
-      .toPromise();
-
-    if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === $event.id);
-      const { audios } = this.contents[index] as PlaylistModel;
-      const resultAudios = [...audios, ...resp.data];
-      const newPlaylist: PlaylistModel = {
-        ...(this.contents[index] as PlaylistModel),
-        audios: resultAudios,
-      };
-      this.contents[index] = newPlaylist;
-      this.store.dispatch(LoadUsedDiskSpace);
-    }else{
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      this.snackBarStatusTranslateService.validateStatus(lname, resp, byteToMB(maxRequestFileSize));
-    }
-  };
-
-
-
-  removeVideoHandler = async (id: string) => {
-    const resp = await this.apiVideo.removeVideoFromNote(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  };
-
-  removeDocumentHandler = async (id: string) => {
-    const resp = await this.apiDocument.removeDocumentFromNote(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  };
-
-  removeAlbumHandler = async (id: string) => {
-    const resp = await this.apiAlbum.removeAlbum(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  };
-
-  removePlaylistHandler = async (id: string) => {
-    const resp = await this.apiPlaylist.removePlaylist(this.note.id, id).toPromise();
-    if (resp.success) {
-      this.contents = this.contents.filter((x) => x.id !== id);
-      this.store.dispatch(LoadUsedDiskSpace);
-    }
-  };
 
   placeHolderClick($event) {
     $event.preventDefault();

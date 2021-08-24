@@ -11,7 +11,7 @@ import {
 import { Subject } from 'rxjs';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
-import { AudioModel, ContentModel, PlaylistModel } from '../../../models/content-model.model';
+import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemoveAudioFromPlaylist } from '../../../models/remove-audio-from-playlist.model';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
@@ -24,7 +24,7 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 })
 export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
   @Input()
-  content: PlaylistModel;
+  content: AudiosCollection;
 
   formats = TypeUploadFormats.AUDIOS;
 
@@ -69,7 +69,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   async uploadAudios(event) {
     const files = event.target.files as File[];
     if(files?.length > 0){
-      this.uploadEvent.emit({ id: this.content.id, files });
+      this.uploadEvent.emit({ contentId: this.content.id, files });
     }
   }
 
@@ -82,7 +82,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     }
   }
 
-  async exportPlaylist(playlist: PlaylistModel) {
+  async exportPlaylist(playlist: AudiosCollection) {
     await this.exportService.exportPlaylist(playlist);
   }
 

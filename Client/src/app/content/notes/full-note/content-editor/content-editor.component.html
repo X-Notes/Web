@@ -98,33 +98,33 @@
           [content]="item"
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteEvent)="removeAlbumHandler($event)"
-          (uploadEvent)="uploadPhotoToAlbumHandler($event)"
-          (deletePhotoFromAlbum)="removePhotoFromAlbumHandler($event)"
+          (deleteEvent)="contentEditorAlbumService.removeAlbumHandler($event, note.id)"
+          (uploadEvent)="contentEditorAlbumService.uploadPhotoToAlbumHandler($event, note.id)"
+          (deletePhotoFromAlbum)="contentEditorAlbumService.removePhotoFromAlbumHandler($event, note.id)"
         ></app-photos>
         <app-audio-note
           #htmlComp
           *ngSwitchCase="contentType.Audio"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (removePlaylist)="removePlaylistHandler($event)"
-          (deleteAudio)="removeAudioFromPlaylistHandler($event)"
-          (changeTitleEvent)="changePlaylistName($event)"
-          (uploadEvent)="uploadAudiosToPlaylistHandler($event)"
+          (removePlaylist)="contentEditorPlaylistService.removeAudiosCollectionHandler($event, note.id)"
+          (deleteAudio)="contentEditorPlaylistService.removeAudioFromPlaylistHandler($event, note.id)"
+          (changeTitleEvent)="contentEditorPlaylistService.changePlaylistName($event, note.id)"
+          (uploadEvent)="contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, note.id)"
         ></app-audio-note>
         <app-video-note
           #htmlComp
           *ngSwitchCase="contentType.Video"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteVideoEvent)="removeVideoHandler($event)"
+          (deleteVideoEvent)="contentEditorVideosService.removeVideosHandler($event, note.id)"
         ></app-video-note>
         <app-document-note
           #htmlComp
           *ngSwitchCase="contentType.Document"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteDocumentEvent)="removeDocumentHandler($event)"
+          (deleteDocumentEvent)="contentEditorDocumentsService.removeDocumentHandler($event, note.id)"
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>
       </div>

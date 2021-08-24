@@ -293,7 +293,7 @@ export class FolderStore {
   }
 
   @Action(TransformTypeFolders)
-  tranformFromTo(
+  transformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeFolders,
   ) {

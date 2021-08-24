@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Album } from '../../models/content-model.model';
+import { PhotosCollection } from '../../models/content-model.model';
 
 @Component({
   selector: 'app-note-preview-photos',
@@ -8,5 +8,5 @@ import { Album } from '../../models/content-model.model';
 })
 export class NotePreviewPhotosComponent {
   @Input()
-  album: Album;
+  album: PhotosCollection;
 }

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
-import { DocumentModel } from '../../../models/content-model.model';
+import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
 import { docFormats, excelFormats, pdfFormats, presentationFormats } from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
@@ -12,7 +12,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 })
 export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
-  content: DocumentModel;
+  content: DocumentsCollection;
 
   @Input()
   isReadOnlyMode = false;
@@ -66,8 +66,12 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     return 'fileInner';
   }
 
-  openModal() {
-    const path = this.exportService.getPath(this.content.documentPath, this.content.authorId);
+  get getFirst(){
+    return this.content.documents[0];
+  }
+
+  openModal(document: DocumentModel) {
+    const path = this.exportService.getPath(document.documentPath, document.authorId);
     console.log(path);
     this.dialogsManageService.viewDock(path);
   }

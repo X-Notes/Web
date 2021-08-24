@@ -2,17 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { DocumentModel } from '../../models/content-model.model';
+import { DocumentModel, DocumentsCollection } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiDocumentService {
 
   constructor(private httpClient: HttpClient) { }
 
-  
-  insertDocumentsToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<DocumentModel>>(
-      `${environment.writeAPI}/api/note/inner/documents/${id}/${contentId}`,
+  transformToDocuments(noteId: string, contentId: string) {
+    const obj = {
+      noteId,
+      contentId
+    };
+    return this.httpClient.post<OperationResult<DocumentsCollection>>(`${environment.writeAPI}/api/note/inner/documents/transform`, obj);
+  }
+
+  uploadDocumentsToCollection(data: FormData, id: string, contentId: string) {
+    return this.httpClient.post<OperationResult<DocumentModel[]>>(
+      `${environment.writeAPI}/api/note/inner/documents/upload/${id}/${contentId}`,
       data, { reportProgress: true, observe: 'events' }
     );
   }
