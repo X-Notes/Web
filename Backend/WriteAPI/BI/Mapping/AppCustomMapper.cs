@@ -6,6 +6,8 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Users;
 using Common.DTO.App;
@@ -43,30 +45,32 @@ namespace BI.Mapping
                             resultList.Add(tNDTO);
                             break;
                         }
-                    case AlbumNote aN:
+                    case PhotosCollectionNote aN:
                         {
-                            var photosDTO = aN.Photos.Select(item => new AlbumPhotoDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
-                            var aNDTO = new AlbumNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
-                            resultList.Add(aNDTO);
+                            var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
+                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
+                            resultList.Add(collectionDTO);
                             break;
                         }
-                    case AudiosPlaylistNote playlistNote:
+                    case AudiosCollectionNote playlistNote:
                         {
                             var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
-                            var playlistDTO = new AudiosPlaylistNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
-                            resultList.Add(playlistDTO);
+                            var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
+                            resultList.Add(collectionDTO);
                             break;
                         }
-                    case VideoNote videoNote:
+                    case VideosCollectionNote videoNote:
                         {
-                            var videoNoteDTO = new VideoNoteDTO(videoNote.Name, videoNote.AppFileId, videoNote.AppFile.PathNonPhotoContent, videoNote.Id, videoNote.UpdatedAt, videoNote.AppFile.UserId);
-                            resultList.Add(videoNoteDTO);
+                            var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
+                            var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.UpdatedAt, videoNote.Name, videosDTO);
+                            resultList.Add(collectionDTO);
                             break;
                         }
-                    case DocumentNote documentNote:
+                    case DocumentsCollectionNote documentNote:
                         {
-                            var documentNoteDTO = new DocumentNoteDTO(documentNote.Name, documentNote.AppFile.PathNonPhotoContent, documentNote.AppFileId, documentNote.Id, documentNote.UpdatedAt, documentNote.AppFile.UserId);
-                            resultList.Add(documentNoteDTO);
+                            var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, item.PathNonPhotoContent, item.Id, item.UserId)).ToList();
+                            var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
+                            resultList.Add(collectionDTO);
                             break;
                         }
                     default:

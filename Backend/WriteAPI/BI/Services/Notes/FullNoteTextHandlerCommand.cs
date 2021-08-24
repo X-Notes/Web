@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
-using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;

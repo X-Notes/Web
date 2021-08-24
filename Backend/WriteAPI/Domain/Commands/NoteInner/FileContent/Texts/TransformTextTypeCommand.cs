@@ -1,6 +1,6 @@
 ﻿using System;
 using Common.Attributes;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
 using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Folders
 {
+    [Table(nameof(Folder), Schema = SchemeConfig.Folder)]
     public class Folder : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter
     {
         public FolderTypeENUM FolderTypeId { set; get; }

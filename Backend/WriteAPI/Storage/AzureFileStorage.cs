@@ -23,9 +23,9 @@ namespace Storage
 
             folders = new Dictionary<ContentTypesFile, string>()
             {
-                {  ContentTypesFile.Images, "Images" },
+                {  ContentTypesFile.Photos, "Images" },
                 {  ContentTypesFile.Videos, "Videos" },
-                {  ContentTypesFile.Files,  "Files"  },
+                {  ContentTypesFile.Documents,  "Files"  },
                 {  ContentTypesFile.Audios, "Audios" },
             };
         }

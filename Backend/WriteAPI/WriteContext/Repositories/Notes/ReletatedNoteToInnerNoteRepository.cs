@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 
 namespace WriteContext.Repositories.Notes
 {
@@ -31,16 +31,16 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(z => (z as AlbumNote).Photos)
+                .ThenInclude(z => (z as PhotosCollectionNote).Photos)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as VideoNote).AppFile)
+                .ThenInclude(x => (x as VideosCollectionNote).Videos)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as AudiosPlaylistNote).Audios)
+                .ThenInclude(x => (x as AudiosCollectionNote).Audios)
                 .Include(x => x.RelatedNote)
                 .ThenInclude(x => x.Contents)
-                .ThenInclude(x => (x as DocumentNote).AppFile)
+                .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
         }

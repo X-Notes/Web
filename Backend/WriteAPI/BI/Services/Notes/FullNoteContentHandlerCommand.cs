@@ -1,7 +1,6 @@
 ﻿using BI.Services.History;
 using BI.SignalR;
-using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Queries.Permissions;

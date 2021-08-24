@@ -6,14 +6,14 @@ using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.Users
 {
-    public class BackgroundRepository : Repository<Backgrounds, Guid>
+    public class BackgroundRepository : Repository<Background, Guid>
     {
         public BackgroundRepository(WriteContextDB contextDB)
             : base(contextDB)
         {
         }
 
-        public async Task<bool> AddBackground(Backgrounds background, AppFile file)
+        public async Task<bool> AddBackground(Background background, AppFile file)
         {
             var success = true;
             using (var transaction = await context.Database.BeginTransactionAsync())

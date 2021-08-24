@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
@@ -11,6 +12,7 @@ using Common.Interfaces.Note;
 
 namespace Common.DatabaseModels.Models.Notes
 {
+    [Table(nameof(Note), Schema = SchemeConfig.Note)]
     public class Note : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter, IBaseNote
     {
         public NoteTypeENUM NoteTypeId { set; get; }

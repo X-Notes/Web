@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,32 +27,36 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-
-        [HttpPost("{id}/{contentId}")]
-        public async Task<OperationResult<VideoNoteDTO>> InsertVideos(IFormFile video, Guid id, Guid contentId, CancellationToken cancellationToken)
+        [HttpPost("upload/{id}/{contentId}")]
+        public async Task<OperationResult<List<VideoNoteDTO>>> UploadVideosToCollection(List<IFormFile> videos, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
-            var validatioResult = this.ValidateFile<VideoNoteDTO>(video, SupportFileContentTypes.Videos);
-            if (!validatioResult.Success)
+            if (videos.Count == 0) // TODO MOVE TO FILTER
             {
-                return validatioResult;
+                return new OperationResult<List<VideoNoteDTO>>().SetNoAnyFile();
             }
 
-            var command = new InsertVideosToNoteCommand(video, id, contentId);
+            var results = videos.Select(document => this.ValidateFile<List<VideoNoteDTO>>(document, SupportFileContentTypes.Videos));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var command = new UploadVideosToCollectionCommands(id, contentId, videos);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command, cancellationToken);
+            return await _mediator.Send(command, cancellationToken);
         }
 
-
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveVideo(RemoveVideoCommand command)
+        public async Task<OperationResult<Unit>> RemoveVideo(RemoveVideosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
 
 
-        [HttpPost("tranform")]
-        public async Task<OperationResult<VideoNoteDTO>> TransformToVideos(TransformToVideosCommand command)
+        [HttpPost("transform")]
+        public async Task<OperationResult<VideosCollectionNoteDTO>> TransformToVideos(TransformToVideosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

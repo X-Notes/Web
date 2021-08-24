@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.DatabaseModels.Models.NoteContent;
+using System.ComponentModel.DataAnnotations.Schema;
+using Common.DatabaseModels.Models.Files.Contents;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.Files
 {
+    [Table(nameof(AppFile), Schema = SchemeConfig.File)]
     public class AppFile : BaseEntity<Guid>
     {
         public string PathPhotoSmall { set; get; }
@@ -29,15 +32,17 @@ namespace Common.DatabaseModels.Models.Files
 
         public List<UserProfilePhoto> UserProfilePhotos { set; get; }
 
-        public List<AlbumNote> AlbumNotes { set; get; }
-        public List<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
+        public List<PhotosCollectionNote> PhotosCollectionNotes { set; get; }
+        public List<PhotoNoteAppFile> PhotosCollectionNoteAppFiles { set; get; }
 
-        public List<VideoNote> VideoNotes { set; get; }
+        public List<VideosCollectionNote> VideosCollectionNotes { set; get; }
+        public List<VideoNoteAppFile> VideosCollectionNoteAppFiles { set; get; }
 
-        public List<AudiosPlaylistNote> AudioNotes { set; get; }
-        public List<AudioNoteAppFile> AudioNoteAppFiles { set; get; }
+        public List<AudiosCollectionNote> AudiosCollectionNotes { set; get; }
+        public List<AudioNoteAppFile> AudiosCollectionNoteAppFiles { set; get; }
 
-        public List<DocumentNote> DocumentNotes { set; get; }
+        public List<DocumentsCollectionNote> DocumentsCollectionNotes { set; get; }
+        public List<DocumentNoteAppFile> DocumentsCollectionNoteAppFiles { set; get; }
 
         public AppFile()
         {

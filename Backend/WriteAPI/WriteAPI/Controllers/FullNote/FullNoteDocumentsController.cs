@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
@@ -10,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
+
+
 namespace WriteAPI.Controllers
 {
     [Authorize]
@@ -23,31 +28,35 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-
-        [HttpPost("{id}/{contentId}")]
-        public async Task<OperationResult<DocumentNoteDTO>> InsertDocuments(IFormFile file, Guid id, Guid contentId, CancellationToken cancellationToken)
+        [HttpPost("upload/{id}/{contentId}")]
+        public async Task<OperationResult<List<DocumentNoteDTO>>> UploadDocumentsToCollection(List<IFormFile> documents, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
-            var validatioResult = this.ValidateFile<DocumentNoteDTO>(file, SupportFileContentTypes.Documents);
-            if (!validatioResult.Success)
+            if (documents.Count == 0) // TODO MOVE TO FILTER
             {
-                return validatioResult;
+                return new OperationResult<List<DocumentNoteDTO>>().SetNoAnyFile();
             }
 
-            var command = new InsertDocumentsToNoteCommand(file, id, contentId);
+            var results = documents.Select(document => this.ValidateFile<List<DocumentNoteDTO>>(document, SupportFileContentTypes.Documents));
+            var result = results.FirstOrDefault(x => !x.Success);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var command = new UploadDocumentsToCollectionCommand(id, contentId, documents);
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command, cancellationToken);
+            return await _mediator.Send(command, cancellationToken);
         }
 
-
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveDocument(RemoveDocumentCommand command)
+        public async Task<OperationResult<Unit>> RemoveDocument(RemoveDocumentsCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
 
-        [HttpPost("tranform")]
-        public async Task<OperationResult<DocumentNoteDTO>> TransformToDocuments(TransformToDocumentsCommand command)
+        [HttpPost("transform")]
+        public async Task<OperationResult<DocumentsCollectionNoteDTO>> TransformToDocuments(TransformToDocumentsCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

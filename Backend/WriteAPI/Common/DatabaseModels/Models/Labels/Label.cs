@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Users;
 using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Labels
 {
+    [Table(nameof(Label), Schema = SchemeConfig.Label)]
     public class Label : BaseEntity<Guid>, IDateCreator, IDateUpdater, IDateDeleter
     {
         public string Color { set; get; }

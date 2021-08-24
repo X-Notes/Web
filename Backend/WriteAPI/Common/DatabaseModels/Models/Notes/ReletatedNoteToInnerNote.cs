@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.Notes
 {
+    [Table(nameof(ReletatedNoteToInnerNote), Schema = SchemeConfig.Note)]
     public class ReletatedNoteToInnerNote : BaseEntity<Guid>
     {
         [NotMapped]

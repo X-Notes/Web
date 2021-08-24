@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.NoteContent;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 
 namespace WriteContext.Repositories.Folders
 {
@@ -23,7 +23,7 @@ namespace WriteContext.Repositories.Folders
                 .Include(x => x.Note)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Note)
-                .ThenInclude(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .ThenInclude(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
                 .OrderBy(x => x.Order).ToListAsync();
         }
 

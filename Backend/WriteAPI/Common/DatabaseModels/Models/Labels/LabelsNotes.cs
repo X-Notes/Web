@@ -4,6 +4,7 @@ using Common.DatabaseModels.Models.Notes;
 
 namespace Common.DatabaseModels.Models.Labels
 {
+    [Table(nameof(LabelsNotes), Schema = SchemeConfig.Label)]
     public class LabelsNotes : BaseEntity<Guid>
     {
         [NotMapped]

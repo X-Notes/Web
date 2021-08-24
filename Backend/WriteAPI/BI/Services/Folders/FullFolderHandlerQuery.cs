@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BI.Helpers;
 using BI.Mapping;
-using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Notes;
 using Domain.Queries.InnerFolder;
 using Domain.Queries.Permissions;

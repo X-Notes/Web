@@ -11,12 +11,12 @@ namespace BI.Mapping
     {
         public BackgroundProfiile()
         {
-            CreateMap<Backgrounds, BackgroundDTO>()
+            CreateMap<Background, BackgroundDTO>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
                 .ForMember(x => x.PhotoId, dest => dest.MapFrom(f => f.FileId))
                 .ForMember(x => x.PhotoPath, dest => dest.MapFrom(f => f.File.GetFromBigPath));
 
-            CreateMap<BackgroundDTO, Backgrounds>()
+            CreateMap<BackgroundDTO, Background>()
                 .ForMember(x => x.Id, dest => dest.MapFrom(f => f.Id))
                 .ForMember(x => x.FileId, dest => dest.MapFrom(f => f.PhotoId));
         }

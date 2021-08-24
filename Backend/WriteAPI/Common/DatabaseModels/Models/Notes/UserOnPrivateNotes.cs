@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.Notes
 {
+    [Table(nameof(UserOnPrivateNotes), Schema = SchemeConfig.Note)]
     public class UserOnPrivateNotes : BaseEntity<Guid>
     {
         [NotMapped]

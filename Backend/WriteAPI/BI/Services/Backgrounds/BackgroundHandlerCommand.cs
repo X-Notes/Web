@@ -78,7 +78,7 @@ namespace BI.Services.Backgrounds
             var filebytes = await request.File.GetFilesBytesAsync();
             var appFile = await _mediator.Send(new SaveBackgroundCommand(user.Id, filebytes));
 
-            var item = new Common.DatabaseModels.Models.Users.Backgrounds()
+            var item = new Common.DatabaseModels.Models.Users.Background()
             {
                 UserId = user.Id,
                 File = appFile

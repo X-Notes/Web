@@ -9,10 +9,12 @@ using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.Files.Contents;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Notes;
@@ -151,10 +153,10 @@ namespace BI.Services.Notes
             if (selectdeletenotes.Count == request.Ids.Count)
             {
                 var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
-                var noteFiles = contents.Where(x => x is AlbumNote).Select(x => x as AlbumNote).SelectMany(x => x.Photos).ToList();
-                var documents = contents.Where(x => x is DocumentNote).Select(x => x as DocumentNote).Select(x => x.AppFile);
-                var audios = contents.Where(x => x is AudiosPlaylistNote).Select(x => x as AudiosPlaylistNote).SelectMany(x => x.Audios);
-                var videos = contents.Where(x => x is VideoNote).Select(x => x as VideoNote).Select(x => x.AppFile);
+                var noteFiles = contents.Where(x => x is PhotosCollectionNote).Select(x => x as PhotosCollectionNote).SelectMany(x => x.Photos).ToList();
+                var documents = contents.Where(x => x is DocumentsCollectionNote).Select(x => x as DocumentsCollectionNote).SelectMany(x => x.Documents);
+                var audios = contents.Where(x => x is AudiosCollectionNote).Select(x => x as AudiosCollectionNote).SelectMany(x => x.Audios);
+                var videos = contents.Where(x => x is VideosCollectionNote).Select(x => x as VideosCollectionNote).SelectMany(x => x.Videos);
                 noteFiles.AddRange(documents);
                 noteFiles.AddRange(audios);
                 noteFiles.AddRange(videos);
@@ -223,70 +225,80 @@ namespace BI.Services.Notes
                             contents.Add(new TextNote(textNote, isHistory, entityId));
                             continue;
                         }
-                    case AlbumNote album:
+                    case PhotosCollectionNote collection:
                         {
 
                             if (isHistory || isOwner)
                             {
-                                var dbFiles = album.AlbumNoteAppFiles.Select(x => new AlbumNoteAppFile
+                                var dbFiles = collection.PhotoNoteAppFiles.Select(x => new PhotoNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
-                                contents.Add(new AlbumNote(album, dbFiles, isHistory, entityId));
+                                contents.Add(new PhotosCollectionNote(collection, dbFiles, isHistory, entityId));
                             }
                             else
                             {
-                                var copyCommands = album.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Images));
+                                var copyCommands = collection.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Photos));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                var copyPhotos = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new AlbumNote(album, copyPhotos, false, entityId));
+                                var copies = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new PhotosCollectionNote(collection, copies, false, entityId));
                             }
                             continue;
                         }
-                    case VideoNote videoNote:
+                    case VideosCollectionNote collection:
                         {
                             if (isHistory || isOwner)
                             {
-                                contents.Add(new VideoNote(videoNote, videoNote.AppFileId, isHistory, entityId));
-                            }
-                            else
-                            {
-                                var copyCommand = new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, videoNote.AppFile, ContentTypesFile.Videos);
-                                var fileCopy = await _mediator.Send(copyCommand);
-                                contents.Add(new VideoNote(videoNote, fileCopy, false, entityId));
-                            }
-                            continue;
-                        }
-                    case AudiosPlaylistNote audioNote:
-                        {
-                            if (isHistory || isOwner)
-                            {
-                                var dbFiles = audioNote.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                var dbFiles = collection.VideoNoteAppFiles.Select(x => new VideoNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
-                                contents.Add(new AudiosPlaylistNote(audioNote, dbFiles, isHistory, entityId));
+                                contents.Add(new VideosCollectionNote(collection, dbFiles, isHistory, entityId));
                             }
                             else
                             {
-                                var copyCommands = audioNote.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
+                                var copyCommands = collection.Videos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Videos));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
-                                var copyAudios = (await Task.WhenAll(tasks)).ToList();
-                                contents.Add(new AudiosPlaylistNote(audioNote, copyAudios, false, entityId));
+                                var copies = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new VideosCollectionNote(collection, copies, false, entityId));
                             }
                             continue;
                         }
-                    case DocumentNote documentNote:
+                    case AudiosCollectionNote collection:
                         {
                             if (isHistory || isOwner)
                             {
-                                contents.Add(new DocumentNote(documentNote, documentNote.AppFileId, isHistory, entityId));
+                                var dbFiles = collection.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                {
+                                    AppFileId = x.AppFileId
+                                }).ToList();
+                                contents.Add(new AudiosCollectionNote(collection, dbFiles, isHistory, entityId));
                             }
                             else
                             {
-                                var copyCommand = new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, documentNote.AppFile, ContentTypesFile.Files);
-                                var fileCopy = await _mediator.Send(copyCommand);
-                                contents.Add(new DocumentNote(documentNote, fileCopy, false, entityId));
+                                var copyCommands = collection.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
+                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                var copies = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new AudiosCollectionNote(collection, copies, false, entityId));
+                            }
+                            continue;
+                        }
+                    case DocumentsCollectionNote collection:
+                        {
+                            if (isHistory || isOwner)
+                            {
+                                var dbFiles = collection.DocumentNoteAppFiles.Select(x => new DocumentNoteAppFile
+                                {
+                                    AppFileId = x.AppFileId
+                                }).ToList();
+                                contents.Add(new DocumentsCollectionNote(collection, dbFiles, isHistory, entityId));
+                            }
+                            else
+                            {
+                                var copyCommands = collection.Documents.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Documents));
+                                var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
+                                var copies = (await Task.WhenAll(tasks)).ToList();
+                                contents.Add(new DocumentsCollectionNote(collection, copies, false, entityId));
                             }
                             continue;
                         }

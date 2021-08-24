@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner.FileContent.Albums;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,29 +28,8 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPost("{id}/{contentId}")]
-        public async Task<OperationResult<AudiosPlaylistNoteDTO>> InsertAudios(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
-        {
-            if (audios.Count == 0)
-            {
-                return new OperationResult<AudiosPlaylistNoteDTO>().SetNoAnyFile();
-            }
-
-            var results = audios.Select(audio => this.ValidateFile<AudiosPlaylistNoteDTO>(audio, SupportFileContentTypes.Audios));
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
-            {
-                return result;
-            }
-
-            var command = new InsertAudiosToNoteCommand(audios, id, contentId);
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command, cancellationToken);
-        }
-
-
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemovePlaylist(RemovePlaylistCommand command)
+        public async Task<OperationResult<Unit>> RemovePlaylist(RemoveAudiosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
@@ -61,14 +39,14 @@ namespace WriteAPI.Controllers
         [HttpDelete("{noteId}/{contentId}/{audioFileId}")]
         public async Task<OperationResult<Unit>> RemoveAudioFromPlaylist(Guid noteId, Guid contentId, Guid audioFileId)
         {
-            var command = new RemoveAudioCommand(noteId, contentId, audioFileId);
+            var command = new RemoveAudioFromCollectionCommand(noteId, contentId, audioFileId);
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
 
 
         [HttpPost("upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToPlaylist(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<AudioNoteDTO>>> UploadAudiosToCollection(List<IFormFile> audios, Guid id, Guid contentId, CancellationToken cancellationToken)
         {
             if (audios.Count == 0) // TODO MOVE TO FILTER
             {
@@ -82,21 +60,22 @@ namespace WriteAPI.Controllers
                 return result;
             }
 
-            var command = new UploadAudiosToPlaylistCommand(id, contentId, audios);
+            var command = new UploadAudiosToCollectionCommand(id, contentId, audios);
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command, cancellationToken);        
         }
 
 
         [HttpPatch("name")]
-        public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNamePlaylistCommand command)
+        public async Task<OperationResult<Unit>> ChangePlaylistName(ChangeNameAudiosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
 
-        [HttpPost("tranform")]
-        public async Task<OperationResult<AudiosPlaylistNoteDTO>> TransformToPlaylist(TransformToPlaylistCommand command)
+
+        [HttpPost("transform")]
+        public async Task<OperationResult<AudiosCollectionNoteDTO>> TransformToPlaylist(TransformToAudiosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

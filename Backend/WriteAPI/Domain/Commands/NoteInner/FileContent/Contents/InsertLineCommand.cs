@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 
