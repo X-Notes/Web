@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
-    [Table(nameof(TextNote), Schema = SchemeConfig.Note)]
+    [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
     public class TextNote : BaseNoteContent
     {
         public string Content { set; get; }

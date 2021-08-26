@@ -7,7 +7,7 @@ using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.NoteContent
 {
-    [Table(nameof(BaseNoteContent), Schema = SchemeConfig.Note)]
+    [Table(nameof(BaseNoteContent), Schema = SchemeConfig.NoteContent)]
     public class BaseNoteContent : BaseEntity<Guid>, IDateUpdater
     {
         public Guid? NoteId { set; get; }

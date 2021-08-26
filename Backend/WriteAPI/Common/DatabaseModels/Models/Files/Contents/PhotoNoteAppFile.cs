@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 
 namespace Common.DatabaseModels.Models.Files.Contents
 {
-    [Table(nameof(PhotoNoteAppFile), Schema = SchemeConfig.File)]
+    [Table(nameof(PhotoNoteAppFile), Schema = SchemeConfig.NoteContent)]
     public class PhotoNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]

@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.NoteContent.FileContent;
 
 namespace Common.DatabaseModels.Models.Files.Contents
 {
-    [Table(nameof(AudioNoteAppFile), Schema = SchemeConfig.File)]
+    [Table(nameof(AudioNoteAppFile), Schema = SchemeConfig.NoteContent)]
     public class AudioNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]

@@ -6,7 +6,7 @@ using Common.DatabaseModels.Models.Files.Contents;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
-    [Table(nameof(PhotosCollectionNote), Schema = SchemeConfig.Note)]
+    [Table(nameof(PhotosCollectionNote), Schema = SchemeConfig.NoteContent)]
     public class PhotosCollectionNote : BaseNoteContent
     {
         public string Name { set; get; }

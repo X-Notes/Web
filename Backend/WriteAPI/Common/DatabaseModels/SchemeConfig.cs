@@ -7,6 +7,8 @@ namespace Common.DatabaseModels
 
         public const string Note = "note";
 
+        public const string NoteContent = "note_content";
+
         public const string NoteHistory = "note_history";
 
         public const string Label  = "label";

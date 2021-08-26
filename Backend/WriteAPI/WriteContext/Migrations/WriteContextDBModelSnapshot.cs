@@ -82,7 +82,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("AppFileId");
 
-                    b.ToTable("AudioNoteAppFile", "file");
+                    b.ToTable("AudioNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.DocumentNoteAppFile", b =>
@@ -97,7 +97,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("AppFileId");
 
-                    b.ToTable("DocumentNoteAppFile", "file");
+                    b.ToTable("DocumentNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.PhotoNoteAppFile", b =>
@@ -112,7 +112,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("AppFileId");
 
-                    b.ToTable("PhotoNoteAppFile", "file");
+                    b.ToTable("PhotoNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.VideoNoteAppFile", b =>
@@ -127,7 +127,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("AppFileId");
 
-                    b.ToTable("VideoNoteAppFile", "file");
+                    b.ToTable("VideoNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
@@ -419,7 +419,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("NoteSnapshotId");
 
-                    b.ToTable("BaseNoteContent", "note");
+                    b.ToTable("BaseNoteContent", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.ContentType", b =>
@@ -432,7 +432,7 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContentType", "note");
+                    b.ToTable("ContentType", "note_content");
 
                     b.HasData(
                         new
@@ -472,7 +472,7 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HType", "note");
+                    b.ToTable("HType", "note_content");
 
                     b.HasData(
                         new
@@ -502,7 +502,7 @@ namespace WriteContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NoteTextType", "note");
+                    b.ToTable("NoteTextType", "note_content");
 
                     b.HasData(
                         new
@@ -1037,7 +1037,7 @@ namespace WriteContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.ToTable("AudiosCollectionNote", "note");
+                    b.ToTable("AudiosCollectionNote", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.DocumentsCollectionNote", b =>
@@ -1047,7 +1047,7 @@ namespace WriteContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.ToTable("DocumentsCollectionNote", "note");
+                    b.ToTable("DocumentsCollectionNote", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.PhotosCollectionNote", b =>
@@ -1066,7 +1066,7 @@ namespace WriteContext.Migrations
                     b.Property<string>("Width")
                         .HasColumnType("text");
 
-                    b.ToTable("PhotosCollectionNote", "note");
+                    b.ToTable("PhotosCollectionNote", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.VideosCollectionNote", b =>
@@ -1076,7 +1076,7 @@ namespace WriteContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.ToTable("VideosCollectionNote", "note");
+                    b.ToTable("VideosCollectionNote", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.TextNote", b =>
@@ -1105,7 +1105,7 @@ namespace WriteContext.Migrations
 
                     b.HasIndex("NoteTextTypeId");
 
-                    b.ToTable("TextNote", "note");
+                    b.ToTable("TextNote", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFile", b =>

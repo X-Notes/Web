@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.Files.Contents
 {
-    [Table(nameof(DocumentNoteAppFile), Schema = SchemeConfig.File)]
+    [Table(nameof(DocumentNoteAppFile), Schema = SchemeConfig.NoteContent)]
     public class DocumentNoteAppFile : BaseEntity<Guid>
     {
         [NotMapped]
