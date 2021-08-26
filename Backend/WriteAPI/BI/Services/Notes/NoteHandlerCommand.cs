@@ -8,8 +8,6 @@ using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
 using Common;
-using Common.DatabaseModels.Models.Files;
-using Common.DatabaseModels.Models.Files.Contents;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;

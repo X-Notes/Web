@@ -10,5 +10,5 @@ export const generateFormData = (files: File[], name: string): FormData => {
 
 export const nameForUploadPhotos = 'photos';
 export const nameForUploadAudios = 'audios';
-export const nameForUploadVideos = 'video';
-export const nameForUploadDocuments = 'file';
+export const nameForUploadVideos = 'videos';
+export const nameForUploadDocuments = 'documents';

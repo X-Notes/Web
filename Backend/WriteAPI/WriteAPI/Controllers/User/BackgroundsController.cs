@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Backgrounds;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Users;
 using Domain.Commands.Backgrounds;
 using Domain.Queries.Backgrounds;
 using MediatR;
@@ -14,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.User
 {
     [Authorize]
     [Route("api/[controller]")]

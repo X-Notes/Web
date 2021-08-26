@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
@@ -12,7 +10,7 @@ using Domain.Queries.RelatedNotes;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.Note
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -28,8 +26,8 @@ namespace WriteAPI.Controllers
         [HttpPost("preview")]
         public async Task<List<PreviewNoteForSelection>> GetPreviewNotes(GetNotesForPreviewWindowQuery command)
         {
-            command.Email =  this.GetUserEmail();
-            return await this._mediator.Send(command);
+            command.Email = this.GetUserEmail();
+            return await _mediator.Send(command);
         }
 
 
@@ -38,21 +36,21 @@ namespace WriteAPI.Controllers
         {
             var email = this.GetUserEmail();
             var command = new GetRelatedNotesQuery(email, id);
-            return await this._mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
         [HttpPost]
         public async Task<OperationResult<Unit>> UpdateRelatedNotesNotes(UpdateRelatedNotesToNoteCommand command)
         {
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
         [HttpPatch("state")]
         public async Task<OperationResult<Unit>> UpdateRelatedNoteState(UpdateRelatedNoteStateCommand command)
         {
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
 
@@ -60,7 +58,7 @@ namespace WriteAPI.Controllers
         public async Task<OperationResult<Unit>> UpdateRelatedNoteOrder(ChangeOrderRelatedNotesCommand command)
         {
             command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
     }

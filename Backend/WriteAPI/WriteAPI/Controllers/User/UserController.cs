@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.Users;
@@ -12,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.User
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -51,7 +50,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPut("username")]
-        public async Task UpdateMainInformation([FromBody]UpdateMainUserInfoCommand info)
+        public async Task UpdateMainInformation([FromBody] UpdateMainUserInfoCommand info)
         {
             var currentUserEmail = this.GetUserEmail();
             info.Email = currentUserEmail;

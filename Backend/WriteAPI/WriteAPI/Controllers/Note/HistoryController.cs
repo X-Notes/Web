@@ -1,9 +1,7 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.History;
 using Domain.Queries.History;
@@ -11,7 +9,7 @@ using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 using Common.DTO.Notes.FullNoteContent;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.Note
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -45,5 +43,5 @@ namespace WriteAPI.Controllers
             var command = new GetSnapshotContentsQuery(email, noteId, snapshotId);
             return await mediator.Send(command);
         }
-    } 
+    }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Notes;
 using Common.DTO.Notes;
@@ -13,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.Note
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -36,82 +35,82 @@ namespace WriteAPI.Controllers
         }
 
         // Commands
-        
+
         [HttpPatch("color")]
-        public async Task ChangeColor([FromBody]ChangeColorNoteCommand command)
+        public async Task ChangeColor([FromBody] ChangeColorNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("delete")]
-        public async Task SetDeleteNotes([FromBody]SetDeleteNoteCommand command)
+        public async Task SetDeleteNotes([FromBody] SetDeleteNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("delete/permanently")]
-        public async Task DeleteNotes([FromBody]DeleteNotesCommand command)
+        public async Task DeleteNotes([FromBody] DeleteNotesCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("copy")]
-        public async Task<List<Guid>> CopyNote([FromBody]CopyNoteCommand command)
+        public async Task<List<Guid>> CopyNote([FromBody] CopyNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            return await this._mediator.Send(command);
+            return await _mediator.Send(command);
         }
 
 
         [HttpPatch("archive")]
-        public async Task ArchiveNote([FromBody]ArchiveNoteCommand command)
+        public async Task ArchiveNote([FromBody] ArchiveNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("ref/private")]
-        public async Task MakePrivate([FromBody]MakePrivateNoteCommand command)
+        public async Task MakePrivate([FromBody] MakePrivateNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("label/add")]
-        public async Task AddLabel([FromBody]AddLabelOnNoteCommand command)
+        public async Task AddLabel([FromBody] AddLabelOnNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         [HttpPatch("label/remove")]
-        public async Task RemoveLabel([FromBody]RemoveLabelFromNoteCommand command)
+        public async Task RemoveLabel([FromBody] RemoveLabelFromNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            await this._mediator.Send(command);
+            await _mediator.Send(command);
         }
 
 
         // GET Entities
         [HttpGet("type/{id}")]
-        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id, [FromQuery]PersonalizationSettingDTO settings)
+        public async Task<List<SmallNote>> GetNotesByType(NoteTypeENUM id, [FromQuery] PersonalizationSettingDTO settings)
         {
             var email = this.GetUserEmail();
             var query = new GetNotesByTypeQuery(email, id, settings);
@@ -129,7 +128,7 @@ namespace WriteAPI.Controllers
         [HttpPost("many")]
         public async Task<List<SmallNote>> GetNoteByIds(GetNotesByNoteIdsQuery query)
         {
-            query.Email= this.GetUserEmail();
+            query.Email = this.GetUserEmail();
             return await _mediator.Send(query);
         }
 

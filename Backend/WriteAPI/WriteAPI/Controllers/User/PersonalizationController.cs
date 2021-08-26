@@ -1,9 +1,5 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Personalization;
 using Domain.Commands.Personalizations;
@@ -11,7 +7,7 @@ using Domain.Queries.Personalization;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.User
 {
     [Authorize]
     [Route("api/[controller]")]

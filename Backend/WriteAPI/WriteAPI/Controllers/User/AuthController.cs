@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common;
 using FirebaseAdmin;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WriteAPI.Filters;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -41,7 +36,7 @@ namespace WriteAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("get")]      
+        [HttpGet("get")]
         public ActionResult GET()
         {
             return Ok();

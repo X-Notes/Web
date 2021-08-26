@@ -9,7 +9,7 @@ using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
 
-namespace WriteAPI.Controllers
+namespace WriteAPI.Controllers.User
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -30,9 +30,9 @@ namespace WriteAPI.Controllers
         public async Task<IEnumerable<NotificationDTO>> GetNotifications()
         {
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
-            if(user != null)
+            if (user != null)
             {
-                var notifs = await this.notificationRepository.GetByUserOrdered(user.Id);
+                var notifs = await notificationRepository.GetByUserOrdered(user.Id);
                 return notifs.Select(t => new NotificationDTO(t));
             }
             throw new Exception("User not found");
@@ -44,7 +44,7 @@ namespace WriteAPI.Controllers
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == this.GetUserEmail());
             if (user != null)
             {
-                var notifs = await this.notificationRepository
+                var notifs = await notificationRepository
                     .GetWhereAsync(x => x.UserToId == user.Id && x.IsRead == false);
                 notifs.ForEach(x => x.IsRead = true);
                 await notificationRepository.UpdateRangeAsync(notifs);
