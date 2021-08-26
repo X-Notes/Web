@@ -7,7 +7,7 @@ using Domain.Queries.Personalization;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
 
-namespace WriteAPI.Controllers.User
+namespace WriteAPI.Controllers.UserContollers
 {
     [Authorize]
     [Route("api/[controller]")]

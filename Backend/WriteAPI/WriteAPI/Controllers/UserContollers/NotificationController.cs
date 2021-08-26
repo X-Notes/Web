@@ -9,7 +9,7 @@ using WriteAPI.ControllerConfig;
 using WriteContext.Repositories.Notifications;
 using WriteContext.Repositories.Users;
 
-namespace WriteAPI.Controllers.User
+namespace WriteAPI.Controllers.UserContollers
 {
     [Authorize]
     [Route("api/[controller]")]

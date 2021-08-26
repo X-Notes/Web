@@ -4,7 +4,7 @@ using FirebaseAdmin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WriteAPI.Controllers.User
+namespace WriteAPI.Controllers.UserContollers
 {
     [Route("api/[controller]")]
     [ApiController]

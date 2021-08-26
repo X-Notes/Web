@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
 
-namespace WriteAPI.Controllers.User
+namespace WriteAPI.Controllers.UserContollers
 {
     [Authorize]
     [Route("api/[controller]")]
