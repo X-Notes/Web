@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.Files;
 
-namespace Common.DatabaseModels.Models.Files.Contents
+namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
     [Table(nameof(PhotoNoteAppFile), Schema = SchemeConfig.NoteContent)]
     public class PhotoNoteAppFile : BaseEntity<Guid>
