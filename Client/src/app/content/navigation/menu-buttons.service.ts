@@ -749,7 +749,6 @@ export class MenuButtonsService {
 
   constructor(
     private store: Store,
-    private snackService: SnackbarService,
     private dialogsManageService: DialogsManageService,
     private sbws: SnackBarWrapperService,
     private pService: PersonalizationService,
@@ -889,12 +888,12 @@ export class MenuButtonsService {
     switch (language) {
       case LanguagesENUM.English: {
         if (type === 'Note') {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Notes deleted permanently` : `Note deleted permanently`,
             null,
           );
         } else {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Folders deleted permanently` : `Folder deleted permanently`,
             null,
           );
@@ -903,12 +902,12 @@ export class MenuButtonsService {
       }
       case LanguagesENUM.Russian: {
         if (type === 'Note') {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Заметки удалены безвозвратно` : `Заметка удалена безвозвратно`,
             null,
           );
         } else {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Папки удалены безвозвратно` : `Папка удалена безвозвратно`,
             null,
           );
@@ -917,12 +916,12 @@ export class MenuButtonsService {
       }
       case LanguagesENUM.Ukraine: {
         if (type === 'Note') {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Нотатки видалені безповоротно` : `Нотаток видален безповоротно`,
             null,
           );
         } else {
-          snackbarRef = this.snackService.openSnackBar(
+          snackbarRef = this.sbws.buildNotification(
             isMany ? `Папки видалені безповоротно` : `Папка видалена безповоротно`,
             null,
           );

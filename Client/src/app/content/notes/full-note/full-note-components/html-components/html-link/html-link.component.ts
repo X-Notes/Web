@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { SnackBarWrapperService } from 'src/app/shared/services/snackbar/snack-bar-wrapper.service';
 import { ApiBrowserTextService } from '../../../../api-browser-text.service';
 import { ApiServiceNotes } from '../../../../api-notes.service';
 
@@ -33,7 +33,7 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
   constructor(
     private api: ApiServiceNotes,
     private apiBrowserService: ApiBrowserTextService,
-    private snackService: SnackbarService,
+    private snackService: SnackBarWrapperService,
     private store: Store,
   ) {}
 
@@ -66,13 +66,13 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
     this.apiBrowserService.copyTest(this.link);
     switch (language) {
       case LanguagesENUM.English:
-        this.snackService.openSnackBar(`Link copied`);
+        this.snackService.buildNotification(`Link copied`, null);
         break;
       case LanguagesENUM.Russian:
-        this.snackService.openSnackBar(`Ссылка скопирована`);
+        this.snackService.buildNotification(`Ссылка скопирована`, null);
         break;
       case LanguagesENUM.Ukraine:
-        this.snackService.openSnackBar(`Посилання скопійоване`);
+        this.snackService.buildNotification(`Посилання скопійоване`, null);
         break;
       default:
         throw new Error('error');

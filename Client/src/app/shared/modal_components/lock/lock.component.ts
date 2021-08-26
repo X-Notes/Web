@@ -13,6 +13,7 @@ import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { PersonalizationService, shake } from '../../services/personalization.service';
+import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
 
 const CompareValidator = (first: string, second: string) => {
@@ -56,7 +57,7 @@ export class LockComponent implements OnInit, OnDestroy {
     private store: Store,
     private lockEncryptService: LockEncryptService,
     private router: Router,
-    private snackService: SnackbarService,
+    private snackService: SnackBarWrapperService,
     private pService: PersonalizationService,
     public dialogRef: MatDialogRef<LockComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id: string; isRemove: boolean },
@@ -147,7 +148,7 @@ export class LockComponent implements OnInit, OnDestroy {
       .toPromise();
     if (!data) {
       const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
-      this.snackService.openSnackBar(message, null, 'center');
+      this.snackService.buildNotification(message, null);
       return false;
     }
     return note;
@@ -159,7 +160,7 @@ export class LockComponent implements OnInit, OnDestroy {
       .toPromise();
     if (!data) {
       const message = await this.pService.getTranslateText('modal.lockModal.incorrect');
-      this.snackService.openSnackBar(message, null, 'center');
+      this.snackService.buildNotification(message, null);
       return false;
     }
     return true;
