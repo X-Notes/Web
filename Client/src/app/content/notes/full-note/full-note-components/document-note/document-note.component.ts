@@ -67,7 +67,9 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   get getFirst(){
-    return this.content.documents[0];
+    if(this.content.documents && this.content.documents.length > 0) {
+      return this.content.documents[0];
+    }
   }
 
   openModal(document: DocumentModel) {

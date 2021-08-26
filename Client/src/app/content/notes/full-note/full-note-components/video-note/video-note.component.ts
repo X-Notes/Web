@@ -33,8 +33,10 @@ export class VideoNoteComponent implements ParentInteraction {
     return this.content;
   }
 
-  get getFirst(){
-    return this.content.videos[0];
+  get getFirst() {
+    if(this.content.videos && this.content.videos.length > 0) {
+      return this.content.videos[0];
+    }
   }
 
   mouseEnter = ($event: any) => {

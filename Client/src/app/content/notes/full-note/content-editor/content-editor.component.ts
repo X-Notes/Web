@@ -18,7 +18,6 @@ import {
   BaseText,
   ContentModel,
   ContentTypeENUM,
-  HeadingTypeENUM,
   NoteTextTypeENUM,
 } from '../../models/content-model.model';
 import { FullNote } from '../../models/full-note.model';
@@ -36,13 +35,12 @@ import { ContentEditableService } from '../services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
 import { SelectionService } from '../services/selection.service';
-import { ApiTextService } from '../services/api-text.service';
-import { ApiNoteContentService } from '../services/api-note-content.service';
 import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
+import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -84,16 +82,15 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   constructor(
     private selectionService: SelectionService,
     @Optional() public sliderService: FullNoteSliderService,
-    private apiText: ApiTextService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
     public menuSelectionService: MenuSelectionService,
-    private apiNoteContent: ApiNoteContentService,
     public contentEditorContentsService: ContentEditorContentsService,
     public contentEditorAlbumService: ContentEditorPhotosCollectionService,
     public contentEditorDocumentsService: ContentEditorDocumentsCollectionService,
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
+    public contentEditorTextService: ContentEditorTextService,
   ) {}
 
   ngOnDestroy(): void {
@@ -104,12 +101,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.newLine
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(async () => {
-        const resp = await this.apiNoteContent.newLine(this.note.id).toPromise();
-        if (resp.success) {
-          this.contents.push(resp.data);
-        }
-      });
+      .subscribe(async () => await this.contentEditorTextService.appendNewEmptyContentToEnd(this.note.id));
 
     this.nameChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
@@ -139,62 +131,27 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async enterHandler(
-    value: EnterEvent, // TODO SETTIMEOUT
-  ) {
-    const breakLineType = value.breakModel.typeBreakLine;
-    const { nextText } = value.breakModel;
-    const newElement = await this.apiNoteContent
-      .insertLine(this.note.id, value.contentId, value.nextItemType, breakLineType, nextText)
-      .toPromise();
+  async enterHandler(value: EnterEvent) {
 
-    if (!newElement.success) {
-      return;
-    }
+    const index = await this.contentEditorTextService
+    .insertNewContent(this.note.id, value.contentId, value.nextItemType, value.breakModel.typeBreakLine, value.breakModel.nextText);
 
-    const elementCurrent = this.contents.find((x) => x.id === value.id);
-    let index = this.contents.indexOf(elementCurrent);
-
-    if (breakLineType === LineBreakType.NEXT) {
-      index += 1;
-    }
-
-    this.contents.splice(index, 0, newElement.data);
     setTimeout(() => {
       this.textElements?.toArray()[index].setFocus();
     }, 0);
   }
 
-  async deleteHTMLHandler(
-    id: string, // TODO SETTIMEOUT AND CHANGE LOGIC
-  ) {
-    const resp = await this.apiNoteContent.removeContent(this.note.id, id).toPromise();
-
-    if (resp.success) {
-      const item = this.contents.find((x) => x.id === id);
-      const indexOf = this.contents.indexOf(item);
-      this.contents = this.contents.filter((z) => z.id !== id);
-      const index = indexOf - 1;
-      this.textElements?.toArray()[index].setFocusToEnd();
-    }
+  async deleteHTMLHandler(id: string) {
+    const index = await this.contentEditorTextService.deleteContent(id, this.note.id);
+    this.textElements?.toArray()[index].setFocusToEnd();
   }
 
   async concatThisWithPrev(id: string) {
-    // TODO SETTIMEOUT
-
-    const resp = await this.apiNoteContent.concatWithPrevious(this.note.id, id).toPromise();
-
-    if (resp.success) {
-      const item = this.contents.find((x) => x.id === resp.data.id) as BaseText;
-      const indexOf = this.contents.indexOf(item);
-      this.contents[indexOf] = resp.data;
-      this.contents = this.contents.filter((x) => x.id !== id);
-
-      setTimeout(() => {
-        const prevItemHtml = this.textElements?.toArray()[indexOf];
-        prevItemHtml.setFocusToEnd();
-      });
-    }
+    const index = await this.contentEditorTextService.concatContentWithPrevContent(id, this.note.id);
+    setTimeout(() => {
+      const prevItemHtml = this.textElements?.toArray()[index];
+      prevItemHtml.setFocusToEnd();
+    });
   }
 
   getTextContent(index: number): BaseText {
@@ -202,75 +159,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   async transformToTypeText(value: TransformContent) {
-    let indexOf;
-
-    const resp = await this.apiText
-      .updateTextType(this.note.id, value.id, value.textType, value.headingType)
-      .toPromise();
-
-    if (!resp.success) {
-      return;
-    }
-
-    switch (value.textType) {
-      case NoteTextTypeENUM.Default: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
-        break;
-      }
-      case NoteTextTypeENUM.Checklist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
-        break;
-      }
-      case NoteTextTypeENUM.Dotlist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
-        break;
-      }
-      case NoteTextTypeENUM.Heading: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType, value.headingType);
-        break;
-      }
-      case NoteTextTypeENUM.Numberlist: {
-        indexOf = this.defaultTextFocusClick(value.id, value.textType);
-        break;
-      }
-      default: {
-        throw new Error('error');
-      }
-    }
-
-    this.checkAddLastTextContent(indexOf);
-  }
-
-  checkAddLastTextContent = (index: number) => {
-    /*
-    if (index === this.contents.length - 1)
-    {
-      this.addNewElementToEnd();
-    }
-    */
-    console.log(index);
-  };
-
-  defaultTextFocusClick(
-    id: string,
-    textTypeId: NoteTextTypeENUM,
-    headingType?: HeadingTypeENUM,
-  ): number {
-    const item = this.contents.find((z) => z.id === id) as BaseText;
-    const indexOf = this.contents.indexOf(item);
-    item.noteTextTypeId = textTypeId;
-    if (headingType) {
-      item.headingTypeId = headingType;
-    }
+    const index = await this.contentEditorTextService.tranformTextContentTo(this.note.id, value);
     setTimeout(() => {
-      this.textElements?.toArray()[indexOf].setFocusToEnd();
+      this.textElements?.toArray()[index].setFocusToEnd();
     }, 0);
-    return indexOf;
   }
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
-
     switch (event.typeFile) {
       case TypeUploadFile.Photos: {
         await this.contentEditorAlbumService.transformToAlbum(this.note.id, event.contentId, event.files);
@@ -295,16 +191,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
   
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    this.apiText
-      .updateContentText(
-        this.note.id,
-        event.contentId,
-        event.content,
-        event.checked,
-        event.isBold,
-        event.isItalic,
-      )
-      .toPromise();
+    const resp = await this.contentEditorTextService.updateTextContent(this.note.id, event);
     if (isLast) {
       this.addNewElementToEnd();
     }

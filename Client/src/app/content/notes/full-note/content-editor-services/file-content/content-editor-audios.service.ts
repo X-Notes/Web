@@ -2,11 +2,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { byteToMB } from 'src/app/core/defaults/byte-convert';
-import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
 import { generateFormData, nameForUploadAudios } from 'src/app/core/defaults/form-data-generator';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
@@ -14,13 +11,13 @@ import { AudiosCollection } from '../../../models/content-model.model';
 import { RemoveAudioFromPlaylist } from '../../../models/remove-audio-from-playlist.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPlaylistService } from '../../services/api-playlist.service';
-import { ContentEditorBase } from '../content-editor-base';
+import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContentEditorAudiosCollectionService extends ContentEditorBase {
+export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
 
   constructor(
     store: Store, 
@@ -39,8 +36,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorBase {
   async transformToAudiosCollection(noteId: string, contentId: string, files: File[]){
     const newAlbumResult = await this.apiAudiosCollection.transformToPlaylist(noteId, contentId).toPromise();
     if(newAlbumResult.success){
-      const index = this.getIndexOrError(contentId);
-      this.transformContentTo(newAlbumResult, index);
+      this.transformContentTo(newAlbumResult, contentId);
       await this.uploadAudiosToCollectionHandler({contentId: newAlbumResult.data.id, files }, noteId);
     }
   }
@@ -64,21 +60,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorBase {
     let results = await forkJoin(uploadsRequests).toPromise();
     let audios = results.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
     
-    const index = this.getIndexOrError($event.contentId);
+    const collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
 
-    const prevDocuments = (this.contents[index] as AudiosCollection).audios;
-    const collection: AudiosCollection = { ...(this.contents[index] as AudiosCollection), audios: [...prevDocuments, ...audios] };
-    this.setContentsItem(collection, index);
+    const newCollection: AudiosCollection = { ...collection, audios: [...collection.audios, ...audios] };
+    this.contentsService.setSafe(newCollection, $event.contentId);
 
-    this.store.dispatch(LoadUsedDiskSpace);
-
-    const unsuccess = results.map(x => x.eventBody).filter(x => !x.success);
-    if(unsuccess?.length > 0){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      unsuccess.forEach(op => {
-        this.snackBarStatusTranslateService.validateStatus(lname, op, byteToMB(maxRequestFileSize));
-      });
-    }
+    this.afterUploadFilesToCollection(results);
   };
 
   async removeAudioFromPlaylistHandler(event: RemoveAudioFromPlaylist, noteId: string) {
@@ -88,16 +75,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorBase {
       .toPromise();
 
     if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === event.contentId);
-      const { audios } = this.contents[index] as AudiosCollection;
-      if (audios.length === 1) {
-        this.removeItemFromContents(event.contentId);
+      const collection = this.contentsService.getContentById<AudiosCollection>(event.contentId);
+      if (collection.audios.length === 1) {
+        this.removeHandler(event.contentId);
       } else {
-        const newPlaylist: AudiosCollection = {
-          ...(this.contents[index] as AudiosCollection),
-          audios: audios.filter((x) => x.fileId !== event.audioId),
-        };
-        this.contents[index] = newPlaylist;
+        const newCollection: AudiosCollection = { ...collection, audios: collection.audios.filter((x) => x.fileId !== event.audioId) };
+        this.contentsService.setSafe(newCollection, event.contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
@@ -108,16 +91,15 @@ export class ContentEditorAudiosCollectionService extends ContentEditorBase {
     const name = 'any name';
     const resp = await this.apiAudiosCollection.changePlaylistName(noteId, contentId, name).toPromise();
     if (resp.success) {
-      const index = this.contents.findIndex((x) => x.id === contentId);
-      (this.contents[index] as AudiosCollection).name = name;
+      const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
+      collection.name = name;
     }
   }
   
   removeAudiosCollectionHandler = async (contentId: string, noteId: string) => {
     const resp = await this.apiAudiosCollection.removePlaylist(noteId, contentId).toPromise();
     if (resp.success) {
-      this.removeItemFromContents(contentId);
-      this.store.dispatch(LoadUsedDiskSpace);
+      this.removeHandler(contentId);
     }
   };
 

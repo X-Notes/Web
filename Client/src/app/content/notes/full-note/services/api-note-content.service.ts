@@ -53,7 +53,7 @@ export class ApiNoteContentService {
     );
   }
 
-  concatWithPrevious(noteId: string, contentId: string) {
+  concatRowWithPrevRow(noteId: string, contentId: string) {
     const obj = {
       contentId,
       noteId,

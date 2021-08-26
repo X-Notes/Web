@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { byteToMB } from 'src/app/core/defaults/byte-convert';
-import { maxRequestFileSize } from 'src/app/core/defaults/constraints';
 import { generateFormData, nameForUploadPhotos } from 'src/app/core/defaults/form-data-generator';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
-import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
@@ -15,13 +11,13 @@ import { PhotosCollection, Photo } from '../../../models/content-model.model';
 import { RemovePhotoFromAlbum } from '../../../models/remove-photo-from-album.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAlbumService } from '../../services/api-album.service';
-import { ContentEditorBase } from '../content-editor-base';
+import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContentEditorPhotosCollectionService extends ContentEditorBase {
+export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
 
   constructor(
     store: Store, 
@@ -40,8 +36,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorBase {
   async transformToAlbum(noteId: string, contentId: string, files: File[]){
     const newAlbumResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
     if(newAlbumResult.success){
-      const index = this.getIndexOrError(contentId);
-      this.transformContentTo(newAlbumResult, index);
+      this.transformContentTo(newAlbumResult, contentId);
       await this.uploadPhotoToAlbumHandler({contentId: newAlbumResult.data.id, files}, noteId);
     }
   }
@@ -65,21 +60,13 @@ export class ContentEditorPhotosCollectionService extends ContentEditorBase {
     let photosResult = await forkJoin(uploadsRequests).toPromise();
     let photos = photosResult.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
     
-    const index = this.getIndexOrError($event.contentId);
-    this.insertPhotosToAlbum(photos, index);
+    const collection = this.contentsService.getContentById<PhotosCollection>($event.contentId);
+    this.insertPhotosToAlbum(photos, collection, $event.contentId);
 
-    this.store.dispatch(LoadUsedDiskSpace);
-
-    const unsuccess = photosResult.map(x => x.eventBody).filter(x => !x.success);
-    if(unsuccess?.length > 0){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      unsuccess.forEach(op => {
-        this.snackBarStatusTranslateService.validateStatus(lname, op, byteToMB(maxRequestFileSize));
-      });
-    }
+    this.afterUploadFilesToCollection(photosResult);
   };
 
-  insertPhotosToAlbum(photos: Photo[], index: number){
+  insertPhotosToAlbum(photos: Photo[], collection: PhotosCollection, contentId: string){
     const newPhotos: Photo[] = photos.map(
       (x) =>
         new Photo(
@@ -92,11 +79,8 @@ export class ContentEditorPhotosCollectionService extends ContentEditorBase {
           x.authorId,
         ),
     );
-    const contentPhotos = (this.contents[index] as PhotosCollection).photos;
-    const resultPhotos = [...contentPhotos, ...newPhotos];
-    const newAlbum: PhotosCollection = { ...(this.contents[index] as PhotosCollection), photos: resultPhotos };
-
-    this.setContentsItem(newAlbum, index);
+    const newCollection: PhotosCollection = { ...collection, photos: [...collection.photos, ...newPhotos] };
+    this.contentsService.setSafe(newCollection, contentId);
   }
 
   async removePhotoFromAlbumHandler(event: RemovePhotoFromAlbum, noteId: string) {
@@ -106,16 +90,13 @@ export class ContentEditorPhotosCollectionService extends ContentEditorBase {
       .toPromise();
 
     if (resp.success) {
-      const index = this.getIndexOrError(event.contentId);
-      const contentPhotos = (this.contents[index] as PhotosCollection).photos;
-      if (contentPhotos.length === 1) {
-        this.removeItemFromContents(event.contentId);
-      } else {
-        const newAlbum: PhotosCollection = {
-          ...(this.contents[index] as PhotosCollection),
-          photos: contentPhotos.filter((x) => x.fileId !== event.photoId),
-        };
-        this.contents[index] = newAlbum;
+      const collection = this.contentsService.getContentById<PhotosCollection>(event.contentId);
+      if (collection.photos.length === 1) {
+        this.removeHandler(event.contentId);
+      } 
+      else {
+        const newCollection: PhotosCollection = { ...collection, photos: collection.photos.filter((x) => x.fileId !== event.photoId) };
+        this.contentsService.setSafe(newCollection, event.contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
@@ -124,8 +105,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorBase {
   removeAlbumHandler = async (contentId: string, noteId: string) => {
     const resp = await this.apiAlbum.removeAlbum(noteId, contentId).toPromise();
     if (resp.success) {
-      this.removeItemFromContents(contentId);
-      this.store.dispatch(LoadUsedDiskSpace);
+      this.removeHandler(contentId);
     }
   };
 
