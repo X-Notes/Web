@@ -119,7 +119,6 @@ export class NoteStore {
   @Selector()
   static getNote(state: NoteState) {
     return (id: string, type: NoteTypeENUM) => {
-      console.log(id, type);
       const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
       return note;
     };

@@ -24,7 +24,6 @@ export class CopyDirective implements OnDestroy, OnInit {
   }
 
   customCopy(e) {
-    console.log(e);
     let items = this.appCopy
       .toArray()
       .map((item) => (item.nativeElement as HTMLElement).firstChild as HTMLElement);

@@ -132,14 +132,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     this.sliderService.panEnd(e, this.wrap);
   }
 
-  updateDoc = (str: string) => {
-    // TODO
-    // const note = { ...this.note };
-    // note.title = str;
-    // this.store.dispatch(new UpdateFullNote(note));
-    console.log(str);
-  };
-
   setSideBarNotes(noteType: NoteTypeENUM) {
     let notes: SmallNote[];
     switch (noteType) {

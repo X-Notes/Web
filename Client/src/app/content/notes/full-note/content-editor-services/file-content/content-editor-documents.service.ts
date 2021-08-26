@@ -46,7 +46,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
 
     const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
 
-    var uploadsRequests = $event.files.map(file => {
+    const uploadsRequests = $event.files.map(file => {
       const formData = generateFormData([file], nameForUploadDocuments);
       const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
       return this.apiDocuments.uploadDocumentsToCollection(formData, noteId, $event.contentId)
@@ -57,7 +57,8 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     let documents = results.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
     
     const prevCollection = this.contentsService.getContentById<DocumentsCollection>($event.contentId);
-    const collection: DocumentsCollection = { ...prevCollection, documents: [...prevCollection.documents, ...documents] };
+    const prev = prevCollection.documents ?? [];
+    const collection: DocumentsCollection = { ...prevCollection, documents: [...prev, ...documents] };
 
     this.contentsService.setSafe(collection, $event.contentId);
 

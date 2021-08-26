@@ -83,7 +83,6 @@ export class InteractionToolsComponent implements OnInit, OnDestroy {
           const notes = items.noteSearchs.map((x) => ({ ...x, type: 'notes' }));
           const folders = items.folderSearchs.map((x) => ({ ...x, type: 'folders' }));
           this.searchResult = [...notes, ...folders];
-          console.log(this.searchResult);
         } else {
           this.searchResult = [];
         }

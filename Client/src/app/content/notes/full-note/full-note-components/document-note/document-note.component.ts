@@ -25,13 +25,11 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   ) {}
 
   setFocus = ($event?: any) => {
-    console.log($event);
   };
 
   setFocusToEnd = () => {};
 
   updateHTML = (content: string) => {
-    console.log(content);
   };
 
   getNative = () => {};
@@ -45,7 +43,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   documentIcon() {
-    const type = this.content.name.split('.').pop().toLowerCase();
+    const type = this.content.name?.split('.').pop().toLowerCase();
 
     if(docFormats.some(format =>  format === type)){
       return 'microsoftWord';
@@ -74,16 +72,13 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   openModal(document: DocumentModel) {
     const path = this.exportService.getPath(document.documentPath, document.authorId);
-    console.log(path);
     this.dialogsManageService.viewDock(path);
   }
 
   mouseEnter = ($event: any) => {
-    console.log($event);
   };
 
   mouseOut = ($event: any) => {
-    console.log($event);
   };
 
   ngOnInit = () => {};

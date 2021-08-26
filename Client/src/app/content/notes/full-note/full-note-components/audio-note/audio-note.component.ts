@@ -109,13 +109,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   }
 
   setFocus = ($event?: any) => {
-    console.log($event);
   };
 
   setFocusToEnd = () => {};
 
   updateHTML = (content: string) => {
-    console.log(content);
   };
 
   getNative = () => {};
@@ -125,10 +123,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   }
 
   mouseEnter = ($event: any) => {
-    console.log($event);
   };
 
   mouseOut = ($event: any) => {
-    console.log($event);
   };
 }

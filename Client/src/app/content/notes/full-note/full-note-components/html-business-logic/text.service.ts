@@ -36,7 +36,6 @@ export class TextService extends HtmlService {
       content.id,
     );
     enterEvent.emit(event);
-    console.log(event);
   }
 
   backDown(
@@ -50,7 +49,6 @@ export class TextService extends HtmlService {
   }
 
   backUp = (e: any) => {
-    console.log(e);
   };
 
   setFocus($event, contentHtml: ElementRef) {

@@ -50,7 +50,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
 
     const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
 
-    var uploadsRequests = $event.files.map(file => {
+    const uploadsRequests = $event.files.map(file => {
       const formData = generateFormData([file], nameForUploadAudios);
       const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
       return this.apiAudiosCollection.uploadAudiosToPlaylist(formData, noteId, $event.contentId)
@@ -61,8 +61,9 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     let audios = results.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
     
     const collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    const prev = collection.audios ?? [];
+    const newCollection: AudiosCollection = { ...collection, audios: [...prev, ...audios] };
 
-    const newCollection: AudiosCollection = { ...collection, audios: [...collection.audios, ...audios] };
     this.contentsService.setSafe(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);

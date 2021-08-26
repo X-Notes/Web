@@ -140,7 +140,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async changePersonalizationSettings(value: any, type: Personalization) {
     const types = Personalization
-    console.log(value, type);
     const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings)}
     switch (type) {
       case types.isViewVideoOnNote:

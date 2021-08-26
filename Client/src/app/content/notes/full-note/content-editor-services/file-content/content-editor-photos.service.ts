@@ -50,7 +50,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
 
     const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
 
-    var uploadsRequests = $event.files.map(file => {
+    const uploadsRequests = $event.files.map(file => {
       const formData = generateFormData([file], nameForUploadPhotos);
       const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
       return this.apiAlbum.uploadPhotosToAlbum(formData, noteId, $event.contentId)
@@ -79,7 +79,8 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           x.authorId,
         ),
     );
-    const newCollection: PhotosCollection = { ...collection, photos: [...collection.photos, ...newPhotos] };
+    const prev = collection.photos ?? [];
+    const newCollection: PhotosCollection = { ...collection, photos: [...prev, ...newPhotos] };
     this.contentsService.setSafe(newCollection, contentId);
   }
 

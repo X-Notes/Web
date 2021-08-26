@@ -126,7 +126,6 @@ export class SelectionDirective implements OnDestroy, OnInit {
 
     this.div.style.width = `${0}px`;
     this.div.style.height = `${0}px`;
-    console.log(evt);
   }
 
   mouseMove(evt) {

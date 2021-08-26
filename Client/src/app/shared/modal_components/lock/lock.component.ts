@@ -71,7 +71,6 @@ export class LockComponent implements OnInit, OnDestroy {
       this.fullNote = this.store.selectSnapshot(NoteStore.oneFull);
       this.isOpenInInner = true;
       this.setFormValidation(this.fullNote);
-      console.log(this.fullNote);
     } else {
       this.note = await this.getNote(id);
       this.setFormValidation(this.note);

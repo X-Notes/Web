@@ -46,7 +46,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
 
     const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
 
-    var uploadsRequests = $event.files.map(file => {
+    const uploadsRequests = $event.files.map(file => {
       const formData = generateFormData([file], nameForUploadVideos);
       const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
       return this.apiVideos.uploadVideosToCollection(formData, noteId, $event.contentId)
@@ -57,7 +57,8 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     let videos = results.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
     
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
-    const collection: VideosCollection = { ...prevCollection, videos: [...prevCollection.videos, ...videos] };
+    const prev = prevCollection.videos ?? [];
+    const collection: VideosCollection = { ...prevCollection, videos: [...prev, ...videos] };
 
     this.contentsService.setSafe(collection, $event.contentId);
 

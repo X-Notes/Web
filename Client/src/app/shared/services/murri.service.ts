@@ -95,12 +95,9 @@ export class MurriService {
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item) => {
-      // eslint-disable-next-line no-underscore-dangle
-      console.log(item._element.id);
       const order: Order = {
         orderEntity: OrderEntity.Note,
         position: item.getGrid().getItems().indexOf(item) + 1,
-        // eslint-disable-next-line no-underscore-dangle
         entityId: item._element.id,
       };
       this.store.dispatch(new PositionNote(order, type));
@@ -150,7 +147,6 @@ export class MurriService {
 
     this.gridSettings(gridItemName, gridElement, isDragEnabled);
     this.grid.on('dragEnd', async (item) => {
-      console.log(item._element.id);
       const order: Order = {
         orderEntity: OrderEntity.Folder,
         position: item.getGrid().getItems().indexOf(item) + 1,
