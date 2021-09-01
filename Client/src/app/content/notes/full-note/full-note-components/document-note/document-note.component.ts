@@ -2,7 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
-import { docFormats, excelFormats, pdfFormats, presentationFormats } from '../../models/enums/type-upload-formats.enum';
+import {
+  docFormats,
+  excelFormats,
+  pdfFormats,
+  presentationFormats,
+} from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -24,13 +29,11 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     private exportService: ExportService,
   ) {}
 
-  setFocus = ($event?: any) => {
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -45,29 +48,36 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   documentIcon() {
     const type = this.content.name?.split('.').pop().toLowerCase();
 
-    if(docFormats.some(format =>  format === type)){
+    if (docFormats.some((format) => format === type)) {
       return 'microsoftWord';
     }
 
-    if(excelFormats.some(format => format === type)){
+    if (excelFormats.some((format) => format === type)) {
       return 'microsoftExcel';
     }
 
-    if(presentationFormats.some(format => format === type)){
+    if (presentationFormats.some((format) => format === type)) {
       return 'microsoftPowerpoint';
     }
 
-    if(pdfFormats.some(format => format === type)){
+    if (pdfFormats.some((format) => format === type)) {
       return 'pdf';
     }
 
     return 'fileInner';
   }
 
-  get getFirst(){
-    if(this.content.documents && this.content.documents.length > 0) {
+  get getFirst() {
+    if (this.content.documents && this.content.documents.length > 0) {
       return this.content.documents[0];
     }
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.documents || this.content.documents.length === 0) {
+      return true;
+    }
+    return false;
   }
 
   openModal(document: DocumentModel) {
@@ -75,11 +85,9 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     this.dialogsManageService.viewDock(path);
   }
 
-  mouseEnter = ($event: any) => {
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-  };
+  mouseOut = ($event: any) => {};
 
   ngOnInit = () => {};
 }

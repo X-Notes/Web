@@ -9,6 +9,8 @@ import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { map, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { FolderStore } from '../folders/state/folders-state';
 import { NoteStore } from '../notes/state/notes-state';
 import {
@@ -34,8 +36,6 @@ import {
 import { MenuItem } from './menu-Item.model';
 import { DialogsManageService } from './dialogs-manage.service';
 import { SnackBarWrapperService } from '../../shared/services/snackbar/snack-bar-wrapper.service';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
-import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 @Injectable({ providedIn: 'root' })
 export class MenuButtonsService {
@@ -944,22 +944,28 @@ export class MenuButtonsService {
     if (isInnerNote) {
       const note = this.store.selectSnapshot(NoteStore.oneFull);
       const idsInner = [note.id];
-      await this.store.dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted)).toPromise();
+      await this.store
+        .dispatch(new DeleteNotesPermanently(idsInner, NoteTypeENUM.Deleted))
+        .toPromise();
       this.deletePermSnackbar(language, 'Note', false);
     } else {
       const idsOuter = this.store.selectSnapshot(NoteStore.selectedIds);
       const isMany = idsOuter.length > 1;
 
-      await this.store.dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted)).toPromise();
+      await this.store
+        .dispatch(new DeleteNotesPermanently(idsOuter, NoteTypeENUM.Deleted))
+        .toPromise();
 
-      this.store.dispatch(LoadUsedDiskSpace)   
+      this.store.dispatch(LoadUsedDiskSpace);
       this.deletePermSnackbar(language, 'Note', isMany);
     }
   }
 
   async deleteFolders() {
     const ids = this.store.selectSnapshot(FolderStore.selectedIds);
-    await this.store.dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted)).toPromise();
+    await this.store
+      .dispatch(new DeleteFoldersPermanently(ids, FolderTypeENUM.Deleted))
+      .toPromise();
     const language = this.store.selectSnapshot(UserStore.getUserLanguage);
     const isMany = ids.length > 1;
     this.deletePermSnackbar(language, 'Folder', isMany);

@@ -159,6 +159,8 @@ export class PersonalizationService {
 
   icon = Icons;
 
+  isSnackBarActive$ = new BehaviorSubject<boolean>(false);
+
   constructor(
     public lockEncryptService: LockEncryptService,
     private translate: TranslateService,

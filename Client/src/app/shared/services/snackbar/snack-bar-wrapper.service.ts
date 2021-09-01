@@ -7,12 +7,17 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { SnackbarService } from 'src/app/shared/services/snackbar/snackbar.service';
+import { PersonalizationService } from '../personalization.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SnackBarWrapperService {
-  constructor(private snackService: SnackbarService, private store: Store) {
+  constructor(
+    private snackService: SnackbarService, 
+    private store: Store,
+    private prService: PersonalizationService) {
+
     this.store.select(AppStore.getSnackBarNotification)
     .subscribe(message => {
       if(message){
@@ -233,17 +238,16 @@ export class SnackBarWrapperService {
 
   buildNotification(message: string, callback: () => void, undoMessage?: string) {
     const snackbarRef = this.buildSnackBarRef(message, undoMessage);
-
-    if (callback) {
-      snackbarRef
-        .afterDismissed()
-        .pipe(take(1))
-        .subscribe((x) => {
-          if (x.dismissedByAction) {
-            callback();
-          }
-        });
-    }
+    this.prService.isSnackBarActive$.next(true);
+    snackbarRef
+    .afterDismissed()
+    .pipe(take(1))
+    .subscribe((x) => {
+      this.prService.isSnackBarActive$.next(false);
+      if (x.dismissedByAction && callback) {
+        callback();
+      }
+    });
     return snackbarRef;
   }
 
@@ -261,7 +265,7 @@ export class SnackBarWrapperService {
     return result;
   }
 
-  buildSnackBarRef(message: string, undo?: string) {
+  private buildSnackBarRef(message: string, undo?: string) {
     return this.snackService.openSnackBar(message, undo);
   }
 }

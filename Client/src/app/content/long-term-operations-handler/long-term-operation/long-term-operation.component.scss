@@ -20,7 +20,15 @@
         .buttons{
             display: flex;
             justify-content: space-between;
-            width: 44px;
+
+            .detail-view{
+                margin-right: 10px;
+            }
+
+            .mini-spinner{
+                position: relative;
+                margin-right: 20px;
+            }
 
             .icon{
                 transition: 0.2s ease;
@@ -40,7 +48,16 @@
             .left-section{
                 display: flex;
                 align-items: center;
+                width: calc(100% - 110px);
 
+                .nowrap {
+                    clear: both;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    display: inherit;
+                }
+                
                 .name{
                     font-size: 0.875rem;
                     margin-left: 16px;
@@ -50,6 +67,8 @@
             .right-section{
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
+                width: 100px;
 
                 .procent{
                     font-size: 0.875rem;

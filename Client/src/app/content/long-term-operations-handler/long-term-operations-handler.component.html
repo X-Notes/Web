@@ -1,7 +1,8 @@
-<div class="container">
+<div #container class="container">
   <app-long-term-operation
+    (cancelAllEvent)="cancelAllHandler()"
+    (cancelSingleEvent)="cancelSingleHandler($event)"
     *ngFor="let item of longTermOperations.operations"
     [operation]="item"
-    (cancelEvent)="longTermOperations.removeItem($event)"
   ></app-long-term-operation>
 </div>

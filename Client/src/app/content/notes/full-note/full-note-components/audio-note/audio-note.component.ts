@@ -23,10 +23,6 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
   styleUrls: ['./audio-note.component.scss'],
 })
 export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
-  @Input()
-  content: AudiosCollection;
-
-  formats = TypeUploadFormats.AUDIOS;
 
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
@@ -42,10 +38,15 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 
-  destroy = new Subject<void>();
-
   @Input()
   isReadOnlyMode = false;
+
+  @Input()
+  content: AudiosCollection;
+
+  destroy = new Subject<void>();
+
+  formats = TypeUploadFormats.AUDIOS;
 
   constructor(private audioService: AudioService, private exportService: ExportService) {}
 
@@ -54,7 +55,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.destroy.complete();
   }
 
-  ngOnInit(): void {}
+  ngOnInit() {}
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
@@ -80,6 +81,13 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
       this.audioService.currentFile = audio;
       this.playStream(audio.audioPath, audio.fileId);
     }
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.audios || this.content.audios.length === 0) {
+      return true;
+    }
+    return false;
   }
 
   async exportPlaylist(playlist: AudiosCollection) {

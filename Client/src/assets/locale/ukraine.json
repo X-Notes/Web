@@ -197,5 +197,25 @@
       "newMessage": "Нове",
       "readMessage": "Прочитане",
       "ChangeUserPermissionNote": "Доступ користувача до нотатка змінений"
+    },
+    "uploader":{
+      "uploading": "Завантаження",
+      "uploadingDocumentsNoteLong": "Завантаження документів в нотаток",
+      "uploadingDocumentsNote": "Завантаження документів",
+      "uploadingVideosNoteLong": "Завантаження відео в нотаток",
+      "uploadingVideosNote": "Завантаження відео",
+      "uploadingAudiosNoteLong": "Завантаження аудіо в нотаток",
+      "uploadingAudiosNote": "Завантаження аудіо",
+      "uploadingPhotosNoteLong": "Завантаження фотографій в нотаток",
+      "uploadingPhotosNote": "Завантаження фотографій",
+      "exportShort": "Експорт",
+      "exportVideos": "Експорт відео",
+      "exportAudios": "Експорт аудіо",
+      "exportDocuments": "Експорт документів",
+      "exportPhotos": "Експорт фотографій",
+      "copyShort": "Копіювання",
+      "copyNotes": "Копіювання нотаток",
+      "copyFolders": "Копіювання папок",
+      "changingProfilePhoto": "Зміна фотографії"
     }
   }

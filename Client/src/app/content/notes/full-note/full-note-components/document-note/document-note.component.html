@@ -4,7 +4,7 @@
       <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
     </div>
   </div>
-  <div class="card-body">
+  <div *ngIf="!isEmpty" class="card-body">
     <div class="card-info">
       <div class="title">{{ getFirst?.name }}</div>
       <div class="link">{{ content.updatedAt | date: 'medium' }}</div>
@@ -41,5 +41,8 @@
         </button>
       </mat-menu>
     </div>
+  </div>
+  <div *ngIf="isEmpty">
+    <p>DOCUMENTS IS EMPTY TODO</p>
   </div>
 </div>

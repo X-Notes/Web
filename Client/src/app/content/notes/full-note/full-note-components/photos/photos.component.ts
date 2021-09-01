@@ -94,7 +94,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   async uploadImages(event) {
     const files = event.target.files as File[];
-    if(files?.length > 0){
+    if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files });
     }
   }
@@ -209,6 +209,13 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
   }
 
+  get isEmpty(): boolean {
+    if (!this.content.photos || this.content.photos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   removePhotoHandler(photoId: string) {
     this.deletePhotoFromAlbum.emit({ photoId, contentId: this.content.id });
   }
@@ -233,13 +240,11 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     }
   };
 
-  setFocus = ($event?: any) => {
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -247,9 +252,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-  };
+  mouseOut = ($event: any) => {};
 }

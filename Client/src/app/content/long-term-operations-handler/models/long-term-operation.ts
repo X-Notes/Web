@@ -1,17 +1,22 @@
-import { HttpEventType } from "@angular/common/http";
+import { HttpEventType } from '@angular/common/http';
+import { Subject } from 'rxjs';
 
-export interface LongTermOperation{
-    title: string;
-    isDetailViewActive: boolean;
-    isDetailViewOpened: boolean;
-    details: OperationDetailMini[];
+export interface LongTermOperation {
+  title: string;
+  titleShort: string;
+  titleMedium: string;
+  isGeneralCancelButtonActive: boolean;
+  isDetailViewActive: boolean;
+  isDetailViewOpened: boolean;
+  details: OperationDetailMini[];
 }
 
 export interface OperationDetailMini {
-    icon: string;
-    name: string;
-    isCancelable: boolean;
-    isShowProcess: boolean;
-    procent: number;
-    status?: HttpEventType;
+  icon: string;
+  name: string;
+  isCancelable: boolean;
+  isShowProcess: boolean;
+  procent: number;
+  obs: Subject<any>;
+  status?: HttpEventType;
 }

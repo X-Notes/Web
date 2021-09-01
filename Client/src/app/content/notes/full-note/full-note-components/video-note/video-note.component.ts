@@ -8,7 +8,6 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
   styleUrls: ['./video-note.component.scss'],
 })
 export class VideoNoteComponent implements ParentInteraction {
-  
   @Input()
   content: VideosCollection;
 
@@ -17,13 +16,11 @@ export class VideoNoteComponent implements ParentInteraction {
 
   @Output() deleteVideoEvent = new EventEmitter<string>();
 
-  setFocus = ($event?: any) => {
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -31,15 +28,20 @@ export class VideoNoteComponent implements ParentInteraction {
     return this.content;
   }
 
+  get isEmpty(): boolean {
+    if (!this.content.videos || this.content.videos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   get getFirst() {
-    if(this.content.videos && this.content.videos.length > 0) {
+    if (this.content.videos && this.content.videos.length > 0) {
       return this.content.videos[0];
     }
   }
 
-  mouseEnter = ($event: any) => {
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-  };
+  mouseOut = ($event: any) => {};
 }

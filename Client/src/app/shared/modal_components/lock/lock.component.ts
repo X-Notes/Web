@@ -14,7 +14,6 @@ import { AppStore } from 'src/app/core/stateApp/app-state';
 import { NoteTypeENUM } from '../../enums/note-types.enum';
 import { PersonalizationService, shake } from '../../services/personalization.service';
 import { SnackBarWrapperService } from '../../services/snackbar/snack-bar-wrapper.service';
-import { SnackbarService } from '../../services/snackbar/snackbar.service';
 
 const CompareValidator = (first: string, second: string) => {
   return (fg: FormGroup) => {

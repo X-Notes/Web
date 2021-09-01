@@ -228,7 +228,7 @@ namespace BI.Services.Notes
 
                             if (isHistory || isOwner)
                             {
-                                var dbFiles = collection.PhotoNoteAppFiles.Select(x => new PhotoNoteAppFile
+                                var dbFiles = collection.PhotoNoteAppFiles?.Select(x => new PhotoNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
@@ -236,7 +236,7 @@ namespace BI.Services.Notes
                             }
                             else
                             {
-                                var copyCommands = collection.Photos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Photos));
+                                var copyCommands = collection.Photos?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Photos));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 contents.Add(new PhotosCollectionNote(collection, copies, false, entityId));
@@ -247,7 +247,7 @@ namespace BI.Services.Notes
                         {
                             if (isHistory || isOwner)
                             {
-                                var dbFiles = collection.VideoNoteAppFiles.Select(x => new VideoNoteAppFile
+                                var dbFiles = collection.VideoNoteAppFiles?.Select(x => new VideoNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
@@ -255,7 +255,7 @@ namespace BI.Services.Notes
                             }
                             else
                             {
-                                var copyCommands = collection.Videos.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Videos));
+                                var copyCommands = collection.Videos?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Videos));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 contents.Add(new VideosCollectionNote(collection, copies, false, entityId));
@@ -266,7 +266,7 @@ namespace BI.Services.Notes
                         {
                             if (isHistory || isOwner)
                             {
-                                var dbFiles = collection.AudioNoteAppFiles.Select(x => new AudioNoteAppFile
+                                var dbFiles = collection.AudioNoteAppFiles?.Select(x => new AudioNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
@@ -274,7 +274,7 @@ namespace BI.Services.Notes
                             }
                             else
                             {
-                                var copyCommands = collection.Audios.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
+                                var copyCommands = collection.Audios?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Audios));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 contents.Add(new AudiosCollectionNote(collection, copies, false, entityId));
@@ -285,7 +285,7 @@ namespace BI.Services.Notes
                         {
                             if (isHistory || isOwner)
                             {
-                                var dbFiles = collection.DocumentNoteAppFiles.Select(x => new DocumentNoteAppFile
+                                var dbFiles = collection.DocumentNoteAppFiles?.Select(x => new DocumentNoteAppFile
                                 {
                                     AppFileId = x.AppFileId
                                 }).ToList();
@@ -293,7 +293,7 @@ namespace BI.Services.Notes
                             }
                             else
                             {
-                                var copyCommands = collection.Documents.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Documents));
+                                var copyCommands = collection.Documents?.Select(file => new CopyBlobFromContainerToContainerCommand(authorId.Value, userId.Value, file, ContentTypesFile.Documents));
                                 var tasks = copyCommands.Select(x => _mediator.Send(x)).ToList();
                                 var copies = (await Task.WhenAll(tasks)).ToList();
                                 contents.Add(new DocumentsCollectionNote(collection, copies, false, entityId));

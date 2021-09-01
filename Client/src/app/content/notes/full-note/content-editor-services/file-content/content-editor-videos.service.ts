@@ -1,61 +1,89 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import { generateFormData, nameForUploadVideos } from 'src/app/core/defaults/form-data-generator';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { VideosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideoService } from '../../services/api-video.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ContentEditorVideosCollectionService extends ContentEditorFilesBase  {
-
+export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
   constructor(
-    store: Store, 
+    store: Store,
     snackBarStatusTranslateService: SnackBarHandlerStatusService,
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     contentEditorContentsService: ContentEditorContentsService,
-    private apiVideos: ApiVideoService) {
-      super(store, snackBarStatusTranslateService, 
-        uploadFilesService, longTermOperationsHandler, snackBarFileProcessingHandler, contentEditorContentsService);
+    private apiVideos: ApiVideoService,
+  ) {
+    super(
+      store,
+      snackBarStatusTranslateService,
+      uploadFilesService,
+      longTermOperationsHandler,
+      snackBarFileProcessingHandler,
+      contentEditorContentsService,
+    );
   }
 
   async transformToVideos(noteId: string, contentId: string, files: File[]) {
     const result = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
-    if(result.success){
+    if (result.success) {
       this.transformContentTo(result, contentId);
-      await this.uploadVideosToCollectionHandler({contentId: result.data.id, files }, noteId);
+      await this.uploadVideosToCollectionHandler({ contentId: result.data.id, files }, noteId);
     }
   }
 
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
-
-    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files)
-    if(!isCan){
+    const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
+    if (!isCan) {
       return;
     }
 
-    const operation = this.longTermOperationsHandler.getNewUploadToNoteOperation();
+    const operation = await this.longTermOperationsHandler.addNewUploadToNoteOperation(
+      'uploader.uploadingVideosNoteLong',
+      'uploader.uploading',
+      'uploader.uploadingVideosNote',
+    );
 
-    const uploadsRequests = $event.files.map(file => {
+    const uploadsRequests = $event.files.map((file) => {
       const formData = generateFormData([file], nameForUploadVideos);
-      const mini = this.longTermOperationsHandler.getOperationDetailMiniUploadToNoteOperation(operation);
-      return this.apiVideos.uploadVideosToCollection(formData, noteId, $event.contentId)
-                          .pipe(x => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini));
+      const cancellationSubject = new Subject<any>();
+      const mini = this.longTermOperationsHandler.addOperationDetailMiniUploadToNoteOperation(
+        operation,
+        cancellationSubject,
+        LongTermsIcons.Video,
+        file.name,
+      );
+      return this.apiVideos.uploadVideosToCollection(formData, noteId, $event.contentId).pipe(
+        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
+        takeUntil(cancellationSubject),
+        (x) => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini),
+      );
     });
 
-    let results = await forkJoin(uploadsRequests).toPromise();
-    let videos = results.map(x => x.eventBody).filter(x => x.success).map(x => x.data).flat(); 
-    
+    const results = await forkJoin(uploadsRequests).toPromise();
+    const videos = results
+      .map((x) => x.eventBody)
+      .filter((x) => x?.success)
+      .map((x) => x?.data)
+      .flat();
+
+    if (!videos || videos.length === 0) {
+      return;
+    }
+
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     const prev = prevCollection.videos ?? [];
     const collection: VideosCollection = { ...prevCollection, videos: [...prev, ...videos] };
@@ -71,5 +99,4 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
       this.removeHandler(contentId);
     }
   };
-
 }
