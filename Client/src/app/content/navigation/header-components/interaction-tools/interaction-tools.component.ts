@@ -4,8 +4,6 @@ import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FolderStore } from 'src/app/content/folders/state/folders-state';
-import { NoteStore } from 'src/app/content/notes/state/notes-state';
 import { searchDelay } from 'src/app/core/defaults/bounceDelay';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { ChangeTheme } from 'src/app/core/stateUser/user-action';

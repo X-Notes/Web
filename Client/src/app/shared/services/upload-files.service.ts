@@ -7,22 +7,31 @@ import { UserStore } from 'src/app/core/stateUser/user-state';
 import { SnackBarHandlerStatusService } from './snackbar/snack-bar-handler-status.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UploadFilesService {
-
-  constructor(    
+  constructor(
     private snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private fileApiService: FileApiService,
-    private store: Store) { }
+    private store: Store,
+  ) {}
 
   async isCanUserUploadFiles(files: File[]): Promise<boolean> {
-    const size = files.map(x => x.size).reduce((pv, cv) => cv + pv);
-    if(size > fileSizeForCheck){
-      const opResult = await this.fileApiService.getCanUserUploadFile(size, files.map(x => x.type)).toPromise();
-      if(!opResult.success){
+    const size = files.map((x) => x.size).reduce((pv, cv) => cv + pv);
+    if (size > fileSizeForCheck) {
+      const opResult = await this.fileApiService
+        .getCanUserUploadFile(
+          size,
+          files.map((x) => x.type),
+        )
+        .toPromise();
+      if (!opResult.success) {
         const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-        this.snackBarStatusTranslateService.validateStatus(lname, opResult, byteToMB(maxRequestFileSize));
+        this.snackBarStatusTranslateService.validateStatus(
+          lname,
+          opResult,
+          byteToMB(maxRequestFileSize),
+        );
         return false;
       }
     }

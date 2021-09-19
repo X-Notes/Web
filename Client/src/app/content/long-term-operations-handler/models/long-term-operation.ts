@@ -5,6 +5,7 @@ export interface LongTermOperation {
   title: string;
   titleShort: string;
   titleMedium: string;
+  startAt: Date;
   isGeneralCancelButtonActive: boolean;
   isDetailViewActive: boolean;
   isDetailViewOpened: boolean;

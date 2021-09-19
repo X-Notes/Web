@@ -41,8 +41,12 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     return this.content;
   }
 
-  async exportDocument() {
-    await this.exportService.exportDocument(this.content);
+  async exportDocuments(documents: DocumentsCollection) {
+    await this.exportService.exportDocuments(documents);
+  }
+
+  async exportDocument(document: DocumentModel) {
+    await this.exportService.exportDocument(document);
   }
 
   documentIcon() {

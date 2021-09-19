@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { PersonalizationService } from 'src/app/shared/services/personalization.service';
+import { PersonalizationService, uploader } from 'src/app/shared/services/personalization.service';
 import { OperationDetailMini } from './models/long-term-operation';
 import { LongTermOperationsHandlerService } from './services/long-term-operations-handler.service';
 
@@ -9,6 +9,7 @@ import { LongTermOperationsHandlerService } from './services/long-term-operation
   selector: 'app-long-term-operations-handler',
   templateUrl: './long-term-operations-handler.component.html',
   styleUrls: ['./long-term-operations-handler.component.scss'],
+  animations: [uploader],
 })
 export class LongTermOperationsHandlerComponent implements OnInit, OnDestroy {
   @ViewChild('container') container: ElementRef;

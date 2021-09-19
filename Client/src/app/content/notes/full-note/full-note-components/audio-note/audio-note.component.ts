@@ -23,7 +23,6 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
   styleUrls: ['./audio-note.component.scss'],
 })
 export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
-
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
@@ -69,8 +68,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   async uploadAudios(event) {
     const files = event.target.files as File[];
-    if(files?.length > 0){
-      this.uploadEvent.emit({ contentId: this.content.id, files });
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
   }
 
@@ -116,13 +115,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     });
   }
 
-  setFocus = ($event?: any) => {
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -130,9 +127,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-  };
+  mouseOut = ($event: any) => {};
 }

@@ -86,12 +86,13 @@ export class PhotosCollection extends ContentModel {
 
   countInRow: number;
 
-  constructor(album: Partial<PhotosCollection>) {
-    super(album.typeId, album.id, album.updatedAt);
-    this.countInRow = album.countInRow;
-    this.height = album.height;
-    this.id = album.id;
-    this.photos = album.photos.map(
+  constructor(collection: Partial<PhotosCollection>) {
+    super(collection.typeId, collection.id, collection.updatedAt);
+    this.countInRow = collection.countInRow;
+    this.height = collection.height;
+    this.width = collection.width;
+    this.id = collection.id;
+    this.photos = collection.photos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
         new Photo(

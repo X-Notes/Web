@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { VideosCollection } from '../../../models/content-model.model';
+import { ExportService } from '../../../export.service';
+import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -16,6 +17,8 @@ export class VideoNoteComponent implements ParentInteraction {
 
   @Output() deleteVideoEvent = new EventEmitter<string>();
 
+  constructor(private exportService: ExportService) {}
+
   setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
@@ -26,6 +29,14 @@ export class VideoNoteComponent implements ParentInteraction {
 
   getContent() {
     return this.content;
+  }
+
+  async exportVideos(videos: VideosCollection) {
+    await this.exportService.exportVideos(videos);
+  }
+
+  async exportVideo(video: VideoModel) {
+    await this.exportService.exportVideo(video);
   }
 
   get isEmpty(): boolean {
