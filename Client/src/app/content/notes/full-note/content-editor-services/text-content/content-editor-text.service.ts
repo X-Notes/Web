@@ -8,10 +8,9 @@ import { ApiTextService } from '../../services/api-text.service';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ContentEditorTextService {
-
   // TODO
   // 2. interfaces for file components
 
@@ -19,17 +18,17 @@ export class ContentEditorTextService {
     private apiNoteContent: ApiNoteContentService,
     private apiText: ApiTextService,
     private contentsService: ContentEditorContentsService,
-    ) { }
+  ) {}
 
-    async deleteContent(contentId: string, noteId: string) {
-      const resp = await this.apiNoteContent.removeContent(noteId, contentId).toPromise();
-      if (resp.success) {
-        const index = this.contentsService.getIndexOrErrorById(contentId);
-        this.contentsService.removeById(contentId);
-        const indexPrevRow = index - 1;
-        return indexPrevRow;
-      }
-      return -1;
+  async deleteContent(contentId: string, noteId: string) {
+    const resp = await this.apiNoteContent.removeContent(noteId, contentId).toPromise();
+    if (resp.success) {
+      const index = this.contentsService.getIndexOrErrorById(contentId);
+      this.contentsService.removeById(contentId);
+      const indexPrevRow = index - 1;
+      return indexPrevRow;
+    }
+    return -1;
   }
 
   async concatContentWithPrevContent(contentId: string, noteId: string) {
@@ -42,8 +41,16 @@ export class ContentEditorTextService {
     return -1;
   }
 
-  async insertNewContent(noteId: string, contentId: string, nextRowType: NoteTextTypeENUM, breakLineType: LineBreakType, nextText: string) {
-    const resp = await this.apiNoteContent.insertLine(noteId, contentId, nextRowType, breakLineType, nextText).toPromise();
+  async insertNewContent(
+    noteId: string,
+    contentId: string,
+    nextRowType: NoteTextTypeENUM,
+    breakLineType: LineBreakType,
+    nextText: string,
+  ) {
+    const resp = await this.apiNoteContent
+      .insertLine(noteId, contentId, nextRowType, breakLineType, nextText)
+      .toPromise();
     if (resp.success) {
       let index = this.contentsService.getIndexOrErrorById(contentId);
       if (breakLineType === LineBreakType.NEXT) {
@@ -56,13 +63,17 @@ export class ContentEditorTextService {
   }
 
   async updateTextContent(noteId: string, e: EditTextEventModel) {
-    const resp = await this.apiText.updateContentText(noteId, e.contentId, e.content, e.checked, e.isBold, e.isItalic).toPromise();
-    return resp.success;
+    const resp = await this.apiText
+      .updateContentText(noteId, e.contentId, e.content, e.checked, e.isBold, e.isItalic)
+      .toPromise();
+    return resp;
   }
 
   async tranformTextContentTo(noteId: string, value: TransformContent) {
-    const resp = await this.apiText.updateTextType(noteId, value.id, value.textType, value.headingType).toPromise();
-    if(resp.success){
+    const resp = await this.apiText
+      .updateTextType(noteId, value.id, value.textType, value.headingType)
+      .toPromise();
+    if (resp.success) {
       const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
       item.content.noteTextTypeId = value.textType;
       if (value.headingType) {
@@ -73,11 +84,10 @@ export class ContentEditorTextService {
     return -1;
   }
 
-  async appendNewEmptyContentToEnd(noteId: string){
+  async appendNewEmptyContentToEnd(noteId: string) {
     const resp = await this.apiNoteContent.newLine(noteId).toPromise();
     if (resp.success) {
       this.contentsService.insertToEnd(resp.data);
     }
   }
-
 }
