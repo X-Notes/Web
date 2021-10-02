@@ -314,56 +314,55 @@ namespace BI.Services.Notes
         {
             var resultIds = new List<Guid>();
             var order = -1;
-            // TODO DO ONE QUERY
-            foreach (var id in request.Ids)
+
+            var command = new GetUserPermissionsForNotesManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.Any())
             {
-                var command = new GetUserPermissionsForNoteQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
-
-                if (permissions.CanRead)
+                var idsForCopy = permissions.Where(x => x.Item2.CanRead).Select(x => x.Item1).ToList();
+                var permission = permissions.First().Item2;
+                if (idsForCopy.Any())
                 {
-                    var noteForCopy = await noteRepository.GetNoteByIdForCopy(id);
-                    var newNote = new Note()
+                    var notesForCopy = await noteRepository.GetNotesByIdsForCopy(idsForCopy);
+                    foreach(var noteForCopy in notesForCopy)
                     {
-                        Title = noteForCopy.Title,
-                        Color = noteForCopy.Color,
-                        CreatedAt = DateTimeOffset.Now,
-                        UpdatedAt = DateTimeOffset.Now,
-                        NoteTypeId = NoteTypeENUM.Private,
-                        RefTypeId = noteForCopy.RefTypeId,
-                        Order = order--,
-                        UserId = permissions.User.Id,
-                    };
-                    var dbNote = await noteRepository.AddAsync(newNote);
-                    resultIds.Add(dbNote.Entity.Id);
-                    var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
+                        var newNote = new Note()
+                        {
+                            Title = noteForCopy.Title,
+                            Color = noteForCopy.Color,
+                            CreatedAt = DateTimeOffset.Now,
+                            UpdatedAt = DateTimeOffset.Now,
+                            NoteTypeId = NoteTypeENUM.Private,
+                            RefTypeId = noteForCopy.RefTypeId,
+                            Order = order--,
+                            UserId = permission.User.Id,
+                        };
+                        var dbNote = await noteRepository.AddAsync(newNote);
+                        resultIds.Add(dbNote.Entity.Id);
+                        var labels = noteForCopy.LabelsNotes.Select(label => new LabelsNotes()
+                        {
+                            NoteId = dbNote.Entity.Id,
+                            LabelId = label.LabelId,
+                            AddedAt = DateTimeOffset.Now
+                        });
+
+                        await labelsNotesRepository.AddRangeAsync(labels);
+                        var contents = await CopyContentAsync(noteForCopy.Contents, false, dbNote.Entity.Id, permission.IsOwner, permission.Author.Id, permission.User.Id);
+                        await baseNoteContentRepository.AddRangeAsync(contents);
+                    }
+
+                    var dbNotes = await noteRepository.GetWhereAsync(x => x.UserId == permission.User.Id && x.NoteTypeId == NoteTypeENUM.Private);
+                    var orders = Enumerable.Range(1, dbNotes.Count);
+                    dbNotes = dbNotes.OrderBy(x => x.Order).Zip(orders, (note, order) =>
                     {
-                        NoteId = dbNote.Entity.Id,
-                        LabelId = label.LabelId,
-                        AddedAt = DateTimeOffset.Now
-                    });
+                        note.Order = order;
+                        return note;
+                    }).ToList();
 
-                    await labelsNotesRepository.AddRangeAsync(labels);
-
-                    var contents = await CopyContentAsync(noteForCopy.Contents, false, dbNote.Entity.Id, permissions.IsOwner, permissions.Author.Id, permissions.User.Id);
-
-                    await baseNoteContentRepository.AddRangeAsync(contents);
+                    await noteRepository.UpdateRangeAsync(dbNotes);
                 }
             }
-
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-
-            var dbNotes = await noteRepository.GetWhereAsync(x => 
-                x.UserId == user.Id 
-                && x.NoteTypeId == NoteTypeENUM.Private);
-
-            var orders = Enumerable.Range(1, dbNotes.Count);
-
-            dbNotes = dbNotes.Zip(orders, (note, order) =>
-            {
-                note.Order = order;
-                return note;
-            }).ToList();
 
             return resultIds;
         }
@@ -432,7 +431,8 @@ namespace BI.Services.Notes
 
         public async Task<Unit> Handle(MakeNoteHistoryCommand request, CancellationToken cancellationToken)
         {
-            var noteForCopy = await noteRepository.GetNoteByIdForCopy(request.Id);
+            var notesForCopy = await noteRepository.GetNotesByIdsForCopy(new List<Guid> { request.Id });
+            var noteForCopy = notesForCopy.First();
 
             var labels = noteForCopy.LabelsNotes.GetLabelUnDesc().Select(x => x.Label).Select(z => new HistoryLabel { Name = z.Name, Color = z.Color }).ToList();
 

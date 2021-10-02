@@ -23,7 +23,13 @@ namespace WriteContext.Repositories.Folders
                 .Include(x => x.Note)
                 .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Note)
-                .ThenInclude(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
+                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
+                .Include(x => x.Note)
+                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as VideosCollectionNote).Videos)
+                .Include(x => x.Note)
+                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as AudiosCollectionNote).Audios)
+                .Include(x => x.Note)
+                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as DocumentsCollectionNote).Documents)
                 .OrderBy(x => x.Order).ToListAsync();
         }
 

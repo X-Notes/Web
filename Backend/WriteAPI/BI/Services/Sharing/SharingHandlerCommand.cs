@@ -62,8 +62,8 @@ namespace BI.Services.Sharing
 
         public async Task<Unit> Handle(ChangeRefTypeFolders request, CancellationToken cancellationToken)
         {
-            var ownerdPermissions = new List<UserPermissionsForNote>();
-            var rejectedPermissions = new List<UserPermissionsForNote>();
+            var ownerdPermissions = new List<UserPermissionsForFolder>();
+            var rejectedPermissions = new List<UserPermissionsForFolder>();
 
             foreach(var id in request.Ids)
             {

@@ -152,7 +152,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<Note> GetNoteByIdForCopy(Guid noteId)
+        public async Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
         {
             return await entities
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
@@ -168,7 +168,7 @@ namespace WriteContext.Repositories.Notes
                 .ThenInclude(x => (x as VideosCollectionNote).Videos)
                 .Include(x => x.Contents)
                 .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
-                .FirstOrDefaultAsync(x => x.Id == noteId);
+                .Where(x => noteIds.Contains(x.Id)).ToListAsync();
         }
 
 
