@@ -32,6 +32,7 @@ import { MenuSelectionService } from './services/menu-selection.service';
 import { SelectionService } from './services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
+
 @NgModule({
   declarations: [
     FullNoteComponent,
@@ -66,7 +67,12 @@ import { FullNoteSliderService } from './services/full-note-slider.service';
     ContentEditorComponent,
     RightSectionContentComponent,
   ],
-  providers: [MenuSelectionService, SelectionService, SidebarNotesService, FullNoteSliderService],
+  providers: [
+    MenuSelectionService, 
+    SelectionService, 
+    SidebarNotesService, 
+    FullNoteSliderService,
+  ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })
 export class FullNoteModule {}

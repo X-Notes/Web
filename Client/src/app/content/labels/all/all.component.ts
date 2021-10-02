@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   ViewChildren,
   ElementRef,
   QueryList,
@@ -14,6 +13,7 @@ import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
+import { Observable } from 'rxjs';
 import { LabelsService } from '../labels.service';
 import { LabelStore } from '../state/labels-state';
 import {
@@ -24,8 +24,7 @@ import {
   RestoreLabel,
 } from '../state/labels-actions';
 import { Label } from '../models/label.model';
-import { SnackBarWrapperService } from '../../navigation/snack-bar-wrapper.service';
-import { Observable } from 'rxjs';
+import { SnackBarWrapperService } from '../../../shared/services/snackbar/snack-bar-wrapper.service';
 
 @Component({
   selector: 'app-all',

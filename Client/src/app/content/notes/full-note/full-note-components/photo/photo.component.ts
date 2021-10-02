@@ -1,9 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Subject } from 'rxjs';
 import { photoInit } from 'src/app/shared/services/personalization.service';
 import { Photo } from '../../../models/content-model.model';
-import { NoteStore } from '../../../state/notes-state';
 
 @Component({
   selector: 'app-photo',
@@ -11,7 +9,7 @@ import { NoteStore } from '../../../state/notes-state';
   styleUrls: ['./photo.component.scss'],
   animations: [photoInit],
 })
-export class PhotoComponent implements OnInit {
+export class PhotoComponent {
   @Output()
   deleteEvent = new EventEmitter<string>();
 
@@ -25,10 +23,6 @@ export class PhotoComponent implements OnInit {
   isReadOnlyMode = false;
 
   destroy = new Subject<void>();
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   onLoadImage() {
     this.photo.loaded = true;

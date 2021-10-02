@@ -1,5 +1,11 @@
 <div class="container" appTheme>
-  <div #album [style.width]="content.width" [style.height]="content.height" class="content-photos">
+  <div
+    *ngIf="!isEmpty"
+    #album
+    [style.width]="content.width"
+    [style.height]="content.height"
+    class="content-photos"
+  >
     <div
       *ngFor="let block of mainBlocks;let i = index"
       class="blocks"
@@ -45,6 +51,9 @@
       class="slider-bottom"
       [ngClass]="{'slider': !isReadOnlyMode}"
     ></div>
+  </div>
+  <div *ngIf="isEmpty" class="empty-section">
+    <p>Empty Album TODO</p>
   </div>
   <div class="action">
     <button type="button" name="options" #action [matMenuTriggerFor]="menu">

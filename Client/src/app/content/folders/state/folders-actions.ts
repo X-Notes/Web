@@ -1,14 +1,18 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
-import { Folders } from '../models/folders.model';
-import { SmallFolder } from '../models/folder.model';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { Folders } from '../models/folders.model';
+import { SmallFolder } from '../models/folder.model';
 
 export class LoadFolders {
-  static type = '[Folders] Load private folders';
+  static type = '[Folders] Load folders';
 
   constructor(public type: FolderTypeENUM, public pr: PersonalizationSetting) {}
+}
+
+export class ResetFolders {
+  static type = '[Folders] Reset folders';
 }
 
 // FUNCTIONS
@@ -107,6 +111,7 @@ export class ClearAddToDomFolders {
 
 export class AddToDomFolders {
   static type = '[Folders] Add AddToDomFolders folders';
+
   constructor(public folders: SmallFolder[]) {}
 }
 

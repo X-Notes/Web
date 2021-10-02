@@ -1,12 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
+using Common.DatabaseModels.Models.Users;
 using Common.DTO.Permissions;
 using Domain.Queries.Permissions;
 using MediatR;
+using Tensorflow;
 using WriteContext.Repositories;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
@@ -17,6 +21,8 @@ namespace BI.Services.Permissions
     public class PermissionHandlerQuery
         : IRequestHandler<GetUserPermissionsForNoteQuery, UserPermissionsForNote>,
           IRequestHandler<GetUserPermissionsForFolderQuery, UserPermissionsForFolder>,
+          IRequestHandler<GetUserPermissionsForFoldersManyQuery, List<(Guid, UserPermissionsForFolder)>>,
+          IRequestHandler<GetUserPermissionsForNotesManyQuery, List<(Guid, UserPermissionsForNote)>>,
           IRequestHandler<GetPermissionUploadFileQuery, PermissionUploadFileEnum>
     {
         private readonly NoteRepository noteRepository;
@@ -41,50 +47,8 @@ namespace BI.Services.Permissions
             if (user != null)
             {
                 var note = await noteRepository.GetForCheckPermission(request.NoteId);
-
-                if (note == null)
-                {
-                    return new UserPermissionsForNote().SetNoteNotFounded();
-                }
-
-                if (note.UserId == user.Id)
-                {
-                    return new UserPermissionsForNote().SetFullAccess(user, note);
-                }
-
-                switch (note.NoteTypeId)
-                {
-                    case NoteTypeENUM.Shared:
-                        {
-                            switch (note.RefTypeId)
-                            {
-                                case RefTypeENUM.Editor:
-                                    {
-                                        return new UserPermissionsForNote().SetFullAccess(user, note);
-                                    }
-                                case RefTypeENUM.Viewer:
-                                    {
-                                        return new UserPermissionsForNote().SetOnlyRead(user, note);
-                                    }
-                            }
-                            break;
-                        }
-                    default:
-                        {
-                            var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
-                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
-                            {
-                                return new UserPermissionsForNote().SetFullAccess(user, note);
-                            }
-                            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
-                            {
-                                return new UserPermissionsForNote().SetOnlyRead(user, note);
-                            }
-                            return new UserPermissionsForNote().SetNoAccessRights(user, note);
-                        }
-                }
+                return GetNotePermission(note, user);
             }
-
             return new UserPermissionsForNote().SetUserNotFounded();
         }
 
@@ -93,51 +57,93 @@ namespace BI.Services.Permissions
             var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
             if (user != null)
             {
-                var folder = await folderRepository.GetWithUsersOnFolder(request.FolderId);
+                var folder = await folderRepository.GetForCheckPermission(request.FolderId);
+                return GetFolderPermission(folder, user);
+            }
+            return new UserPermissionsForFolder().GetUserNotFounded();
+        }
 
-                if (folder == null)
-                {
-                    return new UserPermissionsForFolder().GetFolderNotFounded();
-                }
+        private UserPermissionsForNote GetNotePermission(Note note, User user)
+        {
+            if (note == null)
+            {
+                return new UserPermissionsForNote().SetNoteNotFounded();
+            }
 
-                if (folder.UserId == user.Id)
-                {
-                    return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: true);
-                }
+            if (note.UserId == user.Id)
+            {
+                return new UserPermissionsForNote().SetFullAccess(user, note);
+            }
 
-                switch (folder.FolderTypeId)
+            if (note.NoteTypeId == NoteTypeENUM.Shared)
+            {
+                switch (note.RefTypeId)
                 {
-                    case FolderTypeENUM.Shared:
+                    case RefTypeENUM.Editor:
                         {
-                            switch (folder.RefTypeId)
-                            {
-                                case RefTypeENUM.Editor:
-                                    {
-                                        return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
-                                    }
-                                case RefTypeENUM.Viewer:
-                                    {
-                                        return new UserPermissionsForFolder().GetOnlyRead(user, folder);
-                                    }
-                            }
-                            break;
+                            return new UserPermissionsForNote().SetFullAccess(user, note);
                         }
-                    default:
+                    case RefTypeENUM.Viewer:
                         {
-                            var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
-                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
-                            {
-                                return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
-                            }
-                            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)
-                            {
-                                return new UserPermissionsForFolder().GetOnlyRead(user, folder);
-                            }
-                            return new UserPermissionsForFolder().NoAccessRights(user, folder);
+                            return new UserPermissionsForNote().SetOnlyRead(user, note);
                         }
                 }
             }
-            return new UserPermissionsForFolder().GetUserNotFounded();
+
+            var noteUser = note.UsersOnPrivateNotes.FirstOrDefault(x => x.UserId == user.Id);
+            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Editor)
+            {
+                return new UserPermissionsForNote().SetFullAccess(user, note);
+            }
+
+            if (noteUser != null && noteUser.AccessTypeId == RefTypeENUM.Viewer)
+            {
+                return new UserPermissionsForNote().SetOnlyRead(user, note);
+            }
+
+            return new UserPermissionsForNote().SetNoAccessRights(user, note);
+        }
+
+        private UserPermissionsForFolder GetFolderPermission(Folder folder, User user)
+        {
+            if (folder == null)
+            {
+                return new UserPermissionsForFolder().GetFolderNotFounded();
+            }
+
+            if (folder.UserId == user.Id)
+            {
+                return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: true);
+            }
+
+            if(folder.FolderTypeId == FolderTypeENUM.Shared)
+            {
+                switch (folder.RefTypeId)
+                {
+                    case RefTypeENUM.Editor:
+                        {
+                            return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
+                        }
+                    case RefTypeENUM.Viewer:
+                        {
+                            return new UserPermissionsForFolder().GetOnlyRead(user, folder);
+                        }
+                }
+            }
+
+            var folderUser = folder.UsersOnPrivateFolders.FirstOrDefault(x => x.UserId == user.Id);
+            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Editor)
+            {
+                return new UserPermissionsForFolder().GetFullAccess(user, folder, isOwner: false);
+            }
+
+            if (folderUser != null && folderUser.AccessTypeId == RefTypeENUM.Viewer)
+            {
+                return new UserPermissionsForFolder().GetOnlyRead(user, folder);
+            }
+
+            return new UserPermissionsForFolder().NoAccessRights(user, folder);
+
         }
 
         public async Task<PermissionUploadFileEnum> Handle(GetPermissionUploadFileQuery request, CancellationToken cancellationToken)
@@ -149,6 +155,60 @@ namespace BI.Services.Permissions
                 return PermissionUploadFileEnum.CanUpload;
             }
             return PermissionUploadFileEnum.NoCanUpload;
+        }
+
+        public async Task<List<(Guid, UserPermissionsForFolder)>> Handle(GetUserPermissionsForFoldersManyQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            if (user != null)
+            {
+                var folders = await folderRepository.GetForCheckPermissions(request.FolderIds);
+                var foldersD = folders.ToDictionary(x => x.Id);
+
+                var result = new List<(Guid, UserPermissionsForFolder)>();
+
+                foreach (var id in request.FolderIds)
+                {
+                    if (foldersD.ContainsKey(id))
+                    {
+                        var folderD = foldersD[id];
+                        result.Add((id, GetFolderPermission(folderD, user)));
+                    }
+                    else
+{
+                        result.Add((id, new UserPermissionsForFolder().GetFolderNotFounded()));
+                    }
+                }
+                return result;
+            }
+            return new List<(Guid, UserPermissionsForFolder)>();
+        }
+
+        public async Task<List<(Guid, UserPermissionsForNote)>> Handle(GetUserPermissionsForNotesManyQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
+            if (user != null)
+            {
+                var notes = await noteRepository.GetForCheckPermissions(request.NoteIds);
+                var notesD = notes.ToDictionary(x => x.Id);
+
+                var result = new List<(Guid, UserPermissionsForNote)>();
+
+                foreach (var id in request.NoteIds)
+                {
+                    if (notesD.ContainsKey(id))
+                    {
+                        var noteD = notesD[id];
+                        result.Add((id, GetNotePermission(noteD, user)));
+                    }
+                    else
+                    {
+                        result.Add((id, new UserPermissionsForNote().SetNoteNotFounded()));
+                    }
+                }
+                return result;
+            }
+            return new List<(Guid, UserPermissionsForNote)>();
         }
     }
 }

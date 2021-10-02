@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common.DTO.Notes;
 using Common.DTO.Notes.FullNoteContent;
+using Common.DTO.Personalization;
 using Domain.Commands.FolderInner;
 using Domain.Queries.InnerFolder;
 using MediatR;
@@ -28,10 +29,9 @@ namespace WriteAPI.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<List<SmallNote>> GetNoteByFolderId(Guid id)
+        public async Task<List<SmallNote>> GetNoteByFolderId(Guid id, [FromQuery] PersonalizationSettingDTO settings)
         {
-            var command = new GetFolderNotesByFolderIdQuery(id , this.GetUserEmail());
-            return await this._mediator.Send(command);
+            return await _mediator.Send(new GetFolderNotesByFolderIdQuery(id, this.GetUserEmail(), settings));
         }
 
         [HttpPost("preview")]

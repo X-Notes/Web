@@ -50,7 +50,6 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
       .subscribe((x) => {
         if (x > 0) {
           this.countSelected = x;
-          console.log(this.countSelected);
         }
       });
 
@@ -60,7 +59,6 @@ export class InteractionInnerFolderComponent implements OnInit, OnDestroy {
       .subscribe((x) => {
         if (x > 0) {
           this.countSelected = x;
-          console.log(this.countSelected);
         }
       });
   }

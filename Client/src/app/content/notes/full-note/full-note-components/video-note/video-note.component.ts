@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { VideoModel } from '../../../models/content-model.model';
+import { ExportService } from '../../../export.service';
+import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -9,22 +10,20 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 })
 export class VideoNoteComponent implements ParentInteraction {
   @Input()
-  content: VideoModel;
+  content: VideosCollection;
 
   @Input()
   isReadOnlyMode = false;
 
   @Output() deleteVideoEvent = new EventEmitter<string>();
 
-  setFocus = ($event?: any) => {
-    console.log($event);
-  };
+  constructor(private exportService: ExportService) {}
+
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-    console.log(content);
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -32,11 +31,28 @@ export class VideoNoteComponent implements ParentInteraction {
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-    console.log($event);
-  };
+  async exportVideos(videos: VideosCollection) {
+    await this.exportService.exportVideos(videos);
+  }
 
-  mouseOut = ($event: any) => {
-    console.log($event);
-  };
+  async exportVideo(video: VideoModel) {
+    await this.exportService.exportVideo(video);
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.videos || this.content.videos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  get getFirst() {
+    if (this.content.videos && this.content.videos.length > 0) {
+      return this.content.videos[0];
+    }
+  }
+
+  mouseEnter = ($event: any) => {};
+
+  mouseOut = ($event: any) => {};
 }

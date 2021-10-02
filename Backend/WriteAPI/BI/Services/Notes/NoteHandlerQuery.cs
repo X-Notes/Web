@@ -81,10 +81,8 @@ namespace BI.Services.Notes
                 }
 
                 notes.ForEach(x => x.LabelsNotes = x.LabelsNotes?.GetLabelUnDesc());
-
                 return appCustomMapper.MapNotesToSmallNotesDTO(notes);
             }
-
             throw new Exception("User not found");
         }
 

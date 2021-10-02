@@ -27,11 +27,13 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
       .subscribe((space) => (this.memory = Math.ceil(space)));
 
     this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
+      // eslint-disable-next-line no-return-assign
       .subscribe((user) => (this.billing = user.billingPlanId));
   }
 
@@ -55,13 +57,13 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
   get userMemory() {
     switch (this.billing) {
       case BillingENUM.Free: {
-        return 100;
+        return 1000; // TODO LOAD THIS DATA FROM SERVER
       }
       case BillingENUM.Standart: {
-        return 500;
+        return 5000;
       }
       case BillingENUM.Business: {
-        return 1000;
+        return 20000;
       }
       default: {
         return 9999999; // IT`S OK
@@ -73,14 +75,14 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     const check = this.memory / this.userMemory;
     if (check < 0.65) {
       return 'white';
-    } else if (check >= 0.65 && check < 0.85) {
-      return '#ffed69';
-    } else {
-      return '#ff6969';
     }
+    if (check >= 0.65 && check < 0.85) {
+      return '#ffed69';
+    }
+    return '#ff6969';
   }
 
   get procent() {
-    return (this.memory / this.userMemory) * 100 + '%';
+    return `${(this.memory / this.userMemory) * 100}%`;
   }
 }

@@ -4,6 +4,7 @@ using Common.DatabaseModels.Models.Notes;
 
 namespace Common.DatabaseModels.Models.Folders
 {
+    [Table(nameof(FoldersNotes), Schema = SchemeConfig.Folder)]
     public class FoldersNotes : BaseEntity<Guid>
     {
         [NotMapped]

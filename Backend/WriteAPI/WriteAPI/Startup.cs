@@ -12,8 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WriteAPI.ConfigureAPP;
+using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.Filters;
 using WriteAPI.Hosted;
+using WriteAPI.Middlewares;
 
 namespace WriteAPI
 {
@@ -34,6 +36,11 @@ namespace WriteAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = FileSizeConstraints.MaxRequestFileSize;
+            });
+
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
                 builder.AllowAnyMethod()
@@ -69,7 +76,6 @@ namespace WriteAPI
 
             services.AddMemoryCache();
 
-            services.AddHostedService<HistoryHosted>();
             services.AddHostedService<MLHosted>();
             services.AddHostedService<JobRegisterHosted>();
 

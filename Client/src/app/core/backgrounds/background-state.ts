@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
 import { BackgroundService } from 'src/app/content/profile/background.service';
+import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import {
   NewBackground,
   LoadBackgrounds,
@@ -9,10 +12,9 @@ import {
 } from './background-action';
 import { Background } from '../models/background.model';
 import { LoadUsedDiskSpace, SetCurrentBackground } from '../stateUser/user-action';
-import { OperationResultAdditionalInfo } from 'src/app/content/notes/models/operation-result.model';
 import { UserStore } from '../stateUser/user-state';
-import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
-import { ShowSnackNotification } from '../stateApp/app-action';
+import { byteToMB } from '../defaults/byte-convert';
+import { maxBackgroundPhotoSize } from '../defaults/constraints';
 
 interface BackgroundState {
   backgrounds: Background[];
@@ -27,9 +29,11 @@ interface BackgroundState {
 @Injectable()
 export class BackgroundStore {
   constructor(
-    private backgroundAPI: BackgroundService, 
+    private backgroundAPI: BackgroundService,
+    private snackbarStatusHandler: SnackBarHandlerStatusService,
     private store: Store,
-    private snackbarTranlateHelper: SnackBarTranlateHelperService) {}
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
+  ) {}
 
   @Selector()
   static getUserBackgrounds(state: BackgroundState): Background[] {
@@ -41,12 +45,23 @@ export class BackgroundStore {
     { patchState, getState, dispatch }: StateContext<BackgroundState>,
     { photo }: NewBackground,
   ) {
-    const result = await this.backgroundAPI.newBackground(photo).toPromise();
-
-    if(result.message === OperationResultAdditionalInfo.NotEnoughMemory){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      const message = this.snackbarTranlateHelper.getNoEnoughMemoryTranslate(lname); 
-      this.store.dispatch(new ShowSnackNotification(message));
+    const operation = this.longTermOperationsHandler.addNewBackgroundChangingOperation();
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Image,
+      'background changing',
+      true,
+      true,
+    );
+    const resp = await this.backgroundAPI.newBackground(photo, mini, operation).toPromise();
+    const result = resp.eventBody;
+    const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
+      language,
+      result,
+      byteToMB(maxBackgroundPhotoSize),
+    );
+    if (isNeedInterrupt) {
       return;
     }
 

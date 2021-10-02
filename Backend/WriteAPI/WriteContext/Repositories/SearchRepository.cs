@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
-using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
 
 namespace WriteContext.Repositories
 {
@@ -23,7 +23,7 @@ namespace WriteContext.Repositories
             return await context.Notes
                 .Include(x => x.FoldersNotes).ThenInclude(z => z.Folder)
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Contents).ThenInclude(z => (z as AlbumNote).Photos)
+                .Include(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
                 .Where(x => x.UserId == userId).ToListAsync();
         }
 

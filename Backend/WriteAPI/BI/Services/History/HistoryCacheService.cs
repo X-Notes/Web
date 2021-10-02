@@ -46,9 +46,9 @@ namespace BI.Services.History
             }
         }
 
-        public List<CacheHistory> GetCacheHistoriesForSnapshotingByTime(int afterSeconds)
+        public List<CacheHistory> GetCacheHistoriesForSnapshotingByTime(DateTimeOffset earliestTimestamp)
         {
-            return Ids.Where(x => x.Value.UpdatedAt.AddSeconds(afterSeconds) < DateTimeOffset.Now)
+            return Ids.Where(x => x.Value.UpdatedAt < earliestTimestamp)
                       .Select(x => x.Value).ToList();
         }
 

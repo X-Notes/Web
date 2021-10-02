@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.Notes;
 
 namespace Common.DatabaseModels.Models.Systems
 {
+    [Table(nameof(RefType), Schema = SchemeConfig.Systems)]
     public class RefType : BaseEntity<RefTypeENUM>
     {
         public string Name { set; get; }

@@ -133,49 +133,53 @@ namespace BI.Services.Folders
             var resultIds = new List<Guid>();
             var order = -1;
 
-            foreach (var id in request.Ids)
+            var command = new GetUserPermissionsForFoldersManyQuery(request.Ids, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.Any())
             {
-                var command = new GetUserPermissionsForFolderQuery(id, request.Email);
-                var permissions = await _mediator.Send(command);
-         
-                if (permissions.CanWrite)
+                var idsForCopy = permissions.Where(x => x.Item2.CanRead).Select(x => x.Item1).ToList();
+                var permission = permissions.First().Item2;
+                if (idsForCopy.Any())
                 {
-                    var folderForCopy = await folderRepository.GetFolderByIdForCopy(permissions.Folder.Id);
-                    var newFolder = new Folder()
+                    var foldersForCopy = await folderRepository.GetFoldersByIdsForCopy(idsForCopy);
+                    foreach(var folderForCopy in foldersForCopy)
                     {
-                        Title = folderForCopy.Title,
-                        Color = folderForCopy.Color,
-                        FolderTypeId = FolderTypeENUM.Private,
-                        RefTypeId = folderForCopy.RefTypeId,
-                        Order = order--,
-                        CreatedAt = DateTimeOffset.Now,
-                        UpdatedAt = DateTimeOffset.Now,
-                        UserId = permissions.User.Id
-                    };
-                    var dbFolder = await folderRepository.AddAsync(newFolder);
-                    resultIds.Add(dbFolder.Entity.Id);
-                    var foldersNotes = folderForCopy.FoldersNotes.Select(note => new FoldersNotes()
-                    {
-                        FolderId = dbFolder.Entity.Id,
-                        NoteId = note.NoteId
-                    });
-                    await foldersNotesRepository.AddRangeAsync(foldersNotes);
+                        var newFolder = new Folder()
+                        {
+                            Title = folderForCopy.Title,
+                            Color = folderForCopy.Color,
+                            FolderTypeId = FolderTypeENUM.Private,
+                            RefTypeId = folderForCopy.RefTypeId,
+                            Order = order--,
+                            CreatedAt = DateTimeOffset.Now,
+                            UpdatedAt = DateTimeOffset.Now,
+                            UserId = permission.User.Id
+                        };
+                        var dbFolder = await folderRepository.AddAsync(newFolder);
+                        resultIds.Add(dbFolder.Entity.Id);
+                        var foldersNotes = folderForCopy.FoldersNotes.Select(note => new FoldersNotes()
+                        {
+                            FolderId = dbFolder.Entity.Id,
+                            NoteId = note.NoteId
+                        });
+                        await foldersNotesRepository.AddRangeAsync(foldersNotes);
+                    }
+
+                    var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(permission.User.Id, FolderTypeENUM.Private);
+                    var orders = Enumerable.Range(1, dbFolders.Count);
+                    dbFolders = dbFolders.Zip(orders, (folder, order) => {
+                        folder.Order = order;
+                        return folder;
+                    }).ToList();
+
+                    await folderRepository.UpdateRangeAsync(dbFolders);
+                    var resultFolders = dbFolders.Where(dbFolder => resultIds.Contains(dbFolder.Id)).ToList();
+                    return appCustomMapper.MapFoldersToSmallFolders(resultFolders);
                 }
             }
 
-            var user = await userRepository.FirstOrDefaultAsync(x => x.Email == request.Email);
-            var dbFolders = await folderRepository.GetFoldersByUserIdAndTypeIdNotesIncludeNote(user.Id, FolderTypeENUM.Private);
-
-            var orders = Enumerable.Range(1, dbFolders.Count);
-            dbFolders = dbFolders.Zip(orders, (folder, order) => {
-                folder.Order = order;
-                return folder;
-            }).ToList();
-
-            await folderRepository.UpdateRangeAsync(dbFolders);
-
-            var resultFolders = dbFolders.Where(dbFolder => resultIds.Contains(dbFolder.Id)).ToList();
-            return appCustomMapper.MapFoldersToSmallFolders(resultFolders);
+            return new List<SmallFolder>();
         }
 
         public async Task<Unit> Handle(DeleteFoldersCommand request, CancellationToken cancellationToken)

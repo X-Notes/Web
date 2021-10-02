@@ -1,7 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
-import { DocumentModel } from '../../../models/content-model.model';
+import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
+import {
+  docFormats,
+  excelFormats,
+  pdfFormats,
+  presentationFormats,
+} from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -11,7 +17,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 })
 export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
-  content: DocumentModel;
+  content: DocumentsCollection;
 
   @Input()
   isReadOnlyMode = false;
@@ -23,15 +29,11 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     private exportService: ExportService,
   ) {}
 
-  setFocus = ($event?: any) => {
-    console.log($event);
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-    console.log(content);
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -39,42 +41,57 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     return this.content;
   }
 
-  async exportDocument() {
-    await this.exportService.exportDocument(this.content);
+  async exportDocuments(documents: DocumentsCollection) {
+    await this.exportService.exportDocuments(documents);
+  }
+
+  async exportDocument(document: DocumentModel) {
+    await this.exportService.exportDocument(document);
   }
 
   documentIcon() {
-    const type = this.content.name.split('.').pop().toLowerCase();
-    switch (type) {
-      case 'doc':
-      case 'docx':
-        return 'microsoftWord';
-      case 'xls':
-      case 'xlsx':
-        return 'microsoftExcel';
-      case 'ppt':
-      case 'pptx':
-        return 'microsoftPowerpoint';
-      case 'pdf':
-        return 'pdf';
-      default:
-        return 'fileInner';
+    const type = this.content.name?.split('.').pop().toLowerCase();
+
+    if (docFormats.some((format) => format === type)) {
+      return 'microsoftWord';
+    }
+
+    if (excelFormats.some((format) => format === type)) {
+      return 'microsoftExcel';
+    }
+
+    if (presentationFormats.some((format) => format === type)) {
+      return 'microsoftPowerpoint';
+    }
+
+    if (pdfFormats.some((format) => format === type)) {
+      return 'pdf';
+    }
+
+    return 'fileInner';
+  }
+
+  get getFirst() {
+    if (this.content.documents && this.content.documents.length > 0) {
+      return this.content.documents[0];
     }
   }
 
-  openModal() {
-    const path = this.exportService.getPath(this.content.documentPath, this.content.authorId);
-    console.log(path);
+  get isEmpty(): boolean {
+    if (!this.content.documents || this.content.documents.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  openModal(document: DocumentModel) {
+    const path = this.exportService.getPath(document.documentPath, document.authorId);
     this.dialogsManageService.viewDock(path);
   }
 
-  mouseEnter = ($event: any) => {
-    console.log($event);
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-    console.log($event);
-  };
+  mouseOut = ($event: any) => {};
 
   ngOnInit = () => {};
 }

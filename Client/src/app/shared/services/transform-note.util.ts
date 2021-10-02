@@ -1,5 +1,5 @@
 import {
-  Album,
+  PhotosCollection,
   ContentModel,
   ContentTypeENUM,
 } from 'src/app/content/notes/models/content-model.model';
@@ -19,7 +19,7 @@ export class TransformNoteUtil {
   public static transformContent(contents: ContentModel[]) {
     return contents.map((z) => {
       if (z.typeId === ContentTypeENUM.NoteAlbum) {
-        return new Album(z);
+        return new PhotosCollection(z);
       }
       return z;
     });

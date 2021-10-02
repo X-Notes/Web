@@ -14,7 +14,7 @@ import {
 } from 'src/app/core/stateUser/user-action';
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { AuthService } from 'src/app/core/auth.service';
-import { UpdateRoute } from 'src/app/core/stateApp/app-action';
+import { ShowSnackNotification, UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -30,6 +30,11 @@ import { hideForDemo } from 'src/environments/demo';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { Personalization } from 'src/app/shared/enums/personalization.enum';
+import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
+import { byteToMB } from 'src/app/core/defaults/byte-convert';
+import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
+import { ResetNotes } from '../../notes/state/notes-actions';
+import { ResetFolders } from '../../folders/state/folders-actions';
 
 @Component({
   selector: 'app-profile',
@@ -53,9 +58,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public language$: Observable<LanguagesENUM>;
 
   @Select(UserStore.getPersonalizationSettings)
-  public pSettings$: Observable<PersonalizationSetting>
+  public pSettings$: Observable<PersonalizationSetting>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
+
+  settingsInit: PersonalizationSetting;
 
   hideFor = hideForDemo;
 
@@ -63,7 +70,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themes = ThemeENUM;
 
-  pSettings =Personalization;
+  pSettings = Personalization;
 
   language = LanguagesENUM;
 
@@ -80,8 +87,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    private rend: Renderer2,
     private authService: AuthService,
+    private snackbarTranslateHelper: SnackBarTranlateHelperService,
   ) {}
 
   async ngOnInit() {
@@ -94,6 +101,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(async (x: boolean) => {
         if (x) {
           this.store.dispatch(new LoadBackgrounds());
+          this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         }
       });
 
@@ -135,9 +143,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   async changePersonalizationSettings(value: any, type: Personalization) {
-    const types = Personalization
-    console.log(value, type);
-    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings)}
+    const types = Personalization;
+    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings) };
     switch (type) {
       case types.isViewVideoOnNote:
         settings.isViewVideoOnNote = value;
@@ -187,24 +194,63 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   uploadImage(event) {
-    const file = event.target.files[0];
+    const file = event.target.files[0] as File;
     if (file) {
-      const formDate = new FormData();
-      formDate.append('photo', file);
-      this.store.dispatch(new NewBackground(formDate));
+      if (file.size > maxBackgroundPhotoSize) {
+        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
+          language,
+          byteToMB(maxBackgroundPhotoSize),
+        );
+        this.store.dispatch(new ShowSnackNotification(message));
+      } else {
+        const formDate = new FormData();
+        formDate.append('photo', file);
+        this.store.dispatch(new NewBackground(formDate));
+      }
     }
+    // eslint-disable-next-line no-param-reassign
+    event.target.value = null;
   }
 
   uploadImageUserPhoto(event) {
-    const file = event.target.files[0];
+    const file = event.target.files[0] as File;
     if (file) {
-      const formDate = new FormData();
-      formDate.append('photo', file);
-      this.store.dispatch(new UpdateUserPhoto(formDate));
+      if (file.size > maxProfilePhotoSize) {
+        const language = this.store.selectSnapshot(UserStore.getUserLanguage);
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
+          language,
+          byteToMB(maxProfilePhotoSize),
+        );
+        this.store.dispatch(new ShowSnackNotification(message));
+      } else {
+        const formDate = new FormData();
+        formDate.append('photo', file);
+        this.store.dispatch(new UpdateUserPhoto(formDate));
+      }
     }
+    // eslint-disable-next-line no-param-reassign
+    event.target.value = null;
   }
 
   ngOnDestroy(): void {
+    const lastPs = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+
+    if (
+      lastPs.contentInNoteCount !== this.settingsInit.contentInNoteCount ||
+      lastPs.isViewAudioOnNote !== this.settingsInit.isViewAudioOnNote ||
+      lastPs.isViewDocumentOnNote !== this.settingsInit.isViewDocumentOnNote ||
+      lastPs.isViewTextOnNote !== this.settingsInit.isViewTextOnNote ||
+      lastPs.isViewVideoOnNote !== this.settingsInit.isViewVideoOnNote ||
+      lastPs.isViewPhotosOnNote !== this.settingsInit.isViewPhotosOnNote
+    ) {
+      this.store.dispatch(new ResetNotes());
+    }
+
+    if (lastPs.notesInFolderCount !== this.settingsInit.notesInFolderCount) {
+      this.store.dispatch(new ResetFolders());
+    }
+
     this.destroy.next();
     this.destroy.complete();
   }

@@ -33,6 +33,7 @@ import {
   ChangeColorFullFolder,
   AddToDomFolders,
   MakeSharedFolders,
+  ResetFolders,
 } from './folders-actions';
 import { UpdateColor } from '../../notes/state/update-color.model';
 import { Folders } from '../models/folders.model';
@@ -293,7 +294,7 @@ export class FolderStore {
   }
 
   @Action(TransformTypeFolders)
-  tranformFromTo(
+  transformFromTo(
     { getState, dispatch, patchState }: StateContext<FolderState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeFolders,
   ) {
@@ -388,6 +389,12 @@ export class FolderStore {
         folders: [...getState().folders, folders],
       });
     }
+  }
+
+  @Action(ResetFolders)
+  // eslint-disable-next-line class-methods-use-this
+  async resetFolders({ patchState }: StateContext<FolderState>) {
+    patchState({ folders: [] });
   }
 
   @Action(UpdateFolders)

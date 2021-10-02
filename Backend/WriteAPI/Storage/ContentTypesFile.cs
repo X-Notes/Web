@@ -4,9 +4,9 @@ namespace Storage
 {
     public enum ContentTypesFile
     {
-        Images,
+        Photos,
         Videos,
         Audios,
-        Files
+        Documents
     }
 }

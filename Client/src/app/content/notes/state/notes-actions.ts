@@ -1,14 +1,19 @@
 import { Order } from 'src/app/shared/services/order.service';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
+import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { Label } from '../../labels/models/label.model';
 import { Notes } from './notes.model';
 import { SmallNote } from '../models/small-note.model';
 import { FullNote } from '../models/full-note.model';
-import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
+
+
+export class ResetNotes {
+  static type = '[Notes] Reset notes';
+}
 
 export class LoadNotes {
-  static type = '[Notes] Load private notes';
+  static type = '[Notes] Load notes';
 
   constructor(public type: NoteTypeENUM, public pr: PersonalizationSetting) {}
 }
@@ -51,6 +56,7 @@ export class ClearAddToDomNotes {
 
 export class AddToDomNotes {
   static type = '[Notes] Add AddToDomNotes notes';
+
   constructor(public notes: SmallNote[]) {}
 }
 
@@ -79,6 +85,7 @@ export class BaseChangeTypeSmallNote {
 export class SetDeleteNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] SetDelete notes';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }
@@ -86,6 +93,7 @@ export class SetDeleteNotes extends BaseChangeTypeSmallNote {
 export class ArchiveNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] Archive notes';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }
@@ -94,6 +102,7 @@ export class ArchiveNotes extends BaseChangeTypeSmallNote {
 export class MakePrivateNotes extends BaseChangeTypeSmallNote {
   static type = '[Notes] MakePrivate notes';
 
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(isAddingToDom: boolean) {
     super(isAddingToDom);
   }

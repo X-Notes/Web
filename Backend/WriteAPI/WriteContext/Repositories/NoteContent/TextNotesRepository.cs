@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Common.DatabaseModels.Models.NoteContent;
 using WriteContext.GenericRepositories;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 
 namespace WriteContext.Repositories.NoteContent
 {

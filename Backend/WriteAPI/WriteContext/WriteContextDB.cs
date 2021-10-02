@@ -3,7 +3,8 @@ using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
@@ -20,10 +21,10 @@ namespace WriteContext
         public DbSet<NotificationSetting> NotificationSettings { get; set; }
 
         public DbSet<PersonalizationSetting> PersonalizationSettings { set; get; }
-        
+
         public DbSet<SortedByType> SortedByTypes { set; get; }
 
-        public DbSet<Backgrounds> Backgrounds { set; get; }
+        public DbSet<Background> Backgrounds { set; get; }
 
         public DbSet<Notification> Notifications { set; get; }
 
@@ -54,7 +55,13 @@ namespace WriteContext
         // FILES
         public DbSet<AppFile> Files { set; get; }
 
-        public DbSet<AlbumNoteAppFile> AlbumNoteAppFiles { set; get; }
+        public DbSet<PhotoNoteAppFile> PhotoNoteAppFiles { set; get; }
+
+        public DbSet<VideoNoteAppFile> VideoNoteAppFiles { set; get; }
+
+        public DbSet<DocumentNoteAppFile> DocumentNoteAppFiles { set; get; }
+
+        public DbSet<AudioNoteAppFile> AudioNoteAppFiles { set; get; }
 
         public DbSet<FileType> FileTypes { set; get; }
 
@@ -63,13 +70,13 @@ namespace WriteContext
 
         public DbSet<TextNote> TextNotes { set; get; }
 
-        public DbSet<AlbumNote> AlbumNotes { set; get; }
+        public DbSet<PhotosCollectionNote> AlbumNotes { set; get; }
 
-        public DbSet<AudiosPlaylistNote> AudiosNote { set; get; }
+        public DbSet<AudiosCollectionNote> AudiosNote { set; get; }
 
-        public DbSet<VideoNote> VideosNote { set; get; }
+        public DbSet<VideosCollectionNote> VideosNote { set; get; }
 
-        public DbSet<DocumentNote> DocumentsNote { set; get; }
+        public DbSet<DocumentsCollectionNote> DocumentsNote { set; get; }
 
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
@@ -222,7 +229,7 @@ namespace WriteContext
                 .HasOne(bc => bc.User)
                 .WithMany(b => b.UsersOnPrivateFolders)
                 .HasForeignKey(bc => bc.UserId);
-      
+
             // RELATION NOTES
 
             modelBuilder.Entity<ReletatedNoteToInnerNote>()
@@ -239,40 +246,74 @@ namespace WriteContext
                 .HasForeignKey(bc => bc.RelatedNoteId);
 
 
-            modelBuilder.Entity<AlbumNote>()
+            modelBuilder.Entity<PhotosCollectionNote>()
                 .HasMany(p => p.Photos)
-                .WithMany(p => p.AlbumNotes)
-                .UsingEntity<AlbumNoteAppFile>(
+                .WithMany(p => p.PhotosCollectionNotes)
+                .UsingEntity<PhotoNoteAppFile>(
                     j => j
                         .HasOne(pt => pt.AppFile)
-                        .WithMany(t => t.AlbumNoteAppFiles)
+                        .WithMany(t => t.PhotosCollectionNoteAppFiles)
                         .HasForeignKey(pt => pt.AppFileId),
                     j => j
-                        .HasOne(pt => pt.AlbumNote)
-                        .WithMany(p => p.AlbumNoteAppFiles)
-                        .HasForeignKey(pt => pt.AlbumNoteId),
+                        .HasOne(pt => pt.PhotosCollectionNote)
+                        .WithMany(p => p.PhotoNoteAppFiles)
+                        .HasForeignKey(pt => pt.PhotosCollectionNoteId),
                     j =>
                     {
-                        j.HasKey(bc => new { bc.AlbumNoteId, bc.AppFileId });
+                        j.HasKey(bc => new { bc.PhotosCollectionNoteId, bc.AppFileId });
                     });
 
-            modelBuilder.Entity<AudiosPlaylistNote>()
+            modelBuilder.Entity<AudiosCollectionNote>()
                 .HasMany(x => x.Audios)
-                .WithMany(x => x.AudioNotes)
+                .WithMany(x => x.AudiosCollectionNotes)
                 .UsingEntity<AudioNoteAppFile>(
                     j => j
                          .HasOne(pt => pt.AppFile)
-                         .WithMany(t => t.AudioNoteAppFiles)
+                         .WithMany(t => t.AudiosCollectionNoteAppFiles)
                          .HasForeignKey(pt => pt.AppFileId),
                     j => j
-                         .HasOne(pt => pt.AudioNote)
+                         .HasOne(pt => pt.AudiosCollectionNote)
                          .WithMany(p => p.AudioNoteAppFiles)
-                         .HasForeignKey(pt => pt.AudioNoteId),
+                         .HasForeignKey(pt => pt.AudiosCollectionNoteId),
                     j =>
                     {
-                        j.HasKey(bc => new { bc.AudioNoteId, bc.AppFileId });
+                        j.HasKey(bc => new { bc.AudiosCollectionNoteId, bc.AppFileId });
                     });
-           
+
+            modelBuilder.Entity<VideosCollectionNote>()
+                .HasMany(x => x.Videos)
+                .WithMany(x => x.VideosCollectionNotes)
+                .UsingEntity<VideoNoteAppFile>(
+                    j => j
+                         .HasOne(pt => pt.AppFile)
+                         .WithMany(t => t.VideosCollectionNoteAppFiles)
+                         .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                         .HasOne(pt => pt.VideosCollectionNote)
+                         .WithMany(p => p.VideoNoteAppFiles)
+                         .HasForeignKey(pt => pt.VideosCollectionNoteId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.VideosCollectionNoteId, bc.AppFileId });
+                    });
+
+            modelBuilder.Entity<DocumentsCollectionNote>()
+                .HasMany(x => x.Documents)
+                .WithMany(x => x.DocumentsCollectionNotes)
+                .UsingEntity<DocumentNoteAppFile>(
+                    j => j
+                         .HasOne(pt => pt.AppFile)
+                         .WithMany(t => t.DocumentsCollectionNoteAppFiles)
+                         .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                         .HasOne(pt => pt.DocumentsCollectionNote)
+                         .WithMany(p => p.DocumentNoteAppFiles)
+                         .HasForeignKey(pt => pt.DocumentsCollectionNoteId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.DocumentsCollectionNoteId, bc.AppFileId });
+                    });
+
             modelBuilder.Entity<User>()
                 .HasMany(p => p.NoteHistories)
                 .WithMany(p => p.Users)
@@ -290,7 +331,7 @@ namespace WriteContext
                         j.HasKey(bc => new { bc.UserId, bc.NoteHistoryId });
                     });
 
-            
+
 
             modelBuilder.Entity<Notification>()
                 .HasOne(m => m.UserFrom)
@@ -312,40 +353,40 @@ namespace WriteContext
                 );
 
             modelBuilder.Entity<Language>().HasData(
-                new Language { Id = LanguageENUM.English,  Name = nameof(LanguageENUM.English) },
-                new Language { Id = LanguageENUM.Ukraine,  Name = nameof(LanguageENUM.Ukraine) },
+                new Language { Id = LanguageENUM.English, Name = nameof(LanguageENUM.English) },
+                new Language { Id = LanguageENUM.Ukraine, Name = nameof(LanguageENUM.Ukraine) },
                 new Language { Id = LanguageENUM.Russian, Name = nameof(LanguageENUM.Russian) });
 
             modelBuilder.Entity<Theme>().HasData(
-                new Theme  { Id = ThemeENUM.Dark, Name = nameof(ThemeENUM.Dark) },
-                new Theme  { Id = ThemeENUM.Light, Name = nameof(ThemeENUM.Light) });
+                new Theme { Id = ThemeENUM.Dark, Name = nameof(ThemeENUM.Dark) },
+                new Theme { Id = ThemeENUM.Light, Name = nameof(ThemeENUM.Light) });
 
             modelBuilder.Entity<FontSize>().HasData(
-                new FontSize  { Id = FontSizeENUM.Medium, Name = nameof(FontSizeENUM.Medium) },
-                new FontSize  { Id = FontSizeENUM.Big, Name = nameof(FontSizeENUM.Big) });
+                new FontSize { Id = FontSizeENUM.Medium, Name = nameof(FontSizeENUM.Medium) },
+                new FontSize { Id = FontSizeENUM.Big, Name = nameof(FontSizeENUM.Big) });
 
 
 
             modelBuilder.Entity<FolderType>().HasData(
-                new FolderType  { Id = FolderTypeENUM.Private , Name = nameof(FolderTypeENUM.Private) },
-                new FolderType  { Id = FolderTypeENUM.Shared, Name = nameof(FolderTypeENUM.Shared) },
-                new FolderType  { Id = FolderTypeENUM.Archived, Name = nameof(FolderTypeENUM.Archived) },
-                new FolderType  { Id = FolderTypeENUM.Deleted, Name = nameof(FolderTypeENUM.Deleted) });
+                new FolderType { Id = FolderTypeENUM.Private, Name = nameof(FolderTypeENUM.Private) },
+                new FolderType { Id = FolderTypeENUM.Shared, Name = nameof(FolderTypeENUM.Shared) },
+                new FolderType { Id = FolderTypeENUM.Archived, Name = nameof(FolderTypeENUM.Archived) },
+                new FolderType { Id = FolderTypeENUM.Deleted, Name = nameof(FolderTypeENUM.Deleted) });
 
             modelBuilder.Entity<NoteType>().HasData(
-                new NoteType  { Id = NoteTypeENUM.Private , Name = nameof(NoteTypeENUM.Private)  },
-                new NoteType  { Id = NoteTypeENUM.Shared,   Name = nameof(NoteTypeENUM.Shared)   },
-                new NoteType  { Id = NoteTypeENUM.Archived, Name = nameof(NoteTypeENUM.Archived) },
-                new NoteType  { Id = NoteTypeENUM.Deleted,  Name = nameof(NoteTypeENUM.Deleted)  });
+                new NoteType { Id = NoteTypeENUM.Private, Name = nameof(NoteTypeENUM.Private) },
+                new NoteType { Id = NoteTypeENUM.Shared, Name = nameof(NoteTypeENUM.Shared) },
+                new NoteType { Id = NoteTypeENUM.Archived, Name = nameof(NoteTypeENUM.Archived) },
+                new NoteType { Id = NoteTypeENUM.Deleted, Name = nameof(NoteTypeENUM.Deleted) });
 
             modelBuilder.Entity<RefType>().HasData(
-                new RefType  { Id = RefTypeENUM.Viewer, Name = nameof(RefTypeENUM.Viewer) },
-                new RefType  { Id = RefTypeENUM.Editor, Name = nameof(RefTypeENUM.Editor) });
+                new RefType { Id = RefTypeENUM.Viewer, Name = nameof(RefTypeENUM.Viewer) },
+                new RefType { Id = RefTypeENUM.Editor, Name = nameof(RefTypeENUM.Editor) });
 
             modelBuilder.Entity<BillingPlan>().HasData(
-                new BillingPlan  { Id = BillingPlanTypeENUM.Free, Name = nameof(BillingPlanTypeENUM.Free), MaxSize = 100000000 },
-                new BillingPlan  { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 500000000 },
-                new BillingPlan  { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 1000000000 });
+                new BillingPlan { Id = BillingPlanTypeENUM.Free, Name = nameof(BillingPlanTypeENUM.Free), MaxSize = 1048576000 }, // 1000 MB
+                new BillingPlan { Id = BillingPlanTypeENUM.Standart, Name = nameof(BillingPlanTypeENUM.Standart), MaxSize = 5242880000 }, // 5000 MB
+                new BillingPlan { Id = BillingPlanTypeENUM.Business, Name = nameof(BillingPlanTypeENUM.Business), MaxSize = 20971520000 }); // 20000 MB
 
 
             modelBuilder.Entity<HType>().HasData(
@@ -370,10 +411,10 @@ namespace WriteContext
 
             modelBuilder.Entity<ContentType>().HasData(
                 new ContentType { Id = ContentTypeENUM.Text, Name = nameof(ContentTypeENUM.Text) },
-                new ContentType { Id = ContentTypeENUM.Album, Name = nameof(ContentTypeENUM.Album) },
-                new ContentType { Id = ContentTypeENUM.Document, Name = nameof(ContentTypeENUM.Document) },
-                new ContentType { Id = ContentTypeENUM.PlaylistAudios, Name = nameof(ContentTypeENUM.PlaylistAudios) },
-                new ContentType { Id = ContentTypeENUM.Video, Name = nameof(ContentTypeENUM.Video) }
+                new ContentType { Id = ContentTypeENUM.PhotosCollection, Name = nameof(ContentTypeENUM.PhotosCollection) },
+                new ContentType { Id = ContentTypeENUM.DocumentsCollection, Name = nameof(ContentTypeENUM.DocumentsCollection) },
+                new ContentType { Id = ContentTypeENUM.AudiosCollection, Name = nameof(ContentTypeENUM.AudiosCollection) },
+                new ContentType { Id = ContentTypeENUM.VideosCollection, Name = nameof(ContentTypeENUM.VideosCollection) }
              );
 
         }

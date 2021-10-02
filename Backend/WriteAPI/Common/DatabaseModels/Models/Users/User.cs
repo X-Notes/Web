@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Files;
 using Common.DatabaseModels.Models.Folders;
 using Common.DatabaseModels.Models.History;
@@ -11,6 +12,7 @@ using Common.DatabaseModels.Models.Systems;
 
 namespace Common.DatabaseModels.Models.Users
 {
+    [Table(nameof(User), Schema = SchemeConfig.User)]
     public class User : BaseEntity<Guid>
     {
         public string Name { set; get; }
@@ -33,10 +35,10 @@ namespace Common.DatabaseModels.Models.Users
 
         public List<Label> Labels { set; get; }
 
-        public List<Backgrounds> Backgrounds { set; get; }
+        public List<Background> Backgrounds { set; get; }
 
         public Guid? CurrentBackgroundId { set; get; }
-        public Backgrounds CurrentBackground { set; get; }
+        public Background CurrentBackground { set; get; }
 
         public ThemeENUM ThemeId { set; get; }
         public Theme Theme { set; get; }

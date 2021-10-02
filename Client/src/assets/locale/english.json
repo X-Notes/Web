@@ -199,6 +199,27 @@
       "readMessage": "Read message",
       "ChangeUserPermissionNote": "Change user permission note"
     },
+    "uploader":{
+      "uploading": "Uploading",
+      "uploadingDocumentsNoteLong": "Uploading documents to a note",
+      "uploadingDocumentsNote": "Uploading documents",
+      "uploadingVideosNoteLong": "Uploading videos to a note",
+      "uploadingVideosNote": "Uploading videos",
+      "uploadingAudiosNoteLong": "Uploading audios to a note",
+      "uploadingAudiosNote": "Uploading audios",
+      "uploadingPhotosNoteLong": "Uploading photos to a note",
+      "uploadingPhotosNote": "Uploading photos",
+      "exportShort": "Export",
+      "exportVideos": "Export videos",
+      "exportAudios": "Export audios",
+      "exportDocuments": "Export documents",
+      "exportPhotos": "Export photos",
+      "copyShort": "Copying",
+      "copyNotes": "Copying notes",
+      "copyFolders": "Copying folders",
+      "changingProfilePhoto": "Photo is changing",
+      "changingBackground": "Background is changing"
+    },
     "placeholder": {
       "folderNote": "Note without title",
       "folderSmall": "Folder title",

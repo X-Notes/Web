@@ -4,6 +4,7 @@ using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.History
 {
+    [Table(nameof(UserNoteHistoryManyToMany), Schema = SchemeConfig.NoteHistory)]
     public class UserNoteHistoryManyToMany : BaseEntity<Guid>
     {
         [NotMapped]

@@ -49,10 +49,10 @@ export class EditingLabelsNoteComponent implements OnInit, OnDestroy {
 
   initLabels() {
     const labels = this.store.selectSnapshot(LabelStore.all);
-    this.labels = this.tranformLabels(labels);
+    this.labels = this.transformLabels(labels);
   }
 
-  tranformLabels = (items: Label[]) => {
+  transformLabels = (items: Label[]) => {
     return [...items].map((label) => {
       return { ...label, isSelectedValue: false };
     });

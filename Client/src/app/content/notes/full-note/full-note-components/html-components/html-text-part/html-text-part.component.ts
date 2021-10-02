@@ -203,38 +203,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   async uploadFiles(event) {
     const type = this.uploadFile.nativeElement.uploadType as TypeUploadFile;
-    const { files } = event.target;
-    let data;
-    switch (type) {
-      case TypeUploadFile.PHOTOS: {
-        data = this.generateFormData(files, 'photos');
-        break;
-      }
-      case TypeUploadFile.VIDEOS: {
-        data = this.generateFormData(files, 'video');
-        break;
-      }
-      case TypeUploadFile.AUDIOS: {
-        data = this.generateFormData(files, 'audios');
-        break;
-      }
-      case TypeUploadFile.FILES: {
-        data = this.generateFormData(files, 'file');
-        break;
-      }
-      default: {
-        throw new Error('Incorrect type');
-      }
-    }
-    this.transformToFile.emit({ id: this.content.id, formData: data, typeFile: type });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  generateFormData(files: File[], type: string) {
-    const data = new FormData();
-    for (const file of files) {
-      data.append(type, file);
-    }
-    return data;
+    const files = event.target.files as File[];
+    this.transformToFile.emit({ contentId: this.content.id, typeFile: type, files: [...files] });
   }
 }
