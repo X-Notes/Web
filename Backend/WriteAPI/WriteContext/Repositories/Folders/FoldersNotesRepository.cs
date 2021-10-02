@@ -17,22 +17,6 @@ namespace WriteContext.Repositories.Folders
         {
         }
 
-        public async Task<List<FoldersNotes>> GetOrderedByFolderIdWithNotes(Guid folderId)
-        {
-            return await entities.Where(x => x.FolderId == folderId)
-                .Include(x => x.Note)
-                .ThenInclude(x => x.LabelsNotes).ThenInclude(z => z.Label)
-                .Include(x => x.Note)
-                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as PhotosCollectionNote).Photos)
-                .Include(x => x.Note)
-                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as VideosCollectionNote).Videos)
-                .Include(x => x.Note)
-                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as AudiosCollectionNote).Audios)
-                .Include(x => x.Note)
-                    .ThenInclude(x => x.Contents).ThenInclude(z => (z as DocumentsCollectionNote).Documents)
-                .OrderBy(x => x.Order).ToListAsync();
-        }
-
         public async Task<List<FoldersNotes>> GetOrderedByFolderId(Guid folderId)
         {
             return await entities.Where(x => x.FolderId == folderId).OrderBy(x => x.Order).ToListAsync();

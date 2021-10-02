@@ -6,6 +6,7 @@ import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.
 import { ApiServiceNotes } from 'src/app/content/notes/api-notes.service';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
 import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
+import { UserStore } from 'src/app/core/stateUser/user-state';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
 import { MurriService } from 'src/app/shared/services/murri.service';
@@ -48,7 +49,8 @@ export class FullFolderNotesService
 
   async updateNotesLayout(folderId: string) {
     await this.destroyGridAsync();
-    this.entities = await this.apiFullFolder.getFolderNotes(folderId).toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.entities = await this.apiFullFolder.getFolderNotes(folderId, pr).toPromise();
     await this.murriService.initFolderNotesAsync();
     await this.murriService.setOpacityFlagAsync();
   }

@@ -73,7 +73,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public List<int> GetFilterTypes(PersonalizationSettingDTO settings)
+        private List<int> GetFilterTypes(PersonalizationSettingDTO settings)
         {
             var types = new List<int>();
             types.Add((int)ContentTypeENUM.Text);
@@ -100,7 +100,7 @@ namespace WriteContext.Repositories.Notes
         }
 
 
-        public async Task<List<Note>> GetWithFilteredContent(List<Note> notes, PersonalizationSettingDTO settings)
+        private async Task<List<Note>> GetWithFilteredContent(List<Note> notes, PersonalizationSettingDTO settings)
         {
             var types = GetFilterTypes(settings);
 

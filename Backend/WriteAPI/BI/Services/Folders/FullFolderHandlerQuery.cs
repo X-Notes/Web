@@ -44,9 +44,9 @@ namespace BI.Services.Folders
 
             if (permissions.CanRead)
             {
-                var foldersNotes = await foldersNotesRepository.GetOrderedByFolderIdWithNotes(request.FolderId);
-                var notes = foldersNotes.Select(x => x.Note);
-
+                var foldersNotes = await foldersNotesRepository.GetWhereAsync(x => x.FolderId == request.FolderId);
+                var notesIds = foldersNotes.Select(x => x.NoteId);
+                var notes = await noteRepository.GetNotesByNoteIdsIdWithContentWithPersonalization(notesIds, request.Settings);
                 return noteMapper.MapNotesToSmallNotesDTO(notes);
             }
 

@@ -27,23 +27,6 @@ import { ApiFullFolderService } from '../full-folder/services/api-full-folder.se
   providers: [FullNoteSliderService],
 })
 export class FullFolderNoteComponent implements OnInit, OnDestroy {
-  @ViewChild('fullWrap') wrap: ElementRef;
-
-  private folderId: string;
-
-  private noteId: string;
-
-  private routeSubscription: Subscription;
-
-  destroy = new Subject<void>();
-
-  linkNotes: SmallNote[] = [];
-
-  loaded = false;
-
-  note: FullNote;
-
-  contents: ContentModel[];
 
   @Select(UserStore.getUser)
   public user$: Observable<ShortUser>;
@@ -57,6 +40,24 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   @Select(NoteStore.canNoView)
   public canNoView$: Observable<boolean>;
 
+  @ViewChild('fullWrap') wrap: ElementRef;
+
+  destroy = new Subject<void>();
+
+  linkNotes: SmallNote[] = [];
+
+  loaded = false;
+
+  note: FullNote;
+
+  contents: ContentModel[];
+
+  private folderId: string;
+
+  private noteId: string;
+
+  private routeSubscription: Subscription;
+
   constructor(
     route: ActivatedRoute,
     private store: Store,
@@ -67,8 +68,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
     public pService: PersonalizationService,
   ) {
     this.routeSubscription = route.params.subscribe((params) => {
-      this.noteId = params['noteId'];
-      this.folderId = params['folderId'];
+      this.noteId = params.noteId;
+      this.folderId = params.folderId;
 
       this.store
         .select(AppStore.appLoaded)
@@ -87,7 +88,8 @@ export class FullFolderNoteComponent implements OnInit, OnDestroy {
   async initNote() {
     await this.loadMain();
     // LEFT SECTION
-    this.linkNotes = await this.apiFullFolder.getFolderNotes(this.folderId).toPromise();
+    const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+    this.linkNotes = await this.apiFullFolder.getFolderNotes(this.folderId, pr).toPromise();
     await this.store.dispatch(new LoadFullNote(this.noteId)).toPromise();
 
     await this.signalRService.joinNote(this.noteId);

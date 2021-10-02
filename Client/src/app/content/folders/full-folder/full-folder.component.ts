@@ -112,7 +112,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             await this.loadFolder();
 
             if (this.folder) {
-              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
               await this.ffnService.initializeEntities(notes);
             }
 
