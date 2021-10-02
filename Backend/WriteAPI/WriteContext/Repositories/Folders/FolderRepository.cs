@@ -124,11 +124,18 @@ namespace WriteContext.Repositories.Folders
         }
 
 
-        public async Task<Folder> GetWithUsersOnFolder(Guid id)
+        public async Task<Folder> GetForCheckPermission(Guid id)
         {
             return await context.Folders
                 .Include(x => x.UsersOnPrivateFolders)
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<List<Folder>> GetForCheckPermissions(List<Guid> ids)
+        {
+            return await context.Folders
+                .Include(x => x.UsersOnPrivateFolders)
+                .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
         public async Task<Folder> GetFull(Guid id)

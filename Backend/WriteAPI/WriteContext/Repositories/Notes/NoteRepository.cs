@@ -54,9 +54,15 @@ namespace WriteContext.Repositories.Notes
         public async Task<Note> GetForCheckPermission(Guid id)
         {
             return await context.Notes
-                .Include(x => x.User)
                 .Include(x => x.UsersOnPrivateNotes)
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<List<Note>> GetForCheckPermissions(List<Guid> ids)
+        {
+            return await context.Notes
+                .Include(x => x.UsersOnPrivateNotes)
+                .Where(x => ids.Contains(x.Id)).ToListAsync();
         }
 
         public async Task<Note> GetFull(Guid id)
