@@ -33,6 +33,8 @@ import { Personalization } from 'src/app/shared/enums/personalization.enum';
 import { SnackBarTranlateHelperService } from 'src/app/shared/services/snackbar/snack-bar-tranlate-helper.service';
 import { byteToMB } from 'src/app/core/defaults/byte-convert';
 import { maxBackgroundPhotoSize, maxProfilePhotoSize } from 'src/app/core/defaults/constraints';
+import { ResetNotes } from '../../notes/state/notes-actions';
+import { ResetFolders } from '../../folders/state/folders-actions';
 
 @Component({
   selector: 'app-profile',
@@ -59,6 +61,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public pSettings$: Observable<PersonalizationSetting>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
+
+  settingsInit: PersonalizationSetting;
 
   hideFor = hideForDemo;
 
@@ -97,6 +101,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe(async (x: boolean) => {
         if (x) {
           this.store.dispatch(new LoadBackgrounds());
+          this.settingsInit = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
         }
       });
 
@@ -229,6 +234,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    const lastPs = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+
+    if (
+      lastPs.contentInNoteCount !== this.settingsInit.contentInNoteCount ||
+      lastPs.isViewAudioOnNote !== this.settingsInit.isViewAudioOnNote ||
+      lastPs.isViewDocumentOnNote !== this.settingsInit.isViewDocumentOnNote ||
+      lastPs.isViewTextOnNote !== this.settingsInit.isViewTextOnNote ||
+      lastPs.isViewVideoOnNote !== this.settingsInit.isViewVideoOnNote ||
+      lastPs.isViewPhotosOnNote !== this.settingsInit.isViewPhotosOnNote
+    ) {
+      this.store.dispatch(new ResetNotes());
+    }
+
+    if (lastPs.notesInFolderCount !== this.settingsInit.notesInFolderCount) {
+      this.store.dispatch(new ResetFolders());
+    }
+
     this.destroy.next();
     this.destroy.complete();
   }

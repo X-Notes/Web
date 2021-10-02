@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
@@ -43,6 +44,7 @@ import {
   AddToDomNotes,
   MakeSharedNotes,
   LoadSnapshotNote,
+  ResetNotes,
 } from './notes-actions';
 import { UpdateColor } from './update-color.model';
 import { SmallNote } from '../models/small-note.model';
@@ -832,6 +834,13 @@ export class NoteStore {
         notes: [...getState().notes, notesAPI],
       });
     }
+  }
+
+  @Action(ResetNotes)
+  async resetNotes({ patchState }: StateContext<NoteState>) {
+    patchState({
+      notes: [],
+    });
   }
 
   // NOTES SELECTION

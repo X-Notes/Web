@@ -76,7 +76,12 @@ namespace WriteContext.Repositories.Notes
         private List<int> GetFilterTypes(PersonalizationSettingDTO settings)
         {
             var types = new List<int>();
-            types.Add((int)ContentTypeENUM.Text);
+
+            if (settings.IsViewTextOnNote)
+            {
+                types.Add((int)ContentTypeENUM.Text);
+            }
+
             if (settings.IsViewPhotosOnNote)
             {
                 types.Add((int)ContentTypeENUM.PhotosCollection);
