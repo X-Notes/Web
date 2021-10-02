@@ -75,7 +75,7 @@
       "sectionAccount": "Аккаунт",
       "sectionPersonalization": "Персоналізація",
       "nameUser": "Ім'я",
-      "email": "Электронна адреса",
+      "email": "Електронна адреса",
       "descriptionEmail": "Вашу адресу електронної пошти є ідентефікаціею на Noots і використовується для входу в систему.",
       "logOut": "Вийти",
       "update": "Оновити",
@@ -216,6 +216,7 @@
       "copyShort": "Копіювання",
       "copyNotes": "Копіювання нотаток",
       "copyFolders": "Копіювання папок",
-      "changingProfilePhoto": "Зміна фотографії"
+      "changingProfilePhoto": "Зміна фотографії",
+      "changingBackground": "Зміна заднього фона"
     }
   }

@@ -2,7 +2,7 @@
   <div class="message-header" [ngStyle]="{'border-radius':  isOpened ? '5px 5px 0 0' : '5px'}">
     <p>{{title | translate}}</p>
     <div class="buttons">
-      <div class="mini-spinner" *ngIf="isShortActive">
+      <div class="mini-spinner" *ngIf="operation.isHeaderSpinnerActive">
         <app-spinner [size]="16"></app-spinner>
       </div>
       <div

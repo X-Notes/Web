@@ -56,7 +56,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public language$: Observable<LanguagesENUM>;
 
   @Select(UserStore.getPersonalizationSettings)
-  public pSettings$: Observable<PersonalizationSetting>
+  public pSettings$: Observable<PersonalizationSetting>;
 
   @ViewChild('uploadFile') uploadPhoto: ElementRef;
 
@@ -66,7 +66,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   themes = ThemeENUM;
 
-  pSettings =Personalization;
+  pSettings = Personalization;
 
   language = LanguagesENUM;
 
@@ -83,9 +83,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     public pService: PersonalizationService,
     private store: Store,
-    private rend: Renderer2,
     private authService: AuthService,
-    private snackbarTranslateHelper: SnackBarTranlateHelperService
+    private snackbarTranslateHelper: SnackBarTranlateHelperService,
   ) {}
 
   async ngOnInit() {
@@ -139,8 +138,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   async changePersonalizationSettings(value: any, type: Personalization) {
-    const types = Personalization
-    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings)}
+    const types = Personalization;
+    const settings = { ...this.store.selectSnapshot(UserStore.getPersonalizationSettings) };
     switch (type) {
       case types.isViewVideoOnNote:
         settings.isViewVideoOnNote = value;
@@ -192,35 +191,41 @@ export class ProfileComponent implements OnInit, OnDestroy {
   uploadImage(event) {
     const file = event.target.files[0] as File;
     if (file) {
-      if(file.size > maxBackgroundPhotoSize) 
-      {
+      if (file.size > maxBackgroundPhotoSize) {
         const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(language, byteToMB(maxBackgroundPhotoSize)); 
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
+          language,
+          byteToMB(maxBackgroundPhotoSize),
+        );
         this.store.dispatch(new ShowSnackNotification(message));
-      } else 
-      {
+      } else {
         const formDate = new FormData();
         formDate.append('photo', file);
         this.store.dispatch(new NewBackground(formDate));
       }
     }
+    // eslint-disable-next-line no-param-reassign
+    event.target.value = null;
   }
 
   uploadImageUserPhoto(event) {
     const file = event.target.files[0] as File;
     if (file) {
-      if(file.size > maxProfilePhotoSize)
-      {
+      if (file.size > maxProfilePhotoSize) {
         const language = this.store.selectSnapshot(UserStore.getUserLanguage);
-        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(language, byteToMB(maxProfilePhotoSize)); 
+        const message = this.snackbarTranslateHelper.getFileTooLargeTranslate(
+          language,
+          byteToMB(maxProfilePhotoSize),
+        );
         this.store.dispatch(new ShowSnackNotification(message));
-      }else
-      {
+      } else {
         const formDate = new FormData();
         formDate.append('photo', file);
         this.store.dispatch(new UpdateUserPhoto(formDate));
       }
     }
+    // eslint-disable-next-line no-param-reassign
+    event.target.value = null;
   }
 
   ngOnDestroy(): void {

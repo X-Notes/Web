@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { forkJoin, Subject } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
 import {
   generateFormData,
@@ -54,7 +54,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       return;
     }
 
-    const operation = await this.longTermOperationsHandler.addNewUploadToNoteOperation(
+    const operation = this.longTermOperationsHandler.addNewUploadToNoteOperation(
       'uploader.uploadingDocumentsNoteLong',
       'uploader.uploading',
       'uploader.uploadingDocumentsNote',
@@ -62,17 +62,15 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
 
     const uploadsRequests = $event.files.map((file) => {
       const formData = generateFormData([file], nameForUploadDocuments);
-      const cancellationSubject = new Subject<any>();
-      const mini = this.longTermOperationsHandler.addOperationDetailMiniUploadToNoteOperation(
+      const mini = this.longTermOperationsHandler.getNewMini(
         operation,
-        cancellationSubject,
         LongTermsIcons.Document,
         file.name,
       );
       return this.apiDocuments.uploadDocumentsToCollection(formData, noteId, $event.contentId).pipe(
         finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
-        takeUntil(cancellationSubject),
-        (x) => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini),
+        takeUntil(mini.obs),
+        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
       );
     });
 

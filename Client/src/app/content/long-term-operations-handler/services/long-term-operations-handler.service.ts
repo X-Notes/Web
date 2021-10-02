@@ -10,23 +10,21 @@ export class LongTermOperationsHandlerService {
   public operations: LongTermOperation[] = [];
 
   constructor() {
-    const s = async () =>
-      this.addNewUploadToNoteOperation(
-        'uploader.uploadingPhotosNoteLong',
-        'uploader.uploading',
-        'uploader.uploadingPhotosNote',
-      );
-    s().then((op) =>
-      this.addOperationDetailMiniUploadToNoteOperation(
-        op,
-        new Subject<any>(),
-        LongTermsIcons.Audio,
-        'KEK',
-      ),
+    // this.test();
+  }
+
+  test() {
+    const op = this.addNewUploadToNoteOperation(
+      'uploader.uploadingPhotosNoteLong',
+      'uploader.uploading',
+      'uploader.uploadingPhotosNote',
     );
-    this.addNewExportOperation('uploader.exportVideos', new Subject<any>());
-    this.addNewCopingOperation('uploader.exportVideos', new Subject<any>());
-    this.addNewProfilePhotoChangingOperation(new Subject<any>());
+    this.getNewMini(op, LongTermsIcons.Audio, 'KEK');
+    this.addNewExportOperation('uploader.exportVideos');
+    this.addNewCopingOperation('uploader.copyNotes');
+    this.addNewProfilePhotoChangingOperation();
+    this.addNewBackgroundChangingOperation();
+    // this.finalize(op, op.details[0]);
   }
 
   removeOperation(operation: LongTermOperation) {
@@ -39,130 +37,130 @@ export class LongTermOperationsHandlerService {
   };
 
   finalize = (operation: LongTermOperation, operationMini: OperationDetailMini) => {
-    this.removeOperationDetail(operation, operationMini);
-    if (operation.details.length === 0) {
-      this.removeOperation(operation);
+    const start = operation.startAt.getTime();
+    const end = new Date().getTime();
+    const diff = end - start;
+    const seconds = Math.floor((diff / 1000) % 60);
+    if (seconds < 2) {
+      setTimeout(() => {
+        this.removeOperationDetail(operation, operationMini);
+        if (operation.details.length === 0) {
+          this.removeOperation(operation);
+        }
+      }, 700);
+    } else {
+      this.removeOperationDetail(operation, operationMini);
+      if (operation.details.length === 0) {
+        this.removeOperation(operation);
+      }
     }
   };
 
-  async addNewUploadToNoteOperation(
+  getNewMini = (
+    operation: LongTermOperation,
+    icon: LongTermsIcons,
+    name: string,
+    isCancelable: boolean = true,
+    isShowProcess: boolean = true,
+  ) => {
+    const mini: OperationDetailMini = {
+      icon,
+      name,
+      isCancelable,
+      isShowProcess,
+      procent: 0,
+      obs: new Subject<any>(),
+    };
+    operation.details.push(mini);
+    return mini;
+  };
+
+  // UPLOAD FILES TO NOTE
+  addNewUploadToNoteOperation(
     title: string,
     titleShort: string,
     titleMedium: string,
-  ): Promise<LongTermOperation> {
+  ): LongTermOperation {
     const item: LongTermOperation = {
       titleShort,
       title,
+      startAt: new Date(),
       titleMedium,
       isGeneralCancelButtonActive: true,
       isDetailViewActive: true,
       isDetailViewOpened: true,
+      isHeaderSpinnerActive: false,
       details: [],
     };
     this.operations.push(item);
     return item;
   }
 
-  addOperationDetailMiniUploadToNoteOperation = (
-    operation: LongTermOperation,
-    cancellationToken: Subject<any>,
-    icon: LongTermsIcons,
-    name: string,
-  ) => {
-    const mini: OperationDetailMini = {
-      icon,
-      name,
-      isCancelable: true,
-      isShowProcess: true,
-      procent: 0,
-      obs: cancellationToken,
-    };
-    operation.details.push(mini);
-    return mini;
-  };
-
-  async addNewExportOperation(
-    title: string,
-    cancellationToken: Subject<any>,
-  ): Promise<LongTermOperation> {
+  // EXPORT
+  addNewExportOperation(title: string): LongTermOperation {
     const operation: LongTermOperation = {
       titleShort: 'uploader.exportShort',
       title,
+      startAt: new Date(),
       titleMedium: 'uploader.exportShort',
       isGeneralCancelButtonActive: true,
-      isDetailViewActive: false,
+      isDetailViewActive: true,
       isDetailViewOpened: true,
+      isHeaderSpinnerActive: false,
       details: [],
     };
     this.operations.push(operation);
-    const mini: OperationDetailMini = {
-      icon: LongTermsIcons.Export,
-      name: 'uploader.exportShort',
-      isCancelable: true,
-      isShowProcess: true,
-      procent: 0,
-      obs: cancellationToken,
-    };
-    operation.details.push(mini);
     return operation;
   }
 
-  async addNewCopingOperation(
-    title: string,
-    cancellationToken: Subject<any>,
-  ): Promise<LongTermOperation> {
+  // COPYING
+  addNewCopingOperation(title: string): LongTermOperation {
     const operation: LongTermOperation = {
       titleShort: 'uploader.copyShort',
       title,
+      startAt: new Date(),
       titleMedium: 'uploader.copyShort',
       isGeneralCancelButtonActive: false,
       isDetailViewActive: false,
       isDetailViewOpened: true,
+      isHeaderSpinnerActive: true,
       details: [],
     };
-
     this.operations.push(operation);
-    const mini: OperationDetailMini = {
-      icon: LongTermsIcons.Export,
-      name: 'uploader.copyShort',
-      isCancelable: true,
-      isShowProcess: true,
-      procent: 0,
-      obs: cancellationToken,
-    };
-
-    operation.details.push(mini);
-
     return operation;
   }
 
-  async addNewProfilePhotoChangingOperation(
-    cancellationToken: Subject<any>,
-  ): Promise<LongTermOperation> {
+  addNewProfilePhotoChangingOperation(): LongTermOperation {
     const title = 'uploader.changingProfilePhoto';
-
     const operation: LongTermOperation = {
       titleShort: title,
       title,
       titleMedium: title,
+      startAt: new Date(),
       isGeneralCancelButtonActive: false,
       isDetailViewActive: false,
       isDetailViewOpened: true,
+      isHeaderSpinnerActive: true,
       details: [],
     };
-
     this.operations.push(operation);
-    const mini: OperationDetailMini = {
-      icon: LongTermsIcons.Export,
-      name: title,
-      isCancelable: true,
-      isShowProcess: true,
-      procent: 0,
-      obs: cancellationToken,
+    return operation;
+  }
+
+  addNewBackgroundChangingOperation(): LongTermOperation {
+    const title = 'uploader.changingBackground';
+    const operation: LongTermOperation = {
+      titleShort: title,
+      title,
+      titleMedium: title,
+      startAt: new Date(),
+      isGeneralCancelButtonActive: false,
+      isDetailViewActive: false,
+      isDetailViewOpened: true,
+      isHeaderSpinnerActive: true,
+      details: [],
     };
-
-    operation.details.push(mini);
-
+    this.operations.push(operation);
     return operation;
   }
 }

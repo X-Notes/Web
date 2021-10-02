@@ -215,6 +215,7 @@
       "copyShort": "Copying",
       "copyNotes": "Copying notes",
       "copyFolders": "Copying folders",
-      "changingProfilePhoto": "Photo is changing"
+      "changingProfilePhoto": "Photo is changing",
+      "changingBackground": "Background is changing"
     }
   }

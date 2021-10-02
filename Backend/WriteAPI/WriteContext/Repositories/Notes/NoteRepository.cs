@@ -108,7 +108,7 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => (x as DocumentsCollectionNote).Documents).ToListAsync();
 
             var contentLookUp = contents.ToLookup(x => x.NoteId);
-            notes.ForEach(note => note.Contents = contentLookUp[note.Id].Take(settings.ContentInNoteCount).OrderBy(z => z.Order).ToList());
+            notes.ForEach(note => note.Contents = contentLookUp[note.Id].OrderBy(z => z.Order).Take(settings.ContentInNoteCount).ToList());
 
             return notes;
         }

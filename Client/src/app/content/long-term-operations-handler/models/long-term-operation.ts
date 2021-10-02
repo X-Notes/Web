@@ -9,6 +9,7 @@ export interface LongTermOperation {
   isGeneralCancelButtonActive: boolean;
   isDetailViewActive: boolean;
   isDetailViewOpened: boolean;
+  isHeaderSpinnerActive: boolean;
   details: OperationDetailMini[];
 }
 

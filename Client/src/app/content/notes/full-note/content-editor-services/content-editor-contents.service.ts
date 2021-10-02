@@ -3,22 +3,21 @@ import { Store } from '@ngxs/store';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { ContentModel } from '../../models/content-model.model';
 
-export interface ContentAndIndex<T extends ContentModel>{
+export interface ContentAndIndex<T extends ContentModel> {
   index: number;
   content: T;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ContentEditorContentsService {
-
   contents: ContentModel[]; // TODO MAKE DICTIONARY
 
-  constructor(        
+  constructor(
     protected store: Store,
-    protected snackBarStatusTranslateService: SnackBarHandlerStatusService,) { }
-
+    protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
+  ) {}
 
   // GET INDDEX
   getIndexOrErrorById(contentId: string) {
@@ -29,13 +28,13 @@ export class ContentEditorContentsService {
     throw new Error('Not found');
   }
 
-  getIndexByContent(content: ContentModel){
+  getIndexByContent(content: ContentModel) {
     return this.contents.indexOf(content);
   }
 
   getContentAndIndexById<T extends ContentModel>(contentId: string): ContentAndIndex<T> {
-    for(let i = 0; i < this.contents.length; i++){
-      if(this.contents[i].id === contentId){
+    for (let i = 0; i < this.contents.length; i++) {
+      if (this.contents[i].id === contentId) {
         const obj: ContentAndIndex<T> = { index: i, content: this.contents[i] as T };
         return obj;
       }
@@ -43,7 +42,7 @@ export class ContentEditorContentsService {
     return null;
   }
 
-  getContentById<T extends ContentModel>(contentId: string): T{
+  getContentById<T extends ContentModel>(contentId: string): T {
     return this.contents.find((x) => x.id === contentId) as T;
   }
 
@@ -52,12 +51,12 @@ export class ContentEditorContentsService {
   }
 
   // REMOVE
-  removeById(contentId: string){
+  removeById(contentId: string) {
     this.contents = this.contents.filter((x) => x.id !== contentId);
   }
 
   // INSERT, UPDATE
-  setUnsafe(data: ContentModel, index: number){
+  setUnsafe(data: ContentModel, index: number) {
     this.contents[index] = data;
   }
 
@@ -67,12 +66,11 @@ export class ContentEditorContentsService {
     return obj.index;
   }
 
-  insertInto(data: ContentModel, index: number){
+  insertInto(data: ContentModel, index: number) {
     this.contents.splice(index, 0, data);
   }
 
-  insertToEnd(data: ContentModel){
+  insertToEnd(data: ContentModel) {
     this.contents.push(data);
   }
-  
 }

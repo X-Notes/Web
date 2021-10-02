@@ -56,6 +56,8 @@ import { OnlineUsersNote } from '../models/online-users-note.model';
 import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
 import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
 import { ApiTextService } from '../full-note/services/api-text.service';
+import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 
 interface FullNoteState {
   note: FullNote;
@@ -104,6 +106,7 @@ export class NoteStore {
     private apiText: ApiTextService,
     private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -473,10 +476,19 @@ export class NoteStore {
 
   @Action(CopyNotes)
   async copyNotes(
-    { getState, dispatch, patchState }: StateContext<NoteState>,
+    { getState, dispatch }: StateContext<NoteState>,
     { typeNote, selectedIds, pr }: CopyNotes,
   ) {
-    const newIds = await this.api.copyNotes(selectedIds).toPromise();
+    const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'photo changing',
+      true,
+      true,
+    );
+    const resp = await this.api.copyNotes(selectedIds, mini, operation).toPromise();
+    const newIds = resp.eventBody;
     const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
     const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
     dispatch(
@@ -645,7 +657,7 @@ export class NoteStore {
     { getState, dispatch }: StateContext<NoteState>,
     { order, typeNote }: PositionNote,
   ) {
-    let notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
+    const notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
     const changedNote = notes.find((x) => x.id === order.entityId);
     const flag = notes.indexOf(changedNote);
     if (flag + 1 !== order.position) {

@@ -6,21 +6,24 @@ import { DocumentModel, DocumentsCollection } from '../../models/content-model.m
 
 @Injectable()
 export class ApiDocumentService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   transformToDocuments(noteId: string, contentId: string) {
     const obj = {
       noteId,
-      contentId
+      contentId,
     };
-    return this.httpClient.post<OperationResult<DocumentsCollection>>(`${environment.writeAPI}/api/note/inner/documents/transform`, obj);
+    return this.httpClient.post<OperationResult<DocumentsCollection>>(
+      `${environment.writeAPI}/api/note/inner/documents/transform`,
+      obj,
+    );
   }
 
   uploadDocumentsToCollection(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<DocumentModel[]>>(
       `${environment.writeAPI}/api/note/inner/documents/upload/${id}/${contentId}`,
-      data, { reportProgress: true, observe: 'events' }
+      data,
+      { reportProgress: true, observe: 'events' },
     );
   }
 
@@ -34,5 +37,4 @@ export class ApiDocumentService {
       obj,
     );
   }
-  
 }

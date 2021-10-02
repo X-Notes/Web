@@ -1,25 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { map } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
 import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
-import {
-  ContentModel,
-} from './models/content-model.model';
+import { ContentModel } from './models/content-model.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
+import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermOperation, OperationDetailMini } from '../long-term-operations-handler/models/long-term-operation';
 
 @Injectable()
 export class ApiServiceNotes {
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    protected longTermOperationsHandler: LongTermOperationsHandlerService,
+    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+  ) {}
 
   getNotes(type: NoteTypeENUM, settings: PersonalizationSetting) {
     let params = new HttpParams();
@@ -95,11 +100,20 @@ export class ApiServiceNotes {
     return this.httpClient.patch(`${environment.writeAPI}/api/note/ref/private`, obj);
   }
 
-  copyNotes(ids: string[]) {
+  copyNotes(ids: string[], mini: OperationDetailMini, operation: LongTermOperation) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj);
+    return this.httpClient
+      .patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj, {
+        reportProgress: true,
+        observe: 'events',
+      })
+      .pipe(
+        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
+        takeUntil(mini.obs),
+        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
+      );
   }
 
   deleteNotes(ids: string[]) {

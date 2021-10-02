@@ -6,21 +6,24 @@ import { VideoModel, VideosCollection } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiVideoService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   transformToVideos(noteId: string, contentId: string) {
     const obj = {
       noteId,
-      contentId
+      contentId,
     };
-    return this.httpClient.post<OperationResult<VideosCollection>>(`${environment.writeAPI}/api/note/inner/videos/transform`, obj);
+    return this.httpClient.post<OperationResult<VideosCollection>>(
+      `${environment.writeAPI}/api/note/inner/videos/transform`,
+      obj,
+    );
   }
 
   uploadVideosToCollection(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<VideoModel[]>>(
       `${environment.writeAPI}/api/note/inner/videos/upload/${id}/${contentId}`,
-      data, { reportProgress: true, observe: 'events' }
+      data,
+      { reportProgress: true, observe: 'events' },
     );
   }
 
@@ -34,5 +37,4 @@ export class ApiVideoService {
       obj,
     );
   }
-
 }

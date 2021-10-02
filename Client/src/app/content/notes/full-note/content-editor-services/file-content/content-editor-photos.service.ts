@@ -53,7 +53,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
       return;
     }
 
-    const operation = await this.longTermOperationsHandler.addNewUploadToNoteOperation(
+    const operation = this.longTermOperationsHandler.addNewUploadToNoteOperation(
       'uploader.uploadingPhotosNoteLong',
       'uploader.uploading',
       'uploader.uploadingPhotosNote',
@@ -61,17 +61,15 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
 
     const uploadsRequests = $event.files.map((file) => {
       const formData = generateFormData([file], nameForUploadPhotos);
-      const cancellationSubject = new Subject<any>();
-      const mini = this.longTermOperationsHandler.addOperationDetailMiniUploadToNoteOperation(
+      const mini = this.longTermOperationsHandler.getNewMini(
         operation,
-        cancellationSubject,
         LongTermsIcons.Image,
         file.name,
       );
       return this.apiAlbum.uploadPhotosToAlbum(formData, noteId, $event.contentId).pipe(
         finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
-        takeUntil(cancellationSubject),
-        (x) => this.snackBarFileProcessingHandler.trackFileUploadProcess(x, mini),
+        takeUntil(mini.obs),
+        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
       );
     });
 

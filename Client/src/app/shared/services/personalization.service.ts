@@ -115,12 +115,12 @@ export const shake = trigger('shake', [
 export const uploader = trigger('uploader', [
   transition(':leave', [
     query('.message-header, .operations-container', [style({ opacity: 0 })]),
-    animate('0.8s ease-out', style({ width: 0 })),
+    animate('0.2s ease-out', style({ width: 0 })),
   ]),
   transition(':enter', [
     query('.message-header, .operations-container', [style({ opacity: 0 })]),
     style({ width: 0 }),
-    animate('0.8s ease-out', style({ width: '*' })),
+    animate('0.1s ease-out', style({ width: '*' })),
   ]),
 ]);
 
