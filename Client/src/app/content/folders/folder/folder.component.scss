@@ -78,39 +78,52 @@
       }
     }
 
-    .notes {
+    .folder-content {
       display: flex;
       flex-direction: column;
       width: 100%;
-      margin-bottom: 0.625rem;
-      outline: none;
-      min-height: 40px;
-      .note {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        margin-top: 0.5rem;
-        color: $light-text-color;
 
-        .icon {
-          height: 15px;
-          width: 15px;
+      .notes {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 0.625rem;
+        outline: none;
+        min-height: 40px;
+        
+        .note {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          margin-top: 0.5rem;
           color: $light-text-color;
+  
+          .icon {
+            height: 15px;
+            width: 15px;
+            color: $light-text-color;
+          }
+  
+          p {
+            @include text-overflow;
+            margin-left: 0.5rem;
+          }
         }
 
-        p {
-          @include text-overflow;
-          margin-left: 0.5rem;
+        .no-title {
+          .icon, .placeholder {
+            color: #808080;
+          }
         }
       }
-    }
-
-    .bottom-section{
-      margin-bottom: 0.75rem;
-      .date {
-        display: flex;
-        color: #a1a1a1;
-        font-size: 0.875rem;
+  
+      .bottom-section{
+        margin-bottom: 0.75rem;
+        .date {
+          display: flex;
+          color: #a1a1a1;
+          font-size: 0.875rem;
+        }
       }
     }
   }
@@ -122,14 +135,16 @@
       font-size: 1.5rem;
     }
 
-    .notes {
-      .note {
-        font-size: 1.125rem;
-        margin-top: 0.625rem;
-
-        .icon {
-          height: 18px;
-          width: 18px;
+    .folder-content {
+      .notes {
+        .note {
+          font-size: 1.125rem;
+          margin-top: 0.625rem;
+  
+          .icon {
+            height: 18px;
+            width: 18px;
+          }
         }
       }
     }
@@ -152,10 +167,12 @@
         font-size: 1.125rem;
       }
 
-      .notes {
-        .note {
-          p {
-            font-size: 0.9375rem;
+      .folder-content {
+        .notes {
+          .note {
+            p {
+              font-size: 0.9375rem;
+            }
           }
         }
       }
@@ -174,10 +191,12 @@
         font-size: 1.25rem;
       }
 
-      .notes {
-        .note {
-          p {
-            font-size: 1rem;
+      .folder-content {
+        .notes {
+          .note {
+            p {
+              font-size: 1rem;
+            }
           }
         }
       }

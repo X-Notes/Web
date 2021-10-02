@@ -1,7 +1,8 @@
 <div class="playlist" appTheme>
   <div class="playlist-options">
     <div class="title">
-      <p>{{content?.name}}</p>
+      <p (input)="onInput($event)" [attr.contenteditable]="!isReadOnlyMode">{{content?.name}}</p>
+      <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
     </div>
     <button
       class="audio-button"
@@ -35,15 +36,6 @@
       <button mat-menu-item type="button" name="Download" (click)="exportPlaylist(content)">
         <mat-icon>download</mat-icon>
         <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
-      </button>
-      <button
-        *ngIf="!isReadOnlyMode"
-        mat-menu-item
-        type="button"
-        name="Change title"
-        (click)="changeTitleEvent.emit(content.id)"
-      >
-        <span> change title(no trn) </span>
       </button>
       <button
         *ngIf="!isReadOnlyMode"

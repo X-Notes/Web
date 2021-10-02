@@ -35,13 +35,16 @@
       >
         <app-audio-small
           *ngFor="let item of audioService.playlist; let i = index"
-          [name]="item.name"
+          (click)="play2(item)"
+          [audio]="item"
         ></app-audio-small>
       </div>
     </ng-template>
     <div class="preview">
-      <img *ngIf="false" />
-      <div class="no-preview" [CustomTooltip]="audioName">{{ audioName }}</div>
+      <img *ngIf="metadataParsed.imageUrl" [src]="metadataParsed.imageUrl" />
+      <div *ngIf="!metadataParsed.imageUrl" class="no-preview" [CustomTooltip]="audioName">
+        {{ audioName[0] }}
+      </div>
     </div>
   </div>
   <div class="controls">

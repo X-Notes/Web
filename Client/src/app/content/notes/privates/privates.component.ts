@@ -12,12 +12,13 @@ import { takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { UpdateRoute } from 'src/app/core/stateApp/app-action';
 import { EntityType } from 'src/app/shared/enums/entity-types.enum';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { NotesService } from '../notes.service';
 import { NoteStore } from '../state/notes-state';
 import { UnSelectAllNote } from '../state/notes-actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-privates',
@@ -27,6 +28,9 @@ import { UnSelectAllNote } from '../state/notes-actions';
 })
 export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('item', { read: ElementRef }) refElements: QueryList<ElementRef>;
+
+  @Select(NoteStore.privateCount)
+  privateCount$: Observable<number>;
 
   fontSize = FontSizeENUM;
 
@@ -45,7 +49,6 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
   async ngOnInit() {
     await this.store.dispatch(new UpdateRoute(EntityType.NotePrivate)).toPromise();
     this.pService.setSpinnerState(true);
-    this.pService.setIllustrationState(false);
 
     this.store
       .select(AppStore.appLoaded)
@@ -65,15 +68,6 @@ export class PrivatesComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.pService.waitPreloading();
     this.pService.setSpinnerState(false);
     this.loaded = true;
-
-    this.store
-      .select(NoteStore.privateCount)
-      .pipe(takeUntil(this.noteService.destroy))
-      .subscribe((x) => {
-        if (!x) {
-          this.pService.setIllustrationState(true);
-        }
-      });
   }
 
   ngOnDestroy(): void {

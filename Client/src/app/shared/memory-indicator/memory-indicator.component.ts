@@ -10,7 +10,6 @@ import { BillingENUM } from '../enums/billing.enum';
   styleUrls: ['./memory-indicator.component.scss'],
 })
 export class MemoryIndicatorComponent implements OnInit, OnDestroy {
-
   destroy = new Subject<void>();
 
   memory: number;
@@ -28,43 +27,45 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     this.store
       .select(UserStore.getMemoryMBytes)
       .pipe(takeUntil(this.destroy))
-      .subscribe((space) => this.memory = Math.ceil(space));
+      // eslint-disable-next-line no-return-assign
+      .subscribe((space) => (this.memory = Math.ceil(space)));
 
-      this.store
+    this.store
       .select(UserStore.getUser)
       .pipe(takeUntil(this.destroy))
-      .subscribe((user) => this.billing = user.billingPlanId);
+      // eslint-disable-next-line no-return-assign
+      .subscribe((user) => (this.billing = user.billingPlanId));
   }
 
-  get userBillingPlan(){
-    switch(this.billing){
-      case BillingENUM.Free:{
+  get userBillingPlan() {
+    switch (this.billing) {
+      case BillingENUM.Free: {
         return 'F';
       }
       case BillingENUM.Standart: {
         return 'S';
       }
-      case BillingENUM.Business:{
-        return 'B'
+      case BillingENUM.Business: {
+        return 'B';
       }
-      default:{
+      default: {
         return '';
       }
     }
   }
 
-  get userMemory(){
-    switch(this.billing){
-      case BillingENUM.Free:{
+  get userMemory() {
+    switch (this.billing) {
+      case BillingENUM.Free: {
         return 1000; // TODO LOAD THIS DATA FROM SERVER
       }
       case BillingENUM.Standart: {
         return 5000;
       }
-      case BillingENUM.Business:{
+      case BillingENUM.Business: {
         return 20000;
       }
-      default:{
+      default: {
         return 9999999; // IT`S OK
       }
     }
@@ -74,14 +75,14 @@ export class MemoryIndicatorComponent implements OnInit, OnDestroy {
     const check = this.memory / this.userMemory;
     if (check < 0.65) {
       return 'white';
-    } else if (check >= 0.65 && check < 0.85) {
-      return '#ffed69';
-    } else {
-      return '#ff6969';
     }
+    if (check >= 0.65 && check < 0.85) {
+      return '#ffed69';
+    }
+    return '#ff6969';
   }
 
   get procent() {
-    return (this.memory / this.userMemory) * 100 + '%';
+    return `${(this.memory / this.userMemory) * 100}%`;
   }
 }

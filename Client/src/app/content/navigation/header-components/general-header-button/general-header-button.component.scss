@@ -55,6 +55,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
   .inner-content {
     p {
       padding-right: 0;
@@ -124,5 +125,20 @@
 
   .profile-create {
     width: 54px;
+  }
+
+  .profile-default {
+    margin-right: 0;
+    .inner-content {
+      padding: 0 0.75rem;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-default {
+    .inner-content {
+      padding: 0 0.5rem;
+    }
   }
 }

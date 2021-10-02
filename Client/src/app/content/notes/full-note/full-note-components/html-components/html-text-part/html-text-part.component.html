@@ -10,6 +10,10 @@
     class="block-generic default-text-size"
     (input)="onInput($event)"
     [attr.contenteditable]="!isReadOnlyMode"
+    [ngClass]="{
+      bold: content.isBold,
+      italic: content.isItalic
+    }"
     [textContent]="content?.content"
   ></p>
   <div *ngIf="isActive && !isReadOnlyMode" class="no-content">
@@ -23,6 +27,12 @@
       </div>
       <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="editContentStyle($event, styleType.Bold)">
+        <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
+      </div>
+      <div class="icon" (mousedown)="editContentStyle($event, styleType.Italic)">
+        <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
         <mat-icon svgIcon="listChecked" [inline]="true"></mat-icon>
@@ -43,7 +53,7 @@
         <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.Audios, true)">
-        <mat-icon svgIcon="plus" [inline]="true"></mat-icon>
+        <mat-icon [inline]="true">library_music</mat-icon>
       </div>
     </div>
   </div>

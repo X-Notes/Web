@@ -28,6 +28,24 @@
   </div>
   <div
     class="button"
+    (mousedown)="editContentStyle($event, styleType.Bold)"
+    [ngClass]="getIsActive(textType.Heading)"
+  >
+    <div class="icon">
+      <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
+    </div>
+  </div>
+  <div
+    class="button"
+    (mousedown)="editContentStyle($event, styleType.Italic)"
+    [ngClass]="getIsActive(textType.Heading)"
+  >
+    <div class="icon">
+      <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
+    </div>
+  </div>
+  <div
+    class="button"
     (mousedown)="transformContent($event, textType.Checklist)"
     [ngClass]="getIsActive(textType.Checklist)"
   >

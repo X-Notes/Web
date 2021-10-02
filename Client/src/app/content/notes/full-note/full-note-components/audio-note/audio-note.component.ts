@@ -9,6 +9,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
 import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
@@ -29,7 +31,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   removePlaylist = new EventEmitter<string>();
 
   @Output()
-  changeTitleEvent = new EventEmitter<string>();
+  changeTitleEvent = new EventEmitter<Record<string, string>>();
 
   @Output()
   deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
@@ -47,6 +49,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   formats = TypeUploadFormats.AUDIOS;
 
+  namePlaylistChanged: Subject<string> = new Subject<string>();
+
   constructor(private audioService: AudioService, private exportService: ExportService) {}
 
   ngOnDestroy(): void {
@@ -54,7 +58,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.destroy.complete();
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {
+    this.namePlaylistChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((name) => this.changeTitleEvent.emit({ contentId: this.content.id, name }));
+  }
 
   playStream(url, id) {
     this.audioService.playStream(url, id).subscribe(() => {
@@ -130,4 +138,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   mouseEnter = ($event: any) => {};
 
   mouseOut = ($event: any) => {};
+
+  onInput($event) {
+    this.namePlaylistChanged.next($event.target.innerText);
+  }
 }

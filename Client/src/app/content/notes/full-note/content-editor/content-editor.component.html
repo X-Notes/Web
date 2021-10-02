@@ -9,14 +9,14 @@
   [style.width.px]="sliderService?.mainWidth"
   class="main-content"
 >
-  <div class="note-color" [ngStyle]="{backgroundColor: note?.color}"></div>
+  <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
   <div class="labels-section">
     <div
       class="label"
       *ngFor="let label of note?.labels | noDeletedLabels"
-      [ngStyle]="{backgroundColor: label.color}"
+      [ngStyle]="{ backgroundColor: label.color }"
     >
-      <p>{{label.name}}</p>
+      <p>{{ label.name }}</p>
     </div>
   </div>
   <div class="title-section">
@@ -31,7 +31,7 @@
     <div class="left-border"></div>
   </div>
   <div class="content-section">
-    <div *ngFor="let item of contents; let i = index;">
+    <div *ngFor="let item of contents; let i = index">
       <div [ngSwitch]="item.typeId">
         <ng-container *ngSwitchCase="contentType.Text">
           <app-html-text-part
@@ -44,7 +44,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (transformTo)="transformToTypeText($event)"
             (transformToFile)="transformToFileType($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandlerBoldItalic($event, i === contents.length - 1)"
           ></app-html-text-part>
           <app-html-number-list
             #htmlComp
@@ -140,7 +140,8 @@
 <app-text-edit-menu
   [style.top.px]="menuSelectionService.getTop"
   [style.left.px]="menuSelectionService.left"
-  [style.visibility]="menuSelectionService.menuActive? 'visible': 'hidden'"
+  [style.visibility]="menuSelectionService.menuActive ? 'visible' : 'hidden'"
   (eventTransform)="transformToTypeText($event)"
+  (updateText)="updateTextHandlerBoldItalic($event, false)"
 >
 </app-text-edit-menu>

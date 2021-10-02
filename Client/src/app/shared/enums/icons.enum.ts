@@ -36,7 +36,7 @@ export enum Icons {
   selectLabel = 'selectLabel',
   select = 'select',
   setting = 'setting',
-  shared = 'shared',
+  share = 'share',
   themeLight = 'themeLight',
   videoInner = 'videoInner',
   video = 'video',
@@ -65,4 +65,5 @@ export enum Icons {
   notificationIllustration = 'notificationIllustration',
   noAccessView = 'noAccessView',
   history = 'history',
+  notesInnerFolder = 'notesInnerFolder'
 }

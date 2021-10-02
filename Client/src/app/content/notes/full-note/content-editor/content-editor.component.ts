@@ -101,7 +101,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.newLine
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(async () => await this.contentEditorTextService.appendNewEmptyContentToEnd(this.note.id));
+      .subscribe(async () =>
+        this.contentEditorTextService.appendNewEmptyContentToEnd(this.note.id),
+      );
 
     this.nameChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
@@ -132,9 +134,13 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   async enterHandler(value: EnterEvent) {
-
-    const index = await this.contentEditorTextService
-    .insertNewContent(this.note.id, value.contentId, value.nextItemType, value.breakModel.typeBreakLine, value.breakModel.nextText);
+    const index = await this.contentEditorTextService.insertNewContent(
+      this.note.id,
+      value.contentId,
+      value.nextItemType,
+      value.breakModel.typeBreakLine,
+      value.breakModel.nextText,
+    );
 
     setTimeout(() => {
       this.textElements?.toArray()[index].setFocus();
@@ -147,7 +153,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   async concatThisWithPrev(id: string) {
-    const index = await this.contentEditorTextService.concatContentWithPrevContent(id, this.note.id);
+    const index = await this.contentEditorTextService.concatContentWithPrevContent(
+      id,
+      this.note.id,
+    );
     setTimeout(() => {
       const prevItemHtml = this.textElements?.toArray()[index];
       prevItemHtml.setFocusToEnd();
@@ -169,19 +178,35 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async transformToFileType(event: TransformToFileContent) {
     switch (event.typeFile) {
       case TypeUploadFile.Photos: {
-        await this.contentEditorAlbumService.transformToAlbum(this.note.id, event.contentId, event.files);
+        await this.contentEditorAlbumService.transformToAlbum(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
         break;
       }
       case TypeUploadFile.Audios: {
-        await this.contentEditorPlaylistService.transformToAudiosCollection(this.note.id, event.contentId, event.files);
+        await this.contentEditorPlaylistService.transformToAudiosCollection(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
         break;
       }
       case TypeUploadFile.Documents: {
-        await this.contentEditorDocumentsService.transformToDocuments(this.note.id, event.contentId, event.files);
+        await this.contentEditorDocumentsService.transformToDocuments(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
         break;
       }
       case TypeUploadFile.Videos: {
-        await this.contentEditorVideosService.transformToVideos(this.note.id, event.contentId, event.files);
+        await this.contentEditorVideosService.transformToVideos(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
         break;
       }
       default: {
@@ -189,11 +214,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       }
     }
   }
-  
+
   async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
     const resp = await this.contentEditorTextService.updateTextContent(this.note.id, event);
     if (isLast) {
       this.addNewElementToEnd();
+    }
+    return resp;
+  }
+
+  async updateTextHandlerBoldItalic(event: EditTextEventModel, isLast: boolean) {
+    // TODO REFACTOR
+    const resp = await this.updateTextHandler(event, isLast);
+    if (resp.success) {
+      const item = this.contents.find((z) => z.id === event.contentId) as BaseText;
+      // const indexOf = this.contents.indexOf(item);
+      item.isBold = event.isBold ?? item.isBold;
+      item.isItalic = event.isItalic ?? item.isItalic;
     }
   }
 

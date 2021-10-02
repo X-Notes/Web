@@ -55,6 +55,9 @@ export class HtmlLinkComponent implements OnInit, OnDestroy {
     });
     this.data.title = this.data.title || parsedHtml.title;
     this.data.image = this.data.image || parsedHtml.images[0].src;
+    if (!this.data.image) {
+      this.isLoaded = true;
+    }
   }
 
   openNewTab() {

@@ -1,5 +1,5 @@
 <div appTheme>
-  <div class="sub-nav-item" routerLink="/profile" #profile>
+  <div class="sub-nav-item" (click)="redirectToProfile()" #profile>
     <div class="item">
       <div class="photo">
         <img
@@ -8,9 +8,11 @@
           [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
           (error)="changeSource()"
         />
-        <i *ngIf="photoError" class="icon-people"></i>
+        <div *ngIf="photoError" class="photo-error">
+          <mat-icon svgIcon="people" [inline]="true"></mat-icon>
+        </div>
       </div>
-      <p>{{(user$ | async).name}}</p>
+      <p>{{ (user$ | async).name }}</p>
     </div>
     <div class="ripple-container" matRipple [matRippleTrigger]="profile"></div>
   </div>

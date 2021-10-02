@@ -18,9 +18,9 @@
       class="label"
       *ngFor="let label of note.labels | lastTwoNoDeletedLabels"
       [ngStyle]="{backgroundColor: label.color}"
-      CustomTooltip="{{ label.name }}"
+      [CustomTooltip]="label.name"
       position="Top"
-      labelColor="{{ label.color }}"
+      [labelColor]="label.color"
     >
       <p>{{label.name}}</p>
     </div>
@@ -28,7 +28,7 @@
   <div class="header">
     <h4 *ngIf="note.title; else notNamed">{{note.title}}</h4>
     <ng-template #notNamed>
-      <h4 class="not-named">Add content to your note</h4>
+      <h4 class="not-named">{{ 'placeholder.noteSmall' | translate}}</h4>
     </ng-template>
   </div>
   <ng-container *ngFor="let content of note.contents">
@@ -49,11 +49,7 @@
       <div *ngIf="note.additionalInfo?.isHasUserOnNote" class="icon">
         <mat-icon svgIcon="people" [inline]="true"></mat-icon>
       </div>
-      <div
-        *ngFor="let item of note.additionalInfo?.noteFolderInfos"
-        [CustomTooltip]="item.folderName"
-        class="icon"
-      >
+      <div *ngFor="let item of noteFolders" [CustomTooltip]="item.folderName" class="icon">
         <mat-icon svgIcon="folders" [inline]="true"></mat-icon>
       </div>
     </div>

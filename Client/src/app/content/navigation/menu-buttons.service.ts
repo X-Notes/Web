@@ -57,7 +57,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -168,7 +168,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: false,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -261,7 +261,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -379,7 +379,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: false,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -447,7 +447,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -518,7 +518,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -607,7 +607,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,
@@ -685,7 +685,7 @@ export class MenuButtonsService {
       isViewOnFullFolder: true,
     },
     {
-      icon: 'shared',
+      icon: 'share',
       operation: () => this.dialogsManageService.shareEntity(),
       isVisible: of(true),
       isNoOwnerCanSee: true,

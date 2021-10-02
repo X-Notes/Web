@@ -1,3 +1,5 @@
+@import 'variables';
+
 :host {
   height: 100%;
 }
@@ -36,6 +38,14 @@
         border-radius: inherit;
         max-width: 100%;
       }
+    }
+  }
+}
+
+.light {
+  .progress-bar-section {
+    .text {
+      color: $light-text-color;
     }
   }
 }

@@ -11,6 +11,8 @@
   width: 100%;
   padding: 0.25rem;
   cursor: pointer;
+  overflow: hidden;
+  transition: 0.2s ease;
 
   .preview {
     position: relative;
@@ -67,6 +69,10 @@
 }
 
 .light {
+  &:hover {
+    background-color: whitesmoke;
+  }
+
   .preview {
     .no-preview {
       color: #8e8e8e;
@@ -76,4 +82,8 @@
   .audio-info {
     color: $text-color;
   }
+}
+
+.dark:hover {
+  background-color: #25282d;
 }

@@ -34,7 +34,7 @@
   class="content-generic-project"
   [ngStyle]="{'background-image': (user$ | async).currentBackground?.photoPath !== null ? 'url(' + (userBackground$ | async) + ')' : ''}"
 >
-  <ng-scrollbar class="scroll-helper" [visibility]="'hover'" [appearance]="'compact'">
+  <ng-scrollbar class="scroll-helper" visibility="hover" appearance="compact">
     <div class="content-inner">
       <router-outlet></router-outlet>
     </div>

@@ -5,9 +5,15 @@
   (mouseover)="mouseEnter($event)"
   (mouseout)="mouseOut($event)"
 >
-  <div class="number-list">
+  <div
+    class="number-list"
+    [ngClass]="{
+      bold: content.isBold,
+      italic: content.isItalic
+    }"
+  >
     <div class="number-container">
-      <div class="number">{{content.number}}.</div>
+      <div class="number">{{ content.number }}.</div>
     </div>
     <div class="text-container">
       <p
