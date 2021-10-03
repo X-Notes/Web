@@ -76,6 +76,15 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   constructor(public textService: TextService) {}
 
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+  
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
+
   getContent() {
     return this.content;
   }

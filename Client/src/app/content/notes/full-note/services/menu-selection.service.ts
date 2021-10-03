@@ -3,9 +3,7 @@ import { BaseText } from '../../models/content-model.model';
 
 @Injectable()
 export class MenuSelectionService {
-  public currentItem: BaseText;
-
-  public menuActive = false;
+  public currentTextItem: BaseText;
 
   public startTop = 0;
 
@@ -14,6 +12,10 @@ export class MenuSelectionService {
   public currentScroll = 0;
 
   public left = 0;
+
+  get menuActive() {
+    return this.currentTextItem !== null;
+  }
 
   get getTop() {
     const positionNumber = this.startTop + this.startScroll - this.currentScroll;

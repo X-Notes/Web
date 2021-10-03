@@ -70,7 +70,7 @@ export class ContentEditorContentsService {
   }
 
   // REMOVE
-  removeById(contentId: string) {
+  deleteById(contentId: string) {
     this.contents = this.contents.filter((x) => x.id !== contentId);
   }
 

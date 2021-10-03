@@ -117,4 +117,13 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

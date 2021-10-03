@@ -1,6 +1,7 @@
 import { ContentModel } from '../../models/content-model.model';
 
 export interface ParentInteraction {
+  isReadOnlyMode: boolean;
   setFocus($event?);
   setFocusToEnd();
   updateHTML(content: string);
@@ -8,5 +9,7 @@ export interface ParentInteraction {
   getContent(): ContentModel;
   mouseEnter($event);
   mouseOut($event);
-  isReadOnlyMode: boolean;
+  backspaceUp();
+  backspaceDown();
+  deleteDown();
 }

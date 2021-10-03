@@ -9,6 +9,10 @@ import {
   presentationFormats,
 } from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
+import {
+  ClickableContentService,
+  ClickableSelectableEntities,
+} from '../../services/clickable-content.service';
 
 @Component({
   selector: 'app-document-note',
@@ -22,12 +26,25 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   isReadOnlyMode = false;
 
-  @Output() deleteDocumentEvent = new EventEmitter<string>();
+  @Output()
+  deleteContentEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteDocumentEvent = new EventEmitter<string>();
 
   constructor(
     private dialogsManageService: DialogsManageService,
     private exportService: ExportService,
+    private clickableContentService: ClickableContentService,
   ) {}
+
+  clickDocumentHandler(document: DocumentModel) {
+    this.clickableContentService.set(
+      ClickableSelectableEntities.Document,
+      document.fileId,
+      this.content.id,
+    );
+  }
 
   setFocus = ($event?: any) => {};
 
@@ -94,4 +111,26 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   mouseOut = ($event: any) => {};
 
   ngOnInit = () => {};
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {
+    this.checkForDelete();
+  }
+
+  deleteDown() {
+    this.checkForDelete();
+  }
+
+  checkForDelete() {
+    const audioId = this.clickableContentService.id;
+    if (
+      this.clickableContentService.collectionId === this.content.id &&
+      this.content.documents.some((x) => x.fileId === audioId)
+    ) {
+      this.deleteDocumentEvent.emit(audioId);
+    }
+  }
 }

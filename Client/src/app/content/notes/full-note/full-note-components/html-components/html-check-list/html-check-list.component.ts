@@ -128,4 +128,13 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.content.checked = !this.content.checked;
     this.textChanged.next(this.content.content);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

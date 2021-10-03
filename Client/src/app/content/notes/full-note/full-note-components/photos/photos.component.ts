@@ -10,17 +10,18 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ApiServiceNotes } from '../../../api-notes.service';
 import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { RemovePhotoFromAlbum } from '../../../models/remove-photo-from-album.model';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../services/selection.service';
 import { ApiAlbumService } from '../../services/api-album.service';
+import {
+  ClickableContentService,
+  ClickableSelectableEntities,
+} from '../../services/clickable-content.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -35,10 +36,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   noteId: string;
 
   @Output()
-  deleteEvent = new EventEmitter<string>();
+  deleteContentEvent = new EventEmitter<string>();
 
   @Output()
-  deletePhotoFromAlbum = new EventEmitter<RemovePhotoFromAlbum>();
+  deletePhotoEvent = new EventEmitter<string>();
 
   @Output()
   uploadEvent = new EventEmitter<UploadFilesToEntity>();
@@ -73,6 +74,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private selectionService: SelectionService,
     private api: ApiAlbumService,
     private exportService: ExportService,
+    private clickableContentService: ClickableContentService,
   ) {}
 
   ngOnDestroy(): void {
@@ -84,8 +86,8 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement;
   }
 
-  removeHandler() {
-    this.deleteEvent.emit(this.content.id);
+  deleteContentHandler() {
+    this.deleteContentEvent.emit(this.content.id);
   }
 
   uploadHandler = () => {
@@ -97,6 +99,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
+  }
+
+  clickPhotoHandler(photo: Photo) {
+    this.clickableContentService.set(
+      ClickableSelectableEntities.Photo,
+      photo.fileId,
+      this.content.id,
+    );
   }
 
   changeWidth(diffrence: number) {
@@ -214,8 +224,8 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return false;
   }
 
-  removePhotoHandler(photoId: string) {
-    this.deletePhotoFromAlbum.emit({ photoId, contentId: this.content.id });
+  deletePhotoHandler(photoId: string) {
+    this.deletePhotoEvent.emit(photoId);
   }
 
   getStyle = (numb: number) => {
@@ -253,4 +263,25 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   mouseEnter = ($event: any) => {};
 
   mouseOut = ($event: any) => {};
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  backspaceDown() {
+    this.checkForDelete();
+  }
+
+  deleteDown() {
+    this.checkForDelete();
+  }
+
+  checkForDelete() {
+    const photoId = this.clickableContentService.id;
+    if (
+      this.clickableContentService.collectionId === this.content.id &&
+      this.content.photos.some((x) => x.fileId === photoId)
+    ) {
+      this.deletePhotoEvent.emit(photoId);
+    }
+  }
 }

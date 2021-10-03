@@ -42,7 +42,7 @@
         mat-menu-item
         type="button"
         name="delete"
-        (click)="removePlaylist.emit(content.id)"
+        (click)="deleteContentEvent.emit(content.id)"
       >
         <mat-icon>delete</mat-icon>
         <span>{{ 'innerNote.menu.delete' | translate }}</span>

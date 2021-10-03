@@ -16,8 +16,9 @@
           *ngFor="let item of block"
           [photo]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteEvent)="removePhotoHandler($event)"
+          (deleteEvent)="deletePhotoHandler($event)"
           (downloadPhotoEvent)="exportPhoto($event)"
+          (clickEvent)="clickPhotoHandler($event)"
         ></app-photo>
       </div>
     </div>
@@ -31,8 +32,9 @@
           *ngFor="let item of lastBlock"
           [photo]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteEvent)="removePhotoHandler($event)"
+          (deleteEvent)="deletePhotoHandler($event)"
           (downloadPhotoEvent)="exportPhoto($event)"
+          (clickEvent)="clickPhotoHandler($event)"
         >
         </app-photo>
       </div>
@@ -87,7 +89,7 @@
       mat-menu-item
       type="button"
       name="Delete"
-      (click)="removeHandler()"
+      (click)="deleteContentHandler()"
     >
       <mat-icon>delete</mat-icon>
       <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>

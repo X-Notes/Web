@@ -113,4 +113,13 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

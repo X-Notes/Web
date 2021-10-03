@@ -52,8 +52,8 @@ export class ContentEditorFilesBase {
     }
   }
 
-  protected removeHandler(contentId: string) {
-    this.contentsService.removeById(contentId);
+  protected deleteHandler(contentId: string) {
+    this.contentsService.deleteById(contentId);
     this.store.dispatch(LoadUsedDiskSpace);
   }
 }

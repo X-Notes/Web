@@ -15,9 +15,12 @@ import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
 import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { RemoveAudioFromPlaylist } from '../../../models/remove-audio-from-playlist.model';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
+import {
+  ClickableContentService,
+  ClickableSelectableEntities,
+} from '../../services/clickable-content.service';
 
 @Component({
   selector: 'app-audio-note',
@@ -28,13 +31,13 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
-  removePlaylist = new EventEmitter<string>();
+  deleteContentEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteAudioEvent = new EventEmitter<string>();
 
   @Output()
   changeTitleEvent = new EventEmitter<Record<string, string>>();
-
-  @Output()
-  deleteAudio = new EventEmitter<RemoveAudioFromPlaylist>();
 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
@@ -51,7 +54,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   namePlaylistChanged: Subject<string> = new Subject<string>();
 
-  constructor(private audioService: AudioService, private exportService: ExportService) {}
+  constructor(
+    private audioService: AudioService,
+    private exportService: ExportService,
+    private clickableContentService: ClickableContentService,
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -62,6 +69,14 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.namePlaylistChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((name) => this.changeTitleEvent.emit({ contentId: this.content.id, name }));
+  }
+
+  clickAudioHandler(audio: AudioModel) {
+    this.clickableContentService.set(
+      ClickableSelectableEntities.Audio,
+      audio.fileId,
+      this.content.id,
+    );
   }
 
   playStream(url, id) {
@@ -117,10 +132,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   }
 
   deleteAudioHandler(audioId: string) {
-    this.deleteAudio.emit({
-      audioId,
-      contentId: this.content.id,
-    });
+    this.deleteAudioEvent.emit(audioId);
   }
 
   setFocus = ($event?: any) => {};
@@ -141,5 +153,27 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   onInput($event) {
     this.namePlaylistChanged.next($event.target.innerText);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {
+    this.checkForDelete();
+  }
+
+  deleteDown() {
+    this.checkForDelete();
+  }
+
+  checkForDelete() {
+    const audioId = this.clickableContentService.id;
+    if (
+      this.clickableContentService.collectionId === this.content.id &&
+      this.content.audios.some((x) => x.fileId === audioId)
+    ) {
+      this.deleteAudioEvent.emit(audioId);
+    }
   }
 }

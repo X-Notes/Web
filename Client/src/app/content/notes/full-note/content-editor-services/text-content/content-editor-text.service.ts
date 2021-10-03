@@ -16,7 +16,7 @@ export class ContentEditorTextService {
 
   deleteContent(contentId: string) {
     const index = this.contentsService.getIndexOrErrorById(contentId);
-    this.contentsService.removeById(contentId);
+    this.contentsService.deleteById(contentId);
     const indexPrevRow = index - 1;
     return indexPrevRow;
   }
@@ -26,7 +26,7 @@ export class ContentEditorTextService {
     const prevIndex = data.index - 1;
     const prevContent = this.contentsService.getContentByIndex<BaseText>(prevIndex);
     prevContent.content += data.content.content;
-    this.contentsService.removeById(contentId);
+    this.contentsService.deleteById(contentId);
     return prevIndex;
   }
 

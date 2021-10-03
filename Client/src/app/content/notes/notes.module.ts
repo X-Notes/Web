@@ -10,8 +10,6 @@ import { PrivatesComponent } from './privates/privates.component';
 import { SharedComponent } from './shared/shared.component';
 import { DeletedComponent } from './deleted/deleted.component';
 import { ArchiveComponent } from './archive/archive.component';
-import { SelectionService } from './full-note/services/selection.service';
-import { MenuSelectionService } from './full-note/services/menu-selection.service';
 import { FullNoteModule } from './full-note/full-note.module';
 
 @NgModule({

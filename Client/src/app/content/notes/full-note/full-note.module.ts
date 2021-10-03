@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note.component';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { SelectionDirective } from './directives/selection.directive';
@@ -22,7 +23,6 @@ import { AudioNoteComponent } from './full-note-components/audio-note/audio-note
 import { VideoNoteComponent } from './full-note-components/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { NoteSnapshotComponent } from './note-snapshot/note-snapshot.component';
 import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
@@ -32,6 +32,8 @@ import { MenuSelectionService } from './services/menu-selection.service';
 import { SelectionService } from './services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
+import { ClickableContentService } from './services/clickable-content.service';
+import { ContentEditorListenersService } from './services/content-editor-listeners.service';
 
 @NgModule({
   declarations: [
@@ -68,10 +70,12 @@ import { FullNoteSliderService } from './services/full-note-slider.service';
     RightSectionContentComponent,
   ],
   providers: [
-    MenuSelectionService, 
-    SelectionService, 
-    SidebarNotesService, 
+    MenuSelectionService,
+    SelectionService,
+    SidebarNotesService,
     FullNoteSliderService,
+    ClickableContentService,
+    ContentEditorListenersService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

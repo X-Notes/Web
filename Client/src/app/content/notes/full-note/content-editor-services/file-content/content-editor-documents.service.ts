@@ -40,7 +40,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     );
   }
 
-  async transformToDocuments(noteId: string, contentId: string, files: File[]) {
+  async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
     const result = await this.apiDocuments.transformToDocuments(noteId, contentId).toPromise();
     if (result.success) {
       this.transformContentTo(result, contentId);
@@ -99,10 +99,15 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     this.afterUploadFilesToCollection(results);
   };
 
-  removeDocumentHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string) => {
     const resp = await this.apiDocuments.removeDocumentFromNote(noteId, contentId).toPromise();
     if (resp.success) {
-      this.removeHandler(contentId);
+      this.deleteHandler(contentId);
     }
   };
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDocumentHandler(documentId: string, contentId: string, noteId: string) {
+    // TODO
+  }
 }

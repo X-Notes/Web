@@ -37,7 +37,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  async transformToVideos(noteId: string, contentId: string, files: File[]) {
+  async transformToVideosCollection(noteId: string, contentId: string, files: File[]) {
     const result = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
     if (result.success) {
       this.transformContentTo(result, contentId);
@@ -91,10 +91,14 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     this.afterUploadFilesToCollection(results);
   };
 
-  removeVideosHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string) => {
     const resp = await this.apiVideos.removeVideoFromNote(noteId, contentId).toPromise();
     if (resp.success) {
-      this.removeHandler(contentId);
+      this.deleteHandler(contentId);
     }
   };
+
+  deleteVideoHandler(videoId: string, contentId: string, noteId: string){
+    // TODO
+  }
 }

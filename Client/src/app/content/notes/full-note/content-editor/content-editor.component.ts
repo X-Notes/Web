@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
@@ -39,6 +40,7 @@ import { ContentEditorDocumentsCollectionService } from '../content-editor-servi
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
+import { ContentEditorListenersService } from '../services/content-editor-listeners.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -46,8 +48,8 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService],
 })
-export class ContentEditorComponent implements OnInit, OnDestroy {
-  @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
+export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
@@ -87,11 +89,17 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
     public contentEditorTextService: ContentEditorTextService,
+    private contentEditorListenersService: ContentEditorListenersService,
   ) {}
+
+  ngAfterViewInit(): void {
+    this.contentEditorListenersService.setHandlers(this.elements);
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.contentEditorListenersService.destroysListeners();
   }
 
   ngOnInit(): void {
@@ -130,20 +138,20 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
       value.breakModel.typeBreakLine,
       value.breakModel.nextText,
     );
-    setTimeout(() => this.textElements?.toArray()[index].setFocus());
+    setTimeout(() => this.elements?.toArray()[index].setFocus());
     this.postAction();
   }
 
   deleteRowHandler(id: string) {
     const index = this.contentEditorTextService.deleteContent(id);
-    this.textElements?.toArray()[index].setFocusToEnd();
+    this.elements?.toArray()[index].setFocusToEnd();
     this.postAction();
   }
 
   concatThisWithPrev(id: string) {
     const index = this.contentEditorTextService.concatContentWithPrevContent(id);
     setTimeout(() => {
-      const prevItemHtml = this.textElements?.toArray()[index];
+      const prevItemHtml = this.elements?.toArray()[index];
       prevItemHtml.setFocusToEnd();
     });
     this.postAction();
@@ -155,7 +163,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   transformToTypeText(value: TransformContent) {
     const index = this.contentEditorTextService.tranformTextContentTo(value);
-    setTimeout(() => this.textElements?.toArray()[index].setFocusToEnd());
+    setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
     this.postAction();
   }
 
@@ -163,7 +171,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   async transformToFileType(event: TransformToFileContent) {
     switch (event.typeFile) {
       case TypeUploadFile.Photos: {
-        await this.contentEditorAlbumService.transformToAlbum(
+        await this.contentEditorAlbumService.transformToPhotosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -179,7 +187,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         break;
       }
       case TypeUploadFile.Documents: {
-        await this.contentEditorDocumentsService.transformToDocuments(
+        await this.contentEditorDocumentsService.transformToDocumentsCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -187,7 +195,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         break;
       }
       case TypeUploadFile.Videos: {
-        await this.contentEditorVideosService.transformToVideos(
+        await this.contentEditorVideosService.transformToVideosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -207,7 +215,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   postAction(): void {
     this.contentEditorContentsService.change();
-    const native = this.textElements?.last?.getNative();
+    const native = this.elements?.last?.getNative();
     if (native?.textContent.length !== 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
@@ -215,14 +223,14 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
 
   placeHolderClick($event) {
     $event.preventDefault();
-    setTimeout(() => this.textElements?.last?.setFocus());
+    setTimeout(() => this.elements?.last?.setFocus());
   }
 
   mouseEnter($event) {
-    this.textElements?.last?.mouseEnter($event);
+    this.elements?.last?.mouseEnter($event);
   }
 
   mouseOut($event) {
-    this.textElements?.last?.mouseOut($event);
+    this.elements?.last?.mouseOut($event);
   }
 }

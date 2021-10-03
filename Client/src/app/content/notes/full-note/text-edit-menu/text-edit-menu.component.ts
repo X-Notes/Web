@@ -31,8 +31,8 @@ export class TextEditMenuComponent {
     return false;
   };
 
-  async transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
+  transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+    const item = this.menuSelectionService.currentTextItem;
     if (item.noteTextTypeId === type && item.headingTypeId === heading) {
       this.eventTransform.emit({
         id: item.id,
@@ -53,7 +53,7 @@ export class TextEditMenuComponent {
 
   setBoldStyle($event) {
     $event.preventDefault();
-    const content = this.menuSelectionService.currentItem;
+    const content = this.menuSelectionService.currentTextItem;
     content.isBold = !content.isBold;
     this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
@@ -62,7 +62,7 @@ export class TextEditMenuComponent {
 
   setItalicStyle($event) {
     $event.preventDefault();
-    const content = this.menuSelectionService.currentItem;
+    const content = this.menuSelectionService.currentTextItem;
     content.isItalic = !content.isItalic;
     this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
@@ -70,7 +70,7 @@ export class TextEditMenuComponent {
   }
 
   getIsActive(type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
+    const item = this.menuSelectionService.currentTextItem;
     if (!item) {
       return;
     }
