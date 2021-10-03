@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
-import { EditTextEventModel } from '../../models/edit-text-event.model';
 import { LineBreakType } from '../../models/html-models';
 import { TransformContent } from '../../models/transform-content.model';
 import { ApiNoteContentService } from '../../services/api-note-content.service';
@@ -60,13 +59,6 @@ export class ContentEditorTextService {
       return index;
     }
     return -1;
-  }
-
-  async updateTextContent(noteId: string, e: EditTextEventModel) {
-    const resp = await this.apiText
-      .updateContentText(noteId, e.contentId, e.content, e.checked, e.isBold, e.isItalic)
-      .toPromise();
-    return resp;
   }
 
   async tranformTextContentTo(noteId: string, value: TransformContent) {

@@ -1,13 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { MenuSelectionService } from '../services/menu-selection.service';
-import {
-  HeadingTypeENUM,
-  NoteStyleTypeENUM,
-  NoteTextTypeENUM,
-} from '../../models/content-model.model';
+import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
-import { EditTextEventModel } from '../models/edit-text-event.model';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -19,11 +14,9 @@ export class TextEditMenuComponent {
   eventTransform = new EventEmitter<TransformContent>();
 
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   textType = NoteTextTypeENUM;
-
-  styleType = NoteStyleTypeENUM;
 
   headingType = HeadingTypeENUM;
 
@@ -58,21 +51,20 @@ export class TextEditMenuComponent {
     selection.removeAllRanges();
   }
 
-  async editContentStyle(e, type: NoteStyleTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
-    if (type === this.styleType.Bold) {
-      this.updateText.emit({
-        contentId: item.id,
-        content: item.content,
-        isBold: !item.isBold,
-      });
-    } else {
-      this.updateText.emit({
-        contentId: item.id,
-        content: item.content,
-        isItalic: !item.isItalic,
-      });
-    }
+  setBoldStyle($event) {
+    $event.preventDefault();
+    const content = this.menuSelectionService.currentItem;
+    content.isBold = !content.isBold;
+    this.updateText.emit(content);
+    const selection = this.apiBrowserService.getSelection();
+    selection.removeAllRanges();
+  }
+
+  setItalicStyle($event) {
+    $event.preventDefault();
+    const content = this.menuSelectionService.currentItem;
+    content.isItalic = !content.isItalic;
+    this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
   }

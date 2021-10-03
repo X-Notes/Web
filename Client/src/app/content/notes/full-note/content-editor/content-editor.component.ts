@@ -23,7 +23,6 @@ import {
 import { FullNote } from '../../models/full-note.model';
 import { UpdateTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
-import { EditTextEventModel } from '../models/edit-text-event.model';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
@@ -214,23 +213,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    const resp = await this.contentEditorTextService.updateTextContent(this.note.id, event);
-    if (isLast) {
-      this.addNewElementToEnd();
-    }
-    return resp;
-  }
-
-  async updateTextHandlerBoldItalic(event: EditTextEventModel, isLast: boolean) {
-    // TODO REFACTOR
-    const resp = await this.updateTextHandler(event, isLast);
-    if (resp.success) {
-      const item = this.contents.find((z) => z.id === event.contentId) as BaseText;
-      // const indexOf = this.contents.indexOf(item);
-      item.isBold = event.isBold ?? item.isBold;
-      item.isItalic = event.isItalic ?? item.isItalic;
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async updateTextHandler(content: BaseText, isLast: boolean) {
+    this.contentEditorContentsService.change();
   }
 
   addNewElementToEnd() {

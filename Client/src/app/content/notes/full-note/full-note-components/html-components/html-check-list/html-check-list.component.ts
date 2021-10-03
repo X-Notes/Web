@@ -13,7 +13,6 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { BaseText } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -27,7 +26,7 @@ import { CheckListService } from '../../html-business-logic/check-list.service';
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -82,11 +81,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
         this.content.content = str;
-        this.updateText.emit({
-          content: str,
-          contentId: this.content.id,
-          checked: this.content.checked,
-        });
+        this.updateText.emit(this.content);
       });
   }
 

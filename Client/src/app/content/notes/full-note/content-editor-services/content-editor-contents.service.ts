@@ -33,6 +33,11 @@ export class ContentEditorContentsService {
     return this.contents;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  change() {
+    console.log('change');
+  }
+
   // GET INDDEX
   getIndexOrErrorById(contentId: string) {
     const index = this.contents.findIndex((x) => x.id === contentId);

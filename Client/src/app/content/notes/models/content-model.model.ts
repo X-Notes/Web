@@ -44,7 +44,6 @@ export class AudioModel {
   authorId: string;
 }
 
-
 export class VideosCollection extends ContentModel {
   name: string;
 
@@ -95,6 +94,7 @@ export class PhotosCollection extends ContentModel {
     this.photos = collection.photos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new Photo(
           z.fileId,
           z.photoPathSmall,
@@ -170,9 +170,4 @@ export enum NoteTextTypeENUM {
   Dotlist = 3,
   Numberlist = 4,
   Checklist = 5,
-}
-
-export enum NoteStyleTypeENUM {
-  Bold = 1,
-  Italic = 2,
 }

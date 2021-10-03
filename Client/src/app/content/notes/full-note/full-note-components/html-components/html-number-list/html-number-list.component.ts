@@ -18,7 +18,6 @@ import {
   ContentTypeENUM,
   NoteTextTypeENUM,
 } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -33,7 +32,7 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 export class HtmlNumberListComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -98,7 +97,7 @@ export class HtmlNumberListComponent
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
         this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.updateText.emit(this.content);
       });
   }
 

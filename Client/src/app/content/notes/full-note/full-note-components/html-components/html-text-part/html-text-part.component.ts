@@ -15,10 +15,8 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import {
   BaseText,
   HeadingTypeENUM,
-  NoteStyleTypeENUM,
   NoteTextTypeENUM,
 } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -44,7 +42,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -71,8 +69,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   destroy = new Subject<void>();
 
   typeUpload = TypeUploadFile;
-
-  styleType = NoteStyleTypeENUM;
 
   formats: string;
 
@@ -105,7 +101,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
         this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.updateText.emit(this.content);
       });
   }
 
@@ -127,21 +123,16 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     setTimeout(() => this.uploadFile.nativeElement.click());
   }
 
-  editContentStyle($event, type: NoteStyleTypeENUM) {
+  setBoldStyle($event) {
     $event.preventDefault();
-    if (type === this.styleType.Bold) {
-      this.updateText.emit({
-        contentId: this.content.id,
-        content: this.content.content,
-        isBold: !this.content.isBold,
-      });
-    } else {
-      this.updateText.emit({
-        contentId: this.content.id,
-        content: this.content.content,
-        isItalic: !this.content.isItalic,
-      });
-    }
+    this.content.isBold = !this.content.isBold;
+    this.updateText.emit(this.content);
+  }
+
+  setItalicStyle($event) {
+    $event.preventDefault();
+    this.content.isItalic = !this.content.isItalic;
+    this.updateText.emit(this.content);
   }
 
   preventClick = ($event) => {
