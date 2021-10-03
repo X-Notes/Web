@@ -40,7 +40,7 @@
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
-            (deleteThis)="deleteHTMLHandler($event)"
+            (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (transformTo)="transformToTypeText($event)"
             (transformToFile)="transformToFileType($event)"
@@ -55,7 +55,7 @@
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
-            (deleteThis)="deleteHTMLHandler($event)"
+            (deleteThis)="deleteRowHandler($event)"
             (updateText)="updateTextHandler($event, i === contents.length - 1)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
           ></app-html-number-list>
@@ -66,7 +66,7 @@
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
-            (deleteThis)="deleteHTMLHandler($event)"
+            (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event, i === contents.length - 1)"
           ></app-html-dot-list>
@@ -77,7 +77,7 @@
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
-            (deleteThis)="deleteHTMLHandler($event)"
+            (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event, i === contents.length - 1)"
           ></app-html-check-list>
@@ -87,7 +87,7 @@
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
-            (deleteThis)="deleteHTMLHandler($event)"
+            (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (updateText)="updateTextHandler($event, i === contents.length - 1)"
           ></app-html-headings>

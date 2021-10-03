@@ -67,8 +67,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   @Input()
   note: FullNote | NoteSnapshot;
 
-  newLine: Subject<void> = new Subject();
-
   contentType = ContentTypeENUM;
 
   textType = NoteTextTypeENUM;
@@ -97,12 +95,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.newLine
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(async () =>
-        this.contentEditorTextService.appendNewEmptyContentToEnd(this.note.id),
-      );
-
     this.nameChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
@@ -131,45 +123,40 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async enterHandler(value: EnterEvent) {
-    const index = await this.contentEditorTextService.insertNewContent(
-      this.note.id,
+  enterHandler(value: EnterEvent) {
+    const index = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.typeBreakLine,
       value.breakModel.nextText,
     );
-
-    setTimeout(() => {
-      this.textElements?.toArray()[index].setFocus();
-    }, 0);
+    setTimeout(() => this.textElements?.toArray()[index].setFocus());
+    this.postAction();
   }
 
-  async deleteHTMLHandler(id: string) {
-    const index = await this.contentEditorTextService.deleteContent(id, this.note.id);
+  deleteRowHandler(id: string) {
+    const index = this.contentEditorTextService.deleteContent(id);
     this.textElements?.toArray()[index].setFocusToEnd();
+    this.postAction();
   }
 
-  async concatThisWithPrev(id: string) {
-    const index = await this.contentEditorTextService.concatContentWithPrevContent(
-      id,
-      this.note.id,
-    );
+  concatThisWithPrev(id: string) {
+    const index = this.contentEditorTextService.concatContentWithPrevContent(id);
     setTimeout(() => {
       const prevItemHtml = this.textElements?.toArray()[index];
       prevItemHtml.setFocusToEnd();
     });
+    this.postAction();
   }
 
   getTextContent(index: number): BaseText {
     return this.contents[index] as BaseText;
   }
 
-  async transformToTypeText(value: TransformContent) {
-    const index = await this.contentEditorTextService.tranformTextContentTo(this.note.id, value);
-    setTimeout(() => {
-      this.textElements?.toArray()[index].setFocusToEnd();
-    }, 0);
+  transformToTypeText(value: TransformContent) {
+    const index = this.contentEditorTextService.tranformTextContentTo(value);
+    setTimeout(() => this.textElements?.toArray()[index].setFocusToEnd());
+    this.postAction();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -214,12 +201,16 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async updateTextHandler(content: BaseText, isLast: boolean) {
-    this.contentEditorContentsService.change();
+  updateTextHandler(content: BaseText, isLast: boolean) {
+    this.postAction();
   }
 
-  addNewElementToEnd() {
-    this.newLine.next();
+  postAction(): void {
+    this.contentEditorContentsService.change();
+    const native = this.textElements?.last?.getNative();
+    if (native?.textContent.length !== 0) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
   }
 
   placeHolderClick($event) {
@@ -228,10 +219,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   mouseEnter($event) {
-    const native = this.textElements?.last?.getNative();
-    if (native?.textContent.length !== 0) {
-      this.addNewElementToEnd();
-    }
     this.textElements?.last?.mouseEnter($event);
   }
 

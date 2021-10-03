@@ -65,7 +65,7 @@ export class ContentEditorContentsService {
     return this.contents.find((x) => x.id === contentId) as T;
   }
 
-  getContentWithTypeByIndex<T extends ContentModel>(index: number): T {
+  getContentByIndex<T extends ContentModel>(index: number): T {
     return this.contents[index] as T;
   }
 

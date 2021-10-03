@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
+import * as uuid from 'uuid';
+import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/content-model.model';
 import { LineBreakType } from '../../models/html-models';
 import { TransformContent } from '../../models/transform-content.model';
-import { ApiNoteContentService } from '../../services/api-note-content.service';
-import { ApiTextService } from '../../services/api-text.service';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
 @Injectable({
@@ -13,73 +12,53 @@ export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(
-    private apiNoteContent: ApiNoteContentService,
-    private apiText: ApiTextService,
-    private contentsService: ContentEditorContentsService,
-  ) {}
+  constructor(private contentsService: ContentEditorContentsService) {}
 
-  async deleteContent(contentId: string, noteId: string) {
-    const resp = await this.apiNoteContent.removeContent(noteId, contentId).toPromise();
-    if (resp.success) {
-      const index = this.contentsService.getIndexOrErrorById(contentId);
-      this.contentsService.removeById(contentId);
-      const indexPrevRow = index - 1;
-      return indexPrevRow;
-    }
-    return -1;
+  deleteContent(contentId: string) {
+    const index = this.contentsService.getIndexOrErrorById(contentId);
+    this.contentsService.removeById(contentId);
+    const indexPrevRow = index - 1;
+    return indexPrevRow;
   }
 
-  async concatContentWithPrevContent(contentId: string, noteId: string) {
-    const resp = await this.apiNoteContent.concatRowWithPrevRow(noteId, contentId).toPromise();
-    if (resp.success) {
-      const index = this.contentsService.setSafe(resp.data, contentId);
-      this.contentsService.removeById(contentId);
-      return index;
-    }
-    return -1;
+  concatContentWithPrevContent(contentId: string) {
+    const data = this.contentsService.getContentAndIndexById<BaseText>(contentId);
+    const prevIndex = data.index - 1;
+    const prevContent = this.contentsService.getContentByIndex<BaseText>(prevIndex);
+    prevContent.content += data.content.content;
+    this.contentsService.removeById(contentId);
+    return prevIndex;
   }
 
-  async insertNewContent(
-    noteId: string,
+  insertNewContent(
     contentId: string,
     nextRowType: NoteTextTypeENUM,
     breakLineType: LineBreakType,
     nextText: string,
   ) {
-    const resp = await this.apiNoteContent
-      .insertLine(noteId, contentId, nextRowType, breakLineType, nextText)
-      .toPromise();
-    if (resp.success) {
-      let index = this.contentsService.getIndexOrErrorById(contentId);
-      if (breakLineType === LineBreakType.NEXT) {
-        index += 1;
-      }
-      this.contentsService.insertInto(resp.data, index);
-      return index;
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (breakLineType === LineBreakType.NEXT) {
+      index += 1;
     }
-    return -1;
+    const nContent = new BaseText(ContentTypeENUM.Text, uuid.v4(), new Date());
+    nContent.noteTextTypeId = nextRowType;
+    nContent.content = nextText;
+    this.contentsService.insertInto(nContent, index);
+    return index;
   }
 
-  async tranformTextContentTo(noteId: string, value: TransformContent) {
-    const resp = await this.apiText
-      .updateTextType(noteId, value.id, value.textType, value.headingType)
-      .toPromise();
-    if (resp.success) {
-      const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
-      item.content.noteTextTypeId = value.textType;
-      if (value.headingType) {
-        item.content.headingTypeId = value.headingType;
-      }
-      return item.index;
+  tranformTextContentTo(value: TransformContent) {
+    const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
+    item.content.noteTextTypeId = value.textType;
+    if (value.headingType) {
+      item.content.headingTypeId = value.headingType;
     }
-    return -1;
+    return item.index;
   }
 
-  async appendNewEmptyContentToEnd(noteId: string) {
-    const resp = await this.apiNoteContent.newLine(noteId).toPromise();
-    if (resp.success) {
-      this.contentsService.insertToEnd(resp.data);
-    }
+  appendNewEmptyContentToEnd() {
+    const nContent = new BaseText(ContentTypeENUM.Text, uuid.v4(), new Date());
+    nContent.noteTextTypeId = NoteTextTypeENUM.Default;
+    this.contentsService.insertToEnd(nContent);
   }
 }
