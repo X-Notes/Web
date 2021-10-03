@@ -129,7 +129,6 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   editContentStyle($event, type: NoteStyleTypeENUM) {
     $event.preventDefault();
-    console.log(type, this.content);
     if (type === this.styleType.Bold) {
       this.updateText.emit({
         contentId: this.content.id,

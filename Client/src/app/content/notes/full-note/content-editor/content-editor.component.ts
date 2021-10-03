@@ -55,11 +55,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
   @Input() set contents(contents: ContentModel[]) {
-    this.contentEditorContentsService.contents = contents;
+    this.contentEditorContentsService.initContent(contents);
   }
 
   get contents() {
-    return this.contentEditorContentsService.contents;
+    return this.contentEditorContentsService.getContents;
   }
 
   @Input()

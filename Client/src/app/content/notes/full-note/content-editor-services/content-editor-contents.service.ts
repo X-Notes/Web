@@ -12,12 +12,26 @@ export interface ContentAndIndex<T extends ContentModel> {
   providedIn: 'root',
 })
 export class ContentEditorContentsService {
-  contents: ContentModel[]; // TODO MAKE DICTIONARY
+
+  private contentsSync: Record<string, ContentModel> = {};
+
+  private contents: ContentModel[]; // TODO MAKE DICTIONARY
 
   constructor(
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
   ) {}
+
+  initContent(contents: ContentModel[]) {
+    this.contents = contents;
+    for (const item of contents) {
+      this.contentsSync[item.id] = item;
+    }
+  }
+
+  get getContents() {
+    return this.contents;
+  }
 
   // GET INDDEX
   getIndexOrErrorById(contentId: string) {
