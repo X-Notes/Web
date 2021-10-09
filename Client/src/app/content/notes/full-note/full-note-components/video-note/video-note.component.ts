@@ -5,7 +5,7 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import {
   ClickableContentService,
   ClickableSelectableEntities,
-} from '../../services/clickable-content.service';
+} from '../../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-video-note',

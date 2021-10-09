@@ -23,7 +23,7 @@ import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
-import { MenuSelectionService } from './services/menu-selection.service';
+import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 

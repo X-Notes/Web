@@ -20,7 +20,7 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import {
   ClickableContentService,
   ClickableSelectableEntities,
-} from '../../services/clickable-content.service';
+} from '../../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-audio-note',

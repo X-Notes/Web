@@ -9,7 +9,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ScrollEvent } from 'muuri';
-import { SelectionService } from '../services/selection.service';
+import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
   selector: '[appSelection]',

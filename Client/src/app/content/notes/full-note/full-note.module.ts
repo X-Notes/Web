@@ -28,12 +28,12 @@ import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
 import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
-import { MenuSelectionService } from './services/menu-selection.service';
-import { SelectionService } from './services/selection.service';
+import { MenuSelectionService } from './content-editor-services/menu-selection.service';
+import { SelectionService } from './content-editor-services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
-import { ClickableContentService } from './services/clickable-content.service';
-import { ContentEditorListenersService } from './services/content-editor-listeners.service';
+import { ClickableContentService } from './content-editor-services/clickable-content.service';
+import { ContentEditorListenersService } from './content-editor-services/content-editor-listeners.service';
 
 @NgModule({
   declarations: [

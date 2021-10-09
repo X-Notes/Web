@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../services/menu-selection.service';
+import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
 

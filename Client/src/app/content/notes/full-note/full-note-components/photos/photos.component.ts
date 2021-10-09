@@ -16,12 +16,12 @@ import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
-import { SelectionService } from '../../services/selection.service';
+import { SelectionService } from '../../content-editor-services/selection.service';
 import { ApiAlbumService } from '../../services/api-album.service';
 import {
   ClickableContentService,
   ClickableSelectableEntities,
-} from '../../services/clickable-content.service';
+} from '../../content-editor-services/clickable-content.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',

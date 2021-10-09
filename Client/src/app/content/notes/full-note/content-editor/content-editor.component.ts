@@ -30,17 +30,17 @@ import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { ContentEditableService } from '../services/content-editable.service';
+import { ContentEditableService } from '../content-editor-services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
-import { MenuSelectionService } from '../services/menu-selection.service';
-import { SelectionService } from '../services/selection.service';
+import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
+import { SelectionService } from '../content-editor-services/selection.service';
 import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
-import { ContentEditorListenersService } from '../services/content-editor-listeners.service';
+import { ContentEditorListenersService } from '../content-editor-services/content-editor-listeners.service';
 
 @Component({
   selector: 'app-content-editor',
