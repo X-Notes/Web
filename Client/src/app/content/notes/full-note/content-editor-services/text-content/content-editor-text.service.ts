@@ -5,9 +5,7 @@ import { LineBreakType } from '../../models/html-models';
 import { TransformContent } from '../../models/transform-content.model';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components

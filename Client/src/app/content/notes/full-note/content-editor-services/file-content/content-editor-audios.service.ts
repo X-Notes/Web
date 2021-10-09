@@ -15,9 +15,7 @@ import { ApiPlaylistService } from '../../services/api-playlist.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
   constructor(
     store: Store,

@@ -34,6 +34,13 @@ import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorListenersService } from './content-editor-services/content-editor-listeners.service';
+import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
+import { NavigationKeysService } from './content-editor-services/navigation-keys.service';
+import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
+import { ContentEditorDocumentsCollectionService } from './content-editor-services/file-content/content-editor-documents.service';
+import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
+import { ContentEditorVideosCollectionService } from './content-editor-services/file-content/content-editor-videos.service';
+import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
 
 @NgModule({
   declarations: [
@@ -76,6 +83,13 @@ import { ContentEditorListenersService } from './content-editor-services/content
     FullNoteSliderService,
     ClickableContentService,
     ContentEditorListenersService,
+    ContentEditorContentsService,
+    NavigationKeysService,
+    ContentEditorAudiosCollectionService,
+    ContentEditorDocumentsCollectionService,
+    ContentEditorPhotosCollectionService,
+    ContentEditorVideosCollectionService,
+    ContentEditorTextService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

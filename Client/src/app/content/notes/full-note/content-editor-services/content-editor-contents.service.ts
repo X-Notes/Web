@@ -8,9 +8,7 @@ export interface ContentAndIndex<T extends ContentModel> {
   content: T;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorContentsService {
 
   private contentsSync: Record<string, ContentModel> = {};

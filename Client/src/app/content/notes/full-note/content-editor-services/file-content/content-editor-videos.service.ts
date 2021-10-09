@@ -14,9 +14,7 @@ import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
   constructor(
     store: Store,

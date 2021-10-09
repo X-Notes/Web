@@ -15,9 +15,7 @@ import { ApiAlbumService } from '../../services/api-album.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
   constructor(
     store: Store,
