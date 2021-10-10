@@ -14,7 +14,7 @@ export class MenuSelectionService {
   public left = 0;
 
   get menuActive() {
-    return this.currentTextItem !== null;
+    return this.currentTextItem !== null && this.currentTextItem !== undefined;
   }
 
   get getTop() {
