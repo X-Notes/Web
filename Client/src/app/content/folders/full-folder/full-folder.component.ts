@@ -23,6 +23,7 @@ import { FolderTypeENUM } from 'src/app/shared/enums/folder-types.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { MatMenu } from '@angular/material/menu';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { LoadFolders, LoadFullFolder } from '../state/folders-actions';
 import { FolderStore } from '../state/folders-state';
 import { FullFolder } from '../models/full-folder.model';
@@ -33,7 +34,6 @@ import { ApiFullFolderService } from './services/api-full-folder.service';
 import { MenuButtonsService } from '../../navigation/menu-buttons.service';
 import { ApiServiceNotes } from '../../notes/api-notes.service';
 import { SelectIdNote } from '../../notes/state/notes-actions';
-import { UpdaterEntetiesService } from 'src/app/core/entities-updater.service';
 
 @Component({
   selector: 'app-full-folder',
@@ -84,8 +84,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiFullFolder: ApiFullFolderService,
     public menuButtonService: MenuButtonsService,
     public noteApiService: ApiServiceNotes,
-    private updateNoteService: UpdaterEntetiesService,
-    private router: Router
+    private updateNoteService: UpdaterEntitiesService,
+    private router: Router,
   ) {}
 
   ngAfterViewInit(): void {
@@ -116,7 +116,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
             await this.loadFolder();
 
             if (this.folder) {
-              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id).toPromise();
+              const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
+              const notes = await this.apiFullFolder.getFolderNotes(this.folder.id, pr).toPromise();
               if (notes && notes.length) {
                 this.isHaveNotes = true;
               }
@@ -131,7 +132,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
               this.loadSideBar();
             }
             const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-            const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
+            const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
             const actions = types.map((t: FolderTypeENUM) => new LoadFolders(t, pr));
             this.store.dispatch(actions);
           }
@@ -204,7 +205,8 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe(async (resp) => {
             if (resp) {
               const ids = resp.map((x) => x.id);
-              ids.length ? this.isHaveNotes = true : this.isHaveNotes = false;
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+              ids.length ? (this.isHaveNotes = true) : (this.isHaveNotes = false);
               await this.apiFullFolder.updateNotesInFolder(ids, this.folder.id).toPromise();
               await this.ffnService.updateNotesLayout(this.folder.id);
             }
@@ -222,7 +224,7 @@ export class FullFolderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadSideBar() {
     const pr = this.store.selectSnapshot(UserStore.getPersonalizationSettings);
-    const types = Object.values(FolderTypeENUM).filter((z) => typeof z == 'number');
+    const types = Object.values(FolderTypeENUM).filter((z) => typeof z === 'number');
     const actions = types.map((action: FolderTypeENUM) => new LoadFolders(action, pr));
     await this.store.dispatch(actions).toPromise();
     await this.setSideBarNotes(this.folder.folderTypeId);

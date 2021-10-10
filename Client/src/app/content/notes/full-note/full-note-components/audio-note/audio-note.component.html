@@ -49,15 +49,20 @@
       </button>
     </mat-menu>
   </div>
-  <app-audio
-    *ngFor="let item of content.audios;"
-    [audio]="item"
-    [isReadOnlyMode]="isReadOnlyMode"
-    (playEvent)="play($event)"
-    (pauseEvent)="pause()"
-    (deleteAudio)="deleteAudioHandler($event)"
-    (exportAudio)="exportAudio($event)"
-  ></app-audio>
+  <ng-container *ngIf="!isEmpty">
+    <app-audio
+      *ngFor="let item of content.audios;"
+      [audio]="item"
+      [isReadOnlyMode]="isReadOnlyMode"
+      (playEvent)="play($event)"
+      (pauseEvent)="pause()"
+      (deleteAudio)="deleteAudioHandler($event)"
+      (exportAudio)="exportAudio($event)"
+    ></app-audio>
+  </ng-container>
+  <div *ngIf="isEmpty">
+    <p>PLAYLIST IS EMPTY TODO</p>
+  </div>
 </div>
 <input
   #uploadAudiosRef

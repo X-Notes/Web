@@ -447,7 +447,6 @@ export class ShareComponent implements OnInit, OnDestroy {
   }
 
   changed(text: string) {
-    console.log(text);
     this.searchStrChanged.next(text);
   }
 

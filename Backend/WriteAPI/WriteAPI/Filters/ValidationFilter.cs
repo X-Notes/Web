@@ -13,6 +13,7 @@ namespace WriteAPI.Filters
                 context.Result = new BadRequestObjectResult(context.ModelState);
             }
         }
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }

@@ -15,11 +15,12 @@ import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiServiceNotes } from '../../../api-notes.service';
 import { ExportService } from '../../../export.service';
-import { Photo, Album } from '../../../models/content-model.model';
+import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemovePhotoFromAlbum } from '../../../models/remove-photo-from-album.model';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../services/selection.service';
+import { ApiAlbumService } from '../../services/api-album.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -43,7 +44,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   uploadEvent = new EventEmitter<UploadFilesToEntity>();
 
   @Input()
-  content: Album;
+  content: PhotosCollection;
 
   @Input()
   isReadOnlyMode = false;
@@ -70,7 +71,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
-    private api: ApiServiceNotes,
+    private api: ApiAlbumService,
     private exportService: ExportService,
   ) {}
 
@@ -92,12 +93,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   };
 
   async uploadImages(event) {
-    const data = new FormData();
-    const { files } = event.target;
-    for (const file of files) {
-      data.append('photos', file);
+    const files = event.target.files as File[];
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
-    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   changeWidth(diffrence: number) {
@@ -147,7 +146,6 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
     this.changeHeightSubject.next(this.content.height);
     this.changeWidthSubject.next(this.content.width);
-
     this.initPhotos();
   }
 
@@ -209,6 +207,13 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return this.countLastItems ? this.mainBlocks.length + 1 : this.mainBlocks.length;
   }
 
+  get isEmpty(): boolean {
+    if (!this.content.photos || this.content.photos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   removePhotoHandler(photoId: string) {
     this.deletePhotoFromAlbum.emit({ photoId, contentId: this.content.id });
   }
@@ -233,15 +238,11 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     }
   };
 
-  setFocus = ($event?: any) => {
-    console.log($event);
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-    console.log(content);
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -249,11 +250,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-    console.log($event);
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-    console.log($event);
-  };
+  mouseOut = ($event: any) => {};
 }

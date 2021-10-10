@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PreviewNote } from 'src/app/content/notes/models/preview-note.model';
 import { SmallNote } from 'src/app/content/notes/models/small-note.model';
-import { OperationResult } from 'src/app/content/notes/models/operation-result.model';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
@@ -14,9 +14,15 @@ export class ApiFullFolderService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getFolderNotes(folderId: string) {
+  getFolderNotes(folderId: string, settings: PersonalizationSetting) {
+    let params = new HttpParams();
+    if (settings) {
+      Object.keys(settings).forEach((key) => {
+        params = params.append(key, settings[key]);
+      });
+    }
     return this.httpClient
-      .get<SmallNote[]>(`${this.controllerApi}/${folderId}`)
+      .get<SmallNote[]>(`${this.controllerApi}/${folderId}`, { params })
       .pipe(map((z) => TransformNoteUtil.transformNotes(z)));
   }
 

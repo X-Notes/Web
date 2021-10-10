@@ -22,17 +22,14 @@ export class CheckListService extends HtmlService {
   }
 
   onBlur = (e: any) => {
-    console.log(e);
     // BLUR HANDLER
   };
 
   pasteCommandHandler = (e: any) => {
-    console.log(e);
     throw new Error('Method not implemented.');
   };
 
   onSelectStart = (e: any) => {
-    console.log(e);
     // SELECTIION
   };
 
@@ -74,6 +71,5 @@ export class CheckListService extends HtmlService {
   }
 
   backUp = (e: any) => {
-    console.log(e);
   };
 }

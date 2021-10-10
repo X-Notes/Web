@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { State, Selector, StateContext, Action } from '@ngxs/store';
 import { Injectable } from '@angular/core';
 import { patch, updateItem } from '@ngxs/store/operators';
@@ -43,6 +44,7 @@ import {
   AddToDomNotes,
   MakeSharedNotes,
   LoadSnapshotNote,
+  ResetNotes,
 } from './notes-actions';
 import { UpdateColor } from './update-color.model';
 import { SmallNote } from '../models/small-note.model';
@@ -55,6 +57,9 @@ import { InvitedUsersToNoteOrFolder } from '../models/invited-users-to-note.mode
 import { OnlineUsersNote } from '../models/online-users-note.model';
 import { NoteSnapshotState } from '../full-note/models/history/note-snapshot-state.model';
 import { ApiNoteHistoryService } from '../full-note/services/api-note-history.service';
+import { ApiTextService } from '../full-note/services/api-text.service';
+import { LongTermOperationsHandlerService } from '../../long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermsIcons } from '../../long-term-operations-handler/models/long-terms.icons';
 
 interface FullNoteState {
   note: FullNote;
@@ -100,8 +105,10 @@ interface NoteState {
 export class NoteStore {
   constructor(
     private api: ApiServiceNotes,
+    private apiText: ApiTextService,
     private orderService: OrderService,
     private historyApi: ApiNoteHistoryService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
   ) {}
 
   static getNotesByTypeStatic(state: NoteState, type: NoteTypeENUM) {
@@ -117,7 +124,6 @@ export class NoteStore {
   @Selector()
   static getNote(state: NoteState) {
     return (id: string, type: NoteTypeENUM) => {
-      console.log(id, type);
       const note = this.getNotesByTypeStatic(state, type).notes.find((x) => x.id === id);
       return note;
     };
@@ -357,7 +363,7 @@ export class NoteStore {
   }
 
   @Action(TransformTypeNotes)
-  tranformFromTo(
+  transformFromTo(
     { getState, patchState, dispatch }: StateContext<NoteState>,
     { typeTo, selectedIds, isAddToDom, refTypeId }: TransformTypeNotes,
   ) {
@@ -472,10 +478,19 @@ export class NoteStore {
 
   @Action(CopyNotes)
   async copyNotes(
-    { getState, dispatch, patchState }: StateContext<NoteState>,
+    { getState, dispatch }: StateContext<NoteState>,
     { typeNote, selectedIds, pr }: CopyNotes,
   ) {
-    const newIds = await this.api.copyNotes(selectedIds).toPromise();
+    const operation = this.longTermOperationsHandler.addNewCopingOperation('uploader.copyNotes');
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Export,
+      'photo changing',
+      true,
+      true,
+    );
+    const resp = await this.api.copyNotes(selectedIds, mini, operation).toPromise();
+    const newIds = resp.eventBody;
     const newNotes = await this.api.getNotesMany(newIds, pr).toPromise();
     const privateNotes = this.getNotesByType(getState, NoteTypeENUM.Private);
     dispatch(
@@ -644,7 +659,7 @@ export class NoteStore {
     { getState, dispatch }: StateContext<NoteState>,
     { order, typeNote }: PositionNote,
   ) {
-    let notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
+    const notes = this.getNotesByType(getState, typeNote).map((x) => ({ ...x }));
     const changedNote = notes.find((x) => x.id === order.entityId);
     const flag = notes.indexOf(changedNote);
     if (flag + 1 !== order.position) {
@@ -744,7 +759,7 @@ export class NoteStore {
     const { note } = getState().fullNoteState;
     const newNote: FullNote = { ...note, title: str };
     patchState({ fullNoteState: { ...getState().fullNoteState, note: newNote } });
-    await this.api.updateTitle(str, note.id).toPromise();
+    await this.apiText.updateTitle(str, note.id).toPromise();
     const noteUpdate = newNote as SmallNote;
     dispatch(new UpdateOneNote(noteUpdate, note.noteTypeId));
   }
@@ -819,6 +834,13 @@ export class NoteStore {
         notes: [...getState().notes, notesAPI],
       });
     }
+  }
+
+  @Action(ResetNotes)
+  async resetNotes({ patchState }: StateContext<NoteState>) {
+    patchState({
+      notes: [],
+    });
   }
 
   // NOTES SELECTION

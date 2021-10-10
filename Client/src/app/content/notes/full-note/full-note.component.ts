@@ -25,7 +25,7 @@ import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
 import { MenuSelectionService } from './services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
-import { UpdaterEntetiesService } from '../../../core/entities-updater.service';
+import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 
 @Component({
   selector: 'app-full-note',
@@ -70,7 +70,7 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     public menuSelectionService: MenuSelectionService,
     private api: ApiServiceNotes,
     private signalRService: SignalRService,
-    private updateNoteService: UpdaterEntetiesService,
+    private updateNoteService: UpdaterEntitiesService,
     public sliderService: FullNoteSliderService,
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
@@ -131,14 +131,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   panEnd(e) {
     this.sliderService.panEnd(e, this.wrap);
   }
-
-  updateDoc = (str: string) => {
-    // TODO
-    // const note = { ...this.note };
-    // note.title = str;
-    // this.store.dispatch(new UpdateFullNote(note));
-    console.log(str);
-  };
 
   setSideBarNotes(noteType: NoteTypeENUM) {
     let notes: SmallNote[];

@@ -10,7 +10,7 @@
     oncontextmenu="return false"
     preload="metadata"
     controlslist="nodownload"
-    [src]="content.videoPath | getVideo: content.authorId"
+    [src]="getFirst?.videoPath | getVideo: getFirst?.authorId"
   ></video>
   <div class="controls-blur"></div>
   <div class="controls">
@@ -122,3 +122,10 @@
     </div>
   </div>
 </div>
+
+<!-- <div *ngIf="!isEmpty; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock
+  ><video controls="controls">
+    <source [src]="getFirst?.videoPath | getVideo: getFirst?.authorId" /></video
+></ng-template>
+<ng-template #elseBlock><div>NO ANY VIDEO IN ALBUM TODO</div></ng-template> -->

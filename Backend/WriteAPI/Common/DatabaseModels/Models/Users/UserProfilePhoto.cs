@@ -4,6 +4,7 @@ using Common.DatabaseModels.Models.Files;
 
 namespace Common.DatabaseModels.Models.Users
 {
+    [Table(nameof(UserProfilePhoto), Schema = SchemeConfig.User)]
     public class UserProfilePhoto : BaseEntity<Guid>
     {
         [NotMapped]

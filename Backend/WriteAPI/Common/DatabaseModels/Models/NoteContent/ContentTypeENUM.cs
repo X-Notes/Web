@@ -5,9 +5,9 @@ namespace Common.DatabaseModels.Models.NoteContent
     public enum ContentTypeENUM
     {
         Text = 1,
-        Album = 2,
-        Document = 3,
-        PlaylistAudios = 4,
-        Video = 5,
+        PhotosCollection = 2,
+        DocumentsCollection = 3,
+        AudiosCollection = 4,
+        VideosCollection = 5,
     }
 }

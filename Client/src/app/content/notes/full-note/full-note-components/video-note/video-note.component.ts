@@ -1,6 +1,15 @@
-import { AfterViewInit, OnDestroy } from '@angular/core';
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { VideoModel } from '../../../models/content-model.model';
+import {
+  AfterViewInit,
+  OnDestroy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
+
+import { ExportService } from '../../../export.service';
+import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 
 @Component({
@@ -12,9 +21,9 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   @ViewChild('videoplayer') videoElement;
 
   @ViewChild('videowrapper') videoWrapper;
-  
+
   @Input()
-  content: VideoModel;
+  content: VideosCollection;
 
   @Input()
   isReadOnlyMode = false;
@@ -28,20 +37,23 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   isFullscreen = false;
 
   isWideScreen = false;
-  
+
   volumeHelper: number;
+
+  constructor(private exportService: ExportService) {}
 
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;
-    this.video = <HTMLVideoElement>nativeElement;
+    this.video = nativeElement as HTMLVideoElement;
   }
 
-  async ngOnDestroy(): Promise<void> {
-    if (document['pictureInPictureElement']) {
+  ngOnDestroy = async () => {
+    // @ts-ignore
+    if (document.pictureInPictureElement) {
       // @ts-ignore
-      await document.exitPictureInPicture()
-    } 
-  }
+      await document.exitPictureInPicture();
+    }
+  };
 
   togglePlay() {
     this.isPlaying = this.video.paused;
@@ -63,10 +75,12 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   }
 
   async togglePictureInPicture() {
-    if (document['pictureInPictureEnabled']) {
-      if (document['pictureInPictureElement']) {
+    // @ts-ignore
+    if (document.pictureInPictureEnabled) {
+      // @ts-ignore
+      if (document.pictureInPictureElement) {
         // @ts-ignore
-        await document.exitPictureInPicture()
+        await document.exitPictureInPicture();
       } else {
         // @ts-ignore
         await this.video?.requestPictureInPicture();
@@ -75,7 +89,11 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   }
 
   onFullscreenChange() {
-    document.fullscreenElement ? this.isFullscreen = true : this.isFullscreen = false;
+    if (document.fullscreenElement) {
+      this.isFullscreen = true;
+    } else {
+      this.isFullscreen = false;
+    }
   }
 
   onSliderChangeEnd(evt) {
@@ -102,15 +120,13 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
     }
   }
 
-  setFocus = ($event?: any) => {
-    console.log($event);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-    console.log(content);
-  };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -118,11 +134,31 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-    console.log($event);
-  };
+  async exportVideos(videos: VideosCollection) {
+    await this.exportService.exportVideos(videos);
+  }
 
-  mouseOut = ($event: any) => {
-    console.log($event);
-  };
+  async exportVideo(video: VideoModel) {
+    await this.exportService.exportVideo(video);
+  }
+
+  get isEmpty(): boolean {
+    if (!this.content.videos || this.content.videos.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  get getFirst() {
+    if (this.content.videos && this.content.videos.length > 0) {
+      return this.content.videos[0];
+    }
+    return null;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mouseEnter = ($event: any) => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  mouseOut = ($event: any) => {};
 }

@@ -1,4 +1,4 @@
 export interface UploadFileToEntity {
-  id: string;
-  formData: FormData;
+  contentId: string;
+  files: File[];
 }

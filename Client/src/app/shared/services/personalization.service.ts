@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
+import { trigger, state, style, transition, animate, keyframes, query } from '@angular/animations';
 import { Subject, Observable, BehaviorSubject, combineLatest, fromEvent } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
@@ -114,6 +114,18 @@ export const shake = trigger('shake', [
   ),
 ]);
 
+export const uploader = trigger('uploader', [
+  transition(':leave', [
+    query('.message-header, .operations-container', [style({ opacity: 0 })]),
+    animate('0.2s ease-out', style({ width: 0 })),
+  ]),
+  transition(':enter', [
+    query('.message-header, .operations-container', [style({ opacity: 0 })]),
+    style({ width: 0 }),
+    animate('0.1s ease-out', style({ width: '*' })),
+  ]),
+]);
+
 @Injectable({
   providedIn: 'root',
 })
@@ -158,6 +170,8 @@ export class PersonalizationService {
   windowWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(window.innerWidth);
 
   icon = Icons;
+
+  isSnackBarActive$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     public lockEncryptService: LockEncryptService,

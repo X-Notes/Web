@@ -1,20 +1,18 @@
 ﻿using System;
-using Common.DatabaseModels.Models.NoteContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class VideoNoteDTO : BaseContentNoteDTO
+    public class VideoNoteDTO
     {
-        public string Name { set; get; }
-
         public Guid FileId { set; get; }
+
+        public string Name { set; get; }
 
         public string VideoPath { set; get; }
 
         public Guid AuthorId { set; get; }
 
-        public VideoNoteDTO(string name, Guid fileId, string videoPath, Guid id, DateTimeOffset updatedAt, Guid userId)
-        : base(id, ContentTypeENUM.Video, updatedAt)
+        public VideoNoteDTO(string name, Guid fileId, string videoPath, Guid userId)
         {
             FileId = fileId;
             Name = name;

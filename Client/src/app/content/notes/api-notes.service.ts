@@ -1,34 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { map } from 'rxjs/operators';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import { NoteTypeENUM } from 'src/app/shared/enums/note-types.enum';
 import { Observable } from 'rxjs';
 import { RefTypeENUM } from 'src/app/shared/enums/ref-type.enum';
 import { PersonalizationSetting } from 'src/app/core/models/personalization-setting.model';
 import { TransformNoteUtil } from 'src/app/shared/services/transform-note.util';
+import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SmallNote } from './models/small-note.model';
 import { RequestFullNote } from './models/request-full-note.model';
 import { Notes } from './state/notes.model';
 import { InvitedUsersToNoteOrFolder } from './models/invited-users-to-note.model';
-import {
-  Album,
-  AudioModel,
-  BaseText,
-  ContentModel,
-  DocumentModel,
-  HeadingTypeENUM,
-  NoteTextTypeENUM,
-  Photo,
-  VideoModel,
-} from './models/content-model.model';
-import { OperationResult } from './models/operation-result.model';
+import { ContentModel } from './models/content-model.model';
 import { OnlineUsersNote } from './models/online-users-note.model';
 import { BottomNoteContent } from './models/bottom-note-content.model';
+import { LongTermOperationsHandlerService } from '../long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermOperation, OperationDetailMini } from '../long-term-operations-handler/models/long-term-operation';
 
 @Injectable()
 export class ApiServiceNotes {
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    protected longTermOperationsHandler: LongTermOperationsHandlerService,
+    protected snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
+  ) {}
 
   getNotes(type: NoteTypeENUM, settings: PersonalizationSetting) {
     let params = new HttpParams();
@@ -104,11 +100,20 @@ export class ApiServiceNotes {
     return this.httpClient.patch(`${environment.writeAPI}/api/note/ref/private`, obj);
   }
 
-  copyNotes(ids: string[]) {
+  copyNotes(ids: string[], mini: OperationDetailMini, operation: LongTermOperation) {
     const obj = {
       ids,
     };
-    return this.httpClient.patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj);
+    return this.httpClient
+      .patch<string[]>(`${environment.writeAPI}/api/note/copy`, obj, {
+        reportProgress: true,
+        observe: 'events',
+      })
+      .pipe(
+        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
+        takeUntil(mini.obs),
+        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
+      );
   }
 
   deleteNotes(ids: string[]) {
@@ -150,7 +155,7 @@ export class ApiServiceNotes {
 
   getOnlineUsersOnNote(id: string) {
     return this.httpClient.get<OnlineUsersNote[]>(
-      `${environment.writeAPI}/api/fullnote/users/${id}`,
+      `${environment.writeAPI}/api/note/inner/users/${id}`,
     );
   }
 
@@ -196,264 +201,12 @@ export class ApiServiceNotes {
     return this.httpClient.post(`${environment.writeAPI}/api/share/notes/user/permission`, obj);
   }
 
-  // FULL NOTE
-
-  updateTitle(title: string, id: string) {
-    const obj = {
-      title,
-      id,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/title`,
-      obj,
-    );
-  }
-
-  newLine(noteId: string) {
-    const obj = {
-      noteId,
-    };
-    return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/new`,
-      obj,
-    );
-  }
-
-  insertLine(
-    noteId: string,
-    contentId: string,
-    noteTextType: NoteTextTypeENUM,
-    lineBreakType: string,
-    nextText?: string,
-  ) {
-    const obj = {
-      noteId,
-      contentId,
-      lineBreakType,
-      nextText,
-      noteTextType,
-    };
-    return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/insert`,
-      obj,
-    );
-  }
-
-  removeContent(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/content/remove`,
-      obj,
-    );
-  }
-
-  updateContentText(
-    noteId: string,
-    contentId: string,
-    content: string,
-    checked: boolean,
-    isBold: boolean,
-    isItalic: boolean,
-  ) {
-    const obj = {
-      contentId,
-      content,
-      noteId,
-      checked,
-      isBold,
-      isItalic,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/text`,
-      obj,
-    );
-  }
-
-  concatWithPrevious(noteId: string, contentId: string) {
-    const obj = {
-      contentId,
-      noteId,
-    };
-    return this.httpClient.post<OperationResult<BaseText>>(
-      `${environment.writeAPI}/api/fullnote/content/concat`,
-      obj,
-    );
-  }
-
-  updateContentType(
-    noteId: string,
-    contentId: string,
-    type: NoteTextTypeENUM,
-    headingType: HeadingTypeENUM,
-  ) {
-    const obj = {
-      contentId,
-      type,
-      noteId,
-      headingType,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/text/type`,
-      obj,
-    );
-  }
+  // CONTENTS
 
   getContents(noteId: string): Observable<ContentModel[]> {
     return this.httpClient
-      .get<ContentModel[]>(`${environment.writeAPI}/api/fullnote/contents/${noteId}`)
+      .get<ContentModel[]>(`${environment.writeAPI}/api/note/inner/contents/${noteId}`)
       .pipe(map((x) => TransformNoteUtil.transformContent(x)));
-  }
-
-  insertAlbumToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient
-      .post<OperationResult<Album>>(
-        `${environment.writeAPI}/api/fullnote/album/${id}/${contentId}`,
-        data,
-      )
-      .pipe(
-        map((x) => {
-          // eslint-disable-next-line no-param-reassign
-          x.data = new Album(x.data);
-          return x;
-        }),
-      );
-  }
-
-  removeAlbum(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/remove`,
-      obj,
-    );
-  }
-
-  uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<Photo[]>>(
-      `${environment.writeAPI}/api/fullnote/album/upload/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
-    return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/photo/${noteId}/${contentId}/${photoId}`,
-    );
-  }
-
-  updateCountInRow(noteId: string, contentId: string, count: number) {
-    const obj = {
-      noteId,
-      contentId,
-      count,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/row/count`,
-      obj,
-    );
-  }
-
-  updateAlbumSize(noteId: string, contentId: string, width: string, height: string) {
-    const obj = {
-      noteId,
-      contentId,
-      width,
-      height,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/album/size`,
-      obj,
-    );
-  }
-
-  // AUDIOS
-
-  insertAudiosToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<AudioModel>>(
-      `${environment.writeAPI}/api/fullnote/audios/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  removePlaylist(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/remove`,
-      obj,
-    );
-  }
-
-  removeAudioFromPlaylist(noteId: string, contentId: string, audioId: string) {
-    return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/${noteId}/${contentId}/${audioId}`,
-    );
-  }
-
-  changePlaylistName(noteId: string, contentId: string, name: string) {
-    const obj = {
-      noteId,
-      contentId,
-      name,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/audios/name`,
-      obj,
-    );
-  }
-
-  uploadAudiosToPlaylist(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<AudioModel[]>>(
-      `${environment.writeAPI}/api/fullnote/audios/upload/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  // VIDEOS
-
-  insertVideosToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<VideoModel>>(
-      `${environment.writeAPI}/api/fullnote/videos/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  removeVideoFromNote(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/videos/remove`,
-      obj,
-    );
-  }
-
-  // FILES
-
-  insertFilesToNote(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<DocumentModel>>(
-      `${environment.writeAPI}/api/fullnote/files/${id}/${contentId}`,
-      data,
-    );
-  }
-
-  removeFileFromNote(noteId: string, contentId: string) {
-    const obj = {
-      noteId,
-      contentId,
-    };
-    return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/fullnote/files/remove`,
-      obj,
-    );
   }
 
   // LINKS

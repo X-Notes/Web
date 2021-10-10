@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
-using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO.Search;
 using Domain.Queries.Search;
 using MediatR;
@@ -48,7 +49,7 @@ namespace BI.Services.Search
                     SearchHelper.IsMatchContent(x.Title, request.SearchString)
                     || x.Contents.OfType<TextNote>().Any(x => SearchHelper.IsMatchContent(x.Content, request.SearchString))
                     || x.LabelsNotes.Select(labelNote => labelNote.Label).Any(label => label.Name.Contains(request.SearchString))
-                    || x.Contents.OfType<AlbumNote>()
+                    || x.Contents.OfType<PhotosCollectionNote>()
                                 .Any(x => x.Photos.Any(photo => SearchHelper.IsMatchPhoto(photo, request.SearchString)))
                     ).ToList();
 

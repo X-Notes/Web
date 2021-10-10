@@ -28,37 +28,7 @@ export class BaseText extends ContentModel {
   number?: number;
 }
 
-export class Album extends ContentModel {
-  photos: Photo[];
-
-  height: string;
-
-  width: string;
-
-  countInRow: number;
-
-  constructor(album: Partial<Album>) {
-    super(album.typeId, album.id, album.updatedAt);
-    this.countInRow = album.countInRow;
-    this.height = album.height;
-    this.id = album.id;
-    this.photos = album.photos.map(
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      (z) =>
-        new Photo(
-          z.fileId,
-          z.photoPathSmall,
-          z.photoPathMedium,
-          z.photoPathBig,
-          z.loaded,
-          z.name,
-          z.authorId,
-        ),
-    );
-  }
-}
-
-export class PlaylistModel extends ContentModel {
+export class AudiosCollection extends ContentModel {
   name: string;
 
   audios: AudioModel[];
@@ -74,7 +44,14 @@ export class AudioModel {
   authorId: string;
 }
 
-export class VideoModel extends ContentModel {
+
+export class VideosCollection extends ContentModel {
+  name: string;
+
+  videos: VideoModel[];
+}
+
+export class VideoModel {
   name: string;
 
   videoPath: string;
@@ -84,7 +61,13 @@ export class VideoModel extends ContentModel {
   authorId: string;
 }
 
-export class DocumentModel extends ContentModel {
+export class DocumentsCollection extends ContentModel {
+  name: string;
+
+  documents: DocumentModel[];
+}
+
+export class DocumentModel {
   name: string;
 
   documentPath: string;
@@ -92,6 +75,37 @@ export class DocumentModel extends ContentModel {
   fileId: string;
 
   authorId: string;
+}
+
+export class PhotosCollection extends ContentModel {
+  photos: Photo[];
+
+  height: string;
+
+  width: string;
+
+  countInRow: number;
+
+  constructor(collection: Partial<PhotosCollection>) {
+    super(collection.typeId, collection.id, collection.updatedAt);
+    this.countInRow = collection.countInRow;
+    this.height = collection.height;
+    this.width = collection.width;
+    this.id = collection.id;
+    this.photos = collection.photos.map(
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      (z) =>
+        new Photo(
+          z.fileId,
+          z.photoPathSmall,
+          z.photoPathMedium,
+          z.photoPathBig,
+          z.loaded,
+          z.name,
+          z.authorId,
+        ),
+    );
+  }
 }
 
 export class Photo {

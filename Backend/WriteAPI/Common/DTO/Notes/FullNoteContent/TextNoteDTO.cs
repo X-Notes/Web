@@ -1,6 +1,6 @@
 ﻿using System;
 using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.ContentParts;
+using Common.DatabaseModels.Models.NoteContent.TextContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {

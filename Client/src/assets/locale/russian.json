@@ -205,6 +205,27 @@
       "readMessage": "Прочитанное",
       "ChangeUserPermissionNote": "Доступ пользователя к заметке изменен"
     },
+    "uploader":{
+      "uploading": "Загрузка",
+      "uploadingDocumentsNoteLong": "Загрузка документов в заметку",
+      "uploadingDocumentsNote": "Загрузка документов",
+      "uploadingVideosNoteLong": "Загрузка видео в заметку",
+      "uploadingVideosNote": "Загрузка видео",
+      "uploadingAudiosNoteLong": "Загрузка аудио в заметку",
+      "uploadingAudiosNote": "Загрузка аудио",
+      "uploadingPhotosNoteLong": "Загрузка фотографий в заметку",
+      "uploadingPhotosNote": "Загрузка фотографий",
+      "exportShort": "Экспорт",
+      "exportVideos": "Экспорт видео",
+      "exportAudios": "Экспорт аудио",
+      "exportDocuments": "Экспорт документов",
+      "exportPhotos": "Экспорт фотографий",
+      "copyShort": "Копирование",
+      "copyNotes": "Копирование заметок",
+      "copyFolders": "Копирование папок",
+      "changingProfilePhoto": "Смена фотографии",
+      "changingBackground": "Смена заднего фона"
+    },
     "placeholder": {
       "folderNote": "Заметка без названия",
       "folderSmall": "Название папки",

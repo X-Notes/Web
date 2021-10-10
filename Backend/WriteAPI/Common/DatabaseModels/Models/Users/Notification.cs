@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.Users
 {
+    [Table(nameof(Notification), Schema = SchemeConfig.User)]
     public class Notification : BaseEntity<Guid>
     {
         public Guid? UserFromId { set; get; }

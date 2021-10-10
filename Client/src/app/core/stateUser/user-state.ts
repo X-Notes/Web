@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-properties */
 import { ShortUser } from 'src/app/core/models/short-user.model';
 import { Injectable } from '@angular/core';
 import { State, Selector, Action, StateContext, Store } from '@ngxs/store';
@@ -7,7 +8,10 @@ import { environment } from 'src/environments/environment';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { FontSizeENUM } from 'src/app/shared/enums/font-size.enum';
 import { LanguagesENUM } from 'src/app/shared/enums/languages.enum';
-import { SetToken, ShowSnackNotification, TokenSetNoUpdate } from '../stateApp/app-action';
+import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
+import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
+import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { SetToken, TokenSetNoUpdate } from '../stateApp/app-action';
 import {
   Login,
   Logout,
@@ -25,8 +29,9 @@ import {
 import { UserAPIService } from '../user-api.service';
 import { PersonalizationSetting } from '../models/personalization-setting.model';
 import { ApiPersonalizationSettingsService } from '../api-personalization-settings.service';
-import { OperationResultAdditionalInfo } from 'src/app/content/notes/models/operation-result.model';
-import { SnackBarTranlateHelperService } from 'src/app/content/navigation/snack-bar-tranlate-helper.service';
+import { AppStore } from '../stateApp/app-state';
+import { byteToMB } from '../defaults/byte-convert';
+import { maxProfilePhotoSize } from '../defaults/constraints';
 
 interface UserState {
   user: ShortUser;
@@ -51,8 +56,8 @@ export class UserStore {
     private translateService: TranslateService,
     private backgroundAPI: BackgroundService,
     private apiPersonalizationSettingsService: ApiPersonalizationSettingsService,
-    private snackbarTranlateHelper: SnackBarTranlateHelperService,
-    private store: Store
+    private snackbarStatusHandler: SnackBarHandlerStatusService,
+    private longTermOperationsHandler: LongTermOperationsHandlerService,
   ) {}
 
   @Selector()
@@ -194,12 +199,22 @@ export class UserStore {
     { patchState, getState, dispatch }: StateContext<UserState>,
     { photo }: UpdateUserPhoto,
   ) {
-    const result = await this.api.updateUserPhoto(photo).toPromise();
-
-    if(result.message === OperationResultAdditionalInfo.NotEnoughMemory){
-      const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
-      const message = this.snackbarTranlateHelper.getNoEnoughMemoryTranslate(lname); 
-      this.store.dispatch(new ShowSnackNotification(message));
+    const operation = this.longTermOperationsHandler.addNewProfilePhotoChangingOperation();
+    const mini = this.longTermOperationsHandler.getNewMini(
+      operation,
+      LongTermsIcons.Image,
+      'photo changing',
+      true,
+      true,
+    );
+    const resp = await this.api.updateUserPhoto(photo, mini, operation).toPromise();
+    const result = resp.eventBody;
+    const isNeedInterrupt = this.snackbarStatusHandler.validateStatus(
+      getState().user.languageId,
+      result,
+      byteToMB(maxProfilePhotoSize),
+    );
+    if (isNeedInterrupt) {
       return;
     }
 

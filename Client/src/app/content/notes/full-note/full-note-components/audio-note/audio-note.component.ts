@@ -9,15 +9,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
-import { AudioModel, ContentModel, PlaylistModel } from '../../../models/content-model.model';
+import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { RemoveAudioFromPlaylist } from '../../../models/remove-audio-from-playlist.model';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 
 @Component({
   selector: 'app-audio-note',
@@ -25,11 +25,6 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   styleUrls: ['./audio-note.component.scss'],
 })
 export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
-  @Input()
-  content: PlaylistModel;
-
-  formats = TypeUploadFormats.AUDIOS;
-
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
@@ -47,9 +42,14 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   @Input()
   isReadOnlyMode = false;
 
-  namePlaylistChanged: Subject<string> = new Subject<string>();
+  @Input()
+  content: AudiosCollection;
 
   destroy = new Subject<void>();
+
+  formats = TypeUploadFormats.AUDIOS;
+
+  namePlaylistChanged: Subject<string> = new Subject<string>();
 
   constructor(private audioService: AudioService, private exportService: ExportService) {}
 
@@ -61,7 +61,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   ngOnInit(): void {
     this.namePlaylistChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => this.changeTitleEvent.emit({contentId: this.content.id, name}));
+      .subscribe((name) => this.changeTitleEvent.emit({ contentId: this.content.id, name }));
   }
 
   playStream(url, id) {
@@ -75,12 +75,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   };
 
   async uploadAudios(event) {
-    const data = new FormData();
-    const { files } = event.target;
-    for (const file of files) {
-      data.append('audios', file);
+    const files = event.target.files as File[];
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
-    this.uploadEvent.emit({ id: this.content.id, formData: data });
   }
 
   openFile(audio: AudioModel) {
@@ -92,7 +90,14 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     }
   }
 
-  async exportPlaylist(playlist: PlaylistModel) {
+  get isEmpty(): boolean {
+    if (!this.content.audios || this.content.audios.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
+  async exportPlaylist(playlist: AudiosCollection) {
     await this.exportService.exportPlaylist(playlist);
   }
 
@@ -118,15 +123,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     });
   }
 
-  setFocus = ($event?: any) => {
-    console.log($event);
-  };
+  setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
-  updateHTML = (content: string) => {
-    console.log(content);
-  };
+  updateHTML = (content: string) => {};
 
   getNative = () => {};
 
@@ -134,13 +135,9 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     return this.content;
   }
 
-  mouseEnter = ($event: any) => {
-    console.log($event);
-  };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => {
-    console.log($event);
-  };
+  mouseOut = ($event: any) => {};
 
   onInput($event) {
     this.namePlaylistChanged.next($event.target.innerText);

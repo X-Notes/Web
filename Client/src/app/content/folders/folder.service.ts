@@ -13,7 +13,7 @@ import { SortedByENUM } from 'src/app/core/models/sorted-by.enum';
 import { AppStore } from 'src/app/core/stateApp/app-state';
 import { FeaturesEntitiesService } from 'src/app/shared/services/features-entities.service';
 import { IMurriEntityService } from 'src/app/shared/services/murri-entity.contract';
-import { UpdaterEntetiesService } from 'src/app/core/entities-updater.service';
+import { UpdaterEntitiesService } from 'src/app/core/entities-updater.service';
 import { ApiFoldersService } from './api-folders.service';
 
 /** Injection only in component */
@@ -29,7 +29,7 @@ export class FolderService
     store: Store,
     public pService: PersonalizationService,
     murriService: MurriService,
-    private updateService: UpdaterEntetiesService,
+    private updateService: UpdaterEntitiesService,
     private apiFolders: ApiFoldersService,
   ) {
     super(store, murriService);

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.Users
 {
+    [Table(nameof(PersonalizationSetting), Schema = SchemeConfig.User)]
     public class PersonalizationSetting : BaseEntity<Guid>
     {
         public Guid UserId { set; get; }

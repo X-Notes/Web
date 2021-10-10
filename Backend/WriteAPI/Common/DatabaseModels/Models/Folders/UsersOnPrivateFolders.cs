@@ -5,6 +5,7 @@ using Common.DatabaseModels.Models.Users;
 
 namespace Common.DatabaseModels.Models.Folders
 {
+    [Table(nameof(UsersOnPrivateFolders), Schema = SchemeConfig.Folder)]
     public class UsersOnPrivateFolders : BaseEntity<Guid>
     {
         [NotMapped]

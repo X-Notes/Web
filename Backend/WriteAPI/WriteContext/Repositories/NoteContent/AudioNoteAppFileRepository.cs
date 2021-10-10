@@ -1,4 +1,4 @@
-﻿using Common.DatabaseModels.Models.Files;
+﻿using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
