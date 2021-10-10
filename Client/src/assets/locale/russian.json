@@ -171,7 +171,12 @@
         "pause": "Пауза",
         "loop": "Повтор",
         "playlist": "Плейлист",
-        "close": "Закрыть"
+        "close": "Закрыть",
+        "mute": "Отключить звук",
+        "turnOnSound": "Включить звук",
+        "wideScreen": "Широкий экран",
+        "defaultPlayer": "Обычный экран",
+        "fullscreen": "Во весь экран"
       }
     },
     "noResult": {

@@ -170,7 +170,12 @@
         "pause": "Pause",
         "loop": "loop",
         "playlist": "Playlist",
-        "close": "Close"
+        "close": "Close",
+        "mute": "Mute",
+        "turnOnSound": "Turn on sound",
+        "wideScreen": "Wide screen",
+        "defaultPlayer": "Default player",
+        "fullscreen": "Fullscreen"
       }
     },
     "noResult": {

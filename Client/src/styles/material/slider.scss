@@ -10,13 +10,21 @@
 .slider-controls {
   .slider {
     .mat-slider-wrapper {
-      top: 13px;
+      top: 50%;
+      transform: translateY(-50%);
     }
+  }
+}
+
+.video-volume-slider {
+  .slider-prevent-min-width {
+    min-width: auto;
   }
 }
 
 .slider-controls,
 .volume-slider,
+.video-volume-slider,
 .slider-row
  {
   .slider, .slider-profile {

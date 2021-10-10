@@ -1,3 +1,124 @@
-<video controls="controls">
-  <source [src]="content.videoPath | getVideo: content.authorId" />
-</video>
+<div
+  #videowrapper
+  (fullscreenchange)="onFullscreenChange()"
+  class="video-wrapper"
+  [ngClass]="{ 'wide-screen': isWideScreen }"
+  appTheme
+>
+  <video
+    #videoplayer
+    oncontextmenu="return false"
+    preload="metadata"
+    controlslist="nodownload"
+    [src]="content.videoPath | getVideo: content.authorId"
+  ></video>
+  <div class="controls-blur"></div>
+  <div class="controls">
+    <div class="progress slider-controls">
+      <mat-slider
+        class="slider"
+        min="0"
+        [max]="video?.duration"
+        step="1"
+        [value]="video?.currentTime"
+        (input)="onSliderChangeEnd($event)"
+      ></mat-slider>
+    </div>
+    <div class="actions">
+      <div class="section-actions">
+        <button
+          class="audio-button"
+          type="button"
+          name="play"
+          #play
+          (click)="togglePlay()"
+          [CustomTooltip]="'innerNote.audio.play' | translate"
+        >
+          <div class="icon">
+            <mat-icon *ngIf="!isPlaying" [inline]="true">play_arrow</mat-icon>
+            <mat-icon *ngIf="isPlaying" [inline]="true">pause</mat-icon>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="play"></div>
+        </button>
+        <div class="section-volume">
+          <button
+            [CustomTooltip]="(video?.volume === 0 ? 'innerNote.audio.turnOnSound' :  'innerNote.audio.mute') | translate"
+            (click)="mute()"
+            class="audio-button"
+            type="button"
+            name="sound"
+            #volumeUp>
+            <div class="icon">
+              <mat-icon [inline]="true" *ngIf="video?.volume >= 0.5">volume_up</mat-icon>
+              <mat-icon [inline]="true" *ngIf="video?.volume< 0.5 && video?.volume !== 0"
+                >volume_down</mat-icon
+              >
+              <mat-icon [inline]="true" *ngIf="video?.volume === 0">volume_off</mat-icon>
+            </div>
+            <div class="ripple-container" matRipple [matRippleTrigger]="volumeUp"></div>
+          </button>
+          <div class="video-volume-slider">
+            <mat-slider
+              class="slider slider-prevent-min-width"
+              min="0"
+              max="1"
+              step="0.01"
+              (input)="onSliderVolumeChangeEnd($event)"
+              [value]="video?.volume"
+            ></mat-slider>
+          </div>
+        </div>
+      </div>
+      <div class="section-actions">
+        <!-- <button class="audio-button" type="button" name="Settings" #settings>
+          <div class="icon">
+            <mat-icon [inline]="true">settings</mat-icon>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="settings"></div>
+        </button> -->
+        <button
+          [CustomTooltip]="(video?.volume === 0 ? 'innerNote.audio.turnOnSound' :  'innerNote.audio.mute') | translate"
+          (click)="togglePictureInPicture()"
+          class="audio-button"
+          type="button"
+          name="sound"
+          #miniPlayer
+        >
+          <div class="icon icon-smaller">
+            <mat-icon class="material-icons-outlined-important" [inline]="true"
+              >branding_watermark</mat-icon
+            >
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="miniPlayer"></div>
+        </button>
+        <button
+          [CustomTooltip]="(isWideScreen ? 'innerNote.audio.defaultPlayer': 'innerNote.audio.wideScreen') | translate"
+          (click)="toggleWideScreen()"
+          class="audio-button"
+          type="button"
+          name="sound"
+          #widePlayer
+        >
+          <div class="icon icon-smaller">
+            <mat-icon [inline]="true">video_label</mat-icon>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="widePlayer"></div>
+        </button>
+        <button
+          [CustomTooltip]="(isFullscreen ? '': 'innerNote.audio.fullscreen') | translate"
+          class="audio-button"
+          type="button"
+          name="sound"
+          #fullscreen
+          (click)="toggleFullscreen()"
+        >
+          <div class="icon">
+            <mat-icon *ngIf="!isFullscreen" [inline]="true">fullscreen</mat-icon>
+            <mat-icon *ngIf="isFullscreen" [inline]="true">fullscreen_exit</mat-icon>
+          </div>
+          <div class="ripple-container" matRipple [matRippleTrigger]="fullscreen"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
