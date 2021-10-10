@@ -6,15 +6,8 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class CheckListService extends HtmlService {
+
   transformTo = new EventEmitter<TransformContent>();
-
-  setFocus($event: any, contentHtml: ElementRef<any>) {
-    this.getNativeElement(contentHtml).focus();
-  }
-
-  setFocusToEnd(contentHtml: ElementRef<any>) {
-    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
-  }
 
   onInput(base: BaseText, contentHtml: ElementRef) {
     const content = { ...base };

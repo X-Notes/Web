@@ -110,11 +110,11 @@ export class HtmlNumberListComponent
   }
 
   setFocus($event?) {
-    this.numberService.setFocus($event, this.contentHtml);
+    this.numberService.setFocus($event, this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.numberService.setFocusToEnd(this.contentHtml);
+    this.numberService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {

@@ -40,7 +40,8 @@ import { ContentEditorDocumentsCollectionService } from '../content-editor-servi
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
-import { ContentEditorListenersService } from '../content-editor-services/content-editor-listeners.service';
+import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
+import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 
 @Component({
   selector: 'app-content-editor',
@@ -54,6 +55,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
+
+  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
   @Input() set contents(contents: ContentModel[]) {
     this.contentEditorContentsService.initContent(contents);
@@ -73,7 +76,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   textType = NoteTextTypeENUM;
 
-  nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   destroy = new Subject<void>();
 
@@ -89,27 +92,30 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
     public contentEditorTextService: ContentEditorTextService,
-    private contentEditorListenersService: ContentEditorListenersService,
+    private contentEditorListenersService: ContentEditorElementsListenerService,
+    private contentEditorListenerService: ContentEditorListenerService,
   ) {}
 
   ngAfterViewInit(): void {
     this.contentEditorListenersService.setHandlers(this.elements);
+    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
   }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
     this.contentEditorListenersService.destroysListeners();
+    this.contentEditorListenerService.destroysListeners();
   }
 
   ngOnInit(): void {
-    this.nameChanged
+    this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
   }
 
   onInput($event) {
-    this.nameChanged.next($event.target.innerText);
+    this.noteTitleChanged.next($event.target.innerText);
   }
 
   pasteCommandHandler(e) {

@@ -2,7 +2,7 @@ import { Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/cor
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
-export class ContentEditorListenersService {
+export class ContentEditorElementsListenerService {
   listeners = [];
 
   private renderer: Renderer2;
@@ -12,6 +12,7 @@ export class ContentEditorListenersService {
   }
 
   setHandlers(elements: QueryList<ParentInteraction>) {
+    // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', (e) => {
       for (const el of elements.toArray()) {
         el.backspaceDown();

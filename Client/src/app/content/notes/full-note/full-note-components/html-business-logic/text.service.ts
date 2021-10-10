@@ -50,12 +50,4 @@ export class TextService extends HtmlService {
 
   backUp = (e: any) => {
   };
-
-  setFocus($event, contentHtml: ElementRef) {
-    this.getNativeElement(contentHtml).focus();
-  }
-
-  setFocusToEnd(contentHtml: ElementRef) {
-    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
-  }
 }

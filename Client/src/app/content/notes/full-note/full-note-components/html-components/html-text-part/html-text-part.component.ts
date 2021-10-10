@@ -158,11 +158,11 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   setFocus($event?) {
-    this.textService.setFocus($event, this.contentHtml);
+    this.textService.setFocus($event, this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.textService.setFocusToEnd(this.contentHtml);
+    this.textService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {

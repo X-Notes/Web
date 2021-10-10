@@ -86,11 +86,11 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   setFocus($event?) {
-    this.dotListService.setFocus($event, this.contentHtml);
+    this.dotListService.setFocus($event, this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.dotListService.setFocusToEnd(this.contentHtml);
+    this.dotListService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {

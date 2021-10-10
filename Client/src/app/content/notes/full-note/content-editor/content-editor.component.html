@@ -21,6 +21,7 @@
   </div>
   <div class="title-section">
     <div
+      #noteTitle
       [attr.contenteditable]="!isReadOnlyMode"
       (paste)="pasteCommandHandler($event)"
       [textContent]="note?.title"

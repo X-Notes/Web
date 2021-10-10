@@ -86,11 +86,11 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   setFocus($event?) {
-    this.checkListService.setFocus($event, this.contentHtml);
+    this.checkListService.setFocus($event, this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.checkListService.setFocusToEnd(this.contentHtml);
+    this.checkListService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {

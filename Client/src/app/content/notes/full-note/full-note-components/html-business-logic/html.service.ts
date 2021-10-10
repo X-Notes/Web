@@ -5,9 +5,10 @@ import {
   ContentEditableService,
 } from '../../content-editor-services/content-editable.service';
 import { MenuSelectionService } from '../../content-editor-services/menu-selection.service';
-import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
+import { BaseText, ContentModel, NoteTextTypeENUM } from '../../../models/content-model.model';
 import { EnterEvent } from '../../models/enter-event.model';
 import { SelectionService } from '../../content-editor-services/selection.service';
+import { NavigationKeysService } from '../../content-editor-services/navigation-keys.service';
 
 @Injectable()
 export abstract class HtmlService {
@@ -21,6 +22,7 @@ export abstract class HtmlService {
     public menuSelectionService: MenuSelectionService,
     private renderer: Renderer2,
     public contEditService: ContentEditableService,
+    private navigationKeysService: NavigationKeysService,
   ) {}
 
   pasteCommandHandler(e) {
@@ -58,7 +60,7 @@ export abstract class HtmlService {
   getNativeElement(contentHtml: ElementRef) {
     return contentHtml?.nativeElement;
   }
-
+  
   setHandlers(
     content: BaseText,
     contentHtml: ElementRef,
@@ -118,6 +120,7 @@ export abstract class HtmlService {
   mouseOut($event, contentHtml: ElementRef) {
     this.preFocus = false;
   }
+  
 
   // eslint-disable-next-line class-methods-use-this
   eventEventFactory(
@@ -134,6 +137,20 @@ export abstract class HtmlService {
     };
     return eventModel;
   }
+  
+  setFocus($event: any, contentHtml: ElementRef<any>, contentModel: ContentModel) {
+    this.getNativeElement(contentHtml).focus();
+    this.setFocusedElement(contentModel);
+  }
+  
+  setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModel) {
+    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
+    this.setFocusedElement(contentModel);
+  }
+
+  setFocusedElement(contentModel: ContentModel) {
+    this.navigationKeysService.setSontent = contentModel;
+  }
 
   abstract onBlur(e);
 
@@ -148,7 +165,4 @@ export abstract class HtmlService {
 
   abstract backUp(e);
 
-  abstract setFocus($event, contentHtml: ElementRef);
-
-  abstract setFocusToEnd(contentHtml: ElementRef);
 }

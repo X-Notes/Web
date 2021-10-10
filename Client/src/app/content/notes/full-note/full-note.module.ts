@@ -33,7 +33,7 @@ import { SelectionService } from './content-editor-services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
-import { ContentEditorListenersService } from './content-editor-services/content-editor-listeners.service';
+import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
 import { NavigationKeysService } from './content-editor-services/navigation-keys.service';
 import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
@@ -41,6 +41,7 @@ import { ContentEditorDocumentsCollectionService } from './content-editor-servic
 import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorVideosCollectionService } from './content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
+import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { ContentEditorTextService } from './content-editor-services/text-content
     SidebarNotesService,
     FullNoteSliderService,
     ClickableContentService,
-    ContentEditorListenersService,
+    ContentEditorElementsListenerService,
+    ContentEditorListenerService,
     ContentEditorContentsService,
     NavigationKeysService,
     ContentEditorAudiosCollectionService,

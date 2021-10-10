@@ -82,11 +82,11 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   setFocus($event?) {
-    this.headingService.setFocus($event, this.contentHtml);
+    this.headingService.setFocus($event, this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.headingService.setFocusToEnd(this.contentHtml);
+    this.headingService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {
