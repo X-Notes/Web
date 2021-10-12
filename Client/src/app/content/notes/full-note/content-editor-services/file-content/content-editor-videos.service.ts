@@ -7,12 +7,12 @@ import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snack
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
+import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { VideosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideoService } from '../../services/api-video.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
-import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 
 @Injectable({
   providedIn: 'root',

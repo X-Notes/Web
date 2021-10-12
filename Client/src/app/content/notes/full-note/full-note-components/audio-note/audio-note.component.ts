@@ -123,10 +123,12 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setFocus = ($event?: any) => {};
 
   setFocusToEnd = () => {};
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHTML = (content: string) => {};
 
   getNative = () => {};
@@ -135,8 +137,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     return this.content;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseEnter = ($event: any) => {};
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseOut = ($event: any) => {};
 
   onInput($event) {

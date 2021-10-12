@@ -6,15 +6,17 @@ import { AudioModel, AudiosCollection } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiPlaylistService {
+  constructor(private httpClient: HttpClient) {}
 
-  constructor(private httpClient: HttpClient) { }
-  
   transformToPlaylist(noteId: string, contentId: string) {
     const obj = {
       noteId,
-      contentId
+      contentId,
     };
-    return this.httpClient.post<OperationResult<AudiosCollection>>(`${environment.writeAPI}/api/note/inner/audios/transform`, obj);
+    return this.httpClient.post<OperationResult<AudiosCollection>>(
+      `${environment.writeAPI}/api/note/inner/audios/transform`,
+      obj,
+    );
   }
 
   removePlaylist(noteId: string, contentId: string) {
@@ -49,7 +51,8 @@ export class ApiPlaylistService {
   uploadAudiosToPlaylist(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<AudioModel[]>>(
       `${environment.writeAPI}/api/note/inner/audios/upload/${id}/${contentId}`,
-      data, { reportProgress: true, observe: 'events' }
+      data,
+      { reportProgress: true, observe: 'events' },
     );
   }
 }

@@ -118,6 +118,7 @@
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteVideoEvent)="contentEditorVideosService.removeVideosHandler($event, note.id)"
+          (uploadEvent)="contentEditorVideosService.uploadVideosToCollectionHandler($event, note.id)"
         ></app-video-note>
         <app-document-note
           #htmlComp

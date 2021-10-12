@@ -148,6 +148,7 @@
     },
     "innerNote": {
       "menu": {
+        "addVideo": "Завантажити нове відео",
         "add": "Завантажити нове аудіо",
         "review": "Переглянути",
         "download": "Завантажити",
@@ -176,7 +177,8 @@
         "turnOnSound": "Включити звук",
         "wideScreen": "Широкий екран",
         "defaultPlayer": "Звичайний екран",
-        "fullscreen": "На весь екран"
+        "fullscreen": "На весь екран",
+        "miniPlayer": "Міни-плеєр"
       }
     },
     "noResult": {

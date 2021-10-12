@@ -147,6 +147,7 @@
     },
     "innerNote": {
       "menu": {
+        "addVideo": "Add new video",
         "add": "Add new audio",
         "review": "Review",
         "download": "Download",
@@ -175,7 +176,8 @@
         "turnOnSound": "Turn on sound",
         "wideScreen": "Wide screen",
         "defaultPlayer": "Default player",
-        "fullscreen": "Fullscreen"
+        "fullscreen": "Fullscreen",
+        "miniPlayer": "Mini player"
       }
     },
     "noResult": {
