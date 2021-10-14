@@ -6,11 +6,6 @@ import { HtmlService } from './html.service';
 @Injectable()
 export class HeadingService extends HtmlService {
 
-  onInput(base: BaseText, contentHtml: ElementRef) {
-    const content = { ...base };
-    content.content = this.getNativeElement(contentHtml).innerText;
-  }
-
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
@@ -29,16 +24,9 @@ export class HeadingService extends HtmlService {
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
-    const content = base;
     $event.preventDefault();
     const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-    content.content = this.getNativeElement(contentHtml).innerText;
-    const event = super.eventEventFactory(
-      content.id,
-      breakModel,
-      NoteTextTypeENUM.Default,
-      content.id,
-    );
+    const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Default, base.id);
     enterEvent.emit(event);
   }
 

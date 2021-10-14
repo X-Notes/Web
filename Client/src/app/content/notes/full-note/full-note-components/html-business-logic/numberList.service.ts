@@ -9,11 +9,6 @@ export class NumberListService extends HtmlService {
   
   transformTo = new EventEmitter<TransformContent>();
 
-  onInput(base: BaseText, contentHtml: ElementRef) {
-    const content = { ...base };
-    content.content = this.getNativeElement(contentHtml).innerText;
-  }
-
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
@@ -32,22 +27,20 @@ export class NumberListService extends HtmlService {
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
-    const content = base;
     $event.preventDefault();
     if (this.isContentEmpty(contentHtml)) {
       this.transformTo.emit({
-        id: content.id,
+        id: base.id,
         textType: NoteTextTypeENUM.Default,
         setFocusToEnd: true,
       });
     } else {
       const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-      content.content = this.getNativeElement(contentHtml).innerText;
       const event = super.eventEventFactory(
-        content.id,
+        base.id,
         breakModel,
         NoteTextTypeENUM.Numberlist,
-        content.id,
+        base.id,
       );
       enterEvent.emit(event);
     }

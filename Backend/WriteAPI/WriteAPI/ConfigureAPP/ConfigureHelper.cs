@@ -88,6 +88,7 @@ using BI.JobsHandlers;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Commands.NoteInner.FileContent.Photos;
+using Domain.Commands.NoteInner;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -168,6 +169,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
             services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
             services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
+            services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
 
 
             // FULL NOTE ALBUM

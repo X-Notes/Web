@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Notes.FullNoteContent;
+using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Queries.Notes;
 using MediatR;
@@ -61,6 +62,14 @@ namespace WriteAPI.Controllers
             var command = new GetNoteContentsQuery(email, noteId);
             return await this._mediator.Send(command);
         }
+
+        [HttpPatch("sync/structure")]
+        public async Task<OperationResult<Unit>> SyncNoteContents(SyncNoteStructureCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
+
     }
 
 }

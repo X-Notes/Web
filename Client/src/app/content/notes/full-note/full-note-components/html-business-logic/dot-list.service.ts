@@ -6,13 +6,7 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class DotListService extends HtmlService {
-
   transformTo = new EventEmitter<TransformContent>();
-
-  onInput(base: BaseText, contentHtml: ElementRef) {
-    const content = { ...base };
-    content.content = this.getNativeElement(contentHtml).innerText;
-  }
 
   onBlur = (e: any) => {
     // BLUR HANDLER
@@ -32,23 +26,16 @@ export class DotListService extends HtmlService {
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
-    const content = base;
     $event.preventDefault();
     if (this.isContentEmpty(contentHtml)) {
       this.transformTo.emit({
-        id: content.id,
+        id: base.id,
         textType: NoteTextTypeENUM.Default,
         setFocusToEnd: true,
       });
     } else {
       const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-      content.content = this.getNativeElement(contentHtml).innerText;
-      const event = super.eventEventFactory(
-        content.id,
-        breakModel,
-        NoteTextTypeENUM.Dotlist,
-        content.id,
-      );
+      const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Dotlist, base.id);
       enterEvent.emit(event);
     }
   }
@@ -63,6 +50,5 @@ export class DotListService extends HtmlService {
     super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
-  backUp = (e: any) => {
-  };
+  backUp = (e: any) => {};
 }

@@ -76,7 +76,7 @@ namespace BI.Services.Notes
 
             var _contents = new List<BaseNoteContent>();
 
-            var newText = new TextNote { Id = Guid.NewGuid(), Order = 1, NoteTextTypeId = NoteTextTypeENUM.Default };
+            var newText = new TextNote { Id = Guid.NewGuid(), Order = 0, NoteTextTypeId = NoteTextTypeENUM.Default, UpdatedAt = DateTimeOffset.UtcNow };
             _contents.Add(newText);
 
             var note = new Note()
@@ -150,7 +150,7 @@ namespace BI.Services.Notes
 
             if (selectdeletenotes.Count == request.Ids.Count)
             {
-                var contents = await baseNoteContentRepository.GetContentByNoteIds(request.Ids);
+                var contents = await baseNoteContentRepository.GetContentByNoteIdsAsync(request.Ids);
                 var noteFiles = contents.Where(x => x is PhotosCollectionNote).Select(x => x as PhotosCollectionNote).SelectMany(x => x.Photos).ToList();
                 var documents = contents.Where(x => x is DocumentsCollectionNote).Select(x => x as DocumentsCollectionNote).SelectMany(x => x.Documents);
                 var audios = contents.Where(x => x is AudiosCollectionNote).Select(x => x as AudiosCollectionNote).SelectMany(x => x.Audios);

@@ -62,7 +62,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
                 var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as AudiosCollectionNote;
                 contents.Remove(contentForRemove);
 
@@ -108,7 +108,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var playlist = await baseNoteContentRepository.GetContentById<AudiosCollectionNote>(request.ContentId);
+                var playlist = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
                 var audioForRemove = playlist.Audios.First(x => x.Id == request.AudioId);
                 playlist.Audios.Remove(audioForRemove);
                 playlist.UpdatedAt = DateTimeOffset.Now;
@@ -140,7 +140,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var playlist = await baseNoteContentRepository.GetContentById<AudiosCollectionNote>(request.ContentId);
+                var playlist = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
 
                 playlist.Name = request.Name;
                 playlist.UpdatedAt = DateTimeOffset.Now;
@@ -183,7 +183,7 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var audiosCollection = await baseNoteContentRepository.GetContentById<AudiosCollectionNote>(request.ContentId);
+                var audiosCollection = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try

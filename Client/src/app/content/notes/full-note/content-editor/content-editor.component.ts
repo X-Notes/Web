@@ -59,7 +59,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
   @Input() set contents(contents: ContentModel[]) {
-    this.contentEditorContentsService.initContent(contents);
+    this.contentEditorContentsService.initContent(contents, this.note.id);
   }
 
   get contents() {
@@ -220,11 +220,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   postAction(): void {
-    this.contentEditorContentsService.change();
     const native = this.elements?.last?.getNative();
     if (native?.textContent.length !== 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
+    this.contentEditorContentsService.change();
   }
 
   placeHolderClick($event) {

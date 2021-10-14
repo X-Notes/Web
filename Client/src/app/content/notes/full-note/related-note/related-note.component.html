@@ -47,7 +47,7 @@
               <p>{{content.content}}</p>
             </div>
           </ng-container>
-          <div *ngSwitchCase="contentType.NoteAlbum" class="album">
+          <div *ngSwitchCase="contentType.Photos" class="album">
             <ng-container *ngFor="let item of content.photos">
               <img [src]="item.photoFromSmall | getImage: item.authorId" />
             </ng-container>

@@ -73,7 +73,7 @@ namespace BI.Services.History
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentBySnapshotIdOrdered(request.SnapshotId);
+                var contents = await baseNoteContentRepository.GetAllContentBySnapshotIdOrderedAsync(request.SnapshotId);
                 return noteCustomMapper.MapContentsToContentsDTO(contents);
             }
 

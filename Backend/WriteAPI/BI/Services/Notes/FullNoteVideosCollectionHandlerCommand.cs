@@ -61,7 +61,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
                 var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as VideosCollectionNote;
                 contents.Remove(contentForRemove);
 
@@ -168,7 +168,7 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var videoCollection = await baseNoteContentRepository.GetContentById<VideosCollectionNote>(request.ContentId);
+                var videoCollection = await baseNoteContentRepository.GetContentByIdAsync<VideosCollectionNote>(request.ContentId);
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try

@@ -36,7 +36,7 @@
       <ng-container *ngSwitchCase="contentType.Text">
         <app-note-preview-text [contentBaseText]="content"></app-note-preview-text>
       </ng-container>
-      <ng-container *ngSwitchCase="contentType.NoteAlbum">
+      <ng-container *ngSwitchCase="contentType.Photos">
         <app-note-preview-photos [album]="content"></app-note-preview-photos>
       </ng-container>
     </ng-container>

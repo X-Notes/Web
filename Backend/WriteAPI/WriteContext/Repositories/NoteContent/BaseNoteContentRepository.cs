@@ -17,7 +17,13 @@ namespace WriteContext.Repositories.NoteContent
 
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrdered(Guid id)
+
+        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdAsync(Guid id)
+        {
+            return await entities.Where(x => x.NoteId == id).ToListAsync();
+        }
+
+        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
         {
             return await entities
                 .Include(x => (x as PhotosCollectionNote).Photos)
@@ -29,7 +35,7 @@ namespace WriteContext.Repositories.NoteContent
                 .ToListAsync();
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentBySnapshotIdOrdered(Guid snapshotId)
+        public async Task<List<BaseNoteContent>> GetAllContentBySnapshotIdOrderedAsync(Guid snapshotId)
         {
             return await entities
                 .Include(x => (x as PhotosCollectionNote).Photos)
@@ -41,7 +47,7 @@ namespace WriteContext.Repositories.NoteContent
                 .ToListAsync();
         }
 
-        public async Task<T> GetContentById<T>(Guid id) where T : BaseNoteContent
+        public async Task<T> GetContentByIdAsync<T>(Guid id) where T : BaseNoteContent
         {
             return await entities // TODO OPTIMIZATION
                 .Include(x => (x as PhotosCollectionNote).Photos)
@@ -52,7 +58,7 @@ namespace WriteContext.Repositories.NoteContent
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<BaseNoteContent>> GetContentByNoteIds(List<Guid> ids)
+        public async Task<List<BaseNoteContent>> GetContentByNoteIdsAsync(List<Guid> ids)
         {
             return await entities
                 .Include(x => (x as PhotosCollectionNote).Photos)

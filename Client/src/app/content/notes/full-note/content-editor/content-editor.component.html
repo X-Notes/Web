@@ -95,7 +95,7 @@
         </ng-container>
         <app-photos
           #htmlComp
-          *ngSwitchCase="contentType.NoteAlbum"
+          *ngSwitchCase="contentType.Photos"
           [content]="item"
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
@@ -105,7 +105,7 @@
         ></app-photos>
         <app-audio-note
           #htmlComp
-          *ngSwitchCase="contentType.Audio"
+          *ngSwitchCase="contentType.Audios"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorPlaylistService.deleteContentHandler($event, note.id)"
@@ -115,7 +115,7 @@
         ></app-audio-note>
         <app-video-note
           #htmlComp
-          *ngSwitchCase="contentType.Video"
+          *ngSwitchCase="contentType.Videos"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorVideosService.deleteContentHandler($event, note.id)"
@@ -123,7 +123,7 @@
         ></app-video-note>
         <app-document-note
           #htmlComp
-          *ngSwitchCase="contentType.Document"
+          *ngSwitchCase="contentType.Documents"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorDocumentsService.deleteContentHandler($event, note.id)"

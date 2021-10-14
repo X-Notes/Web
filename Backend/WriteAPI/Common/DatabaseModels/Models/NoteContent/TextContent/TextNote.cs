@@ -22,7 +22,6 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
 
         public TextNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
@@ -38,7 +37,6 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             HTypeId = text.HTypeId;
             Checked = text.Checked;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
@@ -50,7 +48,6 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             this.Content = Content;
             this.Order = Order;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
@@ -59,9 +56,7 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             this.NoteTextTypeId = NoteTextTypeId;
             this.Content = Content;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
-
         }
     }
 }

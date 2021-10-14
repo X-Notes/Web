@@ -127,7 +127,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(request.NoteId);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
                 return appCustomMapper.MapContentsToContentsDTO(contents);
             }
 

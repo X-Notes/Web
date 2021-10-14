@@ -17,7 +17,7 @@ namespace Common.DatabaseModels.Models.NoteContent
         public NoteSnapshot NoteSnapshot { set; get; }
 
 
-        [Range(1, int.MaxValue)]
+        [Range(0, int.MaxValue)]
         public int Order { set; get; }
 
         public ContentTypeENUM ContentTypeId { set; get; }

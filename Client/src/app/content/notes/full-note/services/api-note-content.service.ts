@@ -2,14 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { BaseText, NoteTextTypeENUM } from '../../models/content-model.model';
+import { BaseText, ContentModel, NoteTextTypeENUM } from '../../models/content-model.model';
+import { Diffs, NewRowDiff } from '../content-editor-services/models/diffs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiNoteContentService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
   newLine(noteId: string) {
     const obj = {
@@ -40,7 +40,6 @@ export class ApiNoteContentService {
       obj,
     );
   }
-  
 
   removeContent(noteId: string, contentId: string) {
     const obj = {
@@ -64,4 +63,14 @@ export class ApiNoteContentService {
     );
   }
 
+  syncContentsStructure(noteId: string, diffs: Diffs) {
+    const obj = {
+      diffs,
+      noteId,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/contents/sync/structure`,
+      obj,
+    );
+  }
 }

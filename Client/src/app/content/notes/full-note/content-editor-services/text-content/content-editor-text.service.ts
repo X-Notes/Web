@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as uuid from 'uuid';
-import { BaseText, ContentTypeENUM, NoteTextTypeENUM } from '../../../models/content-model.model';
+import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
 import { LineBreakType } from '../../models/html-models';
 import { TransformContent } from '../../models/transform-content.model';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
@@ -23,7 +22,8 @@ export class ContentEditorTextService {
     const data = this.contentsService.getContentAndIndexById<BaseText>(contentId);
     const prevIndex = data.index - 1;
     const prevContent = this.contentsService.getContentByIndex<BaseText>(prevIndex);
-    prevContent.content += data.content.content;
+    const resContent = prevContent.content + data.content.content;
+    prevContent.content = resContent;
     this.contentsService.deleteById(contentId);
     return prevIndex;
   }
@@ -38,7 +38,8 @@ export class ContentEditorTextService {
     if (breakLineType === LineBreakType.NEXT) {
       index += 1;
     }
-    const nContent = new BaseText(ContentTypeENUM.Text, uuid.v4(), new Date());
+
+    const nContent = BaseText.getNew();
     nContent.noteTextTypeId = nextRowType;
     nContent.content = nextText;
     this.contentsService.insertInto(nContent, index);
@@ -55,7 +56,7 @@ export class ContentEditorTextService {
   }
 
   appendNewEmptyContentToEnd() {
-    const nContent = new BaseText(ContentTypeENUM.Text, uuid.v4(), new Date());
+    const nContent = BaseText.getNew();
     nContent.noteTextTypeId = NoteTextTypeENUM.Default;
     this.contentsService.insertToEnd(nContent);
   }

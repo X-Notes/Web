@@ -65,7 +65,7 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
 
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(note.Id);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
                 var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as PhotosCollectionNote;
                 contents.Remove(contentForRemove);
 
@@ -112,7 +112,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var album = await baseNoteContentRepository.GetContentById<PhotosCollectionNote>(request.ContentId);
+                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
                 album.CountInRow = request.Count;
                 album.UpdatedAt = DateTimeOffset.Now;
                 await baseNoteContentRepository.UpdateAsync(album);
@@ -133,7 +133,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var album = await baseNoteContentRepository.GetContentById<PhotosCollectionNote>(request.ContentId);
+                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
                 album.Height = request.Height;
                 album.Width = request.Width;
                 album.UpdatedAt = DateTimeOffset.Now;
@@ -156,7 +156,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var album = await baseNoteContentRepository.GetContentById<PhotosCollectionNote>(request.ContentId);
+                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
                 var photoForRemove = album.Photos.First(x => x.Id == request.PhotoId);
                 album.Photos.Remove(photoForRemove);
                 album.UpdatedAt = DateTimeOffset.Now;
@@ -210,7 +210,7 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var album = await baseNoteContentRepository.GetContentById<PhotosCollectionNote>(request.ContentId);
+                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
