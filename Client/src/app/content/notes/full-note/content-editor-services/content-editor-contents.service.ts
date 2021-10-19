@@ -30,7 +30,7 @@ export class ContentEditorContentsService {
     private apiNoteContentService: ApiNoteContentService,
   ) {
     // TODO MAYBE UNSUBSCRIVE & upgrade timer
-    this.updateSubject.pipe(debounceTime(1000)).subscribe(x => this.processChanges());
+    this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
   }
 
   initContent(contents: ContentModel[], noteId: string) {

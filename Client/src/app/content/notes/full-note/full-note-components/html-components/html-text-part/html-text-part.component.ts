@@ -24,6 +24,7 @@ import { TransformToFileContent } from '../../../models/transform-file-content.m
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-html-text-part',
@@ -60,6 +61,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
+  
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;

@@ -30,14 +30,14 @@ export class HeadingService extends HtmlService {
     enterEvent.emit(event);
   }
 
-  backDown(
+  checkForDelete(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDelete($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
   backUp = (e: any) => {

@@ -10,8 +10,8 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
@@ -42,6 +42,8 @@ import { ContentEditorAudiosCollectionService } from '../content-editor-services
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -66,6 +68,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.contentEditorContentsService.getContents;
   }
 
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
+
+  theme = ThemeENUM;
+
   @Input()
   isReadOnlyMode = false;
 
@@ -81,7 +88,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   destroy = new Subject<void>();
 
   constructor(
-    private selectionService: SelectionService,
+    public selectionService: SelectionService,
     @Optional() public sliderService: FullNoteSliderService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
@@ -92,19 +99,19 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
     public contentEditorTextService: ContentEditorTextService,
-    private contentEditorListenersService: ContentEditorElementsListenerService,
+    private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
   ) {}
 
   ngAfterViewInit(): void {
-    this.contentEditorListenersService.setHandlers(this.elements);
+    this.contentEditorElementsListenersService.setHandlers(this.elements);
     this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
   }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
-    this.contentEditorListenersService.destroysListeners();
+    this.contentEditorElementsListenersService.destroysListeners();
     this.contentEditorListenerService.destroysListeners();
   }
 
@@ -112,6 +119,15 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
+
+    this.contentEditorElementsListenersService.onClickDeleteOrBackSpaceSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => {
+        for(let itemId of this.selectionService.getSelectedItems()){
+          this.deleteRowHandler(itemId);
+          this.selectionService.removeFromSelectedItems(itemId);
+        }
+      })
   }
 
   onInput($event) {

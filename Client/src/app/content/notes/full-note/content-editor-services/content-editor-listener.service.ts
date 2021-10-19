@@ -25,6 +25,7 @@ export class ContentEditorListenerService {
           const index = arr.indexOf(el);
           if (index === 0) {
             noteTitleEl.nativeElement?.focus();
+            break;
           }
           const upEl = arr[index - 1];
           if (upEl) {
@@ -42,6 +43,7 @@ export class ContentEditorListenerService {
           const index = arr.indexOf(el);
           if (document.activeElement === noteTitleEl.nativeElement) {
             arr[0]?.setFocus();
+            break;
           }
           const upDown = arr[index + 1];
           if (upDown) {

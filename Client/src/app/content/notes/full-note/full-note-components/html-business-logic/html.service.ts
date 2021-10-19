@@ -29,13 +29,18 @@ export abstract class HtmlService {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  backDown(
+  checkForDelete(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
+
+    if(this.selectionService.isAnySelect()){
+      return;
+    }
+
     const selection = this.apiBrowserService.getSelection().toString();
     if (
       this.contEditService.isStart(this.getNativeElement(contentHtml)) &&
@@ -84,7 +89,7 @@ export abstract class HtmlService {
       contentHtml.nativeElement,
       'keydown.backspace',
       (e) => {
-        this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis);
+        this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
       },
     );
     const keyupBackspace = this.renderer.listen(
@@ -94,7 +99,14 @@ export abstract class HtmlService {
         this.backUp(e);
       },
     );
-    this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
+    const keydownDelete = this.renderer.listen(
+      contentHtml.nativeElement,
+      'keydown.delete',
+      (e) => {
+        this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+      },
+    );
+    this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace, keydownDelete);
   }
 
   destroysListeners() {

@@ -13,9 +13,11 @@ export class ContentEditorTextService {
 
   deleteContent(contentId: string) {
     const index = this.contentsService.getIndexOrErrorById(contentId);
-    this.contentsService.deleteById(contentId);
-    const indexPrevRow = index - 1;
-    return indexPrevRow;
+    if(index !== 0){
+      this.contentsService.deleteById(contentId);
+      return index - 1;
+    }
+    return 0;
   }
 
   concatContentWithPrevContent(contentId: string) {

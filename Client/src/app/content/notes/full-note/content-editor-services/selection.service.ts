@@ -1,4 +1,4 @@
-import { ElementRef, Injectable, QueryList } from '@angular/core';
+import { Injectable, QueryList } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -17,26 +17,42 @@ export class SelectionService {
 
   isSelectionInside;
 
+  private selectedItemsSet = new Set<string>();
+
   constructor(private apiBrowserService: ApiBrowserTextService, private store: Store) {}
 
   selectionHandler(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
-    const itemsSelect: HTMLElement[] = [];
-    const itemsNoSelect: HTMLElement[] = [];
-
     for (let item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
+      const content = item.getContent();
       if (this.isRectToRect(firstRect, secondRect)) {
-        itemsSelect.push(html.firstChild as HTMLElement);
+        this.selectedItemsSet.add(content.id);
       } else {
-        itemsNoSelect.push(html.firstChild as HTMLElement);
+        this.selectedItemsSet.delete(content.id);
       }
     }
-    this.makeSelect(itemsSelect);
-    this.makeNoSelect(itemsNoSelect);
+    // this.makeSelect(itemsSelect);
+    // this.makeNoSelect(itemsNoSelect);
   }
 
-  makeSelect(items: HTMLElement[]) {
+  isAnySelect(): boolean {
+    return this.selectedItemsSet.size > 0;
+  }
+
+  isSelected(id: string) {
+    return this.selectedItemsSet.has(id);
+  }
+
+  getSelectedItems(): string[] {
+    return Array.from(this.selectedItemsSet);
+  }
+
+  removeFromSelectedItems(id: string){
+    this.selectedItemsSet.delete(id);
+  }
+
+  makeSelect(items: HTMLElement[]) { // TODO REMOVE
     const theme = this.store.selectSnapshot(UserStore.getUserTheme);
     const refElements = [...items];
     if (this.isSelectionInside) {
@@ -56,7 +72,7 @@ export class SelectionService {
     }
   }
 
-  makeNoSelect = (refElements: HTMLElement[]) => {
+  makeNoSelect = (refElements: HTMLElement[]) => { // TODO REMOVE
     for (const elem of refElements) {
       elem.style.backgroundColor = null;
       elem.removeAttribute('selectedByUser');

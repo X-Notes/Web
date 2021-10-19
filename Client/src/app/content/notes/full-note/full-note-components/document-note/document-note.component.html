@@ -1,4 +1,8 @@
-<div class="card" appTheme>
+<div
+  class="card"
+  appTheme
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+>
   <div class="preview">
     <div class="icon">
       <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>

@@ -12,6 +12,7 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText, HeadingTypeENUM } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
@@ -42,6 +43,14 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+  
+  @Input()
+  theme: ThemeENUM;
+  
+  themeE = ThemeENUM;
+  
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   hType = HeadingTypeENUM;

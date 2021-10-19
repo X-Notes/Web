@@ -5,6 +5,7 @@
     [style.width]="content.width"
     [style.height]="content.height"
     class="content-photos"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
   >
     <div
       *ngFor="let block of mainBlocks;let i = index"

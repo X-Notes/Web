@@ -1,4 +1,8 @@
-<div class="playlist" appTheme>
+<div
+  class="playlist"
+  appTheme
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+>
   <div class="playlist-options">
     <div class="title">
       <p (input)="onInput($event)" [attr.contenteditable]="!isReadOnlyMode">{{content?.name}}</p>

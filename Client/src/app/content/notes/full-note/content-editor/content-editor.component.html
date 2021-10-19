@@ -36,8 +36,10 @@
       <div [ngSwitch]="item.typeId">
         <ng-container *ngSwitchCase="contentType.Text">
           <app-html-text-part
-            *ngIf="item.noteTextTypeId === textType.Default"
             #htmlComp
+            *ngIf="item.noteTextTypeId === textType.Default"
+            [isSelected]="selectionService.isSelected(item.id)"
+            [theme]="theme$ | async"
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
@@ -50,6 +52,8 @@
           <app-html-number-list
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Numberlist"
+            [isSelected]="selectionService.isSelected(item.id)"
+            [theme]="theme$ | async"
             [prevContent]="getTextContent(i - 1)"
             [prevType]="getTextContent(i - 1)?.noteTextTypeId"
             [content]="item"
@@ -63,6 +67,8 @@
           <app-html-dot-list
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Dotlist"
+            [isSelected]="selectionService.isSelected(item.id)"
+            [theme]="theme$ | async"
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
@@ -74,6 +80,8 @@
           <app-html-check-list
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Checklist"
+            [isSelected]="selectionService.isSelected(item.id)"
+            [theme]="theme$ | async"
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
@@ -85,6 +93,8 @@
           <app-html-headings
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Heading"
+            [isSelected]="selectionService.isSelected(item.id)"
+            [theme]="theme$ | async"
             [content]="item"
             [isReadOnlyMode]="isReadOnlyMode"
             (enterEvent)="enterHandler($event)"
@@ -96,6 +106,8 @@
         <app-photos
           #htmlComp
           *ngSwitchCase="contentType.Photos"
+          [isSelected]="selectionService.isSelected(item.id)"
+          [theme]="theme$ | async"
           [content]="item"
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
@@ -106,6 +118,8 @@
         <app-audio-note
           #htmlComp
           *ngSwitchCase="contentType.Audios"
+          [isSelected]="selectionService.isSelected(item.id)"
+          [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorPlaylistService.deleteContentHandler($event, note.id)"
@@ -116,6 +130,8 @@
         <app-video-note
           #htmlComp
           *ngSwitchCase="contentType.Videos"
+          [isSelected]="selectionService.isSelected(item.id)"
+          [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorVideosService.deleteContentHandler($event, note.id)"
@@ -124,6 +140,8 @@
         <app-document-note
           #htmlComp
           *ngSwitchCase="contentType.Documents"
+          [isSelected]="selectionService.isSelected(item.id)"
+          [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="contentEditorDocumentsService.deleteContentHandler($event, note.id)"

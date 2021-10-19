@@ -13,6 +13,7 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   BaseText,
   ContentTypeENUM,
@@ -58,6 +59,14 @@ export class HtmlNumberListComponent
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+  
+  @Input()
+  theme: ThemeENUM;
+  
+  themeE = ThemeENUM;
+  
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();

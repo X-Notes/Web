@@ -22,6 +22,7 @@ import {
   ClickableContentService,
   ClickableSelectableEntities,
 } from '../../content-editor-services/clickable-content.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -50,6 +51,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
+  
   startWidth;
 
   startHeight;

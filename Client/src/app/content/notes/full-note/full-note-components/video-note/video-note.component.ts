@@ -6,6 +6,7 @@ import {
   ClickableContentService,
   ClickableSelectableEntities,
 } from '../../content-editor-services/clickable-content.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-video-note',
@@ -19,6 +20,12 @@ export class VideoNoteComponent implements ParentInteraction {
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+  
+  @Input()
+  theme: ThemeENUM;
+  
   @Output()
   deleteContentEvent = new EventEmitter<string>();
 

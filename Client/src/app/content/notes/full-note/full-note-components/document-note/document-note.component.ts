@@ -13,6 +13,7 @@ import {
   ClickableContentService,
   ClickableSelectableEntities,
 } from '../../content-editor-services/clickable-content.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 
 @Component({
   selector: 'app-document-note',
@@ -26,6 +27,14 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
+  
   @Output()
   deleteContentEvent = new EventEmitter<string>();
 
