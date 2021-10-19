@@ -77,11 +77,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
     );
     this.listeners.push(mousewheelEventListener);
 
-    const mouseDownListener = this.renderer.listen('document', 'mousedown', (e) =>
+    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e) =>
       this.mouseDown(e),
     );
-    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => this.mouseUp(e));
-    const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) =>
+    const mouseUpListener = this.renderer.listen(document, 'mouseup', (e) => this.mouseUp(e));
+    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e) =>
       this.mouseMove(e),
     );
     this.listeners.push(mouseDownListener, mouseMoveListener, mouseUpListener);

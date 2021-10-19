@@ -58,8 +58,13 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     private audioService: AudioService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
+    private host: ElementRef
   ) {}
 
+  getHost(){
+    return this.host;
+  }
+  
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
@@ -141,7 +146,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
 
   getContent(): ContentModel {
     return this.content;

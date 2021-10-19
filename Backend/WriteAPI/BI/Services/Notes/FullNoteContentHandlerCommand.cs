@@ -334,7 +334,6 @@ namespace BI.Services.Notes
                 return new OperationResult<Unit>(true, Unit.Value);
             }
 
-
             return new OperationResult<Unit>(false, Unit.Value);
         }
 

@@ -123,11 +123,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   selectionHandler(secondRect: DOMRect) {
-    this.selectionService.selectionHandler(secondRect, this.refElements);
+    this.selectionService.selectionHandler(secondRect, this.elements);
   }
 
   selectionStartHandler($event: DOMRect) {
-    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.refElements);
+    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.elements);
     if (isSelectionInZone) {
       this.selectionService.isSelectionInside = true;
       this.selectionDirective.div.style.opacity = '0';
@@ -220,7 +220,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   postAction(): void {
-    const native = this.elements?.last?.getNative();
+    const native = this.elements?.last?.getEditableNative();
     if (native?.textContent.length !== 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }

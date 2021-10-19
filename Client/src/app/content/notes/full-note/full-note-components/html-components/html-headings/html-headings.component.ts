@@ -50,10 +50,14 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   destroy = new Subject<void>();
 
-  constructor(public headingService: HeadingService) {}
+  constructor(public headingService: HeadingService, private host: ElementRef) {}
 
   getContent() {
     return this.content;
+  }
+
+  getHost(){
+    return this.host;
   }
 
   ngAfterViewInit(): void {
@@ -94,7 +98,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

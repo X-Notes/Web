@@ -64,10 +64,14 @@ export class HtmlNumberListComponent
 
   destroy = new Subject<void>();
 
-  constructor(public numberService: NumberListService) {}
+  constructor(public numberService: NumberListService, private host: ElementRef) {}
 
   getContent() {
     return this.content;
+  }
+
+  getHost(){
+    return this.host;
   }
 
   ngOnChanges(): void {
@@ -122,7 +126,7 @@ export class HtmlNumberListComponent
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

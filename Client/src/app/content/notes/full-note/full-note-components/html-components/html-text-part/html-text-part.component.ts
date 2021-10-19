@@ -74,7 +74,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   isMulptiply = false;
 
-  constructor(public textService: TextService) {}
+  constructor(public textService: TextService, private host: ElementRef) {}
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
@@ -97,6 +97,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
       this.concatThisWithPrev,
       this.deleteThis,
     );
+  }
+
+  getHost(){
+    return this.host;
   }
 
   ngOnDestroy(): void {
@@ -170,7 +174,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

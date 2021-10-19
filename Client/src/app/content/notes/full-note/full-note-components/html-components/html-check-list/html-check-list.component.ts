@@ -52,8 +52,12 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
 
   destroy = new Subject<void>();
 
-  constructor(public checkListService: CheckListService) {}
+  constructor(public checkListService: CheckListService, private host: ElementRef) {}
 
+  getHost(){
+    return this.host;
+  }
+  
   getContent() {
     return this.content;
   }
@@ -98,7 +102,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

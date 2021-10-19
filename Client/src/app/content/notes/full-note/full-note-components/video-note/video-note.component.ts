@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
@@ -28,6 +28,7 @@ export class VideoNoteComponent implements ParentInteraction {
   constructor(
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
+    private host: ElementRef
   ) {}
 
   clickVideoHandler(video: VideoModel) {
@@ -44,8 +45,12 @@ export class VideoNoteComponent implements ParentInteraction {
 
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
 
+  getHost(){
+    return this.host;
+  }
+  
   getContent() {
     return this.content;
   }

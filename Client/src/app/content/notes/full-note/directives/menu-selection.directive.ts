@@ -55,7 +55,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const contentItem = item.getContent();
       if (
         contentItem.typeId === ContentTypeENUM.Text &&
-        item.getNative() === document.activeElement
+        item.getEditableNative() === document.activeElement
       ) {
         return contentItem as BaseText;
       }

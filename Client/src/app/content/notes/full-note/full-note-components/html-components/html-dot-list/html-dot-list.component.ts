@@ -52,8 +52,12 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
 
   destroy = new Subject<void>();
 
-  constructor(public dotListService: DotListService) {}
+  constructor(public dotListService: DotListService, private host: ElementRef) {}
 
+  getHost(){
+    return this.host;
+  }
+  
   getContent() {
     return this.content;
   }
@@ -98,7 +102,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

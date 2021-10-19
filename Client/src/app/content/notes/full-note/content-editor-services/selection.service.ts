@@ -3,6 +3,7 @@ import { Store } from '@ngxs/store';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
+import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
 export class SelectionService {
@@ -18,15 +19,12 @@ export class SelectionService {
 
   constructor(private apiBrowserService: ApiBrowserTextService, private store: Store) {}
 
-  selectionHandler(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
-    const refElementsArray = refElements.toArray();
-    const length = refElementsArray.length - 1;
-
+  selectionHandler(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
     const itemsSelect: HTMLElement[] = [];
     const itemsNoSelect: HTMLElement[] = [];
 
-    for (let i = 0; i < length; i += 1) {
-      const html = refElementsArray[i].nativeElement as HTMLElement;
+    for (let item of elements) {
+      const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
         itemsSelect.push(html.firstChild as HTMLElement);
@@ -65,11 +63,9 @@ export class SelectionService {
     }
   };
 
-  isSelectionInZone(secondRect: DOMRect, refElements: QueryList<ElementRef>) {
-    const refElementsArray = refElements.toArray();
-    const length = refElementsArray.length - 1;
-    for (let i = 0; i < length; i += 1) {
-      const html = refElementsArray[i].nativeElement as HTMLElement;
+  isSelectionInZone(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
+    for (let item of elements) {
+      const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {
         return true;

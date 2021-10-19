@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ExportService } from '../../../export.service';
 import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
@@ -36,6 +36,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     private dialogsManageService: DialogsManageService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
+    private host: ElementRef
   ) {}
 
   clickDocumentHandler(document: DocumentModel) {
@@ -52,8 +53,12 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
 
+  getHost(){
+    return this.host;
+  }
+  
   getContent() {
     return this.content;
   }

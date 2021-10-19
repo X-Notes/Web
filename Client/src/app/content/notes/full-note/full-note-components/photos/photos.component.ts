@@ -75,6 +75,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private api: ApiAlbumService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
+    private host: ElementRef
   ) {}
 
   ngOnDestroy(): void {
@@ -254,10 +255,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
 
   getContent() {
     return this.content;
+  }
+
+  getHost(){
+    return this.host;
   }
 
   mouseEnter = ($event: any) => {};
