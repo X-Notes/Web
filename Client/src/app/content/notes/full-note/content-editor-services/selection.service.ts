@@ -1,8 +1,4 @@
 import { Injectable, QueryList } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
-import { ApiBrowserTextService } from '../../api-browser-text.service';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 
 @Injectable()
@@ -18,8 +14,6 @@ export class SelectionService {
   isSelectionInside;
 
   private selectedItemsSet = new Set<string>();
-
-  constructor(private apiBrowserService: ApiBrowserTextService, private store: Store) {}
 
   selectionHandler(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
     for (let item of elements) {
@@ -51,33 +45,6 @@ export class SelectionService {
   removeFromSelectedItems(id: string){
     this.selectedItemsSet.delete(id);
   }
-
-  makeSelect(items: HTMLElement[]) { // TODO REMOVE
-    const theme = this.store.selectSnapshot(UserStore.getUserTheme);
-    const refElements = [...items];
-    if (this.isSelectionInside) {
-      if (refElements.length === 1) {
-        refElements[0].style.backgroundColor = null;
-        return;
-      }
-      this.apiBrowserService.getSelection().empty();
-    }
-    for (const elem of refElements) {
-      if (theme === ThemeENUM.Dark) {
-        elem.style.backgroundColor = '#2a2d32';
-      } else {
-        elem.style.backgroundColor = '#f3f3f3';
-      }
-      elem.setAttribute('selectedByUser', 'true');
-    }
-  }
-
-  makeNoSelect = (refElements: HTMLElement[]) => { // TODO REMOVE
-    for (const elem of refElements) {
-      elem.style.backgroundColor = null;
-      elem.removeAttribute('selectedByUser');
-    }
-  };
 
   isSelectionInZone(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
     for (let item of elements) {
