@@ -1,5 +1,5 @@
 ﻿using Common.Attributes;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using MediatR;
 using System;
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;

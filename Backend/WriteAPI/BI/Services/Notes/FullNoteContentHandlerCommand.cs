@@ -3,6 +3,7 @@ using BI.SignalR;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Notes.FullNoteSyncContents;
 using Domain.Commands.NoteInner;

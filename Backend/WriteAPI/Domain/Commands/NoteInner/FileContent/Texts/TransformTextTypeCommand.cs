@@ -1,7 +1,7 @@
 ﻿using System;
 using Common.Attributes;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.NoteInner.FileContent.Texts

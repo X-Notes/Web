@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Notes;
-using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Personalization;
 using Domain.Commands.FolderInner;
 using Domain.Queries.InnerFolder;

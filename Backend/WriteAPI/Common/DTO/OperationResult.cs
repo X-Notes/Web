@@ -1,5 +1,4 @@
-﻿
-namespace Common.DTO.Notes.FullNoteContent
+﻿namespace Common.DTO
 {
     public enum OperationResultAdditionalInfo
     {
@@ -23,14 +22,14 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public OperationResult(bool success, T data)
         {
-            this.Success = success;
-            this.Data = data;
+            Success = success;
+            Data = data;
         }
 
         public OperationResult(bool success, T data, OperationResultAdditionalInfo message)
         {
-            this.Success = success;
-            this.Data = data;
+            Success = success;
+            Data = data;
             Status = message;
         }
 

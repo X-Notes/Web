@@ -8,6 +8,7 @@ using BI.Services.History;
 using BI.SignalR;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Notes;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Videos;

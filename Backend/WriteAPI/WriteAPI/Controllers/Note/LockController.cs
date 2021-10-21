@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Encryption;
 using Domain.Queries.Encryption;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
+using Common.DTO;
 
 namespace WriteAPI.Controllers.Note
 {

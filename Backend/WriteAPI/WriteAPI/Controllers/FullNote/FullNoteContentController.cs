@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Contents;
