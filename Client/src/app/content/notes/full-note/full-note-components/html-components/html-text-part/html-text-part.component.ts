@@ -4,9 +4,11 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -32,7 +34,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService],
 })
-export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -84,6 +86,9 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   isMulptiply = false;
 
   constructor(public textService: TextService, private host: ElementRef) {}
+  
+  ngOnChanges(changes: SimpleChanges): void {
+  }
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
