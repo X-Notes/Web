@@ -88,9 +88,11 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       return;
     }
 
-    const collection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
-    const prev = collection.audios ?? [];
-    const newCollection: AudiosCollection = { ...collection, audios: [...prev, ...audios] };
+    const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
+    const prev = prevCollection.audios ?? [];
+
+    const newCollection = prevCollection.copy();
+    newCollection.audios = [...prev, ...audios];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
 
@@ -110,14 +112,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       .toPromise();
 
     if (resp.success) {
-      const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
-      if (collection.audios.length === 1) {
+      const prevCollection = this.contentsService.getContentById<AudiosCollection>(contentId);
+      if (prevCollection.audios.length === 1) {
         this.deleteHandler(contentId);
       } else {
-        const newCollection: AudiosCollection = {
-          ...collection,
-          audios: collection.audios.filter((x) => x.fileId !== audioId),
-        };
+        const newCollection = prevCollection.copy();
+        newCollection.audios = newCollection.audios.filter((x) => x.fileId !== audioId);
         this.contentsService.setSafe(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);

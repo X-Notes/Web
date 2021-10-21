@@ -23,19 +23,19 @@ export class TransformNoteUtil {
   public static transformContent(contents: ContentModel[]) {
     return contents.map((z) => {
       if (z.typeId === ContentTypeENUM.Photos) {
-        return new PhotosCollection(z);
+        return new PhotosCollection(z as PhotosCollection);
       }
       if (z.typeId === ContentTypeENUM.Videos) {
-        return new VideosCollection(z);
+        return new VideosCollection(z as VideosCollection);
       }
       if (z.typeId === ContentTypeENUM.Audios) {
-        return new AudiosCollection(z);
+        return new AudiosCollection(z as AudiosCollection);
       }
       if (z.typeId === ContentTypeENUM.Documents) {
-        return new DocumentsCollection(z);
+        return new DocumentsCollection(z as DocumentsCollection);
       }
       if (z.typeId === ContentTypeENUM.Text) {
-        return new BaseText(z);
+        return new BaseText(z as BaseText);
       }
       return z;
     });

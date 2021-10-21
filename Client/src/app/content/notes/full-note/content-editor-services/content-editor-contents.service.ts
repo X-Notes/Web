@@ -5,6 +5,7 @@ import { debounce, debounceTime, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { BaseText, ContentModel } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
+import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { Diffs, NewRowDiff, PositionDiff } from './models/diffs';
 
 export interface ContentAndIndex<T extends ContentModel> {
@@ -28,17 +29,24 @@ export class ContentEditorContentsService {
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private apiNoteContentService: ApiNoteContentService,
+    private contentEditorMomentoStateService: ContentEditorMomentoStateService
   ) {
     // TODO MAYBE UNSUBSCRIVE & upgrade timer
     this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
   }
 
-  initContent(contents: ContentModel[], noteId: string) {
+  init(contents: ContentModel[], noteId: string) {
+    this.initContent(contents, noteId);
+    this.contentEditorMomentoStateService.save(this.getContents);
+  }
+
+  private initContent(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
     this.contents = contents;
     for (const item of contents) {
-      this.contentsSync.push({ ...item });
+      this.contentsSync.push(item.copy());
     }
+    console.log(this.contents);
   }
 
   get getContents() {
@@ -50,11 +58,12 @@ export class ContentEditorContentsService {
     this.updateSubject.next(true);
   }
 
-  processChanges(){
+  private processChanges() {
+        this.contentEditorMomentoStateService.save(this.getContents);
+        this.contentEditorMomentoStateService.print();
         // TODO MAYBE TIMER
         const diffs = this.getDiffs(this.getContents);
-        console.log(diffs);
-        
+
         if (diffs.isAnyChanges()) {
           this.apiNoteContentService
           .syncContentsStructure(this.noteId, diffs)
@@ -84,6 +93,12 @@ export class ContentEditorContentsService {
     }
 
     return diffs;
+  }
+
+  // Restore Prev
+  restorePrev() {
+    const prev = this.contentEditorMomentoStateService.getPrev();
+    this.initContent(prev, this.noteId);
   }
 
   // GET INDDEX

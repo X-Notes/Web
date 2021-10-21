@@ -8,7 +8,9 @@ export class ContentEditorElementsListenerService {
 
   private renderer: Renderer2;
 
-  onClickDeleteOrBackSpaceSubject = new Subject();
+  onPressDeleteOrBackSpaceSubject = new Subject();
+
+  onPressCtrlZSubject = new Subject();
 
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
@@ -17,28 +19,38 @@ export class ContentEditorElementsListenerService {
   setHandlers(elements: QueryList<ParentInteraction>) {
     // DELETION
     const keydownBackspace = this.renderer.listen(document, 'keydown.backspace', (e) => {
-      this.onClickDeleteOrBackSpaceSubject.next();
+      this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.backspaceDown();
       }
     });
 
     const keydownDelete = this.renderer.listen(document, 'keydown.delete', (e) => {
-      this.onClickDeleteOrBackSpaceSubject.next();
+      this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.deleteDown();
       }
     });
 
     const keyupBackspace = this.renderer.listen(document, 'keyup.backspace', (e) => {
-      this.onClickDeleteOrBackSpaceSubject.next();
+      this.onPressDeleteOrBackSpaceSubject.next();
       for (const el of elements.toArray()) {
         el.backspaceUp();
       }
     });
 
-    this.listeners.push(keydownBackspace, keyupBackspace, keydownDelete);
+    const keydownZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.code === 'KeyZ') {
+        e.preventDefault();
+        this.onPressCtrlZSubject.next();
+        return false;
+      }
+      return true;
+    });
+    
+    this.listeners.push(keydownBackspace, keyupBackspace, keydownDelete, keydownZ);
   }
+ 
 
   destroysListeners() {
     for (const destroyFunc of this.listeners) {

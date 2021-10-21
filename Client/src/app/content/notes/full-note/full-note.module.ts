@@ -42,6 +42,7 @@ import { ContentEditorPhotosCollectionService } from './content-editor-services/
 import { ContentEditorVideosCollectionService } from './content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
+import { ContentEditorMomentoStateService } from './content-editor-services/content-editor-momento-state.service';
 
 @NgModule({
   declarations: [
@@ -92,6 +93,7 @@ import { ContentEditorListenerService } from './content-editor-services/content-
     ContentEditorPhotosCollectionService,
     ContentEditorVideosCollectionService,
     ContentEditorTextService,
+    ContentEditorMomentoStateService
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

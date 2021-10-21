@@ -87,7 +87,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     this.afterUploadFilesToCollection(photosResult);
   };
 
-  insertPhotosToAlbum(photos: Photo[], collection: PhotosCollection, contentId: string) {
+  insertPhotosToAlbum(photos: Photo[], prevCollection: PhotosCollection, contentId: string) {
     const newPhotos: Photo[] = photos.map(
       (x) =>
         new Photo(
@@ -100,8 +100,11 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           x.authorId,
         ),
     );
-    const prev = collection.photos ?? [];
-    const newCollection: PhotosCollection = { ...collection, photos: [...prev, ...newPhotos] };
+    const prev = prevCollection.photos ?? [];
+
+    const newCollection = prevCollection.copy();
+    newCollection.photos = [...prev, ...newPhotos];
+
     this.contentsService.setSafe(newCollection, contentId);
   }
 
@@ -116,14 +119,13 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     const resp = await this.apiAlbum.removePhotoFromAlbum(noteId, contentId, photoId).toPromise();
 
     if (resp.success) {
-      const collection = this.contentsService.getContentById<PhotosCollection>(contentId);
-      if (collection.photos.length === 1) {
+      const prevCollection = this.contentsService.getContentById<PhotosCollection>(contentId);
+      if (prevCollection.photos.length === 1) {
         this.deleteHandler(contentId);
       } else {
-        const newCollection: PhotosCollection = {
-          ...collection,
-          photos: collection.photos.filter((x) => x.fileId !== photoId),
-        };
+        const newCollection = prevCollection.copy();
+        newCollection.photos = newCollection.photos.filter((x) => x.fileId !== photoId);
+
         this.contentsService.setSafe(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);

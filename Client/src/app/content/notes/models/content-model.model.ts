@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import * as uuid from 'uuid';
 
-export class ContentModel {
+export abstract class ContentModel {
   typeId: ContentTypeENUM;
 
   id: string;
@@ -14,6 +14,8 @@ export class ContentModel {
     this.id = id;
     this.updatedAt = updatedAt;
   }
+
+  abstract copy(): ContentModel;
 }
 
 export class BaseText extends ContentModel {
@@ -49,6 +51,10 @@ export class BaseText extends ContentModel {
       updatedAt: new Date(),
     };
     return new BaseText(obj);
+  }
+
+  copy(): BaseText {
+    return new BaseText(this);
   }
 
   get content(): string {
@@ -125,6 +131,10 @@ export class AudiosCollection extends ContentModel {
         new AudioModel(z.name, z.audioPath, z.fileId, z.authorId),
     );
   }
+
+  copy(): AudiosCollection {
+    return new AudiosCollection(this);
+  }
 }
 
 export class AudioModel {
@@ -159,6 +169,10 @@ export class VideosCollection extends ContentModel {
         new VideoModel(z.name, z.videoPath, z.fileId, z.authorId),
     );
   }
+
+  copy(): VideosCollection {
+    return new VideosCollection(this);
+  }
 }
 
 export class VideoModel {
@@ -192,6 +206,10 @@ export class DocumentsCollection extends ContentModel {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
     );
+  }
+
+  copy(): DocumentsCollection {
+    return new DocumentsCollection(this);
   }
 }
 
@@ -240,6 +258,10 @@ export class PhotosCollection extends ContentModel {
           z.authorId,
         ),
     );
+  }
+
+  copy(): PhotosCollection {
+    return new PhotosCollection(this);
   }
 }
 

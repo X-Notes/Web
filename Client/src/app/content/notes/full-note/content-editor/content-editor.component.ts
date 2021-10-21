@@ -61,7 +61,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
   @Input() set contents(contents: ContentModel[]) {
-    this.contentEditorContentsService.initContent(contents, this.note.id);
+    this.contentEditorContentsService.init(contents, this.note.id);
   }
 
   get contents() {
@@ -120,14 +120,18 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
 
-    this.contentEditorElementsListenersService.onClickDeleteOrBackSpaceSubject
+    this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))
       .subscribe(x => {
         for(let itemId of this.selectionService.getSelectedItems()){
           this.deleteRowHandler(itemId);
           this.selectionService.removeFromSelectedItems(itemId);
         }
-      })
+      });
+
+    this.contentEditorElementsListenersService.onPressCtrlZSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(x => this.contentEditorContentsService.restorePrev());
   }
 
   onInput($event) {

@@ -87,13 +87,11 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
       $event.contentId,
     );
     const prev = prevCollection.documents ?? [];
-    const collection: DocumentsCollection = {
-      ...prevCollection,
-      documents: [...prev, ...documents],
-    };
 
-    this.contentsService.setSafe(collection, $event.contentId);
+    const newCollection = prevCollection.copy();
+    newCollection.documents = [...prev, ...documents];
 
+    this.contentsService.setSafe(newCollection, $event.contentId);
     this.afterUploadFilesToCollection(results);
   };
 
