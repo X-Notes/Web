@@ -7,7 +7,7 @@ namespace Domain.Commands.Notes
 {
     public class CopyNoteCommand : BaseCommandEntity, IRequest<List<Guid>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public CopyNoteCommand()

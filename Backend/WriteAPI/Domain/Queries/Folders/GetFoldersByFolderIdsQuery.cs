@@ -9,7 +9,7 @@ namespace Domain.Queries.Folders
 {
     public class GetFoldersByFolderIdsQuery : BaseQueryEntity, IRequest<List<SmallFolder>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> FolderIds { set; get; }
 
         [Required]

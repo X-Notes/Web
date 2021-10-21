@@ -7,7 +7,7 @@ namespace Domain.Commands.Notes
 {
     public class MakePrivateNoteCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public MakePrivateNoteCommand(string email) : base(email)

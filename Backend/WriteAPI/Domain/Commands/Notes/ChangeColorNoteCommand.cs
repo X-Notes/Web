@@ -9,8 +9,10 @@ namespace Domain.Commands.Notes
     {
         [Required]
         public string Color { set; get; }
-        [Required]
+
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
+
         public ChangeColorNoteCommand(List<Guid> ids, string email, string color)
             :base(email)
         {

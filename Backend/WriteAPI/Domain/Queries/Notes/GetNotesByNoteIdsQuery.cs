@@ -9,7 +9,7 @@ namespace Domain.Queries.Notes
 {
     public class GetNotesByNoteIdsQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
 
         [Required]

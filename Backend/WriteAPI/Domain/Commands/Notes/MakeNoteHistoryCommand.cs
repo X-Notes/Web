@@ -10,7 +10,7 @@ namespace Domain.Commands.Notes
         [Required]
         public Guid Id { set; get; }
 
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> UserIds { set; get; }
 
         public MakeNoteHistoryCommand(Guid id, List<Guid> userIds)

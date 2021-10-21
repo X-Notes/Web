@@ -7,7 +7,7 @@ namespace Domain.Commands.Notes
 {
     public class DeleteNotesCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public DeleteNotesCommand(string email): base(email)

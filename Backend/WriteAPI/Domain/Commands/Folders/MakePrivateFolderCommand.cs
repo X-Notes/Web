@@ -7,7 +7,7 @@ namespace Domain.Commands.Folders
 {
     public class MakePrivateFolderCommand : BaseCommandEntity, IRequest<Unit> 
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public MakePrivateFolderCommand(string email) : base(email)

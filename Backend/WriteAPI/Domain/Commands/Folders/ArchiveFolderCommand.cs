@@ -7,7 +7,7 @@ namespace Domain.Commands.Folders
 {
     public class ArchiveFolderCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public ArchiveFolderCommand(string email) : base(email)

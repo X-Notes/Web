@@ -7,8 +7,9 @@ namespace Domain.Commands.Notes
 {
     public class ArchiveNoteCommand : BaseCommandEntity, IRequest<Unit> 
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
+        
 
         public ArchiveNoteCommand(string email) : base(email)
         {

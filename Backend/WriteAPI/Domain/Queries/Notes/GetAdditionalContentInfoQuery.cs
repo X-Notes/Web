@@ -8,7 +8,7 @@ namespace Domain.Queries.Notes
 {
     public class GetAdditionalContentInfoQuery : BaseQueryEntity, IRequest<List<BottomNoteContent>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
 
         public GetAdditionalContentInfoQuery(List<Guid> noteIds)

@@ -7,7 +7,7 @@ namespace Domain.Commands.Folders
 {
     public class DeleteFoldersCommand : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public DeleteFoldersCommand(string email): base(email)
