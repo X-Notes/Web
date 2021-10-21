@@ -22,7 +22,7 @@ export class PositionDiff {
   }
 }
 
-export class Diffs{
+export class StructureDiffs{
   positions: PositionDiff[] = [];
   newItems: NewRowDiff[] = [];
   removedItems: string[] = [];

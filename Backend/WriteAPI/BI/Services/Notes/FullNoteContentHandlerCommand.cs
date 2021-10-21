@@ -53,6 +53,7 @@ namespace BI.Services.Notes
             this._mediator = _mediator;
         }
 
+        [Obsolete]
         public async Task<OperationResult<TextNoteDTO>> Handle(ConcatWithPreviousCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -110,6 +111,7 @@ namespace BI.Services.Notes
             return new OperationResult<TextNoteDTO>().SetNoPermissions();
         }
 
+        [Obsolete]
         public async Task<OperationResult<Unit>> Handle(RemoveContentCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -162,6 +164,7 @@ namespace BI.Services.Notes
         }
 
 
+        [Obsolete]
         public async Task<OperationResult<TextNoteDTO>> Handle(NewLineTextContentNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -190,6 +193,7 @@ namespace BI.Services.Notes
             return new OperationResult<TextNoteDTO>().SetNoPermissions();
         }
 
+        [Obsolete]
         public async Task<OperationResult<TextNoteDTO>> Handle(InsertLineCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);

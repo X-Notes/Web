@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { BaseText, ContentModel, NoteTextTypeENUM } from '../../models/content-model.model';
-import { Diffs, NewRowDiff } from '../content-editor-services/models/diffs';
+import { BaseText, NoteTextTypeENUM } from '../../models/content-model.model';
+import { StructureDiffs } from '../content-editor-services/models/structure-diffs';
 
 @Injectable({
   providedIn: 'root',
@@ -63,7 +63,7 @@ export class ApiNoteContentService {
     );
   }
 
-  syncContentsStructure(noteId: string, diffs: Diffs) {
+  syncContentsStructure(noteId: string, diffs: StructureDiffs) {
     const obj = {
       diffs,
       noteId,

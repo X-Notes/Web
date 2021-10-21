@@ -80,20 +80,21 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                if(content != null)
+                {
+                    content.Content = request.Content ?? content.Content;
+                    content.Checked = request.Checked ?? content.Checked;
+                    content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
+                    content.IsItalic = request.IsItalic.HasValue ? request.IsItalic.Value : content.IsItalic;
 
-                content.Content = request.Content ?? content.Content;
-                content.Checked = request.Checked ?? content.Checked;
-                content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
-                content.IsItalic = request.IsItalic.HasValue ? request.IsItalic.Value : content.IsItalic;
+                    content.UpdatedAt = DateTimeOffset.Now;
+                    await textNotesRepository.UpdateAsync(content);
 
-                content.UpdatedAt = DateTimeOffset.Now;
-                await textNotesRepository.UpdateAsync(content);
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                return new OperationResult<Unit>(true, Unit.Value);
-                // TODO DEADLOCK
+                    return new OperationResult<Unit>(true, Unit.Value);
+                }
             }
 
             return new OperationResult<Unit>().SetNoPermissions();

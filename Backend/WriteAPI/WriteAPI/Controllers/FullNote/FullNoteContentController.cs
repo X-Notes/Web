@@ -64,7 +64,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPatch("sync/structure")]
-        public async Task<OperationResult<Unit>> SyncNoteContents(SyncNoteStructureCommand command)
+        public async Task<OperationResult<Unit>> SyncNoteStructure(SyncNoteStructureCommand command)
         {
             command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
