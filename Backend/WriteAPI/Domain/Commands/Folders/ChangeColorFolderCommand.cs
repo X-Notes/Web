@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
+using Common.Attributes;
 
 namespace Domain.Commands.Folders
 {

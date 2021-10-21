@@ -47,7 +47,7 @@
             (concatThisWithPrev)="concatThisWithPrev($event)"
             (transformTo)="transformToTypeText($event)"
             (transformToFile)="transformToFileType($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandler($event)"
           ></app-html-text-part>
           <app-html-number-list
             #htmlComp
@@ -61,7 +61,7 @@
             (enterEvent)="enterHandler($event)"
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
           ></app-html-number-list>
           <app-html-dot-list
@@ -75,7 +75,7 @@
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandler($event)"
           ></app-html-dot-list>
           <app-html-check-list
             #htmlComp
@@ -88,7 +88,7 @@
             (transformTo)="transformToTypeText($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandler($event)"
           ></app-html-check-list>
           <app-html-headings
             #htmlComp
@@ -100,7 +100,7 @@
             (enterEvent)="enterHandler($event)"
             (deleteThis)="deleteRowHandler($event)"
             (concatThisWithPrev)="concatThisWithPrev($event)"
-            (updateText)="updateTextHandler($event, i === contents.length - 1)"
+            (updateText)="updateTextHandler($event)"
           ></app-html-headings>
         </ng-container>
         <app-photos
@@ -163,6 +163,6 @@
   [style.left.px]="menuSelectionService.left"
   [style.visibility]="menuSelectionService.menuActive ? 'visible' : 'hidden'"
   (eventTransform)="transformToTypeText($event)"
-  (updateText)="updateTextHandler($event, false)"
+  (updateText)="updateTextHandler($event)"
 >
 </app-text-edit-menu>

@@ -4,6 +4,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 
 namespace Domain.Queries.Notes
 {

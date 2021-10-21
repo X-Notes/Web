@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +44,12 @@ namespace WriteAPI.Controllers
             return await this._mediator.Send(command);
         }
 
+        [HttpPatch("sync")]
+        public async Task<OperationResult<Unit>> SyncTextContents(UpdateTextContentsCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
     }
 
 }

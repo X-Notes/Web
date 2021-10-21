@@ -89,6 +89,7 @@ using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
+using Common.DTO;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -163,6 +164,7 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
+            services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
 
             // FULL NOTE CONTENT
             services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();

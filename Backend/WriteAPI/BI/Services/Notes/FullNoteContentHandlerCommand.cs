@@ -303,7 +303,7 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdAsync(note.Id);
+                var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
 
                 if (request.Diffs.RemovedItems.Any())
                 {

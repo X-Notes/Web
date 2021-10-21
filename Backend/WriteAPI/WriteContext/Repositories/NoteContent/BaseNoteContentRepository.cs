@@ -18,11 +18,6 @@ namespace WriteContext.Repositories.NoteContent
         }
 
 
-        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdAsync(Guid id)
-        {
-            return await entities.Where(x => x.NoteId == id).ToListAsync();
-        }
-
         public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
         {
             return await entities

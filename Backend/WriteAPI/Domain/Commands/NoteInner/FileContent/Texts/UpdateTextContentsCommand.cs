@@ -4,7 +4,6 @@ using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.NoteInner.FileContent.Texts
 {
