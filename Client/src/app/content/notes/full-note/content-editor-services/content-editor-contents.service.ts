@@ -45,10 +45,10 @@ export class ContentEditorContentsService {
   private initContent(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
     this.contents = contents;
+    this.contentsSync = [];
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
-    console.log(this.contentsSync);
   }
 
   get getContents() {
