@@ -26,7 +26,7 @@ export class TextService extends HtmlService {
     enterEvent: EventEmitter<EnterEvent>,
   ) {
     $event.preventDefault();
-    const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
+    const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
     const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Default, base.id);
     enterEvent.emit(event);
   }

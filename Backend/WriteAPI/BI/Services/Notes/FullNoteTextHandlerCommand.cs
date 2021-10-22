@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
@@ -16,7 +17,8 @@ namespace BI.Services.Notes
     public class FullNoteTextHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
         IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>
+        IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
+        IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -72,6 +74,7 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
+        [Obsolete]
         public async Task<OperationResult<Unit>> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -100,6 +103,7 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
+        [Obsolete]
         public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -114,6 +118,44 @@ namespace BI.Services.Notes
                     content.HTypeId = request.HeadingType;
                     content.UpdatedAt = DateTimeOffset.Now;
                     await textNotesRepository.UpdateAsync(content);
+
+                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                    // TODO DEADLOCK
+                    return new OperationResult<Unit>(success: true, Unit.Value);
+                }
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdateTextContentsCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                var ids = request.Texts.Select(x => x.Id).ToList();
+                var contents = await textNotesRepository.GetWhereAsync(x => ids.Contains(x.Id));
+                if (contents.Any())
+                {
+                    foreach(var text in request.Texts)
+                    {
+                        var textForUpdate = contents.First(x => x.Id == text.Id);
+
+                        textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                        textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
+                        textForUpdate.HTypeId = text.HeadingTypeId;
+                        textForUpdate.Checked = text.Checked;
+                        textForUpdate.Content = text.Content;
+                        textForUpdate.IsBold = text.IsBold;
+                        textForUpdate.IsItalic = text.IsItalic; 
+                    }
+
+                    // UPDATING
+                    await textNotesRepository.UpdateRangeAsync(contents);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

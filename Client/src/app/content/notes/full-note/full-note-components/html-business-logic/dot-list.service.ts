@@ -34,7 +34,7 @@ export class DotListService extends HtmlService {
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
+      const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
       const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Dotlist, base.id);
       enterEvent.emit(event);
     }

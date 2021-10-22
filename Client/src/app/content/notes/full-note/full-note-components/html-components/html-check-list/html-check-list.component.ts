@@ -93,7 +93,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
+        this.content.contentSG = str;
         this.updateText.emit(this.content);
       });
   }
@@ -107,7 +107,7 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
@@ -138,8 +138,8 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   async changeCheckBox() {
-    this.content.checked = !this.content.checked;
-    this.textChanged.next(this.content.content);
+    this.content.checkedSG = !this.content.checkedSG;
+    this.textChanged.next(this.content.contentSG);
   }
 
   // eslint-disable-next-line class-methods-use-this

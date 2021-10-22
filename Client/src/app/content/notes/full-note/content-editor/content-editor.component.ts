@@ -235,7 +235,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateTextHandler(content: BaseText, isLast: boolean) {
+  updateTextHandler(content: BaseText) {
     this.postAction();
   }
 

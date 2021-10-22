@@ -35,7 +35,7 @@ export class CopyDirective implements OnDestroy, OnInit {
     const items = this.contentEditorContentsService.getContents
                     .filter(x => selectedItemsIds.some(z => z === x.id) && x instanceof BaseText)
                     .map(x => x as BaseText);
-    const texts = items.map((item) => item.content);
+    const texts = items.map((item) => item.contentSG);
     if (texts.length > 0) {
       const resultText = texts.reduce((pv, cv) => `${pv}\n${cv}`);
       this.apiBrowserFunctions.copyTest(resultText);

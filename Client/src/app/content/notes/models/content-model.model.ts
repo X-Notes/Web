@@ -15,33 +15,41 @@ export abstract class ContentModel {
     this.updatedAt = updatedAt;
   }
 
+  isIdsEquals(ids1: string[], ids2: string[]): boolean {
+    const res1 = ids1.filter((name) => !ids2.includes(name));
+    const res2 = ids2.filter((name) => !ids1.includes(name));
+    return res1.length === 0 && res2.length === 0;
+  }
+
   abstract copy(): ContentModel;
+  abstract copyBase(): ContentModel;
+  abstract isEqual(content: ContentModel): boolean;
 }
 
 export class BaseText extends ContentModel {
 
   number?: number;
 
-  private _content: string;
+  content: string;
 
-  private _headingTypeId?: HeadingTypeENUM;
+  headingTypeId?: HeadingTypeENUM;
 
-  private _noteTextTypeId: NoteTextTypeENUM;
+  noteTextTypeId: NoteTextTypeENUM;
 
-  private _checked?: boolean;
+  checked?: boolean;
 
-  private _isBold: boolean;
+  isBold: boolean;
 
-  private _isItalic: boolean;
+  isItalic: boolean;
 
   constructor(text: Partial<BaseText>) {
     super(text.typeId, text.id, text.updatedAt);
-    this._content = text.content;
-    this._headingTypeId = text.headingTypeId;
-    this._noteTextTypeId = text.noteTextTypeId;
-    this._checked = text.checked;
-    this._isBold = text.isBold;
-    this._isItalic = text.isItalic;
+    this.content = text.content;
+    this.headingTypeId = text.headingTypeId;
+    this.noteTextTypeId = text.noteTextTypeId;
+    this.checked = text.checked;
+    this.isBold = text.isBold;
+    this.isItalic = text.isItalic;
   }
 
   static getNew(): BaseText {
@@ -57,57 +65,87 @@ export class BaseText extends ContentModel {
     return new BaseText(this);
   }
 
-  get content(): string {
-    return this._content;
+  copyBase(): BaseText{
+    const obj = new BaseText(this);
+    obj.content = null;
+    obj.headingTypeId = null;
+    obj.noteTextTypeId = null;
+    obj.checked = null;
+    obj.isBold = null;
+    obj.isItalic = null;
+    return obj;
   }
 
-  set content(content: string) {
-    this._content = content;
+  isEqual(content: BaseText): boolean {
+    return this.content === content.content && 
+           this.headingTypeId === content.headingTypeId &&
+           this.noteTextTypeId === content.noteTextTypeId &&
+           this.checked === content.checked &&
+           this.isBold === content.isBold &&
+           this.isItalic === content.isItalic;
+  }
+
+  update(text: BaseText){
+    this.content = text.content;
+    this.headingTypeId = text.headingTypeId;
+    this.noteTextTypeId = text.noteTextTypeId;
+    this.checked = text.checked;
+    this.isBold = text.isBold;
+    this.isItalic = text.isItalic;
+    this.updatedAt = text.updatedAt;
+  }
+
+  get contentSG(): string {
+    return this.content;
+  }
+
+  set contentSG(content: string) {
+    this.content = content;
     this.updateDate();
   }
 
-  get headingTypeId(): HeadingTypeENUM {
-    return this._headingTypeId;
+  get headingTypeIdSG(): HeadingTypeENUM {
+    return this.headingTypeId;
   }
 
-  set headingTypeId(headingTypeId: HeadingTypeENUM) {
-    this._headingTypeId = headingTypeId;
+  set headingTypeIdSG(headingTypeId: HeadingTypeENUM) {
+    this.headingTypeId = headingTypeId;
     this.updateDate();
   }
 
-  get noteTextTypeId(): NoteTextTypeENUM {
-    return this._noteTextTypeId;
+  get noteTextTypeIdSG(): NoteTextTypeENUM {
+    return this.noteTextTypeId;
   }
 
-  set noteTextTypeId(noteTextTypeId: NoteTextTypeENUM) {
-    this._noteTextTypeId = noteTextTypeId;
+  set noteTextTypeIdSG(noteTextTypeId: NoteTextTypeENUM) {
+    this.noteTextTypeId = noteTextTypeId;
     this.updateDate();
   }
 
-  get checked(): boolean {
-    return this._checked;
+  get checkedSG(): boolean {
+    return this.checked;
   }
 
-  set checked(_checked: boolean) {
-    this._checked = _checked;
+  set checkedSG(_checked: boolean) {
+    this.checked = _checked;
     this.updateDate();
   }
 
-  get isBold(): boolean {
-    return this._isBold;
+  get isBoldSG(): boolean {
+    return this.isBold;
   }
 
-  set isBold(_isBold: boolean) {
-    this._isBold = _isBold;
+  set isBoldSG(_isBold: boolean) {
+    this.isBold = _isBold;
     this.updateDate();
   }
 
-  get isItalic(): boolean {
-    return this._isItalic;
+  get isItalicSG(): boolean {
+    return this.isItalic;
   }
 
-  set isItalic(_isItalic: boolean) {
-    this._isItalic = _isItalic;
+  set isItalicSG(_isItalic: boolean) {
+    this.isItalic = _isItalic;
     this.updateDate();
   }
 
@@ -135,6 +173,39 @@ export class AudiosCollection extends ContentModel {
   copy(): AudiosCollection {
     return new AudiosCollection(this);
   }
+
+  copyBase(): AudiosCollection {
+    const obj = new AudiosCollection(this);
+    obj.name = null;
+    obj.audios = null;
+    return obj;
+  }
+
+  isEqual(content: AudiosCollection): boolean {
+    return this.name === content.name && this.isEqualAudios(content);
+  }
+
+  private isEqualAudios(content: AudiosCollection): boolean {
+    
+    if(content.audios.length !== this.audios.length) {
+      return false;
+    }
+
+    const ids1 = content.audios.map(x => x.fileId);
+    const ids2 = this.audios.map(x => x.fileId);
+    if(!this.isIdsEquals(ids1, ids2)){
+      return false;
+    }
+
+    for(const audioF of this.audios) {
+      const audioS = content.audios.find(x => x.fileId === audioF.fileId);
+      if(!audioF.isEqual(audioS)){
+        return false;
+      }
+    }
+
+    return true;
+  }
 }
 
 export class AudioModel {
@@ -151,6 +222,13 @@ export class AudioModel {
     this.audioPath = audioPath;
     this.fileId = fileId;
     this.authorId = authorId;
+  }
+
+  isEqual(content: AudioModel): boolean {
+    return this.name === content.name &&
+           this.fileId === content.fileId &&
+           this.audioPath === content.audioPath &&
+           this.authorId === content.authorId;
   }
 }
 
@@ -173,6 +251,39 @@ export class VideosCollection extends ContentModel {
   copy(): VideosCollection {
     return new VideosCollection(this);
   }
+
+  copyBase(): VideosCollection {
+    const obj = new VideosCollection(this);
+    obj.name = null;
+    obj.videos = null;
+    return obj;
+  }
+
+  isEqual(content: VideosCollection): boolean {
+    return this.name === content.name && this.isEqualVideos(content);
+  }
+
+  private isEqualVideos(content: VideosCollection): boolean {
+    
+    if(content.videos.length !== this.videos.length) {
+      return false;
+    }
+
+    const ids1 = content.videos.map(x => x.fileId);
+    const ids2 = this.videos.map(x => x.fileId);
+    if(!this.isIdsEquals(ids1, ids2)){
+      return false;
+    }
+
+    for(const videoF of this.videos) {
+      const videoS = content.videos.find(x => x.fileId === videoF.fileId);
+      if(!videoF.isEqual(videoS)){
+        return false;
+      }
+    }
+
+    return true;
+  }
 }
 
 export class VideoModel {
@@ -190,6 +301,13 @@ export class VideoModel {
     this.fileId = fileId;
     this.authorId = authorId;
   }
+
+  isEqual(content: VideoModel): boolean {
+    return this.name === content.name &&
+           this.fileId === content.fileId &&
+           this.videoPath === content.videoPath &&
+           this.authorId === content.authorId;
+  }
 }
 
 export class DocumentsCollection extends ContentModel {
@@ -206,10 +324,44 @@ export class DocumentsCollection extends ContentModel {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
     );
+    
+  }
+
+  isEqual(content: DocumentsCollection): boolean {
+    return this.name === content.name && this.isEqualDocuments(content);
+  }
+
+  private isEqualDocuments(content: DocumentsCollection): boolean {
+    
+    if(content.documents.length !== this.documents.length) {
+      return false;
+    }
+
+    const ids1 = content.documents.map(x => x.fileId);
+    const ids2 = this.documents.map(x => x.fileId);
+    if(!this.isIdsEquals(ids1, ids2)){
+      return false;
+    }
+
+    for(const documentsF of this.documents) {
+      const documentsS = content.documents.find(x => x.fileId === documentsF.fileId);
+      if(!documentsF.isEqual(documentsS)){
+        return false;
+      }
+    }
+
+    return true;
   }
 
   copy(): DocumentsCollection {
     return new DocumentsCollection(this);
+  }
+
+  copyBase(): DocumentsCollection {
+    const obj = new DocumentsCollection(this);
+    obj.name = null;
+    obj.documents = null;
+    return obj;
   }
 }
 
@@ -227,6 +379,13 @@ export class DocumentModel {
     this.documentPath = documentPath;
     this.fileId = fileId;
     this.authorId = authorId;
+  }
+
+  isEqual(content: DocumentModel): boolean {
+    return this.name === content.name &&
+           this.fileId === content.fileId &&
+           this.documentPath === content.documentPath &&
+           this.authorId === content.authorId;
   }
 }
 
@@ -260,8 +419,46 @@ export class PhotosCollection extends ContentModel {
     );
   }
 
+  isEqual(content: PhotosCollection): boolean {
+    return this.height === content.height && 
+           this.width === content.width &&
+           this.countInRow === content.countInRow &&
+           this.isEqualPhotos(content);
+  }
+
+  private isEqualPhotos(content: PhotosCollection): boolean {
+    
+    if(content.photos.length !== this.photos.length) {
+      return false;
+    }
+
+    const ids1 = content.photos.map(x => x.fileId);
+    const ids2 = this.photos.map(x => x.fileId);
+    if(!this.isIdsEquals(ids1, ids2)){
+      return false;
+    }
+
+    for(const photoF of this.photos) {
+      const photoS = content.photos.find(x => x.fileId === photoF.fileId);
+      if(!photoF.isEqual(photoS)){
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   copy(): PhotosCollection {
     return new PhotosCollection(this);
+  }
+
+  copyBase(): PhotosCollection {
+    const obj = new PhotosCollection(this);
+    obj.height = null;
+    obj.width = null;
+    obj.photos = null;
+    obj.countInRow = null;
+    return obj;
   }
 }
 
@@ -304,6 +501,15 @@ export class Photo {
     this.loaded = loaded;
     this.name = name;
     this.authorId = authorId;
+  }
+
+  isEqual(content: Photo): boolean {
+    return this.name === content.name &&
+           this.fileId === content.fileId &&
+           this.photoPathSmall === content.photoPathSmall &&
+           this.photoPathMedium === content.photoPathMedium &&
+           this.photoPathBig === content.photoPathBig &&
+           this.authorId === content.authorId;
   }
 }
 

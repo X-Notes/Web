@@ -89,7 +89,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
+        this.content.contentSG = str;
         this.updateText.emit(this.content);
       });
   }
@@ -103,7 +103,7 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

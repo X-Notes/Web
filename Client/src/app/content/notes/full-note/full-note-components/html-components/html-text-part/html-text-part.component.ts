@@ -127,7 +127,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
+        this.content.contentSG = str;
         this.updateText.emit(this.content);
       });
   }
@@ -152,13 +152,13 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   setBoldStyle($event) {
     $event.preventDefault();
-    this.content.isBold = !this.content.isBold;
+    this.content.isBoldSG = !this.content.isBoldSG;
     this.updateText.emit(this.content);
   }
 
   setItalicStyle($event) {
     $event.preventDefault();
-    this.content.isItalic = !this.content.isItalic;
+    this.content.isItalicSG = !this.content.isItalicSG;
     this.updateText.emit(this.content);
   }
 
@@ -184,7 +184,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

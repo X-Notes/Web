@@ -93,7 +93,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
+        this.content.contentSG = str;
         this.updateText.emit(this.content);
       });
   }
@@ -107,7 +107,7 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
+import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiTextService {
@@ -56,6 +56,17 @@ export class ApiTextService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/text/type`,
+      obj,
+    );
+  }
+
+  syncTextContents(noteId: string, texts: BaseText[]) {
+    const obj = {
+      noteId,
+      texts
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/sync`,
       obj,
     );
   }

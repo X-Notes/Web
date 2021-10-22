@@ -1,23 +1,20 @@
 ﻿using BI.Services.History;
 using BI.SignalR;
 using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
-using Common.DTO.Notes.FullNoteSyncContents;
 using Domain.Commands.NoteInner;
 using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Queries.Permissions;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using WriteContext.Repositories.NoteContent;
+
 namespace BI.Services.Notes
 {
     public class FullNoteContentHandlerCommand :
@@ -345,11 +342,20 @@ namespace BI.Services.Notes
         private TextNote GetTextContent(TextNoteDTO textDto, int index, Guid noteId)
         {
             var textDb = new TextNote();
-            textDb.NoteTextTypeId = NoteTextTypeENUM.Default;
 
+            // UPDATE BASE
+            textDb.Id = textDto.Id;
             textDb.NoteId= noteId;
             textDb.Order = index;
             textDb.UpdatedAt = textDto.UpdatedAt;
+
+            // UPDATE TEXT
+            textDb.NoteTextTypeId = textDto.NoteTextTypeId;
+            textDb.HTypeId = textDto.HeadingTypeId;
+            textDb.Checked = textDto.Checked;
+            textDb.Content = textDto.Content;
+            textDb.IsBold = textDto.IsBold;
+            textDb.IsItalic = textDto.IsItalic;
 
             return textDb;
         }

@@ -9,7 +9,8 @@ export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(private contentsService: ContentEditorContentsService) {}
+  constructor(
+    private contentsService: ContentEditorContentsService) {}
 
   deleteContent(contentId: string) {
     const index = this.contentsService.getIndexOrErrorById(contentId);
@@ -24,8 +25,8 @@ export class ContentEditorTextService {
     const data = this.contentsService.getContentAndIndexById<BaseText>(contentId);
     const prevIndex = data.index - 1;
     const prevContent = this.contentsService.getContentByIndex<BaseText>(prevIndex);
-    const resContent = prevContent.content + data.content.content;
-    prevContent.content = resContent;
+    const resContent = prevContent.contentSG + data.content.contentSG;
+    prevContent.contentSG = resContent;
     this.contentsService.deleteById(contentId);
     return prevIndex;
   }
@@ -42,24 +43,25 @@ export class ContentEditorTextService {
     }
 
     const nContent = BaseText.getNew();
-    nContent.noteTextTypeId = nextRowType;
-    nContent.content = nextText;
+    nContent.noteTextTypeIdSG = nextRowType;
+    nContent.contentSG = nextText;
     this.contentsService.insertInto(nContent, index);
     return index;
   }
 
   tranformTextContentTo(value: TransformContent) {
     const item = this.contentsService.getContentAndIndexById<BaseText>(value.id);
-    item.content.noteTextTypeId = value.textType;
+    item.content.noteTextTypeIdSG = value.textType;
     if (value.headingType) {
-      item.content.headingTypeId = value.headingType;
+      item.content.headingTypeIdSG = value.headingType;
     }
     return item.index;
   }
 
   appendNewEmptyContentToEnd() {
     const nContent = BaseText.getNew();
-    nContent.noteTextTypeId = NoteTextTypeENUM.Default;
+    nContent.noteTextTypeIdSG = NoteTextTypeENUM.Default;
     this.contentsService.insertToEnd(nContent);
   }
+  
 }

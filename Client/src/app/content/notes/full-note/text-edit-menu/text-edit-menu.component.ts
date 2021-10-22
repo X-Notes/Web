@@ -33,7 +33,7 @@ export class TextEditMenuComponent {
 
   transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
     const item = this.menuSelectionService.currentTextItem;
-    if (item.noteTextTypeId === type && item.headingTypeId === heading) {
+    if (item.noteTextTypeIdSG === type && item.headingTypeIdSG === heading) {
       this.eventTransform.emit({
         id: item.id,
         textType: NoteTextTypeENUM.Default,
@@ -54,7 +54,7 @@ export class TextEditMenuComponent {
   setBoldStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    content.isBold = !content.isBold;
+    content.isBoldSG = !content.isBoldSG;
     this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
@@ -63,7 +63,7 @@ export class TextEditMenuComponent {
   setItalicStyle($event) {
     $event.preventDefault();
     const content = this.menuSelectionService.currentTextItem;
-    content.isItalic = !content.isItalic;
+    content.isItalicSG = !content.isItalicSG;
     this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
@@ -75,11 +75,11 @@ export class TextEditMenuComponent {
       return;
     }
 
-    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeId === type) {
+    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeIdSG === type) {
       // eslint-disable-next-line consistent-return
-      return heading === item.headingTypeId ? 'active' : '';
+      return heading === item.headingTypeIdSG ? 'active' : '';
     }
     // eslint-disable-next-line consistent-return
-    return type === item.noteTextTypeId ? 'active' : '';
+    return type === item.noteTextTypeIdSG ? 'active' : '';
   }
 }

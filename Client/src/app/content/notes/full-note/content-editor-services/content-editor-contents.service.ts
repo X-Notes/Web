@@ -5,8 +5,9 @@ import { debounce, debounceTime, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { BaseText, ContentModel } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
+import { ApiTextService } from '../services/api-text.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
-import { Diffs, NewRowDiff, PositionDiff } from './models/diffs';
+import { StructureDiffs, NewRowDiff, PositionDiff } from './models/structure-diffs';
 
 export interface ContentAndIndex<T extends ContentModel> {
   index: number;
@@ -29,7 +30,8 @@ export class ContentEditorContentsService {
     protected store: Store,
     protected snackBarStatusTranslateService: SnackBarHandlerStatusService,
     private apiNoteContentService: ApiNoteContentService,
-    private contentEditorMomentoStateService: ContentEditorMomentoStateService
+    private contentEditorMomentoStateService: ContentEditorMomentoStateService,
+    private apiTexts: ApiTextService,
   ) {
     // TODO MAYBE UNSUBSCRIVE & upgrade timer
     this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
@@ -46,7 +48,7 @@ export class ContentEditorContentsService {
     for (const item of contents) {
       this.contentsSync.push(item.copy());
     }
-    console.log(this.contents);
+    console.log(this.contentsSync);
   }
 
   get getContents() {
@@ -60,21 +62,37 @@ export class ContentEditorContentsService {
 
   private processChanges() {
         this.contentEditorMomentoStateService.save(this.getContents);
-        this.contentEditorMomentoStateService.print();
         // TODO MAYBE TIMER
-        const diffs = this.getDiffs(this.getContents);
-
-        if (diffs.isAnyChanges()) {
+        const structureDiffs = this.getStructureDiffs(this.getContents);
+        if (structureDiffs.isAnyChanges()) {
           this.apiNoteContentService
-          .syncContentsStructure(this.noteId, diffs)
+          .syncContentsStructure(this.noteId, structureDiffs)
           .pipe(take(1))
-          .subscribe((x) => console.log(x));
+          .subscribe(x => {
+            // TODO PATCH
+            this.initContent(this.getContents, this.noteId);
+            this.processTextsChanges();
+          });
+        } else {
+          this.processTextsChanges();
         }
   }
 
-  getDiffs(contents: ContentModel[]): Diffs {
-    contents = [...contents];
-    const diffs: Diffs = new Diffs();
+  private processTextsChanges() {
+    const textDiffs = this.getTextDiffs(this.getContents);
+    if(textDiffs.length > 0){
+      this.apiTexts.syncTextContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
+        (resp) => {
+          for(const text of textDiffs){
+            const item = this.contentsSync.find(x => x.id === text.id) as BaseText;
+            item.update(text);
+          }
+      });
+    }
+  }
+
+  getStructureDiffs(contents: ContentModel[]): StructureDiffs {
+    const diffs: StructureDiffs = new StructureDiffs();
 
     for (let i = 0; i < this.contentsSync.length; i += 1) {
       const id = this.contentsSync[i].id;
@@ -87,12 +105,23 @@ export class ContentEditorContentsService {
       if(!this.contentsSync.some(x => x.id === contents[i].id)){
         diffs.newItems.push(new NewRowDiff(i, contents[i] as BaseText));
       }
-      if(this.contentsSync.some(x => x.id === contents[i].id) && (this.contentsSync[i].id !== contents[i].id)){
+      if(this.contentsSync.some(x => x.id === contents[i].id) && (this.contentsSync[i]?.id !== contents[i]?.id)){
         diffs.positions.push(new PositionDiff(i, contents[i].id));
       }
     }
 
     return diffs;
+  }
+
+  getTextDiffs(contents: ContentModel[]): BaseText[] {
+    const texts: BaseText[] = [];
+    for(const content of contents){
+      const isNeedUpdate = this.contentsSync.some(x => x instanceof BaseText && x.id === content.id && !content.isEqual(x));
+      if(isNeedUpdate){
+        texts.push(content as BaseText)
+      }
+    }
+    return texts;
   }
 
   // Restore Prev

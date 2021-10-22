@@ -109,13 +109,13 @@ export class HtmlNumberListComponent
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
+        this.content.contentSG = str;
         this.updateText.emit(this.content);
       });
   }
 
   setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
+    if (this.prevContent && this.prevContent.noteTextTypeIdSG === NoteTextTypeENUM.Numberlist) {
       this.content.number = this.prevContent.number + 1;
     } else {
       this.content.number = 1;
@@ -131,7 +131,7 @@ export class HtmlNumberListComponent
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
