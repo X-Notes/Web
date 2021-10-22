@@ -20,27 +20,11 @@ namespace WriteAPI.Controllers
             this._mediator = _mediator;
         }
 
-
         [HttpPatch("title")]
         public async Task<OperationResult<Unit>> UpdateTitle([FromBody]UpdateTitleNoteCommand command)
         {
             var email = this.GetUserEmail();
             command.Email = email;
-            return await this._mediator.Send(command);
-        }
-
-
-        [HttpPatch("text/type")]
-        public async Task<OperationResult<Unit>> UpdateType(TransformTextTypeCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPatch("text")]
-        public async Task<OperationResult<Unit>> UpdateText(UpdateTextNoteCommand command)
-        {
-            command.Email = this.GetUserEmail();
             return await this._mediator.Send(command);
         }
 

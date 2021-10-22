@@ -20,46 +20,6 @@ export class ApiTextService {
     );
   }
 
-  updateContentText(
-    noteId: string,
-    contentId: string,
-    content: string,
-    checked: boolean,
-    isBold: boolean,
-    isItalic: boolean,
-  ) {
-    const obj = {
-      contentId,
-      content,
-      noteId,
-      checked,
-      isBold,
-      isItalic,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/text`,
-      obj,
-    );
-  }
-
-  updateTextType(
-    noteId: string,
-    contentId: string,
-    type: NoteTextTypeENUM,
-    headingType: HeadingTypeENUM,
-  ) {
-    const obj = {
-      contentId,
-      type,
-      noteId,
-      headingType,
-    };
-    return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/text/type`,
-      obj,
-    );
-  }
-
   syncTextContents(noteId: string, texts: BaseText[]) {
     const obj = {
       noteId,

@@ -86,7 +86,6 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using BI.JobsHandlers;
 using Domain.Commands.NoteInner.FileContent.Texts;
-using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
@@ -162,15 +161,9 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE TEXT
             services.AddScoped<IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
-            services.AddScoped<IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>, FullNoteTextHandlerCommand>();
 
             // FULL NOTE CONTENT
-            services.AddScoped<IRequestHandler<NewLineTextContentNoteCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
-            services.AddScoped<IRequestHandler<InsertLineCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
-            services.AddScoped<IRequestHandler<RemoveContentCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
-            services.AddScoped<IRequestHandler<ConcatWithPreviousCommand, OperationResult<TextNoteDTO>>, FullNoteContentHandlerCommand>();
             services.AddScoped<IRequestHandler<SyncNoteStructureCommand, OperationResult<Unit>>, FullNoteContentHandlerCommand>();
 
 

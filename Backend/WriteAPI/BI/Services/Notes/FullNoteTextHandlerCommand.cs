@@ -16,8 +16,6 @@ namespace BI.Services.Notes
 {
     public class FullNoteTextHandlerCommand :
         IRequestHandler<UpdateTitleNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<UpdateTextNoteCommand, OperationResult<Unit>>,
-        IRequestHandler<TransformTextTypeCommand, OperationResult<Unit>>,
         IRequestHandler<UpdateTextContentsCommand, OperationResult<Unit>>
     {
 
@@ -69,62 +67,6 @@ namespace BI.Services.Notes
                 await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
 
                 return new OperationResult<Unit>(true, Unit.Value);
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        [Obsolete]
-        public async Task<OperationResult<Unit>> Handle(UpdateTextNoteCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
-            {
-                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                if(content != null)
-                {
-                    content.Content = request.Content ?? content.Content;
-                    content.Checked = request.Checked ?? content.Checked;
-                    content.IsBold = request.IsBold.HasValue ? request.IsBold.Value : content.IsBold;
-                    content.IsItalic = request.IsItalic.HasValue ? request.IsItalic.Value : content.IsItalic;
-
-                    content.UpdatedAt = DateTimeOffset.Now;
-                    await textNotesRepository.UpdateAsync(content);
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<Unit>(true, Unit.Value);
-                }
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        [Obsolete]
-        public async Task<OperationResult<Unit>> Handle(TransformTextTypeCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-
-            if (permissions.CanWrite)
-            {
-                var content = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
-                if (content != null)
-                {
-                    content.NoteTextTypeId = request.Type;
-                    content.HTypeId = request.HeadingType;
-                    content.UpdatedAt = DateTimeOffset.Now;
-                    await textNotesRepository.UpdateAsync(content);
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    // TODO DEADLOCK
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
             }
 
             return new OperationResult<Unit>().SetNoPermissions();

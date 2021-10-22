@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner;
-using Domain.Commands.NoteInner.FileContent.Contents;
 using Domain.Queries.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,35 +23,6 @@ namespace WriteAPI.Controllers
         public FullNoteContentController(IMediator _mediator)
         {
             this._mediator = _mediator;
-        }
-
-
-        [HttpPost("concat")]
-        public async Task<OperationResult<TextNoteDTO>> ConcatLine(ConcatWithPreviousCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveLine(RemoveContentCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPost("insert")]
-        public async Task<OperationResult<TextNoteDTO>> InsertLine(InsertLineCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
-        }
-
-        [HttpPost("new")]
-        public async Task<OperationResult<TextNoteDTO>> NewLine(NewLineTextContentNoteCommand command)
-        {
-            command.Email = this.GetUserEmail();
-            return await this._mediator.Send(command);
         }
 
 
