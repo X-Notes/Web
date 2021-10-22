@@ -3,7 +3,6 @@ using Common.DTO;
 using Common.DTO.Notes.FullNoteSyncContents;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Commands.NoteInner

@@ -65,7 +65,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get contents() {
-    return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order);
+    return this.contentEditorContentsService.getContents;
+    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
   }
 
   @Select(UserStore.getUserTheme)

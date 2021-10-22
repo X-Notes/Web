@@ -16,6 +16,7 @@ namespace Common.DTO.Notes.FullNoteContent
         [Required]
         public DateTimeOffset UpdatedAt { set; get; }
 
+        [Required]
         public int Order { set; get; }
 
         public BaseNoteContentDTO(Guid id, int order, ContentTypeENUM typeId, DateTimeOffset updatedAt)

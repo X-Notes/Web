@@ -8,20 +8,20 @@ namespace Common.DTO.Notes.FullNoteContent
 {
     public class TextNoteDTO : BaseNoteContentDTO
     {
-        public string Content { set; get; }
-
-        public HTypeENUM? HeadingTypeId { set; get; }
-
         [RequiredEnumFieldAttribute]
         public NoteTextTypeENUM NoteTextTypeId { set; get; }
-
-        public bool? Checked { set; get; }
 
         [Required]
         public bool IsBold { set; get; }
 
         [Required]
         public bool IsItalic { set; get; }
+
+        public bool? Checked { set; get; }
+
+        public HTypeENUM? HeadingTypeId { set; get; }
+
+        public string Content { set; get; }
 
         public TextNoteDTO(
             string Content, 

@@ -8,6 +8,6 @@ namespace Common.DTO.Notes.FullNoteSyncContents
     {
         public List<PositionDiff> Positions { set; get; }
         public List<Guid> RemovedItems { set; get; }
-        public List<NewRowDiff<TextNoteDTO>> NewItems { set; get; }
+        public List<TextNoteDTO> NewItems { set; get; }
     }
 }

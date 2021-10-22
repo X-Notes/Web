@@ -1,17 +1,5 @@
 import { BaseText } from '../../../models/content-model.model';
 
-
-export class NewRowDiff {
-  order: number;
-
-  data: BaseText;
-
-  constructor(index: number, data: BaseText) {
-    this.order = index;
-    this.data = data;
-  }
-}
-
 export class PositionDiff {
   id: string;
   order: number;
@@ -24,7 +12,7 @@ export class PositionDiff {
 
 export class StructureDiffs{
   positions: PositionDiff[] = [];
-  newItems: NewRowDiff[] = [];
+  newItems: BaseText[] = [];
   removedItems: string[] = [];
 
   isAnyChanges(){

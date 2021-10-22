@@ -312,7 +312,7 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.NewItems.Any())
                 {
-                    var items = request.Diffs.NewItems.Select(x => GetTextContent(x.Data, x.Order, note.Id));
+                    var items = request.Diffs.NewItems.Select(content => GetTextContent(content, note.Id));
                     await baseNoteContentRepository.AddRangeAsync(items);
                 }
                 if (request.Diffs.Positions.Any())
@@ -339,15 +339,16 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>(false, Unit.Value);
         }
 
-        private TextNote GetTextContent(TextNoteDTO textDto, int index, Guid noteId)
+        private TextNote GetTextContent(TextNoteDTO textDto, Guid noteId)
         {
             var textDb = new TextNote();
 
             // UPDATE BASE
             textDb.Id = textDto.Id;
-            textDb.NoteId= noteId;
-            textDb.Order = index;
+            textDb.Order = textDto.Order;
             textDb.UpdatedAt = textDto.UpdatedAt;
+
+            textDb.NoteId = noteId;
 
             // UPDATE TEXT
             textDb.NoteTextTypeId = textDto.NoteTextTypeId;
