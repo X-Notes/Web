@@ -241,7 +241,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var result = new AudiosCollectionNoteDTO(audioNote.Id, audioNote.UpdatedAt, audioNote.Name, null);
+                    var result = new AudiosCollectionNoteDTO(audioNote.Id, audioNote.Order, audioNote.UpdatedAt, audioNote.Name, null);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

@@ -25,14 +25,14 @@ namespace BI.Mapping
     public class AppCustomMapper
     {
 
-        public List<BaseContentNoteDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
+        public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
         {
             if(Contents == null)
             {
-                return new List<BaseContentNoteDTO>();
+                return new List<BaseNoteContentDTO>();
             }
 
-            var resultList = new List<BaseContentNoteDTO>();
+            var resultList = new List<BaseNoteContentDTO>();
             
             foreach(var content in Contents)
             {
@@ -40,7 +40,7 @@ namespace BI.Mapping
                 {
                     case TextNote tN:
                         {
-                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.NoteTextTypeId, tN.HTypeId, 
+                            var tNDTO = new TextNoteDTO(tN.Content, tN.Id, tN.Order, tN.NoteTextTypeId, tN.HTypeId, 
                                 tN.Checked, tN.IsBold, tN.IsItalic, tN.UpdatedAt);
                             resultList.Add(tNDTO);
                             break;
@@ -48,28 +48,28 @@ namespace BI.Mapping
                     case PhotosCollectionNote aN:
                         {
                             var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
-                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.CountInRow, aN.UpdatedAt);
+                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case AudiosCollectionNote playlistNote:
                         {
                             var audiosDTO = playlistNote.Audios.Select(item => new AudioNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
-                            var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
+                            var collectionDTO = new AudiosCollectionNoteDTO(playlistNote.Id, playlistNote.Order, playlistNote.UpdatedAt, playlistNote.Name, audiosDTO);                            
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case VideosCollectionNote videoNote:
                         {
                             var videosDTO = videoNote.Videos.Select(item => new VideoNoteDTO(item.Name, item.Id, item.PathNonPhotoContent, item.UserId)).ToList();
-                            var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.UpdatedAt, videoNote.Name, videosDTO);
+                            var collectionDTO = new VideosCollectionNoteDTO(videoNote.Id, videoNote.Order, videoNote.UpdatedAt, videoNote.Name, videosDTO);
                             resultList.Add(collectionDTO);
                             break;
                         }
                     case DocumentsCollectionNote documentNote:
                         {
                             var documentsDTO = documentNote.Documents.Select(item => new DocumentNoteDTO(item.Name, item.PathNonPhotoContent, item.Id, item.UserId)).ToList();
-                            var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
+                            var collectionDTO = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, documentsDTO);
                             resultList.Add(collectionDTO);
                             break;
                         }
@@ -155,13 +155,13 @@ namespace BI.Mapping
             };
         }
 
-        private List<BaseContentNoteDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents)
+        private List<BaseNoteContentDTO> GetContentsDTOFromContents(bool isLocked, List<BaseNoteContent> contents)
         {
             if(!isLocked)
             {
                 return MapContentsToContentsDTO(contents).ToList();
             }
-            return new List<BaseContentNoteDTO>();
+            return new List<BaseNoteContentDTO>();
         }
 
         public SmallNote MapNoteToSmallNoteDTO(Note note)

@@ -6,7 +6,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class TextNoteDTO : BaseContentNoteDTO
+    public class TextNoteDTO : BaseNoteContentDTO
     {
         public string Content { set; get; }
 
@@ -23,9 +23,17 @@ namespace Common.DTO.Notes.FullNoteContent
         [Required]
         public bool IsItalic { set; get; }
 
-        public TextNoteDTO(string Content, Guid Id, NoteTextTypeENUM NoteTextTypeId, 
-            HTypeENUM? HeadingTypeId, bool? Checked, bool IsBold, bool IsItalic, DateTimeOffset UpdatedAt)
-            :base(Id, ContentTypeENUM.Text, UpdatedAt)
+        public TextNoteDTO(
+            string Content, 
+            Guid Id, 
+            int order,
+            NoteTextTypeENUM NoteTextTypeId, 
+            HTypeENUM? HeadingTypeId, 
+            bool? Checked, 
+            bool IsBold, 
+            bool IsItalic, 
+            DateTimeOffset UpdatedAt)
+            :base(Id, order, ContentTypeENUM.Text, UpdatedAt)
         {
             this.Content = Content;
             this.HeadingTypeId = HeadingTypeId;

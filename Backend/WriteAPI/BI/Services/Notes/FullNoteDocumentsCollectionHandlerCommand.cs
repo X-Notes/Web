@@ -125,7 +125,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.UpdatedAt, documentNote.Name, null);
+                    var result = new DocumentsCollectionNoteDTO(documentNote.Id, documentNote.Order, documentNote.UpdatedAt, documentNote.Name, null);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

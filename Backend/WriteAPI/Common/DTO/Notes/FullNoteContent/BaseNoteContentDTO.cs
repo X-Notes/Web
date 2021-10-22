@@ -5,7 +5,7 @@ using Common.DatabaseModels.Models.NoteContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class BaseContentNoteDTO
+    public abstract class BaseNoteContentDTO
     {
         [ValidationGuidAttribute]
         public Guid Id { set; get; }
@@ -16,11 +16,14 @@ namespace Common.DTO.Notes.FullNoteContent
         [Required]
         public DateTimeOffset UpdatedAt { set; get; }
 
-        public BaseContentNoteDTO(Guid Id, ContentTypeENUM typeId, DateTimeOffset UpdatedAt)
+        public int Order { set; get; }
+
+        public BaseNoteContentDTO(Guid id, int order, ContentTypeENUM typeId, DateTimeOffset updatedAt)
         {
-            this.Id = Id;
+            this.Id = id;
             this.TypeId = typeId;
-            this.UpdatedAt = UpdatedAt;
+            this.UpdatedAt = updatedAt;
+            this.Order = order;
         }
     }
 }

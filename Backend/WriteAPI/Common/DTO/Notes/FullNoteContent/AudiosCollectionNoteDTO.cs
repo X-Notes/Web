@@ -4,13 +4,13 @@ using Common.DatabaseModels.Models.NoteContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class AudiosCollectionNoteDTO : BaseContentNoteDTO
+    public class AudiosCollectionNoteDTO : BaseNoteContentDTO
     {
         public string Name { set; get; }
         public List<AudioNoteDTO> Audios { set; get; }
 
-        public AudiosCollectionNoteDTO(Guid Id, DateTimeOffset UpdatedAt, string name, List<AudioNoteDTO> audios)
-                : base(Id, ContentTypeENUM.AudiosCollection, UpdatedAt)
+        public AudiosCollectionNoteDTO(Guid Id, int order, DateTimeOffset UpdatedAt, string name, List<AudioNoteDTO> audios)
+                : base(Id, order, ContentTypeENUM.AudiosCollection, UpdatedAt)
         {
             Name = name;
             Audios = audios;

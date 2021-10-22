@@ -90,7 +90,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var textResult = new TextNoteDTO(contentPrev.Content, contentPrev.Id,
+                    var textResult = new TextNoteDTO(contentPrev.Content,  contentPrev.Id, contentPrev.Order,
                         contentPrev.NoteTextTypeId, contentPrev.HTypeId, contentPrev.Checked,
                         contentPrev.IsBold, contentPrev.IsItalic, contentPrev.UpdatedAt);
 
@@ -179,7 +179,7 @@ namespace BI.Services.Notes
 
                 await baseNoteContentRepository.AddAsync(text);
 
-                var textResult = new TextNoteDTO(text.Content, text.Id,
+                var textResult = new TextNoteDTO(text.Content, text.Id, text.Order,
                     text.NoteTextTypeId, text.HTypeId, text.Checked, text.IsBold, text.IsItalic, text.UpdatedAt);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
@@ -227,7 +227,7 @@ namespace BI.Services.Notes
                                 await textNotesRepository.AddAsync(newText);
                                 await baseNoteContentRepository.UpdateRangeAsync(contents);
 
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.NoteTextTypeId,
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.Order, newText.NoteTextTypeId,
                                     newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
@@ -265,7 +265,7 @@ namespace BI.Services.Notes
                                 await textNotesRepository.AddAsync(newText);
                                 await baseNoteContentRepository.UpdateRangeAsync(contents);
 
-                                var textResult = new TextNoteDTO(newText.Content, newText.Id,
+                                var textResult = new TextNoteDTO(newText.Content, newText.Id, newText.Order,
                                     newText.NoteTextTypeId, newText.HTypeId, newText.Checked, newText.IsBold, newText.IsItalic, newText.UpdatedAt);
 
                                 await transaction.CommitAsync();
@@ -312,7 +312,7 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.NewItems.Any())
                 {
-                    var items = request.Diffs.NewItems.Select(x => GetTextContent(x.Data, x.Index, note.Id));
+                    var items = request.Diffs.NewItems.Select(x => GetTextContent(x.Data, x.Order, note.Id));
                     await baseNoteContentRepository.AddRangeAsync(items);
                 }
                 if (request.Diffs.Positions.Any())
@@ -323,7 +323,7 @@ namespace BI.Services.Notes
                        var content = contents.FirstOrDefault(x => x.Id == item.Id);
                        if(content != null)
                        {
-                            content.Order = item.Index;
+                            content.Order = item.Order;
                             updateItems.Add(content);
                        }
                     }

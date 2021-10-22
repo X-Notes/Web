@@ -26,7 +26,7 @@ namespace Common.DTO.Notes
 
         public NoteTypeENUM NoteTypeId { set; get; }
 
-        public List<BaseContentNoteDTO> Contents { set; get; }
+        public List<BaseNoteContentDTO> Contents { set; get; }
 
         public bool IsLocked { set; get; }
 

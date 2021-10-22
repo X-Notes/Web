@@ -9,10 +9,13 @@ export abstract class ContentModel {
 
   updatedAt: Date;
 
-  constructor(type: ContentTypeENUM, id: string, updatedAt: Date) {
+  order: number;
+
+  constructor(type: ContentTypeENUM, id: string, order: number, updatedAt: Date) {
     this.typeId = type;
     this.id = id;
     this.updatedAt = updatedAt;
+    this.order = order;
   }
 
   isIdsEquals(ids1: string[], ids2: string[]): boolean {
@@ -43,7 +46,7 @@ export class BaseText extends ContentModel {
   isItalic: boolean;
 
   constructor(text: Partial<BaseText>) {
-    super(text.typeId, text.id, text.updatedAt);
+    super(text.typeId, text.id, text.order, text.updatedAt);
     this.content = text.content;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
@@ -160,7 +163,7 @@ export class AudiosCollection extends ContentModel {
   audios: AudioModel[];
 
   constructor(collection: Partial<AudiosCollection>) {
-    super(collection.typeId, collection.id, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
     this.audios = collection.audios.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -238,7 +241,7 @@ export class VideosCollection extends ContentModel {
   videos: VideoModel[];
 
   constructor(collection: Partial<VideosCollection>) {
-    super(collection.typeId, collection.id, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
     this.videos = collection.videos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -316,7 +319,7 @@ export class DocumentsCollection extends ContentModel {
   documents: DocumentModel[];
 
   constructor(collection: Partial<DocumentsCollection>) {
-    super(collection.typeId, collection.id, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
     this.documents = collection.documents.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -399,7 +402,7 @@ export class PhotosCollection extends ContentModel {
   countInRow: number;
 
   constructor(collection: Partial<PhotosCollection>) {
-    super(collection.typeId, collection.id, collection.updatedAt);
+    super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.countInRow = collection.countInRow;
     this.height = collection.height;
     this.width = collection.width;

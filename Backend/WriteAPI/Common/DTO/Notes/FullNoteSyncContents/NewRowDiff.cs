@@ -2,9 +2,9 @@
 
 namespace Common.DTO.Notes.FullNoteSyncContents
 {
-    public class NewRowDiff<T> where T : BaseContentNoteDTO
+    public class NewRowDiff<T> where T : BaseNoteContentDTO
     {
-        public int Index { set; get; }
+        public int Order { set; get; }
 
         public T Data { set; get; }
     }

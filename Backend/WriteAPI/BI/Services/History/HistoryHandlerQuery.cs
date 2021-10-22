@@ -15,7 +15,7 @@ namespace BI.Services.History
     public class HistoryHandlerQuery:
         IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>,
         IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>,
-        IRequestHandler<GetSnapshotContentsQuery, List<BaseContentNoteDTO>>
+        IRequestHandler<GetSnapshotContentsQuery, List<BaseNoteContentDTO>>
     {
 
         private readonly IMediator _mediator;
@@ -66,7 +66,7 @@ namespace BI.Services.History
             return new NoteHistoryDTOAnswer(false, null);
         }
 
-        public async Task<List<BaseContentNoteDTO>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
+        public async Task<List<BaseNoteContentDTO>> Handle(GetSnapshotContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

@@ -2,22 +2,22 @@ import { BaseText } from '../../../models/content-model.model';
 
 
 export class NewRowDiff {
-  index: number;
+  order: number;
 
   data: BaseText;
 
   constructor(index: number, data: BaseText) {
-    this.index = index;
+    this.order = index;
     this.data = data;
   }
 }
 
 export class PositionDiff {
   id: string;
-  index: number;
+  order: number;
 
   constructor(index: number, id: string) {
-    this.index = index;
+    this.order = index;
     this.id = id;
   }
 }

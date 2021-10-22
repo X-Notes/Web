@@ -151,7 +151,7 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IRequestHandler<GetFullNoteQuery, FullNoteAnswer>, NoteHandlerQuery>();
             services.AddScoped<IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>, NoteHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>, NoteHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetNoteContentsQuery, List<BaseNoteContentDTO>>, NoteHandlerQuery>();
 
             // RELATED NOTES
             services.AddScoped<IRequestHandler<UpdateRelatedNoteStateCommand, OperationResult<Unit>>, RelatedNotesHandlerCommand>();
@@ -246,7 +246,7 @@ namespace WriteAPI.ConfigureAPP
             // HISTORY
             services.AddScoped<IRequestHandler<GetNoteHistoriesQuery, List<NoteHistoryDTO>>, HistoryHandlerQuery>();
             services.AddScoped<IRequestHandler<GetNoteSnapshotQuery, NoteHistoryDTOAnswer>, HistoryHandlerQuery>();
-            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, List<BaseContentNoteDTO>>, HistoryHandlerQuery>();
+            services.AddScoped<IRequestHandler<GetSnapshotContentsQuery, List<BaseNoteContentDTO>>, HistoryHandlerQuery>();
 
             // SEARCH
             services.AddScoped<IRequestHandler<GetUsersForSharingModalQuery, List<ShortUserForShareModal>>, SeachQueryHandler>();

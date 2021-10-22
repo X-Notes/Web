@@ -4,7 +4,7 @@ using Common.DatabaseModels.Models.NoteContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class PhotosCollectionNoteDTO : BaseContentNoteDTO
+    public class PhotosCollectionNoteDTO : BaseNoteContentDTO
     {
         public List<PhotoNoteDTO> Photos { set; get; }
 
@@ -14,14 +14,13 @@ namespace Common.DTO.Notes.FullNoteContent
 
         public int CountInRow { set; get; }
 
-        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> Files, string Width, 
-            string Height, Guid Id, int CountInRow, DateTimeOffset UpdatedAt)
-            : base(Id, ContentTypeENUM.PhotosCollection, UpdatedAt)
+        public PhotosCollectionNoteDTO(List<PhotoNoteDTO> files, string width, string height, Guid id, int order, int countInRow, DateTimeOffset updatedAt)
+            : base(id, order, ContentTypeENUM.PhotosCollection, updatedAt)
         {
-            this.Photos = Files;
-            this.Height = Height;
-            this.Width = Width;
-            this.CountInRow = CountInRow;
+            this.Photos = files;
+            this.Height = height;
+            this.Width = width;
+            this.CountInRow = countInRow;
         }
     }
 }

@@ -273,7 +273,7 @@ namespace BI.Services.Notes
                     await transaction.CommitAsync();
 
                     var result = new PhotosCollectionNoteDTO(null, albumNote.Width, albumNote.Height,
-                        albumNote.Id, albumNote.CountInRow, albumNote.UpdatedAt);
+                        albumNote.Id, albumNote.Order, albumNote.CountInRow, albumNote.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
