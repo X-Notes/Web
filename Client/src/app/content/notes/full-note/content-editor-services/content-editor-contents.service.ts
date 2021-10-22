@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { debounce, debounceTime, take } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { debounceTime, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { BaseText, ContentModel } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
 import { ApiTextService } from '../services/api-text.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
-import { StructureDiffs, NewRowDiff, PositionDiff } from './models/structure-diffs';
+import { StructureDiffs, PositionDiff } from './models/structure-diffs';
 
 export interface ContentAndIndex<T extends ContentModel> {
   index: number;
@@ -51,6 +51,22 @@ export class ContentEditorContentsService {
     }
   }
 
+  private patchStructuralChanges(diffs: StructureDiffs){
+    if(diffs.removedItems.length > 0) {
+      this.contentsSync = this.contentsSync.filter(x => !diffs.removedItems.some(z => z === x.id))
+    }
+    if(diffs.newItems.length > 0) {
+      for (const item of diffs.newItems) {
+        this.contentsSync.push(item.copy());
+      }
+    }
+    if(diffs.positions.length > 0){
+      for(const pos of diffs.positions){
+        this.contentsSync.find(x => x.id === pos.id).order = pos.order;
+      }
+    }
+  }
+
   get getContents() {
     return this.contents;
   }
@@ -69,8 +85,7 @@ export class ContentEditorContentsService {
           .syncContentsStructure(this.noteId, structureDiffs)
           .pipe(take(1))
           .subscribe(x => {
-            // TODO PATCH
-            this.initContent(this.getContents, this.noteId);
+            this.patchStructuralChanges(structureDiffs);
             this.processTextsChanges();
           });
         } else {
@@ -94,18 +109,19 @@ export class ContentEditorContentsService {
   getStructureDiffs(contents: ContentModel[]): StructureDiffs {
     const diffs: StructureDiffs = new StructureDiffs();
 
-    for (let i = 0; i < this.contentsSync.length; i += 1) {
-      const id = this.contentsSync[i].id;
-      if(!this.contents.some(x => x.id === id)){
-        diffs.removedItems.push(id);
+    for(const contentSync of this.contentsSync) {
+      if(!this.contents.some(x => x.id === contentSync.id)){
+        diffs.removedItems.push(contentSync.id);
       }
     }
 
     for (let i = 0; i < contents.length; i += 1) {
-      if(!this.contentsSync.some(x => x.id === contents[i].id)){
-        diffs.newItems.push(new NewRowDiff(i, contents[i] as BaseText));
+      const content = contents[i];
+      if(!this.contentsSync.some(x => x.id === content.id)){
+        content.order = i;
+        diffs.newItems.push(content as BaseText);
       }
-      if(this.contentsSync.some(x => x.id === contents[i].id) && (this.contentsSync[i]?.id !== contents[i]?.id)){
+      if(this.contentsSync.some(x => x.id === content.id) && this.contentsSync.find(x => x.id === content.id).order !== i) {
         diffs.positions.push(new PositionDiff(i, contents[i].id));
       }
     }
