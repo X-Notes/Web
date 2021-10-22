@@ -136,13 +136,11 @@ export abstract class HtmlService {
 
   // eslint-disable-next-line class-methods-use-this
   eventEventFactory(
-    id: string,
     breakModel: BreakEnterModel,
     nextItemType: NoteTextTypeENUM,
     contentId: string,
   ): EnterEvent {
     const eventModel: EnterEvent = {
-      id,
       breakModel,
       nextItemType,
       contentId,

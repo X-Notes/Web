@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { LineBreakType } from '../models/html-models';
 
 export interface BreakEnterModel {
-  typeBreakLine: LineBreakType;
+  isFocusToNext: boolean;
   nextContent?: DocumentFragment;
   nextText?: string;
 }
@@ -12,8 +11,8 @@ export interface BreakEnterModel {
 export class ContentEditableService {
   constructor(private apiBrowserService: ApiBrowserTextService) {}
 
-  enterService(e): BreakEnterModel {
-    let typeBreakLine: LineBreakType;
+  pressEnterHandler(e): BreakEnterModel {
+    let isFocusToNext = false;
     let nextContent: DocumentFragment;
     let nextText: string;
     const el = e as Node;
@@ -25,26 +24,24 @@ export class ContentEditableService {
       range.selectNodeContents(el);
       range.setEnd(selRange.startContainer, selRange.startOffset);
       const atStart = range.toString().replace(/^\s+|\s+$/g, '') === '';
-      if (atStart) {
-        typeBreakLine = LineBreakType.PREV;
-      }
+      if (atStart) {}
 
       range.selectNodeContents(el);
       range.setStart(selRange.endContainer, selRange.endOffset);
       const atEnd = range.toString().replace(/^\s+|\s+$/g, '') === '';
       if (atEnd) {
-        typeBreakLine = LineBreakType.NEXT;
+        isFocusToNext = true;
       }
 
       if (!atStart && !atEnd) {
-        typeBreakLine = LineBreakType.NEXT;
+        isFocusToNext = true;
         range.selectNodeContents(el);
         range.setStart(selRange.endContainer, selRange.startOffset);
         nextContent = range.extractContents();
         nextText = nextContent.textContent;
       }
     }
-    return { typeBreakLine, nextText, nextContent };
+    return { isFocusToNext, nextText, nextContent };
   }
 
   // eslint-disable-next-line consistent-return

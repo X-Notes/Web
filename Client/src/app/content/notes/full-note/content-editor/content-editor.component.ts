@@ -161,7 +161,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     const index = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
-      value.breakModel.typeBreakLine,
+      value.breakModel.isFocusToNext,
       value.breakModel.nextText,
     );
     setTimeout(() => this.elements?.toArray()[index].setFocus());

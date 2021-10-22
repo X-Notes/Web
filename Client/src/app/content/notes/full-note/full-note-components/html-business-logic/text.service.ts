@@ -21,13 +21,14 @@ export class TextService extends HtmlService {
 
   enter(
     $event: any,
-    base: BaseText,
+    content: BaseText,
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
     $event.preventDefault();
     const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
-    const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Default, base.id);
+    content.contentSG = contentHtml.nativeElement.textContent;
+    const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Default, content.id);
     enterEvent.emit(event);
   }
 

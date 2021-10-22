@@ -22,20 +22,21 @@ export class DotListService extends HtmlService {
 
   enter(
     $event: any,
-    base: BaseText,
+    content: BaseText,
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
     $event.preventDefault();
     if (this.isContentEmpty(contentHtml)) {
       this.transformTo.emit({
-        id: base.id,
+        id: content.id,
         textType: NoteTextTypeENUM.Default,
         setFocusToEnd: true,
       });
     } else {
       const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
-      const event = super.eventEventFactory(base.id, breakModel, NoteTextTypeENUM.Dotlist, base.id);
+      content.contentSG = contentHtml.nativeElement.textContent;
+      const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Dotlist, content.id);
       enterEvent.emit(event);
     }
   }

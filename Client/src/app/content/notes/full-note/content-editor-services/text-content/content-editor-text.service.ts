@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
-import { LineBreakType } from '../../models/html-models';
 import { TransformContent } from '../../models/transform-content.model';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 
@@ -34,11 +33,11 @@ export class ContentEditorTextService {
   insertNewContent(
     contentId: string,
     nextRowType: NoteTextTypeENUM,
-    breakLineType: LineBreakType,
+    isFocusToNext: boolean,
     nextText: string,
   ) {
     let index = this.contentsService.getIndexOrErrorById(contentId);
-    if (breakLineType === LineBreakType.NEXT) {
+    if (isFocusToNext) {
       index += 1;
     }
 
