@@ -38,12 +38,12 @@ export class ContentEditorContentsService {
   }
 
   init(contents: ContentModel[], noteId: string) {
-    this.initContent(contents, noteId);
+    this.noteId = noteId;
+    this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
   }
 
-  private initContent(contents: ContentModel[], noteId: string) {
-    this.noteId = noteId;
+  private initContent(contents: ContentModel[]) {
     this.contents = contents;
     this.contentsSync = [];
     for (const item of contents) {
@@ -142,8 +142,8 @@ export class ContentEditorContentsService {
 
   // Restore Prev
   restorePrev() {
-    const prev = this.contentEditorMomentoStateService.getPrev();
-    this.initContent(prev, this.noteId);
+    this.contents = this.contentEditorMomentoStateService.getPrev();
+    this.change();
   }
 
   // GET INDDEX
