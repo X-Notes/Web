@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.NoteContent;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WriteContext.Migrations
@@ -13,7 +14,7 @@ namespace WriteContext.Migrations
                 name: "file");
 
             migrationBuilder.EnsureSchema(
-                name: "note");
+                name: "note_content");
 
             migrationBuilder.EnsureSchema(
                 name: "user");
@@ -26,6 +27,9 @@ namespace WriteContext.Migrations
 
             migrationBuilder.EnsureSchema(
                 name: "label");
+
+            migrationBuilder.EnsureSchema(
+                name: "note");
 
             migrationBuilder.EnsureSchema(
                 name: "note_history");
@@ -46,7 +50,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ContentType",
-                schema: "note",
+                schema: "note_content",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -98,7 +102,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "HType",
-                schema: "note",
+                schema: "note_content",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -124,7 +128,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "NoteTextType",
-                schema: "note",
+                schema: "note_content",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
@@ -189,7 +193,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AudioNoteAppFile",
-                schema: "file",
+                schema: "note_content",
                 columns: table => new
                 {
                     AppFileId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -577,6 +581,36 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BaseNoteContent",
+                schema: "note_content",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    ContentTypeId = table.Column<int>(type: "integer", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BaseNoteContent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContent_ContentType_ContentTypeId",
+                        column: x => x.ContentTypeId,
+                        principalSchema: "note_content",
+                        principalTable: "ContentType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BaseNoteContent_Note_NoteId",
+                        column: x => x.NoteId,
+                        principalSchema: "note",
+                        principalTable: "Note",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FoldersNotes",
                 schema: "folder",
                 columns: table => new
@@ -642,7 +676,8 @@ namespace WriteContext.Migrations
                     RefTypeId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: true),
                     Color = table.Column<string>(type: "text", nullable: true),
-                    Labels = table.Column<List<HistoryLabel>>(type: "jsonb", nullable: true),
+                    Labels = table.Column<List<SnapshotNoteLabel>>(type: "jsonb", nullable: true),
+                    Contents = table.Column<List<BaseNoteContent>>(type: "jsonb", nullable: true),
                     SnapshotTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     NoteId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -764,36 +799,147 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BaseNoteContent",
-                schema: "note",
+                name: "AudiosCollectionNote",
+                schema: "note_content",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    NoteId = table.Column<Guid>(type: "uuid", nullable: true),
-                    NoteSnapshotId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Order = table.Column<int>(type: "integer", nullable: false),
-                    ContentTypeId = table.Column<int>(type: "integer", nullable: false),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BaseNoteContent", x => x.Id);
+                    table.PrimaryKey("PK_AudiosCollectionNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BaseNoteContent_ContentType_ContentTypeId",
-                        column: x => x.ContentTypeId,
-                        principalSchema: "note",
-                        principalTable: "ContentType",
+                        name: "FK_AudiosCollectionNote_BaseNoteContent_Id",
+                        column: x => x.Id,
+                        principalSchema: "note_content",
+                        principalTable: "BaseNoteContent",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentsCollectionNote",
+                schema: "note_content",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentsCollectionNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentsCollectionNote_BaseNoteContent_Id",
+                        column: x => x.Id,
+                        principalSchema: "note_content",
+                        principalTable: "BaseNoteContent",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PhotosCollectionNote",
+                schema: "note_content",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Width = table.Column<string>(type: "text", nullable: true),
+                    Height = table.Column<string>(type: "text", nullable: true),
+                    CountInRow = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhotosCollectionNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PhotosCollectionNote_BaseNoteContent_Id",
+                        column: x => x.Id,
+                        principalSchema: "note_content",
+                        principalTable: "BaseNoteContent",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TextNote",
+                schema: "note_content",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    NoteTextTypeId = table.Column<int>(type: "integer", nullable: false),
+                    HTypeId = table.Column<int>(type: "integer", nullable: true),
+                    Checked = table.Column<bool>(type: "boolean", nullable: true),
+                    IsBold = table.Column<bool>(type: "boolean", nullable: false),
+                    IsItalic = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TextNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TextNote_BaseNoteContent_Id",
+                        column: x => x.Id,
+                        principalSchema: "note_content",
+                        principalTable: "BaseNoteContent",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BaseNoteContent_Note_NoteId",
-                        column: x => x.NoteId,
-                        principalSchema: "note",
-                        principalTable: "Note",
+                        name: "FK_TextNote_HType_HTypeId",
+                        column: x => x.HTypeId,
+                        principalSchema: "note_content",
+                        principalTable: "HType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TextNote_NoteTextType_NoteTextTypeId",
+                        column: x => x.NoteTextTypeId,
+                        principalSchema: "note_content",
+                        principalTable: "NoteTextType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VideosCollectionNote",
+                schema: "note_content",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VideosCollectionNote", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VideosCollectionNote_BaseNoteContent_Id",
+                        column: x => x.Id,
+                        principalSchema: "note_content",
+                        principalTable: "BaseNoteContent",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SnapshotFileContent",
+                schema: "note_history",
+                columns: table => new
+                {
+                    NoteSnapshotId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppFileId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SnapshotFileContent", x => new { x.NoteSnapshotId, x.AppFileId });
+                    table.ForeignKey(
+                        name: "FK_SnapshotFileContent_AppFile_AppFileId",
+                        column: x => x.AppFileId,
+                        principalSchema: "file",
+                        principalTable: "AppFile",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BaseNoteContent_NoteSnapshot_NoteSnapshotId",
+                        name: "FK_SnapshotFileContent_NoteSnapshot_NoteSnapshotId",
                         column: x => x.NoteSnapshotId,
                         principalSchema: "note_history",
                         principalTable: "NoteSnapshot",
@@ -829,130 +975,8 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AudiosCollectionNote",
-                schema: "note",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AudiosCollectionNote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AudiosCollectionNote_BaseNoteContent_Id",
-                        column: x => x.Id,
-                        principalSchema: "note",
-                        principalTable: "BaseNoteContent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DocumentsCollectionNote",
-                schema: "note",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentsCollectionNote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DocumentsCollectionNote_BaseNoteContent_Id",
-                        column: x => x.Id,
-                        principalSchema: "note",
-                        principalTable: "BaseNoteContent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PhotosCollectionNote",
-                schema: "note",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Width = table.Column<string>(type: "text", nullable: true),
-                    Height = table.Column<string>(type: "text", nullable: true),
-                    CountInRow = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PhotosCollectionNote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PhotosCollectionNote_BaseNoteContent_Id",
-                        column: x => x.Id,
-                        principalSchema: "note",
-                        principalTable: "BaseNoteContent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TextNote",
-                schema: "note",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: true),
-                    NoteTextTypeId = table.Column<int>(type: "integer", nullable: false),
-                    HTypeId = table.Column<int>(type: "integer", nullable: true),
-                    Checked = table.Column<bool>(type: "boolean", nullable: true),
-                    IsBold = table.Column<bool>(type: "boolean", nullable: false),
-                    IsItalic = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TextNote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TextNote_BaseNoteContent_Id",
-                        column: x => x.Id,
-                        principalSchema: "note",
-                        principalTable: "BaseNoteContent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TextNote_HType_HTypeId",
-                        column: x => x.HTypeId,
-                        principalSchema: "note",
-                        principalTable: "HType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_TextNote_NoteTextType_NoteTextTypeId",
-                        column: x => x.NoteTextTypeId,
-                        principalSchema: "note",
-                        principalTable: "NoteTextType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VideosCollectionNote",
-                schema: "note",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VideosCollectionNote", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_VideosCollectionNote_BaseNoteContent_Id",
-                        column: x => x.Id,
-                        principalSchema: "note",
-                        principalTable: "BaseNoteContent",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DocumentNoteAppFile",
-                schema: "file",
+                schema: "note_content",
                 columns: table => new
                 {
                     AppFileId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -971,7 +995,7 @@ namespace WriteContext.Migrations
                     table.ForeignKey(
                         name: "FK_DocumentNoteAppFile_DocumentsCollectionNote_DocumentsCollec~",
                         column: x => x.DocumentsCollectionNoteId,
-                        principalSchema: "note",
+                        principalSchema: "note_content",
                         principalTable: "DocumentsCollectionNote",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -979,7 +1003,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "PhotoNoteAppFile",
-                schema: "file",
+                schema: "note_content",
                 columns: table => new
                 {
                     AppFileId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -998,7 +1022,7 @@ namespace WriteContext.Migrations
                     table.ForeignKey(
                         name: "FK_PhotoNoteAppFile_PhotosCollectionNote_PhotosCollectionNoteId",
                         column: x => x.PhotosCollectionNoteId,
-                        principalSchema: "note",
+                        principalSchema: "note_content",
                         principalTable: "PhotosCollectionNote",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1006,7 +1030,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateTable(
                 name: "VideoNoteAppFile",
-                schema: "file",
+                schema: "note_content",
                 columns: table => new
                 {
                     AppFileId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1025,7 +1049,7 @@ namespace WriteContext.Migrations
                     table.ForeignKey(
                         name: "FK_VideoNoteAppFile_VideosCollectionNote_VideosCollectionNoteId",
                         column: x => x.VideosCollectionNoteId,
-                        principalSchema: "note",
+                        principalSchema: "note_content",
                         principalTable: "VideosCollectionNote",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1071,9 +1095,9 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 3, "Russian" },
+                    { 1, "English" },
                     { 2, "Ukraine" },
-                    { 1, "English" }
+                    { 3, "Russian" }
                 });
 
             migrationBuilder.InsertData(
@@ -1082,8 +1106,8 @@ namespace WriteContext.Migrations
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
-                    { 2, "Editor" },
-                    { 1, "Viewer" }
+                    { 1, "Viewer" },
+                    { 2, "Editor" }
                 });
 
             migrationBuilder.InsertData(
@@ -1094,43 +1118,6 @@ namespace WriteContext.Migrations
                 {
                     { 2, "Light" },
                     { 1, "Dark" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "note",
-                table: "ContentType",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 3, "DocumentsCollection" },
-                    { 4, "AudiosCollection" },
-                    { 1, "Text" },
-                    { 2, "PhotosCollection" },
-                    { 5, "VideosCollection" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "note",
-                table: "HType",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "H1" },
-                    { 2, "H2" },
-                    { 3, "H3" }
-                });
-
-            migrationBuilder.InsertData(
-                schema: "note",
-                table: "NoteTextType",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 4, "Numberlist" },
-                    { 5, "Checklist" },
-                    { 3, "Dotlist" },
-                    { 2, "Heading" },
-                    { 1, "Default" }
                 });
 
             migrationBuilder.InsertData(
@@ -1146,14 +1133,51 @@ namespace WriteContext.Migrations
                 });
 
             migrationBuilder.InsertData(
+                schema: "note_content",
+                table: "ContentType",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 3, "DocumentsCollection" },
+                    { 1, "Text" },
+                    { 5, "VideosCollection" },
+                    { 4, "AudiosCollection" },
+                    { 2, "PhotosCollection" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "note_content",
+                table: "HType",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 3, "H3" },
+                    { 1, "H1" },
+                    { 2, "H2" }
+                });
+
+            migrationBuilder.InsertData(
+                schema: "note_content",
+                table: "NoteTextType",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 4, "Numberlist" },
+                    { 5, "Checklist" },
+                    { 3, "Dotlist" },
+                    { 2, "Heading" },
+                    { 1, "Default" }
+                });
+
+            migrationBuilder.InsertData(
                 schema: "user",
                 table: "BillingPlan",
                 columns: new[] { "Id", "MaxSize", "Name" },
                 values: new object[,]
                 {
                     { 2, 5242880000L, "Standart" },
-                    { 3, 20971520000L, "Business" },
-                    { 1, 1048576000L, "Free" }
+                    { 1, 1048576000L, "Free" },
+                    { 3, 20971520000L, "Business" }
                 });
 
             migrationBuilder.InsertData(
@@ -1181,7 +1205,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_AudioNoteAppFile_AppFileId",
-                schema: "file",
+                schema: "note_content",
                 table: "AudioNoteAppFile",
                 column: "AppFileId");
 
@@ -1199,25 +1223,19 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_BaseNoteContent_ContentTypeId",
-                schema: "note",
+                schema: "note_content",
                 table: "BaseNoteContent",
                 column: "ContentTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BaseNoteContent_NoteId",
-                schema: "note",
+                schema: "note_content",
                 table: "BaseNoteContent",
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BaseNoteContent_NoteSnapshotId",
-                schema: "note",
-                table: "BaseNoteContent",
-                column: "NoteSnapshotId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DocumentNoteAppFile_AppFileId",
-                schema: "file",
+                schema: "note_content",
                 table: "DocumentNoteAppFile",
                 column: "AppFileId");
 
@@ -1333,7 +1351,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_PhotoNoteAppFile_AppFileId",
-                schema: "file",
+                schema: "note_content",
                 table: "PhotoNoteAppFile",
                 column: "AppFileId");
 
@@ -1344,14 +1362,20 @@ namespace WriteContext.Migrations
                 column: "RelatedNoteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SnapshotFileContent_AppFileId",
+                schema: "note_history",
+                table: "SnapshotFileContent",
+                column: "AppFileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TextNote_HTypeId",
-                schema: "note",
+                schema: "note_content",
                 table: "TextNote",
                 column: "HTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TextNote_NoteTextTypeId",
-                schema: "note",
+                schema: "note_content",
                 table: "TextNote",
                 column: "NoteTextTypeId");
 
@@ -1437,13 +1461,13 @@ namespace WriteContext.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_VideoNoteAppFile_AppFileId",
-                schema: "file",
+                schema: "note_content",
                 table: "VideoNoteAppFile",
                 column: "AppFileId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AudioNoteAppFile_AppFile_AppFileId",
-                schema: "file",
+                schema: "note_content",
                 table: "AudioNoteAppFile",
                 column: "AppFileId",
                 principalSchema: "file",
@@ -1453,10 +1477,10 @@ namespace WriteContext.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AudioNoteAppFile_AudiosCollectionNote_AudiosCollectionNoteId",
-                schema: "file",
+                schema: "note_content",
                 table: "AudioNoteAppFile",
                 column: "AudiosCollectionNoteId",
-                principalSchema: "note",
+                principalSchema: "note_content",
                 principalTable: "AudiosCollectionNote",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
@@ -1501,11 +1525,11 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "AudioNoteAppFile",
-                schema: "file");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "DocumentNoteAppFile",
-                schema: "file");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "FoldersNotes",
@@ -1529,15 +1553,19 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhotoNoteAppFile",
-                schema: "file");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "ReletatedNoteToInnerNote",
                 schema: "note");
 
             migrationBuilder.DropTable(
+                name: "SnapshotFileContent",
+                schema: "note_history");
+
+            migrationBuilder.DropTable(
                 name: "TextNote",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "UserNoteHistoryManyToMany",
@@ -1561,15 +1589,15 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "VideoNoteAppFile",
-                schema: "file");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "AudiosCollectionNote",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "DocumentsCollectionNote",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "Label",
@@ -1581,15 +1609,19 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhotosCollectionNote",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "HType",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "NoteTextType",
-                schema: "note");
+                schema: "note_content");
+
+            migrationBuilder.DropTable(
+                name: "NoteSnapshot",
+                schema: "note_history");
 
             migrationBuilder.DropTable(
                 name: "Folder",
@@ -1597,7 +1629,7 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "VideosCollectionNote",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "FolderType",
@@ -1605,15 +1637,11 @@ namespace WriteContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "BaseNoteContent",
-                schema: "note");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "ContentType",
-                schema: "note");
-
-            migrationBuilder.DropTable(
-                name: "NoteSnapshot",
-                schema: "note_history");
+                schema: "note_content");
 
             migrationBuilder.DropTable(
                 name: "Note",

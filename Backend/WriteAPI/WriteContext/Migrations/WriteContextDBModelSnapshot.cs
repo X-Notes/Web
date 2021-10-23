@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.NoteContent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -68,66 +69,6 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AppFile", "file");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.AudioNoteAppFile", b =>
-                {
-                    b.Property<Guid>("AudiosCollectionNoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppFileId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AudiosCollectionNoteId", "AppFileId");
-
-                    b.HasIndex("AppFileId");
-
-                    b.ToTable("AudioNoteAppFile", "note_content");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.DocumentNoteAppFile", b =>
-                {
-                    b.Property<Guid>("DocumentsCollectionNoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppFileId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("DocumentsCollectionNoteId", "AppFileId");
-
-                    b.HasIndex("AppFileId");
-
-                    b.ToTable("DocumentNoteAppFile", "note_content");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.PhotoNoteAppFile", b =>
-                {
-                    b.Property<Guid>("PhotosCollectionNoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppFileId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PhotosCollectionNoteId", "AppFileId");
-
-                    b.HasIndex("AppFileId");
-
-                    b.ToTable("PhotoNoteAppFile", "note_content");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.VideoNoteAppFile", b =>
-                {
-                    b.Property<Guid>("VideosCollectionNoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppFileId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("VideosCollectionNoteId", "AppFileId");
-
-                    b.HasIndex("AppFileId");
-
-                    b.ToTable("VideoNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
@@ -291,7 +232,10 @@ namespace WriteContext.Migrations
                     b.Property<string>("Color")
                         .HasColumnType("text");
 
-                    b.Property<List<HistoryLabel>>("Labels")
+                    b.Property<List<BaseNoteContent>>("Contents")
+                        .HasColumnType("jsonb");
+
+                    b.Property<List<SnapshotNoteLabel>>("Labels")
                         .HasColumnType("jsonb");
 
                     b.Property<Guid>("NoteId")
@@ -320,19 +264,34 @@ namespace WriteContext.Migrations
                     b.ToTable("NoteSnapshot", "note_history");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.History.UserNoteHistoryManyToMany", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.SnapshotFileContent", b =>
+                {
+                    b.Property<Guid>("NoteSnapshotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("NoteSnapshotId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("SnapshotFileContent", "note_history");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.UserNoteSnapshotManyToMany", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("NoteHistoryId")
+                    b.Property<Guid>("NoteSnapshotId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("UserId", "NoteHistoryId");
+                    b.HasKey("UserId", "NoteSnapshotId");
 
-                    b.HasIndex("NoteHistoryId");
+                    b.HasIndex("NoteSnapshotId");
 
-                    b.ToTable("UserNoteHistoryManyToMany", "note_history");
+                    b.ToTable("UserNoteSnapshotManyToMany", "note_history");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Labels.Label", b =>
@@ -399,10 +358,7 @@ namespace WriteContext.Migrations
                     b.Property<int>("ContentTypeId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("NoteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("NoteSnapshotId")
+                    b.Property<Guid>("NoteId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Order")
@@ -416,8 +372,6 @@ namespace WriteContext.Migrations
                     b.HasIndex("ContentTypeId");
 
                     b.HasIndex("NoteId");
-
-                    b.HasIndex("NoteSnapshotId");
 
                     b.ToTable("BaseNoteContent", "note_content");
                 });
@@ -460,6 +414,66 @@ namespace WriteContext.Migrations
                             Id = 5,
                             Name = "VideosCollection"
                         });
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.AudioNoteAppFile", b =>
+                {
+                    b.Property<Guid>("AudiosCollectionNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AudiosCollectionNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("AudioNoteAppFile", "note_content");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.DocumentNoteAppFile", b =>
+                {
+                    b.Property<Guid>("DocumentsCollectionNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("DocumentsCollectionNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("DocumentNoteAppFile", "note_content");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.PhotoNoteAppFile", b =>
+                {
+                    b.Property<Guid>("PhotosCollectionNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PhotosCollectionNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("PhotoNoteAppFile", "note_content");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.VideoNoteAppFile", b =>
+                {
+                    b.Property<Guid>("VideosCollectionNoteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("VideosCollectionNoteId", "AppFileId");
+
+                    b.HasIndex("AppFileId");
+
+                    b.ToTable("VideoNoteAppFile", "note_content");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.TextContent.HType", b =>
@@ -1127,82 +1141,6 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.AudioNoteAppFile", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("AudiosCollectionNoteAppFiles")
-                        .HasForeignKey("AppFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.AudiosCollectionNote", "AudiosCollectionNote")
-                        .WithMany("AudioNoteAppFiles")
-                        .HasForeignKey("AudiosCollectionNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppFile");
-
-                    b.Navigation("AudiosCollectionNote");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.DocumentNoteAppFile", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("DocumentsCollectionNoteAppFiles")
-                        .HasForeignKey("AppFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.DocumentsCollectionNote", "DocumentsCollectionNote")
-                        .WithMany("DocumentNoteAppFiles")
-                        .HasForeignKey("DocumentsCollectionNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppFile");
-
-                    b.Navigation("DocumentsCollectionNote");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.PhotoNoteAppFile", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("PhotosCollectionNoteAppFiles")
-                        .HasForeignKey("AppFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.PhotosCollectionNote", "PhotosCollectionNote")
-                        .WithMany("PhotoNoteAppFiles")
-                        .HasForeignKey("PhotosCollectionNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppFile");
-
-                    b.Navigation("PhotosCollectionNote");
-                });
-
-            modelBuilder.Entity("Common.DatabaseModels.Models.Files.Contents.VideoNoteAppFile", b =>
-                {
-                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
-                        .WithMany("VideosCollectionNoteAppFiles")
-                        .HasForeignKey("AppFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.VideosCollectionNote", "VideosCollectionNote")
-                        .WithMany("VideoNoteAppFiles")
-                        .HasForeignKey("VideosCollectionNoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppFile");
-
-                    b.Navigation("VideosCollectionNote");
-                });
-
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Folders.FolderType", "FolderType")
@@ -1303,11 +1241,30 @@ namespace WriteContext.Migrations
                     b.Navigation("RefType");
                 });
 
-            modelBuilder.Entity("Common.DatabaseModels.Models.History.UserNoteHistoryManyToMany", b =>
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.SnapshotFileContent", b =>
                 {
-                    b.HasOne("Common.DatabaseModels.Models.History.NoteSnapshot", "NoteHistory")
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithMany("SnapshotFileContents")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.History.NoteSnapshot", "NoteSnapshot")
+                        .WithMany("SnapshotFileContents")
+                        .HasForeignKey("NoteSnapshotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("NoteSnapshot");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.History.UserNoteSnapshotManyToMany", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.History.NoteSnapshot", "NoteSnapshot")
                         .WithMany("UserHistories")
-                        .HasForeignKey("NoteHistoryId")
+                        .HasForeignKey("NoteSnapshotId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1317,7 +1274,7 @@ namespace WriteContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("NoteHistory");
+                    b.Navigation("NoteSnapshot");
 
                     b.Navigation("User");
                 });
@@ -1363,18 +1320,88 @@ namespace WriteContext.Migrations
                     b.HasOne("Common.DatabaseModels.Models.Notes.Note", "Note")
                         .WithMany("Contents")
                         .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Common.DatabaseModels.Models.History.NoteSnapshot", "NoteSnapshot")
-                        .WithMany("Contents")
-                        .HasForeignKey("NoteSnapshotId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ContentType");
 
                     b.Navigation("Note");
+                });
 
-                    b.Navigation("NoteSnapshot");
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.AudioNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithMany("AudiosCollectionNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.AudiosCollectionNote", "AudiosCollectionNote")
+                        .WithMany("AudioNoteAppFiles")
+                        .HasForeignKey("AudiosCollectionNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("AudiosCollectionNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.DocumentNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithMany("DocumentsCollectionNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.DocumentsCollectionNote", "DocumentsCollectionNote")
+                        .WithMany("DocumentNoteAppFiles")
+                        .HasForeignKey("DocumentsCollectionNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("DocumentsCollectionNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.PhotoNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithMany("PhotosCollectionNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.PhotosCollectionNote", "PhotosCollectionNote")
+                        .WithMany("PhotoNoteAppFiles")
+                        .HasForeignKey("PhotosCollectionNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("PhotosCollectionNote");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.NoteContent.FileContent.VideoNoteAppFile", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithMany("VideosCollectionNoteAppFiles")
+                        .HasForeignKey("AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.NoteContent.FileContent.VideosCollectionNote", "VideosCollectionNote")
+                        .WithMany("VideoNoteAppFiles")
+                        .HasForeignKey("VideosCollectionNoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("VideosCollectionNote");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Notes.Note", b =>
@@ -1671,6 +1698,8 @@ namespace WriteContext.Migrations
 
                     b.Navigation("PhotosCollectionNoteAppFiles");
 
+                    b.Navigation("SnapshotFileContents");
+
                     b.Navigation("UserProfilePhotos");
 
                     b.Navigation("VideosCollectionNoteAppFiles");
@@ -1695,7 +1724,7 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.History.NoteSnapshot", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("SnapshotFileContents");
 
                     b.Navigation("UserHistories");
                 });

@@ -26,9 +26,9 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
         }
 
 
-        public TextNote(TextNote text, bool isHistory, Guid entityId)
+        public TextNote(TextNote text, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = text.Order;
 
@@ -40,9 +40,9 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             ContentTypeId = ContentTypeENUM.Text;
         }
 
-        public TextNote(bool isHistory, Guid entityId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
+        public TextNote(Guid noteId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             this.NoteTextTypeId = NoteTextTypeId;
             this.Content = Content;

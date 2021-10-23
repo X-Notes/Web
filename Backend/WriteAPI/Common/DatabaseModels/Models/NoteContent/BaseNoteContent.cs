@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.Notes;
 using Common.Interfaces;
 
@@ -10,12 +10,8 @@ namespace Common.DatabaseModels.Models.NoteContent
     [Table(nameof(BaseNoteContent), Schema = SchemeConfig.NoteContent)]
     public class BaseNoteContent : BaseEntity<Guid>, IDateUpdater
     {
-        public Guid? NoteId { set; get; }
+        public Guid NoteId { set; get; }
         public Note Note { set; get; }
-
-        public Guid? NoteSnapshotId { set; get; }
-        public NoteSnapshot NoteSnapshot { set; get; }
-
 
         [Range(0, int.MaxValue)]
         public int Order { set; get; }
@@ -25,16 +21,9 @@ namespace Common.DatabaseModels.Models.NoteContent
 
         public DateTimeOffset UpdatedAt { set; get; }
 
-        public void SetId(bool isHistory, Guid EntityId)
+        public virtual IEnumerable<Guid> GetInternalFilesIds()
         {
-            if (!isHistory)
-            {
-                NoteId = EntityId;
-            }
-            else
-            {
-                NoteSnapshotId = EntityId;
-            }
+            return new List<Guid>();
         }
     }
 }

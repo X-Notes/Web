@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Common.DatabaseModels.Models.Files;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
@@ -19,9 +20,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             ContentTypeId = ContentTypeENUM.DocumentsCollection;
         }
 
-        public DocumentsCollectionNote(DocumentsCollectionNote entity, List<DocumentNoteAppFile> documentNoteAppFiles, bool isHistory, Guid entityId)
+        public DocumentsCollectionNote(DocumentsCollectionNote entity, List<DocumentNoteAppFile> documentNoteAppFiles, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = entity.Order;
 
@@ -33,9 +34,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             DocumentNoteAppFiles = documentNoteAppFiles;
         }
 
-        public DocumentsCollectionNote(DocumentsCollectionNote entity, List<AppFile> documents, bool isHistory, Guid entityId)
+        public DocumentsCollectionNote(DocumentsCollectionNote entity, List<AppFile> documents, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = entity.Order;
 
@@ -47,5 +48,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Documents = documents;
         }
 
+        public override IEnumerable<Guid> GetInternalFilesIds()
+        {
+            return Documents.Select(x => x.Id);
+        }
     }
 }

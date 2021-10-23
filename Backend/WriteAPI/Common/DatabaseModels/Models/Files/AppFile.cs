@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
 
@@ -42,6 +43,9 @@ namespace Common.DatabaseModels.Models.Files
 
         public List<DocumentsCollectionNote> DocumentsCollectionNotes { set; get; }
         public List<DocumentNoteAppFile> DocumentsCollectionNoteAppFiles { set; get; }
+
+        public List<NoteSnapshot> NoteSnapshots { set; get; }
+        public List<SnapshotFileContent> SnapshotFileContents { set; get; }
 
         public AppFile()
         {

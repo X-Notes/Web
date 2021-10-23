@@ -59,7 +59,7 @@ namespace BI.Services.History
 
             if (permissions.CanRead)
             {
-                var snapshot = await noteHistoryRepository.GetSnapshot(request.SnapshotId);
+                var snapshot =  await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
                 return new NoteHistoryDTOAnswer(true, noteCustomMapper.MapNoteSnapshotToNoteSnapshotDTO(snapshot));
             }
 
@@ -73,8 +73,8 @@ namespace BI.Services.History
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentBySnapshotIdOrderedAsync(request.SnapshotId);
-                return noteCustomMapper.MapContentsToContentsDTO(contents);
+                var snapshot = await noteHistoryRepository.FirstOrDefaultAsync(x => x.Id == request.SnapshotId);
+                return noteCustomMapper.MapContentsToContentsDTO(snapshot.Contents);
             }
 
             // TODO WHEN NO ACCESS

@@ -1,12 +1,7 @@
-﻿using Common.DatabaseModels.Models.Labels;
-using Common.DatabaseModels.Models.NoteContent;
+﻿using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common.Interfaces.Note
 {

@@ -17,27 +17,14 @@ namespace WriteContext.Repositories.NoteContent
 
         }
 
-
         public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
         {
-            return await entities
+            return await entities // TODO OPTIMIZATION
                 .Include(x => (x as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
                 .Include(x => (x as DocumentsCollectionNote).Documents)
                 .Where(x => x.NoteId == id)
-                .OrderBy(x => x.Order)
-                .ToListAsync();
-        }
-
-        public async Task<List<BaseNoteContent>> GetAllContentBySnapshotIdOrderedAsync(Guid snapshotId)
-        {
-            return await entities
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Where(x => x.NoteSnapshotId == snapshotId)
                 .OrderBy(x => x.Order)
                 .ToListAsync();
         }
@@ -55,13 +42,12 @@ namespace WriteContext.Repositories.NoteContent
 
         public async Task<List<BaseNoteContent>> GetContentByNoteIdsAsync(List<Guid> ids)
         {
-            return await entities
+            return await entities // TODO OPTIMIZATION
                 .Include(x => (x as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
                 .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Where(x => ids.Contains(x.NoteId.Value)).ToListAsync();
+                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
         }
-
     }
 }
