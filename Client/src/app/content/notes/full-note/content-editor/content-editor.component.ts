@@ -61,7 +61,11 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
   @Input() set contents(contents: ContentModel[]) {
-    this.contentEditorContentsService.init(contents, this.note.id);
+    if(this.isReadOnlyMode){
+      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
+    } else {
+      this.contentEditorContentsService.init(contents, this.note.id);
+    }
   }
 
   get contents() {
@@ -75,7 +79,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   theme = ThemeENUM;
 
   @Input()
-  isReadOnlyMode = false;
+  isReadOnlyMode = true;
 
   @Input()
   note: FullNote | NoteSnapshot;
