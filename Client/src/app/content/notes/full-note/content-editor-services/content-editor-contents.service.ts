@@ -33,14 +33,19 @@ export class ContentEditorContentsService {
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
     private apiTexts: ApiTextService,
   ) {
-    // TODO MAYBE UNSUBSCRIVE & upgrade timer
-    this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
   }
 
   init(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
     this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
+    // TODO MAYBE UNSUBSCRIVE & upgrade timer
+    this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
+  }
+
+  initOnlyRead(contents: ContentModel[], noteId: string) {
+    this.noteId = noteId;
+    this.contents = contents;
   }
 
   private initContent(contents: ContentModel[]) {

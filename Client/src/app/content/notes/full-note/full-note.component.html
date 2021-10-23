@@ -12,7 +12,11 @@
     (panmove)="panMove($event)"
     (panend)="panEnd($event)"
   >
-    <app-content-editor [note]="note" [contents]="contents"></app-content-editor>
+    <app-content-editor
+      [note]="note"
+      [isReadOnlyMode]="false"
+      [contents]="contents"
+    ></app-content-editor>
     <app-right-section-content [note]="note" [wrap]="wrap"></app-right-section-content>
   </div>
   <div *ngIf="(canNoView$ | async) && loaded" class="wrapper">

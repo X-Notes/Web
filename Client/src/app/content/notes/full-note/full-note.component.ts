@@ -31,6 +31,7 @@ import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
+  providers: [FullNoteSliderService],
 })
 export class FullNoteComponent implements OnInit, OnDestroy {
   @ViewChild('fullWrap') wrap: ElementRef;

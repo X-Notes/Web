@@ -31,7 +31,6 @@ import { ContentEditorComponent } from './content-editor/content-editor.componen
 import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { SelectionService } from './content-editor-services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
-import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
@@ -82,7 +81,6 @@ import { ContentEditorMomentoStateService } from './content-editor-services/cont
     MenuSelectionService,
     SelectionService,
     SidebarNotesService,
-    FullNoteSliderService,
     ClickableContentService,
     ContentEditorElementsListenerService,
     ContentEditorListenerService,
