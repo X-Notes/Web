@@ -1,7 +1,5 @@
-﻿using Common.DatabaseModels.Models.NoteContent;
-using Common.DatabaseModels.Models.Notes;
+﻿using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
-using System.Collections.Generic;
 
 namespace Common.Interfaces.Note
 {
@@ -15,7 +13,5 @@ namespace Common.Interfaces.Note
 
         public string Title { set; get; }
         public string Color { set; get; }
-
-        public List<BaseNoteContent> Contents { set; get; }
     }
 }

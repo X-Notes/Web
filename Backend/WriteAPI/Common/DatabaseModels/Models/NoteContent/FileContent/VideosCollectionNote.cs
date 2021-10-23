@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Common.DatabaseModels.Models.Files;
+using Common.Interfaces.Note;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
     [Table(nameof(VideosCollectionNote), Schema = SchemeConfig.NoteContent)]
-    public class VideosCollectionNote : BaseNoteContent
+    public class VideosCollectionNote : BaseNoteContent, IVideosCollection
     {
         public string Name { set; get; }
 

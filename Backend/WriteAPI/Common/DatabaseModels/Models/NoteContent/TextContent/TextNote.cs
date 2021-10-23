@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Common.Interfaces.Note;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
     [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
-    public class TextNote : BaseNoteContent
+    public class TextNote : BaseNoteContent, INoteText
     {
         public string Content { set; get; }
 

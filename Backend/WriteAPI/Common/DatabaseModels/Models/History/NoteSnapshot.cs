@@ -1,4 +1,5 @@
 ﻿using Common.DatabaseModels.Models.Files;
+using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
@@ -26,7 +27,7 @@ namespace Common.DatabaseModels.Models.History
         public List<SnapshotNoteLabel> Labels { get; set; }
 
         [Column(TypeName = "jsonb")]
-        public List<BaseNoteContent> Contents { set; get; }
+        public ContentSnapshot Contents { set; get; }
 
         public DateTimeOffset SnapshotTime { set; get; }
 

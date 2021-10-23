@@ -25,16 +25,16 @@ namespace BI.Mapping
     public class AppCustomMapper
     {
 
-        public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> Contents)
+        public List<BaseNoteContentDTO> MapContentsToContentsDTO(List<BaseNoteContent> contents)
         {
-            if(Contents == null)
+            if(contents == null)
             {
                 return new List<BaseNoteContentDTO>();
             }
 
             var resultList = new List<BaseNoteContentDTO>();
             
-            foreach(var content in Contents)
+            foreach(var content in contents)
             {
                 switch (content)
                 {

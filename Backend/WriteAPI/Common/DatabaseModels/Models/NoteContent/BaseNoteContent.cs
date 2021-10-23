@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.Notes;
-using Common.Interfaces;
+using Common.Interfaces.Note;
 
 namespace Common.DatabaseModels.Models.NoteContent
 {
     [Table(nameof(BaseNoteContent), Schema = SchemeConfig.NoteContent)]
-    public class BaseNoteContent : BaseEntity<Guid>, IDateUpdater
+    public class BaseNoteContent : BaseEntity<Guid>, IBaseNoteContent
     {
         public Guid NoteId { set; get; }
         public Note Note { set; get; }

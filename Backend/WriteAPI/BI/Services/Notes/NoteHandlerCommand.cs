@@ -9,6 +9,7 @@ using BI.Services.History;
 using BI.SignalR;
 using Common;
 using Common.DatabaseModels.Models.History;
+using Common.DatabaseModels.Models.History.Contents;
 using Common.DatabaseModels.Models.Labels;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
@@ -16,6 +17,7 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DatabaseModels.Models.Notes;
 using Common.DatabaseModels.Models.Systems;
 using Common.DTO.Notes;
+using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
 using Domain.Commands.Notes;
 using Domain.Queries.Permissions;
@@ -444,11 +446,67 @@ namespace BI.Services.Notes
                 Labels = labels,
                 UserHistories = request.UserIds.Select(x => new UserNoteSnapshotManyToMany { UserId = x }).ToList(),
                 SnapshotFileContents = noteForCopy.Contents.SelectMany(x => x.GetInternalFilesIds()).Select(x => new SnapshotFileContent { AppFileId = x }).ToList(),
-                Contents = noteForCopy.Contents
+                Contents = Convert(noteForCopy.Contents)
             };
 
             var dbSnapshot = await noteSnapshotRepository.AddAsync(snapshot);
             return Unit.Value;
+        }
+
+        private ContentSnapshot Convert(List<BaseNoteContent> contents)
+        {
+            var result = new ContentSnapshot();
+
+            foreach (var content in contents)
+            {
+                switch (content)
+                {
+                    case TextNote tN:
+                        {
+                            var tNDTO = new TextNoteSnapshot(tN.Content, tN.NoteTextTypeId, tN.HTypeId, tN.Checked, tN.IsBold, tN.IsItalic,
+                                                    tN.Order, tN.ContentTypeId, tN.UpdatedAt);
+                            result.TextNoteSnapshots.Add(tNDTO);
+                            break;
+                        }
+                    case PhotosCollectionNote aN:
+                        {
+                            var photoFileIds = aN.Photos.Select(item => item.Id).ToList();
+                            var collectionDTO = new PhotosCollectionNoteSnapshot(aN.Name, aN.Width, aN.Height, aN.CountInRow, photoFileIds, 
+                                aN.Order, aN.ContentTypeId, aN.UpdatedAt);
+                            result.PhotosCollectionNoteSnapshots.Add(collectionDTO);
+                            break;
+                        }
+                    case AudiosCollectionNote playlistNote:
+                        {
+                            var audioFileIds = playlistNote.Audios.Select(item => item.Id).ToList();
+                            var collectionDTO = new AudiosCollectionNoteSnapshot(playlistNote.Name, audioFileIds,
+                                playlistNote.Order, playlistNote.ContentTypeId, playlistNote.UpdatedAt);
+                            result.AudiosCollectionNoteSnapshots.Add(collectionDTO);
+                            break;
+                        }
+                    case VideosCollectionNote videoNote:
+                        {
+                            var videoFileIds = videoNote.Videos.Select(item => item.Id).ToList();
+                            var collectionDTO = new VideosCollectionNoteSnapshot(videoNote.Name, videoFileIds,
+                                videoNote.Order, videoNote.ContentTypeId, videoNote.UpdatedAt);
+                            result.VideosCollectionNoteSnapshots.Add(collectionDTO);
+                            break;
+                        }
+                    case DocumentsCollectionNote documentNote:
+                        {
+                            var documentFileIds = documentNote.Documents.Select(item => item.Id).ToList();
+                            var collectionDTO = new DocumentsCollectionNoteSnapshot(documentNote.Name, documentFileIds,
+                                documentNote.Order, documentNote.ContentTypeId, documentNote.UpdatedAt);
+                            result.DocumentsCollectionNoteSnapshots.Add(collectionDTO);
+                            break;
+                        }
+                    default:
+                        {
+                            throw new Exception("Incorrect type");
+                        }
+                }
+            }
+            return result;
         }
     }
 }

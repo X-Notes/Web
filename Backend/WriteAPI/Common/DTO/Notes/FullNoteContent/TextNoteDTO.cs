@@ -24,23 +24,23 @@ namespace Common.DTO.Notes.FullNoteContent
         public string Content { set; get; }
 
         public TextNoteDTO(
-            string Content, 
-            Guid Id, 
+            string content, 
+            Guid id, 
             int order,
-            NoteTextTypeENUM NoteTextTypeId, 
-            HTypeENUM? HeadingTypeId, 
-            bool? Checked, 
-            bool IsBold, 
-            bool IsItalic, 
-            DateTimeOffset UpdatedAt)
-            :base(Id, order, ContentTypeENUM.Text, UpdatedAt)
+            NoteTextTypeENUM noteTextTypeId, 
+            HTypeENUM? headingTypeId, 
+            bool? @checked, 
+            bool isBold, 
+            bool isItalic, 
+            DateTimeOffset updatedAt)
+            :base(id, order, ContentTypeENUM.Text, updatedAt)
         {
-            this.Content = Content;
-            this.HeadingTypeId = HeadingTypeId;
-            this.NoteTextTypeId = NoteTextTypeId;
-            this.Checked = Checked;
-            this.IsBold = IsBold;
-            this.IsItalic = IsItalic;
+            this.Content = content;
+            this.HeadingTypeId = headingTypeId;
+            this.NoteTextTypeId = noteTextTypeId;
+            this.Checked = @checked;
+            this.IsBold = isBold;
+            this.IsItalic = isItalic;
         }
     }
 }
