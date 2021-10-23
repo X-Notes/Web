@@ -76,7 +76,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
-
       this.store
         .select(AppStore.appLoaded)
         .pipe(takeUntil(this.destroy)) // TODO REFACTOR
@@ -95,7 +94,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.signalRService.joinNote(this.id);
-    this.store.dispatch(new LoadOnlineUsersOnNote(this.id));
     this.signalRService.updateContentEvent
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.loadContent());
