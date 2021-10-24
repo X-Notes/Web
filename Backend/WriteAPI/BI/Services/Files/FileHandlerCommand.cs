@@ -19,8 +19,8 @@ namespace BI.Services.Files
     public class FileHandlerCommand :
         IRequestHandler<SavePhotosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveAudiosToNoteCommand, List<AppFile>>,
-        IRequestHandler<SaveDocumentToNoteCommand, AppFile>,
-        IRequestHandler<SaveVideoToNoteCommand, AppFile>,
+        IRequestHandler<SaveDocumentsToNoteCommand, List<AppFile>>,
+        IRequestHandler<SaveVideosToNoteCommand, List<AppFile>>,
         IRequestHandler<SaveBackgroundCommand, AppFile>,
         IRequestHandler<SaveUserPhotoCommand, AppFile>,
         IRequestHandler<CopyBlobFromContainerToContainerCommand, AppFile>,
@@ -167,18 +167,26 @@ namespace BI.Services.Files
             await Handle(new RemoveFilesFromStorageCommand(pathes, userId), CancellationToken.None);
         }
 
-        public async Task<AppFile> Handle(SaveDocumentToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<List<AppFile>> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {
-            var file = request.FileBytes;
-            var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, FileHelper.GetExtension(file.FileName));
-            return new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName);
+            var files = new List<AppFile>();
+            foreach (var file in request.FileBytes)
+            {
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Documents, FileHelper.GetExtension(file.FileName));
+                files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Document, request.UserId, file.FileName));
+            }
+            return files;
         }
 
-        public async Task<AppFile> Handle(SaveVideoToNoteCommand request, CancellationToken cancellationToken)
+        public async Task<List<AppFile>> Handle(SaveVideosToNoteCommand request, CancellationToken cancellationToken)
         {
-            var file = request.FileBytes;
-            var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtension(file.FileName));
-            return new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Video, request.UserId, file.FileName);
+            var files = new List<AppFile>();
+            foreach (var file in request.FileBytes)
+            {
+                var blob = await filesStorage.SaveFile(request.UserId.ToString(), file.Bytes, file.ContentType, ContentTypesFile.Videos, FileHelper.GetExtension(file.FileName));
+                files.Add(new AppFile(blob.FilePath, file.ContentType, file.Bytes.Length, FileTypeEnum.Video, request.UserId, file.FileName));
+            }
+            return files;
         }
 
         public async Task<List<AppFile>> Handle(SaveAudiosToNoteCommand request, CancellationToken cancellationToken)

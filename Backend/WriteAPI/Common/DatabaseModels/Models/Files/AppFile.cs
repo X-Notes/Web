@@ -30,6 +30,8 @@ namespace Common.DatabaseModels.Models.Files
         public Guid UserId { set; get; }
         public User User { get; set; }
 
+        public AppFileUploadInfo AppFileUploadInfo { set; get; }
+
         public List<UserProfilePhoto> UserProfilePhotos { set; get; }
 
         public List<PhotosCollectionNote> PhotosCollectionNotes { set; get; }
@@ -134,6 +136,5 @@ namespace Common.DatabaseModels.Models.Files
             }
             return result;
         }
-
     }
 }

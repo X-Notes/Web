@@ -7,7 +7,7 @@ using MediatR;
 namespace Domain.Commands.Files
 {
 
-    public class SaveAudiosToNoteCommand : IRequest<List<AppFile>>
+    public class SaveDocumentsToNoteCommand : IRequest<List<AppFile>>
     {
         public List<FilesBytes> FileBytes { set; get; }
 
@@ -15,13 +15,12 @@ namespace Domain.Commands.Files
 
         public Guid UserId { set; get; }
 
-
-        public SaveAudiosToNoteCommand(Guid userId, List<FilesBytes> fileBytes, Guid noteId)
+        public SaveDocumentsToNoteCommand(Guid userId, List<FilesBytes> fileBytes, Guid noteId)
         {
             this.FileBytes = fileBytes;
             this.NoteId = noteId;
             UserId = userId;
         }
-
     }
+
 }

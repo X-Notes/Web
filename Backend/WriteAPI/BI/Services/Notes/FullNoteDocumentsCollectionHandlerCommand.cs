@@ -159,7 +159,7 @@ namespace BI.Services.Notes
 
                 // FILE LOGIC
                 var filebytes = await request.Documents.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
+                var dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebytes, note.Id));
 
                 if (cancellationToken.IsCancellationRequested)
                 {

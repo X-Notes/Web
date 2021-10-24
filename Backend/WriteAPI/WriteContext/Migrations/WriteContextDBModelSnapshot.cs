@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Common.DatabaseModels.Models.History;
-using Common.DatabaseModels.Models.NoteContent;
+using Common.DatabaseModels.Models.History.Contents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -69,6 +69,49 @@ namespace WriteContext.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AppFile", "file");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadInfo", b =>
+                {
+                    b.Property<Guid>("AppFileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("LinkedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AppFileId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("AppFileUploadInfo", "file");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppFileUploadStatus", "file");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "UnLinked"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Linkeed"
+                        });
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
@@ -232,7 +275,7 @@ namespace WriteContext.Migrations
                     b.Property<string>("Color")
                         .HasColumnType("text");
 
-                    b.Property<List<BaseNoteContent>>("Contents")
+                    b.Property<ContentSnapshot>("Contents")
                         .HasColumnType("jsonb");
 
                     b.Property<List<SnapshotNoteLabel>>("Labels")
@@ -1141,6 +1184,25 @@ namespace WriteContext.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadInfo", b =>
+                {
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFile", "AppFile")
+                        .WithOne("AppFileUploadInfo")
+                        .HasForeignKey("Common.DatabaseModels.Models.Files.AppFileUploadInfo", "AppFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.DatabaseModels.Models.Files.AppFileUploadStatus", "Status")
+                        .WithMany("AppFileUploadInfos")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppFile");
+
+                    b.Navigation("Status");
+                });
+
             modelBuilder.Entity("Common.DatabaseModels.Models.Folders.Folder", b =>
                 {
                     b.HasOne("Common.DatabaseModels.Models.Folders.FolderType", "FolderType")
@@ -1692,6 +1754,8 @@ namespace WriteContext.Migrations
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFile", b =>
                 {
+                    b.Navigation("AppFileUploadInfo");
+
                     b.Navigation("AudiosCollectionNoteAppFiles");
 
                     b.Navigation("DocumentsCollectionNoteAppFiles");
@@ -1703,6 +1767,11 @@ namespace WriteContext.Migrations
                     b.Navigation("UserProfilePhotos");
 
                     b.Navigation("VideosCollectionNoteAppFiles");
+                });
+
+            modelBuilder.Entity("Common.DatabaseModels.Models.Files.AppFileUploadStatus", b =>
+                {
+                    b.Navigation("AppFileUploadInfos");
                 });
 
             modelBuilder.Entity("Common.DatabaseModels.Models.Files.FileType", b =>
