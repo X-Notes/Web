@@ -89,6 +89,7 @@ using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
+using WriteContext.Repositories.Files;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -308,6 +309,10 @@ namespace WriteAPI.ConfigureAPP
 
             // FILES
             services.AddScoped<FileRepository>();
+            services.AddScoped<AppFileUploadInfoRepository>();
+
+
+            // APP
             services.AddScoped<AppRepository>();
 
 
@@ -418,6 +423,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<ConfigForHistoryMaker>();
             services.AddSingleton<HistoryCacheService>();
             services.AddSingleton<HistoryJobHandler>();
+
+            services.AddSingleton<ConfigForFilesDeleter>();
         }
 
         public static void FileStorage(this IServiceCollection services)

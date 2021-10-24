@@ -13,7 +13,7 @@ using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Queries.Permissions;
 using MediatR;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes

@@ -5,12 +5,12 @@ using WriteContext.GenericRepositories;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace WriteContext.Repositories
+namespace WriteContext.Repositories.Files
 {
     public class FileRepository : Repository<AppFile, Guid>
     {
         public FileRepository(WriteContextDB contextDB)
-            :base(contextDB)
+            : base(contextDB)
         {
         }
 

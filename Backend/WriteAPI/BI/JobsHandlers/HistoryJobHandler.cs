@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BI.Services.History;
 using Domain.Commands.Notes;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BI.Services.History
+namespace BI.JobsHandlers
 {
     public class ConfigForHistoryMaker
     {
@@ -25,7 +26,7 @@ namespace BI.Services.History
             IServiceScopeFactory serviceScopeFactory,
             ConfigForHistoryMaker config)
         {
-            this.historyCacheService = historyCacheServicу;
+            historyCacheService = historyCacheServicу;
             this.serviceScopeFactory = serviceScopeFactory;
             this.config = config;
         }
@@ -50,7 +51,7 @@ namespace BI.Services.History
                             var results = await _mediator.Send(command);
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Console.WriteLine(e);
                     }
@@ -62,7 +63,8 @@ namespace BI.Services.History
 
                 Console.WriteLine("End make history");
 
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }

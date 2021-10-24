@@ -11,7 +11,7 @@ using ContentProcessing;
 using Domain.Commands.Files;
 using MediatR;
 using Storage;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Files

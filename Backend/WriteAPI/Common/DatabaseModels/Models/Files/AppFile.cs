@@ -54,6 +54,7 @@ namespace Common.DatabaseModels.Models.Files
 
         }
 
+        // FOR NO PHOTOS TYPES
         public AppFile(string pathNonPhotoContent, string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
             PathNonPhotoContent = pathNonPhotoContent;
@@ -62,8 +63,12 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+
+        // FOR PHOTOS
         public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, 
             string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
@@ -75,8 +80,11 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+        // FOR NO PHOTOS TYPES
         public AppFile(string pathNoPhotoContent, AppFile appFile, Guid userId)
         {
             PathNonPhotoContent = pathNoPhotoContent;
@@ -85,8 +93,11 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+        // FOR PHOTOS
         public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, AppFile appFile, Guid userId)
         {
             PathPhotoSmall = pathPhotoSmall;
@@ -97,6 +108,8 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
         public string GetFromSmallPath

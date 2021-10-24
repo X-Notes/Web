@@ -76,11 +76,17 @@ namespace WriteContext.Migrations
                     b.Property<Guid>("AppFileId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTimeOffset?>("LinkedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("UnLinkedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("AppFileId");
 
@@ -110,7 +116,7 @@ namespace WriteContext.Migrations
                         new
                         {
                             Id = 2,
-                            Name = "Linkeed"
+                            Name = "Linked"
                         });
                 });
 

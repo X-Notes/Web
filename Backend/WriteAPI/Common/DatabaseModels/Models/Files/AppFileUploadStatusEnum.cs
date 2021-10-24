@@ -3,6 +3,6 @@
     public enum AppFileUploadStatusEnum : int
     {
         UnLinked = 1,
-        Linkeed = 2
+        Linked = 2
     }
 }

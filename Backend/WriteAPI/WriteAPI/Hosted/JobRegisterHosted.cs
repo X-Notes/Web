@@ -1,5 +1,4 @@
 ﻿using BI.JobsHandlers;
-using BI.Services.History;
 using Hangfire;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -38,13 +37,19 @@ namespace WriteAPI.Hosted
         public void DeleteHistory()
         {
             BackgroundJob.Enqueue<EntitiesDeleteJobHandler>(x => x.DeleteHistoryHandler());
-            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.FoldersDelete, x => x.DeleteHistoryHandler(), Delay);
+            RecurringJob.AddOrUpdate<EntitiesDeleteJobHandler>(JobNames.HistoryDelete, x => x.DeleteHistoryHandler(), Delay);
         }
 
         public void MakeHistory()
         {
             BackgroundJob.Enqueue<HistoryJobHandler>(x => x.MakeHistoryHandler());
             RecurringJob.AddOrUpdate<HistoryJobHandler>(JobNames.HistoryMake, x => x.MakeHistoryHandler(), Delay);
+        }
+
+        public void UnLinkedFilesDelete()
+        {
+            BackgroundJob.Enqueue<UnlinkedFilesDeleteJobHandler>(x => x.DeleteUnLinkedFiles());
+            RecurringJob.AddOrUpdate<UnlinkedFilesDeleteJobHandler>(JobNames.UnlinkedFilesDelete, x => x.DeleteUnLinkedFiles(), Delay);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -54,6 +59,7 @@ namespace WriteAPI.Hosted
             DeleteFolders();
             DeleteHistory();
             MakeHistory();
+            UnLinkedFilesDelete();
 
             return Task.CompletedTask;
         }

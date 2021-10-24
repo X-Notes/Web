@@ -59,11 +59,11 @@ namespace BI.Services.Notes
                 note.Title = request.Title;
                 note.UpdatedAt = DateTimeOffset.Now;
                 await noteRepository.UpdateAsync(note);
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
 
                 var fullNote = await noteRepository.GetFull(note.Id);
-
                 var noteForUpdating = appCustomMapper.MapNoteToFullNote(fullNote);
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateGeneralFullNote(noteForUpdating);
 
                 return new OperationResult<Unit>(true, Unit.Value);

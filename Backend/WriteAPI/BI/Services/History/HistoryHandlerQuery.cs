@@ -11,7 +11,7 @@ using Common.DTO.Notes.FullNoteContent;
 using Domain.Queries.History;
 using Domain.Queries.Permissions;
 using MediatR;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Histories;
 using WriteContext.Repositories.NoteContent;
 using static System.Net.Mime.MediaTypeNames;

@@ -440,7 +440,7 @@ namespace WriteContext
 
             modelBuilder.Entity<AppFileUploadStatus>().HasData(
                 new AppFileUploadStatus { Id = AppFileUploadStatusEnum.UnLinked, Name = nameof(AppFileUploadStatusEnum.UnLinked) },
-                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.Linkeed, Name = nameof(AppFileUploadStatusEnum.Linkeed) }
+                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.Linked, Name = nameof(AppFileUploadStatusEnum.Linked) }
              );
         }
     }
