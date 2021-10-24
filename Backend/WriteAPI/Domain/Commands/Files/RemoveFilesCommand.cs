@@ -10,8 +10,6 @@ namespace Domain.Commands.Files
 
         public string UserId { set; get; }
 
-        public bool IsNoCheckDelete { set; get; }
-
         public RemoveFilesCommand(string userId, List<AppFile> appFiles)
         {
             this.AppFiles = appFiles;
@@ -22,12 +20,6 @@ namespace Domain.Commands.Files
         {
             this.AppFiles = new List<AppFile> { appFile };
             UserId = userId;
-        }
-
-        public RemoveFilesCommand SetIsNoCheckDelete()
-        {
-            IsNoCheckDelete = true;
-            return this;
         }
     }
 }

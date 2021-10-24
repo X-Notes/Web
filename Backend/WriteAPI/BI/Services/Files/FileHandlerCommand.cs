@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Core;
 using BI.Helpers;
 using Common.DatabaseModels.Models.Files;
 using ContentProcessing;
@@ -12,7 +11,6 @@ using Domain.Commands.Files;
 using MediatR;
 using Storage;
 using WriteContext.Repositories.Files;
-using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Files
 {
@@ -34,30 +32,14 @@ namespace BI.Services.Files
 
         private readonly FileRepository fileRepository;
 
-        private readonly VideoNoteAppFileRepository videoNoteAppFileRepository;
-
-        private readonly DocumentNoteAppFileRepository documentNoteAppFileRepository;
-
-        private readonly AudioNoteAppFileRepository audioNoteAppFileRepository;
-
-        private readonly PhotoNoteAppFileRepository albumNoteAppFileRepository;
-
         public FileHandlerCommand(
             IFilesStorage filesStorage,
             IImageProcessor imageProcessor,
-            FileRepository fileRepository,
-            VideoNoteAppFileRepository videoNoteAppFileRepository,
-            DocumentNoteAppFileRepository documentNoteAppFileRepositoryy,
-            AudioNoteAppFileRepository audioNoteAppFileRepository,
-            PhotoNoteAppFileRepository albumNoteAppFileRepository)
+            FileRepository fileRepository)
         {
             this.filesStorage = filesStorage;
             this.imageProcessor = imageProcessor;
             this.fileRepository = fileRepository;
-            this.videoNoteAppFileRepository = videoNoteAppFileRepository;
-            this.documentNoteAppFileRepository = documentNoteAppFileRepositoryy;
-            this.audioNoteAppFileRepository = audioNoteAppFileRepository;
-            this.albumNoteAppFileRepository = albumNoteAppFileRepository;
         }
 
 
@@ -124,48 +106,13 @@ namespace BI.Services.Files
 
         public async Task<Unit> Handle(RemoveFilesCommand request, CancellationToken cancellationToken)
         {
-
-            if (request.IsNoCheckDelete)
-            {
-                await DeletePermanentlyFiles(request.AppFiles, request.UserId);
-                return Unit.Value;
-            }
-
-            var filesGroups = request.AppFiles.GroupBy(x => x.FileTypeId);
-
-            foreach (var filesGroup in filesGroups)
-            {
-
-                var fileIds = filesGroup.Select(x => x.Id);
-
-                var existIds = filesGroup.Key switch
-                {
-                    FileTypeEnum.Photo => await albumNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
-                    FileTypeEnum.Document => await documentNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
-                    FileTypeEnum.Audio => await audioNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
-                    FileTypeEnum.Video => await videoNoteAppFileRepository.ExistGroupByContainsIds(fileIds),
-                    _ => throw new Exception("Incorrect file type")
-                };
-
-                var idsForDeleting = fileIds.Except(existIds);
-
-                if (idsForDeleting.Any())
-                {
-                    var filesForDelete = request.AppFiles.Where(x => idsForDeleting.Contains(x.Id)).ToList();
-                    await DeletePermanentlyFiles(filesForDelete, request.UserId);
-                }
-            }
+            var pathes = request.AppFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
+            await Handle(new RemoveFilesFromStorageCommand(pathes, request.UserId), CancellationToken.None);
+            await fileRepository.RemoveRangeAsync(request.AppFiles);
 
             return Unit.Value;
         }
 
-        public async Task DeletePermanentlyFiles(List<AppFile> files, string userId)
-        {
-            await fileRepository.RemoveRangeAsync(files);
-
-            var pathes = files.SelectMany(x => x.GetNotNullPathes()).ToList();
-            await Handle(new RemoveFilesFromStorageCommand(pathes, userId), CancellationToken.None);
-        }
 
         public async Task<List<AppFile>> Handle(SaveDocumentsToNoteCommand request, CancellationToken cancellationToken)
         {

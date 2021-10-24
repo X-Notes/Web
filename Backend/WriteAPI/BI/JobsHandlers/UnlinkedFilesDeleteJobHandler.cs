@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Domain.Commands.Files;
+using MediatR;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WriteContext.Repositories.Files;
-using WriteContext.Repositories.Labels;
 
 namespace BI.JobsHandlers
 {
@@ -19,10 +18,16 @@ namespace BI.JobsHandlers
 
         private readonly AppFileUploadInfoRepository appFileUploadInfoRepository;
 
-        public UnlinkedFilesDeleteJobHandler(ConfigForFilesDeleter config, AppFileUploadInfoRepository appFileUploadInfoRepository)
+        private readonly IMediator _mediator;
+
+        public UnlinkedFilesDeleteJobHandler(
+            ConfigForFilesDeleter config, 
+            AppFileUploadInfoRepository appFileUploadInfoRepository,
+            IMediator _mediator)
         {
             this.config = config;
             this.appFileUploadInfoRepository = appFileUploadInfoRepository;
+            this._mediator = _mediator;
         }
 
         public async Task DeleteUnLinkedFiles()
@@ -39,8 +44,17 @@ namespace BI.JobsHandlers
                 {
                     Console.WriteLine($"{infos.Count()} files will be deleted");
 
-                   // TODO DELETE
-                   //await labelRepostory.RemoveRangeAsync(labels);
+                    // TODO DELETE
+
+                    var groups = infos.GroupBy(x => x.AppFile.UserId);
+
+                    foreach(var group in groups)
+                    {
+                        var userId = group.Key;
+                        var files = group.Select(x => x.AppFile).ToList();
+                        await _mediator.Send(new RemoveFilesCommand(userId.ToString(), files));
+                    }
+
                     Console.WriteLine("files were deleted");
                 }
             }

@@ -90,7 +90,7 @@ namespace BI.Services.UserHandlers
             if (userProfilePhoto != null)
             {
                 await userProfilePhotoRepository.RemoveAsync(userProfilePhoto);
-                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile).SetIsNoCheckDelete());
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile));
             }
 
             var filebytes = await request.File.GetFilesBytesAsync();

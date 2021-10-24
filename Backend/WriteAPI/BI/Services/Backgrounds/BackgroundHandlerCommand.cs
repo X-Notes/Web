@@ -51,7 +51,7 @@ namespace BI.Services.Backgrounds
             if (back != null)
             {
                 await backgroundRepository.RemoveAsync(back);
-                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File).SetIsNoCheckDelete());
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File));
             }
             return Unit.Value;
         }
