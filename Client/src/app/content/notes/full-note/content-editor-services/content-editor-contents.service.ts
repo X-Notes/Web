@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { BaseText, ContentModel } from '../../models/content-model.model';
+import { BaseText, ContentModel, ContentTypeENUM } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
 import { ApiTextService } from '../services/api-text.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
@@ -122,7 +122,7 @@ export class ContentEditorContentsService {
 
     for (let i = 0; i < contents.length; i += 1) {
       const content = contents[i];
-      if(!this.contentsSync.some(x => x.id === content.id)){
+      if(!this.contentsSync.some(x => x.id === content.id) && content.typeId === ContentTypeENUM.Text){
         content.order = i;
         diffs.newItems.push(content as BaseText);
       }
@@ -137,7 +137,8 @@ export class ContentEditorContentsService {
   getTextDiffs(contents: ContentModel[]): BaseText[] {
     const texts: BaseText[] = [];
     for(const content of contents){
-      const isNeedUpdate = this.contentsSync.some(x => x instanceof BaseText && x.id === content.id && !content.isEqual(x));
+      const isNeedUpdate = this.contentsSync.some(x => x.typeId === ContentTypeENUM.Text && content.typeId === ContentTypeENUM.Text && 
+                x.id === content.id && !content.isEqual(x));
       if(isNeedUpdate){
         texts.push(content as BaseText)
       }
