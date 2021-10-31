@@ -198,46 +198,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async transformToFileType(event: TransformToFileContent) {
-    switch (event.typeFile) {
-      case TypeUploadFile.Photos: {
-        await this.contentEditorAlbumService.transformToPhotosCollection(
-          this.note.id,
-          event.contentId,
-          event.files,
-        );
-        break;
-      }
-      case TypeUploadFile.Audios: {
-        await this.contentEditorPlaylistService.transformToAudiosCollection(
-          this.note.id,
-          event.contentId,
-          event.files,
-        );
-        break;
-      }
-      case TypeUploadFile.Documents: {
-        await this.contentEditorDocumentsService.transformToDocumentsCollection(
-          this.note.id,
-          event.contentId,
-          event.files,
-        );
-        break;
-      }
-      case TypeUploadFile.Videos: {
-        await this.contentEditorVideosService.transformToVideosCollection(
-          this.note.id,
-          event.contentId,
-          event.files,
-        );
-        break;
-      }
-      default: {
-        throw new Error('incorrect type');
-      }
-    }
-  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateTextHandler(content: BaseText) {
@@ -254,6 +214,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   placeHolderClick($event) {
     $event.preventDefault();
+    if(this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
+    this.contentEditorContentsService.change();
     setTimeout(() => this.elements?.last?.setFocus());
   }
 
@@ -263,5 +227,76 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   mouseOut($event) {
     this.elements?.last?.mouseOut($event);
+  }
+
+  // FILE CONTENTS
+
+  // eslint-disable-next-line class-methods-use-this
+  async transformToFileType(event: TransformToFileContent) {
+    switch (event.typeFile) {
+      case TypeUploadFile.photos: {
+        await this.contentEditorAlbumService.transformToPhotosCollection(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
+        break;
+      }
+      case TypeUploadFile.audios: {
+        await this.contentEditorPlaylistService.transformToAudiosCollection(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
+        break;
+      }
+      case TypeUploadFile.documents: {
+        await this.contentEditorDocumentsService.transformToDocumentsCollection(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
+        break;
+      }
+      case TypeUploadFile.videos: {
+        await this.contentEditorVideosService.transformToVideosCollection(
+          this.note.id,
+          event.contentId,
+          event.files,
+        );
+        break;
+      }
+      default: {
+        throw new Error('incorrect type');
+      }
+    }
+  }
+
+  async deleteVideosCollection(contentId: string){
+    const res = await this.contentEditorVideosService.deleteContentHandler(contentId, this.note.id);
+    if(res.success){
+      this.postAction();
+    }
+  }
+
+  async deleteAudiosCollection(contentId: string){
+    const res = await this.contentEditorPlaylistService.deleteContentHandler(contentId, this.note.id);
+    if(res.success){
+      this.postAction();
+    }
+  }
+
+  async deletePhotosCollection(contentId: string){
+    const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
+    if(res.success){
+      this.postAction();
+    }
+  }
+
+  async deleteDocumentsCollection(contentId: string){
+    const res = await this.contentEditorDocumentsService.deleteContentHandler(contentId, this.note.id);
+    if(res.success){
+      this.postAction();
+    }
   }
 }

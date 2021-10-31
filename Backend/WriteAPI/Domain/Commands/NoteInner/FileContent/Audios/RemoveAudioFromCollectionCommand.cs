@@ -14,7 +14,7 @@ namespace Domain.Commands.NoteInner.FileContent.Audios
         public Guid ContentId { set; get; }
 
         [ValidationGuid]
-        public Guid AudioId { set; get; }
+        public Guid AudioId { set; get; } // TODO DO MANY and for other files
 
         public RemoveAudioFromCollectionCommand(Guid noteId, Guid contentId, Guid audioId)
         {

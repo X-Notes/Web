@@ -112,7 +112,7 @@
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
           (uploadEvent)="contentEditorAlbumService.uploadPhotoToAlbumHandler($event, note.id)"
-          (deleteContentEvent)="contentEditorAlbumService.deleteContentHandler($event, note.id)"
+          (deleteContentEvent)="deletePhotosCollection($event)"
           (deletePhotoEvent)="contentEditorAlbumService.deletePhotoHandler($event, item.id, note.id)"
         ></app-photos>
         <app-audio-note
@@ -122,7 +122,7 @@
           [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteContentEvent)="contentEditorPlaylistService.deleteContentHandler($event, note.id)"
+          (deleteContentEvent)="deleteAudiosCollection($event)"
           (deleteAudioEvent)="contentEditorPlaylistService.deleteAudioHandler($event, item.id, note.id)"
           (changeTitleEvent)="contentEditorPlaylistService.changePlaylistName($event, note.id)"
           (uploadEvent)="contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, note.id)"
@@ -134,7 +134,7 @@
           [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteContentEvent)="contentEditorVideosService.deleteContentHandler($event, note.id)"
+          (deleteContentEvent)="deleteVideosCollection($event)"
           (deleteVideoEvent)="contentEditorVideosService.deleteVideoHandler($event, item.id, note.id)"
         ></app-video-note>
         <app-document-note
@@ -144,7 +144,7 @@
           [theme]="theme$ | async"
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
-          (deleteContentEvent)="contentEditorDocumentsService.deleteContentHandler($event, note.id)"
+          (deleteContentEvent)="deleteDocumentsCollection($event)"
           (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>

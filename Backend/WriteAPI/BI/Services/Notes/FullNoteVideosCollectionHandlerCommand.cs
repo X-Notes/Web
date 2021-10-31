@@ -7,7 +7,6 @@ using BI.Helpers;
 using BI.Services.History;
 using BI.SignalR;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
-using Common.DatabaseModels.Models.Notes;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Files;
@@ -19,8 +18,9 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteVideosCollectionHandlerCommand :
+    public class FullNoteVideosCollectionHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<RemoveVideosCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<RemoveVideoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
         IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>
     {
@@ -29,9 +29,9 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly FileRepository fileRepository;
-
         private readonly VideosCollectionNoteRepository videoNoteRepository;
+
+        private readonly VideoNoteAppFileRepository videoNoteAppFileRepository;
 
         private readonly HistoryCacheService historyCacheService;
 
@@ -41,14 +41,16 @@ namespace BI.Services.Notes
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             FileRepository fileRepository,
+            AppFileUploadInfoRepository appFileUploadInfoRepository,
             VideosCollectionNoteRepository videoNoteRepository,
+            VideoNoteAppFileRepository videoNoteAppFileRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService)
+            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.fileRepository = fileRepository;
             this.videoNoteRepository = videoNoteRepository;
+            this.videoNoteAppFileRepository = videoNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
         }
@@ -62,39 +64,35 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
-                var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as VideosCollectionNote;
-                contents.Remove(contentForRemove);
+                var videos = await videoNoteAppFileRepository.GetWhereAsync(x => x.VideosCollectionNoteId == request.ContentId);
+                var ids = videos.Select(x => x.AppFileId).ToArray();
 
-                var orders = Enumerable.Range(1, contents.Count);
-                contents = contents.Zip(orders, (content, order) =>
-                {
-                    content.Order = order;
-                    content.UpdatedAt = DateTimeOffset.Now;
-                    return content;
-                }).ToList();
+                await MarkAsUnlinked(ids);
 
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+                return new OperationResult<Unit>(success: true, Unit.Value);
+            }
 
-                try
-                {
-                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
-                    await baseNoteContentRepository.UpdateRangeAsync(contents);
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
 
-                    await transaction.CommitAsync();
+        public async Task<OperationResult<Unit>> Handle(RemoveVideoFromCollectionCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
 
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.Videos));
+            if (permissions.CanWrite)
+            {
+                var collection = await videoNoteRepository.GetOneIncludeVideoNoteAppFiles(request.ContentId);
+                collection.VideoNoteAppFiles = collection.VideoNoteAppFiles.Where(x => x.AppFileId != request.VideoId).ToList();
+                collection.UpdatedAt = DateTimeOffset.Now;
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+                await videoNoteRepository.UpdateAsync(collection);
+                await MarkAsUnlinked(request.VideoId);
 
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                }
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -108,6 +106,12 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var contentForRemove = await baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+
+                if (contentForRemove == null)
+                {
+                    throw new Exception("Content not found");
+                }
+
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
@@ -169,17 +173,17 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var videoCollection = await baseNoteContentRepository.GetContentByIdAsync<VideosCollectionNote>(request.ContentId);
+                var videoCollection = await videoNoteRepository.GetOneIncludeVideos(request.ContentId);
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
-                    await fileRepository.AddRangeAsync(dbFiles);
-
                     videoCollection.Videos.AddRange(dbFiles);
                     videoCollection.UpdatedAt = DateTimeOffset.Now;
 
                     await videoNoteRepository.UpdateAsync(videoCollection);
+
+                    await MarkAsLinked(dbFiles);
 
                     await transaction.CommitAsync();
 

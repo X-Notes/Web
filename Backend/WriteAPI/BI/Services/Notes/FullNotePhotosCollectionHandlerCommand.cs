@@ -18,7 +18,7 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNotePhotosCollectionHandlerCommand :
+    public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<RemovePhotosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<UploadPhotosToCollectionCommand, OperationResult<List<PhotoNoteDTO>>>,
         IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>,
@@ -31,9 +31,9 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly FileRepository fileRepository;
+        private readonly PhotosCollectionNoteRepository photosCollectionNoteRepository;
 
-        private readonly PhotosCollectionNoteRepository albumNoteRepository;
+        private readonly PhotoNoteAppFileRepository photoNoteAppFileRepository;
 
         private readonly HistoryCacheService historyCacheService;
 
@@ -43,20 +43,21 @@ namespace BI.Services.Notes
             IMediator _mediator,
             BaseNoteContentRepository baseNoteContentRepository,
             FileRepository fileRepository,
-            PhotosCollectionNoteRepository albumNoteRepository,
+            AppFileUploadInfoRepository appFileUploadInfoRepository,
+            PhotosCollectionNoteRepository photosCollectionNoteRepository,
+            PhotoNoteAppFileRepository photoNoteAppFileRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService)
+            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.fileRepository = fileRepository;
-            this.albumNoteRepository = albumNoteRepository;
+            this.photosCollectionNoteRepository = photosCollectionNoteRepository;
+            this.photoNoteAppFileRepository = photoNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
         }
 
 
-        // TODO REMOVE WITHOUT ORDERING
         public async Task<OperationResult<Unit>> Handle(RemovePhotosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
@@ -65,42 +66,36 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
+                var photos = await photoNoteAppFileRepository.GetWhereAsync(x => x.PhotosCollectionNoteId == request.ContentId);
+                var ids = photos.Select(x => x.AppFileId).ToArray();
 
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
-                var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as PhotosCollectionNote;
-                contents.Remove(contentForRemove);
+                await MarkAsUnlinked(ids);
 
-                var orders = Enumerable.Range(1, contents.Count);
-                contents = contents.Zip(orders, (content, order) =>
-                {
-                    content.Order = order;
-                    content.UpdatedAt = DateTimeOffset.Now;
-                    return content;
-                }).ToList();
+                return new OperationResult<Unit>(success: true, Unit.Value);
+            }
 
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
 
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
+        public async Task<OperationResult<Unit>> Handle(RemovePhotoFromCollectionCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+            var note = permissions.Note;
 
-                try
-                {
-                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
-                    await baseNoteContentRepository.UpdateRangeAsync(contents);
+            if (permissions.CanWrite)
+            {
+                var collection = await photosCollectionNoteRepository.GetOneIncludePhotoNoteAppFiles(request.ContentId);
+                collection.PhotoNoteAppFiles = collection.PhotoNoteAppFiles.Where(x => x.AppFileId != request.PhotoId).ToList();
+                collection.UpdatedAt = DateTimeOffset.Now;
 
-                    await transaction.CommitAsync();
+                await photosCollectionNoteRepository.UpdateAsync(collection);
+                await MarkAsUnlinked(request.PhotoId);
 
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.Photos));
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                }
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -113,10 +108,10 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
-                album.CountInRow = request.Count;
-                album.UpdatedAt = DateTimeOffset.Now;
-                await baseNoteContentRepository.UpdateAsync(album);
+                var collection = await photosCollectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                collection.CountInRow = request.Count;
+                collection.UpdatedAt = DateTimeOffset.Now;
+                await photosCollectionNoteRepository.UpdateAsync(collection);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
@@ -134,47 +129,13 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
-                album.Height = request.Height;
-                album.Width = request.Width;
-                album.UpdatedAt = DateTimeOffset.Now;
-                await baseNoteContentRepository.UpdateAsync(album);
+                var collection = await photosCollectionNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+                collection.Height = request.Height;
+                collection.Width = request.Width;
+                collection.UpdatedAt = DateTimeOffset.Now;
+                await baseNoteContentRepository.UpdateAsync(collection);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                return new OperationResult<Unit>(success: true, Unit.Value);
-            }
-
-            return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-        public async Task<OperationResult<Unit>> Handle(RemovePhotoFromCollectionCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
-            {
-                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
-                var photoForRemove = album.Photos.First(x => x.Id == request.PhotoId);
-                album.Photos.Remove(photoForRemove);
-                album.UpdatedAt = DateTimeOffset.Now;
-
-                if (album.Photos.Count == 0)
-                {
-                    var resp = await _mediator.Send(new RemovePhotosCollectionCommand(note.Id, album.Id, request.Email));
-                }
-                else
-                {
-                    await baseNoteContentRepository.UpdateAsync(album);
-                }
-
-                await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), photoForRemove));
-
-                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
 
                 return new OperationResult<Unit>(success: true, Unit.Value);
@@ -211,18 +172,18 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var album = await baseNoteContentRepository.GetContentByIdAsync<PhotosCollectionNote>(request.ContentId);
+                var collection = await photosCollectionNoteRepository.GetOneIncludePhotos(request.ContentId);
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
-                    await fileRepository.AddRangeAsync(dbFiles);
+                    collection.Photos.AddRange(dbFiles);
+                    collection.UpdatedAt = DateTimeOffset.Now;
 
-                    album.Photos.AddRange(dbFiles);
-                    album.UpdatedAt = DateTimeOffset.Now;
+                    await photosCollectionNoteRepository.UpdateAsync(collection);
 
-                    await albumNoteRepository.UpdateAsync(album);
+                    await MarkAsLinked(dbFiles);
 
                     await transaction.CommitAsync();
 
@@ -253,6 +214,12 @@ namespace BI.Services.Notes
             {
                 var contentForRemove = await baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
+                if (contentForRemove == null)
+                {
+                    throw new Exception("Content not found");
+                }
+
+
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
@@ -268,7 +235,7 @@ namespace BI.Services.Notes
                         Height = "auto",
                     };
 
-                    await albumNoteRepository.AddAsync(albumNote);
+                    await photosCollectionNoteRepository.AddAsync(albumNote);
 
                     await transaction.CommitAsync();
 

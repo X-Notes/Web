@@ -64,8 +64,8 @@
       (exportAudio)="exportAudio($event)"
     ></app-audio>
   </ng-container>
-  <div *ngIf="isEmpty">
-    <p>PLAYLIST IS EMPTY TODO</p>
+  <div *ngIf="content.isLoading" class="spinner-container">
+    <app-spinner [size]="16"></app-spinner>
   </div>
 </div>
 <input

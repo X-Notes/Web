@@ -185,11 +185,13 @@ namespace WriteAPI.ConfigureAPP
 
             // FULL NOTE VIDEOS
             services.AddScoped<IRequestHandler<RemoveVideosCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveVideoFromCollectionCommand, OperationResult<Unit>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>, FullNoteVideosCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>, FullNoteVideosCollectionHandlerCommand>();
 
             // FULL NOTE DOCUMENTS
             services.AddScoped<IRequestHandler<RemoveDocumentsCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
+            services.AddScoped<IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>, FullNoteDocumentsCollectionHandlerCommand>();
 
@@ -417,7 +419,8 @@ namespace WriteAPI.ConfigureAPP
 
             services.AddScoped<IImageProcessor, ImageProcessor>();
 
-            services.AddSingleton<ConfigForEntitesDeliting>();
+            // BACKGROUND JOBS
+            services.AddSingleton<ConfigForEntitesDeliting>(); // TODO CHECK
             services.AddScoped<EntitiesDeleteJobHandler>();
 
             services.AddSingleton<ConfigForHistoryMaker>();
@@ -425,6 +428,8 @@ namespace WriteAPI.ConfigureAPP
             services.AddSingleton<HistoryJobHandler>();
 
             services.AddSingleton<ConfigForFilesDeleter>();
+            services.AddScoped<UnlinkedFilesDeleteJobHandler>();
+
         }
 
         public static void FileStorage(this IServiceCollection services)

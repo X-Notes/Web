@@ -24,7 +24,7 @@ export class ContentEditorFilesBase {
     protected contentsService: ContentEditorContentsService,
   ) {}
 
-  protected transformContentTo<T extends ContentModel>(
+  protected transformContentToOrWarning<T extends ContentModel>(
     result: OperationResult<T>,
     contentId: string,
   ): void {

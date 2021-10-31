@@ -14,6 +14,7 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAlbumService } from '../../services/api-album.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
@@ -37,10 +38,12 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
-    const newAlbumResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
-    if (newAlbumResult.success) {
-      this.transformContentTo(newAlbumResult, contentId);
-      await this.uploadPhotoToAlbumHandler({ contentId: newAlbumResult.data.id, files }, noteId);
+    const collectionResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
+    if (collectionResult.success) {
+      collectionResult.data.isLoading = true; // TODO TRY CATCH
+      this.transformContentToOrWarning(collectionResult, contentId);
+      await this.uploadPhotoToAlbumHandler({ contentId: collectionResult.data.id, files }, noteId);
+      collectionResult.data.isLoading = false;
     }
   }
 
@@ -102,17 +105,18 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
     const prev = prevCollection.photos ?? [];
 
-    const newCollection = prevCollection.copy();
+    const newCollection = new PhotosCollection(prevCollection);
     newCollection.photos = [...prev, ...newPhotos];
 
     this.contentsService.setSafe(newCollection, contentId);
   }
 
-  deleteContentHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
     const resp = await this.apiAlbum.removeAlbum(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
+    return resp;
   };
 
   async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {

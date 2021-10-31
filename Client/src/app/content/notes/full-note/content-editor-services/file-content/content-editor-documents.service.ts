@@ -16,6 +16,7 @@ import { ApiDocumentService } from '../../services/api-document.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorDocumentsCollectionService extends ContentEditorFilesBase {
@@ -39,10 +40,12 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
   }
 
   async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
-    const result = await this.apiDocuments.transformToDocuments(noteId, contentId).toPromise();
-    if (result.success) {
-      this.transformContentTo(result, contentId);
-      await this.uploadDocumentsToCollectionHandler({ contentId: result.data.id, files }, noteId);
+    const collectionResult = await this.apiDocuments.transformToDocuments(noteId, contentId).toPromise();
+    if (collectionResult.success) {
+      collectionResult.data.isLoading = true; // TODO TRY CATCH
+      this.transformContentToOrWarning(collectionResult, contentId);
+      await this.uploadDocumentsToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
+      collectionResult.data.isLoading = false;
     }
   }
 
@@ -88,18 +91,19 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     );
     const prev = prevCollection.documents ?? [];
 
-    const newCollection = prevCollection.copy();
+    const newCollection = new DocumentsCollection(prevCollection);
     newCollection.documents = [...prev, ...documents];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
     const resp = await this.apiDocuments.removeDocumentFromNote(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
+    return resp;
   };
 
   // eslint-disable-next-line class-methods-use-this

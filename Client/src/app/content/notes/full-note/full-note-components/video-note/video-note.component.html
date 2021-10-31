@@ -1,6 +1,10 @@
 <div *ngIf="!isEmpty; then thenBlock else elseBlock"></div>
-<ng-template #thenBlock
-  ><video controls="controls">
-    <source [src]="getFirst?.videoPath | getVideo: getFirst?.authorId" /></video
-></ng-template>
+<ng-template #thenBlock>
+  <video controls="controls">
+    <source [src]="getFirst?.videoPath | getVideo: getFirst?.authorId" />
+  </video>
+  <div *ngIf="content.isLoading" class="spinner-container">
+    <app-spinner [size]="16"></app-spinner>
+  </div>
+</ng-template>
 <ng-template #elseBlock><div>NO ANY VIDEO IN ALBUM TODO</div></ng-template>

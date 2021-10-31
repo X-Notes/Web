@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Microsoft.EntityFrameworkCore;
 using WriteContext.GenericRepositories;
 
 namespace WriteContext.Repositories.NoteContent
@@ -9,6 +11,16 @@ namespace WriteContext.Repositories.NoteContent
         public VideosCollectionNoteRepository(WriteContextDB contextDB)
         : base(contextDB)
         {
+        }
+
+        public async Task<VideosCollectionNote> GetOneIncludeVideoNoteAppFiles(Guid id)
+        {
+            return await entities.Include(x => x.VideoNoteAppFiles).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<VideosCollectionNote> GetOneIncludeVideos(Guid id)
+        {
+            return await entities.Include(x => x.Videos).FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

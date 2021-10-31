@@ -162,15 +162,17 @@ export class AudiosCollection extends ContentModel {
 
   audios: AudioModel[];
 
+  isLoading = false;
+
   constructor(collection: Partial<AudiosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.audios = collection.audios.map(
+    this.audios = collection.audios ? collection.audios.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new AudioModel(z.name, z.audioPath, z.fileId, z.authorId),
-    );
+    ): [];
   }
 
   copy(): AudiosCollection {
@@ -240,15 +242,17 @@ export class VideosCollection extends ContentModel {
 
   videos: VideoModel[];
 
+  isLoading = false;
+
   constructor(collection: Partial<VideosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.videos = collection.videos.map(
+    this.videos = collection.videos ? collection.videos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new VideoModel(z.name, z.videoPath, z.fileId, z.authorId),
-    );
+    ): [];
   }
 
   copy(): VideosCollection {
@@ -318,15 +322,17 @@ export class DocumentsCollection extends ContentModel {
 
   documents: DocumentModel[];
 
+  isLoading = false;
+
   constructor(collection: Partial<DocumentsCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.documents = collection.documents.map(
+    this.documents = collection.documents ? collection.documents.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
-    );
+    ) : [];
     
   }
 
@@ -401,12 +407,14 @@ export class PhotosCollection extends ContentModel {
 
   countInRow: number;
 
+  isLoading = false;
+  
   constructor(collection: Partial<PhotosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.countInRow = collection.countInRow;
     this.height = collection.height;
     this.width = collection.width;
-    this.photos = collection.photos.map(
+    this.photos = collection.photos ? collection.photos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -419,7 +427,7 @@ export class PhotosCollection extends ContentModel {
           z.name,
           z.authorId,
         ),
-    );
+    ): [];
   }
 
   isEqual(content: PhotosCollection): boolean {

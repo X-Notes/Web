@@ -13,6 +13,7 @@ import { ApiVideoService } from '../../services/api-video.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
@@ -36,10 +37,12 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToVideosCollection(noteId: string, contentId: string, files: File[]) {
-    const result = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
-    if (result.success) {
-      this.transformContentTo(result, contentId);
-      await this.uploadVideosToCollectionHandler({ contentId: result.data.id, files }, noteId);
+    const collectionResult = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
+    if (collectionResult.success) {
+      collectionResult.data.isLoading = true;
+      this.transformContentToOrWarning(collectionResult, contentId);
+      await this.uploadVideosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
+      collectionResult.data.isLoading = false;
     }
   }
 
@@ -83,7 +86,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     const prev = prevCollection.videos ?? [];
     
-    const newCollection = prevCollection.copy();
+    const newCollection = new VideosCollection(prevCollection);
     newCollection.videos = [...prev, ...videos];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
@@ -91,11 +94,12 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
     const resp = await this.apiVideos.removeVideoFromNote(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
+    return resp;
   };
 
   deleteVideoHandler(videoId: string, contentId: string, noteId: string){

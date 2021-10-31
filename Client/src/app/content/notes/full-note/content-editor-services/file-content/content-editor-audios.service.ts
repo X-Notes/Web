@@ -14,6 +14,7 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPlaylistService } from '../../services/api-playlist.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
@@ -37,15 +38,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToAudiosCollection(noteId: string, contentId: string, files: File[]) {
-    const newAlbumResult = await this.apiAudiosCollection
-      .transformToPlaylist(noteId, contentId)
-      .toPromise();
-    if (newAlbumResult.success) {
-      this.transformContentTo(newAlbumResult, contentId);
-      await this.uploadAudiosToCollectionHandler(
-        { contentId: newAlbumResult.data.id, files },
-        noteId,
-      );
+    const collectionResult = await this.apiAudiosCollection.transformToPlaylist(noteId, contentId).toPromise();
+    if (collectionResult.success) {
+      collectionResult.data.isLoading = true; // TODO TRY CATCH
+      this.transformContentToOrWarning(collectionResult, contentId);
+      await this.uploadAudiosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
+      collectionResult.data.isLoading = false;
     }
   }
 
@@ -91,7 +89,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.audios ?? [];
 
-    const newCollection = prevCollection.copy();
+    const newCollection = new AudiosCollection(prevCollection);
     newCollection.audios = [...prev, ...audios];
 
     this.contentsService.setSafe(newCollection, $event.contentId);
@@ -99,11 +97,12 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
     const resp = await this.apiAudiosCollection.removePlaylist(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
+    return resp;
   };
 
   async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {

@@ -29,17 +29,6 @@ namespace WriteContext.Repositories.NoteContent
                 .ToListAsync();
         }
 
-        public async Task<T> GetContentByIdAsync<T>(Guid id) where T : BaseNoteContent
-        {
-            return await entities // TODO OPTIMIZATION
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Cast<T>()
-                .FirstOrDefaultAsync(x => x.Id == id);
-        }
-
         public async Task<List<BaseNoteContent>> GetContentByNoteIdsAsync(List<Guid> ids)
         {
             return await entities // TODO OPTIMIZATION

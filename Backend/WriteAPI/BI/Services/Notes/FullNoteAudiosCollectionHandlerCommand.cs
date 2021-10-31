@@ -18,7 +18,7 @@ using WriteContext.Repositories.NoteContent;
 
 namespace BI.Services.Notes
 {
-    public class FullNoteAudiosCollectionHandlerCommand :
+    public class FullNoteAudiosCollectionHandlerCommand : FullNoteBaseCollection,
                 IRequestHandler<RemoveAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>,
@@ -30,9 +30,9 @@ namespace BI.Services.Notes
 
         private readonly BaseNoteContentRepository baseNoteContentRepository;
 
-        private readonly FileRepository fileRepository;
-
         private readonly AudiosCollectionNoteRepository audioNoteRepository;
+
+        private readonly AudioNoteAppFileRepository audioNoteAppFileRepository;
 
         private readonly HistoryCacheService historyCacheService;
 
@@ -43,13 +43,15 @@ namespace BI.Services.Notes
             BaseNoteContentRepository baseNoteContentRepository,
             FileRepository fileRepository,
             AudiosCollectionNoteRepository audioNoteRepository,
+            AudioNoteAppFileRepository audioNoteAppFileRepository,
+            AppFileUploadInfoRepository appFileUploadInfoRepository,
             HistoryCacheService historyCacheService,
-            AppSignalRService appSignalRService)
+            AppSignalRService appSignalRService) : base(appFileUploadInfoRepository, fileRepository)
         {
             this._mediator = _mediator;
             this.baseNoteContentRepository = baseNoteContentRepository;
-            this.fileRepository = fileRepository;
             this.audioNoteRepository = audioNoteRepository;
+            this.audioNoteAppFileRepository = audioNoteAppFileRepository;
             this.historyCacheService = historyCacheService;
             this.appSignalRService = appSignalRService;
         }
@@ -59,43 +61,15 @@ namespace BI.Services.Notes
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(note.Id);
-                var contentForRemove = contents.FirstOrDefault(x => x.Id == request.ContentId) as AudiosCollectionNote;
-                contents.Remove(contentForRemove);
+                var audios = await audioNoteAppFileRepository.GetWhereAsync(x => x.AudiosCollectionNoteId == request.ContentId);
+                var ids = audios.Select(x => x.AppFileId).ToArray();
 
-                var orders = Enumerable.Range(1, contents.Count);
-                contents = contents.Zip(orders, (content, order) =>
-                {
-                    content.Order = order;
-                    content.UpdatedAt = DateTimeOffset.Now;
-                    return content;
-                }).ToList();
+                await MarkAsUnlinked(ids);
 
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                try
-                {
-                    await baseNoteContentRepository.RemoveAsync(contentForRemove);
-                    await baseNoteContentRepository.UpdateRangeAsync(contents);
-
-                    await transaction.CommitAsync();
-
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), contentForRemove.Audios));
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<Unit>(success: true, Unit.Value);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                }
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
@@ -105,25 +79,15 @@ namespace BI.Services.Notes
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
 
             if (permissions.CanWrite)
             {
-                var playlist = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
-                var audioForRemove = playlist.Audios.First(x => x.Id == request.AudioId);
-                playlist.Audios.Remove(audioForRemove);
-                playlist.UpdatedAt = DateTimeOffset.Now;
+                var audiosCollection = await audioNoteRepository.GetOneIncludeAudioNoteAppFiles(request.ContentId);
+                audiosCollection.AudioNoteAppFiles = audiosCollection.AudioNoteAppFiles.Where(x => x.AppFileId != request.AudioId).ToList();
+                audiosCollection.UpdatedAt = DateTimeOffset.Now;
 
-                if (playlist.Audios.Count == 0)
-                {
-                    var resp = await _mediator.Send(new RemoveAudiosCollectionCommand(note.Id, playlist.Id, request.Email));
-                }
-                else
-                {
-                    await baseNoteContentRepository.UpdateAsync(playlist);
-                }
-
-                await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), audioForRemove));
+                await audioNoteRepository.UpdateAsync(audiosCollection);
+                await MarkAsUnlinked(request.AudioId);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
@@ -141,12 +105,12 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var playlist = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
+                var audiosCollection = await audioNoteRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
 
-                playlist.Name = request.Name;
-                playlist.UpdatedAt = DateTimeOffset.Now;
+                audiosCollection.Name = request.Name;
+                audiosCollection.UpdatedAt = DateTimeOffset.Now;
 
-                await baseNoteContentRepository.UpdateAsync(playlist);
+                await audioNoteRepository.UpdateAsync(audiosCollection);
 
                 historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                 await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
@@ -159,6 +123,10 @@ namespace BI.Services.Notes
 
         public async Task<OperationResult<List<AudioNoteDTO>>> Handle(UploadAudiosToCollectionCommand request, CancellationToken cancellationToken)
         {
+            // TODO
+            // 1. Handler when user upload many
+            // 2. User Memory
+
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
             var note = permissions.Note;
@@ -184,17 +152,17 @@ namespace BI.Services.Notes
                 }
 
                 // UPDATING
-                var audiosCollection = await baseNoteContentRepository.GetContentByIdAsync<AudiosCollectionNote>(request.ContentId);
+                var audiosCollection = await audioNoteRepository.GetOneIncludeAudios(request.ContentId);
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 
                 try
                 {
-                    await fileRepository.AddRangeAsync(dbFiles);
-
                     audiosCollection.Audios.AddRange(dbFiles);
                     audiosCollection.UpdatedAt = DateTimeOffset.Now;
 
                     await audioNoteRepository.UpdateAsync(audiosCollection);
+
+                    await MarkAsLinked(dbFiles);
 
                     await transaction.CommitAsync();
 
@@ -224,6 +192,11 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var contentForRemove = await baseNoteContentRepository.FirstOrDefaultAsync(x => x.Id == request.ContentId);
+
+                if(contentForRemove == null)
+                {
+                    throw new Exception("Content not found");
+                }
 
                 using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
 

@@ -59,7 +59,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   destroy = new Subject<void>();
 
-  formats = TypeUploadFormats.AUDIOS;
+  formats = TypeUploadFormats.audios;
 
   namePlaylistChanged: Subject<string> = new Subject<string>();
 

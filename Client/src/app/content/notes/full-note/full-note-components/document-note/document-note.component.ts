@@ -18,7 +18,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 @Component({
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
-  styleUrls: ['../styles/inner-card.scss'],
+  styleUrls: ['../styles/inner-card.scss', './document-note.component.scss'],
 })
 export class DocumentNoteComponent implements OnInit, ParentInteraction {
   @Input()

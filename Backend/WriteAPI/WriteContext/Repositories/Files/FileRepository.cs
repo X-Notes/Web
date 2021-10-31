@@ -17,7 +17,7 @@ namespace WriteContext.Repositories.Files
 
         public async Task<long> GetTotalUserMemory(Guid userId)
         {
-            return await entities.Where(x => x.UserId == userId).SumAsync(x => x.Size);
+            return await entities.Include(x => x.AppFileUploadInfo).Where(x => x.UserId == userId && x.AppFileUploadInfo.StatusId == AppFileUploadStatusEnum.Linked).SumAsync(x => x.Size);
         }
 
     }
