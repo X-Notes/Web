@@ -139,8 +139,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe(x => this.contentEditorContentsService.restorePrev());
   }
 
-  onInput($event) {
+  onTitleInput($event) {
     this.noteTitleChanged.next($event.target.innerText);
+  }
+
+  handlerTitleEnter($event: KeyboardEvent){
+    $event.preventDefault();
+    this.contentEditorTextService.appendNewEmptyContentToStart();
+    setTimeout(() => this.elements?.first?.setFocus());
   }
 
   pasteCommandHandler(e) {

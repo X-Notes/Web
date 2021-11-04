@@ -26,7 +26,8 @@
       (paste)="pasteCommandHandler($event)"
       [textContent]="note?.title"
       class="title"
-      (input)="onInput($event)"
+      (input)="onTitleInput($event)"
+      (keydown.enter)="handlerTitleEnter($event)"
     ></div>
     <div class="placeholder">Title</div>
     <div class="left-border"></div>

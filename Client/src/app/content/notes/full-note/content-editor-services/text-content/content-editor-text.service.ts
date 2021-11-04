@@ -57,10 +57,18 @@ export class ContentEditorTextService {
     return item.index;
   }
 
-  appendNewEmptyContentToEnd() {
+  getNewTextContent(): BaseText{
     const nContent = BaseText.getNew();
     nContent.noteTextTypeIdSG = NoteTextTypeENUM.Default;
-    this.contentsService.insertToEnd(nContent);
+    return nContent;
   }
-  
+
+
+  appendNewEmptyContentToEnd() {
+    this.contentsService.insertToEnd(this.getNewTextContent());
+  }
+
+  appendNewEmptyContentToStart() {
+    this.contentsService.insertToStart(this.getNewTextContent());
+  }
 }

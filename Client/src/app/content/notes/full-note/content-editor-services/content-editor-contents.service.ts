@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject } from 'rxjs';
-import { debounceTime, take } from 'rxjs/operators';
+import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { BaseText, ContentModel, ContentTypeENUM } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
@@ -40,7 +40,7 @@ export class ContentEditorContentsService {
     this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
     // TODO MAYBE UNSUBSCRIVE & upgrade timer
-    this.updateSubject.pipe(debounceTime(500)).subscribe(x => this.processChanges());
+    this.updateSubject.pipe(filter(x => x === true),debounceTime(500)).subscribe(x => this.processChanges());
   }
 
   initOnlyRead(contents: ContentModel[], noteId: string) {
@@ -148,8 +148,27 @@ export class ContentEditorContentsService {
 
   // Restore Prev
   restorePrev() {
-    this.contents = this.contentEditorMomentoStateService.getPrev();
-    this.change();
+    const prev = this.contentEditorMomentoStateService.getPrev();
+    if(!this.isContentsEquals(prev, this.contents)){
+      this.contents = prev;
+      this.change();
+    }
+  }
+
+  isContentsEquals(f: ContentModel[], s: ContentModel[]){
+    for(const content of f){
+      const itemForCompare = s.find(x => x.id === content.id);
+      if(!itemForCompare || !content.isEqual(itemForCompare)) {
+        return false;
+      }
+    }
+    for(const content of s){
+      const itemForCompare = f.find(x => x.id === content.id);
+      if(!itemForCompare || !content.isEqual(itemForCompare)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // GET INDDEX
@@ -205,5 +224,9 @@ export class ContentEditorContentsService {
 
   insertToEnd(data: ContentModel) {
     this.contents.push(data);
+  }
+
+  insertToStart(data: ContentModel) {
+    this.contents.unshift(data);
   }
 }
