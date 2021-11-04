@@ -1,5 +1,6 @@
 import { ElementRef, Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
 import { ParentInteraction } from '../models/parent-interaction.interface';
+import { ClickableContentService } from './clickable-content.service';
 import { NavigationKeysService } from './navigation-keys.service';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class ContentEditorListenerService {
   constructor(
     rendererFactory: RendererFactory2,
     private navigationKeysService: NavigationKeysService,
+    private clickableService: ClickableContentService,
   ) {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -57,7 +59,11 @@ export class ContentEditorListenerService {
     // const source = fromEvent(document, 'keydown');
     // source.subscribe((x) => console.log('222: ', x));
 
-    this.listeners.push(keydownArrowDown, keydownArrowUp);
+    const click = this.renderer.listen(document, 'click', (e) => {
+      this.clickableService.reset();
+    });
+
+    this.listeners.push(keydownArrowDown, keydownArrowUp, click);
   }
 
   destroysListeners() {

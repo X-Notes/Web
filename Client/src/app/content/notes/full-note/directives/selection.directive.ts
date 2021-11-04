@@ -9,6 +9,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ScrollEvent } from 'muuri';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
 import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
@@ -43,6 +44,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private selectionService: SelectionService,
+    private clickableService: ClickableContentService
   ) {}
 
   @HostListener('mousedown', ['$event'])
@@ -116,6 +118,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.div.style.left = `${this.x - this.selectionService.sidebarWidth}px`;
 
     this.selectionService.ismousedown = true;
+    this.clickableService.resetHard();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 
