@@ -104,7 +104,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   get isClicked() {
-    return this.clickableService.id === this.getFirst.fileId;
+    return this.clickableService.id === this.getFirst?.fileId;
   }
 
   get getFirst(): DocumentModel {
@@ -136,20 +136,20 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   // eslint-disable-next-line class-methods-use-this
   backspaceDown() {
-    this.checkForDelete();
+    this.deleteIfCan();
   }
 
   deleteDown() {
-    this.checkForDelete();
+    this.deleteIfCan();
   }
 
-  checkForDelete() {
-    const audioId = this.clickableContentService.id;
+  deleteIfCan() {
+    const documentId = this.clickableContentService.id;
     if (
       this.clickableContentService.collectionId === this.content.id &&
-      this.content.documents.some((x) => x.fileId === audioId)
+      this.content.documents.some((x) => x.fileId === documentId)
     ) {
-      this.deleteDocumentEvent.emit(audioId);
+      this.deleteContentEvent.emit(this.content.id);
     }
   }
 }

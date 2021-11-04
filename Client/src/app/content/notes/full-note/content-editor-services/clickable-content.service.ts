@@ -25,10 +25,13 @@ export class ClickableContentService {
   }
 
   timeDifference(): number {
+    if(this.setTime) {
     const start = this.setTime.getTime();
     const end = new Date().getTime();
     const diff = end - start;
     return diff / 1000;
+    }
+    return Infinity;
   }
 
   reset() {

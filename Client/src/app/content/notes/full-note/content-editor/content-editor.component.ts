@@ -147,6 +147,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     $event.preventDefault();
     this.contentEditorTextService.appendNewEmptyContentToStart();
     setTimeout(() => this.elements?.first?.setFocus());
+    this.postAction();
   }
 
   pasteCommandHandler(e) {
