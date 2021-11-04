@@ -4,10 +4,12 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
@@ -28,7 +30,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
 })
-export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -58,7 +60,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
+
   startWidth;
 
   startHeight;
@@ -85,7 +87,11 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef
-  ) {}
+  ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateHeightByNativeOffset();
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -93,7 +99,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement;
+    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
   deleteContentHandler() {
@@ -142,6 +148,15 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     this.changeHeightSubject.next(`${newHeight}px`);
   }
 
+  updateHeightByNativeOffset() {
+    setTimeout(() => {
+      const height = this.albumChild?.nativeElement.offsetHeight + 'px';
+      if (this.content.height !== height) {
+        this.changeHeightSubject.next(height);
+      }
+    }, 500);
+  }
+
   saveWidth() {
     this.startWidth = this.albumChild.nativeElement.offsetWidth;
   }
@@ -177,6 +192,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
       this.changeHeightSubject.next(`height`);
       this.initPhotos();
+      this.updateHeightByNativeOffset();
     }
   }
 
@@ -258,38 +274,38 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     }
   };
 
-  setFocus = ($event?: any) => {};
+  setFocus = ($event?: any) => { };
 
-  setFocusToEnd = () => {};
+  setFocusToEnd = () => { };
 
-  updateHTML = (content: string) => {};
+  updateHTML = (content: string) => { };
 
-  getEditableNative = () => {};
+  getEditableNative = () => { };
 
   getContent() {
     return this.content;
   }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
 
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => { };
 
-  mouseOut = ($event: any) => {};
+  mouseOut = ($event: any) => { };
 
   // eslint-disable-next-line class-methods-use-this
-  backspaceUp() {}
+  backspaceUp() { }
 
   backspaceDown() {
-    this.checkForDelete();
+    this.deleteIfCan();
   }
 
   deleteDown() {
-    this.checkForDelete();
+    this.deleteIfCan();
   }
 
-  checkForDelete() {
+  deleteIfCan() {
     const photoId = this.clickableContentService.id;
     if (
       this.clickableContentService.collectionId === this.content.id &&
