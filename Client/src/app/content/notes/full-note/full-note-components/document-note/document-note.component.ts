@@ -45,7 +45,8 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     private dialogsManageService: DialogsManageService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
-    private host: ElementRef
+    private host: ElementRef,
+    private clickableService: ClickableContentService
   ) {}
 
   clickDocumentHandler(document: DocumentModel) {
@@ -102,7 +103,11 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
     return 'fileInner';
   }
 
-  get getFirst() {
+  get isClicked() {
+    return this.clickableService.id === this.getFirst.fileId;
+  }
+
+  get getFirst(): DocumentModel {
     if (this.content.documents && this.content.documents.length > 0) {
       return this.content.documents[0];
     }

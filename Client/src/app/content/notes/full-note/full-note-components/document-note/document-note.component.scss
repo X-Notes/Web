@@ -1,3 +1,12 @@
+@mixin is-selected {
+    box-shadow: 0 0 0 2px #0887a7;
+  }
+  
+.is-selected {
+    @include is-selected;
+}
+  
+
 .spinner-container{
     position: relative;
     display: flex;

@@ -62,6 +62,7 @@
       (pauseEvent)="pause()"
       (deleteAudio)="deleteAudioHandler($event)"
       (exportAudio)="exportAudio($event)"
+      (clickEvent)="clickAudioHandler($event)"
     ></app-audio>
   </ng-container>
   <div *ngIf="content.isLoading" class="spinner-container">

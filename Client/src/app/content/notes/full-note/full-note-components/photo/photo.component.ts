@@ -31,7 +31,7 @@ export class PhotoComponent {
   constructor(private clickableService: ClickableContentService) {
   }
 
-  get isSelected() {
+  get isClicked() {
     return this.clickableService.id === this.photo.fileId;
   }
 

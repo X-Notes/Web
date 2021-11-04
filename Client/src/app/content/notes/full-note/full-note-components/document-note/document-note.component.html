@@ -1,6 +1,8 @@
 <div
   class="card"
   appTheme
+  (click)="clickDocumentHandler(getFirst)"
+  [ngClass]="{'is-selected' : isClicked}"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <div class="preview">
