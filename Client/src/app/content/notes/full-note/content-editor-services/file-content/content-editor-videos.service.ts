@@ -40,6 +40,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     const collectionResult = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true;
+      collectionResult.data.videos = collectionResult.data.videos ? collectionResult.data.videos : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadVideosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
       collectionResult.data.isLoading = false;

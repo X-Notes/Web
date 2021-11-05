@@ -19,7 +19,7 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNoteDocumentsCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<RemoveDocumentsCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
         IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>
@@ -55,7 +55,7 @@ namespace BI.Services.Notes
             this.appSignalRService = appSignalRService;
         }
 
-        public async Task<OperationResult<Unit>> Handle(RemoveDocumentsCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkDocumentsCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

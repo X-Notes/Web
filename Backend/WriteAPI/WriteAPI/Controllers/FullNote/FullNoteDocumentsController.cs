@@ -50,7 +50,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveDocument(RemoveDocumentsCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemoveDocument(UnlinkDocumentsCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

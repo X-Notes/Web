@@ -49,7 +49,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveVideo(RemoveVideosCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemoveVideo(UnlinkVideosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

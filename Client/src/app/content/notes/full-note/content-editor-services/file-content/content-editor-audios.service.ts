@@ -41,6 +41,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     const collectionResult = await this.apiAudiosCollection.transformToPlaylist(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
+      collectionResult.data.audios = collectionResult.data.audios ? collectionResult.data.audios : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadAudiosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
       collectionResult.data.isLoading = false;

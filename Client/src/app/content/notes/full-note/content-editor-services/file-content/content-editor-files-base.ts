@@ -29,7 +29,7 @@ export class ContentEditorFilesBase {
     contentId: string,
   ): void {
     if (result.success) {
-      this.contentsService.setSafe(result.data, contentId);
+      this.contentsService.setSafeContentsAndSyncContents(result.data, contentId);
     } else {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
       this.snackBarStatusTranslateService.validateStatus(

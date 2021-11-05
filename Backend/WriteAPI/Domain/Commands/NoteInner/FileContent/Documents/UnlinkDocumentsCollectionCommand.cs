@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Domain.Commands.NoteInner.FileContent.Documents
 {
-    public class RemoveDocumentsCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UnlinkDocumentsCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
@@ -13,7 +13,7 @@ namespace Domain.Commands.NoteInner.FileContent.Documents
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public RemoveDocumentsCollectionCommand(Guid NoteId, Guid ContentId, string Email)
+        public UnlinkDocumentsCollectionCommand(Guid NoteId, Guid ContentId, string Email)
         {
             this.NoteId = NoteId;
             this.ContentId = ContentId;

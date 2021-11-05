@@ -7,7 +7,7 @@ import { BaseText, ContentModel, ContentTypeENUM } from '../../models/content-mo
 import { ApiNoteContentService } from '../services/api-note-content.service';
 import { ApiTextService } from '../services/api-text.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
-import { StructureDiffs, PositionDiff } from './models/structure-diffs';
+import { StructureDiffs, PositionDiff, ItemForRemove } from './models/structure-diffs';
 
 export interface ContentAndIndex<T extends ContentModel> {
   index: number;
@@ -115,7 +115,7 @@ export class ContentEditorContentsService{
   // STRUCTURE
   private patchStructuralChanges(itemsForPatch: ContentModel[], diffs: StructureDiffs): ContentModel[] {
     if(diffs.removedItems.length > 0) {
-      itemsForPatch = itemsForPatch.filter(x => !diffs.removedItems.some(z => z === x.id))
+      itemsForPatch = itemsForPatch.filter(x => !diffs.removedItems.some(z => z.id === x.id))
     }
     if(diffs.newItems.length > 0) {
       for (const item of diffs.newItems) {
@@ -135,7 +135,7 @@ export class ContentEditorContentsService{
 
     for(const contentSync of oldContents) {
       if(!newContents.some(x => x.id === contentSync.id)){
-        diffs.removedItems.push(contentSync.id);
+        diffs.removedItems.push(new ItemForRemove(contentSync.id));
       }
     }
 

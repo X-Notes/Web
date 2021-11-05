@@ -1,4 +1,4 @@
-import { BaseText } from '../../../models/content-model.model';
+import { BaseText, ContentTypeENUM } from '../../../models/content-model.model';
 
 export class PositionDiff {
   id: string;
@@ -10,11 +10,19 @@ export class PositionDiff {
   }
 }
 
+export class ItemForRemove{
+  id: string;
+
+  constructor(id: string){
+    this.id = id;
+  }
+}
+
 export class StructureDiffs{
   positions: PositionDiff[] = [];
   newItems: BaseText[] = [];
-  removedItems: string[] = [];
-
+  removedItems: ItemForRemove[] = [];
+  
   isAnyChanges(){
     return this.positions.length > 0 || this.newItems.length > 0 || this.removedItems.length > 0;
   }

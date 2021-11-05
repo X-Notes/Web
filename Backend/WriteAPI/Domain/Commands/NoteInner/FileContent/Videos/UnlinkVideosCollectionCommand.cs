@@ -3,9 +3,9 @@ using Common.Attributes;
 using Common.DTO;
 using MediatR;
 
-namespace Domain.Commands.NoteInner.FileContent.Photos
+namespace Domain.Commands.NoteInner.FileContent.Videos
 {
-    public class RemovePhotosCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
+    public class UnlinkVideosCollectionCommand : BaseCommandEntity, IRequest<OperationResult<Unit>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
@@ -13,12 +13,11 @@ namespace Domain.Commands.NoteInner.FileContent.Photos
         [ValidationGuid]
         public Guid ContentId { set; get; }
 
-        public RemovePhotosCollectionCommand(Guid NoteId, Guid ContentId, string Email)
+        public UnlinkVideosCollectionCommand(Guid NoteId, Guid ContentId, string Email)
         {
             this.NoteId = NoteId;
             this.ContentId = ContentId;
             this.Email = Email;
-
         }
     }
 }

@@ -29,7 +29,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveAlbum(RemovePhotosCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemoveAlbum(UnlinkPhotosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);

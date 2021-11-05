@@ -5,6 +5,10 @@ using Common.DatabaseModels.Models.NoteContent.TextContent;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner;
+using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.NoteInner.FileContent.Documents;
+using Domain.Commands.NoteInner.FileContent.Photos;
+using Domain.Commands.NoteInner.FileContent.Videos;
 using Domain.Queries.Permissions;
 using MediatR;
 using System;
@@ -58,7 +62,43 @@ namespace BI.Services.Notes
 
                 if (request.Diffs.RemovedItems.Any())
                 {
-                    var contentsToDelete = contents.Where(x => request.Diffs.RemovedItems.Contains(x.Id));
+                    var removeIds = request.Diffs.RemovedItems.Select(x => x.Id);
+                    var contentsToDelete = contents.Where(x => removeIds.Contains(x.Id));
+
+                    var groups = contentsToDelete.GroupBy(x => x.ContentTypeId);
+
+                    if (groups.Any(x => x.Key == ContentTypeENUM.PhotosCollection))
+                    {
+                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.PhotosCollection))
+                        {
+                            await _mediator.Send(new UnlinkPhotosCollectionCommand(note.Id, collection.Id, request.Email));
+                        }
+                    }
+
+                    if (groups.Any(x => x.Key == ContentTypeENUM.AudiosCollection))
+                    {
+                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.AudiosCollection))
+                        {
+                            await _mediator.Send(new UnlinkAudiosCollectionCommand(note.Id, collection.Id, request.Email));
+                        }
+                    }
+
+                    if (groups.Any(x => x.Key == ContentTypeENUM.DocumentsCollection))
+                    {
+                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.DocumentsCollection))
+                        {
+                            await _mediator.Send(new UnlinkDocumentsCollectionCommand(note.Id, collection.Id, request.Email));
+                        }
+                    }
+
+                    if (groups.Any(x => x.Key == ContentTypeENUM.VideosCollection))
+                    {
+                        foreach (var collection in groups.First(x => x.Key == ContentTypeENUM.VideosCollection))
+                        {
+                            await _mediator.Send(new UnlinkVideosCollectionCommand(note.Id, collection.Id, request.Email));
+                        }
+                    }
+
                     if (contentsToDelete.Any())
                     {
                         await baseNoteContentRepository.RemoveRangeAsync(contentsToDelete);

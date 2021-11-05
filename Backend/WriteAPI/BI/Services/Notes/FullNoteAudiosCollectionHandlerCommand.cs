@@ -19,7 +19,7 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNoteAudiosCollectionHandlerCommand : FullNoteBaseCollection,
-                IRequestHandler<RemoveAudiosCollectionCommand, OperationResult<Unit>>,
+                IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<UploadAudiosToCollectionCommand, OperationResult<List<AudioNoteDTO>>>,
@@ -57,7 +57,7 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(RemoveAudiosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkAudiosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

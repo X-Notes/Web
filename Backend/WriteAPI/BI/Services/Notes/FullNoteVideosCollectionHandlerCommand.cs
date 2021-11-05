@@ -19,7 +19,7 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNoteVideosCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<RemoveVideosCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<UnlinkVideosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveVideoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
         IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>
@@ -56,7 +56,7 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(RemoveVideosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkVideosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

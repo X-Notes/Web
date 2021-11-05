@@ -19,7 +19,7 @@ using WriteContext.Repositories.NoteContent;
 namespace BI.Services.Notes
 {
     public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
-        IRequestHandler<RemovePhotosCollectionCommand, OperationResult<Unit>>,
+        IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<UploadPhotosToCollectionCommand, OperationResult<List<PhotoNoteDTO>>>,
         IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<ChangePhotosCollectionRowCountCommand, OperationResult<Unit>>,
@@ -58,7 +58,7 @@ namespace BI.Services.Notes
         }
 
 
-        public async Task<OperationResult<Unit>> Handle(RemovePhotosCollectionCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(UnlinkPhotosCollectionCommand request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);

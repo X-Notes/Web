@@ -30,7 +30,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemovePlaylist(RemoveAudiosCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemovePlaylist(UnlinkAudiosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
