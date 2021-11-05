@@ -226,7 +226,7 @@ namespace BI.Services.Notes
                 {
                     await baseNoteContentRepository.RemoveAsync(contentForRemove);
 
-                    var albumNote = new PhotosCollectionNote()
+                    var photosCollection = new PhotosCollectionNote()
                     {
                         NoteId = request.NoteId,
                         Order = contentForRemove.Order,
@@ -235,12 +235,12 @@ namespace BI.Services.Notes
                         Height = "auto",
                     };
 
-                    await photosCollectionNoteRepository.AddAsync(albumNote);
+                    await photosCollectionNoteRepository.AddAsync(photosCollection);
 
                     await transaction.CommitAsync();
 
-                    var result = new PhotosCollectionNoteDTO(null, albumNote.Width, albumNote.Height,
-                        albumNote.Id, albumNote.Order, albumNote.CountInRow, albumNote.UpdatedAt);
+                    var result = new PhotosCollectionNoteDTO(null, photosCollection.Width, photosCollection.Height,
+                        photosCollection.Id, photosCollection.Order, photosCollection.CountInRow, photosCollection.UpdatedAt);
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

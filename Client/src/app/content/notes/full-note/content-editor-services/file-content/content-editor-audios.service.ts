@@ -92,7 +92,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     const newCollection = new AudiosCollection(prevCollection);
     newCollection.audios = [...prev, ...audios];
 
-    this.contentsService.setSafe(newCollection, $event.contentId);
+    this.contentsService.setSafeContentsAndSyncContents(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };

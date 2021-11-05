@@ -10,6 +10,7 @@ namespace BI.JobsHandlers
     public class ConfigForFilesDeleter
     {
         public int NDays { set; get; } = 2;
+        public int NMinutes { set; get; } = 2;
     }
 
     public class UnlinkedFilesDeleteJobHandler
@@ -36,7 +37,7 @@ namespace BI.JobsHandlers
             {
                 Console.WriteLine("Start files deleting");
 
-                var earliestTimestamp = DateTimeOffset.UtcNow.AddDays(-config.NDays);
+                var earliestTimestamp = DateTimeOffset.UtcNow.AddMinutes(-config.NMinutes);
 
                 var infos = await appFileUploadInfoRepository.GetFilesInfoThatNeedDelete(earliestTimestamp);
 

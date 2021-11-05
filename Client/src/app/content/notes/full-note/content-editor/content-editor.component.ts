@@ -216,7 +216,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if (native?.textContent.length !== 0) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
-    this.contentEditorContentsService.change();
+    this.contentEditorContentsService.changeAndSave();
   }
 
   placeHolderClick($event) {
@@ -224,7 +224,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if(this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
-    this.contentEditorContentsService.change();
+    this.contentEditorContentsService.changeAndSave();
     setTimeout(() => this.elements?.last?.setFocus());
   }
 

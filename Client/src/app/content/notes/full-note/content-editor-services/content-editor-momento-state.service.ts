@@ -19,6 +19,9 @@ export class ContentEditorMomentoStateService {
   }
 
   getPrev(): ContentModel[] {
+    if(this.state.size() === 0) {
+      throw new Error("collection is empty");
+    }
     if(this.state.size() === 1) {
       return this.state.peek();
     }
@@ -27,6 +30,10 @@ export class ContentEditorMomentoStateService {
 
   size(): number {
     return this.state.size();
+  }
+
+  isEmpty(): boolean {
+    return this.size() === 0;
   }
 
   print(): void{

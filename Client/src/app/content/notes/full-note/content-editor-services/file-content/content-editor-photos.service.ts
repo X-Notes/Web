@@ -108,7 +108,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     const newCollection = new PhotosCollection(prevCollection);
     newCollection.photos = [...prev, ...newPhotos];
 
-    this.contentsService.setSafe(newCollection, contentId);
+    this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
   }
 
   deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {

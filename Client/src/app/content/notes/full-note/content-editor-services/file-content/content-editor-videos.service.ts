@@ -89,7 +89,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     const newCollection = new VideosCollection(prevCollection);
     newCollection.videos = [...prev, ...videos];
 
-    this.contentsService.setSafe(newCollection, $event.contentId);
+    this.contentsService.setSafeContentsAndSyncContents(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };

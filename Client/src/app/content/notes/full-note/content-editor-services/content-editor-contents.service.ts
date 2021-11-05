@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject } from 'rxjs';
-import { debounceTime, filter, take } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { BaseText, ContentModel, ContentTypeENUM } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
@@ -15,7 +15,7 @@ export interface ContentAndIndex<T extends ContentModel> {
 }
 
 @Injectable()
-export class ContentEditorContentsService {
+export class ContentEditorContentsService{
   private contentsSync: ContentModel[] = [];
 
   private contents: ContentModel[]; // TODO MAKE DICTIONARY
@@ -24,7 +24,9 @@ export class ContentEditorContentsService {
 
   private noteId: string;
 
-  private updateSubject = new BehaviorSubject<boolean>(false);
+  private updateSubject: BehaviorSubject<boolean>;
+
+  private saveSubject: BehaviorSubject<boolean>;
 
   constructor(
     protected store: Store,
@@ -39,8 +41,20 @@ export class ContentEditorContentsService {
     this.noteId = noteId;
     this.initContent(contents);
     this.contentEditorMomentoStateService.save(this.getContents);
-    // TODO MAYBE UNSUBSCRIVE & upgrade timer
-    this.updateSubject.pipe(filter(x => x === true),debounceTime(500)).subscribe(x => this.processChanges());
+
+   this.destroyAndInitSubject(); 
+
+    this.updateSubject.pipe(filter(x => x === true), debounceTime(200))
+        .subscribe(() => { this.processChanges();});
+    this.saveSubject.pipe(filter(x => x === true), debounceTime(200))
+        .subscribe(() => this.contentEditorMomentoStateService.save(this.getContents));
+  }
+
+  destroyAndInitSubject() {
+    this.updateSubject?.complete();
+    this.updateSubject = new BehaviorSubject<boolean>(false);
+    this.saveSubject?.complete();
+    this.saveSubject = new BehaviorSubject<boolean>(false);
   }
 
   initOnlyRead(contents: ContentModel[], noteId: string) {
@@ -56,41 +70,28 @@ export class ContentEditorContentsService {
     }
   }
 
-  private patchStructuralChanges(diffs: StructureDiffs){
-    if(diffs.removedItems.length > 0) {
-      this.contentsSync = this.contentsSync.filter(x => !diffs.removedItems.some(z => z === x.id))
-    }
-    if(diffs.newItems.length > 0) {
-      for (const item of diffs.newItems) {
-        this.contentsSync.push(item.copy());
-      }
-    }
-    if(diffs.positions.length > 0){
-      for(const pos of diffs.positions){
-        this.contentsSync.find(x => x.id === pos.id).order = pos.order;
-      }
-    }
-  }
-
   get getContents() {
     return this.contents;
   }
 
   // eslint-disable-next-line class-methods-use-this
+  changeAndSave() {
+    this.updateSubject.next(true);
+    this.saveSubject.next(true);
+  }
+
   change() {
     this.updateSubject.next(true);
   }
 
   private processChanges() {
-        this.contentEditorMomentoStateService.save(this.getContents);
-        // TODO MAYBE TIMER
-        const structureDiffs = this.getStructureDiffs(this.getContents);
+        const structureDiffs = this.getStructureDiffs(this.contentsSync, this.getContents);
         if (structureDiffs.isAnyChanges()) {
           this.apiNoteContentService
           .syncContentsStructure(this.noteId, structureDiffs)
           .pipe(take(1))
           .subscribe(x => {
-            this.patchStructuralChanges(structureDiffs);
+            this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
             this.processTextsChanges();
           });
         } else {
@@ -99,8 +100,8 @@ export class ContentEditorContentsService {
   }
 
   private processTextsChanges() {
-    const textDiffs = this.getTextDiffs(this.getContents);
-    if(textDiffs.length > 0){
+    const textDiffs = this.getTextDiffs(this.contentsSync, this.getContents);
+    if(textDiffs.length > 0) {
       this.apiTexts.syncTextContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
         (resp) => {
           for(const text of textDiffs){
@@ -111,33 +112,56 @@ export class ContentEditorContentsService {
     }
   }
 
-  getStructureDiffs(contents: ContentModel[]): StructureDiffs {
+  // STRUCTURE
+  private patchStructuralChanges(itemsForPatch: ContentModel[], diffs: StructureDiffs): ContentModel[] {
+    if(diffs.removedItems.length > 0) {
+      itemsForPatch = itemsForPatch.filter(x => !diffs.removedItems.some(z => z === x.id))
+    }
+    if(diffs.newItems.length > 0) {
+      for (const item of diffs.newItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if(diffs.positions.length > 0){
+      for(const pos of diffs.positions){
+        itemsForPatch.find(x => x.id === pos.id).order = pos.order;
+      }
+    }
+    return itemsForPatch;
+  }
+
+  private getStructureDiffs(oldContents: ContentModel[], newContents: ContentModel[]): StructureDiffs {
     const diffs: StructureDiffs = new StructureDiffs();
 
-    for(const contentSync of this.contentsSync) {
-      if(!this.contents.some(x => x.id === contentSync.id)){
+    for(const contentSync of oldContents) {
+      if(!newContents.some(x => x.id === contentSync.id)){
         diffs.removedItems.push(contentSync.id);
       }
     }
 
-    for (let i = 0; i < contents.length; i += 1) {
-      const content = contents[i];
-      if(!this.contentsSync.some(x => x.id === content.id) && content.typeId === ContentTypeENUM.Text){
+    for (let i = 0; i < newContents.length; i += 1) {
+      const content = newContents[i];
+      if(!oldContents.some(x => x.id === content.id) && content.typeId === ContentTypeENUM.Text){
         content.order = i;
         diffs.newItems.push(content as BaseText);
       }
-      if(this.contentsSync.some(x => x.id === content.id) && this.contentsSync.find(x => x.id === content.id).order !== i) {
-        diffs.positions.push(new PositionDiff(i, contents[i].id));
+      if(oldContents.some(x => x.id === content.id) && oldContents.find(x => x.id === content.id).order !== i) {
+        diffs.positions.push(new PositionDiff(i, newContents[i].id));
       }
     }
 
     return diffs;
   }
 
-  getTextDiffs(contents: ContentModel[]): BaseText[] {
+  // TEXT
+  private patchTextDiffs(texts: BaseText[]) {
+    texts.forEach(item => this.setSafe(item, item.id));
+  }
+
+  private getTextDiffs(oldContents: ContentModel[], newContents: ContentModel[]): BaseText[] {
     const texts: BaseText[] = [];
-    for(const content of contents){
-      const isNeedUpdate = this.contentsSync.some(x => x.typeId === ContentTypeENUM.Text && content.typeId === ContentTypeENUM.Text && 
+    for(const content of newContents){
+      const isNeedUpdate = oldContents.some(x => x.typeId === ContentTypeENUM.Text && content.typeId === ContentTypeENUM.Text && 
                 x.id === content.id && !content.isEqual(x));
       if(isNeedUpdate){
         texts.push(content as BaseText)
@@ -148,10 +172,29 @@ export class ContentEditorContentsService {
 
   // Restore Prev
   restorePrev() {
+    if(this.contentEditorMomentoStateService.isEmpty()){
+      return;
+    }
     const prev = this.contentEditorMomentoStateService.getPrev();
-    if(!this.isContentsEquals(prev, this.contents)){
-      this.contents = prev;
-      this.change();
+    if(!this.isContentsEquals(prev, this.contents)) { 
+
+      let isNeedChange = false;
+
+      const structureDiffs = this.getStructureDiffs(this.contents, prev);
+      if(structureDiffs.isAnyChanges()) {
+        this.contents = this.patchStructuralChanges(this.contents, structureDiffs);
+        isNeedChange = true;
+      }
+
+      const textDiffs = this.getTextDiffs(this.contents, prev);
+      if(textDiffs && textDiffs.length > 0){
+        this.patchTextDiffs(textDiffs);
+        isNeedChange = true;
+      }
+
+      if(isNeedChange){
+        this.change();
+      }
     }
   }
 
@@ -194,6 +237,16 @@ export class ContentEditorContentsService {
     return null;
   }
 
+  findContentAndIndexById<T extends ContentModel>(contents: ContentModel[], contentId: string): ContentAndIndex<T> {
+    for (let i = 0; i < contents.length; i += 1) {
+      if (contents[i].id === contentId) {
+        const obj: ContentAndIndex<T> = { index: i, content: contents[i] as T };
+        return obj;
+      }
+    }
+    return null;
+  }
+
   getContentById<T extends ContentModel>(contentId: string): T {
     return this.contents.find((x) => x.id === contentId) as T;
   }
@@ -208,7 +261,7 @@ export class ContentEditorContentsService {
   }
 
   // INSERT, UPDATE
-  setUnsafe(data: ContentModel, index: number) {
+  setUnsafe(data: ContentModel, index: number): void {
     this.contents[index] = data;
   }
 
@@ -216,6 +269,17 @@ export class ContentEditorContentsService {
     const obj = this.getContentAndIndexById(contentId);
     this.contents[obj.index] = data;
     return obj.index;
+  }
+
+  setSafeContentsAndSyncContents(data: ContentModel, contentId: string): number {
+    const obj = this.getContentAndIndexById(contentId);
+    const obj2 = this.findContentAndIndexById(this.contentsSync, contentId);
+    if(obj && obj2){
+      this.contents[obj.index] = data;
+      this.contentsSync[obj2.index] = data;
+      return obj.index;
+    }
+    throw new Error("Content not found");
   }
 
   insertInto(data: ContentModel, index: number) {

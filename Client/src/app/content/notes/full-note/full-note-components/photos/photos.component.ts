@@ -154,7 +154,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
       if (this.content.height !== height) {
         this.changeHeightSubject.next(height);
       }
-    }, 500);
+    }, 50);
   }
 
   saveWidth() {
