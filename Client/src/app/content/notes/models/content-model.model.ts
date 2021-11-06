@@ -401,6 +401,8 @@ export class DocumentModel {
 export class PhotosCollection extends ContentModel {
   photos: Photo[];
 
+  name: string;
+
   height: string;
 
   width: string;
@@ -414,6 +416,7 @@ export class PhotosCollection extends ContentModel {
     this.countInRow = collection.countInRow;
     this.height = collection.height;
     this.width = collection.width;
+    this.name = collection.name;
     this.photos = collection.photos ? collection.photos.map(
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       (z) =>

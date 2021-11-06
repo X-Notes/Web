@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
-import { BaseText, ContentModel, ContentTypeENUM } from '../../models/content-model.model';
+import { AudiosCollection, BaseText, ContentModel, ContentTypeENUM, DocumentsCollection, PhotosCollection, VideosCollection } from '../../models/content-model.model';
 import { ApiNoteContentService } from '../services/api-note-content.service';
 import { ApiTextService } from '../services/api-text.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
@@ -93,14 +93,42 @@ export class ContentEditorContentsService{
           .subscribe(x => {
             this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
             this.processTextsChanges();
+            this.processPhotosChanges();
+            this.processAudiosChanges();
+            this.processDocumentsChanges();
+            this.processVideosChanges();
           });
         } else {
           this.processTextsChanges();
+          this.processPhotosChanges();
+          this.processAudiosChanges();
+          this.processDocumentsChanges();
+          this.processVideosChanges();
         }
   }
 
+  private processPhotosChanges(){
+    const diffs = this.getContentDiffs<PhotosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Photos);
+    // 1. Worker
+    // 2. Playlist title
+    // 3. single update when user edit and batch when ctrl + z
+  }
+
+  private processAudiosChanges(){
+    const diffs = this.getContentDiffs<AudiosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
+    console.log('Diifs: ', diffs);
+  }
+
+  private processDocumentsChanges(){
+    const diffs = this.getContentDiffs<DocumentsCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Documents);
+  }
+
+  private processVideosChanges(){
+    const diffs = this.getContentDiffs<VideosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
+  }
+
   private processTextsChanges() {
-    const textDiffs = this.getTextDiffs(this.contentsSync, this.getContents);
+    const textDiffs = this.getContentDiffs<BaseText>(this.contentsSync, this.getContents, ContentTypeENUM.Text);
     if(textDiffs.length > 0) {
       this.apiTexts.syncTextContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
         (resp) => {
@@ -158,16 +186,15 @@ export class ContentEditorContentsService{
     texts.forEach(item => this.setSafe(item, item.id));
   }
 
-  private getTextDiffs(oldContents: ContentModel[], newContents: ContentModel[]): BaseText[] {
-    const texts: BaseText[] = [];
-    for(const content of newContents){
-      const isNeedUpdate = oldContents.some(x => x.typeId === ContentTypeENUM.Text && content.typeId === ContentTypeENUM.Text && 
-                x.id === content.id && !content.isEqual(x));
+  private getContentDiffs<T extends ContentModel>(oldContents: ContentModel[], newContents: ContentModel[], type: ContentTypeENUM): T[] {
+    const contents: T[] = [];
+    for(const content of newContents.filter(x => x.typeId === type)){
+      const isNeedUpdate = oldContents.some(x => x.typeId === type && x.id === content.id && !content.isEqual(x));
       if(isNeedUpdate){
-        texts.push(content as BaseText)
+        contents.push(content as T)
       }
     }
-    return texts;
+    return contents;
   }
 
   // Restore Prev
@@ -186,7 +213,7 @@ export class ContentEditorContentsService{
         isNeedChange = true;
       }
 
-      const textDiffs = this.getTextDiffs(this.contents, prev);
+      const textDiffs = this.getContentDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
       if(textDiffs && textDiffs.length > 0){
         this.patchTextDiffs(textDiffs);
         isNeedChange = true;

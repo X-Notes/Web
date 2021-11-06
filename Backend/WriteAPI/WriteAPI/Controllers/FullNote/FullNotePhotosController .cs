@@ -17,7 +17,7 @@ using WriteAPI.ControllerConfig;
 namespace WriteAPI.Controllers
 {
     [Authorize]
-    [Route("api/note/inner/album")]
+    [Route("api/note/inner/photos")]
     [ApiController]
     public class FullNoteAlbumsController : ControllerBase
     {
@@ -83,6 +83,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
+        }
+
+        [HttpPatch("sync")]
+        public async Task<OperationResult<Unit>> SyncTextContents(UpdatePhotosContentsCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
     }
 

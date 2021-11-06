@@ -14,7 +14,7 @@ export class ApiAlbumService {
       contentId,
     };
     return this.httpClient.post<OperationResult<PhotosCollection>>(
-      `${environment.writeAPI}/api/note/inner/album/transform`,
+      `${environment.writeAPI}/api/note/inner/photos/transform`,
       obj,
     );
   }
@@ -25,14 +25,14 @@ export class ApiAlbumService {
       contentId,
     };
     return this.httpClient.post<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/album/remove`,
+      `${environment.writeAPI}/api/note/inner/photos/remove`,
       obj,
     );
   }
 
   uploadPhotosToAlbum(data: FormData, id: string, contentId: string) {
     return this.httpClient.post<OperationResult<Photo[]>>(
-      `${environment.writeAPI}/api/note/inner/album/upload/${id}/${contentId}`,
+      `${environment.writeAPI}/api/note/inner/photos/upload/${id}/${contentId}`,
       data,
       { reportProgress: true, observe: 'events' },
     );
@@ -40,7 +40,7 @@ export class ApiAlbumService {
 
   removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
     return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/album/photo/${noteId}/${contentId}/${photoId}`,
+      `${environment.writeAPI}/api/note/inner/photos/photo/${noteId}/${contentId}/${photoId}`,
     );
   }
 
@@ -51,7 +51,7 @@ export class ApiAlbumService {
       count,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/album/row/count`,
+      `${environment.writeAPI}/api/note/inner/photos/row/count`,
       obj,
     );
   }
@@ -64,7 +64,18 @@ export class ApiAlbumService {
       height,
     };
     return this.httpClient.patch<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/album/size`,
+      `${environment.writeAPI}/api/note/inner/photos/size`,
+      obj,
+    );
+  }
+
+  syncContents(noteId: string, photos: PhotosCollection[]) {
+    const obj = {
+      noteId,
+      photos
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/photos/sync`,
       obj,
     );
   }

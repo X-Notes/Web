@@ -48,7 +48,7 @@ namespace BI.Mapping
                     case PhotosCollectionNote aN:
                         {
                             var photosDTO = aN.Photos.Select(item => new PhotoNoteDTO(item.Id, item.Name, item.PathPhotoSmall, item.PathPhotoMedium, item.PathPhotoBig, item.UserId)).ToList();
-                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
+                            var collectionDTO = new PhotosCollectionNoteDTO(photosDTO, aN.Name, aN.Width, aN.Height, aN.Id, aN.Order, aN.CountInRow, aN.UpdatedAt);
                             resultList.Add(collectionDTO);
                             break;
                         }

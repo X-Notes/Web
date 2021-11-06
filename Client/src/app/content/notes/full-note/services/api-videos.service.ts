@@ -37,4 +37,15 @@ export class ApiVideoService {
       obj,
     );
   }
+
+  syncContents(noteId: string, videos: VideosCollection[]) {
+    const obj = {
+      noteId,
+      videos
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/videos/sync`,
+      obj,
+    );
+  }
 }

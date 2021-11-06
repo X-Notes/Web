@@ -37,4 +37,15 @@ export class ApiDocumentService {
       obj,
     );
   }
+
+  syncContents(noteId: string, documents: DocumentsCollection[]) {
+    const obj = {
+      noteId,
+      documents
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/documents/sync`,
+      obj,
+    );
+  }
 }

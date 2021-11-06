@@ -22,7 +22,8 @@ namespace BI.Services.Notes
         IRequestHandler<UnlinkVideosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveVideoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
-        IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>
+        IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>,
+        IRequestHandler<UpdateVideosContentsCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -203,6 +204,73 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<List<VideoNoteDTO>>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdateVideosContentsCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                if (request.Videos.Count == 1)
+                {
+                    await UpdateOne(request.Videos.First());
+                }
+                else
+                {
+                    await UpdateMany(request.Videos);
+                }
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                // TODO DEADLOCK
+                return new OperationResult<Unit>(success: true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        private async Task UpdateMany(List<VideosCollectionNoteDTO> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await UpdateOne(entity);
+            }
+        }
+
+        private async Task UpdateOne(VideosCollectionNoteDTO entity)
+        {
+            var entityForUpdate = await videoNoteRepository.GetOneIncludeVideoNoteAppFiles(entity.Id);
+            if (entityForUpdate != null)
+            {
+                entityForUpdate.UpdatedAt = DateTimeOffset.Now;
+                entityForUpdate.Name = entity.Name;
+
+                var databaseFileIds = entityForUpdate.VideoNoteAppFiles.Select(x => x.AppFileId);
+                var entityFileIds = entity.Videos.Select(x => x.FileId);
+
+                var idsForDelete = databaseFileIds.Except(entityFileIds);
+                var idsForAdd = entityFileIds.Except(databaseFileIds);
+
+                if (idsForDelete.Any() || idsForAdd.Any())
+                {
+                    entityForUpdate.VideoNoteAppFiles = entity.Videos.Select(x =>
+                        new VideoNoteAppFile { AppFileId = x.FileId, VideosCollectionNoteId = entityForUpdate.Id }).ToList();
+                }
+
+                if (idsForDelete.Any())
+                {
+                    await MarkAsUnlinked(idsForDelete.ToArray());
+                }
+
+                if (idsForAdd.Any())
+                {
+                    await MarkAsLinked(idsForAdd.ToArray());
+                }
+            }
+            await videoNoteRepository.UpdateAsync(entityForUpdate);
         }
     }
 }

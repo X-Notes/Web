@@ -52,4 +52,15 @@ export class ApiPlaylistService {
       data, { reportProgress: true, observe: 'events' }
     );
   }
+
+  syncContents(noteId: string, audios: AudiosCollection[]) {
+    const obj = {
+      noteId,
+      audios
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/audios/sync`,
+      obj,
+    );
+  }
 }

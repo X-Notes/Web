@@ -22,7 +22,8 @@ namespace BI.Services.Notes
         IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
-        IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>
+        IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>,
+        IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -203,5 +204,71 @@ namespace BI.Services.Notes
             return new OperationResult<List<DocumentNoteDTO>>().SetNoPermissions();
         }
 
+        public async Task<OperationResult<Unit>> Handle(UpdateDocumentsContentsCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                if (request.Documents.Count == 1)
+                {
+                    await UpdateOne(request.Documents.First());
+                }
+                else
+                {
+                    await UpdateMany(request.Documents);
+                }
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                // TODO DEADLOCK
+                return new OperationResult<Unit>(success: true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        private async Task UpdateMany(List<DocumentsCollectionNoteDTO> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await UpdateOne(entity);
+            }
+        }
+
+        private async Task UpdateOne(DocumentsCollectionNoteDTO entity)
+        {
+            var entityForUpdate = await documentNoteRepository.GetOneIncludeDocumentNoteAppFiles(entity.Id);
+            if (entityForUpdate != null)
+            {
+                entityForUpdate.UpdatedAt = DateTimeOffset.Now;
+                entityForUpdate.Name = entity.Name;
+
+                var databaseFileIds = entityForUpdate.DocumentNoteAppFiles.Select(x => x.AppFileId);
+                var entityFileIds = entity.Documents.Select(x => x.FileId);
+
+                var idsForDelete = databaseFileIds.Except(entityFileIds);
+                var idsForAdd = entityFileIds.Except(databaseFileIds);
+
+                if (idsForDelete.Any() || idsForAdd.Any())
+                {
+                    entityForUpdate.DocumentNoteAppFiles = entity.Documents.Select(x =>
+                        new DocumentNoteAppFile { AppFileId = x.FileId, DocumentsCollectionNoteId = entityForUpdate.Id }).ToList();
+                }
+
+                if (idsForDelete.Any())
+                {
+                    await MarkAsUnlinked(idsForDelete.ToArray());
+                }
+
+                if (idsForAdd.Any())
+                {
+                    await MarkAsLinked(idsForAdd.ToArray());
+                }
+            }
+            await documentNoteRepository.UpdateAsync(entityForUpdate);
+        }
     }
 }

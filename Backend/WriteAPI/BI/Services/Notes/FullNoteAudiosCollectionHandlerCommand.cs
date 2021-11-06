@@ -13,6 +13,7 @@ using Domain.Commands.Files;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Queries.Permissions;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Storage;
 using WriteContext.Repositories.Files;
 using WriteContext.Repositories.NoteContent;
 
@@ -23,7 +24,8 @@ namespace BI.Services.Notes
                 IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<UploadAudiosToCollectionCommand, OperationResult<List<AudioNoteDTO>>>,
-                IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>
+                IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
+                IRequestHandler<UpdateAudiosContentsCommand, OperationResult<Unit>>
     {
 
         private readonly IMediator _mediator;
@@ -229,6 +231,73 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<AudiosCollectionNoteDTO>().SetNoPermissions();
+        }
+
+        public async Task<OperationResult<Unit>> Handle(UpdateAudiosContentsCommand request, CancellationToken cancellationToken)
+        {
+            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
+            var permissions = await _mediator.Send(command);
+
+            if (permissions.CanWrite)
+            {
+                if (request.Audios.Count == 1)
+                {
+                    await UpdateOne(request.Audios.First());
+                }
+                else
+                {
+                    await UpdateMany(request.Audios);
+                }
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                // TODO DEADLOCK
+                return new OperationResult<Unit>(success: true, Unit.Value);
+            }
+
+            return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        private async Task UpdateMany(List<AudiosCollectionNoteDTO> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await UpdateOne(entity);
+            }
+        }
+
+        private async Task UpdateOne(AudiosCollectionNoteDTO entity)
+        {
+            var entityForUpdate = await audioNoteRepository.GetOneIncludeAudioNoteAppFiles(entity.Id);
+            if (entityForUpdate != null)
+            {
+                entityForUpdate.UpdatedAt = DateTimeOffset.Now;
+                entityForUpdate.Name = entity.Name;
+
+                var databaseFileIds = entityForUpdate.AudioNoteAppFiles.Select(x => x.AppFileId);
+                var entityFileIds = entity.Audios.Select(x => x.FileId);
+
+                var idsForDelete = databaseFileIds.Except(entityFileIds);
+                var idsForAdd = entityFileIds.Except(databaseFileIds);
+
+                if (idsForDelete.Any() || idsForAdd.Any())
+                {
+                    entityForUpdate.AudioNoteAppFiles = entity.Audios.Select(x => 
+                        new AudioNoteAppFile { AppFileId = x.FileId, AudiosCollectionNoteId = entityForUpdate.Id }).ToList();
+                }
+
+                if (idsForDelete.Any())
+                {
+                    await MarkAsUnlinked(idsForDelete.ToArray());
+                }
+
+                if (idsForAdd.Any())
+                {
+                    await MarkAsLinked(idsForAdd.ToArray());
+                }
+            }
+            await audioNoteRepository.UpdateAsync(entityForUpdate);
         }
     }
 }

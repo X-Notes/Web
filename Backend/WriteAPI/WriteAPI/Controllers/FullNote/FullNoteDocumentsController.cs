@@ -5,9 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Documents;
-using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -61,6 +59,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
+        }
+
+        [HttpPatch("sync")]
+        public async Task<OperationResult<Unit>> SyncTextContents(UpdateDocumentsContentsCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
     }
 

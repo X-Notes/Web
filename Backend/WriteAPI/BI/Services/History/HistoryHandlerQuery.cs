@@ -120,7 +120,7 @@ namespace BI.Services.History
         {
             var filePhotos = files.Where(x => photos.PhotosFilesIds.Contains(x.Id))
                 .Select(x => new PhotoNoteDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId)).ToList();
-            return new PhotosCollectionNoteDTO(filePhotos, photos.Width, photos.Height, Guid.Empty, photos.Order, photos.CountInRow, photos.UpdatedAt);
+            return new PhotosCollectionNoteDTO(filePhotos, photos.Name, photos.Width, photos.Height, Guid.Empty, photos.Order, photos.CountInRow, photos.UpdatedAt);
         }
 
         private VideosCollectionNoteDTO ConvertVideosCollection(VideosCollectionNoteSnapshot videos, List<AppFile> files)

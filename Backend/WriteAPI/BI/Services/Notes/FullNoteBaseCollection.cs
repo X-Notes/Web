@@ -41,5 +41,12 @@ namespace BI.Services.Notes
             files.ForEach(x => x.AppFileUploadInfo.SetLinked());
             await fileRepository.UpdateRangeAsync(files);
         }
+
+        protected async Task MarkAsLinked(params Guid[] ids)
+        {
+            var infos = await appFileUploadInfoRepository.GetWhereAsync(x => ids.Contains(x.AppFileId));
+            infos.ForEach(x => x.SetLinked());
+            await appFileUploadInfoRepository.UpdateRangeAsync(infos);
+        }
     }
 }
