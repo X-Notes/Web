@@ -12,7 +12,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { DocumentsCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { ApiDocumentService } from '../../services/api-documents.service';
+import { ApiDocumentsService } from '../../services/api-documents.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
@@ -27,7 +27,7 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     contentEditorContentsService: ContentEditorContentsService,
-    private apiDocuments: ApiDocumentService,
+    private apiDocuments: ApiDocumentsService,
   ) {
     super(
       store,

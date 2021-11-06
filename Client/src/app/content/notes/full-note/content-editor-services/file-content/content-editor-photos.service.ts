@@ -11,7 +11,7 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { PhotosCollection, Photo } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { ApiAlbumService } from '../../services/api-photos.service';
+import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
@@ -24,7 +24,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     uploadFilesService: UploadFilesService,
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
-    private apiAlbum: ApiAlbumService,
+    private apiAlbum: ApiPhotosService,
     contentEditorContentsService: ContentEditorContentsService,
   ) {
     super(

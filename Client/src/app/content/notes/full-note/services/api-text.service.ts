@@ -20,7 +20,7 @@ export class ApiTextService {
     );
   }
 
-  syncTextContents(noteId: string, texts: BaseText[]) {
+  syncContents(noteId: string, texts: BaseText[]) {
     const obj = {
       noteId,
       texts

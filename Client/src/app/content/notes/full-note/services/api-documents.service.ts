@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { DocumentModel, DocumentsCollection } from '../../models/content-model.model';
 
 @Injectable()
-export class ApiDocumentService {
+export class ApiDocumentsService {
   constructor(private httpClient: HttpClient) {}
 
   transformToDocuments(noteId: string, contentId: string) {

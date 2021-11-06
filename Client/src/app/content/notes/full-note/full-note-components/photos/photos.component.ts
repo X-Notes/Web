@@ -19,7 +19,7 @@ import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../content-editor-services/selection.service';
-import { ApiAlbumService } from '../../services/api-photos.service';
+import { ApiPhotosService } from '../../services/api-photos.service';
 import {
   ClickableContentService,
   ClickableSelectableEntities,
@@ -83,7 +83,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
-    private api: ApiAlbumService,
+    private api: ApiPhotosService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef

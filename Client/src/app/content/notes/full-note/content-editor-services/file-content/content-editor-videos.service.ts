@@ -9,7 +9,7 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { VideosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { ApiVideoService } from '../../services/api-videos.service';
+import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
@@ -24,7 +24,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     contentEditorContentsService: ContentEditorContentsService,
-    private apiVideos: ApiVideoService,
+    private apiVideos: ApiVideosService,
   ) {
     super(
       store,

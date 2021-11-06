@@ -299,6 +299,9 @@ namespace BI.Services.Notes
             {
                 entityForUpdate.UpdatedAt = DateTimeOffset.Now;
                 entityForUpdate.Name = entity.Name;
+                entityForUpdate.Width = entity.Width;
+                entityForUpdate.Height = entity.Height;
+                entityForUpdate.CountInRow = entity.CountInRow;
 
                 var databaseFileIds = entityForUpdate.PhotoNoteAppFiles.Select(x => x.AppFileId);
                 var entityFileIds = entity.Photos.Select(x => x.FileId);

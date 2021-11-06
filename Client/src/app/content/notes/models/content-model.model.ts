@@ -175,6 +175,12 @@ export class AudiosCollection extends ContentModel {
     ): [];
   }
 
+  update(entity: AudiosCollection){
+    this.name = entity.name;
+    this.updatedAt = entity.updatedAt;
+    this.audios = entity.audios;
+  }
+
   copy(): AudiosCollection {
     return new AudiosCollection(this);
   }
@@ -266,6 +272,12 @@ export class VideosCollection extends ContentModel {
     return obj;
   }
 
+  update(entity: VideosCollection){
+    this.name = entity.name;
+    this.updatedAt = entity.updatedAt;
+    this.videos = entity.videos;
+  }
+
   isEqual(content: VideosCollection): boolean {
     return this.name === content.name && this.isEqualVideos(content);
   }
@@ -334,6 +346,12 @@ export class DocumentsCollection extends ContentModel {
         new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
     ) : [];
     
+  }
+
+  update(entity: DocumentsCollection){
+    this.name = entity.name;
+    this.updatedAt = entity.updatedAt;
+    this.documents = entity.documents;
   }
 
   isEqual(content: DocumentsCollection): boolean {
@@ -432,6 +450,16 @@ export class PhotosCollection extends ContentModel {
         ),
     ): [];
   }
+
+  update(entity: PhotosCollection){
+    this.name = entity.name;
+    this.height = entity.height;
+    this.width = entity.width;
+    this.countInRow = entity.countInRow;
+    this.updatedAt = entity.updatedAt;
+    this.photos = entity.photos;
+  }
+
 
   isEqual(content: PhotosCollection): boolean {
     return this.height === content.height && 

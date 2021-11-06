@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { AudioModel, AudiosCollection } from '../../models/content-model.model';
 
 @Injectable()
-export class ApiPlaylistService {
+export class ApiAudiosService {
 
   constructor(private httpClient: HttpClient) { }
   

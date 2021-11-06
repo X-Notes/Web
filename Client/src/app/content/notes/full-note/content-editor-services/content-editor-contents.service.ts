@@ -1,11 +1,15 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { debounceTime, filter, take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, } from 'rxjs';
+import { debounceTime, filter, take } from 'rxjs/operators';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
 import { AudiosCollection, BaseText, ContentModel, ContentTypeENUM, DocumentsCollection, PhotosCollection, VideosCollection } from '../../models/content-model.model';
+import { ApiAudiosService } from '../services/api-audios.service';
+import { ApiDocumentsService } from '../services/api-documents.service';
 import { ApiNoteContentService } from '../services/api-note-content.service';
+import { ApiPhotosService } from '../services/api-photos.service';
 import { ApiTextService } from '../services/api-text.service';
+import { ApiVideosService } from '../services/api-videos.service';
 import { ContentEditorMomentoStateService } from './content-editor-momento-state.service';
 import { StructureDiffs, PositionDiff, ItemForRemove } from './models/structure-diffs';
 
@@ -34,8 +38,14 @@ export class ContentEditorContentsService{
     private apiNoteContentService: ApiNoteContentService,
     private contentEditorMomentoStateService: ContentEditorMomentoStateService,
     private apiTexts: ApiTextService,
+    private apiAudios: ApiAudiosService,
+    private apiVideos: ApiVideosService,
+    private apiDocuments: ApiDocumentsService,
+    private apiPhotos: ApiPhotosService,
   ) {
   }
+
+    // TODO 1. Worker
 
   init(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
@@ -93,44 +103,77 @@ export class ContentEditorContentsService{
           .subscribe(x => {
             this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
             this.processTextsChanges();
-            this.processPhotosChanges();
-            this.processAudiosChanges();
-            this.processDocumentsChanges();
-            this.processVideosChanges();
           });
         } else {
           this.processTextsChanges();
-          this.processPhotosChanges();
-          this.processAudiosChanges();
-          this.processDocumentsChanges();
-          this.processVideosChanges();
         }
+  }
+
+
+  private processFileEntities(){
+    this.processPhotosChanges();
+    this.processAudiosChanges();
+    this.processDocumentsChanges();
+    this.processVideosChanges();
   }
 
   private processPhotosChanges(){
     const diffs = this.getContentDiffs<PhotosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Photos);
-    // 1. Worker
-    // 2. Playlist title
-    // 3. single update when user edit and batch when ctrl + z
+    if(diffs.length > 0) {
+      this.apiPhotos.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
+        (resp) => {
+          for(const diff of diffs){
+            const item = this.contentsSync.find(x => x.id === diff.id) as PhotosCollection;
+            item.update(diff);
+          }
+      });
+    }
   }
 
   private processAudiosChanges(){
     const diffs = this.getContentDiffs<AudiosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
-    console.log('Diifs: ', diffs);
+    console.log(diffs);
+    if(diffs.length > 0) {
+      this.apiAudios.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
+        (resp) => {
+          for(const diff of diffs){
+            const item = this.contentsSync.find(x => x.id === diff.id) as AudiosCollection;
+            item.update(diff);
+          }
+      });
+    }
   }
 
   private processDocumentsChanges(){
     const diffs = this.getContentDiffs<DocumentsCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Documents);
+    if(diffs.length > 0) {
+      this.apiDocuments.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
+        (resp) => {
+          for(const diff of diffs){
+            const item = this.contentsSync.find(x => x.id === diff.id) as DocumentsCollection;
+            item.update(diff);
+          }
+      });
+    }
   }
 
   private processVideosChanges(){
     const diffs = this.getContentDiffs<VideosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
+    if(diffs.length > 0) {
+      this.apiVideos.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
+        (resp) => {
+          for(const diff of diffs){
+            const item = this.contentsSync.find(x => x.id === diff.id) as VideosCollection;
+            item.update(diff);
+          }
+      });
+    }
   }
 
   private processTextsChanges() {
     const textDiffs = this.getContentDiffs<BaseText>(this.contentsSync, this.getContents, ContentTypeENUM.Text);
     if(textDiffs.length > 0) {
-      this.apiTexts.syncTextContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
+      this.apiTexts.syncContents(this.noteId, textDiffs).pipe(take(1)).subscribe(
         (resp) => {
           for(const text of textDiffs){
             const item = this.contentsSync.find(x => x.id === text.id) as BaseText;

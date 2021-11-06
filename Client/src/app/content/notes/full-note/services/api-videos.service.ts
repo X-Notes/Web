@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { VideoModel, VideosCollection } from '../../models/content-model.model';
 
 @Injectable()
-export class ApiVideoService {
+export class ApiVideosService {
   constructor(private httpClient: HttpClient) {}
 
   transformToVideos(noteId: string, contentId: string) {

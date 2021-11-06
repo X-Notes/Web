@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { PhotosCollection, Photo } from '../../models/content-model.model';
 
 @Injectable()
-export class ApiAlbumService {
+export class ApiPhotosService {
   constructor(private httpClient: HttpClient) {}
 
   transformToAlbum(noteId: string, contentId: string) {
