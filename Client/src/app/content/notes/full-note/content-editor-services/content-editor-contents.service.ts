@@ -46,6 +46,8 @@ export class ContentEditorContentsService{
   }
 
     // TODO 1. Worker
+    // TODO 2. File Content process change + ctrlx + z
+    //
 
   init(contents: ContentModel[], noteId: string) {
     this.noteId = noteId;
