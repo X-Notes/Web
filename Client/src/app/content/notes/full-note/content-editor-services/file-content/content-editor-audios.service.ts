@@ -124,9 +124,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
   }
 
-  async changePlaylistName(contentId: string, noteId: string) {
-    // TODO
-    const name = 'any name';
+  async changePlaylistName(contentId: string, noteId: string, name: string) {
     const resp = await this.apiAudiosCollection
       .changePlaylistName(noteId, contentId, name)
       .toPromise();

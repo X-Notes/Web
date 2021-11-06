@@ -125,7 +125,7 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
           (deleteAudioEvent)="contentEditorPlaylistService.deleteAudioHandler($event, item.id, note.id)"
-          (changeTitleEvent)="contentEditorPlaylistService.changePlaylistName($event, note.id)"
+          (changeTitleEvent)="contentEditorPlaylistService.changePlaylistName(item.id, note.id, $event)"
           (uploadEvent)="contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, note.id)"
         ></app-audio-note>
         <app-video-note

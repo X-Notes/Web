@@ -10,7 +10,7 @@ using WriteAPI.ControllerConfig;
 namespace WriteAPI.Controllers
 {
     [Authorize]
-    [Route("api/note/inner")]
+    [Route("api/note/inner/text")]
     [ApiController]
     public class FullNoteTextController : ControllerBase
     {

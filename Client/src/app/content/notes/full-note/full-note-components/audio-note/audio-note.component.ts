@@ -38,7 +38,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   deleteAudioEvent = new EventEmitter<string>();
 
   @Output()
-  changeTitleEvent = new EventEmitter<Record<string, string>>();
+  changeTitleEvent = new EventEmitter<string>();
 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
@@ -82,7 +82,7 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   ngOnInit(): void {
     this.namePlaylistChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => this.changeTitleEvent.emit({ contentId: this.content.id, name }));
+      .subscribe((name) => this.changeTitleEvent.emit(name));
   }
 
   clickAudioHandler(audio: AudioModel) {

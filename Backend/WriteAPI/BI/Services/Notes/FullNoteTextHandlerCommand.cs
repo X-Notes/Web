@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using BI.Mapping;
 using BI.Services.History;
 using BI.SignalR;
 using Common.DTO;
+using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Texts;
 using Domain.Queries.Permissions;
 using MediatR;
@@ -79,35 +81,62 @@ namespace BI.Services.Notes
 
             if (permissions.CanWrite)
             {
-                var ids = request.Texts.Select(x => x.Id).ToList();
-                var contents = await textNotesRepository.GetWhereAsync(x => ids.Contains(x.Id));
-                if (contents.Any())
+                if(request.Texts.Count == 1)
                 {
-                    foreach(var text in request.Texts)
-                    {
-                        var textForUpdate = contents.First(x => x.Id == text.Id);
-
-                        textForUpdate.UpdatedAt = DateTimeOffset.Now;
-                        textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
-                        textForUpdate.HTypeId = text.HeadingTypeId;
-                        textForUpdate.Checked = text.Checked;
-                        textForUpdate.Content = text.Content;
-                        textForUpdate.IsBold = text.IsBold;
-                        textForUpdate.IsItalic = text.IsItalic; 
-                    }
-
-                    // UPDATING
-                    await textNotesRepository.UpdateRangeAsync(contents);
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    // TODO DEADLOCK
-                    return new OperationResult<Unit>(success: true, Unit.Value);
+                    await UpdateOne(request.Texts.First());
                 }
+                else
+                {
+                    await UpdateMany(request.Texts);
+                }
+
+                historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
+                await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
+
+                // TODO DEADLOCK
+                return new OperationResult<Unit>(success: true, Unit.Value);
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
+        }
+
+        private async Task UpdateMany(List<TextNoteDTO> texts)
+        {
+            var ids = texts.Select(x => x.Id).ToList();
+            var contents = await textNotesRepository.GetWhereAsync(x => ids.Contains(x.Id));
+
+            foreach (var text in texts)
+            {
+                var textForUpdate = contents.FirstOrDefault(x => x.Id == text.Id);
+                if(textForUpdate != null)
+                {
+                    textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                    textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
+                    textForUpdate.HTypeId = text.HeadingTypeId;
+                    textForUpdate.Checked = text.Checked;
+                    textForUpdate.Content = text.Content;
+                    textForUpdate.IsBold = text.IsBold;
+                    textForUpdate.IsItalic = text.IsItalic;
+                }
+            }
+            // UPDATING
+            await textNotesRepository.UpdateRangeAsync(contents);
+        }
+
+        private async Task UpdateOne(TextNoteDTO text)
+        {
+            var textForUpdate = await textNotesRepository.FirstOrDefaultAsync(x => x.Id == text.Id);
+            if (textForUpdate != null)
+            {
+                textForUpdate.UpdatedAt = DateTimeOffset.Now;
+                textForUpdate.NoteTextTypeId = text.NoteTextTypeId;
+                textForUpdate.HTypeId = text.HeadingTypeId;
+                textForUpdate.Checked = text.Checked;
+                textForUpdate.Content = text.Content;
+                textForUpdate.IsBold = text.IsBold;
+                textForUpdate.IsItalic = text.IsItalic;
+            }
+            await textNotesRepository.UpdateAsync(textForUpdate);
         }
     }
 }
