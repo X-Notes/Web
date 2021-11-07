@@ -112,9 +112,9 @@
           [content]="item"
           [noteId]="note.id"
           [isReadOnlyMode]="isReadOnlyMode"
-          (uploadEvent)="contentEditorAlbumService.uploadPhotoToAlbumHandler($event, note.id)"
+          (uploadEvent)="uploadPhotoToAlbumHandler($event, note.id)"
           (deleteContentEvent)="deletePhotosCollection($event)"
-          (deletePhotoEvent)="contentEditorAlbumService.deletePhotoHandler($event, item.id, note.id)"
+          (deletePhotoEvent)="deletePhotoHandler($event, item.id, note.id)"
         ></app-photos>
         <app-audio-note
           #htmlComp
@@ -124,9 +124,9 @@
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
-          (deleteAudioEvent)="contentEditorPlaylistService.deleteAudioHandler($event, item.id, note.id)"
-          (changeTitleEvent)="contentEditorPlaylistService.changePlaylistName(item.id, note.id, $event)"
-          (uploadEvent)="contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, note.id)"
+          (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
+          (changeTitleEvent)="changePlaylistName(item.id, note.id, $event)"
+          (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
         ></app-audio-note>
         <app-video-note
           #htmlComp

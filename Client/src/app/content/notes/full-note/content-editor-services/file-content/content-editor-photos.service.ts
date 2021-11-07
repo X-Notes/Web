@@ -131,7 +131,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
         const newCollection = prevCollection.copy();
         newCollection.photos = newCollection.photos.filter((x) => x.fileId !== photoId);
 
-        this.contentsService.setSafe(newCollection, contentId);
+        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }

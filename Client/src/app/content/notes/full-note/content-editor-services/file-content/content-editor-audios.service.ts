@@ -118,19 +118,18 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       } else {
         const newCollection = prevCollection.copy();
         newCollection.audios = newCollection.audios.filter((x) => x.fileId !== audioId);
-        this.contentsService.setSafe(newCollection, contentId);
+        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
   }
 
-  async changePlaylistName(contentId: string, noteId: string, name: string) {
-    const resp = await this.apiAudiosCollection
-      .changePlaylistName(noteId, contentId, name)
-      .toPromise();
+  async changePlaylistName(contentId: string, noteId: string, name: string): Promise<void> {
+    const resp = await this.apiAudiosCollection.changePlaylistName(noteId, contentId, name).toPromise();
     if (resp.success) {
       const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
       collection.name = name;
+      this.contentsService.setSafeContentsAndSyncContents(collection, collection.id);
     }
   }
 }

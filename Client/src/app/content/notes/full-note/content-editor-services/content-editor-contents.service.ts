@@ -105,9 +105,11 @@ export class ContentEditorContentsService{
           .subscribe(x => {
             this.contentsSync = this.patchStructuralChanges(this.contentsSync, structureDiffs);
             this.processTextsChanges();
+            this.processFileEntities();
           });
         } else {
           this.processTextsChanges();
+          this.processFileEntities();
         }
   }
 
@@ -231,6 +233,11 @@ export class ContentEditorContentsService{
     texts.forEach(item => this.setSafe(item, item.id));
   }
 
+  // FILES
+  private patchFileContentDiffs(contents: ContentModel[]) {
+    contents.forEach(item => this.setSafe(item, item.id));
+  }
+
   private getContentDiffs<T extends ContentModel>(oldContents: ContentModel[], newContents: ContentModel[], type: ContentTypeENUM): T[] {
     const contents: T[] = [];
     for(const content of newContents.filter(x => x.typeId === type)){
@@ -252,15 +259,42 @@ export class ContentEditorContentsService{
 
       let isNeedChange = false;
 
+      // STRUCTURE
       const structureDiffs = this.getStructureDiffs(this.contents, prev);
       if(structureDiffs.isAnyChanges()) {
         this.contents = this.patchStructuralChanges(this.contents, structureDiffs);
         isNeedChange = true;
       }
 
+      // TEXTS
       const textDiffs = this.getContentDiffs<BaseText>(this.contents, prev, ContentTypeENUM.Text);
       if(textDiffs && textDiffs.length > 0){
         this.patchTextDiffs(textDiffs);
+        isNeedChange = true;
+      }
+
+      // FILES
+      const audiosDiffs = this.getContentDiffs<AudiosCollection>(this.contents, prev, ContentTypeENUM.Audios);
+      if(audiosDiffs && audiosDiffs.length > 0){
+        this.patchFileContentDiffs(audiosDiffs);
+        isNeedChange = true;
+      }
+
+      const photosDiffs = this.getContentDiffs<PhotosCollection>(this.contents, prev, ContentTypeENUM.Photos);
+      if(photosDiffs && photosDiffs.length > 0){
+        this.patchFileContentDiffs(photosDiffs);
+        isNeedChange = true;
+      }
+
+      const documentsDiffs = this.getContentDiffs<DocumentsCollection>(this.contents, prev, ContentTypeENUM.Documents);
+      if(documentsDiffs && documentsDiffs.length > 0){
+        this.patchFileContentDiffs(documentsDiffs);
+        isNeedChange = true;
+      }
+
+      const videosDiffs = this.getContentDiffs<VideosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Videos);
+      if(videosDiffs && videosDiffs.length > 0){
+        this.patchFileContentDiffs(videosDiffs);
         isNeedChange = true;
       }
 
@@ -328,8 +362,11 @@ export class ContentEditorContentsService{
   }
 
   // REMOVE
-  deleteById(contentId: string) {
+  deleteById(contentId: string, isDeleteInContentSync: boolean) {
     this.contents = this.contents.filter((x) => x.id !== contentId);
+    if(isDeleteInContentSync){
+      this.contentsSync = this.contentsSync.filter((x) => x.id !== contentId);
+    }
   }
 
   // INSERT, UPDATE
@@ -350,6 +387,14 @@ export class ContentEditorContentsService{
       this.contents[obj.index] = data;
       this.contentsSync[obj2.index] = data;
       return obj.index;
+    }
+    throw new Error("Content not found");
+  }
+
+  setSafeSyncContents(data: ContentModel, contentId: string): void {
+    const obj = this.findContentAndIndexById(this.contentsSync, contentId);
+    if(obj){
+      this.contentsSync[obj.index] = data;
     }
     throw new Error("Content not found");
   }

@@ -53,7 +53,7 @@ export class ContentEditorFilesBase {
   }
 
   protected deleteHandler(contentId: string) {
-    this.contentsService.deleteById(contentId);
+    this.contentsService.deleteById(contentId, false);
     this.store.dispatch(LoadUsedDiskSpace);
   }
 }

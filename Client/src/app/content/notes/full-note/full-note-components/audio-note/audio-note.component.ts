@@ -82,7 +82,10 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   ngOnInit(): void {
     this.namePlaylistChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => this.changeTitleEvent.emit(name));
+      .subscribe((name) => {
+        this.content.name = name;
+        this.changeTitleEvent.emit(name);
+      });
   }
 
   clickAudioHandler(audio: AudioModel) {

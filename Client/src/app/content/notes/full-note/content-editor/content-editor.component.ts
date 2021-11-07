@@ -44,6 +44,7 @@ import { ContentEditorElementsListenerService } from '../content-editor-services
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { UploadFileToEntity } from '../models/upload-files-to-entity';
 
 @Component({
   selector: 'app-content-editor',
@@ -305,5 +306,30 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     if(res.success){
       this.postAction();
     }
+  }
+
+  async changePlaylistName(contentId: string, noteId: string, name: string) {
+    await this.contentEditorPlaylistService.changePlaylistName(contentId, noteId, name);
+    this.postAction();
+  }
+
+  async deleteAudioHandler(audioId: string, contentId: string, noteId: string){
+    await this.contentEditorPlaylistService.deleteAudioHandler(audioId, contentId, noteId);
+    this.postAction();
+  }
+
+  uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, noteId);
+    this.postAction();
+  }
+
+  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorAlbumService.uploadPhotoToAlbumHandler($event, noteId);
+    this.postAction();
+  };
+
+  async deletePhotoHandler(photoId: string, contentId: string, noteId: string){
+    await this.contentEditorAlbumService.deletePhotoHandler(photoId, contentId, noteId);
+    this.postAction();
   }
 }
