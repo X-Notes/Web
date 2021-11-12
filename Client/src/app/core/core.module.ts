@@ -79,7 +79,11 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiPersonalizationSettingsService,
     FileApiService,
     UpdaterEntitiesService,
-    ApiAudiosService, ApiPhotosService, ApiDocumentsService, ApiVideosService, ApiTextService
+    ApiAudiosService,
+    ApiPhotosService,
+    ApiDocumentsService,
+    ApiVideosService,
+    ApiTextService,
   ],
 })
 export class CoreModule {}
