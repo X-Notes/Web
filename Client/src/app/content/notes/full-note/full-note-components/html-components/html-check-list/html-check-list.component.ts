@@ -16,6 +16,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
 import { CheckListService } from '../../html-business-logic/check-list.service';
 
@@ -26,6 +27,9 @@ import { CheckListService } from '../../html-business-logic/check-list.service';
   providers: [CheckListService],
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+  
   @Output()
   updateText = new EventEmitter<BaseText>();
 
@@ -54,8 +58,6 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
-  @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();
 
@@ -98,8 +100,10 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
       });
   }
 
-  setFocus($event?) {
-    this.checkListService.setFocus($event, this.contentHtml, this.content);
+  isFocusToNext = () => true;
+
+  setFocus(entity: SetFocus) {
+    this.checkListService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {

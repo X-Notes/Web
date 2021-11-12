@@ -6,7 +6,6 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class CheckListService extends HtmlService {
-
   transformTo = new EventEmitter<TransformContent>();
 
   onBlur = (e: any) => {
@@ -37,11 +36,7 @@ export class CheckListService extends HtmlService {
     } else {
       const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
       content.contentSG = contentHtml.nativeElement.textContent;
-      const event = super.eventEventFactory(
-        breakModel,
-        NoteTextTypeENUM.Checklist,
-        content.id,
-      );
+      const event = super.eventEventFactory(breakModel, NoteTextTypeENUM.Checklist, content.id);
       enterEvent.emit(event);
     }
   }
@@ -56,6 +51,5 @@ export class CheckListService extends HtmlService {
     super.checkForDelete($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
-  backUp = (e: any) => {
-  };
+  backUp = (e: any) => {};
 }

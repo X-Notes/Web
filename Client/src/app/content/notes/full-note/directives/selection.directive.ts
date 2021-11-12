@@ -118,7 +118,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.div.style.left = `${this.x - this.selectionService.sidebarWidth}px`;
 
     this.selectionService.ismousedown = true;
-    this.clickableService.resetHard();
+    this.clickableService.reset();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 

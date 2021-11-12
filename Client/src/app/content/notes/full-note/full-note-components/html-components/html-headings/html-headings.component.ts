@@ -16,6 +16,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText, HeadingTypeENUM } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { HeadingService } from '../../html-business-logic/heading.service';
 
 @Component({
@@ -94,8 +95,10 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
       });
   }
 
-  setFocus($event?) {
-    this.headingService.setFocus($event, this.contentHtml, this.content);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.headingService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {

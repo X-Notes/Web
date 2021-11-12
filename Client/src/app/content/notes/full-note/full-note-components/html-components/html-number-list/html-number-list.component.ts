@@ -21,6 +21,7 @@ import {
 } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
@@ -122,8 +123,10 @@ export class HtmlNumberListComponent
     }
   }
 
-  setFocus($event?) {
-    this.numberService.setFocus($event, this.contentHtml, this.content);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.numberService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {

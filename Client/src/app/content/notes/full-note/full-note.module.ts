@@ -34,7 +34,6 @@ import { SidebarNotesService } from './services/sidebar-notes.service';
 import { ClickableContentService } from './content-editor-services/clickable-content.service';
 import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
-import { NavigationKeysService } from './content-editor-services/navigation-keys.service';
 import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorDocumentsCollectionService } from './content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
@@ -85,13 +84,12 @@ import { ContentEditorMomentoStateService } from './content-editor-services/cont
     ContentEditorElementsListenerService,
     ContentEditorListenerService,
     ContentEditorContentsService,
-    NavigationKeysService,
     ContentEditorAudiosCollectionService,
     ContentEditorDocumentsCollectionService,
     ContentEditorPhotosCollectionService,
     ContentEditorVideosCollectionService,
     ContentEditorTextService,
-    ContentEditorMomentoStateService
+    ContentEditorMomentoStateService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

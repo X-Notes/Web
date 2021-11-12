@@ -6,7 +6,9 @@
   <div class="playlist-options">
     <div class="title">
       <p
+        #titleHtml
         (input)="onInput($event)"
+        (click)="clickAudioHandler(null)"
         [textContent]="content?.name"
         [attr.contenteditable]="!isReadOnlyMode"
       ></p>

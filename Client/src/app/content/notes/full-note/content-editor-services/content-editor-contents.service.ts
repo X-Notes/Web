@@ -136,7 +136,6 @@ export class ContentEditorContentsService{
 
   private processAudiosChanges(){
     const diffs = this.getContentDiffs<AudiosCollection>(this.contentsSync, this.getContents, ContentTypeENUM.Audios);
-    console.log(diffs);
     if(diffs.length > 0) {
       this.apiAudios.syncContents(this.noteId, diffs).pipe(take(1)).subscribe(
         (resp) => {

@@ -1,6 +1,6 @@
 <div
   class="audio-container"
-  (click)="clickEvent.emit(audio)"
+  (click)="clickEvent.emit(audio.fileId)"
   [ngClass]="{'is-selected' : isClicked}"
 >
   <div class="preview" appTheme>

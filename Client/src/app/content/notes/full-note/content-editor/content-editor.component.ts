@@ -14,6 +14,8 @@ import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import {
   BaseText,
@@ -42,8 +44,6 @@ import { ContentEditorAudiosCollectionService } from '../content-editor-services
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
-import { UserStore } from 'src/app/core/stateUser/user-state';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
 
 @Component({
@@ -61,8 +61,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
+  @Input()
+  isReadOnlyMode = true;
+
+  @Input()
+  note: FullNote | NoteSnapshot;
+  
   @Input() set contents(contents: ContentModel[]) {
-    if(this.isReadOnlyMode){
+    if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
     } else {
       this.contentEditorContentsService.init(contents, this.note.id);
@@ -78,12 +84,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   theme$: Observable<ThemeENUM>;
 
   theme = ThemeENUM;
-
-  @Input()
-  isReadOnlyMode = true;
-
-  @Input()
-  note: FullNote | NoteSnapshot;
 
   contentType = ContentTypeENUM;
 
@@ -128,8 +128,8 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => {
-        for(let itemId of this.selectionService.getSelectedItems()){
+      .subscribe(() => {
+        for (const itemId of this.selectionService.getSelectedItems()) {
           this.deleteRowHandler(itemId);
           this.selectionService.removeFromSelectedItems(itemId);
         }
@@ -137,14 +137,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.destroy))
-      .subscribe(x => this.contentEditorContentsService.restorePrev());
+      .subscribe(() => this.contentEditorContentsService.restorePrev());
   }
 
   onTitleInput($event) {
     this.noteTitleChanged.next($event.target.innerText);
   }
 
-  handlerTitleEnter($event: KeyboardEvent){
+  handlerTitleEnter($event: KeyboardEvent) {
     $event.preventDefault();
     this.contentEditorTextService.appendNewEmptyContentToStart();
     setTimeout(() => this.elements?.first?.setFocus());
@@ -206,7 +206,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateTextHandler(content: BaseText) {
     this.postAction();
@@ -222,7 +221,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   placeHolderClick($event) {
     $event.preventDefault();
-    if(this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
+    if (this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
       this.contentEditorTextService.appendNewEmptyContentToEnd();
     }
     this.contentEditorContentsService.changeAndSave();
@@ -280,30 +279,36 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-  async deleteVideosCollection(contentId: string){
+  async deleteVideosCollection(contentId: string) {
     const res = await this.contentEditorVideosService.deleteContentHandler(contentId, this.note.id);
-    if(res.success){
+    if (res.success) {
       this.postAction();
     }
   }
 
-  async deleteAudiosCollection(contentId: string){
-    const res = await this.contentEditorPlaylistService.deleteContentHandler(contentId, this.note.id);
-    if(res.success){
+  async deleteAudiosCollection(contentId: string) {
+    const res = await this.contentEditorPlaylistService.deleteContentHandler(
+      contentId,
+      this.note.id,
+    );
+    if (res.success) {
       this.postAction();
     }
   }
 
-  async deletePhotosCollection(contentId: string){
+  async deletePhotosCollection(contentId: string) {
     const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
-    if(res.success){
+    if (res.success) {
       this.postAction();
     }
   }
 
-  async deleteDocumentsCollection(contentId: string){
-    const res = await this.contentEditorDocumentsService.deleteContentHandler(contentId, this.note.id);
-    if(res.success){
+  async deleteDocumentsCollection(contentId: string) {
+    const res = await this.contentEditorDocumentsService.deleteContentHandler(
+      contentId,
+      this.note.id,
+    );
+    if (res.success) {
       this.postAction();
     }
   }
@@ -313,7 +318,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.postAction();
   }
 
-  async deleteAudioHandler(audioId: string, contentId: string, noteId: string){
+  async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {
     await this.contentEditorPlaylistService.deleteAudioHandler(audioId, contentId, noteId);
     this.postAction();
   }
@@ -321,14 +326,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, noteId);
     this.postAction();
-  }
+  };
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorAlbumService.uploadPhotoToAlbumHandler($event, noteId);
     this.postAction();
   };
 
-  async deletePhotoHandler(photoId: string, contentId: string, noteId: string){
+  async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
     await this.contentEditorAlbumService.deletePhotoHandler(photoId, contentId, noteId);
     this.postAction();
   }

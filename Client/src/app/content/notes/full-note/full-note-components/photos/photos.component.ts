@@ -14,23 +14,23 @@ import {
 } from '@angular/core';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
-import {
-  ClickableContentService,
-  ClickableSelectableEntities,
-} from '../../content-editor-services/clickable-content.service';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
 })
-export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
+export class PhotosComponent
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -86,8 +86,8 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
     private api: ApiPhotosService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
-    private host: ElementRef
-  ) { }
+    private host: ElementRef,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateHeightByNativeOffset();
@@ -117,12 +117,8 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
     }
   }
 
-  clickPhotoHandler(photo: Photo) {
-    this.clickableContentService.set(
-      ClickableSelectableEntities.Photo,
-      photo.fileId,
-      this.content.id,
-    );
+  clickPhotoHandler(photoId: string) {
+    this.clickableContentService.set(ClickableSelectableEntities.Photo, photoId, this.content.id);
   }
 
   changeWidth(diffrence: number) {
@@ -150,7 +146,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
 
   updateHeightByNativeOffset() {
     setTimeout(() => {
-      const height = this.albumChild?.nativeElement.offsetHeight + 'px';
+      const height = `${this.albumChild?.nativeElement.offsetHeight}px`;
       if (this.content.height !== height) {
         this.changeHeightSubject.next(height);
       }
@@ -274,13 +270,53 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
     }
   };
 
-  setFocus = ($event?: any) => { };
+  isFocusToNext(entity: SetFocus) {
+    if (entity.itemId) {
+      if (entity.status === FocusDirection.Up) {
+        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+        return index === 0;
+      }
+      if (entity.status === FocusDirection.Down) {
+        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+        return index === this.content.photos.length - 1;
+      }
+    }
+    return false;
+  }
 
-  setFocusToEnd = () => { };
+  setFocus = (entity?: SetFocus) => {
+    const isExist = this.content.photos.some((x) => x.fileId === entity.itemId);
 
-  updateHTML = (content: string) => { };
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
 
-  getEditableNative = () => { };
+    if (entity.status === FocusDirection.Up) {
+      this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickPhotoHandler(this.content.photos[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      this.clickPhotoHandler(this.content.photos[0].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+    }
+  };
+
+  setFocusToEnd = () => {};
+
+  updateHTML = (content: string) => {};
+
+  getEditableNative = () => {};
 
   getContent() {
     return this.content;
@@ -290,12 +326,12 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
     return this.host;
   }
 
-  mouseEnter = ($event: any) => { };
+  mouseEnter = ($event: any) => {};
 
-  mouseOut = ($event: any) => { };
+  mouseOut = ($event: any) => {};
 
   // eslint-disable-next-line class-methods-use-this
-  backspaceUp() { }
+  backspaceUp() {}
 
   backspaceDown() {
     this.deleteIfCan();
@@ -306,12 +342,9 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, OnChan
   }
 
   deleteIfCan() {
-    const photoId = this.clickableContentService.id;
-    if (
-      this.clickableContentService.collectionId === this.content.id &&
-      this.content.photos.some((x) => x.fileId === photoId)
-    ) {
-      this.deletePhotoEvent.emit(photoId);
+    const photo = this.content.photos.find((x) => this.clickableContentService.isClicked(x.fileId));
+    if (photo) {
+      this.deletePhotoEvent.emit(photo.fileId);
     }
   }
 }

@@ -1,53 +1,38 @@
 import { Injectable } from '@angular/core';
-
-export enum ClickableSelectableEntities {
-  Photo,
-  Video,
-  Audio,
-  Document,
-}
+import { ContentModel } from '../../models/content-model.model';
+import { ClickableSelectableEntities } from './clickable-selectable-entities.enum';
 
 @Injectable()
 export class ClickableContentService {
-  type: ClickableSelectableEntities;
-
-  id: string;
-
-  collectionId: string;
-
   setTime: Date;
 
+  currentContentId: string;
+
+  currentItemId: string;
+
+  type: ClickableSelectableEntities;
+
   set(type: ClickableSelectableEntities, id: string, collectionId: string) {
-    this.type = type;
-    this.id = id;
-    this.collectionId = collectionId;
+    this.setSontent(collectionId, id, type);
     this.setTime = new Date();
   }
 
-  timeDifference(): number {
-    if(this.setTime) {
-    const start = this.setTime.getTime();
-    const end = new Date().getTime();
-    const diff = end - start;
-    return diff / 1000;
-    }
-    return Infinity;
+  isEqual(content: ContentModel): boolean {
+    return content.id === this.currentContentId;
   }
 
   reset() {
-    if(this.timeDifference() < 0.03){
-      return;
-    }
-    this.resetIternal();
+    this.setSontent(null, null, null);
   }
 
-  resetHard() {
-    this.resetIternal();
+
+  isClicked(itemId: string): boolean {
+    return this.currentItemId === itemId;
   }
 
-  private resetIternal(){
-    this.type = null;
-    this.id = null;
-    this.collectionId = null;
+  setSontent(contentId: string, itemId: string, type: ClickableSelectableEntities) {
+    this.currentContentId = contentId;
+    this.currentItemId = itemId;
+    this.type = type;
   }
 }

@@ -11,24 +11,28 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
 import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import {
-  ClickableContentService,
-  ClickableSelectableEntities,
-} from '../../content-editor-services/clickable-content.service';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
+import { CollectionService } from '../collection-services/collection.service';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 
 @Component({
   selector: 'app-audio-note',
   templateUrl: './audio-note.component.html',
   styleUrls: ['./audio-note.component.scss'],
 })
-export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy {
+export class AudioNoteComponent
+  extends CollectionService
+  implements ParentInteraction, OnInit, OnDestroy {
+  @ViewChild('titleHtml') titleHtml: ElementRef;
+
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
@@ -51,11 +55,11 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
 
   @Input()
   theme: ThemeENUM;
-  
-  themeE = ThemeENUM;
-  
+
   @Input()
   content: AudiosCollection;
+
+  themeE = ThemeENUM;
 
   destroy = new Subject<void>();
 
@@ -67,13 +71,15 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     private audioService: AudioService,
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
-    private host: ElementRef
-  ) {}
+    private host: ElementRef,
+  ) {
+    super();
+  }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
-  
+
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
@@ -88,12 +94,8 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
       });
   }
 
-  clickAudioHandler(audio: AudioModel) {
-    this.clickableContentService.set(
-      ClickableSelectableEntities.Audio,
-      audio.fileId,
-      this.content.id,
-    );
+  clickAudioHandler(audioId: string) {
+    this.clickableContentService.set(ClickableSelectableEntities.Audio, audioId, this.content.id);
   }
 
   playStream(url, id) {
@@ -152,7 +154,58 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
     this.deleteAudioEvent.emit(audioId);
   }
 
-  setFocus = ($event?: any) => {};
+  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
+
+  isFocusToNext(entity: SetFocus) {
+    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.audios.length - 1;
+    }
+    return false;
+  }
+
+  setFocus = (entity?: SetFocus) => {
+    const isExist = this.content.audios.some((x) => x.fileId === entity.itemId);
+
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
+      if (index === 0) {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      } else {
+        this.clickAudioHandler(this.content.audios[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up) {
+      this.clickAudioHandler(this.content.audios[this.content.audios.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
+      this.clickAudioHandler(this.content.audios[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      if (this.isTitleFocused()) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickAudioHandler(this.content.audios[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      }
+    }
+  };
 
   setFocusToEnd = () => {};
 
@@ -185,12 +238,9 @@ export class AudioNoteComponent implements ParentInteraction, OnInit, OnDestroy 
   }
 
   checkForDelete() {
-    const audioId = this.clickableContentService.id;
-    if (
-      this.clickableContentService.collectionId === this.content.id &&
-      this.content.audios.some((x) => x.fileId === audioId)
-    ) {
-      this.deleteAudioEvent.emit(audioId);
+    const audio = this.content.audios.find((x) => this.clickableContentService.isClicked(x.fileId));
+    if (audio) {
+      this.deleteAudioEvent.emit(audio.fileId);
     }
   }
 }

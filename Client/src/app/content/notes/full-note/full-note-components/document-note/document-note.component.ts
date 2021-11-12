@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
 import {
@@ -9,18 +10,23 @@ import {
   presentationFormats,
 } from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import {
-  ClickableContentService,
-  ClickableSelectableEntities,
-} from '../../content-editor-services/clickable-content.service';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { SetFocus } from '../../models/set-focus';
+import { CollectionService } from '../collection-services/collection.service';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 
 @Component({
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
   styleUrls: ['../styles/inner-card.scss', './document-note.component.scss'],
 })
-export class DocumentNoteComponent implements OnInit, ParentInteraction {
+export class DocumentNoteComponent extends CollectionService implements OnInit, ParentInteraction {
+  @Output()
+  deleteContentEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteDocumentEvent = new EventEmitter<string>();
+
   @Input()
   content: DocumentsCollection;
 
@@ -34,30 +40,30 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
-  @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
-  deleteDocumentEvent = new EventEmitter<string>();
 
   constructor(
     private dialogsManageService: DialogsManageService,
     private exportService: ExportService,
-    private clickableContentService: ClickableContentService,
     private host: ElementRef,
-    private clickableService: ClickableContentService
-  ) {}
+    private clickableService: ClickableContentService,
+  ) {
+    super();
+  }
 
   clickDocumentHandler(document: DocumentModel) {
-    this.clickableContentService.set(
+    this.clickableService.set(
       ClickableSelectableEntities.Document,
       document.fileId,
       this.content.id,
     );
   }
 
-  setFocus = ($event?: any) => {};
+  isFocusToNext = (entity: SetFocus) => true;
+
+  setFocus = (entity?: SetFocus) => {
+    this.clickDocumentHandler(this.getFirst);
+    (document.activeElement as HTMLInputElement).blur();
+  };
 
   setFocusToEnd = () => {};
 
@@ -65,10 +71,10 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
 
   getEditableNative = () => {};
 
-  getHost(){
+  getHost() {
     return this.host;
   }
-  
+
   getContent() {
     return this.content;
   }
@@ -104,7 +110,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   get isClicked() {
-    return this.clickableService.id === this.getFirst?.fileId;
+    return this.clickableService.isClicked(this.getFirst?.fileId);
   }
 
   get getFirst(): DocumentModel {
@@ -144,11 +150,7 @@ export class DocumentNoteComponent implements OnInit, ParentInteraction {
   }
 
   deleteIfCan() {
-    const documentId = this.clickableContentService.id;
-    if (
-      this.clickableContentService.collectionId === this.content.id &&
-      this.content.documents.some((x) => x.fileId === documentId)
-    ) {
+    if (this.content.documents.some((x) => this.clickableService.isClicked(x.fileId))) {
       this.deleteContentEvent.emit(this.content.id);
     }
   }

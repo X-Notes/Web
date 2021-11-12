@@ -18,7 +18,7 @@ export class PhotoComponent {
   downloadPhotoEvent = new EventEmitter<Photo>();
 
   @Output()
-  clickEvent = new EventEmitter<Photo>();
+  clickEvent = new EventEmitter<string>();
 
   @Input()
   photo: Photo;
@@ -28,11 +28,10 @@ export class PhotoComponent {
 
   destroy = new Subject<void>();
 
-  constructor(private clickableService: ClickableContentService) {
-  }
+  constructor(private clickableService: ClickableContentService) {}
 
   get isClicked() {
-    return this.clickableService.id === this.photo.fileId;
+    return this.clickableService.isClicked(this.photo.fileId);
   }
 
   onLoadImage() {

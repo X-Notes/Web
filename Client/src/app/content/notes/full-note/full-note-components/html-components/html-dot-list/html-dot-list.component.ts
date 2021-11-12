@@ -16,6 +16,7 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText } from '../../../../models/content-model.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
 import { DotListService } from '../../html-business-logic/dot-list.service';
 
@@ -98,8 +99,10 @@ export class HtmlDotListComponent implements OnInit, OnDestroy, AfterViewInit, P
       });
   }
 
-  setFocus($event?) {
-    this.dotListService.setFocus($event, this.contentHtml, this.content);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.dotListService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {

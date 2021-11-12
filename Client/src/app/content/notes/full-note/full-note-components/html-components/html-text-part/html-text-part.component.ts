@@ -14,6 +14,7 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   BaseText,
   HeadingTypeENUM,
@@ -26,7 +27,7 @@ import { TransformToFileContent } from '../../../models/transform-file-content.m
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
-import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { SetFocus } from '../../../models/set-focus';
 
 @Component({
   selector: 'app-html-text-part',
@@ -34,7 +35,8 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService],
 })
-export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
+export class HtmlTextPartComponent
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -70,7 +72,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
-  
+
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;
@@ -86,16 +88,15 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   isMulptiply = false;
 
   constructor(public textService: TextService, private host: ElementRef) {}
-  
-  ngOnChanges(changes: SimpleChanges): void {
-  }
+
+  ngOnChanges(changes: SimpleChanges): void {}
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
 
   // eslint-disable-next-line class-methods-use-this
   backspaceDown() {}
-  
+
   // eslint-disable-next-line class-methods-use-this
   deleteDown() {}
 
@@ -113,7 +114,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     );
   }
 
-  getHost(){
+  getHost() {
     return this.host;
   }
 
@@ -175,8 +176,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textService.mouseOut($event, this.contentHtml);
   }
 
-  setFocus($event?) {
-    this.textService.setFocus($event, this.contentHtml, this.content);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.textService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
