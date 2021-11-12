@@ -1,4 +1,5 @@
 ﻿using Common.Attributes;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 using Microsoft.AspNetCore.Http;

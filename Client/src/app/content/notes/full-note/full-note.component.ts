@@ -23,7 +23,7 @@ import { SmallNote } from '../models/small-note.model';
 import { LoadLabels } from '../../labels/state/labels-actions';
 import { FullNoteSliderService } from './services/full-note-slider.service';
 import { ContentModel } from '../models/content-model.model';
-import { MenuSelectionService } from './services/menu-selection.service';
+import { MenuSelectionService } from './content-editor-services/menu-selection.service';
 import { ApiServiceNotes } from '../api-notes.service';
 import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
 
@@ -31,6 +31,7 @@ import { UpdaterEntitiesService } from '../../../core/entities-updater.service';
   selector: 'app-full-note',
   templateUrl: './full-note.component.html',
   styleUrls: ['./full-note.component.scss'],
+  providers: [FullNoteSliderService],
 })
 export class FullNoteComponent implements OnInit, OnDestroy {
   @ViewChild('fullWrap') wrap: ElementRef;
@@ -75,7 +76,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
   ) {
     this.routeSubscription = route.params.subscribe(async (params) => {
       this.id = params.id;
-
       this.store
         .select(AppStore.appLoaded)
         .pipe(takeUntil(this.destroy)) // TODO REFACTOR
@@ -94,7 +94,6 @@ export class FullNoteComponent implements OnInit, OnDestroy {
     await this.loadMain();
     await this.loadLeftMenuWithNotes();
     await this.signalRService.joinNote(this.id);
-    this.store.dispatch(new LoadOnlineUsersOnNote(this.id));
     this.signalRService.updateContentEvent
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.loadContent());

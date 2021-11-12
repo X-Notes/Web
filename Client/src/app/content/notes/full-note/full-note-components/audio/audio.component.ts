@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SafeUrl } from '@angular/platform-browser';
 import { AudioService } from '../../../audio.service';
 import { AudioModel } from '../../../models/content-model.model';
 import { StreamAudioState } from '../../../models/stream-audio-state.model';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 
 @Component({
   selector: 'app-audio',
@@ -20,6 +21,9 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   @Output() exportAudio = new EventEmitter<AudioModel>();
 
+  @Output()
+  clickEvent = new EventEmitter<string>();
+
   @Input() audio: AudioModel;
 
   @Input()
@@ -31,10 +35,13 @@ export class AudioComponent implements OnInit, OnDestroy {
 
   metadataParsed: Record<string, SafeUrl> = {
     duration: '',
-    imageUrl: ''
-  }
+    imageUrl: '',
+  };
 
-  constructor(public audioService: AudioService) {}
+  constructor(
+    public audioService: AudioService,
+    private clickableService: ClickableContentService,
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.audioService
@@ -48,6 +55,10 @@ export class AudioComponent implements OnInit, OnDestroy {
         }
       });
     this.metadataParsed = await this.audioService.getMetadata(this.audio.audioPath);
+  }
+
+  get isClicked() {
+    return this.clickableService.isClicked(this.audio.fileId);
   }
 
   ngOnDestroy(): void {

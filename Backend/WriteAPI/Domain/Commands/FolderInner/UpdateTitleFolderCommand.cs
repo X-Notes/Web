@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.FolderInner

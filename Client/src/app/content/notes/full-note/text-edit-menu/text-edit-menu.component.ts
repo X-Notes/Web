@@ -1,13 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../services/menu-selection.service';
-import {
-  HeadingTypeENUM,
-  NoteStyleTypeENUM,
-  NoteTextTypeENUM,
-} from '../../models/content-model.model';
+import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
+import { BaseText, HeadingTypeENUM, NoteTextTypeENUM } from '../../models/content-model.model';
 import { TransformContent } from '../models/transform-content.model';
-import { EditTextEventModel } from '../models/edit-text-event.model';
 
 @Component({
   selector: 'app-text-edit-menu',
@@ -19,11 +14,9 @@ export class TextEditMenuComponent {
   eventTransform = new EventEmitter<TransformContent>();
 
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   textType = NoteTextTypeENUM;
-
-  styleType = NoteStyleTypeENUM;
 
   headingType = HeadingTypeENUM;
 
@@ -38,9 +31,9 @@ export class TextEditMenuComponent {
     return false;
   };
 
-  async transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
-    if (item.noteTextTypeId === type && item.headingTypeId === heading) {
+  transformContent(e, type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
+    const item = this.menuSelectionService.currentTextItem;
+    if (item.noteTextTypeIdSG === type && item.headingTypeIdSG === heading) {
       this.eventTransform.emit({
         id: item.id,
         textType: NoteTextTypeENUM.Default,
@@ -58,36 +51,35 @@ export class TextEditMenuComponent {
     selection.removeAllRanges();
   }
 
-  async editContentStyle(e, type: NoteStyleTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
-    if (type === this.styleType.Bold) {
-      this.updateText.emit({
-        contentId: item.id,
-        content: item.content,
-        isBold: !item.isBold,
-      });
-    } else {
-      this.updateText.emit({
-        contentId: item.id,
-        content: item.content,
-        isItalic: !item.isItalic,
-      });
-    }
+  setBoldStyle($event) {
+    $event.preventDefault();
+    const content = this.menuSelectionService.currentTextItem;
+    content.isBoldSG = !content.isBoldSG;
+    this.updateText.emit(content);
+    const selection = this.apiBrowserService.getSelection();
+    selection.removeAllRanges();
+  }
+
+  setItalicStyle($event) {
+    $event.preventDefault();
+    const content = this.menuSelectionService.currentTextItem;
+    content.isItalicSG = !content.isItalicSG;
+    this.updateText.emit(content);
     const selection = this.apiBrowserService.getSelection();
     selection.removeAllRanges();
   }
 
   getIsActive(type: NoteTextTypeENUM, heading?: HeadingTypeENUM) {
-    const item = this.menuSelectionService.currentItem;
+    const item = this.menuSelectionService.currentTextItem;
     if (!item) {
       return;
     }
 
-    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeId === type) {
+    if (type === NoteTextTypeENUM.Heading && item.noteTextTypeIdSG === type) {
       // eslint-disable-next-line consistent-return
-      return heading === item.headingTypeId ? 'active' : '';
+      return heading === item.headingTypeIdSG ? 'active' : '';
     }
     // eslint-disable-next-line consistent-return
-    return type === item.noteTextTypeId ? 'active' : '';
+    return type === item.noteTextTypeIdSG ? 'active' : '';
   }
 }

@@ -1,4 +1,9 @@
-<div class="photo" appTheme>
+<div
+  (click)="clickEvent.emit(photo.fileId)"
+  [ngClass]="{'is-selected' : isClicked}"
+  class="photo"
+  appTheme
+>
   <img
     [@photoInit]="photo.loaded ? 'loaded' : 'noLoaded'"
     [src]="photo.photoFromBig | getImage: photo.authorId"

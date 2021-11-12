@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.RelatedNotes
@@ -11,7 +11,8 @@ namespace Domain.Commands.RelatedNotes
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }
-        [Required]
+        
+        [RequiredListNotEmptyAttribute]
         public List<Guid> RelatedNoteIds { set; get; }
     }
 }

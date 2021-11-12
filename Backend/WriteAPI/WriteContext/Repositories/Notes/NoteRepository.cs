@@ -111,8 +111,8 @@ namespace WriteContext.Repositories.Notes
 
             var notesIds = notes.Select(z => z.Id).ToHashSet();
 
-            var contents = await context.BaseNoteContents
-                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId.Value))
+            var contents = await context.BaseNoteContents // TODO OPTIMIZATION
+                .Where(z => types.Contains((int)z.ContentTypeId) && notesIds.Contains(z.NoteId))
                 .Include(z => (z as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
@@ -158,8 +158,8 @@ namespace WriteContext.Repositories.Notes
 
 
         public async Task<List<Note>> GetNotesByIdsForCopy(List<Guid> noteIds)
-        {
-            return await entities
+        { 
+            return await entities  // TODO OPTIMIZATION
                 .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
                 .Include(x => x.Contents)
                 .ThenInclude(z => (z as PhotosCollectionNote).PhotoNoteAppFiles)
@@ -174,6 +174,25 @@ namespace WriteContext.Repositories.Notes
                 .Include(x => x.Contents)
                 .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
                 .Where(x => noteIds.Contains(x.Id)).ToListAsync();
+        }
+
+        public async Task<Note> GetNoteByIdsForCopy(Guid noteId)
+        {
+            return await entities  // TODO OPTIMIZATION
+                .Include(x => x.LabelsNotes).ThenInclude(z => z.Label)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as PhotosCollectionNote).PhotoNoteAppFiles)
+                .Include(x => x.Contents)
+                .ThenInclude(z => (z as PhotosCollectionNote).Photos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudiosCollectionNote).AudioNoteAppFiles)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as AudiosCollectionNote).Audios)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as VideosCollectionNote).Videos)
+                .Include(x => x.Contents)
+                .ThenInclude(x => (x as DocumentsCollectionNote).Documents)
+                .FirstOrDefaultAsync(x => x.Id == noteId);
         }
 
 

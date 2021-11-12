@@ -60,7 +60,7 @@ namespace Common.DatabaseModels.Models.Users
 
         public List<NoteSnapshot> NoteHistories { set; get; }
 
-        public List<UserNoteHistoryManyToMany> UserHistories { set; get; }
+        public List<UserNoteSnapshotManyToMany> UserHistories { set; get; }
 
         public BillingPlanTypeENUM BillingPlanId { set; get; }
         public BillingPlan BillingPlan { set; get; }

@@ -13,14 +13,15 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   BaseText,
   ContentTypeENUM,
   NoteTextTypeENUM,
 } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
 import { NumberListService } from '../../html-business-logic/numberList.service';
 
@@ -33,7 +34,7 @@ import { NumberListService } from '../../html-business-logic/numberList.service'
 export class HtmlNumberListComponent
   implements OnInit, OnDestroy, AfterViewInit, ParentInteraction, OnChanges {
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -59,16 +60,28 @@ export class HtmlNumberListComponent
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+  
+  @Input()
+  theme: ThemeENUM;
+  
+  themeE = ThemeENUM;
+  
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
 
-  constructor(public numberService: NumberListService) {}
+  constructor(public numberService: NumberListService, private host: ElementRef) {}
 
   getContent() {
     return this.content;
+  }
+
+  getHost(){
+    return this.host;
   }
 
   ngOnChanges(): void {
@@ -97,33 +110,35 @@ export class HtmlNumberListComponent
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.content.contentSG = str;
+        this.updateText.emit(this.content);
       });
   }
 
   setNumber() {
-    if (this.prevContent && this.prevContent.noteTextTypeId === NoteTextTypeENUM.Numberlist) {
+    if (this.prevContent && this.prevContent.noteTextTypeIdSG === NoteTextTypeENUM.Numberlist) {
       this.content.number = this.prevContent.number + 1;
     } else {
       this.content.number = 1;
     }
   }
 
-  setFocus($event?) {
-    this.numberService.setFocus($event, this.contentHtml);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.numberService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.numberService.setFocusToEnd(this.contentHtml);
+    this.numberService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -142,4 +157,13 @@ export class HtmlNumberListComponent
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

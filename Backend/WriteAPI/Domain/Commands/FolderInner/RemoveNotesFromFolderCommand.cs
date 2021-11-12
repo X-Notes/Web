@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Common.Attributes;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using MediatR;
 
 namespace Domain.Commands.FolderInner
@@ -11,7 +11,8 @@ namespace Domain.Commands.FolderInner
     {
         [ValidationGuid]
         public Guid FolderId { set; get; }
-        [Required]
+        
+        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
     }
 }

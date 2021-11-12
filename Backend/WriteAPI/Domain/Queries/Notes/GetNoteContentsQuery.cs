@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Domain.Queries.Notes
 {
-    public class GetNoteContentsQuery : BaseQueryEntity, IRequest<List<BaseContentNoteDTO>>
+    public class GetNoteContentsQuery : BaseQueryEntity, IRequest<List<BaseNoteContentDTO>>
     {
         [ValidationGuid]
         public Guid NoteId { set; get; }

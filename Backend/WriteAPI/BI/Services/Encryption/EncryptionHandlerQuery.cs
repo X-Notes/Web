@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Domain.Queries.Encryption;
 using Domain.Queries.Permissions;
 using MediatR;

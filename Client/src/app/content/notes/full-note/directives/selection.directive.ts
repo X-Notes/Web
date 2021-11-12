@@ -9,7 +9,8 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ScrollEvent } from 'muuri';
-import { SelectionService } from '../services/selection.service';
+import { ClickableContentService } from '../content-editor-services/clickable-content.service';
+import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
   selector: '[appSelection]',
@@ -43,6 +44,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private selectionService: SelectionService,
+    private clickableService: ClickableContentService
   ) {}
 
   @HostListener('mousedown', ['$event'])
@@ -77,11 +79,11 @@ export class SelectionDirective implements OnDestroy, OnInit {
     );
     this.listeners.push(mousewheelEventListener);
 
-    const mouseDownListener = this.renderer.listen('document', 'mousedown', (e) =>
+    const mouseDownListener = this.renderer.listen(document, 'mousedown', (e) =>
       this.mouseDown(e),
     );
-    const mouseUpListener = this.renderer.listen('document', 'mouseup', (e) => this.mouseUp(e));
-    const mouseMoveListener = this.renderer.listen('document', 'mousemove', (e) =>
+    const mouseUpListener = this.renderer.listen(document, 'mouseup', (e) => this.mouseUp(e));
+    const mouseMoveListener = this.renderer.listen(document, 'mousemove', (e) =>
       this.mouseMove(e),
     );
     this.listeners.push(mouseDownListener, mouseMoveListener, mouseUpListener);
@@ -116,6 +118,7 @@ export class SelectionDirective implements OnDestroy, OnInit {
     this.div.style.left = `${this.x - this.selectionService.sidebarWidth}px`;
 
     this.selectionService.ismousedown = true;
+    this.clickableService.reset();
     this.selectionStartEvent.emit(this.div.getBoundingClientRect());
   }
 

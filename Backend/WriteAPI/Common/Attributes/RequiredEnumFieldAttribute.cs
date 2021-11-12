@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class RequiredEnumFieldAttribute : RequiredAttribute
     {
         public override bool IsValid(object value)

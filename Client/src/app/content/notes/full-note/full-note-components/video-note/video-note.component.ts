@@ -10,11 +10,15 @@ import {
   HostListener,
 } from '@angular/core';
 
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { UploadFileToEntity } from '../../models/upload-files-to-entity';
+import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { SetFocus } from '../../models/set-focus';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 
 @Component({
   selector: 'app-video-note',
@@ -36,7 +40,17 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   @Input()
   isReadOnlyMode = false;
 
-  @Output() deleteVideoEvent = new EventEmitter<string>();
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  @Output()
+  deleteContentEvent = new EventEmitter<string>();
+
+  @Output()
+  deleteVideoEvent = new EventEmitter<string>();
 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
@@ -53,13 +67,17 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
 
   volumeHelper: number;
 
-  formats = TypeUploadFormats.VIDEOS;
+  formats = TypeUploadFormats.videos;
 
   translate = 0;
 
   indexVideo = 0;
 
-  constructor(private exportService: ExportService) {}
+  constructor(
+    private exportService: ExportService,
+    private clickableContentService: ClickableContentService,
+    private host: ElementRef,
+  ) {}
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
@@ -149,15 +167,33 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  setFocus = ($event?: any) => {};
+  clickVideoHandler(video: VideoModel) {
+    this.clickableContentService.set(
+      ClickableSelectableEntities.Video,
+      video.fileId,
+      this.content.id,
+    );
+  }
+
+  isFocusToNext(entity: SetFocus) {
+    console.log('TO DO');
+    return true;
+  }
+
+  setFocus = (entity?: SetFocus) => {
+    console.log(entity);
+  };
 
   setFocusToEnd = () => {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
+
+  getHost() {
+    return this.host;
+  }
 
   getContent() {
     return this.content;
@@ -275,4 +311,22 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseOut = ($event: any) => {};
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  backspaceDown() {
+    this.checkForDelete();
+  }
+
+  deleteDown() {
+    this.checkForDelete();
+  }
+
+  checkForDelete() {
+    const video = this.content.videos.find((x) => this.clickableContentService.isClicked(x.fileId));
+    if (video) {
+      this.deleteVideoEvent.emit(video.fileId);
+    }
+  }
 }

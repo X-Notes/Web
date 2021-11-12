@@ -6,7 +6,8 @@
   border-radius: 5px;
   margin-top: 0.625rem;
   padding: 0 0.75rem 0.5rem 0;
-
+  min-height: 150px;
+  
   &:hover {
     .action {
       button[type='button'] {
@@ -115,5 +116,13 @@
       height: 40px;
       width: 20px;
     }
+  }
+
+  .spinner-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 38px;
   }
 }

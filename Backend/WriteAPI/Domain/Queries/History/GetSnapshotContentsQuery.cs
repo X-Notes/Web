@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Domain.Queries.History
 {
-    public class GetSnapshotContentsQuery : BaseQueryEntity, IRequest<List<BaseContentNoteDTO>>
+    public class GetSnapshotContentsQuery : BaseQueryEntity, IRequest<List<BaseNoteContentDTO>>
     {
         [ValidationGuid]
         public Guid SnapshotId { set; get; }

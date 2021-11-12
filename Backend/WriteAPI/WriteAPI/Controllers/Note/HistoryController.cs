@@ -37,7 +37,7 @@ namespace WriteAPI.Controllers.Note
         }
 
         [HttpGet("snapshot/contents/{noteId}/{snapshotId}")]
-        public async Task<List<BaseContentNoteDTO>> GetSnapshotContent(Guid noteId, Guid snapshotId)
+        public async Task<List<BaseNoteContentDTO>> GetSnapshotContent(Guid noteId, Guid snapshotId)
         {
             var email = this.GetUserEmail();
             var command = new GetSnapshotContentsQuery(email, noteId, snapshotId);

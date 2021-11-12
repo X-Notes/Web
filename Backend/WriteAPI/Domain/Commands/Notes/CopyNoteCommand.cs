@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 using MediatR;
 
 namespace Domain.Commands.Notes
 {
     public class CopyNoteCommand : BaseCommandEntity, IRequest<List<Guid>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
 
         public CopyNoteCommand()

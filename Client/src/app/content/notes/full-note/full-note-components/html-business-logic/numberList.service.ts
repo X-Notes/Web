@@ -6,20 +6,8 @@ import { HtmlService } from './html.service';
 
 @Injectable()
 export class NumberListService extends HtmlService {
+  
   transformTo = new EventEmitter<TransformContent>();
-
-  setFocus($event: any, contentHtml: ElementRef<any>) {
-    this.getNativeElement(contentHtml).focus();
-  }
-
-  setFocusToEnd(contentHtml: ElementRef<any>) {
-    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
-  }
-
-  onInput(base: BaseText, contentHtml: ElementRef) {
-    const content = { ...base };
-    content.content = this.getNativeElement(contentHtml).innerText;
-  }
 
   onBlur = (e: any) => {
     // BLUR HANDLER
@@ -35,11 +23,10 @@ export class NumberListService extends HtmlService {
 
   enter(
     $event: any,
-    base: BaseText,
+    content: BaseText,
     contentHtml: ElementRef,
     enterEvent: EventEmitter<EnterEvent>,
   ) {
-    const content = base;
     $event.preventDefault();
     if (this.isContentEmpty(contentHtml)) {
       this.transformTo.emit({
@@ -48,10 +35,9 @@ export class NumberListService extends HtmlService {
         setFocusToEnd: true,
       });
     } else {
-      const breakModel = this.contEditService.enterService(this.getNativeElement(contentHtml));
-      content.content = this.getNativeElement(contentHtml).innerText;
+      const breakModel = this.contEditService.pressEnterHandler(this.getNativeElement(contentHtml));
+      content.contentSG = contentHtml.nativeElement.textContent;
       const event = super.eventEventFactory(
-        content.id,
         breakModel,
         NoteTextTypeENUM.Numberlist,
         content.id,
@@ -60,14 +46,14 @@ export class NumberListService extends HtmlService {
     }
   }
 
-  backDown(
+  checkForDelete(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
-    super.backDown($event, content, contentHtml, concatThisWithPrev, deleteThis);
+    super.checkForDelete($event, content, contentHtml, concatThisWithPrev, deleteThis);
   }
 
   backUp = (e: any) => {

@@ -8,7 +8,16 @@ export class ApiBrowserTextService {
     e.preventDefault();
     let text = (e.originalEvent || e).clipboardData.getData('text/plain');
     text = text.replace(/&nbsp;/g, '');
-    document.execCommand('insertHTML', false, text);
+
+    const range = document.getSelection().getRangeAt(0);
+    range.deleteContents();
+    const textNode = document.createTextNode(text);
+    range.insertNode(textNode);
+    range.selectNodeContents(textNode);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
 
   copyInputLink(input: HTMLInputElement) {

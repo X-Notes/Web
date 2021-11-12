@@ -29,7 +29,7 @@ namespace BI.Services.Notes
         IRequestHandler<GetAllNotesQuery, List<SmallNote>>,
         IRequestHandler<GetFullNoteQuery, FullNoteAnswer>,
         IRequestHandler<GetOnlineUsersOnNoteQuery, List<OnlineUserOnNote>>,
-        IRequestHandler<GetNoteContentsQuery, List<BaseContentNoteDTO>>
+        IRequestHandler<GetNoteContentsQuery, List<BaseNoteContentDTO>>
     {
         private readonly IMapper mapper;
         private readonly NoteRepository noteRepository;
@@ -120,14 +120,14 @@ namespace BI.Services.Notes
             return new List<OnlineUserOnNote>();
         }
 
-        public async Task<List<BaseContentNoteDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
+        public async Task<List<BaseNoteContentDTO>> Handle(GetNoteContentsQuery request, CancellationToken cancellationToken)
         {
             var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
             var permissions = await _mediator.Send(command);
 
             if (permissions.CanRead)
             {
-                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrdered(request.NoteId);
+                var contents = await baseNoteContentRepository.GetAllContentByNoteIdOrderedAsync(request.NoteId);
                 return appCustomMapper.MapContentsToContentsDTO(contents);
             }
 

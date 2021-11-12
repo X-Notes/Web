@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using BI.Helpers;
+using Common.DTO;
 using Common.DTO.Backgrounds;
-using Common.DTO.Notes.FullNoteContent;
 using ContentProcessing;
 using Domain.Commands.Backgrounds;
 using Domain.Commands.Files;
@@ -51,7 +51,7 @@ namespace BI.Services.Backgrounds
             if (back != null)
             {
                 await backgroundRepository.RemoveAsync(back);
-                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File).SetIsNoCheckDelete());
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), back.File));
             }
             return Unit.Value;
         }

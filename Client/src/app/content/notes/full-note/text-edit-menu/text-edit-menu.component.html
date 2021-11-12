@@ -26,18 +26,14 @@
       <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
     </div>
   </div>
-  <div
-    class="button"
-    (mousedown)="editContentStyle($event, styleType.Bold)"
-    [ngClass]="getIsActive(textType.Heading)"
-  >
+  <div class="button" (mousedown)="setBoldStyle($event)" [ngClass]="getIsActive(textType.Heading)">
     <div class="icon">
       <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
     </div>
   </div>
   <div
     class="button"
-    (mousedown)="editContentStyle($event, styleType.Italic)"
+    (mousedown)="setItalicStyle($event)"
     [ngClass]="getIsActive(textType.Heading)"
   >
     <div class="icon">

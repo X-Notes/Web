@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Common.DTO;
 using Common.DTO.Backgrounds;
-using Common.DTO.Notes.FullNoteContent;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

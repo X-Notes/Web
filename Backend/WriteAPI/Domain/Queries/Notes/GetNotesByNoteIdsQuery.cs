@@ -4,12 +4,13 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 
 namespace Domain.Queries.Notes
 {
     public class GetNotesByNoteIdsQuery : BaseQueryEntity, IRequest<List<SmallNote>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
 
         [Required]

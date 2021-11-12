@@ -6,7 +6,7 @@ using Domain.Queries.Files;
 using Domain.Queries.Users;
 using MediatR;
 using Storage;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Users;
 
 namespace BI.Services.UserHandlers

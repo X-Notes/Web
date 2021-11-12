@@ -9,7 +9,7 @@ namespace Domain.Commands.Share.Folders
 {
     public class ChangeRefTypeFolders : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { get; set; }
 
         [RequiredEnumField(ErrorMessage = "RefType id is required.")]

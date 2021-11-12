@@ -5,8 +5,8 @@ using BI.Helpers;
 using Common.DatabaseModels.Models.Plan;
 using Common.DatabaseModels.Models.Systems;
 using Common.DatabaseModels.Models.Users;
+using Common.DTO;
 using Common.DTO.Backgrounds;
-using Common.DTO.Notes.FullNoteContent;
 using Common.DTO.Users;
 using Domain.Commands.Files;
 using Domain.Commands.Users;
@@ -90,7 +90,7 @@ namespace BI.Services.UserHandlers
             if (userProfilePhoto != null)
             {
                 await userProfilePhotoRepository.RemoveAsync(userProfilePhoto);
-                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile).SetIsNoCheckDelete());
+                await _mediator.Send(new RemoveFilesCommand(user.Id.ToString(), userProfilePhoto.AppFile));
             }
 
             var filebytes = await request.File.GetFilesBytesAsync();

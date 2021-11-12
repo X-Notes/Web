@@ -4,21 +4,22 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import {
   BaseText,
   HeadingTypeENUM,
-  NoteStyleTypeENUM,
   NoteTextTypeENUM,
 } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
 import { TransformContent } from '../../../models/transform-content.model';
@@ -26,6 +27,7 @@ import { TransformToFileContent } from '../../../models/transform-file-content.m
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
 import { TextService } from '../../html-business-logic/text.service';
+import { SetFocus } from '../../../models/set-focus';
 
 @Component({
   selector: 'app-html-text-part',
@@ -33,7 +35,8 @@ import { TextService } from '../../html-business-logic/text.service';
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService],
 })
-export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class HtmlTextPartComponent
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -44,7 +47,7 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   enterEvent = new EventEmitter<EnterEvent>();
 
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   deleteThis = new EventEmitter<string>();
@@ -62,6 +65,14 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
+
   textType = NoteTextTypeENUM;
 
   headingType = HeadingTypeENUM;
@@ -72,13 +83,22 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   typeUpload = TypeUploadFile;
 
-  styleType = NoteStyleTypeENUM;
-
   formats: string;
 
   isMulptiply = false;
 
-  constructor(public textService: TextService) {}
+  constructor(public textService: TextService, private host: ElementRef) {}
+
+  ngOnChanges(changes: SimpleChanges): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 
   getContent() {
     return this.content;
@@ -94,6 +114,10 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     );
   }
 
+  getHost() {
+    return this.host;
+  }
+
   ngOnDestroy(): void {
     this.textService.destroysListeners();
     this.destroy.next();
@@ -104,8 +128,8 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.content.contentSG = str;
+        this.updateText.emit(this.content);
       });
   }
 
@@ -127,22 +151,16 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     setTimeout(() => this.uploadFile.nativeElement.click());
   }
 
-  editContentStyle($event, type: NoteStyleTypeENUM) {
+  setBoldStyle($event) {
     $event.preventDefault();
-    console.log(type, this.content);
-    if (type === this.styleType.Bold) {
-      this.updateText.emit({
-        contentId: this.content.id,
-        content: this.content.content,
-        isBold: !this.content.isBold,
-      });
-    } else {
-      this.updateText.emit({
-        contentId: this.content.id,
-        content: this.content.content,
-        isItalic: !this.content.isItalic,
-      });
-    }
+    this.content.isBoldSG = !this.content.isBoldSG;
+    this.updateText.emit(this.content);
+  }
+
+  setItalicStyle($event) {
+    $event.preventDefault();
+    this.content.isItalicSG = !this.content.isItalicSG;
+    this.updateText.emit(this.content);
   }
 
   preventClick = ($event) => {
@@ -158,20 +176,22 @@ export class HtmlTextPartComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textService.mouseOut($event, this.contentHtml);
   }
 
-  setFocus($event?) {
-    this.textService.setFocus($event, this.contentHtml);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.textService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.textService.setFocusToEnd(this.contentHtml);
+    this.textService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 

@@ -1,6 +1,6 @@
 ﻿using Azure.Core;
 using Common.DatabaseModels.Models.Files;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Domain.Queries.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Http;

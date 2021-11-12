@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { FullNoteComponent } from './full-note.component';
 import { PhotosComponent } from './full-note-components/photos/photos.component';
 import { SelectionDirective } from './directives/selection.directive';
@@ -22,16 +23,24 @@ import { AudioNoteComponent } from './full-note-components/audio-note/audio-note
 import { VideoNoteComponent } from './full-note-components/video-note/video-note.component';
 import { DocumentNoteComponent } from './full-note-components/document-note/document-note.component';
 import { AudioComponent } from './full-note-components/audio/audio.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { NoteSnapshotComponent } from './note-snapshot/note-snapshot.component';
 import { FullNoteRouting } from './full-note-routing';
 import { RightSectionContentComponent } from './right-section-content/right-section-content.component';
 import { LeftSectionContentNotesListComponent } from './left-section-content-notes-list/left-section-content-notes-list.component';
 import { ContentEditorComponent } from './content-editor/content-editor.component';
-import { MenuSelectionService } from './services/menu-selection.service';
-import { SelectionService } from './services/selection.service';
+import { MenuSelectionService } from './content-editor-services/menu-selection.service';
+import { SelectionService } from './content-editor-services/selection.service';
 import { SidebarNotesService } from './services/sidebar-notes.service';
-import { FullNoteSliderService } from './services/full-note-slider.service';
+import { ClickableContentService } from './content-editor-services/clickable-content.service';
+import { ContentEditorElementsListenerService } from './content-editor-services/content-editor-elements-listener.service';
+import { ContentEditorContentsService } from './content-editor-services/content-editor-contents.service';
+import { ContentEditorAudiosCollectionService } from './content-editor-services/file-content/content-editor-audios.service';
+import { ContentEditorDocumentsCollectionService } from './content-editor-services/file-content/content-editor-documents.service';
+import { ContentEditorPhotosCollectionService } from './content-editor-services/file-content/content-editor-photos.service';
+import { ContentEditorVideosCollectionService } from './content-editor-services/file-content/content-editor-videos.service';
+import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
+import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
+import { ContentEditorMomentoStateService } from './content-editor-services/content-editor-momento-state.service';
 
 @NgModule({
   declarations: [
@@ -68,10 +77,19 @@ import { FullNoteSliderService } from './services/full-note-slider.service';
     RightSectionContentComponent,
   ],
   providers: [
-    MenuSelectionService, 
-    SelectionService, 
-    SidebarNotesService, 
-    FullNoteSliderService,
+    MenuSelectionService,
+    SelectionService,
+    SidebarNotesService,
+    ClickableContentService,
+    ContentEditorElementsListenerService,
+    ContentEditorListenerService,
+    ContentEditorContentsService,
+    ContentEditorAudiosCollectionService,
+    ContentEditorDocumentsCollectionService,
+    ContentEditorPhotosCollectionService,
+    ContentEditorVideosCollectionService,
+    ContentEditorTextService,
+    ContentEditorMomentoStateService,
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

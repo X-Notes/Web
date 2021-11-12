@@ -12,10 +12,11 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { TransformContent } from '../../../models/transform-content.model';
 import { CheckListService } from '../../html-business-logic/check-list.service';
 
@@ -26,8 +27,11 @@ import { CheckListService } from '../../html-business-logic/check-list.service';
   providers: [CheckListService],
 })
 export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+
+  @ViewChild('contentHtml') contentHtml: ElementRef;
+  
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   transformTo = new EventEmitter<TransformContent>();
@@ -47,14 +51,24 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   @Input()
   isReadOnlyMode = false;
 
-  @ViewChild('contentHtml') contentHtml: ElementRef;
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
 
   textChanged: Subject<string> = new Subject<string>();
 
   destroy = new Subject<void>();
 
-  constructor(public checkListService: CheckListService) {}
+  constructor(public checkListService: CheckListService, private host: ElementRef) {}
 
+  getHost(){
+    return this.host;
+  }
+  
   getContent() {
     return this.content;
   }
@@ -81,29 +95,27 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
-        this.updateText.emit({
-          content: str,
-          contentId: this.content.id,
-          checked: this.content.checked,
-        });
+        this.content.contentSG = str;
+        this.updateText.emit(this.content);
       });
   }
 
-  setFocus($event?) {
-    this.checkListService.setFocus($event, this.contentHtml);
+  isFocusToNext = () => true;
+
+  setFocus(entity: SetFocus) {
+    this.checkListService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.checkListService.setFocusToEnd(this.contentHtml);
+    this.checkListService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -130,7 +142,16 @@ export class HtmlCheckListComponent implements OnInit, OnDestroy, AfterViewInit,
   }
 
   async changeCheckBox() {
-    this.content.checked = !this.content.checked;
-    this.textChanged.next(this.content.content);
+    this.content.checkedSG = !this.content.checkedSG;
+    this.textChanged.next(this.content.contentSG);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

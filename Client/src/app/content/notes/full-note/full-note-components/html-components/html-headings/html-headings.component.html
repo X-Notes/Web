@@ -11,6 +11,7 @@
     bold: content.isBold,
     italic: content.isItalic
   }"
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <p
     #contentHtml

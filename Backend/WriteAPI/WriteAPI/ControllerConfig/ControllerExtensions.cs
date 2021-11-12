@@ -1,4 +1,4 @@
-﻿using Common.DTO.Notes.FullNoteContent;
+﻿using Common.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;

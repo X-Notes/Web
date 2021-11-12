@@ -26,10 +26,10 @@ import { ApiNoteHistoryService } from '../content/notes/full-note/services/api-n
 import { ApiPersonalizationSettingsService } from './api-personalization-settings.service';
 import { UpdaterEntitiesService } from './entities-updater.service';
 import { FileApiService } from './file-api.service';
-import { ApiPlaylistService } from '../content/notes/full-note/services/api-playlist.service';
-import { ApiAlbumService } from '../content/notes/full-note/services/api-album.service';
-import { ApiDocumentService } from '../content/notes/full-note/services/api-document.service';
-import { ApiVideoService } from '../content/notes/full-note/services/api-video.service';
+import { ApiAudiosService } from '../content/notes/full-note/services/api-audios.service';
+import { ApiPhotosService } from '../content/notes/full-note/services/api-photos.service';
+import { ApiDocumentsService } from '../content/notes/full-note/services/api-documents.service';
+import { ApiVideosService } from '../content/notes/full-note/services/api-videos.service';
 import { ApiTextService } from '../content/notes/full-note/services/api-text.service';
 
 export const HttpLoaderFactory = (http: HttpClient) => {
@@ -79,7 +79,7 @@ export class MissingTranslationService implements MissingTranslationHandler {
     ApiPersonalizationSettingsService,
     FileApiService,
     UpdaterEntitiesService,
-    ApiPlaylistService, ApiAlbumService, ApiDocumentService, ApiVideoService, ApiTextService
+    ApiAudiosService, ApiPhotosService, ApiDocumentsService, ApiVideosService, ApiTextService
   ],
 })
 export class CoreModule {}
