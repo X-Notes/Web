@@ -1,3 +1,341 @@
+@import 'audio.scss'; // TODO Audio??
+@import 'variables';
+
+:host {
+    display: flex;
+    padding: 0 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.playlist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 5px;
+    padding: 0 0.5rem;
+
+    .playlist-options {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        padding: 0.25rem 0.5rem 0 0.5rem;
+    
+        .title {
+          position: relative;
+          display: flex;
+          flex: 1;
+          font-size: 0.875rem;
+    
+          p {
+            outline: none;
+            @include text-overflow;
+          }
+    
+          p:empty + .placeholder {
+            display: block;
+          }
+    
+          .placeholder {
+            position: absolute;
+            top: 0;
+            display: none;
+            user-select: none;
+            pointer-events: none;
+            color: #7b7b7b;
+          }
+        }
+    }
+
+    .video-wrapper {
+        position: relative;
+        display: flex;
+        width: 100%;
+        margin: 0.5rem 0;
+        padding-bottom: 56.25%;
+        border-radius: 5px;
+        overflow: hidden;
+
+        video {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+        }
+
+        .controls-blur {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 25%;
+            background: linear-gradient(360deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 50%);
+        }
+
+        .controls {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 0.25rem;
+
+            .progress {
+                display: flex;
+                width: 100%;
+
+                .slider {
+                    width: 100%;
+                    height: 24px;
+                }
+            }
+
+            .actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+
+                .section-actions {
+                    display: flex;
+                    align-items: center;
+
+                    button[type="button"] {
+                        color: white;
+                    }
+
+                    &:first-child {
+                        flex: 1;
+                    }
+
+                    .section-volume {
+                        display: flex;
+                        align-items: center;
+
+                        .video-volume-slider {
+                            min-width: 128px;
+
+                            .slider {
+                                width: 100%;
+                            }
+                        }
+
+                        @media (max-width: 400px) {
+                            width: 100%;
+
+                            .video-volume-slider {
+                                width: inherit;
+                                min-width: auto;
+                            }
+                        }
+                    }                    
+                }
+            }
+        }
+    }
+
+    .wide-screen {
+        margin: 0 -30px;
+        width: calc(100% + 60px);
+
+        @media (max-width: 1024px) {
+            margin: 0 -4vw;
+            width: calc(100% + 8vw);
+        }
+    }
+
+    .dark.wide-screen {
+        background-color: black;
+    }
+
+    .light.wide-screen {
+        background-color: white;
+    }
+
+    .more-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0.8px solid transparent;
+        padding: 0;
+        min-height: 32px;
+        min-width: 32px;
+        outline: none;
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        background-color: transparent;
+        border-radius: 5px;
+        transition: 0.2s ease;
+        margin-right: 0.25rem;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    
+        .icon {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+
+            .material-icons-outlined-important {
+                font-family: 'Material Icons Outlined';
+            }
+        }
+    }
+
+    .icon-smaller {
+        width: 1.25rem;
+        height: 1.25rem;
+        font-size: 1.25rem;
+    }
+
+    .video-playlist {
+        position: relative;
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+
+        .video-playlist-wrapper {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition-property: transform;
+            transition: 0.3s ease;
+
+            .thumb-video-wrapper {
+                display: flex;
+                flex-direction: column;
+                flex: 0 0 calc(100% / 3);
+                overflow: hidden;
+                cursor: pointer;
+                padding: 0.25rem;
+    
+                &:last-child {
+                    margin-right: 0;
+                }
+    
+                .thumb-video {
+                    position: relative;
+                    display: flex;
+                    margin-bottom: 0.25rem;
+                    border-radius: 5px;
+                    padding-bottom: 56.25%;
+    
+                    video {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 5px;
+                        background-color: black;
+                        transition: 0.3s ease;
+                    }
+
+                    .thumb-active {
+                        box-shadow: 0 0 0 2px #0887a7;
+                    }
+
+                    .more-wrapper {
+
+                    }
+                }
+    
+                .video-title {
+                    display: flex;
+                    width: 100%;
+                    font-size: 0.875rem;
+        
+                    p {
+                        @include text-overflow;
+                    }
+                }
+            }
+        }
+
+        .next-button {
+            right: 0;
+        }
+
+        .prev-button {
+            left: 0;
+        }
+
+        .more-thumb-button {
+            position: absolute;
+            right: 0;
+        }
+
+       .action-button {
+            position: absolute;
+            bottom: 50%;
+            transform: translateY(50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 0;
+            outline: none;
+            border-radius: 50%;
+            padding: 0.375rem;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+
+            .icon {
+                display: flex;
+                font-size: 1.375rem;
+                color: $text-color;
+            }
+
+            @media (max-width: 450px) {
+                padding: 0.25rem;
+
+                .icon {
+                    font-size: 1.25rem;
+                }
+            }
+        }
+    }
+}
+
+.dark {
+    background-color: $dark-color;
+  
+    .playlist-options {
+      .title {
+        color: #dedede;
+      }
+
+      .more-button {
+        color: white;
+      }
+    }
+}
+  
+.light {
+    background-color: #fafafa;
+    color: $text-color;
+    border: 0.8px solid #bababa;
+  
+    .playlist-options {
+      .title, .icon {
+        color: $text-color;
+      }
+    }
+}
+
 .spinner-container{
     position: relative;
     display: flex;
