@@ -1,4 +1,10 @@
-<div class="card" appTheme>
+<div
+  class="card"
+  appTheme
+  (click)="clickDocumentHandler(getFirst)"
+  [ngClass]="{'is-selected' : isClicked}"
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+>
   <div class="preview">
     <div class="icon">
       <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
@@ -34,7 +40,7 @@
           mat-menu-item
           type="button"
           name="delete"
-          (click)="deleteDocumentEvent.emit(content.id)"
+          (click)="deleteContentEvent.emit(content.id)"
         >
           <mat-icon>delete</mat-icon>
           <span>{{ 'innerNote.menu.delete' | translate }}</span>
@@ -42,7 +48,7 @@
       </mat-menu>
     </div>
   </div>
-  <div *ngIf="isEmpty">
-    <p>DOCUMENTS IS EMPTY TODO</p>
+  <div *ngIf="content.isLoading" class="spinner-container">
+    <app-spinner [size]="16"></app-spinner>
   </div>
 </div>

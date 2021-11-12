@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
 
@@ -29,6 +30,8 @@ namespace Common.DatabaseModels.Models.Files
         public Guid UserId { set; get; }
         public User User { get; set; }
 
+        public AppFileUploadInfo AppFileUploadInfo { set; get; }
+
         public List<UserProfilePhoto> UserProfilePhotos { set; get; }
 
         public List<PhotosCollectionNote> PhotosCollectionNotes { set; get; }
@@ -43,11 +46,15 @@ namespace Common.DatabaseModels.Models.Files
         public List<DocumentsCollectionNote> DocumentsCollectionNotes { set; get; }
         public List<DocumentNoteAppFile> DocumentsCollectionNoteAppFiles { set; get; }
 
+        public List<NoteSnapshot> NoteSnapshots { set; get; }
+        public List<SnapshotFileContent> SnapshotFileContents { set; get; }
+
         public AppFile()
         {
 
         }
 
+        // FOR NO PHOTOS TYPES
         public AppFile(string pathNonPhotoContent, string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
             PathNonPhotoContent = pathNonPhotoContent;
@@ -56,8 +63,12 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+
+        // FOR PHOTOS
         public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, 
             string type, long size, FileTypeEnum fileTypeId, Guid userId, string name)
         {
@@ -69,8 +80,11 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+        // FOR NO PHOTOS TYPES
         public AppFile(string pathNoPhotoContent, AppFile appFile, Guid userId)
         {
             PathNonPhotoContent = pathNoPhotoContent;
@@ -79,8 +93,11 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
+        // FOR PHOTOS
         public AppFile(string pathPhotoSmall, string pathPhotoMedium, string pathPhotoBig, AppFile appFile, Guid userId)
         {
             PathPhotoSmall = pathPhotoSmall;
@@ -91,6 +108,8 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+
+            AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
 
         public string GetFromSmallPath
@@ -130,6 +149,5 @@ namespace Common.DatabaseModels.Models.Files
             }
             return result;
         }
-
     }
 }

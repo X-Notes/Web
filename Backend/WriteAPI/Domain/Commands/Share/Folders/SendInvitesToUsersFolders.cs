@@ -9,7 +9,7 @@ namespace Domain.Commands.Share.Folders
 {
     public class SendInvitesToUsersFolders : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> UserIds { set; get; }
 
         [ValidationGuid]

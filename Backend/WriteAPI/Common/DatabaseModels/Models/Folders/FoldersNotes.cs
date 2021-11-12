@@ -9,10 +9,13 @@ namespace Common.DatabaseModels.Models.Folders
     {
         [NotMapped]
         public override Guid Id { set; get; }
+
         public Guid FolderId { get; set; }
         public Folder Folder { get; set; }
+
         public Guid NoteId { get; set; }
         public Note Note { get; set; }
+
         public int Order { set; get; }
     }
 }

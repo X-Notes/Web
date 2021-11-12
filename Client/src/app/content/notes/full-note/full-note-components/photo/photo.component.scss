@@ -6,6 +6,14 @@
   height: 100%;
 }
 
+@mixin is-selected {
+  box-shadow: 0 0 0 2px #0887a7;
+}
+
+.is-selected {
+  @include is-selected;
+}
+
 .photo {
   position: relative;
   height: 100%;
@@ -14,8 +22,6 @@
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 0 0 2px #0887a7;
-
     .action {
       button[type='button'] {
         opacity: 1;

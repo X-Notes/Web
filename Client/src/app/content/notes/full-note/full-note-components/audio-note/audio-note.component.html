@@ -1,7 +1,17 @@
-<div class="playlist" appTheme>
+<div
+  class="playlist"
+  appTheme
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+>
   <div class="playlist-options">
     <div class="title">
-      <p (input)="onInput($event)" [attr.contenteditable]="!isReadOnlyMode">{{content?.name}}</p>
+      <p
+        #titleHtml
+        (input)="onInput($event)"
+        (click)="clickAudioHandler(null)"
+        [textContent]="content?.name"
+        [attr.contenteditable]="!isReadOnlyMode"
+      ></p>
       <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
     </div>
     <button
@@ -42,7 +52,7 @@
         mat-menu-item
         type="button"
         name="delete"
-        (click)="removePlaylist.emit(content.id)"
+        (click)="deleteContentEvent.emit(content.id)"
       >
         <mat-icon>delete</mat-icon>
         <span>{{ 'innerNote.menu.delete' | translate }}</span>
@@ -58,10 +68,11 @@
       (pauseEvent)="pause()"
       (deleteAudio)="deleteAudioHandler($event)"
       (exportAudio)="exportAudio($event)"
+      (clickEvent)="clickAudioHandler($event)"
     ></app-audio>
   </ng-container>
-  <div *ngIf="isEmpty">
-    <p>PLAYLIST IS EMPTY TODO</p>
+  <div *ngIf="content.isLoading" class="spinner-container">
+    <app-spinner [size]="16"></app-spinner>
   </div>
 </div>
 <input

@@ -8,7 +8,10 @@
 
         public static string FoldersDelete = "FoldersDelete";
 
+        public static string HistoryDelete = "HistoryDelete";
+
         public static string HistoryMake = "HistoryMake";
 
+        public static string UnlinkedFilesDelete = "UnlinkedFilesDelete";
     }
 }

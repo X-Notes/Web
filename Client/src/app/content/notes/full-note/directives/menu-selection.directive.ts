@@ -8,10 +8,10 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
-import { MenuSelectionService } from '../services/menu-selection.service';
+import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
 import { BaseText, ContentTypeENUM } from '../../models/content-model.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
-import { SelectionService } from '../services/selection.service';
+import { SelectionService } from '../content-editor-services/selection.service';
 
 @Directive({
   selector: '[appMenuSelection]',
@@ -41,14 +41,12 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const left = (coords.left + coords.right) / 2;
       const top = coords.top - 48;
 
-      this.menuSelectionService.menuActive = true;
-      this.menuSelectionService.currentItem = this.getCurrentItem();
+      this.menuSelectionService.currentTextItem = this.getCurrentItem();
       this.menuSelectionService.left = left;
       this.menuSelectionService.startTop = top;
       this.menuSelectionService.startScroll = this.elementRef.nativeElement.scrollTop;
     } else {
-      this.menuSelectionService.menuActive = false;
-      this.menuSelectionService.currentItem = null;
+      this.menuSelectionService.currentTextItem = null;
     }
   }
 
@@ -57,7 +55,7 @@ export class MenuSelectionDirective implements OnDestroy, OnInit {
       const contentItem = item.getContent();
       if (
         contentItem.typeId === ContentTypeENUM.Text &&
-        item.getNative() === document.activeElement
+        item.getEditableNative() === document.activeElement
       ) {
         return contentItem as BaseText;
       }

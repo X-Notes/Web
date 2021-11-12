@@ -9,7 +9,7 @@ namespace Domain.Commands.Share.Notes
 {
     public class SendInvitesToUsersNotes : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> UserIds { set; get; }
 
         [ValidationGuid]

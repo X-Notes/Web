@@ -1,6 +1,6 @@
 export enum TypeUploadFile {
-  Photos,
-  Audios,
-  Videos,
-  Documents,
+  photos,
+  audios,
+  videos,
+  documents,
 }

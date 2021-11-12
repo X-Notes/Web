@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 using MediatR;
 
 namespace Domain.Commands.Notes
@@ -9,8 +10,10 @@ namespace Domain.Commands.Notes
     {
         [Required]
         public string Color { set; get; }
-        [Required]
+
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
+
         public ChangeColorNoteCommand(List<Guid> ids, string email, string color)
             :base(email)
         {

@@ -1,33 +1,46 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 using Common.DatabaseModels.Models.NoteContent;
 using Common.DatabaseModels.Models.NoteContent.TextContent;
 
 namespace Common.DTO.Notes.FullNoteContent
 {
-    public class TextNoteDTO : BaseContentNoteDTO
+    public class TextNoteDTO : BaseNoteContentDTO
     {
-        public string Content { set; get; }
-
-        public HTypeENUM? HeadingTypeId { set; get; }
-
+        [RequiredEnumFieldAttribute]
         public NoteTextTypeENUM NoteTextTypeId { set; get; }
+
+        [Required]
+        public bool IsBold { set; get; }
+
+        [Required]
+        public bool IsItalic { set; get; }
 
         public bool? Checked { set; get; }
 
-        public bool IsBold { set; get; }
+        public HTypeENUM? HeadingTypeId { set; get; }
 
-        public bool IsItalic { set; get; }
+        public string Content { set; get; }
 
-        public TextNoteDTO(string Content, Guid Id, NoteTextTypeENUM NoteTextTypeId, 
-            HTypeENUM? HeadingTypeId, bool? Checked, bool IsBold, bool IsItalic, DateTimeOffset UpdatedAt)
-            :base(Id, ContentTypeENUM.Text, UpdatedAt)
+        public TextNoteDTO(
+            string content, 
+            Guid id, 
+            int order,
+            NoteTextTypeENUM noteTextTypeId, 
+            HTypeENUM? headingTypeId, 
+            bool? @checked, 
+            bool isBold, 
+            bool isItalic, 
+            DateTimeOffset updatedAt)
+            :base(id, order, ContentTypeENUM.Text, updatedAt)
         {
-            this.Content = Content;
-            this.HeadingTypeId = HeadingTypeId;
-            this.NoteTextTypeId = NoteTextTypeId;
-            this.Checked = Checked;
-            this.IsBold = IsBold;
-            this.IsItalic = IsItalic;
+            this.Content = content;
+            this.HeadingTypeId = headingTypeId;
+            this.NoteTextTypeId = noteTextTypeId;
+            this.Checked = @checked;
+            this.IsBold = isBold;
+            this.IsItalic = isItalic;
         }
     }
 }

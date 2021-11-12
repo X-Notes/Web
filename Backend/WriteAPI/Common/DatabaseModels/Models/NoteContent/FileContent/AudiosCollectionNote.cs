@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Common.DatabaseModels.Models.Files;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
@@ -19,9 +20,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             ContentTypeId = ContentTypeENUM.AudiosCollection;
         }
 
-        public AudiosCollectionNote(AudiosCollectionNote entity, List<AudioNoteAppFile> audios, bool isHistory, Guid entityId)
+        public AudiosCollectionNote(AudiosCollectionNote entity, List<AudioNoteAppFile> audios, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = entity.Order;
             Name = entity.Name;
@@ -32,9 +33,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             AudioNoteAppFiles = audios;
         }
 
-        public AudiosCollectionNote(AudiosCollectionNote entity, List<AppFile> audios, bool isHistory, Guid entityId)
+        public AudiosCollectionNote(AudiosCollectionNote entity, List<AppFile> audios, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = entity.Order;
             Name = entity.Name;
@@ -45,5 +46,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Audios = audios;
         }
 
+        public override IEnumerable<Guid> GetInternalFilesIds()
+        {
+            return Audios.Select(x => x.Id);
+        }
     }
 }

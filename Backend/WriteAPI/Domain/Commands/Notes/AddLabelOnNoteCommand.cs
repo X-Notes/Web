@@ -10,7 +10,8 @@ namespace Domain.Commands.Notes
     {
         [ValidationGuid]
         public Guid LabelId { set; get; }
-        [Required]
+
+        [RequiredListNotEmptyAttribute]
         public List<Guid> NoteIds { set; get; }
     }
 }

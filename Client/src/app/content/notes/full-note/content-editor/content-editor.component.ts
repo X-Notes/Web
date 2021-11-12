@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
@@ -9,10 +10,12 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { UserStore } from 'src/app/core/stateUser/user-state';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import {
   BaseText,
@@ -23,23 +26,25 @@ import {
 import { FullNote } from '../../models/full-note.model';
 import { UpdateTitle } from '../../state/notes-actions';
 import { SelectionDirective } from '../directives/selection.directive';
-import { EditTextEventModel } from '../models/edit-text-event.model';
 import { EnterEvent } from '../models/enter-event.model';
 import { TypeUploadFile } from '../models/enums/type-upload-file.enum';
 import { NoteSnapshot } from '../models/history/note-snapshot.model';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { TransformContent } from '../models/transform-content.model';
 import { TransformToFileContent } from '../models/transform-file-content.model';
-import { ContentEditableService } from '../services/content-editable.service';
+import { ContentEditableService } from '../content-editor-services/content-editable.service';
 import { FullNoteSliderService } from '../services/full-note-slider.service';
-import { MenuSelectionService } from '../services/menu-selection.service';
-import { SelectionService } from '../services/selection.service';
+import { MenuSelectionService } from '../content-editor-services/menu-selection.service';
+import { SelectionService } from '../content-editor-services/selection.service';
 import { ContentEditorContentsService } from '../content-editor-services/content-editor-contents.service';
 import { ContentEditorPhotosCollectionService } from '../content-editor-services/file-content/content-editor-photos.service';
 import { ContentEditorDocumentsCollectionService } from '../content-editor-services/file-content/content-editor-documents.service';
 import { ContentEditorVideosCollectionService } from '../content-editor-services/file-content/content-editor-videos.service';
 import { ContentEditorAudiosCollectionService } from '../content-editor-services/file-content/content-editor-audios.service';
 import { ContentEditorTextService } from '../content-editor-services/text-content/content-editor-text.service';
+import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
+import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
+import { UploadFileToEntity } from '../models/upload-files-to-entity';
 
 @Component({
   selector: 'app-content-editor',
@@ -47,39 +52,49 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService],
 })
-export class ContentEditorComponent implements OnInit, OnDestroy {
-  @ViewChildren('htmlComp') textElements: QueryList<ParentInteraction>;
+export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
 
   @ViewChild(SelectionDirective) selectionDirective: SelectionDirective;
 
-  @Input() set contents(contents: ContentModel[]) {
-    this.contentEditorContentsService.contents = contents;
-  }
-
-  get contents() {
-    return this.contentEditorContentsService.contents;
-  }
+  @ViewChild('noteTitle', { read: ElementRef }) noteTitleEl: ElementRef;
 
   @Input()
-  isReadOnlyMode = false;
+  isReadOnlyMode = true;
 
   @Input()
   note: FullNote | NoteSnapshot;
+  
+  @Input() set contents(contents: ContentModel[]) {
+    if (this.isReadOnlyMode) {
+      this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
+    } else {
+      this.contentEditorContentsService.init(contents, this.note.id);
+    }
+  }
 
-  newLine: Subject<void> = new Subject();
+  get contents() {
+    return this.contentEditorContentsService.getContents;
+    // return this.contentEditorContentsService.getContents.sort((a, b) => a.order - b.order); TODO
+  }
+
+  @Select(UserStore.getUserTheme)
+  theme$: Observable<ThemeENUM>;
+
+  theme = ThemeENUM;
 
   contentType = ContentTypeENUM;
 
   textType = NoteTextTypeENUM;
 
-  nameChanged: Subject<string> = new Subject<string>(); // CHANGE
+  noteTitleChanged: Subject<string> = new Subject<string>(); // CHANGE
 
   destroy = new Subject<void>();
 
   constructor(
-    private selectionService: SelectionService,
+    public selectionService: SelectionService,
     @Optional() public sliderService: FullNoteSliderService,
     private apiBrowserFunctions: ApiBrowserTextService,
     private store: Store,
@@ -90,27 +105,50 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     public contentEditorVideosService: ContentEditorVideosCollectionService,
     public contentEditorPlaylistService: ContentEditorAudiosCollectionService,
     public contentEditorTextService: ContentEditorTextService,
+    private contentEditorElementsListenersService: ContentEditorElementsListenerService,
+    private contentEditorListenerService: ContentEditorListenerService,
   ) {}
+
+  ngAfterViewInit(): void {
+    this.contentEditorElementsListenersService.setHandlers(this.elements);
+    this.contentEditorListenerService.setHandlers(this.elements, this.noteTitleEl);
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+    this.contentEditorElementsListenersService.destroysListeners();
+    this.contentEditorListenerService.destroysListeners();
   }
 
   ngOnInit(): void {
-    this.newLine
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe(async () =>
-        this.contentEditorTextService.appendNewEmptyContentToEnd(this.note.id),
-      );
-
-    this.nameChanged
+    this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((title) => this.store.dispatch(new UpdateTitle(title)));
+
+    this.contentEditorElementsListenersService.onPressDeleteOrBackSpaceSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        for (const itemId of this.selectionService.getSelectedItems()) {
+          this.deleteRowHandler(itemId);
+          this.selectionService.removeFromSelectedItems(itemId);
+        }
+      });
+
+    this.contentEditorElementsListenersService.onPressCtrlZSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => this.contentEditorContentsService.restorePrev());
   }
 
-  onInput($event) {
-    this.nameChanged.next($event.target.innerText);
+  onTitleInput($event) {
+    this.noteTitleChanged.next($event.target.innerText);
+  }
+
+  handlerTitleEnter($event: KeyboardEvent) {
+    $event.preventDefault();
+    this.contentEditorTextService.appendNewEmptyContentToStart();
+    setTimeout(() => this.elements?.first?.setFocus());
+    this.postAction();
   }
 
   pasteCommandHandler(e) {
@@ -118,11 +156,11 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
   }
 
   selectionHandler(secondRect: DOMRect) {
-    this.selectionService.selectionHandler(secondRect, this.refElements);
+    this.selectionService.selectionHandler(secondRect, this.elements);
   }
 
   selectionStartHandler($event: DOMRect) {
-    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.refElements);
+    const isSelectionInZone = this.selectionService.isSelectionInZone($event, this.elements);
     if (isSelectionInZone) {
       this.selectionService.isSelectionInside = true;
       this.selectionDirective.div.style.opacity = '0';
@@ -132,59 +170,86 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async enterHandler(value: EnterEvent) {
-    const index = await this.contentEditorTextService.insertNewContent(
-      this.note.id,
+  enterHandler(value: EnterEvent) {
+    const index = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
-      value.breakModel.typeBreakLine,
+      value.breakModel.isFocusToNext,
       value.breakModel.nextText,
     );
-
-    setTimeout(() => {
-      this.textElements?.toArray()[index].setFocus();
-    }, 0);
+    setTimeout(() => this.elements?.toArray()[index].setFocus());
+    this.postAction();
   }
 
-  async deleteHTMLHandler(id: string) {
-    const index = await this.contentEditorTextService.deleteContent(id, this.note.id);
-    this.textElements?.toArray()[index].setFocusToEnd();
+  deleteRowHandler(id: string) {
+    const index = this.contentEditorTextService.deleteContent(id);
+    this.elements?.toArray()[index].setFocusToEnd();
+    this.postAction();
   }
 
-  async concatThisWithPrev(id: string) {
-    const index = await this.contentEditorTextService.concatContentWithPrevContent(
-      id,
-      this.note.id,
-    );
+  concatThisWithPrev(id: string) {
+    const index = this.contentEditorTextService.concatContentWithPrevContent(id);
     setTimeout(() => {
-      const prevItemHtml = this.textElements?.toArray()[index];
+      const prevItemHtml = this.elements?.toArray()[index];
       prevItemHtml.setFocusToEnd();
     });
+    this.postAction();
   }
 
   getTextContent(index: number): BaseText {
     return this.contents[index] as BaseText;
   }
 
-  async transformToTypeText(value: TransformContent) {
-    const index = await this.contentEditorTextService.tranformTextContentTo(this.note.id, value);
-    setTimeout(() => {
-      this.textElements?.toArray()[index].setFocusToEnd();
-    }, 0);
+  transformToTypeText(value: TransformContent) {
+    const index = this.contentEditorTextService.tranformTextContentTo(value);
+    setTimeout(() => this.elements?.toArray()[index].setFocusToEnd());
+    this.postAction();
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  updateTextHandler(content: BaseText) {
+    this.postAction();
+  }
+
+  postAction(): void {
+    const native = this.elements?.last?.getEditableNative();
+    if (native?.textContent.length !== 0) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
+    this.contentEditorContentsService.changeAndSave();
+  }
+
+  placeHolderClick($event) {
+    $event.preventDefault();
+    if (this.elements?.last.getContent().typeId !== ContentTypeENUM.Text) {
+      this.contentEditorTextService.appendNewEmptyContentToEnd();
+    }
+    this.contentEditorContentsService.changeAndSave();
+    setTimeout(() => this.elements?.last?.setFocus());
+  }
+
+  mouseEnter($event) {
+    this.elements?.last?.mouseEnter($event);
+  }
+
+  mouseOut($event) {
+    this.elements?.last?.mouseOut($event);
+  }
+
+  // FILE CONTENTS
 
   // eslint-disable-next-line class-methods-use-this
   async transformToFileType(event: TransformToFileContent) {
     switch (event.typeFile) {
-      case TypeUploadFile.Photos: {
-        await this.contentEditorAlbumService.transformToAlbum(
+      case TypeUploadFile.photos: {
+        await this.contentEditorAlbumService.transformToPhotosCollection(
           this.note.id,
           event.contentId,
           event.files,
         );
         break;
       }
-      case TypeUploadFile.Audios: {
+      case TypeUploadFile.audios: {
         await this.contentEditorPlaylistService.transformToAudiosCollection(
           this.note.id,
           event.contentId,
@@ -192,16 +257,16 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
         );
         break;
       }
-      case TypeUploadFile.Documents: {
-        await this.contentEditorDocumentsService.transformToDocuments(
+      case TypeUploadFile.documents: {
+        await this.contentEditorDocumentsService.transformToDocumentsCollection(
           this.note.id,
           event.contentId,
           event.files,
         );
         break;
       }
-      case TypeUploadFile.Videos: {
-        await this.contentEditorVideosService.transformToVideos(
+      case TypeUploadFile.videos: {
+        await this.contentEditorVideosService.transformToVideosCollection(
           this.note.id,
           event.contentId,
           event.files,
@@ -214,43 +279,62 @@ export class ContentEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async updateTextHandler(event: EditTextEventModel, isLast: boolean) {
-    const resp = await this.contentEditorTextService.updateTextContent(this.note.id, event);
-    if (isLast) {
-      this.addNewElementToEnd();
-    }
-    return resp;
-  }
-
-  async updateTextHandlerBoldItalic(event: EditTextEventModel, isLast: boolean) {
-    // TODO REFACTOR
-    const resp = await this.updateTextHandler(event, isLast);
-    if (resp.success) {
-      const item = this.contents.find((z) => z.id === event.contentId) as BaseText;
-      // const indexOf = this.contents.indexOf(item);
-      item.isBold = event.isBold ?? item.isBold;
-      item.isItalic = event.isItalic ?? item.isItalic;
+  async deleteVideosCollection(contentId: string) {
+    const res = await this.contentEditorVideosService.deleteContentHandler(contentId, this.note.id);
+    if (res.success) {
+      this.postAction();
     }
   }
 
-  addNewElementToEnd() {
-    this.newLine.next();
-  }
-
-  placeHolderClick($event) {
-    $event.preventDefault();
-    setTimeout(() => this.textElements?.last?.setFocus());
-  }
-
-  mouseEnter($event) {
-    const native = this.textElements?.last?.getNative();
-    if (native?.textContent.length !== 0) {
-      this.addNewElementToEnd();
+  async deleteAudiosCollection(contentId: string) {
+    const res = await this.contentEditorPlaylistService.deleteContentHandler(
+      contentId,
+      this.note.id,
+    );
+    if (res.success) {
+      this.postAction();
     }
-    this.textElements?.last?.mouseEnter($event);
   }
 
-  mouseOut($event) {
-    this.textElements?.last?.mouseOut($event);
+  async deletePhotosCollection(contentId: string) {
+    const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
+    if (res.success) {
+      this.postAction();
+    }
+  }
+
+  async deleteDocumentsCollection(contentId: string) {
+    const res = await this.contentEditorDocumentsService.deleteContentHandler(
+      contentId,
+      this.note.id,
+    );
+    if (res.success) {
+      this.postAction();
+    }
+  }
+
+  async changePlaylistName(contentId: string, noteId: string, name: string) {
+    await this.contentEditorPlaylistService.changePlaylistName(contentId, noteId, name);
+    this.postAction();
+  }
+
+  async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {
+    await this.contentEditorPlaylistService.deleteAudioHandler(audioId, contentId, noteId);
+    this.postAction();
+  }
+
+  uploadAudiosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, noteId);
+    this.postAction();
+  };
+
+  uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorAlbumService.uploadPhotoToAlbumHandler($event, noteId);
+    this.postAction();
+  };
+
+  async deletePhotoHandler(photoId: string, contentId: string, noteId: string) {
+    await this.contentEditorAlbumService.deletePhotoHandler(photoId, contentId, noteId);
+    this.postAction();
   }
 }

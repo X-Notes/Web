@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Common.DatabaseModels.Models.Files;
+using Common.Interfaces.Note;
 
 namespace Common.DatabaseModels.Models.NoteContent.FileContent
 {
     [Table(nameof(PhotosCollectionNote), Schema = SchemeConfig.NoteContent)]
-    public class PhotosCollectionNote : BaseNoteContent
+    public class PhotosCollectionNote : BaseNoteContent, IPhotosCollection
     {
         public string Name { set; get; }
         public string Width { set; get; }
@@ -22,9 +24,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             ContentTypeId = ContentTypeENUM.PhotosCollection;
         }
 
-        public PhotosCollectionNote(PhotosCollectionNote entity, List<PhotoNoteAppFile> albumNoteAppFiles, bool isHistory, Guid entityId)
+        public PhotosCollectionNote(PhotosCollectionNote entity, List<PhotoNoteAppFile> albumNoteAppFiles, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
@@ -38,9 +40,9 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             PhotoNoteAppFiles = albumNoteAppFiles;
         }
 
-        public PhotosCollectionNote(PhotosCollectionNote entity, List<AppFile> files, bool isHistory, Guid entityId)
+        public PhotosCollectionNote(PhotosCollectionNote entity, List<AppFile> files, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
@@ -52,6 +54,11 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
             Order = entity.Order;
 
             Photos = files;
+        }
+
+        public override IEnumerable<Guid> GetInternalFilesIds()
+        {
+            return Photos.Select(x => x.Id);
         }
     }
 }

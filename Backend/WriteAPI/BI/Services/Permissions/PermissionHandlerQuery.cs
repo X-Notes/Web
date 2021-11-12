@@ -11,7 +11,7 @@ using Common.DTO.Permissions;
 using Domain.Queries.Permissions;
 using MediatR;
 using Tensorflow;
-using WriteContext.Repositories;
+using WriteContext.Repositories.Files;
 using WriteContext.Repositories.Folders;
 using WriteContext.Repositories.Notes;
 using WriteContext.Repositories.Users;

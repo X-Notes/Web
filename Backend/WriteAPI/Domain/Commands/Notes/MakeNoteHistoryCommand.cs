@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Common.Attributes;
 
 namespace Domain.Commands.Notes
 {
@@ -10,7 +11,7 @@ namespace Domain.Commands.Notes
         [Required]
         public Guid Id { set; get; }
 
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> UserIds { set; get; }
 
         public MakeNoteHistoryCommand(Guid id, List<Guid> userIds)

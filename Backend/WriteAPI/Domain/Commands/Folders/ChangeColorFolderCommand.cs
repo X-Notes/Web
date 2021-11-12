@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using MediatR;
+using Common.Attributes;
 
 namespace Domain.Commands.Folders
 {
@@ -9,8 +10,10 @@ namespace Domain.Commands.Folders
     {
         [Required]
         public string Color { set; get; }
-        [Required]
+
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { set; get; }
+        
         public ChangeColorFolderCommand(List<Guid> ids, string email, string color)
             : base(email)
         {

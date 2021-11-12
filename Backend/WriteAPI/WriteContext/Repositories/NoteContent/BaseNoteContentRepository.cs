@@ -17,9 +17,9 @@ namespace WriteContext.Repositories.NoteContent
 
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrdered(Guid id)
+        public async Task<List<BaseNoteContent>> GetAllContentByNoteIdOrderedAsync(Guid id)
         {
-            return await entities
+            return await entities // TODO OPTIMIZATION
                 .Include(x => (x as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
@@ -29,38 +29,14 @@ namespace WriteContext.Repositories.NoteContent
                 .ToListAsync();
         }
 
-        public async Task<List<BaseNoteContent>> GetAllContentBySnapshotIdOrdered(Guid snapshotId)
-        {
-            return await entities
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Where(x => x.NoteSnapshotId == snapshotId)
-                .OrderBy(x => x.Order)
-                .ToListAsync();
-        }
-
-        public async Task<T> GetContentById<T>(Guid id) where T : BaseNoteContent
+        public async Task<List<BaseNoteContent>> GetContentByNoteIdsAsync(List<Guid> ids)
         {
             return await entities // TODO OPTIMIZATION
                 .Include(x => (x as PhotosCollectionNote).Photos)
                 .Include(x => (x as VideosCollectionNote).Videos)
                 .Include(x => (x as AudiosCollectionNote).Audios)
                 .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Cast<T>()
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .Where(x => ids.Contains(x.NoteId)).ToListAsync();
         }
-
-        public async Task<List<BaseNoteContent>> GetContentByNoteIds(List<Guid> ids)
-        {
-            return await entities
-                .Include(x => (x as PhotosCollectionNote).Photos)
-                .Include(x => (x as VideosCollectionNote).Videos)
-                .Include(x => (x as AudiosCollectionNote).Audios)
-                .Include(x => (x as DocumentsCollectionNote).Documents)
-                .Where(x => ids.Contains(x.NoteId.Value)).ToListAsync();
-        }
-
     }
 }

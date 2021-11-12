@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Backgrounds;
-using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.Backgrounds;
 using Domain.Queries.Backgrounds;
 using MediatR;

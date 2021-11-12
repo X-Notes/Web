@@ -9,14 +9,13 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { VideosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
-import { ApiVideoService } from '../../services/api-video.service';
+import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
   constructor(
     store: Store,
@@ -25,7 +24,7 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     longTermOperationsHandler: LongTermOperationsHandlerService,
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     contentEditorContentsService: ContentEditorContentsService,
-    private apiVideos: ApiVideoService,
+    private apiVideos: ApiVideosService,
   ) {
     super(
       store,
@@ -37,11 +36,14 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     );
   }
 
-  async transformToVideos(noteId: string, contentId: string, files: File[]) {
-    const result = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
-    if (result.success) {
-      this.transformContentTo(result, contentId);
-      await this.uploadVideosToCollectionHandler({ contentId: result.data.id, files }, noteId);
+  async transformToVideosCollection(noteId: string, contentId: string, files: File[]) {
+    const collectionResult = await this.apiVideos.transformToVideos(noteId, contentId).toPromise();
+    if (collectionResult.success) {
+      collectionResult.data.isLoading = true;
+      collectionResult.data.videos = collectionResult.data.videos ? collectionResult.data.videos : [];
+      this.transformContentToOrWarning(collectionResult, contentId);
+      await this.uploadVideosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
+      collectionResult.data.isLoading = false;
     }
   }
 
@@ -84,17 +86,24 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
 
     const prevCollection = this.contentsService.getContentById<VideosCollection>($event.contentId);
     const prev = prevCollection.videos ?? [];
-    const collection: VideosCollection = { ...prevCollection, videos: [...prev, ...videos] };
+    
+    const newCollection = new VideosCollection(prevCollection);
+    newCollection.videos = [...prev, ...videos];
 
-    this.contentsService.setSafe(collection, $event.contentId);
+    this.contentsService.setSafeContentsAndSyncContents(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };
 
-  removeVideosHandler = async (contentId: string, noteId: string) => {
+  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
     const resp = await this.apiVideos.removeVideoFromNote(noteId, contentId).toPromise();
     if (resp.success) {
-      this.removeHandler(contentId);
+      this.deleteHandler(contentId);
     }
+    return resp;
   };
+
+  deleteVideoHandler(videoId: string, contentId: string, noteId: string){
+    // TODO
+  }
 }

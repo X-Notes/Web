@@ -4,6 +4,7 @@
   (mouseover)="mouseEnter($event)"
   (mouseleave)="mouseOut($event)"
   (click)="setFocus($event)"
+  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <p
     #contentHtml
@@ -28,10 +29,10 @@
       <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H3)">
         <mat-icon svgIcon="h3" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="editContentStyle($event, styleType.Bold)">
+      <div class="icon" (mousedown)="setBoldStyle($event)">
         <mat-icon svgIcon="bold" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="editContentStyle($event, styleType.Italic)">
+      <div class="icon" (mousedown)="setItalicStyle($event)">
         <mat-icon svgIcon="italic" [inline]="true"></mat-icon>
       </div>
       <div class="icon" (mousedown)="transformContent($event, textType.Checklist)">
@@ -43,16 +44,16 @@
       <div class="icon" (mousedown)="transformContent($event, textType.Numberlist)">
         <mat-icon svgIcon="list" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.Photos, true)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.photos, true)">
         <mat-icon svgIcon="image" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.Documents, false)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.documents, false)">
         <mat-icon svgIcon="file" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.Videos, false)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.videos, false)">
         <mat-icon svgIcon="videoInner" [inline]="true"></mat-icon>
       </div>
-      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.Audios, true)">
+      <div class="icon" (mousedown)="transformToFileHandler($event, typeUpload.audios, true)">
         <mat-icon [inline]="true">library_music</mat-icon>
       </div>
     </div>

@@ -9,7 +9,7 @@ namespace Domain.Commands.Share.Notes
 {
     public class ChangeRefTypeNotes : BaseCommandEntity, IRequest<Unit>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> Ids { get; set; }
 
         [RequiredEnumField(ErrorMessage = "Ref type id is required.")]

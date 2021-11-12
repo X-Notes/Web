@@ -1,10 +1,15 @@
 import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
 import { ApiBrowserTextService } from '../../../api-browser-text.service';
-import { BreakEnterModel, ContentEditableService } from '../../services/content-editable.service';
-import { MenuSelectionService } from '../../services/menu-selection.service';
-import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
+import {
+  BreakEnterModel,
+  ContentEditableService,
+} from '../../content-editor-services/content-editable.service';
+import { MenuSelectionService } from '../../content-editor-services/menu-selection.service';
+import { BaseText, ContentModel, NoteTextTypeENUM } from '../../../models/content-model.model';
 import { EnterEvent } from '../../models/enter-event.model';
-import { SelectionService } from '../../services/selection.service';
+import { SelectionService } from '../../content-editor-services/selection.service';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 
 @Injectable()
 export abstract class HtmlService {
@@ -18,19 +23,24 @@ export abstract class HtmlService {
     public menuSelectionService: MenuSelectionService,
     private renderer: Renderer2,
     public contEditService: ContentEditableService,
+    private clickableService: ClickableContentService,
   ) {}
 
   pasteCommandHandler(e) {
     this.apiBrowserService.pasteCommandHandler(e);
   }
 
-  backDown(
+  checkForDelete(
     $event,
     content: BaseText,
     contentHtml: ElementRef,
     concatThisWithPrev: EventEmitter<string>,
     deleteThis: EventEmitter<string>,
   ) {
+    if (this.selectionService.isAnySelect()) {
+      return;
+    }
+
     const selection = this.apiBrowserService.getSelection().toString();
     if (
       this.contEditService.isStart(this.getNativeElement(contentHtml)) &&
@@ -79,7 +89,7 @@ export abstract class HtmlService {
       contentHtml.nativeElement,
       'keydown.backspace',
       (e) => {
-        this.backDown(e, content, contentHtml, concatThisWithPrev, deleteThis);
+        this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
       },
     );
     const keyupBackspace = this.renderer.listen(
@@ -89,7 +99,18 @@ export abstract class HtmlService {
         this.backUp(e);
       },
     );
-    this.listeners.push(blur, paste, selectStart, keydownBackspace, keydownEnter, keyupBackspace);
+    const keydownDelete = this.renderer.listen(contentHtml.nativeElement, 'keydown.delete', (e) => {
+      this.checkForDelete(e, content, contentHtml, concatThisWithPrev, deleteThis);
+    });
+    this.listeners.push(
+      blur,
+      paste,
+      selectStart,
+      keydownBackspace,
+      keydownEnter,
+      keyupBackspace,
+      keydownDelete,
+    );
   }
 
   destroysListeners() {
@@ -118,18 +139,30 @@ export abstract class HtmlService {
 
   // eslint-disable-next-line class-methods-use-this
   eventEventFactory(
-    id: string,
     breakModel: BreakEnterModel,
     nextItemType: NoteTextTypeENUM,
     contentId: string,
   ): EnterEvent {
     const eventModel: EnterEvent = {
-      id,
       breakModel,
       nextItemType,
       contentId,
     };
     return eventModel;
+  }
+
+  setFocus(contentHtml: ElementRef<any>, contentModel: ContentModel) {
+    this.getNativeElement(contentHtml).focus();
+    this.setFocusedElement(contentModel);
+  }
+
+  setFocusToEnd(contentHtml: ElementRef<any>, contentModel: ContentModel) {
+    this.contEditService.setCursor(this.getNativeElement(contentHtml), false);
+    this.setFocusedElement(contentModel);
+  }
+
+  setFocusedElement(contentModel: ContentModel) {
+    this.clickableService.setSontent(contentModel.id, null, ClickableSelectableEntities.Text);
   }
 
   abstract onBlur(e);
@@ -144,8 +177,4 @@ export abstract class HtmlService {
   );
 
   abstract backUp(e);
-
-  abstract setFocus($event, contentHtml: ElementRef);
-
-  abstract setFocusToEnd(contentHtml: ElementRef);
 }

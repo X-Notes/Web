@@ -16,10 +16,10 @@ namespace Domain.Commands.Files
         public Guid UserId { set; get; }
 
 
-        public SaveAudiosToNoteCommand(Guid userId, List<FilesBytes> FileBytes, Guid NoteId)
+        public SaveAudiosToNoteCommand(Guid userId, List<FilesBytes> fileBytes, Guid noteId)
         {
-            this.FileBytes = FileBytes;
-            this.NoteId = NoteId;
+            this.FileBytes = fileBytes;
+            this.NoteId = noteId;
             UserId = userId;
         }
 

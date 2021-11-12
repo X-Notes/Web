@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.NoteInner.FileContent.Audios;
+using Domain.Commands.NoteInner.FileContent.Documents;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +31,7 @@ namespace WriteAPI.Controllers
 
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemovePlaylist(RemoveAudiosCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemovePlaylist(UnlinkAudiosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
@@ -79,6 +81,13 @@ namespace WriteAPI.Controllers
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
+        }
+
+        [HttpPatch("sync")]
+        public async Task<OperationResult<Unit>> SyncTextContents(UpdateAudiosContentsCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
         }
     }
 

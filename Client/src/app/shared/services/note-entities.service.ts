@@ -75,10 +75,12 @@ export abstract class NoteEntitiesService extends FeaturesEntitiesService<SmallN
 
   async loadAdditionNoteInformation() {
     const noteIds = this.entities.map((x) => x.id);
-    const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
-    for (const info of additionalInfo) {
-      const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
-      this.entities[noteIndex].additionalInfo = info;
+    if(noteIds.length > 0){
+      const additionalInfo = await this.apiService.getAdditionalInfos(noteIds).toPromise();
+      for (const info of additionalInfo) {
+        const noteIndex = this.entities.findIndex((x) => x.id == info.noteId);
+        this.entities[noteIndex].additionalInfo = info;
+      }
     }
   }
 

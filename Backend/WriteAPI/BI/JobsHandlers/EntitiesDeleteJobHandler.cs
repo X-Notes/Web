@@ -38,7 +38,7 @@ namespace BI.JobsHandlers
             NoteRepository noteRepository,
             FolderRepository folderRepository,
             ConfigForEntitesDeliting configForEntitesDeliting,
-             NoteSnapshotRepository noteSnapshotRepository)
+            NoteSnapshotRepository noteSnapshotRepository)
         {
             this.labelRepostory = labelRepostory;
             this.noteRepository = noteRepository;

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Common.Interfaces.Note;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.DatabaseModels.Models.NoteContent.TextContent
 {
     [Table(nameof(TextNote), Schema = SchemeConfig.NoteContent)]
-    public class TextNote : BaseNoteContent
+    public class TextNote : BaseNoteContent, INoteText
     {
         public string Content { set; get; }
 
@@ -22,14 +23,13 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
 
         public TextNote()
         {
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
 
-        public TextNote(TextNote text, bool isHistory, Guid entityId)
+        public TextNote(TextNote text, Guid noteId)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             Order = text.Order;
 
@@ -38,19 +38,17 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             HTypeId = text.HTypeId;
             Checked = text.Checked;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
-        public TextNote(bool isHistory, Guid entityId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
+        public TextNote(Guid noteId, NoteTextTypeENUM NoteTextTypeId, int Order, string Content = null)
         {
-            SetId(isHistory, entityId);
+            NoteId = noteId;
 
             this.NoteTextTypeId = NoteTextTypeId;
             this.Content = Content;
             this.Order = Order;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
         }
 
@@ -59,9 +57,7 @@ namespace Common.DatabaseModels.Models.NoteContent.TextContent
             this.NoteTextTypeId = NoteTextTypeId;
             this.Content = Content;
 
-            UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.Text;
-
         }
     }
 }

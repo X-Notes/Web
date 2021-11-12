@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.DatabaseModels.Models.NoteContent.FileContent;
+using Common.DTO;
 using Common.DTO.Notes.FullNoteContent;
-using Domain.Commands.NoteInner.FileContent.Audios;
-using Domain.Commands.NoteInner.FileContent.Documents;
 using Domain.Commands.NoteInner.FileContent.Videos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WriteAPI.ConstraintsUploadFiles;
 using WriteAPI.ControllerConfig;
+
 namespace WriteAPI.Controllers
 {
     [Authorize]
@@ -48,7 +47,7 @@ namespace WriteAPI.Controllers
         }
 
         [HttpPost("remove")]
-        public async Task<OperationResult<Unit>> RemoveVideo(RemoveVideosCollectionCommand command)
+        public async Task<OperationResult<Unit>> RemoveVideo(UnlinkVideosCollectionCommand command)
         {
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
@@ -62,8 +61,12 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
-        // TODO transform with
-
+        [HttpPatch("sync")]
+        public async Task<OperationResult<Unit>> SyncTextContents(UpdateVideosContentsCommand command)
+        {
+            command.Email = this.GetUserEmail();
+            return await this._mediator.Send(command);
+        }
     }
 
 }

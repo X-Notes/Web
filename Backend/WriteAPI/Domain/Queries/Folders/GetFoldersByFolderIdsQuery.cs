@@ -1,4 +1,5 @@
-﻿using Common.DTO.Folders;
+﻿using Common.Attributes;
+using Common.DTO.Folders;
 using Common.DTO.Personalization;
 using MediatR;
 using System;
@@ -9,7 +10,7 @@ namespace Domain.Queries.Folders
 {
     public class GetFoldersByFolderIdsQuery : BaseQueryEntity, IRequest<List<SmallFolder>>
     {
-        [Required]
+        [RequiredListNotEmptyAttribute]
         public List<Guid> FolderIds { set; get; }
 
         [Required]

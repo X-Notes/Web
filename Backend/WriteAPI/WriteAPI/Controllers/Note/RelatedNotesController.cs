@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.DTO.Notes;
-using Common.DTO.Notes.FullNoteContent;
 using Domain.Commands.RelatedNotes;
 using Domain.Queries.RelatedNotes;
 using WriteAPI.ControllerConfig;
 using Microsoft.AspNetCore.Authorization;
+using Common.DTO;
 
 namespace WriteAPI.Controllers.Note
 {

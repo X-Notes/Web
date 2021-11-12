@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Common.DTO.Users;
 using Domain.Commands.Users;
 using Domain.Queries.Files;

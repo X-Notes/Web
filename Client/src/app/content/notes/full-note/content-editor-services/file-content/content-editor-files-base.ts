@@ -24,12 +24,12 @@ export class ContentEditorFilesBase {
     protected contentsService: ContentEditorContentsService,
   ) {}
 
-  protected transformContentTo<T extends ContentModel>(
+  protected transformContentToOrWarning<T extends ContentModel>(
     result: OperationResult<T>,
     contentId: string,
   ): void {
     if (result.success) {
-      this.contentsService.setSafe(result.data, contentId);
+      this.contentsService.setSafeContentsAndSyncContents(result.data, contentId);
     } else {
       const lname = this.store.selectSnapshot(UserStore.getUserLanguage);
       this.snackBarStatusTranslateService.validateStatus(
@@ -52,8 +52,8 @@ export class ContentEditorFilesBase {
     }
   }
 
-  protected removeHandler(contentId: string) {
-    this.contentsService.removeById(contentId);
+  protected deleteHandler(contentId: string) {
+    this.contentsService.deleteById(contentId, false);
     this.store.dispatch(LoadUsedDiskSpace);
   }
 }

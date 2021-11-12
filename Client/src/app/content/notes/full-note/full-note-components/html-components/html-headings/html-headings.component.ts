@@ -12,10 +12,11 @@ import {
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { BaseText, HeadingTypeENUM } from '../../../../models/content-model.model';
-import { EditTextEventModel } from '../../../models/edit-text-event.model';
 import { EnterEvent } from '../../../models/enter-event.model';
 import { ParentInteraction } from '../../../models/parent-interaction.interface';
+import { SetFocus } from '../../../models/set-focus';
 import { HeadingService } from '../../html-business-logic/heading.service';
 
 @Component({
@@ -26,7 +27,7 @@ import { HeadingService } from '../../html-business-logic/heading.service';
 })
 export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
   @Output()
-  updateText = new EventEmitter<EditTextEventModel>();
+  updateText = new EventEmitter<BaseText>();
 
   @Output()
   enterEvent = new EventEmitter<EnterEvent>();
@@ -43,6 +44,14 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   @Input()
   isReadOnlyMode = false;
 
+  @Input()
+  isSelected = false;
+  
+  @Input()
+  theme: ThemeENUM;
+  
+  themeE = ThemeENUM;
+  
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
   hType = HeadingTypeENUM;
@@ -51,10 +60,14 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
 
   destroy = new Subject<void>();
 
-  constructor(public headingService: HeadingService) {}
+  constructor(public headingService: HeadingService, private host: ElementRef) {}
 
   getContent() {
     return this.content;
+  }
+
+  getHost(){
+    return this.host;
   }
 
   ngAfterViewInit(): void {
@@ -77,25 +90,27 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
     this.textChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
       .subscribe((str) => {
-        this.content.content = str;
-        this.updateText.emit({ content: str, contentId: this.content.id });
+        this.content.contentSG = str;
+        this.updateText.emit(this.content);
       });
   }
 
-  setFocus($event?) {
-    this.headingService.setFocus($event, this.contentHtml);
+  isFocusToNext = () => true;
+  
+  setFocus(entity: SetFocus) {
+    this.headingService.setFocus(this.contentHtml, this.content);
   }
 
   setFocusToEnd() {
-    this.headingService.setFocusToEnd(this.contentHtml);
+    this.headingService.setFocusToEnd(this.contentHtml, this.content);
   }
 
   updateHTML(content: string) {
-    this.content.content = content;
+    this.content.contentSG = content;
     this.contentHtml.nativeElement.innerHTML = content;
   }
 
-  getNative() {
+  getEditableNative() {
     return this.contentHtml?.nativeElement;
   }
 
@@ -114,4 +129,13 @@ export class HtmlHeadingsComponent implements OnInit, OnDestroy, AfterViewInit, 
   onInput($event) {
     this.textChanged.next($event.target.innerText);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceDown() {}
+
+  // eslint-disable-next-line class-methods-use-this
+  deleteDown() {}
 }

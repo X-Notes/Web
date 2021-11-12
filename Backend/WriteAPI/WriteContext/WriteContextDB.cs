@@ -81,7 +81,7 @@ namespace WriteContext
         // NOTE HISTORY
         public DbSet<NoteSnapshot> NoteSnapshots { set; get; }
 
-        public DbSet<UserNoteHistoryManyToMany> UserNoteHistoryManyToMany { set; get; }
+        public DbSet<UserNoteSnapshotManyToMany> UserNoteHistoryManyToMany { set; get; }
 
         // SYSTEMS
         public DbSet<Language> Languages { set; get; }
@@ -114,11 +114,6 @@ namespace WriteContext
             modelBuilder.HasDefaultSchema("Noots");
 
             // CONTENT
-
-            modelBuilder.Entity<BaseNoteContent>()
-                .HasOne(x => x.NoteSnapshot)
-                .WithMany(x => x.Contents)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BaseNoteContent>()
                 .HasOne(x => x.Note)
@@ -165,6 +160,14 @@ namespace WriteContext
                 .HasMany(x => x.AppFiles)
                 .WithOne(x => x.FileType)
                 .HasForeignKey(x => x.FileTypeId);
+
+            modelBuilder.Entity<AppFileUploadInfo>()
+                .HasKey(x => x.AppFileId);
+
+            modelBuilder.Entity<AppFileUploadStatus>()
+                .HasMany(x => x.AppFileUploadInfos)
+                .WithOne(x => x.Status)
+                .HasForeignKey(x => x.StatusId);
 
             modelBuilder.Entity<AppFile>()
                 .HasOne(x => x.User)
@@ -314,21 +317,39 @@ namespace WriteContext
                         j.HasKey(bc => new { bc.DocumentsCollectionNoteId, bc.AppFileId });
                     });
 
+
+            modelBuilder.Entity<NoteSnapshot>()
+                .HasMany(x => x.AppFiles)
+                .WithMany(x => x.NoteSnapshots)
+                .UsingEntity<SnapshotFileContent>(
+                    j => j
+                            .HasOne(pt => pt.AppFile)
+                            .WithMany(t => t.SnapshotFileContents)
+                            .HasForeignKey(pt => pt.AppFileId),
+                    j => j
+                            .HasOne(pt => pt.NoteSnapshot)
+                            .WithMany(p => p.SnapshotFileContents)
+                            .HasForeignKey(pt => pt.NoteSnapshotId),
+                    j =>
+                    {
+                        j.HasKey(bc => new { bc.NoteSnapshotId, bc.AppFileId });
+                    });
+
             modelBuilder.Entity<User>()
                 .HasMany(p => p.NoteHistories)
                 .WithMany(p => p.Users)
-                .UsingEntity<UserNoteHistoryManyToMany>(
+                .UsingEntity<UserNoteSnapshotManyToMany>(
                     j => j
-                        .HasOne(pt => pt.NoteHistory)
+                        .HasOne(pt => pt.NoteSnapshot)
                         .WithMany(t => t.UserHistories)
-                        .HasForeignKey(pt => pt.NoteHistoryId),
+                        .HasForeignKey(pt => pt.NoteSnapshotId),
                     j => j
                         .HasOne(pt => pt.User)
                         .WithMany(p => p.UserHistories)
                         .HasForeignKey(pt => pt.UserId),
                     j =>
                     {
-                        j.HasKey(bc => new { bc.UserId, bc.NoteHistoryId });
+                        j.HasKey(bc => new { bc.UserId, bc.NoteSnapshotId });
                     });
 
 
@@ -417,6 +438,10 @@ namespace WriteContext
                 new ContentType { Id = ContentTypeENUM.VideosCollection, Name = nameof(ContentTypeENUM.VideosCollection) }
              );
 
+            modelBuilder.Entity<AppFileUploadStatus>().HasData(
+                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.UnLinked, Name = nameof(AppFileUploadStatusEnum.UnLinked) },
+                new AppFileUploadStatus { Id = AppFileUploadStatusEnum.Linked, Name = nameof(AppFileUploadStatusEnum.Linked) }
+             );
         }
     }
 }

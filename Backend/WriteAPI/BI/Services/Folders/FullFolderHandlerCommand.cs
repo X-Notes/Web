@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.DatabaseModels.Models.Folders;
-using Common.DTO.Notes.FullNoteContent;
+using Common.DTO;
 using Domain.Commands.FolderInner;
 using Domain.Queries.Permissions;
 using MediatR;

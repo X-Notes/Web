@@ -4,29 +4,33 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
 import { combineLatest, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { ApiServiceNotes } from '../../../api-notes.service';
+import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { RemovePhotoFromAlbum } from '../../../models/remove-photo-from-album.model';
 import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
-import { SelectionService } from '../../services/selection.service';
-import { ApiAlbumService } from '../../services/api-album.service';
+import { SelectionService } from '../../content-editor-services/selection.service';
+import { ApiPhotosService } from '../../services/api-photos.service';
+import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
+import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
 })
-export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, ParentInteraction {
+export class PhotosComponent
+  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
@@ -35,10 +39,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   noteId: string;
 
   @Output()
-  deleteEvent = new EventEmitter<string>();
+  deleteContentEvent = new EventEmitter<string>();
 
   @Output()
-  deletePhotoFromAlbum = new EventEmitter<RemovePhotoFromAlbum>();
+  deletePhotoEvent = new EventEmitter<string>();
 
   @Output()
   uploadEvent = new EventEmitter<UploadFilesToEntity>();
@@ -48,6 +52,14 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
 
   @Input()
   isReadOnlyMode = false;
+
+  @Input()
+  isSelected = false;
+
+  @Input()
+  theme: ThemeENUM;
+
+  themeE = ThemeENUM;
 
   startWidth;
 
@@ -71,9 +83,15 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     private renderer: Renderer2,
     private elRef: ElementRef,
     private selectionService: SelectionService,
-    private api: ApiAlbumService,
+    private api: ApiPhotosService,
     private exportService: ExportService,
+    private clickableContentService: ClickableContentService,
+    private host: ElementRef,
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateHeightByNativeOffset();
+  }
 
   ngOnDestroy(): void {
     this.destroy.next();
@@ -81,11 +99,11 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
   }
 
   ngAfterViewInit(): void {
-    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement;
+    this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
   }
 
-  removeHandler() {
-    this.deleteEvent.emit(this.content.id);
+  deleteContentHandler() {
+    this.deleteContentEvent.emit(this.content.id);
   }
 
   uploadHandler = () => {
@@ -97,6 +115,10 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
+  }
+
+  clickPhotoHandler(photoId: string) {
+    this.clickableContentService.set(ClickableSelectableEntities.Photo, photoId, this.content.id);
   }
 
   changeWidth(diffrence: number) {
@@ -120,6 +142,15 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       this.renderer.setStyle(this.albumChild.nativeElement, 'height', `${newHeight}px`);
     }
     this.changeHeightSubject.next(`${newHeight}px`);
+  }
+
+  updateHeightByNativeOffset() {
+    setTimeout(() => {
+      const height = `${this.albumChild?.nativeElement.offsetHeight}px`;
+      if (this.content.height !== height) {
+        this.changeHeightSubject.next(height);
+      }
+    }, 50);
   }
 
   saveWidth() {
@@ -157,6 +188,7 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
       this.renderer.setStyle(this.albumChild.nativeElement, 'height', 'auto');
       this.changeHeightSubject.next(`height`);
       this.initPhotos();
+      this.updateHeightByNativeOffset();
     }
   }
 
@@ -214,8 +246,8 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     return false;
   }
 
-  removePhotoHandler(photoId: string) {
-    this.deletePhotoFromAlbum.emit({ photoId, contentId: this.content.id });
+  deletePhotoHandler(photoId: string) {
+    this.deletePhotoEvent.emit(photoId);
   }
 
   getStyle = (numb: number) => {
@@ -238,19 +270,81 @@ export class PhotosComponent implements OnInit, OnDestroy, AfterViewInit, Parent
     }
   };
 
-  setFocus = ($event?: any) => {};
+  isFocusToNext(entity: SetFocus) {
+    if (entity.itemId) {
+      if (entity.status === FocusDirection.Up) {
+        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+        return index === 0;
+      }
+      if (entity.status === FocusDirection.Down) {
+        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+        return index === this.content.photos.length - 1;
+      }
+    }
+    return false;
+  }
+
+  setFocus = (entity?: SetFocus) => {
+    const isExist = this.content.photos.some((x) => x.fileId === entity.itemId);
+
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up) {
+      this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickPhotoHandler(this.content.photos[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      this.clickPhotoHandler(this.content.photos[0].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+    }
+  };
 
   setFocusToEnd = () => {};
 
   updateHTML = (content: string) => {};
 
-  getNative = () => {};
+  getEditableNative = () => {};
 
   getContent() {
     return this.content;
   }
 
+  getHost() {
+    return this.host;
+  }
+
   mouseEnter = ($event: any) => {};
 
   mouseOut = ($event: any) => {};
+
+  // eslint-disable-next-line class-methods-use-this
+  backspaceUp() {}
+
+  backspaceDown() {
+    this.deleteIfCan();
+  }
+
+  deleteDown() {
+    this.deleteIfCan();
+  }
+
+  deleteIfCan() {
+    const photo = this.content.photos.find((x) => this.clickableContentService.isClicked(x.fileId));
+    if (photo) {
+      this.deletePhotoEvent.emit(photo.fileId);
+    }
+  }
 }
