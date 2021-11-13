@@ -7,7 +7,8 @@
         FileSizeTooLarge,
         NoSupportExtension,
         NoAnyFile,
-        RequestCancelled
+        RequestCancelled,
+        NotFound
     }
 
     public class OperationResult<T>
@@ -77,6 +78,13 @@
         {
             Success = false;
             Status = OperationResultAdditionalInfo.RequestCancelled;
+            return this;
+        }
+
+        public OperationResult<T> SetNotFound()
+        {
+            Success = false;
+            Status = OperationResultAdditionalInfo.NotFound;
             return this;
         }
     }

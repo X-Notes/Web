@@ -19,7 +19,7 @@ export class ApiPhotosService {
     );
   }
 
-  removeAlbum(noteId: string, contentId: string) {
+  removeCollection(noteId: string, contentId: string) {
     const obj = {
       noteId,
       contentId,
@@ -40,7 +40,7 @@ export class ApiPhotosService {
 
   removePhotoFromAlbum(noteId: string, contentId: string, photoId: string) {
     return this.httpClient.delete<OperationResult<any>>(
-      `${environment.writeAPI}/api/note/inner/photos/photo/${noteId}/${contentId}/${photoId}`,
+      `${environment.writeAPI}/api/note/inner/photos/${noteId}/${contentId}/${photoId}`,
     );
   }
 

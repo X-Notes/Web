@@ -7,7 +7,7 @@
     <div class="title">
       <p
         #titleHtml
-        (input)="onInput($event)"
+        (input)="onTitleChangeInput($event)"
         (click)="clickAudioHandler(null)"
         [textContent]="content?.name"
         [attr.contenteditable]="!isReadOnlyMode"

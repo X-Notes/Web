@@ -27,7 +27,13 @@ export class ApiVideosService {
     );
   }
 
-  removeVideoFromNote(noteId: string, contentId: string) {
+  removeVideoFromCollection(noteId: string, contentId: string, videoId: string) {
+    return this.httpClient.delete<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/videos/${noteId}/${contentId}/${videoId}`,
+    );
+  }
+
+  removeCollection(noteId: string, contentId: string) {
     const obj = {
       noteId,
       contentId,
@@ -45,6 +51,18 @@ export class ApiVideosService {
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/videos/sync`,
+      obj,
+    );
+  }
+
+  updateVideosCollectionInfo(noteId: string, contentId: string, name: string) {
+    const obj = {
+      noteId,
+      contentId,
+      name,
+    };
+    return this.httpClient.patch<OperationResult<any>>(
+      `${environment.writeAPI}/api/note/inner/videos/info`,
       obj,
     );
   }

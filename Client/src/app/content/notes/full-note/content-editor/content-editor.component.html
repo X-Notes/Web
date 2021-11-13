@@ -125,7 +125,7 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteAudiosCollection($event)"
           (deleteAudioEvent)="deleteAudioHandler($event, item.id, note.id)"
-          (changeTitleEvent)="changePlaylistName(item.id, note.id, $event)"
+          (changeTitleEvent)="changeAudiosCollectionName(item.id, note.id, $event)"
           (uploadEvent)="uploadAudiosToCollectionHandler($event, note.id)"
         ></app-audio-note>
         <app-video-note
@@ -136,8 +136,9 @@
           [content]="item"
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteVideosCollection($event)"
-          (deleteVideoEvent)="contentEditorVideosService.deleteVideoHandler($event, item.id, note.id)"
-          (uploadEvent)="contentEditorVideosService.uploadVideosToCollectionHandler($event, note.id)"
+          (changeTitleEvent)="changeVideosCollectionName(item.id, note.id, $event)"
+          (deleteVideoEvent)="deleteVideoHandler($event, item.id, note.id)"
+          (uploadEvent)="uploadVideosToCollectionHandler($event, note.id)"
         ></app-video-note>
         <app-document-note
           #htmlComp

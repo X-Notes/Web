@@ -224,7 +224,7 @@ export class AudioNoteComponent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mouseOut = ($event: any) => {};
 
-  onInput($event) {
+  onTitleChangeInput($event) {
     this.namePlaylistChanged.next($event.target.innerText);
   }
 

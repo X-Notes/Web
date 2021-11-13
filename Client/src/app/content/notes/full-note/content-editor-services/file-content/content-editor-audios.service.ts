@@ -9,12 +9,12 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { AudiosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAudiosService } from '../../services/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
@@ -38,12 +38,19 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
   }
 
   async transformToAudiosCollection(noteId: string, contentId: string, files: File[]) {
-    const collectionResult = await this.apiAudiosCollection.transformToPlaylist(noteId, contentId).toPromise();
+    const collectionResult = await this.apiAudiosCollection
+      .transformToPlaylist(noteId, contentId)
+      .toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
-      collectionResult.data.audios = collectionResult.data.audios ? collectionResult.data.audios : [];
+      collectionResult.data.audios = collectionResult.data.audios
+        ? collectionResult.data.audios
+        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
-      await this.uploadAudiosToCollectionHandler({ contentId: collectionResult.data.id, files }, noteId);
+      await this.uploadAudiosToCollectionHandler(
+        { contentId: collectionResult.data.id, files },
+        noteId,
+      );
       collectionResult.data.isLoading = false;
     }
   }
@@ -98,7 +105,10 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     this.afterUploadFilesToCollection(results);
   };
 
-  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
+  deleteContentHandler = async (
+    contentId: string,
+    noteId: string,
+  ): Promise<OperationResult<any>> => {
     const resp = await this.apiAudiosCollection.removePlaylist(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
@@ -124,8 +134,10 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     }
   }
 
-  async changePlaylistName(contentId: string, noteId: string, name: string): Promise<void> {
-    const resp = await this.apiAudiosCollection.changePlaylistName(noteId, contentId, name).toPromise();
+  async changeAudiosCollectionName(contentId: string, noteId: string, name: string): Promise<void> {
+    const resp = await this.apiAudiosCollection
+      .changePlaylistName(noteId, contentId, name)
+      .toPromise();
     if (resp.success) {
       const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
       collection.name = name;

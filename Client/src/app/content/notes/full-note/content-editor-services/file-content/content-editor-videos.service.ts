@@ -14,6 +14,7 @@ import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiVideosService } from '../../services/api-videos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 
 @Injectable()
 export class ContentEditorVideosCollectionService extends ContentEditorFilesBase {
@@ -104,14 +105,39 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     contentId: string,
     noteId: string,
   ): Promise<OperationResult<any>> => {
-    const resp = await this.apiVideos.removeVideoFromNote(noteId, contentId).toPromise();
+    const resp = await this.apiVideos.removeCollection(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }
     return resp;
   };
 
-  deleteVideoHandler(videoId: string, contentId: string, noteId: string) {
-    // TODO
+  async deleteVideoHandler(videoId: string, contentId: string, noteId: string) {
+    const resp = await this.apiVideos
+      .removeVideoFromCollection(noteId, contentId, videoId)
+      .toPromise();
+
+    if (resp.success) {
+      const prevCollection = this.contentsService.getContentById<VideosCollection>(contentId);
+      if (prevCollection.videos.length === 1) {
+        this.deleteHandler(contentId);
+      } else {
+        const newCollection = prevCollection.copy();
+        newCollection.videos = newCollection.videos.filter((x) => x.fileId !== videoId);
+        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
+      }
+      this.store.dispatch(LoadUsedDiskSpace);
+    }
+  }
+
+  async changeVideosCollectionName(contentId: string, noteId: string, name: string): Promise<void> {
+    const resp = await this.apiVideos
+      .updateVideosCollectionInfo(noteId, contentId, name)
+      .toPromise();
+    if (resp.success) {
+      const collection = this.contentsService.getContentById<VideosCollection>(contentId);
+      collection.name = name;
+      this.contentsService.setSafeContentsAndSyncContents(collection, collection.id);
+    }
   }
 }

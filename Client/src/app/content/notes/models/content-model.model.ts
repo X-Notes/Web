@@ -25,12 +25,13 @@ export abstract class ContentModel {
   }
 
   abstract copy(): ContentModel;
+
   abstract copyBase(): ContentModel;
+
   abstract isEqual(content: ContentModel): boolean;
 }
 
 export class BaseText extends ContentModel {
-
   number?: number;
 
   content: string;
@@ -68,7 +69,7 @@ export class BaseText extends ContentModel {
     return new BaseText(this);
   }
 
-  copyBase(): BaseText{
+  copyBase(): BaseText {
     const obj = new BaseText(this);
     obj.content = null;
     obj.headingTypeId = null;
@@ -80,15 +81,17 @@ export class BaseText extends ContentModel {
   }
 
   isEqual(content: BaseText): boolean {
-    return this.content === content.content && 
-           this.headingTypeId === content.headingTypeId &&
-           this.noteTextTypeId === content.noteTextTypeId &&
-           this.checked === content.checked &&
-           this.isBold === content.isBold &&
-           this.isItalic === content.isItalic;
+    return (
+      this.content === content.content &&
+      this.headingTypeId === content.headingTypeId &&
+      this.noteTextTypeId === content.noteTextTypeId &&
+      this.checked === content.checked &&
+      this.isBold === content.isBold &&
+      this.isItalic === content.isItalic
+    );
   }
 
-  update(text: BaseText){
+  update(text: BaseText) {
     this.content = text.content;
     this.headingTypeId = text.headingTypeId;
     this.noteTextTypeId = text.noteTextTypeId;
@@ -167,15 +170,17 @@ export class AudiosCollection extends ContentModel {
   constructor(collection: Partial<AudiosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.audios = collection.audios ? collection.audios.map(
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      (z) =>
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        new AudioModel(z.name, z.audioPath, z.fileId, z.authorId),
-    ): [];
+    this.audios = collection.audios
+      ? collection.audios.map(
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          (z) =>
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            new AudioModel(z.name, z.audioPath, z.fileId, z.authorId),
+        )
+      : [];
   }
 
-  update(entity: AudiosCollection){
+  update(entity: AudiosCollection) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
     this.audios = entity.audios;
@@ -197,20 +202,19 @@ export class AudiosCollection extends ContentModel {
   }
 
   private isEqualAudios(content: AudiosCollection): boolean {
-    
-    if(content.audios.length !== this.audios.length) {
+    if (content.audios.length !== this.audios.length) {
       return false;
     }
 
-    const ids1 = content.audios.map(x => x.fileId);
-    const ids2 = this.audios.map(x => x.fileId);
-    if(!this.isIdsEquals(ids1, ids2)){
+    const ids1 = content.audios.map((x) => x.fileId);
+    const ids2 = this.audios.map((x) => x.fileId);
+    if (!this.isIdsEquals(ids1, ids2)) {
       return false;
     }
 
-    for(const audioF of this.audios) {
-      const audioS = content.audios.find(x => x.fileId === audioF.fileId);
-      if(!audioF.isEqual(audioS)){
+    for (const audioF of this.audios) {
+      const audioS = content.audios.find((x) => x.fileId === audioF.fileId);
+      if (!audioF.isEqual(audioS)) {
         return false;
       }
     }
@@ -236,10 +240,12 @@ export class AudioModel {
   }
 
   isEqual(content: AudioModel): boolean {
-    return this.name === content.name &&
-           this.fileId === content.fileId &&
-           this.audioPath === content.audioPath &&
-           this.authorId === content.authorId;
+    return (
+      this.name === content.name &&
+      this.fileId === content.fileId &&
+      this.audioPath === content.audioPath &&
+      this.authorId === content.authorId
+    );
   }
 }
 
@@ -253,12 +259,14 @@ export class VideosCollection extends ContentModel {
   constructor(collection: Partial<VideosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.videos = collection.videos ? collection.videos.map(
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      (z) =>
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        new VideoModel(z.name, z.videoPath, z.fileId, z.authorId),
-    ): [];
+    this.videos = collection.videos
+      ? collection.videos.map(
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          (z) =>
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            new VideoModel(z.name, z.videoPath, z.fileId, z.authorId),
+        )
+      : [];
   }
 
   copy(): VideosCollection {
@@ -272,7 +280,7 @@ export class VideosCollection extends ContentModel {
     return obj;
   }
 
-  update(entity: VideosCollection){
+  update(entity: VideosCollection) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
     this.videos = entity.videos;
@@ -283,20 +291,19 @@ export class VideosCollection extends ContentModel {
   }
 
   private isEqualVideos(content: VideosCollection): boolean {
-    
-    if(content.videos.length !== this.videos.length) {
+    if (content.videos.length !== this.videos.length) {
       return false;
     }
 
-    const ids1 = content.videos.map(x => x.fileId);
-    const ids2 = this.videos.map(x => x.fileId);
-    if(!this.isIdsEquals(ids1, ids2)){
+    const ids1 = content.videos.map((x) => x.fileId);
+    const ids2 = this.videos.map((x) => x.fileId);
+    if (!this.isIdsEquals(ids1, ids2)) {
       return false;
     }
 
-    for(const videoF of this.videos) {
-      const videoS = content.videos.find(x => x.fileId === videoF.fileId);
-      if(!videoF.isEqual(videoS)){
+    for (const videoF of this.videos) {
+      const videoS = content.videos.find((x) => x.fileId === videoF.fileId);
+      if (!videoF.isEqual(videoS)) {
         return false;
       }
     }
@@ -322,10 +329,12 @@ export class VideoModel {
   }
 
   isEqual(content: VideoModel): boolean {
-    return this.name === content.name &&
-           this.fileId === content.fileId &&
-           this.videoPath === content.videoPath &&
-           this.authorId === content.authorId;
+    return (
+      this.name === content.name &&
+      this.fileId === content.fileId &&
+      this.videoPath === content.videoPath &&
+      this.authorId === content.authorId
+    );
   }
 }
 
@@ -339,16 +348,17 @@ export class DocumentsCollection extends ContentModel {
   constructor(collection: Partial<DocumentsCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.name = collection.name;
-    this.documents = collection.documents ? collection.documents.map(
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      (z) =>
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
-    ) : [];
-    
+    this.documents = collection.documents
+      ? collection.documents.map(
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          (z) =>
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId),
+        )
+      : [];
   }
 
-  update(entity: DocumentsCollection){
+  update(entity: DocumentsCollection) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
     this.documents = entity.documents;
@@ -356,28 +366,6 @@ export class DocumentsCollection extends ContentModel {
 
   isEqual(content: DocumentsCollection): boolean {
     return this.name === content.name && this.isEqualDocuments(content);
-  }
-
-  private isEqualDocuments(content: DocumentsCollection): boolean {
-    
-    if(content.documents.length !== this.documents.length) {
-      return false;
-    }
-
-    const ids1 = content.documents.map(x => x.fileId);
-    const ids2 = this.documents.map(x => x.fileId);
-    if(!this.isIdsEquals(ids1, ids2)){
-      return false;
-    }
-
-    for(const documentsF of this.documents) {
-      const documentsS = content.documents.find(x => x.fileId === documentsF.fileId);
-      if(!documentsF.isEqual(documentsS)){
-        return false;
-      }
-    }
-
-    return true;
   }
 
   copy(): DocumentsCollection {
@@ -389,6 +377,27 @@ export class DocumentsCollection extends ContentModel {
     obj.name = null;
     obj.documents = null;
     return obj;
+  }
+
+  private isEqualDocuments(content: DocumentsCollection): boolean {
+    if (content.documents.length !== this.documents.length) {
+      return false;
+    }
+
+    const ids1 = content.documents.map((x) => x.fileId);
+    const ids2 = this.documents.map((x) => x.fileId);
+    if (!this.isIdsEquals(ids1, ids2)) {
+      return false;
+    }
+
+    for (const documentsF of this.documents) {
+      const documentsS = content.documents.find((x) => x.fileId === documentsF.fileId);
+      if (!documentsF.isEqual(documentsS)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
@@ -409,10 +418,12 @@ export class DocumentModel {
   }
 
   isEqual(content: DocumentModel): boolean {
-    return this.name === content.name &&
-           this.fileId === content.fileId &&
-           this.documentPath === content.documentPath &&
-           this.authorId === content.authorId;
+    return (
+      this.name === content.name &&
+      this.fileId === content.fileId &&
+      this.documentPath === content.documentPath &&
+      this.authorId === content.authorId
+    );
   }
 }
 
@@ -428,30 +439,32 @@ export class PhotosCollection extends ContentModel {
   countInRow: number;
 
   isLoading = false;
-  
+
   constructor(collection: Partial<PhotosCollection>) {
     super(collection.typeId, collection.id, collection.order, collection.updatedAt);
     this.countInRow = collection.countInRow;
     this.height = collection.height;
     this.width = collection.width;
     this.name = collection.name;
-    this.photos = collection.photos ? collection.photos.map(
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      (z) =>
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        new Photo(
-          z.fileId,
-          z.photoPathSmall,
-          z.photoPathMedium,
-          z.photoPathBig,
-          z.loaded,
-          z.name,
-          z.authorId,
-        ),
-    ): [];
+    this.photos = collection.photos
+      ? collection.photos.map(
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          (z) =>
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            new Photo(
+              z.fileId,
+              z.photoPathSmall,
+              z.photoPathMedium,
+              z.photoPathBig,
+              z.loaded,
+              z.name,
+              z.authorId,
+            ),
+        )
+      : [];
   }
 
-  update(entity: PhotosCollection){
+  update(entity: PhotosCollection) {
     this.name = entity.name;
     this.height = entity.height;
     this.width = entity.width;
@@ -460,34 +473,13 @@ export class PhotosCollection extends ContentModel {
     this.photos = entity.photos;
   }
 
-
   isEqual(content: PhotosCollection): boolean {
-    return this.height === content.height && 
-           this.width === content.width &&
-           this.countInRow === content.countInRow &&
-           this.isEqualPhotos(content);
-  }
-
-  private isEqualPhotos(content: PhotosCollection): boolean {
-    
-    if(content.photos.length !== this.photos.length) {
-      return false;
-    }
-
-    const ids1 = content.photos.map(x => x.fileId);
-    const ids2 = this.photos.map(x => x.fileId);
-    if(!this.isIdsEquals(ids1, ids2)){
-      return false;
-    }
-
-    for(const photoF of this.photos) {
-      const photoS = content.photos.find(x => x.fileId === photoF.fileId);
-      if(!photoF.isEqual(photoS)){
-        return false;
-      }
-    }
-
-    return true;
+    return (
+      this.height === content.height &&
+      this.width === content.width &&
+      this.countInRow === content.countInRow &&
+      this.isEqualPhotos(content)
+    );
   }
 
   copy(): PhotosCollection {
@@ -501,6 +493,27 @@ export class PhotosCollection extends ContentModel {
     obj.photos = null;
     obj.countInRow = null;
     return obj;
+  }
+  
+  private isEqualPhotos(content: PhotosCollection): boolean {
+    if (content.photos.length !== this.photos.length) {
+      return false;
+    }
+
+    const ids1 = content.photos.map((x) => x.fileId);
+    const ids2 = this.photos.map((x) => x.fileId);
+    if (!this.isIdsEquals(ids1, ids2)) {
+      return false;
+    }
+
+    for (const photoF of this.photos) {
+      const photoS = content.photos.find((x) => x.fileId === photoF.fileId);
+      if (!photoF.isEqual(photoS)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
@@ -546,12 +559,14 @@ export class Photo {
   }
 
   isEqual(content: Photo): boolean {
-    return this.name === content.name &&
-           this.fileId === content.fileId &&
-           this.photoPathSmall === content.photoPathSmall &&
-           this.photoPathMedium === content.photoPathMedium &&
-           this.photoPathBig === content.photoPathBig &&
-           this.authorId === content.authorId;
+    return (
+      this.name === content.name &&
+      this.fileId === content.fileId &&
+      this.photoPathSmall === content.photoPathSmall &&
+      this.photoPathMedium === content.photoPathMedium &&
+      this.photoPathBig === content.photoPathBig &&
+      this.authorId === content.authorId
+    );
   }
 }
 
