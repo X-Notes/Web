@@ -21,7 +21,7 @@ import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { SetFocus } from '../../models/set-focus';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 
 @Component({
@@ -199,13 +199,59 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     this.clickableContentService.set(ClickableSelectableEntities.Video, videoId, this.content.id);
   }
 
+  isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
+
+  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
+  
   isFocusToNext(entity: SetFocus) {
-    console.log('TO DO');
-    return true;
+    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.videos.length - 1;
+    }
+    return false;
   }
 
   setFocus = (entity?: SetFocus) => {
-    console.log(entity);
+    const isExist = this.content.videos.some((x) => x.fileId === entity.itemId);
+
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      if (index === 0) {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      } else {
+        this.clickAudioHandler(this.content.videos[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up) {
+      this.clickAudioHandler(this.content.videos[this.content.videos.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickAudioHandler(this.content.videos[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      if (this.isTitleFocused()) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickAudioHandler(this.content.videos[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      }
+    }
   };
 
   setFocusToEnd = () => {};

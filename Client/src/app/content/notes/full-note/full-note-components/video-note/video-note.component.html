@@ -58,7 +58,7 @@
     #videowrapper
     (fullscreenchange)="onFullscreenChange()"
     class="video-wrapper"
-    [ngClass]="{ 'wide-screen': isWideScreen }"
+    [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo.fileId) }"
   >
     <video
       #videoplayer
@@ -192,7 +192,7 @@
       >
         <div class="thumb-video">
           <video
-            [ngClass]="{'thumb-active': i === indexVideo}"
+            [ngClass]="{'is-selected': isClicked(item.fileId), 'thumb-active': i === indexVideo}"
             disablecontrols
             [src]="item?.videoPath | getVideo: item?.authorId"
           ></video>
