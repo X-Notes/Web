@@ -8,16 +8,20 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
+  OnInit,
 } from '@angular/core';
 
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { Subject } from 'rxjs';
+import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { SetFocus } from '../../models/set-focus';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 
 @Component({
@@ -25,7 +29,7 @@ import { ClickableSelectableEntities } from '../../content-editor-services/click
   templateUrl: './video-note.component.html',
   styleUrls: ['./video-note.component.scss'],
 })
-export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnDestroy {
+export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
@@ -33,6 +37,8 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
+
+  @ViewChild('titleHtml') titleHtml: ElementRef;
 
   @Input()
   content: VideosCollection;
@@ -55,6 +61,9 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
 
+  @Output()
+  changeTitleEvent = new EventEmitter<string>();
+
   video: HTMLVideoElement;
 
   isPlaying = false;
@@ -73,6 +82,10 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
 
   indexVideo = 0;
 
+  destroy = new Subject<void>();
+
+  titleCollectionChanged: Subject<string> = new Subject<string>();
+
   constructor(
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
@@ -89,12 +102,27 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
     this.translate = width;
   };
 
+  onTitleChangeInput($event) {
+    this.titleCollectionChanged.next($event.target.innerText);
+  }
+
+  ngOnInit(): void {
+    this.titleCollectionChanged
+      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
+      .subscribe((name) => {
+        this.content.name = name;
+        this.changeTitleEvent.emit(name);
+      });
+  }
+
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;
     this.video = nativeElement;
   }
 
   ngOnDestroy = async () => {
+    this.destroy.next();
+    this.destroy.complete();
     // @ts-ignore
     if (document.pictureInPictureElement) {
       // @ts-ignore
@@ -167,21 +195,63 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
     }
   }
 
-  clickVideoHandler(video: VideoModel) {
-    this.clickableContentService.set(
-      ClickableSelectableEntities.Video,
-      video.fileId,
-      this.content.id,
-    );
+  clickAudioHandler(videoId: string) {
+    this.clickableContentService.set(ClickableSelectableEntities.Video, videoId, this.content.id);
   }
 
+  isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
+
+  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
+  
   isFocusToNext(entity: SetFocus) {
-    console.log('TO DO');
-    return true;
+    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.videos.length - 1;
+    }
+    return false;
   }
 
   setFocus = (entity?: SetFocus) => {
-    console.log(entity);
+    const isExist = this.content.videos.some((x) => x.fileId === entity.itemId);
+
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      if (index === 0) {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      } else {
+        this.clickAudioHandler(this.content.videos[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up) {
+      this.clickAudioHandler(this.content.videos[this.content.videos.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      this.clickAudioHandler(this.content.videos[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      if (this.isTitleFocused()) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickAudioHandler(this.content.videos[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleHtml.nativeElement.focus();
+        this.clickAudioHandler(null);
+      }
+    }
   };
 
   setFocusToEnd = () => {};
@@ -210,10 +280,6 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnD
   uploadHandler = () => {
     this.uploadAudiosRef.nativeElement.click();
   };
-
-  deleteVideoHandler() {
-    this.deleteVideoEvent.emit(this.content.id);
-  }
 
   // may is need in further
 

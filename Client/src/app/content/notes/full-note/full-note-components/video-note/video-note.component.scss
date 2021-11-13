@@ -245,7 +245,7 @@
                     }
 
                     .thumb-active {
-                        box-shadow: 0 0 0 2px #0887a7;
+                        box-shadow: 0 0 0 1px #ffffff;
                     }
 
                     .more-wrapper {
@@ -342,4 +342,12 @@
     justify-content: center;
     align-items: center;
     height: 38px;
+}
+
+@mixin is-selected {
+    box-shadow: 0 0 0 2px #0887a7 !important;
+  }
+  
+.is-selected {
+    @include is-selected;
 }

@@ -4,7 +4,8 @@ export enum OperationResultAdditionalInfo {
   FileSizeTooLarge,
   NoSupportExtension,
   NoAnyFile,
-  RequestCancelled
+  RequestCancelled,
+  NotFound
 }
 
 export interface OperationResult<T> {

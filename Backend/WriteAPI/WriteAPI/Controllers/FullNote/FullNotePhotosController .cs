@@ -55,7 +55,7 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command, cancellationToken);
         }
 
-        [HttpDelete("photo/{noteId}/{contentId}/{photoId}")]
+        [HttpDelete("{noteId}/{contentId}/{photoId}")]
         public async Task<OperationResult<Unit>> RemovePhotoFromAlbum(Guid noteId, Guid contentId, Guid photoId)
         {
             var command = new RemovePhotoFromCollectionCommand(noteId, contentId, photoId);

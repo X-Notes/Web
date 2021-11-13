@@ -113,7 +113,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
   }
 
   deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
-    const resp = await this.apiAlbum.removeAlbum(noteId, contentId).toPromise();
+    const resp = await this.apiAlbum.removeCollection(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);
     }

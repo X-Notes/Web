@@ -279,11 +279,44 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  // VIDEOS
   async deleteVideosCollection(contentId: string) {
     const res = await this.contentEditorVideosService.deleteContentHandler(contentId, this.note.id);
     if (res.success) {
       this.postAction();
     }
+  }
+
+  async deleteVideoHandler(videoId: string, contentId: string, noteId: string) {
+    await this.contentEditorVideosService.deleteVideoHandler(videoId, contentId, noteId);
+    this.postAction();
+  }
+
+  async changeVideosCollectionName(contentId: string, noteId: string, name: string) {
+    await this.contentEditorVideosService.changeVideosCollectionName(contentId, noteId, name);
+    this.postAction();
+  }
+
+  uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorVideosService.uploadVideosToCollectionHandler($event, noteId);
+    this.postAction();
+  };
+
+  // DOCUMENTS
+  async deleteDocumentsCollection(contentId: string) {
+    const res = await this.contentEditorDocumentsService.deleteContentHandler(
+      contentId,
+      this.note.id,
+    );
+    if (res.success) {
+      this.postAction();
+    }
+  }
+
+  // AUDIOS
+  async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {
+    await this.contentEditorPlaylistService.changeAudiosCollectionName(contentId, noteId, name);
+    this.postAction();
   }
 
   async deleteAudiosCollection(contentId: string) {
@@ -296,28 +329,6 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-  async deletePhotosCollection(contentId: string) {
-    const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
-    if (res.success) {
-      this.postAction();
-    }
-  }
-
-  async deleteDocumentsCollection(contentId: string) {
-    const res = await this.contentEditorDocumentsService.deleteContentHandler(
-      contentId,
-      this.note.id,
-    );
-    if (res.success) {
-      this.postAction();
-    }
-  }
-
-  async changePlaylistName(contentId: string, noteId: string, name: string) {
-    await this.contentEditorPlaylistService.changePlaylistName(contentId, noteId, name);
-    this.postAction();
-  }
-
   async deleteAudioHandler(audioId: string, contentId: string, noteId: string) {
     await this.contentEditorPlaylistService.deleteAudioHandler(audioId, contentId, noteId);
     this.postAction();
@@ -327,6 +338,14 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler($event, noteId);
     this.postAction();
   };
+
+  // PHOTOS
+  async deletePhotosCollection(contentId: string) {
+    const res = await this.contentEditorAlbumService.deleteContentHandler(contentId, this.note.id);
+    if (res.success) {
+      this.postAction();
+    }
+  }
 
   uploadPhotoToAlbumHandler = async ($event: UploadFileToEntity, noteId: string) => {
     await this.contentEditorAlbumService.uploadPhotoToAlbumHandler($event, noteId);

@@ -1,7 +1,13 @@
 <div class="playlist" appTheme>
   <div class="playlist-options">
     <div class="title">
-      <p>Title</p>
+      <p
+        #titleHtml
+        (input)="onTitleChangeInput($event)"
+        (click)="clickAudioHandler(null)"
+        [textContent]="content?.name"
+        [attr.contenteditable]="!isReadOnlyMode"
+      ></p>
       <div class="placeholder">{{ 'placeholder.playlist' | translate }}</div>
     </div>
     <button
@@ -37,7 +43,12 @@
         <mat-icon>download</mat-icon>
         <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
       </button>
-      <button (click)="deleteVideoHandler()" mat-menu-item type="button" name="delete">
+      <button
+        (click)="deleteContentEvent.emit(this.content.id)"
+        mat-menu-item
+        type="button"
+        name="delete"
+      >
         <mat-icon>delete</mat-icon>
         <span>{{ 'innerNote.menu.delete' | translate }}</span>
       </button>
@@ -47,7 +58,7 @@
     #videowrapper
     (fullscreenchange)="onFullscreenChange()"
     class="video-wrapper"
-    [ngClass]="{ 'wide-screen': isWideScreen }"
+    [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo.fileId) }"
   >
     <video
       #videoplayer
@@ -181,7 +192,7 @@
       >
         <div class="thumb-video">
           <video
-            [ngClass]="{'thumb-active': i === indexVideo}"
+            [ngClass]="{'is-selected': isClicked(item.fileId), 'thumb-active': i === indexVideo}"
             disablecontrols
             [src]="item?.videoPath | getVideo: item?.authorId"
           ></video>
@@ -206,7 +217,12 @@
               attributeName="panelClass"
               [element]="menu"
             >
-              <button mat-menu-item type="button" name="delete">
+              <button
+                (click)="deleteVideoEvent.emit(item.fileId)"
+                mat-menu-item
+                type="button"
+                name="delete"
+              >
                 <mat-icon>delete</mat-icon>
                 <span>{{ 'innerNote.menu.delete' | translate }}</span>
               </button>
