@@ -26,6 +26,7 @@ export class ContentEditorListenerService {
         const index = arr.indexOf(el);
         if (index === 0) {
           noteTitleEl.nativeElement?.focus();
+          return;
         }
         const { currentItemId: itemId } = this.clickableService;
         const upEl = el.isFocusToNext({ itemId, status: FocusDirection.Up }) ? arr[index - 1] : el;
@@ -36,14 +37,17 @@ export class ContentEditorListenerService {
     });
 
     const keydownArrowDown = this.renderer.listen(document, 'keydown.ArrowDown', (e) => {
-
       const arr = elements.toArray();
+
+      if (document.activeElement === noteTitleEl.nativeElement) {
+        arr[0]?.setFocus();
+        return;
+      }
+
       const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
       if (el) {
         const index = arr.indexOf(el);
-        if (document.activeElement === noteTitleEl.nativeElement) {
-          arr[0]?.setFocus();
-        }
+
         const upDown = arr[index + 1];
         if (upDown) {
           const { currentItemId: itemId } = this.clickableService;
