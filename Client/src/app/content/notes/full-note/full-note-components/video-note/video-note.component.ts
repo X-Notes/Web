@@ -195,7 +195,7 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     }
   }
 
-  clickAudioHandler(videoId: string) {
+  clickVideoHandler(videoId: string) {
     this.clickableContentService.set(ClickableSelectableEntities.Video, videoId, this.content.id);
   }
 
@@ -221,23 +221,23 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
         this.titleHtml.nativeElement.focus();
-        this.clickAudioHandler(null);
+        this.clickVideoHandler(null);
       } else {
-        this.clickAudioHandler(this.content.videos[index - 1].fileId);
+        this.clickVideoHandler(this.content.videos[index - 1].fileId);
         (document.activeElement as HTMLInputElement).blur();
       }
       return;
     }
 
     if (entity.status === FocusDirection.Up) {
-      this.clickAudioHandler(this.content.videos[this.content.videos.length - 1].fileId);
+      this.clickVideoHandler(this.content.videos[this.content.videos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
-      this.clickAudioHandler(this.content.videos[index + 1].fileId);
+      this.clickVideoHandler(this.content.videos[index + 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
       return;
     }
@@ -245,11 +245,11 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     if (entity.status === FocusDirection.Down) {
       if (this.isTitleFocused()) {
         // eslint-disable-next-line prefer-destructuring
-        this.clickAudioHandler(this.content.videos[0].fileId);
+        this.clickVideoHandler(this.content.videos[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
         this.titleHtml.nativeElement.focus();
-        this.clickAudioHandler(null);
+        this.clickVideoHandler(null);
       }
     }
   };

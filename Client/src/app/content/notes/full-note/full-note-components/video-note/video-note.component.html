@@ -4,7 +4,7 @@
       <p
         #titleHtml
         (input)="onTitleChangeInput($event)"
-        (click)="clickAudioHandler(null)"
+        (click)="clickVideoHandler(null)"
         [textContent]="content?.name"
         [attr.contenteditable]="!isReadOnlyMode"
       ></p>
@@ -61,6 +61,7 @@
     [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo.fileId) }"
   >
     <video
+      (click)="clickVideoHandler(getMainVideo?.fileId)"
       #videoplayer
       oncontextmenu="return false"
       preload="metadata"
