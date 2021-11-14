@@ -66,7 +66,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   @Input()
   note: FullNote | NoteSnapshot;
-  
+
   @Input() set contents(contents: ContentModel[]) {
     if (this.isReadOnlyMode) {
       this.contentEditorContentsService.initOnlyRead(contents, this.note.id);
@@ -138,6 +138,18 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
       .pipe(takeUntil(this.destroy))
       .subscribe(() => this.contentEditorContentsService.restorePrev());
+
+    this.contentEditorListenerService.onPressEnterSubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe((contentId: string) => {
+        if (contentId) {
+          this.enterHandler({
+            breakModel: { isFocusToNext: true },
+            nextItemType: NoteTextTypeENUM.Default,
+            contentId,
+          });
+        }
+      });
   }
 
   onTitleInput($event) {

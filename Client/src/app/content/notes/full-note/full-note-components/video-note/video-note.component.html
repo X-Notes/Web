@@ -58,7 +58,7 @@
     #videowrapper
     (fullscreenchange)="onFullscreenChange()"
     class="video-wrapper"
-    [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo.fileId) }"
+    [ngClass]="{ 'wide-screen': isWideScreen, 'is-selected': isClicked(getMainVideo?.fileId) }"
   >
     <video
       (click)="clickVideoHandler(getMainVideo?.fileId)"

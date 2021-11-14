@@ -1,11 +1,15 @@
 import { ElementRef, Injectable, QueryList, Renderer2, RendererFactory2 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { ParentInteraction } from '../models/parent-interaction.interface';
 import { FocusDirection } from '../models/set-focus';
 import { ClickableContentService } from './clickable-content.service';
+import { ClickableSelectableEntities } from './clickable-selectable-entities.enum';
 
 @Injectable()
 export class ContentEditorListenerService {
   listeners = [];
+
+  onPressEnterSubject = new BehaviorSubject<string>(null);
 
   private renderer: Renderer2;
 
@@ -61,14 +65,15 @@ export class ContentEditorListenerService {
       }
     });
 
-    // const source = fromEvent(document, 'keydown');
-    // source.subscribe((x) => console.log('222: ', x));
-
-    const click = this.renderer.listen(document, 'click', () => {
-      // this.clickableService.reset(); TODO
+    const keydownEnter = this.renderer.listen(document, 'keydown.enter', (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (this.clickableService?.type !== ClickableSelectableEntities.Text) {
+        this.onPressEnterSubject.next(this.clickableService.currentContentId);
+      }
+      return false;
     });
 
-    this.listeners.push(keydownArrowDown, keydownArrowUp, click);
+    this.listeners.push(keydownArrowDown, keydownArrowUp, keydownEnter);
   }
 
   destroysListeners() {

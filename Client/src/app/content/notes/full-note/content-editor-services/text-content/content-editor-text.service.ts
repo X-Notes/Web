@@ -8,12 +8,11 @@ export class ContentEditorTextService {
   // TODO
   // 2. interfaces for file components
 
-  constructor(
-    private contentsService: ContentEditorContentsService) {}
+  constructor(private contentsService: ContentEditorContentsService) {}
 
   deleteContent(contentId: string) {
     const index = this.contentsService.getIndexOrErrorById(contentId);
-    if(index !== 0){
+    if (index !== 0) {
       this.contentsService.deleteById(contentId, false);
       return index - 1;
     }
@@ -57,14 +56,13 @@ export class ContentEditorTextService {
     return item.index;
   }
 
-  getNewTextContent(): BaseText{
+  getNewTextContent = (): BaseText => {
     const nContent = BaseText.getNew();
     nContent.noteTextTypeIdSG = NoteTextTypeENUM.Default;
     return nContent;
-  }
+  };
 
-
-  appendNewEmptyContentToEnd() {
+  appendNewEmptyContentToEnd(): void {
     this.contentsService.insertToEnd(this.getNewTextContent());
   }
 
