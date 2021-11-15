@@ -9,31 +9,39 @@
   [ngStyle]="{'width': sliderService ? sliderService?.mainWidth : ''}"
   class="main-content"
 >
-  <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
-  <div class="labels-section">
-    <div
-      class="label"
-      *ngFor="let label of note?.labels | noDeletedLabels"
-      [ngStyle]="{ backgroundColor: label.color }"
-    >
-      <p>{{ label.name }}</p>
+  <div class="top-section">
+    <div class="note-color" [ngStyle]="{ backgroundColor: note?.color }"></div>
+    <div class="labels-section">
+      <div
+        class="label"
+        *ngFor="let label of note?.labels | noDeletedLabels"
+        [ngStyle]="{ backgroundColor: label.color }"
+      >
+        <p>{{ label.name }}</p>
+      </div>
+    </div>
+    <div class="title-section">
+      <div
+        #noteTitle
+        [attr.contenteditable]="!isReadOnlyMode"
+        (paste)="pasteCommandHandler($event)"
+        [textContent]="note?.title"
+        class="title"
+        (input)="onTitleInput($event)"
+        (keydown.enter)="handlerTitleEnter($event)"
+      ></div>
+      <div class="placeholder">Title</div>
+      <div class="left-border"></div>
     </div>
   </div>
-  <div class="title-section">
-    <div
-      #noteTitle
-      [attr.contenteditable]="!isReadOnlyMode"
-      (paste)="pasteCommandHandler($event)"
-      [textContent]="note?.title"
-      class="title"
-      (input)="onTitleInput($event)"
-      (keydown.enter)="handlerTitleEnter($event)"
-    ></div>
-    <div class="placeholder">Title</div>
-    <div class="left-border"></div>
-  </div>
-  <div class="content-section">
-    <div *ngFor="let item of contents; let i = index">
+  
+  <virtual-scroller
+    #scroll
+    [items]="contents"
+    [enableUnequalChildrenSizes]="true"
+    class="content-section"
+  >
+    <div *ngFor="let item of scroll.viewPortItems; let i = index">
       <div [ngSwitch]="item.typeId">
         <ng-container *ngSwitchCase="contentType.Text">
           <app-html-text-part
@@ -153,13 +161,14 @@
         <div *ngSwitchDefault>Default</div>
       </div>
     </div>
+    <!--
     <div
       class="empty"
       (mousedown)="placeHolderClick($event)"
       (mousemove)="mouseEnter($event)"
       (mouseout)="mouseOut($event)"
-    ></div>
-  </div>
+    ></div> -->
+  </virtual-scroller>
 </div>
 <app-text-edit-menu
   [style.top.px]="menuSelectionService.getTop"

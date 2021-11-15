@@ -8,68 +8,73 @@
   background-color: rgba(31, 33, 37, 0.9);
   padding: 1.25rem 30px;
   transition: 0.2s background-color ease;
-  overflow-y: scroll;
   height: 100%;
 
-  .note-color {
-    width: 40px;
-    height: 40px;
-  }
-
-  &::-webkit-scrollbar {
-    display: none;
-    scrollbar-width: none;
-    width: 0;
-  }
-  .labels-section {
-    margin-bottom: 1rem;
-  }
-
-  .title-section {
-    position: relative;
-    display: flex;
-    margin-left: 0.5rem;
-    font-size: 2.5rem;
-    font-weight: 700;
-    height: 50px;
-
-    .title {
-      display: flex;
-      flex-wrap: wrap;
-      width: 100%;
-      padding-left: 0.625rem;
-      word-break: break-all;
-      white-space: pre-wrap;
-      outline: none;
-
-      &:empty {
-        padding-left: 0;
-      }
-    }
-
-    .title:empty + .placeholder {
-      display: block;
-    }
-
-    .title:empty ~ .left-border {
-      width: 0;
-      background-color: #7b7b7b;
-    }
-
-    .placeholder {
-      display: none;
-      position: absolute;
-      top: 0;
-      pointer-events: none;
-      user-select: none;
-      margin-left: 0.25rem;
-      color: #7b7b7b;
-    }
-  }
-  .content-section {
+  .top-section{
     display: flex;
     flex-direction: column;
-    margin-top: 35px;
+    height: 80px;
+
+    .note-color {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .labels-section {
+      margin-bottom: 1rem;
+    }
+  
+    .title-section {
+      position: relative;
+      display: flex;
+      margin-left: 0.5rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      height: 50px;
+  
+      .title {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        padding-left: 0.625rem;
+        word-break: break-all;
+        white-space: pre-wrap;
+        outline: none;
+  
+        &:empty {
+          padding-left: 0;
+        }
+      }
+  
+      .title:empty + .placeholder {
+        display: block;
+      }
+  
+      .title:empty ~ .left-border {
+        width: 0;
+        background-color: #7b7b7b;
+      }
+  
+      .placeholder {
+        display: none;
+        position: absolute;
+        top: 0;
+        pointer-events: none;
+        user-select: none;
+        margin-left: 0.25rem;
+        color: #7b7b7b;
+      }
+    }
+  }
+
+  .content-section {
+    border: 1px solid white;
+    // height: calc(100% - 80px);
+    height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
     .empty {
       height: 400px;
     }

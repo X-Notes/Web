@@ -63,6 +63,7 @@ import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
 import { RouterModule } from '@angular/router';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 
 @NgModule({
   declarations: [
@@ -131,6 +132,7 @@ import { RouterModule } from '@angular/router';
     NgxDocViewerModule,
     MatSliderModule,
     RouterModule,
+    VirtualScrollerModule,
   ],
   exports: [
     TranslateModule,
@@ -183,6 +185,7 @@ import { RouterModule } from '@angular/router';
     LeftSectionWrapperComponent,
     NavMenuItemComponent,
     NavProfileItemComponent,
+    VirtualScrollerModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

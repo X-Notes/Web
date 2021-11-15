@@ -90,7 +90,8 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
-  ) {}
+  ) {
+  }
 
   @HostListener('window:resize', ['$event'])
   onResize = () => {
