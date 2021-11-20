@@ -16,18 +16,21 @@ export class SelectionService {
   private selectedItemsSet = new Set<string>();
 
   selectionHandler(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
-    for (let item of elements) {
+    const idsToAdd = [];
+    for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       const content = item.getContent();
       if (this.isRectToRect(firstRect, secondRect)) {
-        this.selectedItemsSet.add(content.id);
+        idsToAdd.push(content.id);
       } else {
         this.selectedItemsSet.delete(content.id);
       }
     }
-    // this.makeSelect(itemsSelect);
-    // this.makeNoSelect(itemsNoSelect);
+
+    if (idsToAdd.length !== 1) {
+      idsToAdd.forEach((id) => this.selectedItemsSet.add(id));
+    }
   }
 
   isAnySelect(): boolean {
@@ -42,12 +45,16 @@ export class SelectionService {
     return Array.from(this.selectedItemsSet);
   }
 
-  removeFromSelectedItems(id: string){
+  selectItems(ids: string[]) {
+    ids.forEach((id) => this.selectedItemsSet.add(id));
+  }
+
+  removeFromSelectedItems(id: string) {
     this.selectedItemsSet.delete(id);
   }
 
   isSelectionInZone(secondRect: DOMRect, elements: QueryList<ParentInteraction>) {
-    for (let item of elements) {
+    for (const item of elements) {
       const html = item.getHost().nativeElement;
       const firstRect = html.getBoundingClientRect();
       if (this.isRectToRect(firstRect, secondRect)) {

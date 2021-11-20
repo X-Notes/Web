@@ -1,15 +1,15 @@
 import { ElementRef, EventEmitter, Injectable, Renderer2 } from '@angular/core';
-import { ApiBrowserTextService } from '../../../api-browser-text.service';
+import { ApiBrowserTextService } from '../../../../api-browser-text.service';
 import {
   BreakEnterModel,
   ContentEditableService,
-} from '../../content-editor-services/content-editable.service';
-import { MenuSelectionService } from '../../content-editor-services/menu-selection.service';
-import { BaseText, ContentModel, NoteTextTypeENUM } from '../../../models/content-model.model';
-import { EnterEvent } from '../../models/enter-event.model';
-import { SelectionService } from '../../content-editor-services/selection.service';
-import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
-import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
+} from '../../../content-editor-services/content-editable.service';
+import { MenuSelectionService } from '../../../content-editor-services/menu-selection.service';
+import { BaseText, ContentModel, NoteTextTypeENUM } from '../../../../models/content-model.model';
+import { EnterEvent } from '../../../models/enter-event.model';
+import { SelectionService } from '../../../content-editor-services/selection.service';
+import { ClickableSelectableEntities } from '../../../content-editor-services/clickable-selectable-entities.enum';
+import { ClickableContentService } from '../../../content-editor-services/clickable-content.service';
 
 @Injectable()
 export abstract class HtmlService {

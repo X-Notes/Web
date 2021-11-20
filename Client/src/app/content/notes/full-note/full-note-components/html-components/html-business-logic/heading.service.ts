@@ -1,20 +1,19 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { BaseText, NoteTextTypeENUM } from '../../../models/content-model.model';
-import { EnterEvent } from '../../models/enter-event.model';
+import { BaseText, NoteTextTypeENUM } from '../../../../models/content-model.model';
+import { EnterEvent } from '../../../models/enter-event.model';
 import { HtmlService } from './html.service';
 
 @Injectable()
-export class TextService extends HtmlService {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export class HeadingService extends HtmlService {
+
   onBlur = (e: any) => {
     // BLUR HANDLER
   };
 
-  pasteCommandHandler(e: any) {
-    super.pasteCommandHandler(e);
-  }
+  pasteCommandHandler = (e: any) => {
+    throw new Error('Method not implemented.');
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSelectStart = (e: any) => {
     // SELECTIION
   };
