@@ -1,6 +1,9 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  DoCheck,
   ElementRef,
   Input,
   OnDestroy,
@@ -51,8 +54,9 @@ import { UploadFileToEntity } from '../models/upload-files-to-entity';
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
 
   @ViewChildren('htmlComp', { read: ElementRef }) refElements: QueryList<ElementRef>;
@@ -107,6 +111,7 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     public contentEditorTextService: ContentEditorTextService,
     private contentEditorElementsListenersService: ContentEditorElementsListenerService,
     private contentEditorListenerService: ContentEditorListenerService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit(): void {
@@ -121,6 +126,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
     this.contentEditorListenerService.destroysListeners();
   }
 
+  ngDoCheck(): void {
+    // console.log('do check');
+  }
+
   ngOnInit(): void {
     this.noteTitleChanged
       .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
@@ -133,6 +142,13 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           this.deleteRowHandler(itemId);
           this.selectionService.removeFromSelectedItems(itemId);
         }
+      });
+
+    this.contentEditorElementsListenersService.onPressCtrlASubject
+      .pipe(takeUntil(this.destroy))
+      .subscribe(() => {
+        const ids = this.contents.map((x) => x.id);
+        this.selectionService.selectItems(ids);
       });
 
     this.contentEditorElementsListenersService.onPressCtrlZSubject
@@ -150,6 +166,16 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
           });
         }
       });
+
+    setInterval(() => {
+      console.log('start');
+      // this.elements.last.markForCheck();
+      this.cdr.detectChanges();
+    }, 1000);
+  }
+
+  onFocusHandler(content: ParentInteraction) {
+    this.elements.forEach((x) => x.markForCheck()); // TO Mb optimization
   }
 
   onTitleInput($event) {
@@ -221,6 +247,10 @@ export class ContentEditorComponent implements OnInit, AfterViewInit, OnDestroy 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateTextHandler(content: BaseText) {
     this.postAction();
+  }
+
+  changeDetectionChecker() {
+    console.log('Check contents');
   }
 
   postAction(): void {

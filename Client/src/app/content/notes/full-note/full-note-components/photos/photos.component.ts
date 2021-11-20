@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -24,12 +25,14 @@ import { ApiPhotosService } from '../../services/api-photos.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { CollectionService } from '../collection-services/collection.service';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
 })
 export class PhotosComponent
+  extends CollectionService
   implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
   @ViewChild('album') albumChild: ElementRef;
 
@@ -87,7 +90,10 @@ export class PhotosComponent
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
-  ) {}
+    cdr: ChangeDetectorRef,
+  ) {
+    super(cdr);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateHeightByNativeOffset();

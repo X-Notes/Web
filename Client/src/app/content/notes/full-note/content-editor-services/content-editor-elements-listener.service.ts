@@ -9,6 +9,8 @@ export class ContentEditorElementsListenerService {
   onPressDeleteOrBackSpaceSubject = new Subject();
 
   onPressCtrlZSubject = new Subject();
+
+  onPressCtrlASubject = new Subject();
   
   private renderer: Renderer2;
 
@@ -32,7 +34,7 @@ export class ContentEditorElementsListenerService {
       }
     });
 
-    const keydownZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+    const keydownCtrlZ = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
       if (e.ctrlKey && e.code === 'KeyZ') {
         e.preventDefault();
         this.onPressCtrlZSubject.next();
@@ -40,8 +42,17 @@ export class ContentEditorElementsListenerService {
       }
       return true;
     });
+
+    const keydownCtrlA = this.renderer.listen(document.body, 'keydown', (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.code === 'KeyA') {
+        e.preventDefault();
+        this.onPressCtrlASubject.next();
+        return false;
+      }
+      return true;
+    });
     
-    this.listeners.push(keydownBackspace, keydownDelete, keydownZ);
+    this.listeners.push(keydownBackspace, keydownDelete, keydownCtrlZ, keydownCtrlA);
   }
  
 

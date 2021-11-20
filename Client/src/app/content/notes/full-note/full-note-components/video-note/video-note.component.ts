@@ -9,6 +9,7 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
@@ -23,13 +24,16 @@ import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { CollectionService } from '../collection-services/collection.service';
 
 @Component({
   selector: 'app-video-note',
   templateUrl: './video-note.component.html',
   styleUrls: ['./video-note.component.scss'],
 })
-export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
+export class VideoNoteComponent
+  extends CollectionService
+  implements ParentInteraction, AfterViewInit, OnInit, OnDestroy {
   @ViewChild('videoplayer') videoElement: ElementRef<HTMLVideoElement>;
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
@@ -90,7 +94,9 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
+    cdr: ChangeDetectorRef,
   ) {
+    super(cdr);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -203,7 +209,7 @@ export class VideoNoteComponent implements ParentInteraction, AfterViewInit, OnI
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
 
   isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
-  
+
   isFocusToNext(entity: SetFocus) {
     if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
       return true;

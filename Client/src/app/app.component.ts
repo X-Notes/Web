@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -12,7 +12,7 @@ import { IconsService } from './shared/services/icons.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, DoCheck {
   destroy = new Subject<void>();
 
   constructor(
@@ -35,6 +35,10 @@ export class AppComponent implements OnInit, OnDestroy {
             .toPromise();
         }
       });
+  }
+
+  ngDoCheck(): void {
+    // console.log('app');
   }
 
   ngOnDestroy(): void {

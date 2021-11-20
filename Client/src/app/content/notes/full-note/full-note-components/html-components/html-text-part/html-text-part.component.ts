@@ -1,6 +1,9 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  DoCheck,
   ElementRef,
   EventEmitter,
   Input,
@@ -26,17 +29,20 @@ import { TransformContent } from '../../../models/transform-content.model';
 import { TransformToFileContent } from '../../../models/transform-file-content.model';
 import { TypeUploadFile } from '../../../models/enums/type-upload-file.enum';
 import { TypeUploadFormats } from '../../../models/enums/type-upload-formats.enum';
-import { TextService } from '../../html-business-logic/text.service';
+import { TextService } from '../html-business-logic/text.service';
 import { SetFocus } from '../../../models/set-focus';
+import { BaseHtmlComponent } from '../../base-html-components';
 
 @Component({
   selector: 'app-html-text-part',
   templateUrl: './html-text-part.component.html',
   styleUrls: ['./html-text-part.component.scss'],
   providers: [TextService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HtmlTextPartComponent
-  implements OnInit, OnDestroy, AfterViewInit, OnChanges, ParentInteraction {
+  extends BaseHtmlComponent
+  implements OnInit, OnDestroy, AfterViewInit, DoCheck, ParentInteraction {
   @Output()
   transformToFile = new EventEmitter<TransformToFileContent>();
 
@@ -54,6 +60,10 @@ export class HtmlTextPartComponent
 
   @Output()
   concatThisWithPrev = new EventEmitter<string>();
+
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output()
+  onFocus = new EventEmitter<HtmlTextPartComponent>();
 
   @ViewChild('contentHtml') contentHtml: ElementRef;
 
@@ -87,9 +97,12 @@ export class HtmlTextPartComponent
 
   isMulptiply = false;
 
-  constructor(public textService: TextService, private host: ElementRef) {}
-
-  ngOnChanges(changes: SimpleChanges): void {}
+  constructor(public textService: TextService, private host: ElementRef, cdr: ChangeDetectorRef) {
+    super(cdr);
+  }
+  ngDoCheck(): void {
+    // console.log('do check text');
+  }
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}
@@ -177,13 +190,19 @@ export class HtmlTextPartComponent
   }
 
   isFocusToNext = () => true;
-  
+
   setFocus(entity: SetFocus) {
     this.textService.setFocus(this.contentHtml, this.content);
+    this.onFocus.emit(this);
+  }
+
+  changeDetectionChecker() {
+    console.log('Check text');
   }
 
   setFocusToEnd() {
     this.textService.setFocusToEnd(this.contentHtml, this.content);
+    this.onFocus.emit(this);
   }
 
   updateHTML(content: string) {
@@ -195,7 +214,7 @@ export class HtmlTextPartComponent
     return this.contentHtml?.nativeElement;
   }
 
-  get isActive() {
+  get isFocused() {
     return this.textService.isActive(this.contentHtml);
   }
 

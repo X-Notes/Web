@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
@@ -46,8 +46,9 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     private exportService: ExportService,
     private host: ElementRef,
     private clickableService: ClickableContentService,
+    cdr: ChangeDetectorRef,
   ) {
-    super();
+    super(cdr);
   }
 
   clickDocumentHandler(document: DocumentModel) {

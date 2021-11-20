@@ -10,4 +10,8 @@ export class BaseHtmlComponent {
   detectChanges(): void {
     this.cdr.detectChanges();
   }
+
+  markForCheck(): void {
+    this.cdr.markForCheck();
+  }
 }

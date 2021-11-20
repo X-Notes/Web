@@ -17,7 +17,7 @@
     }"
     [textContent]="content?.content"
   ></p>
-  <div *ngIf="isActive && !isReadOnlyMode" class="no-content">
+  <div *ngIf="isFocused && !isReadOnlyMode" class="no-content">
     <p>Text</p>
     <div class="buttons" (mousedown)="preventClick($event)">
       <div class="icon" (mousedown)="transformContent($event, textType.Heading, headingType.H1)">
@@ -72,3 +72,4 @@
   *ngIf="isLink"
   [link]="CurrentTextCotent"
 ></app-html-link>
+{{changeDetectionChecker()}}

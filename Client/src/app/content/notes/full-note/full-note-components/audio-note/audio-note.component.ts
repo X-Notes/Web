@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -72,8 +73,9 @@ export class AudioNoteComponent
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
     private host: ElementRef,
+    cdr: ChangeDetectorRef,
   ) {
-    super();
+    super(cdr);
   }
 
   getHost() {

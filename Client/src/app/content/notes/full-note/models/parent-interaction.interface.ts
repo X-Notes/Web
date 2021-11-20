@@ -20,4 +20,5 @@ export interface ParentInteraction {
   backspaceDown();
   deleteDown();
   detectChanges();
+  markForCheck();
 }
