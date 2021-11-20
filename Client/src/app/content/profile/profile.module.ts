@@ -6,9 +6,17 @@ import { ProfileComponent } from './profile/profile.component';
 import { ProfileRouting } from './profile-routing';
 import { DropDirective } from './drop/drop.directive';
 import { LeftSectionBackgroundsComponent } from './left-section-backgrounds/left-section-backgrounds.component';
+import { ProfileHeaderComponent } from './profile-components/profile-header/profile-header.component';
+import { ProfileUserInfoComponent } from './profile-components/profile-user-info/profile-user-info.component';
 
 @NgModule({
-  declarations: [ProfileComponent, DropDirective, LeftSectionBackgroundsComponent],
+  declarations: [
+    ProfileComponent,
+    DropDirective,
+    LeftSectionBackgroundsComponent,
+    ProfileHeaderComponent,
+    ProfileUserInfoComponent,
+  ],
   imports: [CommonModule, ProfileRouting, SharedModule, FormsModule],
 })
 export class ProfileModule {}

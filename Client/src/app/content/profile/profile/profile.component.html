@@ -13,56 +13,9 @@
     <div class="content-inner-profile">
       <div class="main">
         <div class="sections">
-          <div class="header">
-            <p>{{ 'profile.sectionProfile' | translate }}</p>
-          </div>
-          <div class="user-info generic-section">
-            <div class="photo" appDrop>
-              <img
-                *ngIf="!photoError"
-                [src]="(user$ | async).photoPath | getImage: (user$ | async).id"
-                alt="User photo"
-                (error)="changeSource()"
-              />
-              <div *ngIf="photoError" class="photo-error">
-                <mat-icon svgIcon="people" [inline]="true"></mat-icon>
-              </div>
-              <input
-                type="file"
-                accept="image/jpeg,image/png"
-                name="choose photo"
-                id="upl"
-                (change)="uploadImageUserPhoto($event)"
-              />
-              <label for="upl" class="change-photo" #profilePhoto>
-                <div class="icon">
-                  <mat-icon svgIcon="newphoto" [inline]="true"></mat-icon>
-                </div>
-                <div class="ripple-container" matRipple [matRippleTrigger]="profilePhoto"></div>
-              </label>
-            </div>
-            <div class="fields">
-              <div class="field">
-                <div class="field-name">
-                  <p>{{ 'profile.nameUser' | translate }}</p>
-                </div>
-                <input type="text" placeholder="Your name" [(ngModel)]="userName" />
-              </div>
-              <div class="field">
-                <div class="field-name">
-                  <p>{{ 'profile.email' | translate }}</p>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Your name"
-                  disabled
-                  value="{{(user$ | async).email}}"
-                />
-                <div class="help-info">
-                  <p>{{ 'profile.descriptionEmail' | translate }}</p>
-                </div>
-              </div>
-            </div>
+          <app-profile-header [title]="'profile.sectionProfile' | translate"></app-profile-header>
+          <div class="generic-section">
+            <app-profile-user-info></app-profile-user-info>
           </div>
           <div class="managment-buttons generic-section">
             <button
@@ -80,24 +33,10 @@
               </div>
               <div class="ripple-container" matRipple [matRippleTrigger]="logOut"></div>
             </button>
-            <button
-              class="generic-button"
-              type="button"
-              name="Update button"
-              #updateProfile
-              (click)="updateName()"
-            >
-              <div class="content-button">
-                <p>{{ 'profile.update' | translate }}</p>
-              </div>
-              <div class="ripple-container" matRipple [matRippleTrigger]="updateProfile"></div>
-            </button>
           </div>
         </div>
-        <div *ngIf="hideFor" class="sections">
-          <div class="header">
-            <p>{{ 'profile.sectionGeneral' | translate }}</p>
-          </div>
+        <div class="sections">
+          <app-profile-header [title]="'profile.sectionGeneral' | translate"></app-profile-header>
           <div class="billing-forms generic-section">
             <div class="form"></div>
             <div class="form"></div>
@@ -105,9 +44,7 @@
           </div>
         </div>
         <div class="sections">
-          <div class="header">
-            <p>{{ 'profile.sectionAccount' | translate }}</p>
-          </div>
+          <app-profile-header [title]="'profile.sectionAccount' | translate"></app-profile-header>
           <div class="account-setting generic-section">
             <div class="field-language">
               <div class="field-name">
@@ -126,10 +63,10 @@
               </app-select>
             </div>
             <div class="field-key">
-              <div *ngIf="hideFor" class="field-name">
+              <div class="field-name">
                 <p>{{ 'profile.personalKey' | translate }}</p>
               </div>
-              <div *ngIf="hideFor" class="personal-key">
+              <div class="personal-key">
                 <input type="password" name="Personal key" />
                 <button class="generic-button" type="button" name="Update button" #changeKey>
                   <div class="content-button">
@@ -148,9 +85,9 @@
           </div>
         </div>
         <div class="sections">
-          <div class="header">
-            <p>{{ 'profile.sectionPersonalization' | translate }}</p>
-          </div>
+          <app-profile-header
+            [title]="'profile.sectionPersonalization' | translate"
+          ></app-profile-header>
           <div class="personalization-setting generic-section">
             <div class="fields">
               <div class="field">
