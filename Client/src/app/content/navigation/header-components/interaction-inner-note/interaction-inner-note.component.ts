@@ -9,7 +9,6 @@ import {
   PersonalizationService,
   showMenuLeftRight,
 } from 'src/app/shared/services/personalization.service';
-import { hideForDemo } from 'src/environments/demo';
 import { DialogsManageService } from '../../dialogs-manage.service';
 import { MenuButtonsService } from '../../menu-buttons.service';
 
@@ -32,8 +31,6 @@ export class InteractionInnerNoteComponent {
   @ViewChild('heightPeople') heightPeople: ElementRef;
 
   @ViewChild('scrollbar') scrollbar: ElementRef;
-
-  hideFor = hideForDemo;
 
   constructor(
     public pService: PersonalizationService,
