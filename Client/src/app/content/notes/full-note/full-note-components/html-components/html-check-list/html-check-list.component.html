@@ -3,9 +3,14 @@
   class="main-container"
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
-  (mouseout)="mouseOut($event)"
+  (mouseleave)="mouseLeave($event)"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
+  <div class="icon-container">
+    <div *ngIf="isMouseOver" class="drag-handler">
+      <ng-content></ng-content>
+    </div>
+  </div>
   <div class="check-list">
     <div class="checkbox-container inner-box-list">
       <mat-checkbox

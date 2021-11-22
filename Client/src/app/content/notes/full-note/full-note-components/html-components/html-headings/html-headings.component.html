@@ -3,7 +3,7 @@
   class="main-container"
   (click)="setFocus($event)"
   (mouseover)="mouseEnter($event)"
-  (mouseout)="mouseOut($event)"
+  (mouseleave)="mouseLeave($event)"
   [ngClass]="{
     h1: content.headingTypeId === hType.H1,
     h2: content.headingTypeId === hType.H2,
@@ -13,6 +13,11 @@
   }"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
+  <div class="icon-container">
+    <div *ngIf="isMouseOver" class="drag-handler">
+      <ng-content></ng-content>
+    </div>
+  </div>
   <p
     #contentHtml
     class="block-generic"

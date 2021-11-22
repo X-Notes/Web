@@ -134,10 +134,12 @@ export class HtmlHeadingsComponent
 
   mouseEnter($event) {
     this.headingService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.headingService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.headingService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

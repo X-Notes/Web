@@ -6,11 +6,21 @@
     @include is-selected;
 }
   
-
-.spinner-container{
-    position: relative;
+.document-content {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 38px;
+    width: 100%;
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+    }
+    
+    .spinner-container{
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 38px;
+    }
 }

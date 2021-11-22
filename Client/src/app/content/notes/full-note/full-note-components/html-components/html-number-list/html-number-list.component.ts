@@ -161,10 +161,12 @@ export class HtmlNumberListComponent
 
   mouseEnter($event) {
     this.numberService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.numberService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.numberService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

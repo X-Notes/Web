@@ -132,9 +132,13 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     this.dialogsManageService.viewDock(path);
   }
 
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
   ngOnInit = () => {};
 

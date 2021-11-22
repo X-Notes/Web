@@ -133,7 +133,7 @@ export abstract class HtmlService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseOut($event, contentHtml: ElementRef) {
+  mouseLeave($event, contentHtml: ElementRef) {
     this.preFocus = false;
   }
 

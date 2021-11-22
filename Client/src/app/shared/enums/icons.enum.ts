@@ -65,5 +65,6 @@ export enum Icons {
   notificationIllustration = 'notificationIllustration',
   noAccessView = 'noAccessView',
   history = 'history',
-  notesInnerFolder = 'notesInnerFolder'
+  notesInnerFolder = 'notesInnerFolder',
+  dragAndDrop = 'dragAndDrop',
 }

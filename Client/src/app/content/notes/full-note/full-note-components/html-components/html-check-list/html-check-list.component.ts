@@ -138,10 +138,12 @@ export class HtmlCheckListComponent
 
   mouseEnter($event) {
     this.checkListService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.checkListService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.checkListService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

@@ -41,6 +41,7 @@ import { ContentEditorVideosCollectionService } from './content-editor-services/
 import { ContentEditorTextService } from './content-editor-services/text-content/content-editor-text.service';
 import { ContentEditorListenerService } from './content-editor-services/content-editor-listener.service';
 import { ContentEditorMomentoStateService } from './content-editor-services/content-editor-momento-state.service';
+import { DragDropHandlerComponent } from './ui-components/drag-drop-handler/drag-drop-handler.component';
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ import { ContentEditorMomentoStateService } from './content-editor-services/cont
     RightSectionContentComponent,
     LeftSectionContentNotesListComponent,
     ContentEditorComponent,
+    DragDropHandlerComponent,
   ],
   exports: [
     LeftSectionContentNotesListComponent,

@@ -15,7 +15,7 @@ export interface ParentInteraction {
   getHost(): ElementRef<HTMLElement>;
   getContent(): ContentModel;
   mouseEnter($event);
-  mouseOut($event);
+  mouseLeave($event);
   backspaceUp();
   backspaceDown();
   deleteDown();

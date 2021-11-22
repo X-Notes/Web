@@ -137,11 +137,14 @@ export class HtmlDotListComponent
   }
 
   mouseEnter($event) {
+    $event.preventDefault();
     this.dotListService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.dotListService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.dotListService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   get isActive() {

@@ -183,10 +183,12 @@ export class HtmlTextPartComponent
   mouseEnter($event) {
     $event.preventDefault();
     this.textService.mouseEnter($event, this.contentHtml);
+    this.isMouseOver = true;
   }
 
-  mouseOut($event) {
-    this.textService.mouseOut($event, this.contentHtml);
+  mouseLeave($event) {
+    this.textService.mouseLeave($event, this.contentHtml);
+    this.isMouseOver = false;
   }
 
   isFocusToNext = () => true;

@@ -64,6 +64,7 @@ import { NavMenuItemComponent } from './left-section-components/nav-menu-item/na
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
 import { RouterModule } from '@angular/router';
 import { VirtualScrollerModule } from 'ngx-virtual-scroller';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -133,6 +134,7 @@ import { VirtualScrollerModule } from 'ngx-virtual-scroller';
     MatSliderModule,
     RouterModule,
     VirtualScrollerModule,
+    DragDropModule,
   ],
   exports: [
     TranslateModule,
@@ -186,6 +188,7 @@ import { VirtualScrollerModule } from 'ngx-virtual-scroller';
     NavMenuItemComponent,
     NavProfileItemComponent,
     VirtualScrollerModule,
+    DragDropModule,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

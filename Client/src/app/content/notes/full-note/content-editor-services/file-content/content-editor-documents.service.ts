@@ -40,7 +40,10 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
   }
 
   async transformToDocumentsCollection(noteId: string, contentId: string, files: File[]) {
-    const collectionResult = await this.apiDocuments.transformToDocuments(noteId, contentId).toPromise();
+    const collectionResult = await this.apiDocuments
+      .transformToDocuments(noteId, contentId)
+      .toPromise();
+      console.log('result: ', collectionResult);
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
       collectionResult.data.documents = collectionResult.data.documents ? collectionResult.data.documents : [];

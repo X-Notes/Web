@@ -48,6 +48,7 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-content-editor',
@@ -166,12 +167,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
           });
         }
       });
-
-    setInterval(() => {
-      console.log('start');
-      // this.elements.last.markForCheck();
-      this.cdr.detectChanges();
-    }, 1000);
   }
 
   onFocusHandler(content: ParentInteraction) {
@@ -253,6 +248,11 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     console.log('Check contents');
   }
 
+  drop(event: CdkDragDrop<ContentModel[]>) {
+    console.log('TODO drop');
+    moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
+  }
+
   postAction(): void {
     const native = this.elements?.last?.getEditableNative();
     if (native?.textContent.length !== 0) {
@@ -275,7 +275,7 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   mouseOut($event) {
-    this.elements?.last?.mouseOut($event);
+    this.elements?.last?.mouseLeave($event);
   }
 
   // FILE CONTENTS

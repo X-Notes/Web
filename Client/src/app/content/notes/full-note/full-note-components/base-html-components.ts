@@ -1,6 +1,9 @@
 import { ChangeDetectorRef } from '@angular/core';
 
 export class BaseHtmlComponent {
+
+  public isMouseOver = false;
+
   protected cdr: ChangeDetectorRef;
 
   constructor(cdr: ChangeDetectorRef) {
