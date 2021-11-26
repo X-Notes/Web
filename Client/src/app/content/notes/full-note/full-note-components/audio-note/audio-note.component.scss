@@ -1,5 +1,4 @@
 @import 'variables';
-@import 'audio.scss';
 
 :host {
   display: flex;
@@ -7,84 +6,32 @@
   margin: 0.25rem 0;
 }
 
-.playlist {
+.audio-content {
   display: flex;
-  flex-direction: column;
   width: 100%;
-  border-radius: 5px;
-
-  .playlist-options {
+  
+  .playlist {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex: 1;
-    padding: 0.25rem 0.5rem 0 0.5rem;
+    flex-direction: column;
+    width: calc(100% - 30px);
+    border-radius: 5px;
 
-    .title {
+    .spinner-container {
       position: relative;
       display: flex;
-      flex: 1;
-      font-size: 0.875rem;
-
-      p {
-        outline: none;
-        @include text-overflow;
-      }
-
-      p:empty + .placeholder {
-        display: block;
-      }
-
-      .placeholder {
-        position: absolute;
-        top: 0;
-        display: none;
-        user-select: none;
-        pointer-events: none;
-        color: #7b7b7b;
-      }
+      justify-content: center;
+      align-items: center;
+      height: 38px;
     }
-  }
-
-  .spinner-container{
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 38px;
   }
 }
 
 .dark {
   background-color: $dark-color;
-
-  .playlist-options {
-    .title {
-      color: #dedede;
-    }
-  }
-
-  button[type='button'] {
-    color: white;
-
-    &:hover {
-      background-color: $dark-button;
-    }
-  }
 }
 
 .light {
   background-color: #fafafa;
   color: $text-color;
   border: 0.8px solid #bababa;
-
-  .playlist-options {
-    .title {
-      color: $text-color;
-    }
-  }
-
-  button[type='button']:hover {
-    background-color: #cacaca;
-  }
 }

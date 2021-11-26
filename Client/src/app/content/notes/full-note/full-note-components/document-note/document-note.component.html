@@ -1,54 +1,59 @@
-<div
-  class="card"
-  appTheme
-  (click)="clickDocumentHandler(getFirst)"
-  [ngClass]="{'is-selected' : isClicked}"
-  [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
->
-  <div class="preview">
-    <div class="icon">
-      <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
+<div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="document-content">
+  <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
+    ><ng-content></ng-content
+  ></app-drag-drop-handler-container>
+  <div
+    class="card"
+    appTheme
+    (click)="clickDocumentHandler(getFirst)"
+    [ngClass]="{'is-selected' : isClicked}"
+    [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
+  >
+    <div class="preview">
+      <div class="icon">
+        <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
+      </div>
     </div>
-  </div>
-  <div *ngIf="!isEmpty" class="card-body">
-    <div class="card-info">
-      <div class="title">{{ getFirst?.name }}</div>
-      <div class="link">{{ content.updatedAt | date: 'medium' }}</div>
-    </div>
-    <div class="card-action">
-      <button type="button" name="options" #action [matMenuTriggerFor]="menu">
-        <mat-icon>more_vert</mat-icon>
-        <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
-      </button>
-      <mat-menu
-        #menu="matMenu"
-        appLazyTheme
-        themeClass="menu"
-        attributeName="panelClass"
-        [element]="menu"
-      >
-        <button mat-menu-item type="button" name="review" (click)="openModal(getFirst)">
-          <mat-icon>wysiwyg</mat-icon>
-          <span>{{ 'innerNote.menu.review' | translate }}</span>
+    <div *ngIf="!isEmpty" class="card-body">
+      <div class="card-info">
+        <div class="title">{{ getFirst?.name }}</div>
+        <div class="link">{{ content.updatedAt | date: 'medium' }}</div>
+      </div>
+      <div class="card-action">
+        <button type="button" name="options" #action [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+          <div class="ripple-container" matRipple [matRippleTrigger]="action"></div>
         </button>
-        <button mat-menu-item type="button" name="download" (click)="exportDocuments(content)">
-          <mat-icon>download</mat-icon>
-          <span>{{ 'innerNote.menu.download' | translate }}</span>
-        </button>
-        <button
-          *ngIf="!isReadOnlyMode"
-          mat-menu-item
-          type="button"
-          name="delete"
-          (click)="deleteContentEvent.emit(content.id)"
+        <mat-menu
+          #menu="matMenu"
+          appLazyTheme
+          themeClass="menu"
+          attributeName="panelClass"
+          [element]="menu"
         >
-          <mat-icon>delete</mat-icon>
-          <span>{{ 'innerNote.menu.delete' | translate }}</span>
-        </button>
-      </mat-menu>
+          <button mat-menu-item type="button" name="review" (click)="openModal(getFirst)">
+            <mat-icon>wysiwyg</mat-icon>
+            <span>{{ 'innerNote.menu.review' | translate }}</span>
+          </button>
+          <button mat-menu-item type="button" name="download" (click)="exportDocuments(content)">
+            <mat-icon>download</mat-icon>
+            <span>{{ 'innerNote.menu.download' | translate }}</span>
+          </button>
+          <button
+            *ngIf="!isReadOnlyMode"
+            mat-menu-item
+            type="button"
+            name="delete"
+            (click)="deleteContentEvent.emit(content.id)"
+          >
+            <mat-icon>delete</mat-icon>
+            <span>{{ 'innerNote.menu.delete' | translate }}</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
-  </div>
-  <div *ngIf="content.isLoading" class="spinner-container">
-    <app-spinner [size]="16"></app-spinner>
+    <div *ngIf="content.isLoading" class="spinner-container">
+      <app-spinner [size]="16"></app-spinner>
+    </div>
   </div>
 </div>

@@ -6,11 +6,9 @@
   (mouseleave)="mouseLeave($event)"
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
-  <div class="icon-container">
-    <div *ngIf="isMouseOver" class="drag-handler">
-      <ng-content></ng-content>
-    </div>
-  </div>
+  <app-drag-drop-handler-container [isShow]="isMouseOver"
+    ><ng-content></ng-content
+  ></app-drag-drop-handler-container>
   <div class="check-list">
     <div class="checkbox-container inner-box-list">
       <mat-checkbox

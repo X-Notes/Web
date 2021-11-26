@@ -1,0 +1,17 @@
+<button
+  (click)="clickEvent.emit()"
+  appTheme
+  class="button"
+  [ngClass]="classes"
+  type="button"
+  name="options"
+  #buttonTemplate
+  [disabled]="disabled"
+  [CustomTooltip]="tooltip"
+  position="{{position}}"
+>
+  <div class="icon" [ngClass]="iconClasses" [ngStyle]="{'color': isActive ? activeColor : ''}">
+    <mat-icon [ngClass]="matIconClasses" [inline]="inline">{{button}}</mat-icon>
+  </div>
+  <div class="ripple-container" matRipple [matRippleTrigger]="buttonTemplate"></div>
+</button>

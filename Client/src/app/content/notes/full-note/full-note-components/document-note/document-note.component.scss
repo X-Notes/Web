@@ -8,14 +8,7 @@
   
 .document-content {
     display: flex;
-    width: 100%;
-    .icon-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30px;
-    }
-    
+    width: 100%;    
     .spinner-container{
         position: relative;
         display: flex;

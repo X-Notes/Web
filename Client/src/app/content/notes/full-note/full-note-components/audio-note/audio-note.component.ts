@@ -10,8 +10,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { AudioService } from '../../../audio.service';
 import { ExportService } from '../../../export.service';
@@ -66,8 +64,6 @@ export class AudioNoteComponent
 
   formats = TypeUploadFormats.audios;
 
-  namePlaylistChanged: Subject<string> = new Subject<string>();
-
   constructor(
     private audioService: AudioService,
     private exportService: ExportService,
@@ -87,14 +83,7 @@ export class AudioNoteComponent
     this.destroy.complete();
   }
 
-  ngOnInit(): void {
-    this.namePlaylistChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => {
-        this.content.name = name;
-        this.changeTitleEvent.emit(name);
-      });
-  }
+  ngOnInit(): void {}
 
   clickAudioHandler(audioId: string) {
     this.clickableContentService.set(ClickableSelectableEntities.Audio, audioId, this.content.id);
@@ -220,14 +209,17 @@ export class AudioNoteComponent
     return this.content;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
-  onTitleChangeInput($event) {
-    this.namePlaylistChanged.next($event.target.innerText);
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
   }
 
   // eslint-disable-next-line class-methods-use-this

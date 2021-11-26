@@ -1,0 +1,46 @@
+@import 'variables';
+
+.playlist-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  padding: 0.25rem 0.5rem 0 0.5rem;
+
+  .title {
+    position: relative;
+    display: flex;
+    flex: 1;
+    font-size: 0.875rem;
+
+    p {
+      outline: none;
+      @include text-overflow;
+    }
+
+    p:empty + .placeholder {
+      display: block;
+    }
+
+    .placeholder {
+      position: absolute;
+      top: 0;
+      display: none;
+      user-select: none;
+      pointer-events: none;
+      color: #7b7b7b;
+    }
+  }
+}
+
+.dark {
+  .title {
+    color: #dedede;
+  }
+}
+
+.light {
+  .title {
+    color: $text-color;
+  }
+}

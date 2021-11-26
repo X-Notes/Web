@@ -23,8 +23,8 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
 
   metadataParsed: Record<string, SafeUrl> = {
     duration: '',
-    imageUrl: ''
-  }
+    imageUrl: '',
+  };
 
   public positions = [
     new ConnectionPositionPair(
@@ -46,7 +46,9 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy))
       .subscribe(async (state) => {
         if (this.state?.id !== this.audioService.currentFile.fileId) {
-          this.metadataParsed = await this.audioService.getMetadata(this.audioService.currentFile.audioPath)
+          this.metadataParsed = await this.audioService.getMetadata(
+            this.audioService.currentFile.audioPath,
+          );
         }
         this.state = state;
       });
@@ -98,7 +100,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     let index = this.audioService.playlist.findIndex(
       (x) => x.fileId === this.audioService.currentFile.fileId,
     );
-    index = index + 1;
+    index += 1;
     if (this.audioService.playlist[index]) {
       const file = this.audioService.playlist[index];
       this.openFile(file);
@@ -111,7 +113,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     let index = this.audioService.playlist.findIndex(
       (x) => x.fileId === this.audioService.currentFile.fileId,
     );
-    index = index - 1;
+    index -= 1;
     if (this.audioService.playlist[index]) {
       const file = this.audioService.playlist[index];
       this.openFile(file);
@@ -120,7 +122,7 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isFirstPlaying() {
+  get isFirstPlaying() {
     return (
       this.audioService.playlist.findIndex(
         (x) => x.fileId === this.audioService.currentFile.fileId,
@@ -128,13 +130,25 @@ export class AudioControlsComponent implements OnInit, OnDestroy {
     );
   }
 
-  isLastPlaying() {
+  get isLastPlaying() {
     return (
       this.audioService.playlist.findIndex(
         (x) => x.fileId === this.audioService.currentFile.fileId,
       ) ===
       this.audioService.playlist.length - 1
     );
+  }
+
+  get volumeIcon(): string {
+    if (this.state?.currentVolume === 0) {
+      return 'volume_off';
+    }
+    if (this.state?.currentVolume < 0.5 && this.state?.currentVolume !== 0) {
+      return 'volume_down';
+    }
+    if (this.state?.currentVolume >= 0.5) {
+      return 'volume_up';
+    }
   }
 
   onSliderChangeEnd(change) {

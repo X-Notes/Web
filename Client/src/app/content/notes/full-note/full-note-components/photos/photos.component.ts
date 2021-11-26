@@ -80,6 +80,8 @@ export class PhotosComponent
 
   changeHeightSubject = new Subject<string>();
 
+  nameCollectionChanged: Subject<string> = new Subject<string>();
+
   changeSizeAlbumHalder = combineLatest([this.changeWidthSubject, this.changeHeightSubject]);
 
   constructor(
@@ -121,6 +123,10 @@ export class PhotosComponent
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
+  }
+
+  onTitleChangeInput($event) {
+    this.nameCollectionChanged.next($event.target.innerText);
   }
 
   clickPhotoHandler(photoId: string) {
@@ -332,9 +338,13 @@ export class PhotosComponent
     return this.host;
   }
 
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

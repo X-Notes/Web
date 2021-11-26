@@ -14,8 +14,6 @@ import {
 
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Subject } from 'rxjs';
-import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
-import { debounceTime, takeUntil } from 'rxjs/operators';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
@@ -88,8 +86,6 @@ export class VideoNoteComponent
 
   destroy = new Subject<void>();
 
-  titleCollectionChanged: Subject<string> = new Subject<string>();
-
   constructor(
     private exportService: ExportService,
     private clickableContentService: ClickableContentService,
@@ -109,18 +105,12 @@ export class VideoNoteComponent
     this.translate = width;
   };
 
-  onTitleChangeInput($event) {
-    this.titleCollectionChanged.next($event.target.innerText);
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
   }
 
-  ngOnInit(): void {
-    this.titleCollectionChanged
-      .pipe(takeUntil(this.destroy), debounceTime(updateNoteContentDelay))
-      .subscribe((name) => {
-        this.content.name = name;
-        this.changeTitleEvent.emit(name);
-      });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     const { nativeElement } = this.videoElement;
@@ -136,6 +126,18 @@ export class VideoNoteComponent
       await document.exitPictureInPicture();
     }
   };
+
+  get volumeIcon(): string {
+    if (this.video?.volume === 0) {
+      return 'volume_off';
+    }
+    if (this.video?.volume < 0.5 && this.video?.volume !== 0) {
+      return 'volume_down';
+    }
+    if (this.video?.volume >= 0.5) {
+      return 'volume_up';
+    }
+  }
 
   togglePlay() {
     this.isPlaying = this.video.paused;
@@ -379,11 +381,13 @@ export class VideoNoteComponent
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseEnter = ($event: any) => {};
+  mouseEnter = ($event: any) => {
+    this.isMouseOver = true;
+  };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  mouseOut = ($event: any) => {};
+  mouseLeave = ($event: any) => {
+    this.isMouseOver = false;
+  };
 
   // eslint-disable-next-line class-methods-use-this
   backspaceUp() {}

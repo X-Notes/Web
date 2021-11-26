@@ -15,6 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { MatSliderModule } from '@angular/material/slider';
+import { RouterModule } from '@angular/router';
+import { VirtualScrollerModule } from 'ngx-virtual-scroller';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DialogService } from './modal_components/dialog.service';
 import { ChangeColorComponent } from './modal_components/change-color/change-color.component';
 import { EditingLabelsNoteComponent } from './modal_components/editing-labels-note/editing-labels-note.component';
@@ -62,9 +65,7 @@ import { ManageMenuButtonsPipe } from './pipes/manage-menu-buttons.pipe';
 import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section-wrapper.component';
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
-import { RouterModule } from '@angular/router';
-import { VirtualScrollerModule } from 'ngx-virtual-scroller';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { ButtonCollectionComponent } from '../content/notes/full-note/ui-components/button-collection/button-collection.component';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     LeftSectionWrapperComponent,
     NavMenuItemComponent,
     NavProfileItemComponent,
+    ButtonCollectionComponent,
   ],
   imports: [
     CommonModule,
@@ -189,6 +191,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     NavProfileItemComponent,
     VirtualScrollerModule,
     DragDropModule,
+    ButtonCollectionComponent,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],
