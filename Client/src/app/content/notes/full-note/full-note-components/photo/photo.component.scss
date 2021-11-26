@@ -35,4 +35,13 @@
     top: 4px;
     right: 4px;
   }
+
+  &:hover{
+    app-button-collection {
+      opacity: 1;
+    }
+  }
+  app-button-collection {
+    opacity: 0;
+  }
 }

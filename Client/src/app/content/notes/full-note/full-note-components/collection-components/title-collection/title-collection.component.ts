@@ -20,7 +20,10 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
 
   @Input()
   isReadOnlyMode = false;
-  
+
+  @Input()
+  isShowButton = false;
+
   @Input()
   textContent = '';
 

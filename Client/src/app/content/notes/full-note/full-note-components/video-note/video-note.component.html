@@ -9,6 +9,7 @@
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="clickVideoHandler(null)"
       [menu]="menu"
+      [isShowButton]="isMouseOver"
     ></app-title-collection>
     <div
       #videowrapper
@@ -25,7 +26,6 @@
         (ended)="isPlaying = false"
         [src]="getMainVideo?.videoPath | getVideo: getMainVideo?.authorId"
       ></video>
-      <div class="controls-blur"></div>
       <div class="controls">
         <div class="progress slider-controls">
           <mat-slider
@@ -112,33 +112,31 @@
               disablecontrols
               [src]="item?.videoPath | getVideo: item?.authorId"
             ></video>
-            <div class="more-wrapper">
-              <app-button-collection
-                class="more-thumb-button"
-                [matMenuTriggerFor]="menu"
-                [button]="'more_vert'"
-                [classes]="'light-static'"
-                (clickEvent)="$event.stopPropagation()"
-              ></app-button-collection>
+            <app-button-collection
+              class="more-thumb-button"
+              [matMenuTriggerFor]="menu"
+              [button]="'more_vert'"
+              [classes]="'light-static'"
+              (clickEvent)="$event.stopPropagation()"
+            ></app-button-collection>
 
-              <mat-menu
-                #menu="matMenu"
-                appLazyTheme
-                themeClass="menu"
-                attributeName="panelClass"
-                [element]="menu"
+            <mat-menu
+              #menu="matMenu"
+              appLazyTheme
+              themeClass="menu"
+              attributeName="panelClass"
+              [element]="menu"
+            >
+              <button
+                (click)="deleteVideoEvent.emit(item.fileId)"
+                mat-menu-item
+                type="button"
+                name="delete"
               >
-                <button
-                  (click)="deleteVideoEvent.emit(item.fileId)"
-                  mat-menu-item
-                  type="button"
-                  name="delete"
-                >
-                  <mat-icon>delete</mat-icon>
-                  <span>{{ 'innerNote.menu.delete' | translate }}</span>
-                </button>
-              </mat-menu>
-            </div>
+                <mat-icon>delete</mat-icon>
+                <span>{{ 'innerNote.menu.delete' | translate }}</span>
+              </button>
+            </mat-menu>
           </div>
           <div class="video-title">
             <p>{{ item.name }}</p>
@@ -186,6 +184,7 @@
   (change)="uploadAudios($event)"
 />
 
+<!-- Collection menu -->
 <mat-menu
   #menu="matMenu"
   appLazyTheme

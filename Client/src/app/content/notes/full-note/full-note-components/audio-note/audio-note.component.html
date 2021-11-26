@@ -13,6 +13,7 @@
       (changeTitleEvent)="onTitleChangeInput($event)"
       (clickInputEvent)="clickAudioHandler(null)"
       [menu]="menu"
+      [isShowButton]="isMouseOver"
     ></app-title-collection>
     <ng-container *ngIf="!isEmpty">
       <app-audio

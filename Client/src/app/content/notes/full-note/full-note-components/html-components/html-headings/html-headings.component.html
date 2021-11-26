@@ -16,12 +16,14 @@
   <app-drag-drop-handler-container [isShow]="isMouseOver"
     ><ng-content></ng-content
   ></app-drag-drop-handler-container>
-  <p
-    #contentHtml
-    class="block-generic"
-    [attr.contenteditable]="!isReadOnlyMode"
-    (input)="onInput($event)"
-    [textContent]="content?.content"
-  ></p>
-  <p class="no-content" *ngIf="isActive">Heading</p>
+  <div class="text-content">
+    <p
+      #contentHtml
+      class="block-generic"
+      [attr.contenteditable]="!isReadOnlyMode"
+      (input)="onInput($event)"
+      [textContent]="content?.content"
+    ></p>
+    <p class="no-content" *ngIf="isActive">Heading todo add translate</p>
+  </div>
 </div>

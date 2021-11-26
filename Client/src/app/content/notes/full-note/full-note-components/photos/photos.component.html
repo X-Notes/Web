@@ -17,6 +17,7 @@
         (changeTitleEvent)="onTitleChangeInput($event)"
         (clickInputEvent)="clickPhotoHandler(null)"
         [menu]="menu"
+        [isShowButton]="isMouseOver"
       ></app-title-collection>
       <div
         *ngFor="let block of mainBlocks;let i = index"
