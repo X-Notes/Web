@@ -66,6 +66,7 @@ import { LeftSectionWrapperComponent } from './left-section-wrapper/left-section
 import { NavMenuItemComponent } from './left-section-components/nav-menu-item/nav-menu-item.component';
 import { NavProfileItemComponent } from './left-section-components/nav-profile-item/nav-profile-item.component';
 import { ButtonCollectionComponent } from '../content/notes/full-note/ui-components/button-collection/button-collection.component';
+import { DropDirective } from '../content/profile/drop/drop.directive';
 
 @NgModule({
   declarations: [
@@ -115,6 +116,7 @@ import { ButtonCollectionComponent } from '../content/notes/full-note/ui-compone
     NavMenuItemComponent,
     NavProfileItemComponent,
     ButtonCollectionComponent,
+    DropDirective,
   ],
   imports: [
     CommonModule,
@@ -192,6 +194,7 @@ import { ButtonCollectionComponent } from '../content/notes/full-note/ui-compone
     VirtualScrollerModule,
     DragDropModule,
     ButtonCollectionComponent,
+    DropDirective,
   ],
   providers: [DialogService, OrderService, BackgroundService],
   entryComponents: [TooltipComponent],

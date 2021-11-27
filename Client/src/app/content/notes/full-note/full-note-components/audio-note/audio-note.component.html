@@ -1,8 +1,10 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="audio-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
   <div
+    [appDrop]="'drop-active'"
+    (fileDropped)="uploadAudios($event)"
     class="playlist"
     appTheme
     [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
@@ -40,7 +42,7 @@
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadAudios($event)"
+  (change)="uploadAudios($event.target.files)"
 />
 <mat-menu
   #menu="matMenu"

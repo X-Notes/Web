@@ -7,7 +7,7 @@
   [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
 >
   <app-drag-drop-handler-container [isShow]="isMouseOver"
-    ><ng-content></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
   <div class="text-content">
     <p

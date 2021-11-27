@@ -26,6 +26,7 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
+import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -37,6 +38,8 @@ export class PhotosComponent
   @ViewChild('album') albumChild: ElementRef;
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
+
+  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
   @Input()
   noteId: string;
@@ -118,8 +121,7 @@ export class PhotosComponent
     this.uploadPhoto.nativeElement.click();
   };
 
-  async uploadImages(event) {
-    const files = event.target.files as File[];
+  async uploadImages(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
@@ -283,15 +285,12 @@ export class PhotosComponent
   };
 
   isFocusToNext(entity: SetFocus) {
-    if (entity.itemId) {
-      if (entity.status === FocusDirection.Up) {
-        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-        return index === 0;
-      }
-      if (entity.status === FocusDirection.Down) {
-        const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-        return index === this.content.photos.length - 1;
-      }
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.photos.length - 1;
     }
     return false;
   }
@@ -301,14 +300,20 @@ export class PhotosComponent
 
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.photos.findIndex((x) => x.fileId === entity.itemId);
-      this.clickPhotoHandler(this.content.photos[index - 1].fileId);
-      (document.activeElement as HTMLInputElement).blur();
+      if (index === 0) {
+        this.titleComponent.focusOnTitle();
+        this.clickPhotoHandler(null);
+      } else {
+        this.clickPhotoHandler(this.content.photos[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
       return;
     }
 
     if (entity.status === FocusDirection.Up) {
       this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
     }
 
     if (entity.status === FocusDirection.Down && isExist) {
@@ -319,8 +324,14 @@ export class PhotosComponent
     }
 
     if (entity.status === FocusDirection.Down) {
-      this.clickPhotoHandler(this.content.photos[0].fileId);
-      (document.activeElement as HTMLInputElement).blur();
+      if (this.titleComponent.isFocusedOnTitle) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickPhotoHandler(this.content.photos[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleComponent.focusOnTitle();
+        this.clickPhotoHandler(null);
+      }
     }
   };
 

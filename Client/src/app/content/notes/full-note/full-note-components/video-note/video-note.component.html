@@ -1,8 +1,8 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="video-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
-  <div class="playlist" appTheme>
+  <div class="playlist" appTheme [appDrop]="'drop-active'" (fileDropped)="uploadVideos($event)">
     <app-title-collection
       [isReadOnlyMode]="isReadOnlyMode"
       [textContent]="content?.name"
@@ -113,6 +113,7 @@
               [src]="item?.videoPath | getVideo: item?.authorId"
             ></video>
             <app-button-collection
+              *ngIf="!isReadOnlyMode"
               class="more-thumb-button"
               [matMenuTriggerFor]="menu"
               [button]="'more_vert'"
@@ -181,7 +182,7 @@
   multiple
   [accept]="formats"
   hidden="true"
-  (change)="uploadAudios($event)"
+  (change)="uploadVideos($event.target.files)"
 />
 
 <!-- Collection menu -->
@@ -207,6 +208,7 @@
     <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
   </button>
   <button
+    *ngIf="!isReadOnlyMode"
     (click)="deleteContentEvent.emit(this.content.id)"
     mat-menu-item
     type="button"

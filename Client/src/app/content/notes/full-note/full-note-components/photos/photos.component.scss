@@ -14,7 +14,6 @@
     position: relative;
     display: flex;
     border-radius: 5px;
-    margin-top: 0.625rem;
     min-height: 150px;
     width: 100%;
 
@@ -118,5 +117,9 @@
       align-items: center;
       height: 38px;
     }
+  }
+
+  .drop-active{
+    outline: 1px solid white;
   }
 }

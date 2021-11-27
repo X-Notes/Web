@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
@@ -9,6 +18,8 @@ import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
   styleUrls: ['./title-collection.component.scss'],
 })
 export class TitleCollectionComponent implements OnInit, OnDestroy {
+  @ViewChild('titleHtml') titleHtml: ElementRef;
+
   @Output()
   changeTitleEvent = new EventEmitter<string>();
 
@@ -46,5 +57,13 @@ export class TitleCollectionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy.next();
     this.destroy.complete();
+  }
+
+  focusOnTitle() {
+    this.titleHtml.nativeElement.focus();
+  }
+
+  get isFocusedOnTitle(): boolean {
+    return document.activeElement === this.titleHtml.nativeElement;
   }
 }

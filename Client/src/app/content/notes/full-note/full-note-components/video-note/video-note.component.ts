@@ -23,6 +23,7 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
+import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 
 @Component({
   selector: 'app-video-note',
@@ -40,8 +41,8 @@ export class VideoNoteComponent
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
 
-  @ViewChild('titleHtml') titleHtml: ElementRef;
-
+  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
+  
   @Input()
   content: VideosCollection;
 
@@ -210,10 +211,8 @@ export class VideoNoteComponent
 
   isClicked = (itemId: string) => this.clickableContentService.isClicked(itemId);
 
-  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
-
   isFocusToNext(entity: SetFocus) {
-    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
     }
     if (entity.status === FocusDirection.Down) {
@@ -224,12 +223,13 @@ export class VideoNoteComponent
   }
 
   setFocus = (entity?: SetFocus) => {
-    const isExist = this.content.videos.some((x) => x.fileId === entity.itemId);
+    const isExist = this.content.videos.some((x) => x.fileId === entity?.itemId);
 
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
+      console.log(index);
       if (index === 0) {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickVideoHandler(null);
       } else {
         this.clickVideoHandler(this.content.videos[index - 1].fileId);
@@ -252,12 +252,12 @@ export class VideoNoteComponent
     }
 
     if (entity.status === FocusDirection.Down) {
-      if (this.isTitleFocused()) {
+      if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
         this.clickVideoHandler(this.content.videos[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickVideoHandler(null);
       }
     }
@@ -333,8 +333,7 @@ export class VideoNoteComponent
     this.indexVideo = index;
   }
 
-  async uploadAudios(event) {
-    const files = event.target.files as File[];
+  async uploadVideos(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }

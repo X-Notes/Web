@@ -1,8 +1,13 @@
 <div (mouseover)="mouseEnter($event)" (mouseleave)="mouseLeave($event)" class="photo-content">
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
-    ><ng-content></ng-content
+    ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
-  <div class="photo-container" appTheme>
+  <div
+    class="photo-container"
+    appTheme
+    [appDrop]="'drop-active'"
+    (fileDropped)="uploadImages($event)"
+  >
     <div
       *ngIf="!isEmpty"
       #album
@@ -80,7 +85,7 @@
   multiple
   accept="image/jpeg,image/png"
   hidden="true"
-  (change)="uploadImages($event)"
+  (change)="uploadImages($event.target.files)"
 />
 
 <!-- PHOTO MENU -->

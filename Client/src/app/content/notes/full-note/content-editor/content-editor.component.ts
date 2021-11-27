@@ -19,6 +19,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { updateNoteContentDelay } from 'src/app/core/defaults/bounceDelay';
 import { UserStore } from 'src/app/core/stateUser/user-state';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
+import { CdkDragDrop, CdkDragEnd, CdkDragStart, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiBrowserTextService } from '../../api-browser-text.service';
 import {
   BaseText,
@@ -48,14 +49,12 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-content-editor',
   templateUrl: './content-editor.component.html',
   styleUrls: ['./content-editor.component.scss'],
   providers: [ContentEditableService],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, OnDestroy {
   @ViewChildren('htmlComp') elements: QueryList<ParentInteraction>;
@@ -249,8 +248,16 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   drop(event: CdkDragDrop<ContentModel[]>) {
-    console.log('TODO drop');
     moveItemInArray(this.contents, event.previousIndex, event.currentIndex);
+    this.postAction();
+  }
+
+  dragStarted(event: CdkDragStart) {
+    console.log(event);
+  }
+
+  dragEnded(event: CdkDragEnd) {
+    console.log(event);
   }
 
   postAction(): void {

@@ -21,6 +21,7 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 
 @Component({
   selector: 'app-audio-note',
@@ -30,8 +31,6 @@ import { ClickableSelectableEntities } from '../../content-editor-services/click
 export class AudioNoteComponent
   extends CollectionService
   implements ParentInteraction, OnInit, OnDestroy {
-  @ViewChild('titleHtml') titleHtml: ElementRef;
-
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
@@ -45,6 +44,8 @@ export class AudioNoteComponent
 
   @Output()
   uploadEvent = new EventEmitter<UploadFileToEntity>();
+
+  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
 
   @Input()
   isReadOnlyMode = false;
@@ -99,8 +100,7 @@ export class AudioNoteComponent
     this.uploadAudiosRef.nativeElement.click();
   };
 
-  async uploadAudios(event) {
-    const files = event.target.files as File[];
+  async uploadAudios(files: File[]) {
     if (files?.length > 0) {
       this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
     }
@@ -145,10 +145,8 @@ export class AudioNoteComponent
     this.deleteAudioEvent.emit(audioId);
   }
 
-  isTitleFocused = (): boolean => document.activeElement === this.titleHtml.nativeElement;
-
   isFocusToNext(entity: SetFocus) {
-    if (entity.status === FocusDirection.Up && this.isTitleFocused()) {
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
       return true;
     }
     if (entity.status === FocusDirection.Down) {
@@ -164,7 +162,7 @@ export class AudioNoteComponent
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.audios.findIndex((x) => x.fileId === entity.itemId);
       if (index === 0) {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       } else {
         this.clickAudioHandler(this.content.audios[index - 1].fileId);
@@ -187,12 +185,12 @@ export class AudioNoteComponent
     }
 
     if (entity.status === FocusDirection.Down) {
-      if (this.isTitleFocused()) {
+      if (this.titleComponent.isFocusedOnTitle) {
         // eslint-disable-next-line prefer-destructuring
         this.clickAudioHandler(this.content.audios[0].fileId);
         (document.activeElement as HTMLInputElement).blur();
       } else {
-        this.titleHtml.nativeElement.focus();
+        this.titleComponent.focusOnTitle();
         this.clickAudioHandler(null);
       }
     }
