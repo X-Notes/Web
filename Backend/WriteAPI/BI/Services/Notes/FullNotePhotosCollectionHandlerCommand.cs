@@ -216,7 +216,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var photos = dbFiles.Select(x => new PhotoNoteDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId)).ToList();
+                    var photos = dbFiles.Select(x => new PhotoNoteDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId, x.CreatedAt)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

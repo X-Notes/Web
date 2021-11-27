@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Common.DatabaseModels.Models.History;
 using Common.DatabaseModels.Models.NoteContent.FileContent;
 using Common.DatabaseModels.Models.Users;
+using Common.Interfaces;
 
 namespace Common.DatabaseModels.Models.Files
 {
     [Table(nameof(AppFile), Schema = SchemeConfig.File)]
-    public class AppFile : BaseEntity<Guid>
+    public class AppFile : BaseEntity<Guid>, IDateCreator
     {
         public string PathPhotoSmall { set; get; }
         public string PathPhotoMedium { set; get; }
@@ -49,6 +50,8 @@ namespace Common.DatabaseModels.Models.Files
         public List<NoteSnapshot> NoteSnapshots { set; get; }
         public List<SnapshotFileContent> SnapshotFileContents { set; get; }
 
+        public DateTimeOffset CreatedAt { set; get; }
+
         public AppFile()
         {
 
@@ -63,6 +66,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+            CreatedAt = DateTimeOffset.UtcNow;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -80,6 +84,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = fileTypeId;
             UserId = userId;
             Name = name;
+            CreatedAt = DateTimeOffset.UtcNow;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -93,6 +98,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+            CreatedAt = DateTimeOffset.UtcNow;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }
@@ -108,6 +114,7 @@ namespace Common.DatabaseModels.Models.Files
             FileTypeId = appFile.FileTypeId;
             UserId = userId;
             Name = appFile.Name;
+            CreatedAt = DateTimeOffset.UtcNow;
 
             AppFileUploadInfo = new AppFileUploadInfo().SetUnLinked();
         }

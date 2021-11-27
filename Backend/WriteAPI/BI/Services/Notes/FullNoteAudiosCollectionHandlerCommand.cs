@@ -190,7 +190,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId)).ToList();
+                    var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

@@ -44,6 +44,8 @@ import { ContentEditorMomentoStateService } from './content-editor-services/cont
 import { DragDropHandlerComponent } from './ui-components/drag-drop-handler/drag-drop-handler.component';
 import { TitleCollectionComponent } from './full-note-components/collection-components/title-collection/title-collection.component';
 import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-handler-container/drag-drop-handler-container.component';
+import { DocumentItemComponent } from './full-note-components/document-item/document-item.component';
+import { CollectionService } from './full-note-components/collection-services/collection.service';
 
 @NgModule({
   declarations: [
@@ -76,6 +78,7 @@ import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-han
     DragDropHandlerComponent,
     TitleCollectionComponent,
     DragDropHandlerContainerComponent,
+    DocumentItemComponent,
   ],
   exports: [
     LeftSectionContentNotesListComponent,
@@ -96,6 +99,7 @@ import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-han
     ContentEditorVideosCollectionService,
     ContentEditorTextService,
     ContentEditorMomentoStateService,
+    CollectionService
   ],
   imports: [CommonModule, SharedModule, FullNoteRouting],
 })

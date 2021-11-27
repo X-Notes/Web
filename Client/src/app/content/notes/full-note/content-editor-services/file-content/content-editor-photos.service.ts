@@ -102,6 +102,7 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
           false,
           x.name,
           x.authorId,
+          x.uploadAt,
         ),
     );
     const prev = prevCollection.photos ?? [];

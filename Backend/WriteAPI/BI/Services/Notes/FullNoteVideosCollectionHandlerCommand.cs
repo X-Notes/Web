@@ -206,7 +206,7 @@ namespace BI.Services.Notes
 
                     await transaction.CommitAsync();
 
-                    var videos = dbFiles.Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId)).ToList();
+                    var videos = dbFiles.Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);

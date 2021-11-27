@@ -204,7 +204,7 @@ namespace BI.Services.Notes
                     
                     await transaction.CommitAsync();
 
-                    var documents = dbFiles.Select(x => new DocumentNoteDTO(x.Name, x.PathNonPhotoContent, x.Id, x.UserId)).ToList();
+                    var documents = dbFiles.Select(x => new DocumentNoteDTO(x.Name, x.PathNonPhotoContent, x.Id, x.UserId, x.CreatedAt)).ToList();
 
                     historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
                     await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
