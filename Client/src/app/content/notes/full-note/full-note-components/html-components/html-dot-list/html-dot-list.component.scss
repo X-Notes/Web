@@ -21,6 +21,11 @@
     position: relative;
     display: flex;
     flex-grow: 1;
+
+    .no-content-list{
+      font-size: 1.125rem;
+      margin-left: 0.25rem;
+    }
   }
 }
 
