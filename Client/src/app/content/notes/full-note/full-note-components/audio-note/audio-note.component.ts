@@ -16,7 +16,6 @@ import { ExportService } from '../../../export.service';
 import { AudioModel, ContentModel, AudiosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
-import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
@@ -34,24 +33,7 @@ export class AudioNoteComponent
   @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deleteAudioEvent = new EventEmitter<string>();
-
-  @Output()
-  changeTitleEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFileToEntity>();
-
-  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;

@@ -362,6 +362,12 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     }
   }
 
+  uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
+    await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler($event, noteId);
+    this.postAction();
+  };
+
+
   // AUDIOS
   async changeAudiosCollectionName(contentId: string, noteId: string, name: string) {
     await this.contentEditorPlaylistService.changeAudiosCollectionName(contentId, noteId, name);

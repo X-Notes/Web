@@ -137,7 +137,7 @@
     mat-menu-item
     type="button"
     name="Delete"
-    (click)="deleteContentHandler()"
+    (click)="deleteContentEvent.emit(content.id)"
   >
     <mat-icon>delete</mat-icon>
     <span> {{ 'innerNote.photoMenu.delete' | translate }} </span>

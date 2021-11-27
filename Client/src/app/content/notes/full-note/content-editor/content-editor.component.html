@@ -176,6 +176,7 @@
           [isReadOnlyMode]="isReadOnlyMode"
           (deleteContentEvent)="deleteDocumentsCollection($event)"
           (deleteDocumentEvent)="contentEditorDocumentsService.deleteDocumentHandler($event, item.id, note.id)"
+          (uploadEvent)="uploadDocumentsToCollectionHandler($event, note.id)"
           ><app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
         ></app-document-note>
         <div *ngSwitchDefault>Default</div>

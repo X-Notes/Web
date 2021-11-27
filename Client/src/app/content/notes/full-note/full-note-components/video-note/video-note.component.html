@@ -177,7 +177,7 @@
 <!-- Additional -->
 
 <input
-  #uploadAudiosRef
+  #uploadVideosRef
   type="file"
   multiple
   [accept]="formats"
@@ -197,7 +197,7 @@
     *ngIf="!isReadOnlyMode"
     mat-menu-item
     type="button"
-    name="add new audio"
+    name="add new video"
     (click)="uploadHandler()"
   >
     <mat-icon>video_library</mat-icon>

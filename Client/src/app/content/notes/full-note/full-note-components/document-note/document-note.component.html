@@ -2,30 +2,32 @@
   <app-drag-drop-handler-container [isShow]="isMouseOver" [classes]="'mt-20'"
     ><ng-content *ngIf="!isReadOnlyMode"></ng-content
   ></app-drag-drop-handler-container>
+
   <div
-    class="card"
+    [appDrop]="'drop-active'"
+    (fileDropped)="uploadDocuments($event)"
+    class="playlist"
     appTheme
-    (click)="clickDocumentHandler(getFirst)"
-    [ngClass]="{'is-selected' : isClicked}"
     [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
   >
-    <div class="preview">
-      <div class="icon">
-        <mat-icon [svgIcon]="documentIcon()" [inline]="true"></mat-icon>
-      </div>
-    </div>
-    <div *ngIf="!isEmpty" class="card-body">
-      <div class="card-info">
-        <div class="title">{{ getFirst?.name }}</div>
-        <div class="link">{{ content.updatedAt | date: 'medium' }}</div>
-      </div>
-      <div class="card-action">
-        <app-button-collection
-          [matMenuTriggerFor]="menu"
-          [button]="'more_vert'"
-        ></app-button-collection>
-      </div>
-    </div>
+    <app-title-collection
+      [isReadOnlyMode]="isReadOnlyMode"
+      [textContent]="content?.name"
+      (changeTitleEvent)="onTitleChangeInput($event)"
+      (clickInputEvent)="clickDocumentHandler(null)"
+      [menu]="menu"
+      [isShowButton]="isMouseOver"
+    ></app-title-collection>
+    <ng-container *ngIf="!isEmpty">
+      <app-document-item
+        *ngFor="let item of content.documents;"
+        [document]="item"
+        [isReadOnlyMode]="isReadOnlyMode"
+        (deleteDocument)="deleteDocumentHandler($event)"
+        (exportAudio)="exportDocument($event)"
+        (clickEvent)="clickDocumentHandler($event)"
+      ></app-document-item>
+    </ng-container>
     <div *ngIf="content.isLoading" class="spinner-container">
       <app-spinner [size]="16"></app-spinner>
     </div>
@@ -33,6 +35,15 @@
 </div>
 
 <!-- ADDITIONAL -->
+<input
+  #uploadRef
+  type="file"
+  multiple
+  [accept]="formats"
+  hidden="true"
+  (change)="uploadDocuments($event.target.files)"
+/>
+
 <mat-menu
   #menu="matMenu"
   appLazyTheme
@@ -40,13 +51,19 @@
   attributeName="panelClass"
   [element]="menu"
 >
-  <button mat-menu-item type="button" name="review" (click)="openModal(getFirst)">
-    <mat-icon>wysiwyg</mat-icon>
-    <span>{{ 'innerNote.menu.review' | translate }}</span>
+  <button
+    *ngIf="!isReadOnlyMode"
+    mat-menu-item
+    type="button"
+    name="add new audio"
+    (click)="uploadHandler()"
+  >
+    <mat-icon>library_music</mat-icon>
+    <span>{{ 'innerNote.menu.add' | translate }}</span>
   </button>
-  <button mat-menu-item type="button" name="download" (click)="exportDocuments(content)">
+  <button mat-menu-item type="button" name="Download" (click)="exportDocuments(content)">
     <mat-icon>download</mat-icon>
-    <span>{{ 'innerNote.menu.download' | translate }}</span>
+    <span> {{ 'innerNote.photoMenu.download' | translate }} </span>
   </button>
   <button
     *ngIf="!isReadOnlyMode"

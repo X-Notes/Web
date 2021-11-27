@@ -37,35 +37,18 @@ export class VideoNoteComponent
 
   @ViewChild('videowrapper') videoWrapper: ElementRef<HTMLElement>;
 
-  @ViewChild('uploadAudiosRef') uploadAudiosRef: ElementRef;
+  @ViewChild('uploadVideosRef') uploadVideosRef: ElementRef;
 
   @ViewChild('videoPlaylist') videoPlaylist: ElementRef;
-
-  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
   
   @Input()
   content: VideosCollection;
 
   @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
-
-  @Input()
   theme: ThemeENUM;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deleteVideoEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFileToEntity>();
-
-  @Output()
-  changeTitleEvent = new EventEmitter<string>();
 
   video: HTMLVideoElement;
 
@@ -287,7 +270,7 @@ export class VideoNoteComponent
   }
 
   uploadHandler = () => {
-    this.uploadAudiosRef.nativeElement.click();
+    this.uploadVideosRef.nativeElement.click();
   };
 
   // may is need in further

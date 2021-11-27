@@ -6,48 +6,39 @@ import {
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { DialogsManageService } from 'src/app/content/navigation/dialogs-manage.service';
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { DocumentModel, DocumentsCollection } from '../../../models/content-model.model';
-import {
-  docFormats,
-  excelFormats,
-  pdfFormats,
-  presentationFormats,
-} from '../../models/enums/type-upload-formats.enum';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
-import { SetFocus } from '../../models/set-focus';
+import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
+import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 
 @Component({
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
-  styleUrls: ['../styles/inner-card.scss', './document-note.component.scss'],
+  styleUrls: ['./document-note.component.scss'],
 })
 export class DocumentNoteComponent extends CollectionService implements OnInit, ParentInteraction {
-  @Output()
-  deleteContentEvent = new EventEmitter<string>();
+  @ViewChild('uploadRef') uploadRef: ElementRef;
 
   @Output()
   deleteDocumentEvent = new EventEmitter<string>();
-
+  
   @Input()
   content: DocumentsCollection;
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;
 
   themeE = ThemeENUM;
+
+  formats = TypeUploadFormats.documents;
 
   constructor(
     private dialogsManageService: DialogsManageService,
@@ -59,19 +50,59 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     super(cdr);
   }
 
-  clickDocumentHandler(document: DocumentModel) {
-    this.clickableService.set(
-      ClickableSelectableEntities.Document,
-      document.fileId,
-      this.content.id,
-    );
+  clickDocumentHandler(documentId: string) {
+    this.clickableService.set(ClickableSelectableEntities.Document, documentId, this.content.id);
   }
 
-  isFocusToNext = (entity: SetFocus) => true;
+  isFocusToNext(entity: SetFocus) {
+    if (entity.status === FocusDirection.Up && this.titleComponent.isFocusedOnTitle) {
+      return true;
+    }
+    if (entity.status === FocusDirection.Down) {
+      const index = this.content.documents.findIndex((x) => x.fileId === entity.itemId);
+      return index === this.content.documents.length - 1;
+    }
+    return false;
+  }
 
   setFocus = (entity?: SetFocus) => {
-    this.clickDocumentHandler(this.getFirst);
-    (document.activeElement as HTMLInputElement).blur();
+    const isExist = this.content.documents.some((x) => x.fileId === entity.itemId);
+
+    if (entity.status === FocusDirection.Up && isExist) {
+      const index = this.content.documents.findIndex((x) => x.fileId === entity.itemId);
+      if (index === 0) {
+        this.titleComponent.focusOnTitle();
+        this.clickDocumentHandler(null);
+      } else {
+        this.clickDocumentHandler(this.content.documents[index - 1].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      }
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up) {
+      this.clickDocumentHandler(this.content.documents[this.content.documents.length - 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down && isExist) {
+      const index = this.content.documents.findIndex((x) => x.fileId === entity.itemId);
+      this.clickDocumentHandler(this.content.documents[index + 1].fileId);
+      (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Down) {
+      if (this.titleComponent.isFocusedOnTitle) {
+        // eslint-disable-next-line prefer-destructuring
+        this.clickDocumentHandler(this.content.documents[0].fileId);
+        (document.activeElement as HTMLInputElement).blur();
+      } else {
+        this.titleComponent.focusOnTitle();
+        this.clickDocumentHandler(null);
+      }
+    }
   };
 
   setFocusToEnd = () => {};
@@ -88,34 +119,25 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     return this.content;
   }
 
-  async exportDocuments(documents: DocumentsCollection) {
-    await this.exportService.exportDocuments(documents);
-  }
-
   async exportDocument(document: DocumentModel) {
     await this.exportService.exportDocument(document);
   }
 
-  documentIcon() {
-    const type = this.content.name?.split('.').pop().toLowerCase();
+  deleteDocumentHandler(documentId: string) {
+    this.deleteDocumentEvent.emit(documentId);
+  }
 
-    if (docFormats.some((format) => format === type)) {
-      return 'microsoftWord';
-    }
+  onTitleChangeInput(name: string) {
+    this.content.name = name;
+    this.changeTitleEvent.emit(name);
+  }
 
-    if (excelFormats.some((format) => format === type)) {
-      return 'microsoftExcel';
-    }
+  uploadHandler = () => {
+    this.uploadRef.nativeElement.click();
+  };
 
-    if (presentationFormats.some((format) => format === type)) {
-      return 'microsoftPowerpoint';
-    }
-
-    if (pdfFormats.some((format) => format === type)) {
-      return 'pdf';
-    }
-
-    return 'fileInner';
+  async exportDocuments(documents: DocumentsCollection) {
+    await this.exportService.exportDocuments(documents);
   }
 
   get isClicked() {
@@ -135,9 +157,10 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
     return false;
   }
 
-  openModal(document: DocumentModel) {
-    const path = this.exportService.getPath(document.documentPath, document.authorId);
-    this.dialogsManageService.viewDock(path);
+  async uploadDocuments(files: File[]) {
+    if (files?.length > 0) {
+      this.uploadEvent.emit({ contentId: this.content.id, files: [...files] });
+    }
   }
 
   mouseEnter = ($event: any) => {

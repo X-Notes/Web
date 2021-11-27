@@ -19,14 +19,12 @@ import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { ExportService } from '../../../export.service';
 import { Photo, PhotosCollection } from '../../../models/content-model.model';
 import { ParentInteraction } from '../../models/parent-interaction.interface';
-import { UploadFileToEntity as UploadFilesToEntity } from '../../models/upload-files-to-entity';
 import { SelectionService } from '../../content-editor-services/selection.service';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ClickableContentService } from '../../content-editor-services/clickable-content.service';
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
-import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 @Component({
   selector: 'app-photos',
   templateUrl: './photos.component.html',
@@ -39,28 +37,14 @@ export class PhotosComponent
 
   @ViewChild('uploadPhotos') uploadPhoto: ElementRef;
 
-  @ViewChild(TitleCollectionComponent) titleComponent: TitleCollectionComponent;
-
   @Input()
   noteId: string;
 
   @Output()
-  deleteContentEvent = new EventEmitter<string>();
-
-  @Output()
   deletePhotoEvent = new EventEmitter<string>();
-
-  @Output()
-  uploadEvent = new EventEmitter<UploadFilesToEntity>();
 
   @Input()
   content: PhotosCollection;
-
-  @Input()
-  isReadOnlyMode = false;
-
-  @Input()
-  isSelected = false;
 
   @Input()
   theme: ThemeENUM;
@@ -111,10 +95,6 @@ export class PhotosComponent
 
   ngAfterViewInit(): void {
     this.mainContainer = this.elRef.nativeElement.parentElement.parentElement.parentElement.parentElement; // TODO PIZDEC REMOVE THIS
-  }
-
-  deleteContentHandler() {
-    this.deleteContentEvent.emit(this.content.id);
   }
 
   uploadHandler = () => {
