@@ -35,26 +35,6 @@ namespace WriteAPI.Controllers
             return await _mediator.Send(command);
         }
 
-        [HttpPost("upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<PhotoNoteDTO>>> UploadPhotosToCollection(List<IFormFile> photos, Guid id, Guid contentId, CancellationToken cancellationToken)
-        {
-            if (photos.Count == 0)
-            {
-                return new OperationResult<List<PhotoNoteDTO>>().SetNoAnyFile();
-            }
-
-            var results = photos.Select(photo => this.ValidateFile<List<PhotoNoteDTO>>(photo, SupportFileContentTypes.Photos));
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
-            {
-                return result;
-            }
-
-            var command = new UploadPhotosToCollectionCommand(id, contentId, photos);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command, cancellationToken);
-        }
-
         [HttpDelete("{noteId}/{contentId}/{photoId}")]
         public async Task<OperationResult<Unit>> RemovePhotoFromAlbum(Guid noteId, Guid contentId, Guid photoId)
         {
@@ -76,7 +56,6 @@ namespace WriteAPI.Controllers
             command.Email = this.GetUserEmail();
             return await _mediator.Send(command);
         }
-
 
         [HttpPost("transform")]
         public async Task<OperationResult<PhotosCollectionNoteDTO>> TransformToAlbum(TransformToPhotosCollectionCommand command)

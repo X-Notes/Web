@@ -23,7 +23,6 @@ namespace BI.Services.Notes
                 IRequestHandler<UnlinkAudiosCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<RemoveAudioFromCollectionCommand, OperationResult<Unit>>,
                 IRequestHandler<ChangeNameAudiosCollectionCommand, OperationResult<Unit>>,
-                IRequestHandler<UploadAudiosToCollectionCommand, OperationResult<List<AudioNoteDTO>>>,
                 IRequestHandler<TransformToAudiosCollectionCommand, OperationResult<AudiosCollectionNoteDTO>>,
                 IRequestHandler<UpdateAudiosContentsCommand, OperationResult<Unit>>
     {
@@ -139,74 +138,6 @@ namespace BI.Services.Notes
             return new OperationResult<Unit>().SetNoPermissions();
         }
 
-        public async Task<OperationResult<List<AudioNoteDTO>>> Handle(UploadAudiosToCollectionCommand request, CancellationToken cancellationToken)
-        {
-            // TODO
-            // 1. Handler when user upload many
-            // 2. User Memory
-
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
-            {
-                // PERMISSION MEMORY
-                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Audios.Sum(x => x.Length), permissions.Author.Id));
-                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
-                {
-                    return new OperationResult<List<AudioNoteDTO>>().SetNoEnougnMemory();
-                }
-
-                // FILE LOGIC
-                var filebytes = await request.Audios.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveAudiosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
-                    return new OperationResult<List<AudioNoteDTO>>().SetRequestCancelled();
-                }
-
-                // UPDATING
-                var audiosCollection = await audioNoteRepository.GetOneIncludeAudios(request.ContentId);
-
-                if (audiosCollection == null)
-                {
-                    return new OperationResult<List<AudioNoteDTO>>().SetNotFound();
-                }
-
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                try
-                {
-                    audiosCollection.Audios.AddRange(dbFiles);
-                    audiosCollection.UpdatedAt = DateTimeOffset.Now;
-
-                    await audioNoteRepository.UpdateAsync(audiosCollection);
-
-                    await MarkAsLinked(dbFiles);
-
-                    await transaction.CommitAsync();
-
-                    var audios = dbFiles.Select(x => new AudioNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<List<AudioNoteDTO>>(success: true, audios);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), dbFiles));
-                }
-            }
-
-            return new OperationResult<List<AudioNoteDTO>>().SetNoPermissions();
-        }
 
         public async Task<OperationResult<AudiosCollectionNoteDTO>> Handle(TransformToAudiosCollectionCommand request, CancellationToken cancellationToken)
         {

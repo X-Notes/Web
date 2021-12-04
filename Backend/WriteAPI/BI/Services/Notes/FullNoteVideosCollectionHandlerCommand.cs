@@ -23,7 +23,6 @@ namespace BI.Services.Notes
         IRequestHandler<UnlinkVideosCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveVideoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToVideosCollectionCommand, OperationResult<VideosCollectionNoteDTO>>,
-        IRequestHandler<UploadVideosToCollectionCommands, OperationResult<List<VideoNoteDTO>>>,
         IRequestHandler<UpdateVideosContentsCommand, OperationResult<Unit>>,
         IRequestHandler<UpdateVideosCollectionInfoCommand, OperationResult<Unit>>
     {
@@ -157,71 +156,6 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<VideosCollectionNoteDTO>().SetNoPermissions();
-        }
-
-        public async Task<OperationResult<List<VideoNoteDTO>>> Handle(UploadVideosToCollectionCommands request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
-            {
-                // PERMISSION MEMORY
-                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Videos.Sum(x => x.Length), permissions.Author.Id));
-                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
-                {
-                    return new OperationResult<List<VideoNoteDTO>>().SetNoEnougnMemory();
-                }
-
-                // FILE LOGIC
-                var filebytes = await request.Videos.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveVideosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
-                    return new OperationResult<List<VideoNoteDTO>>().SetRequestCancelled();
-                }
-
-                // UPDATING
-                var videoCollection = await videoNoteRepository.GetOneIncludeVideos(request.ContentId);
-
-                if (videoCollection == null)
-                {
-                    return new OperationResult<List<VideoNoteDTO>> ().SetNotFound();
-                }
-
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                try
-                {
-                    videoCollection.Videos.AddRange(dbFiles);
-                    videoCollection.UpdatedAt = DateTimeOffset.Now;
-
-                    await videoNoteRepository.UpdateAsync(videoCollection);
-
-                    await MarkAsLinked(dbFiles);
-
-                    await transaction.CommitAsync();
-
-                    var videos = dbFiles.Select(x => new VideoNoteDTO(x.Name, x.Id, x.PathNonPhotoContent, x.UserId, x.CreatedAt)).ToList();
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<List<VideoNoteDTO>>(success: true, videos);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), dbFiles));
-                }
-            }
-
-            return new OperationResult<List<VideoNoteDTO>>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateVideosContentsCommand request, CancellationToken cancellationToken)

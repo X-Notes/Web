@@ -23,7 +23,6 @@ namespace BI.Services.Notes
         IRequestHandler<UnlinkDocumentsCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<RemoveDocumentFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<TransformToDocumentsCollectionCommand,  OperationResult<DocumentsCollectionNoteDTO>>,
-        IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>,
         IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>
     {
 
@@ -155,71 +154,6 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<DocumentsCollectionNoteDTO>().SetNoPermissions();
-        }
-
-        public async Task<OperationResult<List<DocumentNoteDTO>>> Handle(UploadDocumentsToCollectionCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
-            {
-                // PERMISSION MEMORY
-                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Documents.Sum(x => x.Length), permissions.Author.Id));
-                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
-                {
-                    return new OperationResult<List<DocumentNoteDTO>>().SetNoEnougnMemory();
-                }
-
-                // FILE LOGIC
-                var filebytes = await request.Documents.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SaveDocumentsToNoteCommand(permissions.Author.Id, filebytes, note.Id));
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
-                    return new OperationResult<List<DocumentNoteDTO>>().SetRequestCancelled();
-                }
-
-                // UPDATING
-                var documentsCollection = await documentNoteRepository.GetOneIncludeDocuments(request.ContentId);
-
-                if (documentsCollection == null)
-                {
-                    return new OperationResult<List<DocumentNoteDTO>>().SetNotFound();
-                }
-
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                try
-                {
-                    documentsCollection.Documents.AddRange(dbFiles);
-                    documentsCollection.UpdatedAt = DateTimeOffset.Now;
-
-                    await documentNoteRepository.UpdateAsync(documentsCollection);
-
-                    await MarkAsLinked(dbFiles);
-                    
-                    await transaction.CommitAsync();
-
-                    var documents = dbFiles.Select(x => new DocumentNoteDTO(x.Name, x.PathNonPhotoContent, x.Id, x.UserId, x.CreatedAt)).ToList();
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<List<DocumentNoteDTO>>(success: true, documents);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), dbFiles));
-                }
-            }
-
-            return new OperationResult<List<DocumentNoteDTO>>().SetNoPermissions();
         }
 
         public async Task<OperationResult<Unit>> Handle(UpdateDocumentsContentsCommand request, CancellationToken cancellationToken)

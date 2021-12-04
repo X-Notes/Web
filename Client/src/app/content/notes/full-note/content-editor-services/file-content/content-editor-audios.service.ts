@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
 import { LongTermOperationsHandlerService } from 'src/app/content/long-term-operations-handler/services/long-term-operations-handler.service';
-import { generateFormData, nameForUploadAudios } from 'src/app/core/defaults/form-data-generator';
+import { generateFormData } from 'src/app/core/defaults/form-data-generator';
 import { LoadUsedDiskSpace } from 'src/app/core/stateUser/user-action';
 import { SnackBarFileProcessHandlerService } from 'src/app/shared/services/snackbar/snack-bar-file-process-handler.service';
 import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/snack-bar-handler-status.service';
@@ -10,11 +10,13 @@ import { UploadFilesService } from 'src/app/shared/services/upload-files.service
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
-import { AudiosCollection } from '../../../models/content-model.model';
+import { AudioModel, AudiosCollection } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiAudiosService } from '../../services/api-audios.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
+import { ApiNoteFilesService } from '../../services/api-note-files.service';
+import { FileNoteTypes } from '../../models/file-note-types.enum';
 
 @Injectable()
 export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase {
@@ -26,6 +28,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     snackBarFileProcessingHandler: SnackBarFileProcessHandlerService,
     private apiAudiosCollection: ApiAudiosService,
     contentEditorContentsService: ContentEditorContentsService,
+    private apiFiles: ApiNoteFilesService,
   ) {
     super(
       store,
@@ -68,19 +71,18 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     );
 
     const uploadsRequests = $event.files.map((file) => {
-      const formData = generateFormData([file], nameForUploadAudios);
+      const formData = generateFormData([file]);
       const mini = this.longTermOperationsHandler.getNewMini(
         operation,
         LongTermsIcons.Audio,
         file.name,
       );
-      return this.apiAudiosCollection
-        .uploadAudiosToPlaylist(formData, noteId, $event.contentId)
-        .pipe(
-          finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
-          takeUntil(mini.obs),
-          (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
-        );
+
+      return this.apiFiles.uploadFilesToNote(formData, noteId, FileNoteTypes.Audio).pipe(
+        finalize(() => this.longTermOperationsHandler.finalize(operation, mini)),
+        takeUntil(mini.obs),
+        (x) => this.snackBarFileProcessingHandler.trackProcess(x, mini),
+      );
     });
 
     const results = await forkJoin(uploadsRequests).toPromise();
@@ -94,13 +96,16 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       return;
     }
 
+    const audiosMapped = audios.map(
+      (x) => new AudioModel(x.name, x.pathNonPhotoContent, x.id, x.authorId, x.createdAt),
+    );
     const prevCollection = this.contentsService.getContentById<AudiosCollection>($event.contentId);
     const prev = prevCollection.audios ?? [];
 
     const newCollection = new AudiosCollection(prevCollection);
-    newCollection.audios = [...prev, ...audios];
+    newCollection.audios = [...prev, ...audiosMapped];
 
-    this.contentsService.setSafeContentsAndSyncContents(newCollection, $event.contentId);
+    this.contentsService.setSafe(newCollection, $event.contentId);
 
     this.afterUploadFilesToCollection(results);
   };
@@ -128,7 +133,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
       } else {
         const newCollection = prevCollection.copy();
         newCollection.audios = newCollection.audios.filter((x) => x.fileId !== audioId);
-        this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
+        this.contentsService.setSafe(newCollection, contentId);
       }
       this.store.dispatch(LoadUsedDiskSpace);
     }
@@ -141,7 +146,7 @@ export class ContentEditorAudiosCollectionService extends ContentEditorFilesBase
     if (resp.success) {
       const collection = this.contentsService.getContentById<AudiosCollection>(contentId);
       collection.name = name;
-      this.contentsService.setSafeContentsAndSyncContents(collection, collection.id);
+      this.contentsService.setSafe(collection, collection.id);
     }
   }
 }

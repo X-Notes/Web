@@ -35,26 +35,6 @@ namespace WriteAPI.Controllers
         }
 
 
-        [HttpPost("upload/{id}/{contentId}")]
-        public async Task<OperationResult<List<VideoNoteDTO>>> UploadVideosToCollection(List<IFormFile> videos, Guid id, Guid contentId, CancellationToken cancellationToken)
-        {
-            if (videos.Count == 0) // TODO MOVE TO FILTER
-            {
-                return new OperationResult<List<VideoNoteDTO>>().SetNoAnyFile();
-            }
-
-            var results = videos.Select(document => this.ValidateFile<List<VideoNoteDTO>>(document, SupportFileContentTypes.Videos));
-            var result = results.FirstOrDefault(x => !x.Success);
-            if (result != null)
-            {
-                return result;
-            }
-
-            var command = new UploadVideosToCollectionCommands(id, contentId, videos);
-            command.Email = this.GetUserEmail();
-            return await _mediator.Send(command, cancellationToken);
-        }
-
         [HttpDelete("{noteId}/{contentId}/{videoId}")]
         public async Task<OperationResult<Unit>> RemoveVideoFromCollection(Guid noteId, Guid contentId, Guid videoId)
         {

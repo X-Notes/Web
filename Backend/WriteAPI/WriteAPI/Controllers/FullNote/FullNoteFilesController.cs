@@ -1,5 +1,6 @@
 ﻿using Common.DatabaseModels.Models.Files;
 using Common.DTO;
+using Common.DTO.Files;
 using Domain.Commands.NoteInner.FileContent.Audios;
 using Domain.Commands.NoteInner.FileContent.Files;
 using Domain.Commands.NoteInner.FileContent.Photos;
@@ -29,11 +30,11 @@ namespace WriteAPI.Controllers.FullNote
         }
 
         [HttpPost("upload/{noteId}/{fileType}")]
-        public async Task<OperationResult<List<Guid>>> UploadAudiosToCollection(List<IFormFile> files, Guid noteId, FileTypeEnum fileType, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<FileDTO>>> UploadFiles(List<IFormFile> noteFiles, Guid noteId, FileTypeEnum fileType, CancellationToken cancellationToken)
         {
-            if (files.Count == 0) // TODO MOVE TO FILTER
+            if (noteFiles.Count == 0) // TODO MOVE TO FILTER
             {
-                return new OperationResult<List<Guid>>().SetNoAnyFile();
+                return new OperationResult<List<FileDTO>>().SetNoAnyFile();
             }
 
             IEnumerable<OperationResult<List<Guid>>> results = null;
@@ -42,22 +43,22 @@ namespace WriteAPI.Controllers.FullNote
             {
                 case FileTypeEnum.Photo:
                     {
-                        results = files.Select(photo => this.ValidateFile<List<Guid>>(photo, SupportFileContentTypes.Photos));
+                        results = noteFiles.Select(photo => this.ValidateFile<List<Guid>>(photo, SupportFileContentTypes.Photos));
                         break;
                     }
                 case FileTypeEnum.Video:
                     {
-                        results = files.Select(video => this.ValidateFile<List<Guid>>(video, SupportFileContentTypes.Videos));
+                        results = noteFiles.Select(video => this.ValidateFile<List<Guid>>(video, SupportFileContentTypes.Videos));
                         break;
                     }
                 case FileTypeEnum.Document:
                     {
-                        results = files.Select(document => this.ValidateFile<List<Guid>>(document, SupportFileContentTypes.Documents));
+                        results = noteFiles.Select(document => this.ValidateFile<List<Guid>>(document, SupportFileContentTypes.Documents));
                         break;
                     }
                 case FileTypeEnum.Audio:
                     {
-                        results = files.Select(audio => this.ValidateFile<List<Guid>>(audio, SupportFileContentTypes.Audios));
+                        results = noteFiles.Select(audio => this.ValidateFile<List<Guid>>(audio, SupportFileContentTypes.Audios));
                         break;
                     }
                 default:
@@ -69,11 +70,22 @@ namespace WriteAPI.Controllers.FullNote
             var result = results.FirstOrDefault(x => !x.Success);
             if (result != null)
             {
-                return new OperationResult<List<Guid>>().SetNoSupportExtension();
+                return new OperationResult<List<FileDTO>>().SetNoSupportExtension();
             }
 
-            var resp =  await _mediator.Send(new UploadNoteFilesToStorageAndSaveCommand(fileType, files, noteId), cancellationToken);
-            return new OperationResult<List<Guid>>(true ,resp.Data.Select(x => x.Id).ToList());
+            var command = new UploadNoteFilesToStorageAndSaveCommand(fileType, noteFiles, noteId);
+            command.Email = this.GetUserEmail();
+            var resp = await _mediator.Send(command, cancellationToken);
+
+            if(resp.Success)
+            {
+                var respResult = resp.Data
+                    .Select(x => new FileDTO(x.Id, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.PathNonPhotoContent,
+                    x.Name, x.UserId, x.CreatedAt)).ToList();
+                return new OperationResult<List<FileDTO>>(true, respResult);
+            }
+
+            return new OperationResult<List<FileDTO>>(false, null, resp.Status);
         }
     }
 }

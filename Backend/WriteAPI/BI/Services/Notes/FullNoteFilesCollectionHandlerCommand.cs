@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WriteContext.Repositories.Files;
 
 namespace BI.Services.Notes
 {
@@ -18,10 +19,12 @@ namespace BI.Services.Notes
     {
 
         private readonly IMediator _mediator;
+        private readonly FileRepository fileRepository;
 
-        public FullNoteFilesCollectionHandlerCommand(IMediator _mediator)
+        public FullNoteFilesCollectionHandlerCommand(IMediator _mediator, FileRepository fileRepository)
         {
             this._mediator = _mediator;
+            this.fileRepository = fileRepository;
         }
 
         public async Task<OperationResult<List<AppFile>>> Handle(UploadNoteFilesToStorageAndSaveCommand request, CancellationToken cancellationToken)
@@ -70,11 +73,25 @@ namespace BI.Services.Notes
                         }
                 }
 
-                if (cancellationToken.IsCancellationRequested)
+                async Task removeFilesFromStorage()
                 {
                     var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
                     await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await removeFilesFromStorage();
                     return new OperationResult<List<AppFile>>().SetRequestCancelled();
+                }
+
+                try  
+                {
+                   await fileRepository.AddRangeAsync(dbFiles);
+                } catch (Exception e)
+                {
+                    await removeFilesFromStorage();
+                    return new OperationResult<List<AppFile>>(false, null, OperationResultAdditionalInfo.AnotherError, e.Message);
                 }
 
                 return new OperationResult<List<AppFile>>(true, dbFiles);

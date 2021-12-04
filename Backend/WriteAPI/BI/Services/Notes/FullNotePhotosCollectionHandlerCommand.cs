@@ -20,7 +20,6 @@ namespace BI.Services.Notes
 {
     public class FullNotePhotosCollectionHandlerCommand : FullNoteBaseCollection,
         IRequestHandler<UnlinkPhotosCollectionCommand, OperationResult<Unit>>,
-        IRequestHandler<UploadPhotosToCollectionCommand, OperationResult<List<PhotoNoteDTO>>>,
         IRequestHandler<RemovePhotoFromCollectionCommand, OperationResult<Unit>>,
         IRequestHandler<ChangePhotosCollectionRowCountCommand, OperationResult<Unit>>,
         IRequestHandler<ChangePhotosCollectionSizeCommand, OperationResult<Unit>>,
@@ -166,72 +165,6 @@ namespace BI.Services.Notes
             }
 
             return new OperationResult<Unit>().SetNoPermissions();
-        }
-
-
-        public async Task<OperationResult<List<PhotoNoteDTO>>> Handle(UploadPhotosToCollectionCommand request, CancellationToken cancellationToken)
-        {
-            var command = new GetUserPermissionsForNoteQuery(request.NoteId, request.Email);
-            var permissions = await _mediator.Send(command);
-            var note = permissions.Note;
-
-            if (permissions.CanWrite)
-            {
-                // PERMISSION MEMORY
-                var uploadPermission = await _mediator.Send(new GetPermissionUploadFileQuery(request.Photos.Sum(x => x.Length), permissions.Author.Id));
-                if (uploadPermission == PermissionUploadFileEnum.NoCanUpload)
-                {
-                    return new OperationResult<List<PhotoNoteDTO>>().SetNoEnougnMemory();
-                }
-
-                // FILE LOGIC
-                var filebytes = await request.Photos.GetFilesBytesAsync();
-                var dbFiles = await _mediator.Send(new SavePhotosToNoteCommand(permissions.Author.Id, filebytes, note.Id));
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    var pathes = dbFiles.SelectMany(x => x.GetNotNullPathes()).ToList();
-                    await _mediator.Send(new RemoveFilesFromStorageCommand(pathes, permissions.Author.Id.ToString()));
-                    return new OperationResult<List<PhotoNoteDTO>>().SetRequestCancelled();
-                }
-
-                // UPDATING
-                var collection = await photosCollectionNoteRepository.GetOneIncludePhotos(request.ContentId);
-
-                if(collection == null)
-                {
-                    return new OperationResult<List<PhotoNoteDTO>>().SetNotFound();
-                }
-
-                using var transaction = await baseNoteContentRepository.context.Database.BeginTransactionAsync();
-
-                try
-                {
-                    collection.Photos.AddRange(dbFiles);
-                    collection.UpdatedAt = DateTimeOffset.Now;
-
-                    await photosCollectionNoteRepository.UpdateAsync(collection);
-
-                    await MarkAsLinked(dbFiles);
-
-                    await transaction.CommitAsync();
-
-                    var photos = dbFiles.Select(x => new PhotoNoteDTO(x.Id, x.Name, x.PathPhotoSmall, x.PathPhotoMedium, x.PathPhotoBig, x.UserId, x.CreatedAt)).ToList();
-
-                    historyCacheService.UpdateNote(permissions.Note.Id, permissions.User.Id, permissions.Author.Email);
-                    await appSignalRService.UpdateContent(request.NoteId, permissions.User.Email);
-
-                    return new OperationResult<List<PhotoNoteDTO>>(success: true, photos);
-                }
-                catch (Exception e)
-                {
-                    await transaction.RollbackAsync();
-                    Console.WriteLine(e);
-                    await _mediator.Send(new RemoveFilesCommand(permissions.User.Id.ToString(), dbFiles));
-                }
-            }
-
-            return new OperationResult<List<PhotoNoteDTO>>().SetNoPermissions();
         }
 
         public async Task<OperationResult<PhotosCollectionNoteDTO>> Handle(TransformToPhotosCollectionCommand request, CancellationToken cancellationToken)

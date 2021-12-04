@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { environment } from 'src/environments/environment';
-import { AudioModel, AudiosCollection } from '../../models/content-model.model';
+import { AudiosCollection } from '../../models/content-model.model';
 
 @Injectable()
 export class ApiAudiosService {
@@ -49,18 +49,10 @@ export class ApiAudiosService {
     );
   }
 
-  uploadAudiosToPlaylist(data: FormData, id: string, contentId: string) {
-    return this.httpClient.post<OperationResult<AudioModel[]>>(
-      `${environment.writeAPI}/api/note/inner/audios/upload/${id}/${contentId}`,
-      data,
-      { reportProgress: true, observe: 'events' },
-    );
-  }
-
   syncContents(noteId: string, audios: AudiosCollection[]) {
     const obj = {
       noteId,
-      audios
+      audios,
     };
     return this.httpClient.patch<OperationResult<any>>(
       `${environment.writeAPI}/api/note/inner/audios/sync`,

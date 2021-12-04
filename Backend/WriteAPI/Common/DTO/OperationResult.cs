@@ -8,7 +8,8 @@
         NoSupportExtension,
         NoAnyFile,
         RequestCancelled,
-        NotFound
+        NotFound,
+        AnotherError
     }
 
     public class OperationResult<T>
@@ -27,11 +28,12 @@
             Data = data;
         }
 
-        public OperationResult(bool success, T data, OperationResultAdditionalInfo message)
+        public OperationResult(bool success, T data, OperationResultAdditionalInfo? status, string message = null)
         {
             Success = success;
             Data = data;
-            Status = message;
+            Status = status;
+            Message = message;
         }
 
         public OperationResult()
