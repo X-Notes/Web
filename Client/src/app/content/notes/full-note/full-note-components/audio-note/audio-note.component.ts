@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -20,12 +21,12 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { CollectionService } from '../collection-services/collection.service';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
-import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 
 @Component({
   selector: 'app-audio-note',
   templateUrl: './audio-note.component.html',
   styleUrls: ['./audio-note.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioNoteComponent
   extends CollectionService

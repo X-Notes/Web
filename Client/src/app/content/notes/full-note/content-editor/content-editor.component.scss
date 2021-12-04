@@ -81,6 +81,16 @@
   }
 }
 
+.file-insert{
+  display: none;
+}
+
+.is-placeholder-active {
+  .file-insert{
+    display: block;
+  }
+}
+
 .custom-placeholder{
   background: #0887a7;
   border-radius: 5px;

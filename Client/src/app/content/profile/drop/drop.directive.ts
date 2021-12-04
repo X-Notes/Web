@@ -9,6 +9,10 @@ export class DropDirective {
   
   @Output() fileDropped = new EventEmitter<File[]>();
 
+  @Output() dragOverEvent = new EventEmitter();
+
+  @Output() dragLeaveEvent = new EventEmitter();
+
   @HostBinding('class') get fileOver(): string {
     return this.isActive ? this.appDrop : null;
   }
@@ -19,12 +23,14 @@ export class DropDirective {
     evt.preventDefault();
     evt.stopPropagation();
     this.isActive = true;
+    this.dragOverEvent.emit();
   }
 
   @HostListener('dragleave', ['$event']) public onDragLeave(evt) {
     evt.preventDefault();
     evt.stopPropagation();
     this.isActive = false;
+    this.dragLeaveEvent.emit();
   }
 
   @HostListener('drop', ['$event']) public ondrop(evt) {
@@ -33,7 +39,7 @@ export class DropDirective {
     this.isActive = false;
     const { files } = evt.dataTransfer;
     if (files.length > 0) {
-      this.fileDropped.emit(files);
+      this.fileDropped.emit([...files]);
     }
   }
 }

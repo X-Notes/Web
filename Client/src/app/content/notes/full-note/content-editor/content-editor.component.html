@@ -44,7 +44,11 @@
       *ngFor="let item of contents; let i = index"
     >
       <ng-container [ngSwitch]="item.typeId">
-        <ng-container *ngSwitchCase="contentType.Text">
+        <div
+          [appDrop]="'is-placeholder-active'"
+          (fileDropped)="uploadRandomFiles($event, i, item.id)"
+          *ngSwitchCase="contentType.Text"
+        >
           <app-html-text-part
             #htmlComp
             *ngIf="item.noteTextTypeId === textType.Default"
@@ -127,7 +131,8 @@
           >
             <app-drag-drop-handler cdkDragHandle></app-drag-drop-handler
           ></app-html-headings>
-        </ng-container>
+          <div class="custom-placeholder file-insert"></div>
+        </div>
         <app-photos
           #htmlComp
           *ngSwitchCase="contentType.Photos"

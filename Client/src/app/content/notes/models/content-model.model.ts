@@ -180,6 +180,15 @@ export class AudiosCollection extends ContentModel {
       : [];
   }
 
+  static getNew(): AudiosCollection {
+    const obj: Partial<AudiosCollection> = {
+      typeId: ContentTypeENUM.Audios,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new AudiosCollection(obj);
+  }
+
   update(entity: AudiosCollection) {
     this.name = entity.name;
     this.updatedAt = entity.updatedAt;
@@ -272,6 +281,15 @@ export class VideosCollection extends ContentModel {
       : [];
   }
 
+  static getNew(): VideosCollection {
+    const obj: Partial<VideosCollection> = {
+      typeId: ContentTypeENUM.Videos,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new VideosCollection(obj);
+  }
+
   copy(): VideosCollection {
     return new VideosCollection(this);
   }
@@ -362,6 +380,15 @@ export class DocumentsCollection extends ContentModel {
             new DocumentModel(z.name, z.documentPath, z.fileId, z.authorId, z.uploadAt),
         )
       : [];
+  }
+
+  static getNew(): DocumentsCollection {
+    const obj: Partial<DocumentsCollection> = {
+      typeId: ContentTypeENUM.Documents,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new DocumentsCollection(obj);
   }
 
   update(entity: DocumentsCollection) {
@@ -478,6 +505,15 @@ export class PhotosCollection extends ContentModel {
             ),
         )
       : [];
+  }
+
+  static getNew(): PhotosCollection {
+    const obj: Partial<PhotosCollection> = {
+      typeId: ContentTypeENUM.Photos,
+      id: uuid.v4(),
+      updatedAt: new Date(),
+    };
+    return new PhotosCollection(obj);
   }
 
   update(entity: PhotosCollection) {

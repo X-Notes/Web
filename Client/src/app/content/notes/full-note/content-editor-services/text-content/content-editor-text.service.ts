@@ -44,7 +44,7 @@ export class ContentEditorTextService {
     nContent.noteTextTypeIdSG = nextRowType;
     nContent.contentSG = nextText;
     this.contentsService.insertInto(nContent, index);
-    return index;
+    return { index, content: nContent };
   }
 
   tranformTextContentTo(value: TransformContent) {

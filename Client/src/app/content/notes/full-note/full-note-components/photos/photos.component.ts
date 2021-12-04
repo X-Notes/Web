@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -29,6 +30,7 @@ import { CollectionService } from '../collection-services/collection.service';
   selector: 'app-photos',
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotosComponent
   extends CollectionService

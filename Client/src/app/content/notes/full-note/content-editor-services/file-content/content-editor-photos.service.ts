@@ -9,12 +9,12 @@ import { SnackBarHandlerStatusService } from 'src/app/shared/services/snackbar/s
 import { UploadFilesService } from 'src/app/shared/services/upload-files.service';
 import { finalize, takeUntil } from 'rxjs/operators';
 import { LongTermsIcons } from 'src/app/content/long-term-operations-handler/models/long-terms.icons';
+import { OperationResult } from 'src/app/shared/models/operation-result.model';
 import { PhotosCollection, Photo } from '../../../models/content-model.model';
 import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { ApiPhotosService } from '../../services/api-photos.service';
 import { ContentEditorFilesBase } from './content-editor-files-base';
 import { ContentEditorContentsService } from '../content-editor-contents.service';
-import { OperationResult } from 'src/app/shared/models/operation-result.model';
 
 @Injectable()
 export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase {
@@ -37,11 +37,23 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     );
   }
 
+  insertNewContent(contentId: string, isFocusToNext: boolean) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    const nContent = PhotosCollection.getNew();
+    this.contentsService.insertInto(nContent, index);
+    return { index, content: nContent };
+  }
+
   async transformToPhotosCollection(noteId: string, contentId: string, files: File[]) {
     const collectionResult = await this.apiAlbum.transformToAlbum(noteId, contentId).toPromise();
     if (collectionResult.success) {
       collectionResult.data.isLoading = true; // TODO TRY CATCH
-      collectionResult.data.photos = collectionResult.data.photos ? collectionResult.data.photos : [];
+      collectionResult.data.photos = collectionResult.data.photos
+        ? collectionResult.data.photos
+        : [];
       this.transformContentToOrWarning(collectionResult, contentId);
       await this.uploadPhotoToAlbumHandler({ contentId: collectionResult.data.id, files }, noteId);
       collectionResult.data.isLoading = false;
@@ -113,7 +125,10 @@ export class ContentEditorPhotosCollectionService extends ContentEditorFilesBase
     this.contentsService.setSafeContentsAndSyncContents(newCollection, contentId);
   }
 
-  deleteContentHandler = async (contentId: string, noteId: string): Promise<OperationResult<any>> => {
+  deleteContentHandler = async (
+    contentId: string,
+    noteId: string,
+  ): Promise<OperationResult<any>> => {
     const resp = await this.apiAlbum.removeCollection(noteId, contentId).toPromise();
     if (resp.success) {
       this.deleteHandler(contentId);

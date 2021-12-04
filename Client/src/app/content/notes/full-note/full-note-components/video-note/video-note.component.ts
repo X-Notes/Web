@@ -10,11 +10,11 @@ import {
   HostListener,
   OnInit,
   ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 
 import { ThemeENUM } from 'src/app/shared/enums/theme.enum';
 import { Subject } from 'rxjs';
-import { UploadFileToEntity } from '../../models/upload-files-to-entity';
 import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
 import { ExportService } from '../../../export.service';
 import { VideoModel, VideosCollection } from '../../../models/content-model.model';
@@ -23,12 +23,12 @@ import { ClickableContentService } from '../../content-editor-services/clickable
 import { FocusDirection, SetFocus } from '../../models/set-focus';
 import { ClickableSelectableEntities } from '../../content-editor-services/clickable-selectable-entities.enum';
 import { CollectionService } from '../collection-services/collection.service';
-import { TitleCollectionComponent } from '../collection-components/title-collection/title-collection.component';
 
 @Component({
   selector: 'app-video-note',
   templateUrl: './video-note.component.html',
   styleUrls: ['./video-note.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoNoteComponent
   extends CollectionService

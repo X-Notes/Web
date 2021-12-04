@@ -90,6 +90,7 @@ using Domain.Commands.NoteInner.FileContent.Photos;
 using Domain.Commands.NoteInner;
 using Common.DTO;
 using WriteContext.Repositories.Files;
+using Domain.Commands.NoteInner.FileContent.Files;
 
 namespace WriteAPI.ConfigureAPP
 {
@@ -199,6 +200,9 @@ namespace WriteAPI.ConfigureAPP
             services.AddScoped<IRequestHandler<TransformToDocumentsCollectionCommand, OperationResult<DocumentsCollectionNoteDTO>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UploadDocumentsToCollectionCommand, OperationResult<List<DocumentNoteDTO>>>, FullNoteDocumentsCollectionHandlerCommand>();
             services.AddScoped<IRequestHandler<UpdateDocumentsContentsCommand, OperationResult<Unit>>, FullNoteDocumentsCollectionHandlerCommand>();
+
+            // FULL NOTE FILES
+            services.AddScoped<IRequestHandler<UploadNoteFilesToStorageAndSaveCommand, OperationResult<List<AppFile>>>, FullNoteFilesCollectionHandlerCommand>();
 
             //FOLDERS
             services.AddScoped<IRequestHandler<NewFolderCommand, SmallFolder>, FolderHandlerCommand>();

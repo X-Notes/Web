@@ -49,6 +49,7 @@ import { ContentEditorTextService } from '../content-editor-services/text-conten
 import { ContentEditorElementsListenerService } from '../content-editor-services/content-editor-elements-listener.service';
 import { ContentEditorListenerService } from '../content-editor-services/content-editor-listener.service';
 import { UploadFileToEntity } from '../models/upload-files-to-entity';
+import { TypeUploadFormats } from '../models/enums/type-upload-formats.enum';
 
 @Component({
   selector: 'app-content-editor',
@@ -203,13 +204,13 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
   }
 
   enterHandler(value: EnterEvent) {
-    const index = this.contentEditorTextService.insertNewContent(
+    const obj = this.contentEditorTextService.insertNewContent(
       value.contentId,
       value.nextItemType,
       value.breakModel.isFocusToNext,
       value.breakModel.nextText,
     );
-    setTimeout(() => this.elements?.toArray()[index].setFocus());
+    setTimeout(() => this.elements?.toArray()[obj.index].setFocus());
     this.postAction();
   }
 
@@ -283,6 +284,34 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
 
   mouseOut($event) {
     this.elements?.last?.mouseLeave($event);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async uploadRandomFiles(files: File[], index: number, contentId: string) {
+    console.log('files: ', files);
+    console.log('index: ', index);
+    const formats = files.map((x) => `.${x.name.split('.').pop()}`);
+    const photosFormats = TypeUploadFormats.photos.split(',');
+    const audiosFormats = TypeUploadFormats.audios.split(',');
+    const videosFormats = TypeUploadFormats.videos.split(',');
+    const documentsFormats = TypeUploadFormats.documents.split(',');
+    if (formats.every((z) => photosFormats.some((x) => x === z))) {
+      const cont = this.contentEditorAlbumService.insertNewContent(contentId, false);
+      await this.contentEditorAlbumService.uploadPhotoToAlbumHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
+    }
+    if (formats.every((z) => audiosFormats.some((x) => x === z))) {
+      console.log('Only audios');
+    }
+    if (formats.every((z) => videosFormats.some((x) => x === z))) {
+      console.log('Only videos');
+    }
+    if (formats.every((z) => documentsFormats.some((x) => x === z))) {
+      console.log('Only documents');
+    }
+    this.postAction();
   }
 
   // FILE CONTENTS

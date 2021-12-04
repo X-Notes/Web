@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -23,6 +24,7 @@ import { TypeUploadFormats } from '../../models/enums/type-upload-formats.enum';
   selector: 'app-document-note',
   templateUrl: './document-note.component.html',
   styleUrls: ['./document-note.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentNoteComponent extends CollectionService implements OnInit, ParentInteraction {
   @ViewChild('uploadRef') uploadRef: ElementRef;
