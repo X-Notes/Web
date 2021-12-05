@@ -24,19 +24,15 @@ export class StructureDiffs {
 
   removedItems: ItemForRemove[] = [];
 
-  private newTextItems: BaseText[] = [];
+  newTextItems: BaseText[] = [];
 
-  private photosCollectionItems: ContentModel[] = [];
+  photosCollectionItems: ContentModel[] = [];
 
-  private audiosCollectionItems: ContentModel[] = [];
+  audiosCollectionItems: ContentModel[] = [];
 
-  private videosCollectionItems: ContentModel[] = [];
+  videosCollectionItems: ContentModel[] = [];
 
-  private documentsCollectionItems: ContentModel[] = [];
-
-  get textItems(): BaseText[] {
-    return this.newTextItems;
-  }
+  documentsCollectionItems: ContentModel[] = [];
 
   push(content: ContentModel): void {
     switch (content.typeId) {

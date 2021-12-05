@@ -22,6 +22,7 @@ namespace Common.DatabaseModels.Models.NoteContent.FileContent
         {
             UpdatedAt = DateTimeOffset.Now;
             ContentTypeId = ContentTypeENUM.PhotosCollection;
+            CountInRow = 2;
         }
 
         public PhotosCollectionNote(PhotosCollectionNote entity, List<PhotoNoteAppFile> albumNoteAppFiles, Guid noteId)

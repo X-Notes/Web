@@ -28,6 +28,10 @@
         (clickEvent)="clickDocumentHandler($event)"
       ></app-document-item>
     </ng-container>
+    <app-empty-collection-items-placeholder
+      *ngIf="isEmpty"
+      [title]="'upload documents TODO'"
+    ></app-empty-collection-items-placeholder>
     <div *ngIf="content.isLoading" class="spinner-container">
       <app-spinner [size]="16"></app-spinner>
     </div>

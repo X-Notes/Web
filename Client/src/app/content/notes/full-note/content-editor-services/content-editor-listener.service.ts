@@ -54,7 +54,6 @@ export class ContentEditorListenerService {
       }
 
       const el = arr.find((item) => this.clickableService.isEqual(item.getContent()));
-      console.log('el: ', el);
       if (el) {
         const index = arr.indexOf(el);
 

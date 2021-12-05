@@ -288,8 +288,6 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
 
   // eslint-disable-next-line class-methods-use-this
   async uploadRandomFiles(files: File[], index: number, contentId: string) {
-    console.log('files: ', files);
-    console.log('index: ', index);
     const formats = files.map((x) => `.${x.name.split('.').pop()}`);
     const photosFormats = TypeUploadFormats.photos.split(',');
     const audiosFormats = TypeUploadFormats.audios.split(',');
@@ -297,19 +295,25 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     const documentsFormats = TypeUploadFormats.documents.split(',');
     if (formats.every((z) => photosFormats.some((x) => x === z))) {
       const cont = this.contentEditorAlbumService.insertNewContent(contentId, false);
+      this.postAction();
+      /*
       await this.contentEditorAlbumService.uploadPhotoToAlbumHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
+      */
     }
     if (formats.every((z) => audiosFormats.some((x) => x === z))) {
-      console.log('Only audios');
+      const cont = this.contentEditorPlaylistService.insertNewContent(contentId, false);
+      this.postAction();
     }
     if (formats.every((z) => videosFormats.some((x) => x === z))) {
-      console.log('Only videos');
+      const cont = this.contentEditorVideosService.insertNewContent(contentId, false);
+      this.postAction();
     }
     if (formats.every((z) => documentsFormats.some((x) => x === z))) {
-      console.log('Only documents');
+      const cont = this.contentEditorDocumentsService.insertNewContent(contentId, false);
+      this.postAction();
     }
     this.postAction();
   }

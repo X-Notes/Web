@@ -210,6 +210,7 @@ export class PhotosComponent
   }
 
   initPhotos() {
+    this.content.countInRow = this.content.countInRow === 0 ? 2 : this.content.countInRow;
     this.mainBlocks = [];
     this.lastBlock = [];
     const photoLength = this.content.photos.length;
@@ -292,9 +293,15 @@ export class PhotosComponent
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
+    if (entity.status === FocusDirection.Up && this.content.photos.length > 0) {
       this.clickPhotoHandler(this.content.photos[this.content.photos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.photos.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickPhotoHandler(null);
       return;
     }
 

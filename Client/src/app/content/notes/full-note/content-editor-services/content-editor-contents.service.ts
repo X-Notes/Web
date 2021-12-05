@@ -146,6 +146,8 @@ export class ContentEditorContentsService {
       this.getContents,
       ContentTypeENUM.Photos,
     );
+    console.log('diffs: ', diffs);
+    console.log('sync: ', this.contentsSync);
     if (diffs.length > 0) {
       this.apiPhotos
         .syncContents(this.noteId, diffs)
@@ -244,8 +246,28 @@ export class ContentEditorContentsService {
     if (diffs.removedItems.length > 0) {
       itemsForPatch = itemsForPatch.filter((x) => !diffs.removedItems.some((z) => z.id === x.id));
     }
-    if (diffs.textItems.length > 0) {
-      for (const item of diffs.textItems) {
+    if (diffs.newTextItems.length > 0) {
+      for (const item of diffs.newTextItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.photosCollectionItems.length > 0) {
+      for (const item of diffs.photosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.audiosCollectionItems.length > 0) {
+      for (const item of diffs.audiosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.videosCollectionItems.length > 0) {
+      for (const item of diffs.videosCollectionItems) {
+        itemsForPatch.push(item.copy());
+      }
+    }
+    if (diffs.documentsCollectionItems.length > 0) {
+      for (const item of diffs.documentsCollectionItems) {
         itemsForPatch.push(item.copy());
       }
     }

@@ -512,6 +512,7 @@ export class PhotosCollection extends ContentModel {
       typeId: ContentTypeENUM.Photos,
       id: uuid.v4(),
       updatedAt: new Date(),
+      countInRow: 2,
     };
     return new PhotosCollection(obj);
   }

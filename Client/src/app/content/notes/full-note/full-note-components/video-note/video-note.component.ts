@@ -210,7 +210,6 @@ export class VideoNoteComponent
 
     if (entity.status === FocusDirection.Up && isExist) {
       const index = this.content.videos.findIndex((x) => x.fileId === entity.itemId);
-      console.log(index);
       if (index === 0) {
         this.titleComponent.focusOnTitle();
         this.clickVideoHandler(null);
@@ -221,9 +220,15 @@ export class VideoNoteComponent
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
+    if (entity.status === FocusDirection.Up && this.content.videos.length > 0) {
       this.clickVideoHandler(this.content.videos[this.content.videos.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.videos.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickVideoHandler(null);
       return;
     }
 

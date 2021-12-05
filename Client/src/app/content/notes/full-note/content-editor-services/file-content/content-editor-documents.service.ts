@@ -57,6 +57,16 @@ export class ContentEditorDocumentsCollectionService extends ContentEditorFilesB
     }
   }
 
+  insertNewContent(contentId: string, isFocusToNext: boolean) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    const nContent = DocumentsCollection.getNew();
+    this.contentsService.insertInto(nContent, index);
+    return { index, content: nContent };
+  }
+
   uploadDocumentsToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {

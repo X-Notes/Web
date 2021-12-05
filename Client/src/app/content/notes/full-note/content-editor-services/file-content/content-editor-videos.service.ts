@@ -56,6 +56,16 @@ export class ContentEditorVideosCollectionService extends ContentEditorFilesBase
     }
   }
 
+  insertNewContent(contentId: string, isFocusToNext: boolean) {
+    let index = this.contentsService.getIndexOrErrorById(contentId);
+    if (isFocusToNext) {
+      index += 1;
+    }
+    const nContent = VideosCollection.getNew();
+    this.contentsService.insertInto(nContent, index);
+    return { index, content: nContent };
+  }
+
   uploadVideosToCollectionHandler = async ($event: UploadFileToEntity, noteId: string) => {
     const isCan = await this.uploadFilesService.isCanUserUploadFiles($event.files);
     if (!isCan) {

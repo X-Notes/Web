@@ -75,8 +75,10 @@ namespace BI.Services.Notes
 
                     return new OperationResult<Unit>(success: true, Unit.Value);
                 }
-
-                return new OperationResult<Unit>().SetNotFound();
+                else
+                {
+                    return new OperationResult<Unit>(success: true, Unit.Value, OperationResultAdditionalInfo.NoAnyFile);
+                }
             }
 
             return new OperationResult<Unit>().SetNoPermissions();

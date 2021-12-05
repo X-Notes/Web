@@ -154,9 +154,15 @@ export class AudioNoteComponent
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
+    if (entity.status === FocusDirection.Up && this.content.audios.length > 0) {
       this.clickAudioHandler(this.content.audios[this.content.audios.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.audios.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickAudioHandler(null);
       return;
     }
 

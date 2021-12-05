@@ -82,9 +82,15 @@ export class DocumentNoteComponent extends CollectionService implements OnInit, 
       return;
     }
 
-    if (entity.status === FocusDirection.Up) {
+    if (entity.status === FocusDirection.Up && this.content.documents.length > 0) {
       this.clickDocumentHandler(this.content.documents[this.content.documents.length - 1].fileId);
       (document.activeElement as HTMLInputElement).blur();
+      return;
+    }
+
+    if (entity.status === FocusDirection.Up && this.content.documents.length === 0) {
+      this.titleComponent.focusOnTitle();
+      this.clickDocumentHandler(null);
       return;
     }
 

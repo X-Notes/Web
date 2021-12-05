@@ -46,6 +46,7 @@ import { TitleCollectionComponent } from './full-note-components/collection-comp
 import { DragDropHandlerContainerComponent } from './ui-components/drag-drop-handler-container/drag-drop-handler-container.component';
 import { DocumentItemComponent } from './full-note-components/document-item/document-item.component';
 import { CollectionService } from './full-note-components/collection-services/collection.service';
+import { EmptyCollectionItemsPlaceholderComponent } from './full-note-components/collection-components/empty-collection-items-placeholder/empty-collection-items-placeholder.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { CollectionService } from './full-note-components/collection-services/co
     TitleCollectionComponent,
     DragDropHandlerContainerComponent,
     DocumentItemComponent,
+    EmptyCollectionItemsPlaceholderComponent,
   ],
   exports: [
     LeftSectionContentNotesListComponent,

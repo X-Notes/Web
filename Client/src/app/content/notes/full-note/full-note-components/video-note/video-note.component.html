@@ -12,6 +12,7 @@
       [isShowButton]="isMouseOver"
     ></app-title-collection>
     <div
+      *ngIf="!isEmpty"
       #videowrapper
       (fullscreenchange)="onFullscreenChange()"
       class="video-wrapper"
@@ -171,6 +172,10 @@
         <div class="ripple-container" matRipple [matRippleTrigger]="toNext"></div>
       </button>
     </div>
+    <app-empty-collection-items-placeholder
+      *ngIf="isEmpty"
+      [title]="'upload videos TODO'"
+    ></app-empty-collection-items-placeholder>
   </div>
 </div>
 

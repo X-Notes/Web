@@ -9,10 +9,7 @@
     (fileDropped)="uploadImages($event)"
   >
     <div
-      *ngIf="!isEmpty"
       #album
-      [style.width]="content.width"
-      [style.height]="content.height"
       class="content-photos"
       [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
     >
@@ -24,53 +21,59 @@
         [menu]="menu"
         [isShowButton]="isMouseOver"
       ></app-title-collection>
-      <div
-        *ngFor="let block of mainBlocks;let i = index"
-        class="blocks"
-        [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
-      >
-        <div class="block" [ngClass]="getStyle(content.countInRow)">
-          <app-photo
-            *ngFor="let item of block"
-            [photo]="item"
-            [isReadOnlyMode]="isReadOnlyMode"
-            (deleteEvent)="deletePhotoHandler($event)"
-            (downloadPhotoEvent)="exportPhoto($event)"
-            (clickEvent)="clickPhotoHandler($event)"
-          ></app-photo>
+      <div *ngIf="!isEmpty" class="blocks-container">
+        <div
+          *ngFor="let block of mainBlocks;let i = index"
+          class="blocks"
+          [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+        >
+          <div class="block" [ngClass]="getStyle(content.countInRow)">
+            <app-photo
+              *ngFor="let item of block"
+              [photo]="item"
+              [isReadOnlyMode]="isReadOnlyMode"
+              (deleteEvent)="deletePhotoHandler($event)"
+              (downloadPhotoEvent)="exportPhoto($event)"
+              (clickEvent)="clickPhotoHandler($event)"
+            ></app-photo>
+          </div>
         </div>
-      </div>
-      <div
-        class="blocks"
-        *ngIf="lastBlock.length > 0"
-        [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
-      >
-        <div class="block" [ngClass]="getStyle(countLastItems)">
-          <app-photo
-            *ngFor="let item of lastBlock"
-            [photo]="item"
-            [isReadOnlyMode]="isReadOnlyMode"
-            (deleteEvent)="deletePhotoHandler($event)"
-            (downloadPhotoEvent)="exportPhoto($event)"
-            (clickEvent)="clickPhotoHandler($event)"
-          >
-          </app-photo>
+        <div
+          class="blocks"
+          *ngIf="lastBlock.length > 0"
+          [ngStyle]="{'height': 'calc(100% / ' + totalRows + ')'}"
+        >
+          <div class="block" [ngClass]="getStyle(countLastItems)">
+            <app-photo
+              *ngFor="let item of lastBlock"
+              [photo]="item"
+              [isReadOnlyMode]="isReadOnlyMode"
+              (deleteEvent)="deletePhotoHandler($event)"
+              (downloadPhotoEvent)="exportPhoto($event)"
+              (clickEvent)="clickPhotoHandler($event)"
+            >
+            </app-photo>
+          </div>
         </div>
+        <div
+          appChangeSizeAlbumWidth
+          (mouseClick)="saveWidth()"
+          (changeWeight)="changeWidth($event)"
+          class="slider-right"
+          [ngClass]="{'slider': !isReadOnlyMode}"
+        ></div>
+        <div
+          appChangeSizeAlbumHeight
+          (mouseClick)="saveHeight($event)"
+          (changeHeight)="changeHeight($event)"
+          class="slider-bottom"
+          [ngClass]="{'slider': !isReadOnlyMode}"
+        ></div>
       </div>
-      <div
-        appChangeSizeAlbumWidth
-        (mouseClick)="saveWidth()"
-        (changeWeight)="changeWidth($event)"
-        class="slider-right"
-        [ngClass]="{'slider': !isReadOnlyMode}"
-      ></div>
-      <div
-        appChangeSizeAlbumHeight
-        (mouseClick)="saveHeight($event)"
-        (changeHeight)="changeHeight($event)"
-        class="slider-bottom"
-        [ngClass]="{'slider': !isReadOnlyMode}"
-      ></div>
+      <app-empty-collection-items-placeholder
+        *ngIf="isEmpty"
+        [title]="'upload photos TODO'"
+      ></app-empty-collection-items-placeholder>
     </div>
     <div *ngIf="content.isLoading" class="spinner-container">
       <app-spinner [size]="16"></app-spinner>

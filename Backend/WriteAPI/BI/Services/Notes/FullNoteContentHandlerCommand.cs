@@ -76,6 +76,7 @@ namespace BI.Services.Notes
             if (permissions.CanWrite)
             {
                 var contents = await baseNoteContentRepository.GetWhereAsync(x => x.NoteId == note.Id);
+                var contentIds = contents.Select(x => x.Id).ToList();
 
                 if (request.Diffs.RemovedItems != null && request.Diffs.RemovedItems.Any())
                 {
@@ -123,30 +124,85 @@ namespace BI.Services.Notes
                 }
                 if (request.Diffs.NewTextItems != null && request.Diffs.NewTextItems.Any())
                 {
-                    var items = request.Diffs.NewTextItems.Select(content => GetTextContent(content, note.Id));
-                    await textNotesRepository.AddRangeAsync(items);
+                    var itemsThatNeedAdd = request.Diffs.NewTextItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.NewTextItems.Where(x => contentIds.Contains(x.Id)).ToList();
+
+                    if (itemsThatNeedAdd.Any())
+                    {
+                        var items = request.Diffs.NewTextItems.Select(content => GetTextContent(content, note.Id));
+                        await textNotesRepository.AddRangeAsync(items);
+                    }
+                    if (itemsThatAlreadyAdded.Any())
+                    {
+                        Console.WriteLine("ITEMS TEXTS EXIST");
+                    }
                 }
 
                 // FILES
                 if (request.Diffs.PhotosCollectionItems != null && request.Diffs.PhotosCollectionItems.Any())
                 {
-                    var items = request.Diffs.PhotosCollectionItems.Select(x => GetCollectionContent<PhotosCollectionNote>(x, note.Id));
-                    await photosCollectionNoteRepository.AddRangeAsync(items);
+                    var itemsThatNeedAdd = request.Diffs.PhotosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.PhotosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+
+                    if (itemsThatNeedAdd.Any())
+                    {
+                        var items = request.Diffs.PhotosCollectionItems.Select(x =>
+                        {
+                            var cont = GetCollectionContent<PhotosCollectionNote>(x, note.Id);
+                            cont.CountInRow = 2;
+                            return cont;
+                        });
+                        await photosCollectionNoteRepository.AddRangeAsync(items);
+                    }
+                    if (itemsThatAlreadyAdded.Any())
+                    {
+                        Console.WriteLine("ITEMS PHOTOS EXIST");
+                    }
                 }
                 if (request.Diffs.AudiosCollectionItems != null && request.Diffs.AudiosCollectionItems.Any())
                 {
-                    var items = request.Diffs.AudiosCollectionItems.Select(x => GetCollectionContent<AudiosCollectionNote>(x, note.Id));
-                    await audiosCollectionNoteRepository.AddRangeAsync(items);
+                    var itemsThatNeedAdd = request.Diffs.AudiosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.AudiosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+
+                    if (itemsThatNeedAdd.Any())
+                    {
+                        var items = request.Diffs.AudiosCollectionItems.Select(x => GetCollectionContent<AudiosCollectionNote>(x, note.Id));
+                        await audiosCollectionNoteRepository.AddRangeAsync(items);
+                    }
+                    if (itemsThatAlreadyAdded.Any())
+                    {
+                        Console.WriteLine("ITEMS AUDIOS EXIST");
+                    }
                 }
                 if (request.Diffs.VideosCollectionItems != null && request.Diffs.VideosCollectionItems.Any())
                 {
-                    var items = request.Diffs.VideosCollectionItems.Select(x => GetCollectionContent<VideosCollectionNote>(x, note.Id));
-                    await videosCollectionNoteRepository.AddRangeAsync(items);
+                    var itemsThatNeedAdd = request.Diffs.VideosCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.VideosCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+
+                    if (itemsThatNeedAdd.Any())
+                    {
+                        var items = request.Diffs.VideosCollectionItems.Select(x => GetCollectionContent<VideosCollectionNote>(x, note.Id));
+                        await videosCollectionNoteRepository.AddRangeAsync(items);
+                    }
+                    if (itemsThatAlreadyAdded.Any())
+                    {
+                        Console.WriteLine("ITEMS VIDEOS EXIST");
+                    }
                 }
                 if (request.Diffs.DocumentsCollectionItems != null && request.Diffs.DocumentsCollectionItems.Any())
                 {
-                    var items = request.Diffs.DocumentsCollectionItems.Select(x => GetCollectionContent<DocumentsCollectionNote>(x, note.Id));
-                    await documentsCollectionNoteRepository.AddRangeAsync(items);
+                    var itemsThatNeedAdd = request.Diffs.DocumentsCollectionItems.Where(x => !contentIds.Contains(x.Id)).ToList();
+                    var itemsThatAlreadyAdded = request.Diffs.DocumentsCollectionItems.Where(x => contentIds.Contains(x.Id)).ToList();
+
+                    if (itemsThatNeedAdd.Any())
+                    {
+                        var items = request.Diffs.DocumentsCollectionItems.Select(x => GetCollectionContent<DocumentsCollectionNote>(x, note.Id));
+                        await documentsCollectionNoteRepository.AddRangeAsync(items);
+                    }
+                    if (itemsThatAlreadyAdded.Any())
+                    {
+                        Console.WriteLine("ITEMS DOCUMENTS EXIST");
+                    }
                 }
 
                 if (request.Diffs.Positions != null && request.Diffs.Positions.Any())
