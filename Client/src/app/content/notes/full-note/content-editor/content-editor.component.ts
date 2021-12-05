@@ -296,24 +296,34 @@ export class ContentEditorComponent implements OnInit, DoCheck, AfterViewInit, O
     if (formats.every((z) => photosFormats.some((x) => x === z))) {
       const cont = this.contentEditorAlbumService.insertNewContent(contentId, false);
       this.postAction();
-      /*
       await this.contentEditorAlbumService.uploadPhotoToAlbumHandler(
         { contentId: cont.content.id, files },
         this.note.id,
       );
-      */
     }
     if (formats.every((z) => audiosFormats.some((x) => x === z))) {
       const cont = this.contentEditorPlaylistService.insertNewContent(contentId, false);
       this.postAction();
+      await this.contentEditorPlaylistService.uploadAudiosToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
     }
     if (formats.every((z) => videosFormats.some((x) => x === z))) {
       const cont = this.contentEditorVideosService.insertNewContent(contentId, false);
       this.postAction();
+      await this.contentEditorVideosService.uploadVideosToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
     }
     if (formats.every((z) => documentsFormats.some((x) => x === z))) {
       const cont = this.contentEditorDocumentsService.insertNewContent(contentId, false);
       this.postAction();
+      await this.contentEditorDocumentsService.uploadDocumentsToCollectionHandler(
+        { contentId: cont.content.id, files },
+        this.note.id,
+      );
     }
     this.postAction();
   }
