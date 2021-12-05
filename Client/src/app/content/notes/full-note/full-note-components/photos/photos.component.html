@@ -9,7 +9,6 @@
     (fileDropped)="uploadImages($event)"
   >
     <div
-      #album
       class="content-photos"
       [ngStyle]="{'backgroundColor': isSelected ? (theme === themeE.Dark ? '#2a2d32' : '#f3f3f3') : null }"
     >
@@ -21,7 +20,7 @@
         [menu]="menu"
         [isShowButton]="isMouseOver"
       ></app-title-collection>
-      <div *ngIf="!isEmpty" class="blocks-container">
+      <div #album [ngStyle]="{'display': isEmpty ? 'none' : 'block' }" class="blocks-container">
         <div
           *ngFor="let block of mainBlocks;let i = index"
           class="blocks"
